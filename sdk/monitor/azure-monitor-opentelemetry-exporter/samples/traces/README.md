@@ -114,7 +114,8 @@ $ python sample_requests.py
 
 * Update `APPLICATIONINSIGHTS_CONNECTION_STRING` environment variable
 
-* Ensure you have a database named `Database` with a table named `test`
+* Ensure you have a database named `test` with a table named `test_table`, make sure `test_table` has a field called `test_field`
+* Supply your `user` and `password` for your database if needed
 * Run the sample
 
 ```sh

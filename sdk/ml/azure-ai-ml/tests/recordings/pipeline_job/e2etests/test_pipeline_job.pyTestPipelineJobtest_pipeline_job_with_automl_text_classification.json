@@ -458,6 +458,7 @@
               "training_data": "${{parent.inputs.text_classification_training_data}}",
               "limits": {
                 "max_trials": 1,
+                "max_nodes": 1,
                 "timeout_minutes": 60
               },
               "featurization": {
@@ -559,6 +560,7 @@
               "training_data": "${{parent.inputs.text_classification_training_data}}",
               "limits": {
                 "max_trials": 1,
+                "max_nodes": 1,
                 "timeout_minutes": 60
               },
               "featurization": {

@@ -36,6 +36,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity, monitor_with_telemetry_mixin
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import (
@@ -63,7 +64,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
-from azure.ai.ml.entities import Compute, Job, PipelineJob
+from azure.ai.ml.entities import Compute, Job, PipelineJob, ValidationResult, ServiceInstance
 from azure.ai.ml.entities._assets._artifacts.code import Code
 from azure.ai.ml.entities._builders import BaseNode, Command, DoWhile, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
@@ -73,9 +74,11 @@ from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import _is_pipeline_child_job
 from azure.ai.ml.entities._job.parallel.parallel_job import ParallelJob
-from azure.ai.ml.entities._job.service_instance import ServiceInstance
 from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
-from azure.ai.ml.entities._validation import SchemaValidatableMixin
+from azure.ai.ml.entities._validation import (
+    SchemaValidatableMixin,
+    _ValidationResultBuilder,
+)
 from azure.ai.ml.exceptions import (
     ComponentException,
     ErrorCategory,
@@ -96,8 +99,8 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
+from ..entities._builders.condition_node import ConditionNode
 from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
-from ..entities._validation import ValidationResult, _ValidationResultBuilder
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
 from ._dataset_dataplane_operations import DatasetDataplaneOperations
@@ -116,7 +119,7 @@ if TYPE_CHECKING:
     from azure.ai.ml.operations import DatastoreOperations
 
 ops_logger = OpsLogger(__name__)
-module_logger = ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class JobOperations(_ScopeDependentOperations):
@@ -137,7 +140,7 @@ class JobOperations(_ScopeDependentOperations):
         **kwargs: Any,
     ):
         super(JobOperations, self).__init__(operation_scope, operation_config)
-        # ops_logger.update_info(kwargs)
+        ops_logger.update_info(kwargs)
         self._operation_2022_10_preview = service_client_10_2022_preview.jobs
         self._service_client = service_client_10_2022_preview
         self._all_operations = all_operations
@@ -217,7 +220,7 @@ class JobOperations(_ScopeDependentOperations):
         return self._api_base_url
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Job.List", ActivityType.PUBLICAPI)
     def list(
         self,
         *,
@@ -260,7 +263,7 @@ class JobOperations(_ScopeDependentOperations):
             pass
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Get", ActivityType.PUBLICAPI)
     def get(self, name: str) -> Job:
         """Get a job resource.
 
@@ -283,14 +286,15 @@ class JobOperations(_ScopeDependentOperations):
 
         return job
 
-    # @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.INTERNALCALL)
-    def _show_services(self, name: str, node_index: int):
+    @distributed_trace
+    @monitor_with_telemetry_mixin(logger, "Job.ShowServices", ActivityType.PUBLICAPI)
+    def show_services(self, name: str, node_index: int = 0) -> Dict[str, ServiceInstance]:
         """Get services associated with a job's node.
 
         :param str name: Name of the job.
         :param int node_index: Index of the node.
         :return: The Services associated with the job for the given node.
-        :rtype: ServiceInstance
+        :rtype: Dict[str, ServiceInstance] Map of service names to ServiceInstance.
         """
 
         service_instances_dict = self._runs_operations._operation.get_run_service_instances(
@@ -304,7 +308,7 @@ class JobOperations(_ScopeDependentOperations):
         }
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Job.Cancel", ActivityType.PUBLICAPI)
     def begin_cancel(self, name: str) -> LROPoller[None]:
         """Cancel job resource.
 
@@ -360,7 +364,7 @@ class JobOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @experimental
-    # @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.PUBLICAPI)
     def validate(self, job: Job, *, raise_on_failure: bool = False, **kwargs) -> ValidationResult:
         """Validate a job. Anonymous assets may be created if there are inline
         defined entities, e.g. Component, Environment & Code. Only pipeline job
@@ -375,7 +379,7 @@ class JobOperations(_ScopeDependentOperations):
         """
         return self._validate(job, raise_on_failure=raise_on_failure, **kwargs)
 
-    # @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
+    @monitor_with_telemetry_mixin(logger, "Job.Validate", ActivityType.INTERNALCALL)
     def _validate(
         self, job: Job, *, raise_on_failure: bool = False, **kwargs  # pylint:disable=unused-argument
     ) -> ValidationResult:
@@ -417,7 +421,8 @@ class JobOperations(_ScopeDependentOperations):
 
             for node_name, node in job.jobs.items():
                 try:
-                    if not isinstance(node, DoWhile):
+                    # TODO(1979547): refactor, not all nodes have compute
+                    if not isinstance(node, (DoWhile, ConditionNode)):
                         node.compute = self._try_get_compute_arm_id(node.compute)
                 except Exception as e:  # pylint: disable=broad-except
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
@@ -426,7 +431,7 @@ class JobOperations(_ScopeDependentOperations):
         return validation_result.try_raise(raise_error=raise_on_failure, error_target=ErrorTarget.PIPELINE)
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(
         self,
         job: Job,
@@ -573,7 +578,7 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Archive", ActivityType.PUBLICAPI)
     def archive(self, name: str) -> None:
         """Archive a job or restore an archived job.
 
@@ -585,7 +590,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=True)
 
     @distributed_trace
-    # @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
+    @monitor_with_telemetry_mixin(logger, "Job.Restore", ActivityType.PUBLICAPI)
     def restore(self, name: str) -> None:
         """Archive a job or restore an archived job.
 
@@ -597,7 +602,7 @@ class JobOperations(_ScopeDependentOperations):
         self._archive_or_restore(name=name, is_archived=False)
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Job.Stream", ActivityType.PUBLICAPI)
     def stream(self, name: str) -> None:
         """Stream logs of a job.
 
@@ -614,7 +619,7 @@ class JobOperations(_ScopeDependentOperations):
         )
 
     @distributed_trace
-    # @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Job.Download", ActivityType.PUBLICAPI)
     def download(
         self,
         name: str,
@@ -644,7 +649,8 @@ class JobOperations(_ScopeDependentOperations):
         """
         job_details = self.get(name)
         # job is reused, get reused job to download
-        if job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE:
+        if job_details.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE and \
+                PipelineConstants.REUSED_JOB_ID in job_details.properties:
             reused_job_name = job_details.properties[PipelineConstants.REUSED_JOB_ID]
             reused_job_detail = self.get(reused_job_name)
             module_logger.info("job %s reuses previous job %s, download from the reused job.", name, reused_job_name)
@@ -668,7 +674,7 @@ class JobOperations(_ScopeDependentOperations):
         output_directory_name = "named-outputs"
 
         def log_missing_uri(what: str):
-            module_logger.debug(
+            logger.debug(
                 'Could not download %s for job "%s" (job status: %s)', what, job_details.name, job_details.status
             )
 

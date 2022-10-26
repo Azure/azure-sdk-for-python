@@ -7,15 +7,16 @@
 import functools
 import warnings
 from typing import (  # pylint: disable=unused-import
-    Any, Dict, List, Optional,
+    Any, Dict, List, Optional, Union,
     TYPE_CHECKING)
 from urllib.parse import urlparse, quote, unquote
 
 import six
+from typing_extensions import Self
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 from azure.core.tracing.decorator import distributed_trace
-
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query
 from ._shared.request_handlers import add_metadata_headers, serialize_iso
 from ._shared.response_handlers import (
@@ -31,6 +32,7 @@ from ._models import QueueMessage, AccessPolicy, MessagesPaged
 from ._serialize import get_api_version
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import QueueProperties
 
 
@@ -77,12 +79,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             :caption: Create the queue client with url and credential.
     """
     def __init__(
-            self, account_url,  # type: str
-            queue_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            queue_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         try:
             if not account_url.lower().startswith('http'):
                 account_url = "https://" + account_url
@@ -120,12 +121,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
             f"/{quote(queue_name)}{self._query_str}")
 
     @classmethod
-    def from_queue_url(cls,
-                       queue_url,  # type: str
-                       credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-                       **kwargs  # type: Any
-                       ):
-        # type: (...) -> QueueClient
+    def from_queue_url(
+            cls, queue_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> Self:
         """A client to interact with a specific Queue.
 
         :param str queue_url: The full URI to the queue, including SAS token if used.
@@ -165,12 +165,11 @@ class QueueClient(StorageAccountHostsMixin, StorageEncryptionMixin):
 
     @classmethod
     def from_connection_string(
-            cls, conn_str,  # type: str
-            queue_name,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-     ):
-        # type: (...) -> QueueClient
+            cls, conn_str: str,
+            queue_name: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+     ) -> Self:
         """Create QueueClient from a Connection String.
 
         :param str conn_str:

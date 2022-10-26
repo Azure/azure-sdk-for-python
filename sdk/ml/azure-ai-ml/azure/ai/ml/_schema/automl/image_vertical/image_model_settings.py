@@ -7,8 +7,6 @@
 from marshmallow import fields, post_load
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
-    ImageModelSettingsClassification,
-    ImageModelSettingsObjectDetection,
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
@@ -72,7 +70,8 @@ class ImageModelSettingsClassificationSchema(ImageModelSettingsSchema):
     weighted_loss = fields.Int()
 
     @post_load
-    def make(self, data, **kwargs) -> ImageModelSettingsClassification:
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsClassification
         return ImageModelSettingsClassification(**data)
 
 
@@ -101,7 +100,8 @@ class ImageModelSettingsObjectDetectionSchema(ImageDetectionSegmentationCommonSc
     )
 
     @post_load
-    def make(self, data, **kwargs) -> ImageModelSettingsObjectDetection:
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsObjectDetection
         return ImageModelSettingsObjectDetection(**data)
 
 
@@ -111,5 +111,6 @@ class ImageModelSettingsInstanceSegmentationSchema(ImageDetectionSegmentationCom
     )
 
     @post_load
-    def make(self, data, **kwargs) -> ImageModelSettingsObjectDetection:
+    def make(self, data, **kwargs):
+        from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsObjectDetection
         return ImageModelSettingsObjectDetection(**data)

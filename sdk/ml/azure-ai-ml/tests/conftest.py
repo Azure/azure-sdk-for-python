@@ -13,9 +13,7 @@ import pytest
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml._utils._asset_utils import get_object_hash
 from azure.ai.ml._utils.utils import hash_dict
-from azure.ai.ml.constants._common import GitProperties
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -77,6 +75,14 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     )
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex="\\/az-ml-artifacts\\/(\\S{32})\\/", group_for_replace="1"
+    )
+    # for internal code whose upload_hash is of length 36
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s]{36})\\/?", group_for_replace="1"
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s]{36})\\/",
+        group_for_replace="1"
     )
 
 
@@ -243,7 +249,6 @@ def registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) 
         credential=auth,
         subscription_id=e2e_ws_scope.subscription_id,
         resource_group_name=e2e_ws_scope.resource_group_name,
-        workspace_name=e2e_ws_scope.workspace_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="testFeed",
     )
@@ -254,8 +259,6 @@ def only_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredent
     """return a machine learning client using default e2e testing workspace"""
     return MLClient(
         credential=auth,
-        subscription_id=e2e_ws_scope.subscription_id,
-        resource_group_name=e2e_ws_scope.resource_group_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name="testFeed",
     )
@@ -529,11 +532,12 @@ def credentialless_datastore(client: MLClient, storage_account_name: str) -> Azu
 def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()
 def enable_environment_id_arm_expansion(mocker: MockFixture):
-    mocker.patch("azure.ai.ml.operations._operation_orchestrator.is_private_preview_enabled", return_value=False)
+    mocker.patch("azure.ai.ml._utils.utils.is_private_preview_enabled", return_value=False)
 
 
 @pytest.fixture(autouse=True)
