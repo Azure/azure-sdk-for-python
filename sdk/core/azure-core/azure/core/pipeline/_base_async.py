@@ -40,20 +40,7 @@ ImplPoliciesType = List[
 ]
 AsyncPoliciesType = List[Union[AsyncHTTPPolicy, SansIOHTTPPolicy]]
 
-try:
-    from contextlib import AbstractAsyncContextManager
-except ImportError:  # Python <= 3.7
-
-    class AbstractAsyncContextManager(object):  # type: ignore
-        async def __aenter__(self):
-            """Return `self` upon entering the runtime context."""
-            return self
-
-        @abc.abstractmethod
-        async def __aexit__(self, exc_type, exc_value, traceback):
-            """Raise any exception triggered within the runtime context."""
-            return None
-
+from contextlib import AbstractAsyncContextManager
 
 class _SansIOAsyncHTTPPolicyRunner(
     AsyncHTTPPolicy[HTTPRequestType, AsyncHTTPResponseType]

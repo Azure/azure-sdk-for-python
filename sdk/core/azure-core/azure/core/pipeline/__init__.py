@@ -26,31 +26,10 @@
 
 import abc
 from typing import TypeVar, Generic
-
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
+ABC = abc.ABC
 
 HTTPResponseType = TypeVar("HTTPResponseType")
 HTTPRequestType = TypeVar("HTTPRequestType")
-
-try:
-    from contextlib import (  # pylint: disable=unused-import
-        AbstractContextManager,
-    )
-except ImportError:  # Python <= 3.5
-
-    class AbstractContextManager(object):  # type: ignore
-        def __enter__(self):
-            """Return `self` upon entering the runtime context."""
-            return self
-
-        @abc.abstractmethod
-        def __exit__(self, exc_type, exc_value, traceback):
-            """Raise any exception triggered within the runtime context."""
-            return None
-
 
 class PipelineContext(dict):
     """A context object carried by the pipeline request and response containers.
@@ -176,12 +155,6 @@ class PipelineResponse(Generic[HTTPRequestType, HTTPResponseType]):
 
 
 from ._base import Pipeline  # pylint: disable=wrong-import-position
+from ._base_async import AsyncPipeline  # pylint: disable=unused-import
 
-__all__ = ["Pipeline", "PipelineRequest", "PipelineResponse", "PipelineContext"]
-
-try:
-    from ._base_async import AsyncPipeline  # pylint: disable=unused-import
-
-    __all__.append("AsyncPipeline")
-except (SyntaxError, ImportError):
-    pass  # Asynchronous pipelines not supported.
+__all__ = ["Pipeline", "PipelineRequest", "PipelineResponse", "PipelineContext", "AsyncPipeline"]

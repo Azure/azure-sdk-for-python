@@ -10,14 +10,7 @@ from datetime import datetime
 from .utils._utils import _convert_to_isoformat, TZ_UTC
 from .utils._messaging_shared import _get_json_content
 from .serialization import NULL
-
-try:
-    from typing import TYPE_CHECKING, cast, Union
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    from typing import Any, Optional, Dict
+from typing import cast, Union, Any, Optional, Dict
 
 
 __all__ = ["CloudEvent"]

@@ -37,27 +37,10 @@ from .pipeline.policies import (
     RequestIdPolicy,
     AsyncRetryPolicy,
 )
-
-try:
-    from typing import TYPE_CHECKING, TypeVar
-except ImportError:
-    TYPE_CHECKING = False
+from typing import TypeVar
 
 HTTPRequestType = TypeVar("HTTPRequestType")
 AsyncHTTPResponseType = TypeVar("AsyncHTTPResponseType")
-
-if TYPE_CHECKING:
-    from typing import (
-        List,
-        Dict,
-        Union,
-        IO,
-        Tuple,
-        Optional,
-        Callable,
-        Iterator,
-        cast,
-    )  # pylint: disable=unused-import
 
 _LOGGER = logging.getLogger(__name__)
 
