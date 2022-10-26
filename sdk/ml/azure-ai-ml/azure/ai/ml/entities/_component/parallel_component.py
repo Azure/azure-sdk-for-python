@@ -19,7 +19,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 
 from ..._schema import PathAwareSchema
-from .._util import convert_ordered_dict_to_dict, validate_attribute_type
+from .._util import validate_attribute_type
 from .component import Component
 
 
