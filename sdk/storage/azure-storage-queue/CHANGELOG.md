@@ -1,6 +1,6 @@
 # Release History
 
-## 12.5.1 (Unreleased)
+## 12.6.0b1 (Unreleased)
 
 ### Features Added
 
