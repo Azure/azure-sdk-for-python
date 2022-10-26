@@ -10,9 +10,9 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 24 Oct 2022 23:45:57 GMT",
+        "Date": "Wed, 26 Oct 2022 21:43:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:45:57 GMT",
+        "x-ms-date": "Wed, 26 Oct 2022 21:43:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -22,7 +22,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Mon, 24 Oct 2022 23:45:57 GMT",
+        "Date": "Wed, 26 Oct 2022 21:43:37 GMT",
         "Location": "https://fakeendpoint.table.core.windows.net/Tables(\u0027uttable41d42aba\u0027)",
         "Server": [
           "Windows-Azure-Table/1.0",
@@ -44,23 +44,22 @@
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "51",
+        "Content-Length": "16",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 24 Oct 2022 23:45:57 GMT",
+        "Date": "Wed, 26 Oct 2022 21:43:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:45:57 GMT",
+        "x-ms-date": "Wed, 26 Oct 2022 21:43:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
-        "RowKey": "rk",
-        "RowKey@odata.type": "Edm.String"
+        "RowKey": "rk"
       },
       "StatusCode": 400,
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Mon, 24 Oct 2022 23:45:57 GMT",
+        "Date": "Wed, 26 Oct 2022 21:43:37 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -74,7 +73,7 @@
           "code": "PropertiesNeedValue",
           "message": {
             "lang": "en-US",
-            "value": "The values are not specified for all properties in the entity.\nRequestId:6e95c212-b002-003a-5402-e8687a000000\nTime:2022-10-24T23:45:58.2461579Z"
+            "value": "The values are not specified for all properties in the entity.\nRequestId:772a5c1d-a002-0026-6284-e93a1a000000\nTime:2022-10-26T21:43:38.5518018Z"
           }
         }
       }
@@ -87,9 +86,9 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 24 Oct 2022 23:45:57 GMT",
+        "Date": "Wed, 26 Oct 2022 21:43:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:45:57 GMT",
+        "x-ms-date": "Wed, 26 Oct 2022 21:43:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -97,7 +96,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Mon, 24 Oct 2022 23:45:57 GMT",
+        "Date": "Wed, 26 Oct 2022 21:43:37 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -123,9 +122,9 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Mon, 24 Oct 2022 23:45:58 GMT",
+        "Date": "Wed, 26 Oct 2022 21:43:38 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:45:58 GMT",
+        "x-ms-date": "Wed, 26 Oct 2022 21:43:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -133,7 +132,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Mon, 24 Oct 2022 23:45:58 GMT",
+        "Date": "Wed, 26 Oct 2022 21:43:38 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"

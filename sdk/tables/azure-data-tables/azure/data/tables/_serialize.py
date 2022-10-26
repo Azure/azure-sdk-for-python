@@ -212,6 +212,9 @@ def _add_entity_properties(source):
     to_send = dict(source)  # shallow copy
     try:
         properties["PartitionKey"] = to_send.pop("PartitionKey")
+    except KeyError:
+        pass
+    try:
         properties["RowKey"] = to_send.pop("RowKey")
     except KeyError:
         pass

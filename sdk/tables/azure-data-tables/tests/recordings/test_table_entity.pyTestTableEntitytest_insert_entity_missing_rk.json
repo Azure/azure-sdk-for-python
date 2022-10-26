@@ -10,9 +10,9 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 24 Oct 2022 23:46:17 GMT",
+        "Date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:46:17 GMT",
+        "x-ms-date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -22,7 +22,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Mon, 24 Oct 2022 23:46:17 GMT",
+        "Date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "Location": "https://fakeendpoint.table.core.windows.net/Tables(\u0027uttable41e62abc\u0027)",
         "Server": [
           "Windows-Azure-Table/1.0",
@@ -47,9 +47,9 @@
         "Content-Length": "22",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 24 Oct 2022 23:46:18 GMT",
+        "Date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:46:18 GMT",
+        "x-ms-date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -59,7 +59,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Mon, 24 Oct 2022 23:46:17 GMT",
+        "Date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -73,7 +73,7 @@
           "code": "PropertiesNeedValue",
           "message": {
             "lang": "en-US",
-            "value": "The values are not specified for all properties in the entity.\nRequestId:3110464e-e002-007a-0502-e86f42000000\nTime:2022-10-24T23:46:18.4853837Z"
+            "value": "The values are not specified for all properties in the entity.\nRequestId:6812e935-9002-002d-6484-e9c171000000\nTime:2022-10-26T21:44:44.3542818Z"
           }
         }
       }
@@ -86,9 +86,9 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Mon, 24 Oct 2022 23:46:18 GMT",
+        "Date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:46:18 GMT",
+        "x-ms-date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -96,7 +96,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/json; odata=minimalmetadata; streaming=true; charset=utf-8",
-        "Date": "Mon, 24 Oct 2022 23:46:17 GMT",
+        "Date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -122,9 +122,9 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Mon, 24 Oct 2022 23:46:18 GMT",
+        "Date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Mon, 24 Oct 2022 23:46:18 GMT",
+        "x-ms-date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
@@ -132,7 +132,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Mon, 24 Oct 2022 23:46:17 GMT",
+        "Date": "Wed, 26 Oct 2022 21:44:44 GMT",
         "Server": [
           "Windows-Azure-Table/1.0",
           "Microsoft-HTTPAPI/2.0"
