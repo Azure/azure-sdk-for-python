@@ -35,7 +35,6 @@ from ._models import (
     ContentSettings,
     NTFSAttributes)
 from ._generated.models import (
-    HandleItem,
     ShareAccessTier
 )
 from ._generated.models import (
@@ -74,7 +73,6 @@ __all__ = [
     'ContentSettings',
     'Handle',
     'NTFSAttributes',
-    'HandleItem',
     'ShareRootSquash',
     'generate_account_sas',
     'generate_share_sas',
