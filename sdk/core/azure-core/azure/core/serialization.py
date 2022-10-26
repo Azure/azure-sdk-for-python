@@ -88,7 +88,11 @@ def _datetime_as_isostr(dt):
     # First try datetime.datetime
     if hasattr(dt, "year") and hasattr(dt, "hour"):
         dt = cast(datetime, dt)
-        iso_formatted = dt.astimezone(TZ_UTC).isoformat()
+        # astimezone() fails for naive times in Python 2.7, so make make sure dt is aware (tzinfo is set)
+        if not dt.tzinfo:
+            iso_formatted = dt.replace(tzinfo=TZ_UTC).isoformat()
+        else:
+            iso_formatted = dt.astimezone(TZ_UTC).isoformat()
         # Replace the trailing "+00:00" UTC offset with "Z" (RFC 3339: https://www.ietf.org/rfc/rfc3339.txt)
         return iso_formatted.replace("+00:00", "Z")
     # Next try datetime.date or datetime.time
