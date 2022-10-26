@@ -57,6 +57,7 @@ class BarSchema(Schema):
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestExperimentalUtils(unittest.TestCase):
     def setUp(self):
         _warning_cache.clear()

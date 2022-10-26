@@ -24,6 +24,7 @@ from .._utils import PARAMETERS_TO_TEST
 
 @pytest.mark.usefixtures("enable_internal_components")
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestComponent:
     def test_load_v2_component(self):
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"

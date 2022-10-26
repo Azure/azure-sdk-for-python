@@ -95,6 +95,7 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "automl",
     "pyyaml",
     "CONLL",
     "pyjwt",
@@ -1124,8 +1125,14 @@
         "Nify",
         "ctxt",
         "unflattened",
-	  "deseralize",
-	  "wday"
+	      "deseralize",
+	      "wday"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/test-resources.json",
+      "words": [
+        "azconfig"
       ]
     }
   ],

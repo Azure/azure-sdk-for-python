@@ -1,0 +1,6 @@
+trigger: none
+
+extends:
+  template: ./tests.yml
+  parameters:
+    TestMarkArgument: "automl_test"

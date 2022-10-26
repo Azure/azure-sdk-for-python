@@ -48,6 +48,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestDSLPipelineWithSpecificNodes:
     def test_dsl_pipeline_sweep_node(self) -> None:
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"
@@ -1404,6 +1405,7 @@ class TestDSLPipelineWithSpecificNodes:
                 "tags": {},
             }
         }
+
     def test_multi_parallel_components_with_file_input_pipeline_output(self) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
@@ -1834,7 +1836,17 @@ class TestDSLPipelineWithSpecificNodes:
 
     def test_pipeline_with_command_services(self):
         services = {
-            "my_jupyter": {"job_service_type": "Jupyter"},
+            "my_ssh": {"job_service_type": "ssh"},
+            "my_tensorboard": {
+                "job_service_type": "tensor_board",
+                "properties": {
+                    "logDir": "~/tblog",
+                },
+            },
+            "my_jupyterlab": {"job_service_type": "jupyter_lab"},
+        }
+        rest_services = {
+            "my_ssh": {"job_service_type": "SSH"},
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
                 "properties": {
@@ -1873,7 +1885,7 @@ class TestDSLPipelineWithSpecificNodes:
             assert isinstance(service, JobService)
 
         job_rest_obj = pipeline._to_rest_object()
-        assert job_rest_obj.properties.jobs["node"]["services"] == services
+        assert job_rest_obj.properties.jobs["node"]["services"] == rest_services
 
         recovered_obj = PipelineJob._from_rest_object(job_rest_obj)
         node_services = recovered_obj.jobs["node"].services
@@ -1883,7 +1895,8 @@ class TestDSLPipelineWithSpecificNodes:
             assert isinstance(service, JobService)
 
         # test set services in pipeline
-        new_services = {"my_jupyter": {"job_service_type": "Jupyter"}}
+        new_services = {"my_jupyter": {"job_service_type": "jupyter_lab"}}
+        rest_new_services = {"my_jupyter": {"job_service_type": "JupyterLab"}}
 
         @dsl.pipeline()
         def sample_pipeline_with_new_services():
@@ -1898,7 +1911,7 @@ class TestDSLPipelineWithSpecificNodes:
             assert isinstance(service, JobService)
 
         job_rest_obj = pipeline._to_rest_object()
-        assert job_rest_obj.properties.jobs["node"]["services"] == new_services
+        assert job_rest_obj.properties.jobs["node"]["services"] == rest_new_services
 
     def test_pipeline_with_pipeline_component_entity(self):
         path = "./tests/test_configs/components/helloworld_component.yml"
