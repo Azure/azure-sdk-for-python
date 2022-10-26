@@ -309,12 +309,26 @@ class Component(
         }
 
         type_in_override = find_type_in_override(params_override)
-        from azure.ai.ml.entities._component.component_factory import component_factory
 
-        component = component_factory.load_from_dict(_type=type_in_override, data=data, context=context, **kwargs)
+        # type_in_override > type_in_yaml > default (command)
+        if type_in_override is None:
+            type_in_override = data.get(CommonYamlFields.TYPE, NodeType.COMMAND)
+        data[CommonYamlFields.TYPE] = type_in_override
+
+        from azure.ai.ml.entities._component.component_factory import component_factory
+        create_instance_func, create_schema_func = component_factory.get_create_funcs(
+            data[CommonYamlFields.TYPE],
+            schema=data.get(CommonYamlFields.SCHEMA) if CommonYamlFields.SCHEMA in data else None,
+        )
+        new_instance = create_instance_func()
+        new_instance.__init__(
+            yaml_str=kwargs.pop("yaml_str", None),
+            _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
+            **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
+        )
         if yaml_path:
-            component._source_path = yaml_path
-        return component
+            new_instance._source_path = yaml_path
+        return new_instance
 
     @classmethod
     def _from_container_rest_object(cls, component_container_rest_object: ComponentContainerData) -> "Component":
@@ -476,7 +490,6 @@ class Component(
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""
 
-        # Distribution inherits from autorest generated class, use as_dist() to dump to json
         # Replace the name of $schema to schema.
         component_schema_dict = self._dump_for_validation()
         component_schema_dict.pop("base_path", None)

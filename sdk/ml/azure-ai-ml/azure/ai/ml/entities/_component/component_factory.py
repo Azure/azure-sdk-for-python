@@ -4,17 +4,16 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Callable, Tuple
 
-from marshmallow import INCLUDE, Schema
+from marshmallow import Schema
 
 from azure.ai.ml._utils.utils import is_internal_components_enabled
 from azure.ai.ml.constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
-    CommonYamlFields,
 )
-from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.automl_component import AutoMLComponent
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
@@ -115,31 +114,6 @@ class _ComponentFactory:
         """
         self._create_instance_funcs[_type] = create_instance_func
         self._create_schema_funcs[_type] = create_schema_func
-
-    def load_from_dict(self, *, data: Dict, context: Dict, _type: str = None, **kwargs) -> Component:
-        """Load a component from a yaml dict.
-
-        param data: the yaml dict. type data: Dict param context: the
-        context of the yaml dict. type context: Dict param _type: the
-        type name of the component. When None, it will be inferred from
-        the yaml dict. type _type: str
-        """
-        if _type is None:
-            _type = data.get(CommonYamlFields.TYPE, NodeType.COMMAND)
-        else:
-            data[CommonYamlFields.TYPE] = _type
-
-        create_instance_func, create_schema_func = self.get_create_funcs(
-            _type,
-            schema=data.get(CommonYamlFields.SCHEMA) if CommonYamlFields.SCHEMA in data else None,
-        )
-        new_instance = create_instance_func()
-        new_instance.__init__(
-            yaml_str=kwargs.pop("yaml_str", None),
-            _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
-        )
-        return new_instance
 
 
 component_factory = _ComponentFactory()
