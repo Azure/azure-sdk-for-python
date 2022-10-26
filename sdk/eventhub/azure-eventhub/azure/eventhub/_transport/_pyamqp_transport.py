@@ -533,7 +533,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             error = AuthenticationError(str(exception), exception)
         elif isinstance(exception, errors.AMQPLinkError):
             error = ConnectError(str(exception), exception)
-        # TODO: do we need MessageHanlderError in amqp any more
+        # TODO: do we need MessageHandlerError in amqp any more
         #  if connection/session/link error are enough?
         # elif isinstance(exception, errors.MessageHandlerError):
         #     error = ConnectionLostError(str(exception), exception)

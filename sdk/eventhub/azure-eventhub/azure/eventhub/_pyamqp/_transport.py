@@ -36,6 +36,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import errno
+from multiprocessing import AuthenticationError
 import re
 import socket
 import ssl
@@ -57,6 +58,7 @@ from .constants import (
     TransportType,
     AMQP_WS_SUBPROTOCOL,
 )
+from .error import AuthenticationException, ErrorCondition
 
 
 try:
@@ -495,7 +497,11 @@ class SSLTransport(_AbstractTransport):
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
-        self.sock = self._wrap_socket(self.sock, **self.sslopts)
+        try:
+            self.sock = self._wrap_socket(self.sock, **self.sslopts)
+        except FileNotFoundError as exc:
+            # TODO: invalid connection_verify, should we raise some other error?
+            raise 
         self.sock.do_handshake()
         self._quick_recv = self.sock.recv
 
@@ -684,7 +690,7 @@ class WebSocketTransport(_AbstractTransport):
             if username or password:
                 http_proxy_auth = (username, password)
         try:
-            from websocket import create_connection
+            from websocket import create_connection, WebSocketAddressException
 
             self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
@@ -695,6 +701,12 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_host=http_proxy_host,
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth,
+            )
+        except WebSocketAddressException as exc:
+            raise AuthenticationException(
+                ErrorCondition.SocketError, # TODO: ClientError?
+                description="Failed to authenticate the connection due to exception: " + str(exc),
+                error=exc,
             )
         except ImportError:
             raise ValueError(

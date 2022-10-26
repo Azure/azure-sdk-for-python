@@ -59,6 +59,7 @@ from .._transport import (
     AMQP_PORT,
     TIMEOUT_INTERVAL,
 )
+from ..error import AuthenticationException, ErrorCondition
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -464,7 +465,7 @@ class WebSocketTransportAsync(
             password = self._http_proxy.get("password", None)
 
         try:
-            from aiohttp import ClientSession
+            from aiohttp import ClientSession, ClientConnectorError
             from urllib.parse import urlsplit
 
             if username or password:
@@ -480,15 +481,25 @@ class WebSocketTransportAsync(
                 parsed_url = urlsplit(url)
                 url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
 
-            self.ws = await self.session.ws_connect(
-                url=url,
-                timeout=self._connect_timeout,
-                protocols=[AMQP_WS_SUBPROTOCOL],
-                autoclose=False,
-                proxy=http_proxy_host,
-                proxy_auth=http_proxy_auth,
-                ssl=self.sslopts,
-            )
+            try:
+                self.ws = await self.session.ws_connect(
+                    url=url,
+                    timeout=self._connect_timeout,
+                    protocols=[AMQP_WS_SUBPROTOCOL],
+                    autoclose=False,
+                    proxy=http_proxy_host,
+                    proxy_auth=http_proxy_auth,
+                    ssl=self.sslopts,
+                )
+            except ClientConnectorError as exc:
+                if self._custom_endpoint:
+                    raise AuthenticationException(
+                        ErrorCondition.SocketError, # TODO: ClientError?
+                        description="Failed to authenticate the connection due to exception: " + str(exc),
+                        error=exc,
+                    )
+                else:
+                    raise
             self.connected = True
 
         except ImportError:
