@@ -237,7 +237,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         assert area_codes.next()    
 
     def test_list_geographic_area_codes(self):
-        area_codes = self.phone_number_client.list_available_area_codes("US", "person", "Seattle")
+        area_codes = self.phone_number_client.list_available_area_codes("US", "person", "Phoenix")
         assert area_codes.next()  
 
     def test_list_countries(self):
@@ -249,7 +249,7 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         assert localities.next()  
 
     def test_list_localities_with_administrative_division(self):
-        localities = self.phone_number_client.list_available_localities("US", administrative_division="WA")
+        localities = self.phone_number_client.list_available_localities("US", administrative_division="AZ")
         assert localities.next()       
 
     def test_list_offerings(self):
