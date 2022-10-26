@@ -404,7 +404,9 @@ def _build_pipeline_parameter(func, original_kwargs, group_default_kwargs=None, 
     if group_default_kwargs:
         transformed_kwargs.update(
             {
-                key: _wrap_pipeline_parameter(key, default_value=value, actual_value=value) for key, value in group_default_kwargs.items()
+                key: _wrap_pipeline_parameter(
+                    key, default_value=value, actual_value=value
+                ) for key, value in group_default_kwargs.items()
                 if key not in non_pipeline_parameter_dict
             }
         )
