@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 from typing import Union
 
-from azure.ai.ml.entities._util import _general_copy
+from azure.ai.ml.entities._util import _copy_folder_ignore_pycache, _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 ADDITIONAL_INCLUDES_SUFFIX = "additional_includes"
@@ -165,7 +165,7 @@ class _AdditionalIncludes:
                 folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
                 with tempfile.TemporaryDirectory() as tmp_dir:
                     tmp_folder_to_zip = (Path(tmp_dir) / "zip").resolve()
-                    shutil.copytree(folder_to_zip, tmp_folder_to_zip, ignore=shutil.ignore_patterns("__pycache__"))
+                    _copy_folder_ignore_pycache(folder_to_zip, tmp_folder_to_zip)
                     src_path = (Path(tempfile.mkdtemp()) / zip_additional_include.name).resolve()
                     shutil.make_archive(str(src_path.parent / src_path.stem), "zip", tmp_folder_to_zip)
             dst_path = (tmp_folder_path / src_path.name).resolve()

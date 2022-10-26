@@ -32,7 +32,7 @@ from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import find_type_in_override
+from azure.ai.ml.entities._util import find_type_in_override, _copy_folder_ignore_pycache
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
@@ -475,7 +475,7 @@ class Component(
                     else:
                         src_path = Path(self.base_path) / code
                         dst_path = Path(tmp_dir) / TEMP_COMPONENT_CODE_FOLDER / src_path.name
-                        copytree(src_path, dst_path, ignore=ignore_patterns("__pycache__"))
+                        _copy_folder_ignore_pycache(src_path, dst_path)
                         yield dst_path
             else:
                 yield tmp_dir
