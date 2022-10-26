@@ -516,8 +516,8 @@ class WebSocketTransportAsync(
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
             return view
-        except asyncio.TimeoutError:
-            raise TimeoutError()
+        except asyncio.TimeoutError as te:
+            raise ConnectionError('recv timed out (%s)' % te)
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -531,4 +531,7 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.ws.send_bytes(s)
+        try:
+            await self.ws.send_bytes(s)
+        except asyncio.TimeoutError as te:
+            raise ConnectionError('send timed out (%s)' % te)
