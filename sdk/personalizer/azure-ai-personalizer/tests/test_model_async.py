@@ -15,9 +15,9 @@ class TestModelAsync(AzureRecordedTestCase):
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers_async.create_async_personalizer_admin_client(
             personalizer_endpoint, personalizer_api_key)
-        unsigned_model_bytes = await client.get_model(signed=False)
-        signed_model_bytes = await client.get_model(signed=True)
+        unsigned_model_bytes = await client.export_model(signed=False)
+        signed_model_bytes = await client.export_model(signed=True)
         await client.import_model(signed_model_bytes)
-        new_unsigned_model_bytes = await client.get_model(signed=False)
+        new_unsigned_model_bytes = await client.export_model(signed=False)
         assert [b async for b in unsigned_model_bytes] == [b async for b in new_unsigned_model_bytes]
         
