@@ -1,5 +1,11 @@
 # Release History
 
+## 2.10.0 (2022-10-26)
+
+### Features Added
+
+  - Model ScriptActivity has a new parameter script_block_execution_timeout
+
 ## 2.9.0 (2022-10-24)
 
 ### Features Added
