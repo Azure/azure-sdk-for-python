@@ -27,7 +27,7 @@
 This module is the requests implementation of Pipeline ABC
 """
 import logging
-from urlparse import urlparse  # type: ignore
+from urllib.parse import urlparse  # type: ignore
 
 from azure.core.exceptions import TooManyRedirectsError
 

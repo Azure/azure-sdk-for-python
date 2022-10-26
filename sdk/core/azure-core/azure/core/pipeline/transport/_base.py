@@ -23,14 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from __future__ import absolute_import
 import abc
 from email.message import Message
 import json
 import logging
 import time
 import copy
-from urlparse import urlparse  # type: ignore
+from urllib.parse import urlparse  # type: ignore
 import xml.etree.ElementTree as ET
 
 from typing import (
