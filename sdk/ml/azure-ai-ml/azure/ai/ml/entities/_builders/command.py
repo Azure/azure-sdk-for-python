@@ -14,6 +14,7 @@ from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
@@ -500,9 +501,6 @@ class Command(BaseNode):
         obj = BaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            from azure.ai.ml._restclient.v2022_10_01_preview.models import \
-                JobResourceConfiguration as RestJobResourceConfiguration
-            from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
             resources = RestJobResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
 

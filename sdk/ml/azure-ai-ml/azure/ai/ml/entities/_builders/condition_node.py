@@ -31,7 +31,7 @@ class ConditionNode(ControlFlowNode):
     @classmethod
     def _create_schema_for_validation(
         cls, context
-    ) -> typing.Union[PathAwareSchema, Schema]:  # pylint: disable=unused-argument
+    ) -> PathAwareSchema:  # pylint: disable=unused-argument
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)

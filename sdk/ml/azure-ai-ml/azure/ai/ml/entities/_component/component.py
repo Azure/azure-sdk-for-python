@@ -286,7 +286,7 @@ class Component(
         return component_io
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         return ComponentSchema(context=context)
 
     @classmethod
@@ -367,7 +367,7 @@ class Component(
         )
 
         instance = create_instance_func()
-        instance.__init__(**instance._from_rest_object_to_init_params(obj))  # pylint: disable=no-member
+        instance.__init__(**instance._from_rest_object_to_init_params(obj))
         return instance
 
     @classmethod

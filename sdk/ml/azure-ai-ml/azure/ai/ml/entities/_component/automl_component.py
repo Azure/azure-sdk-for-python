@@ -43,5 +43,5 @@ class AutoMLComponent(Component):
         return self._task
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         return AutoMLComponentSchema(context=context)

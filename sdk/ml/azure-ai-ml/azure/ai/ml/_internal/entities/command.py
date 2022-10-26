@@ -15,7 +15,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfig
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.core.fields import DistributionField
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
-from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
 
 
@@ -96,9 +95,6 @@ class Command(InternalBaseNode):
         obj = InternalBaseNode._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
-            from azure.ai.ml._restclient.v2022_10_01_preview.models import \
-                JobResourceConfiguration as RestJobResourceConfiguration
-            from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
             resources = RestJobResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
 
