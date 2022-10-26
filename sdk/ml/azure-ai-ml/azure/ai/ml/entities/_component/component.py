@@ -8,7 +8,7 @@ from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Union
 
-from marshmallow import Schema
+from marshmallow import Schema, INCLUDE
 
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentContainerData,
@@ -23,11 +23,12 @@ from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
-    REGISTRY_URI_FORMAT,
+    REGISTRY_URI_FORMAT, CommonYamlFields,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
@@ -332,21 +333,66 @@ class Component(
 
     @classmethod
     def _from_rest_object(cls, obj: ComponentVersionData) -> "Component":
-        from azure.ai.ml.entities._component.component_factory import component_factory
-
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # Convert command component back to import component private preview
         component_spec = obj.properties.component_spec
-        type = component_spec["type"]
-        if type == NodeType.COMMAND and component_spec["command"] == NodeType.IMPORT:
-            component_spec["type"] = NodeType.IMPORT
+        if component_spec[CommonYamlFields.TYPE] == NodeType.COMMAND and component_spec["command"] == NodeType.IMPORT:
+            component_spec[CommonYamlFields.TYPE] = NodeType.IMPORT
             component_spec["source"] = component_spec.pop("inputs")
             component_spec["output"] = component_spec.pop("outputs")["output"]
 
+        # shouldn't block serialization when name is not valid
+        # maybe override serialization method for name field?
+        from azure.ai.ml.entities._component.component_factory import component_factory
+        create_instance_func, _ = component_factory.get_create_funcs(
+            obj.properties.component_spec[CommonYamlFields.TYPE],
+            schema=obj.properties.component_spec[CommonYamlFields.SCHEMA]
+            if CommonYamlFields.SCHEMA in obj.properties.component_spec
+            else None,
+        )
+
+        instance = create_instance_func()
+        instance.__init__(**instance._from_rest_object_to_init_params(obj))
+        return instance
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
         # Object got from rest data contain _source, we delete it.
         if "_source" in obj.properties.component_spec:
             del obj.properties.component_spec["_source"]
-        return component_factory.load_from_rest(obj=obj)
+
+        rest_component_version = obj.properties
+        _type = rest_component_version.component_spec[CommonYamlFields.TYPE]
+
+        # inputs/outputs will be parsed by instance._build_io in instance's __init__
+        inputs = rest_component_version.component_spec.pop("inputs", {})
+        # parse String -> string, Integer -> integer, etc
+        for _input in inputs.values():
+            _input["type"] = Input._map_from_rest_type(_input["type"])
+        outputs = rest_component_version.component_spec.pop("outputs", {})
+
+        # put it here as distribution is shared by some components, e.g. command
+        distribution = rest_component_version.component_spec.pop("distribution", None)
+        if distribution:
+            distribution = DistributionConfiguration._from_rest_object(distribution)
+
+        origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
+        rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
+        init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
+            rest_component_version.component_spec, unknown=INCLUDE
+        )
+        init_kwargs.update(dict(
+            id=obj.id,
+            is_anonymous=rest_component_version.is_anonymous,
+            creation_context=obj.system_data,
+            inputs=inputs,
+            outputs=outputs,
+            distribution=distribution,
+            name=origin_name,
+        ))
+
+        # remove empty values, because some property only works for specific component, eg: distribution for command
+        return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
 
     def _set_is_anonymous(self, is_anonymous: bool):
         """Mark this component as anonymous and overwrite component name to

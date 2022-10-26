@@ -326,6 +326,8 @@ class PipelineComponent(Component):
     @classmethod
     def _resolve_sub_nodes(cls, rest_jobs):
         sub_nodes = {}
+        if rest_jobs is None:
+            return sub_nodes
         for node_name, node in rest_jobs.items():
             if LoopNode._is_loop_node_dict(node):
                 sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
@@ -368,6 +370,16 @@ class PipelineComponent(Component):
             }
         )
         return telemetry_values
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+        init_kwargs = super()._from_rest_object_to_init_params(obj)
+        # Note: we need to refine the logic here if more specific type logic here.
+        jobs = obj.properties.component_spec.pop("jobs", None)
+        if jobs:
+            jobs = PipelineComponent._resolve_sub_nodes(jobs)
+        init_kwargs["jobs"] = jobs
+        return init_kwargs
 
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""
