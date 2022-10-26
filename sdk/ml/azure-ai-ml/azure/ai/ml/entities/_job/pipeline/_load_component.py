@@ -11,7 +11,7 @@ from marshmallow import INCLUDE
 from azure.ai.ml import Output
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.pipeline.component_job import SweepSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, CommonYamlFields
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, CommonYamlFields, SOURCE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import ControlFlowType, NodeType
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
@@ -187,9 +187,7 @@ class _PipelineNodeFactory:
             if component_key in data and isinstance(data[component_key], dict):
                 data[component_key] = Component._load(
                     data=data[component_key],
-                    context={
-                        BASE_PATH_CONTEXT_KEY: data[component_key].get(BASE_PATH_CONTEXT_KEY, None),
-                    }
+                    yaml_path=data[component_key].pop(SOURCE_PATH_CONTEXT_KEY, None),
                 )
 
         new_instance.__init__(**data)
