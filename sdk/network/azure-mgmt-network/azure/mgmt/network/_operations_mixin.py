@@ -8,40 +8,36 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from msrest import Serializer, Deserializer
-from typing import TYPE_CHECKING
+from ._serialization import Serializer, Deserializer
+from typing import Any, IO, Iterable, Optional, Union
+
+from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 
 from . import models as _models
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional
-
-    from azure.core.paging import ItemPaged
-    from azure.core.polling import LROPoller
 
 
 class NetworkManagementClientOperationsMixin(object):
 
-    def begin_delete_bastion_shareable_link(  # pylint: disable=inconsistent-return-statements
+    def begin_delete_bastion_shareable_link(
         self,
-        resource_group_name,  # type: str
-        bastion_host_name,  # type: str
-        bsl_request,  # type: _models.BastionShareableLinkListRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[None]
+        resource_group_name: str,
+        bastion_host_name: str,
+        bsl_request: Union[_models.BastionShareableLinkListRequest, IO],
+        **kwargs: Any
+    ) -> LROPoller[None]:
         """Deletes the Bastion Shareable Links for all the VMs specified in the request.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
-        :type bsl_request: ~azure.mgmt.network.v2022_01_01.models.BastionShareableLinkListRequest
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param bsl_request: Post request for all the Bastion Shareable Link endpoints. Is either a
+         model type or a IO type. Required.
+        :type bsl_request: ~azure.mgmt.network.v2022_05_01.models.BastionShareableLinkListRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -52,7 +48,7 @@ class NetworkManagementClientOperationsMixin(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_delete_bastion_shareable_link')
         if api_version == '2019-09-01':
@@ -77,13 +73,14 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_delete_bastion_shareable_link'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -91,26 +88,26 @@ class NetworkManagementClientOperationsMixin(object):
 
     def begin_generatevirtualwanvpnserverconfigurationvpnprofile(
         self,
-        resource_group_name,  # type: str
-        virtual_wan_name,  # type: str
-        vpn_client_params,  # type: _models.VirtualWanVpnProfileParameters
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[_models.VpnProfileResponse]
+        resource_group_name: str,
+        virtual_wan_name: str,
+        vpn_client_params: Union[_models.VirtualWanVpnProfileParameters, IO],
+        **kwargs: Any
+    ) -> LROPoller[_models.VpnProfileResponse]:
         """Generates a unique VPN profile for P2S clients for VirtualWan and associated
         VpnServerConfiguration combination in the specified resource group.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN whose associated VpnServerConfigurations is
-         needed.
+         needed. Required.
         :type virtual_wan_name: str
         :param vpn_client_params: Parameters supplied to the generate VirtualWan VPN profile generation
-         operation.
-        :type vpn_client_params: ~azure.mgmt.network.v2022_01_01.models.VirtualWanVpnProfileParameters
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+         operation. Is either a model type or a IO type. Required.
+        :type vpn_client_params: ~azure.mgmt.network.v2022_05_01.models.VirtualWanVpnProfileParameters
+         or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -122,8 +119,8 @@ class NetworkManagementClientOperationsMixin(object):
         :return: An instance of LROPoller that returns either VpnProfileResponse or the result of
          cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.mgmt.network.v2022_01_01.models.VpnProfileResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.polling.LROPoller[~azure.mgmt.network.v2022_05_01.models.VpnProfileResponse]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_generatevirtualwanvpnserverconfigurationvpnprofile')
         if api_version == '2019-08-01':
@@ -150,13 +147,14 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_generatevirtualwanvpnserverconfigurationvpnprofile'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -164,20 +162,16 @@ class NetworkManagementClientOperationsMixin(object):
 
     def begin_get_active_sessions(
         self,
-        resource_group_name,  # type: str
-        bastion_host_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[ItemPaged[_models.BastionActiveSessionListResult]]
+        resource_group_name: str,
+        bastion_host_name: str,
+        **kwargs: Any
+    ) -> LROPoller[Iterable["_models.BastionActiveSession"]]:
         """Returns the list of currently active sessions on the Bastion.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -189,8 +183,8 @@ class NetworkManagementClientOperationsMixin(object):
         :return: An instance of LROPoller that returns an iterator like instance of either
          BastionActiveSessionListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2022_01_01.models.BastionActiveSessionListResult]]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2022_05_01.models.BastionActiveSession]]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_get_active_sessions')
         if api_version == '2019-09-01':
@@ -215,13 +209,14 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_get_active_sessions'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -229,23 +224,23 @@ class NetworkManagementClientOperationsMixin(object):
 
     def begin_put_bastion_shareable_link(
         self,
-        resource_group_name,  # type: str
-        bastion_host_name,  # type: str
-        bsl_request,  # type: _models.BastionShareableLinkListRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller[ItemPaged[_models.BastionShareableLinkListResult]]
+        resource_group_name: str,
+        bastion_host_name: str,
+        bsl_request: Union[_models.BastionShareableLinkListRequest, IO],
+        **kwargs: Any
+    ) -> LROPoller[Iterable["_models.BastionShareableLink"]]:
         """Creates a Bastion Shareable Links for all the VMs specified in the request.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
-        :type bsl_request: ~azure.mgmt.network.v2022_01_01.models.BastionShareableLinkListRequest
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param bsl_request: Post request for all the Bastion Shareable Link endpoints. Is either a
+         model type or a IO type. Required.
+        :type bsl_request: ~azure.mgmt.network.v2022_05_01.models.BastionShareableLinkListRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
@@ -257,8 +252,8 @@ class NetworkManagementClientOperationsMixin(object):
         :return: An instance of LROPoller that returns an iterator like instance of either
          BastionShareableLinkListResult or the result of cls(response)
         :rtype:
-         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2022_01_01.models.BastionShareableLinkListResult]]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.polling.LROPoller[~azure.core.paging.ItemPaged[~azure.mgmt.network.v2022_05_01.models.BastionShareableLink]]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_put_bastion_shareable_link')
         if api_version == '2019-09-01':
@@ -283,13 +278,14 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_put_bastion_shareable_link'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -297,25 +293,21 @@ class NetworkManagementClientOperationsMixin(object):
 
     def check_dns_name_availability(
         self,
-        location,  # type: str
-        domain_name_label,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.DnsNameAvailabilityResult
+        location: str,
+        domain_name_label: str,
+        **kwargs: Any
+    ) -> _models.DnsNameAvailabilityResult:
         """Checks whether a domain name in the cloudapp.azure.com zone is available for use.
 
-        :param location: The location of the domain name.
+        :param location: The location of the domain name. Required.
         :type location: str
         :param domain_name_label: The domain name to be verified. It must conform to the following
-         regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$.
+         regular expression: ^[a-z][a-z0-9-]{1,61}[a-z0-9]$. Required.
         :type domain_name_label: str
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DnsNameAvailabilityResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_01_01.models.DnsNameAvailabilityResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: DnsNameAvailabilityResult or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2022_05_01.models.DnsNameAvailabilityResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('check_dns_name_availability')
         if api_version == '2015-06-15':
@@ -380,13 +372,14 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'check_dns_name_availability'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -394,29 +387,28 @@ class NetworkManagementClientOperationsMixin(object):
 
     def disconnect_active_sessions(
         self,
-        resource_group_name,  # type: str
-        bastion_host_name,  # type: str
-        session_ids,  # type: _models.SessionIds
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[_models.BastionSessionDeleteResult]
+        resource_group_name: str,
+        bastion_host_name: str,
+        session_ids: Union[_models.SessionIds, IO],
+        **kwargs: Any
+    ) -> Iterable["_models.BastionSessionState"]:
         """Returns the list of currently active sessions on the Bastion.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param session_ids: The list of sessionids to disconnect.
-        :type session_ids: ~azure.mgmt.network.v2022_01_01.models.SessionIds
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param session_ids: The list of sessionids to disconnect. Is either a model type or a IO type.
+         Required.
+        :type session_ids: ~azure.mgmt.network.v2022_05_01.models.SessionIds or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BastionSessionDeleteResult or the result of
-         cls(response)
+        :return: An iterator like instance of either BastionSessionState or the result of cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2022_01_01.models.BastionSessionDeleteResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2022_05_01.models.BastionSessionState]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('disconnect_active_sessions')
         if api_version == '2019-09-01':
@@ -441,13 +433,14 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'disconnect_active_sessions'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -455,30 +448,27 @@ class NetworkManagementClientOperationsMixin(object):
 
     def express_route_provider_port(
         self,
-        providerport,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.ExpressRouteProviderPort
+        providerport: str,
+        **kwargs: Any
+    ) -> _models.ExpressRouteProviderPort:
         """Retrieves detail of a provider port.
 
-        :param providerport: The name of the provider port.
+        :param providerport: The name of the provider port. Required.
         :type providerport: str
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ExpressRouteProviderPort, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_01_01.models.ExpressRouteProviderPort
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: ExpressRouteProviderPort or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2022_05_01.models.ExpressRouteProviderPort
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('express_route_provider_port')
-        if api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        if api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'express_route_provider_port'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -486,29 +476,29 @@ class NetworkManagementClientOperationsMixin(object):
 
     def get_bastion_shareable_link(
         self,
-        resource_group_name,  # type: str
-        bastion_host_name,  # type: str
-        bsl_request,  # type: _models.BastionShareableLinkListRequest
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Iterable[_models.BastionShareableLinkListResult]
+        resource_group_name: str,
+        bastion_host_name: str,
+        bsl_request: Union[_models.BastionShareableLinkListRequest, IO],
+        **kwargs: Any
+    ) -> Iterable["_models.BastionShareableLink"]:
         """Return the Bastion Shareable Links for all the VMs specified in the request.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param bastion_host_name: The name of the Bastion Host.
+        :param bastion_host_name: The name of the Bastion Host. Required.
         :type bastion_host_name: str
-        :param bsl_request: Post request for all the Bastion Shareable Link endpoints.
-        :type bsl_request: ~azure.mgmt.network.v2022_01_01.models.BastionShareableLinkListRequest
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param bsl_request: Post request for all the Bastion Shareable Link endpoints. Is either a
+         model type or a IO type. Required.
+        :type bsl_request: ~azure.mgmt.network.v2022_05_01.models.BastionShareableLinkListRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either BastionShareableLinkListResult or the result of
+        :return: An iterator like instance of either BastionShareableLink or the result of
          cls(response)
         :rtype:
-         ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2022_01_01.models.BastionShareableLinkListResult]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.paging.ItemPaged[~azure.mgmt.network.v2022_05_01.models.BastionShareableLink]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('get_bastion_shareable_link')
         if api_version == '2019-09-01':
@@ -533,13 +523,14 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'get_bastion_shareable_link'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -547,176 +538,192 @@ class NetworkManagementClientOperationsMixin(object):
 
     def list_active_connectivity_configurations(
         self,
-        resource_group_name,  # type: str
-        network_manager_name,  # type: str
-        parameters,  # type: _models.ActiveConfigurationParameter
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.ActiveConnectivityConfigurationsListResult
+        resource_group_name: str,
+        network_manager_name: str,
+        parameters: Union[_models.ActiveConfigurationParameter, IO],
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.ActiveConnectivityConfigurationsListResult:
         """Lists active connectivity configurations in a network manager.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param network_manager_name: The name of the network manager.
+        :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param parameters: Active Configuration Parameter.
-        :type parameters: ~azure.mgmt.network.v2022_01_01.models.ActiveConfigurationParameter
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param parameters: Active Configuration Parameter. Is either a model type or a IO type.
+         Required.
+        :type parameters: ~azure.mgmt.network.v2022_05_01.models.ActiveConfigurationParameter or IO
+        :param top: An optional query parameter which specifies the maximum number of records to be
+         returned by the server. Default value is None.
+        :type top: int
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ActiveConnectivityConfigurationsListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_01_01.models.ActiveConnectivityConfigurationsListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: ActiveConnectivityConfigurationsListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2022_05_01.models.ActiveConnectivityConfigurationsListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_active_connectivity_configurations')
-        if api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        if api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_active_connectivity_configurations'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.list_active_connectivity_configurations(resource_group_name, network_manager_name, parameters, **kwargs)
+        return mixin_instance.list_active_connectivity_configurations(resource_group_name, network_manager_name, parameters, top, **kwargs)
 
     def list_active_security_admin_rules(
         self,
-        resource_group_name,  # type: str
-        network_manager_name,  # type: str
-        parameters,  # type: _models.ActiveConfigurationParameter
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.ActiveSecurityAdminRulesListResult
+        resource_group_name: str,
+        network_manager_name: str,
+        parameters: Union[_models.ActiveConfigurationParameter, IO],
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.ActiveSecurityAdminRulesListResult:
         """Lists active security admin rules in a network manager.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param network_manager_name: The name of the network manager.
+        :param network_manager_name: The name of the network manager. Required.
         :type network_manager_name: str
-        :param parameters: Active Configuration Parameter.
-        :type parameters: ~azure.mgmt.network.v2022_01_01.models.ActiveConfigurationParameter
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param parameters: Active Configuration Parameter. Is either a model type or a IO type.
+         Required.
+        :type parameters: ~azure.mgmt.network.v2022_05_01.models.ActiveConfigurationParameter or IO
+        :param top: An optional query parameter which specifies the maximum number of records to be
+         returned by the server. Default value is None.
+        :type top: int
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ActiveSecurityAdminRulesListResult, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_01_01.models.ActiveSecurityAdminRulesListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: ActiveSecurityAdminRulesListResult or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2022_05_01.models.ActiveSecurityAdminRulesListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_active_security_admin_rules')
-        if api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        if api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_active_security_admin_rules'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.list_active_security_admin_rules(resource_group_name, network_manager_name, parameters, **kwargs)
+        return mixin_instance.list_active_security_admin_rules(resource_group_name, network_manager_name, parameters, top, **kwargs)
 
     def list_network_manager_effective_connectivity_configurations(
         self,
-        resource_group_name,  # type: str
-        virtual_network_name,  # type: str
-        parameters,  # type: _models.QueryRequestOptions
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.NetworkManagerEffectiveConnectivityConfigurationListResult
+        resource_group_name: str,
+        virtual_network_name: str,
+        parameters: Union[_models.QueryRequestOptions, IO],
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.NetworkManagerEffectiveConnectivityConfigurationListResult:
         """List all effective connectivity configurations applied on a virtual network.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param virtual_network_name: The name of the virtual network.
+        :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :param parameters: Parameters supplied to list correct page.
-        :type parameters: ~azure.mgmt.network.v2022_01_01.models.QueryRequestOptions
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param parameters: Parameters supplied to list correct page. Is either a model type or a IO
+         type. Required.
+        :type parameters: ~azure.mgmt.network.v2022_05_01.models.QueryRequestOptions or IO
+        :param top: An optional query parameter which specifies the maximum number of records to be
+         returned by the server. Default value is None.
+        :type top: int
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: NetworkManagerEffectiveConnectivityConfigurationListResult, or the result of
+        :return: NetworkManagerEffectiveConnectivityConfigurationListResult or the result of
          cls(response)
         :rtype:
-         ~azure.mgmt.network.v2022_01_01.models.NetworkManagerEffectiveConnectivityConfigurationListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.mgmt.network.v2022_05_01.models.NetworkManagerEffectiveConnectivityConfigurationListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_network_manager_effective_connectivity_configurations')
-        if api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        if api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_network_manager_effective_connectivity_configurations'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.list_network_manager_effective_connectivity_configurations(resource_group_name, virtual_network_name, parameters, **kwargs)
+        return mixin_instance.list_network_manager_effective_connectivity_configurations(resource_group_name, virtual_network_name, parameters, top, **kwargs)
 
     def list_network_manager_effective_security_admin_rules(
         self,
-        resource_group_name,  # type: str
-        virtual_network_name,  # type: str
-        parameters,  # type: _models.QueryRequestOptions
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.NetworkManagerEffectiveSecurityAdminRulesListResult
+        resource_group_name: str,
+        virtual_network_name: str,
+        parameters: Union[_models.QueryRequestOptions, IO],
+        top: Optional[int] = None,
+        **kwargs: Any
+    ) -> _models.NetworkManagerEffectiveSecurityAdminRulesListResult:
         """List all effective security admin rules applied on a virtual network.
 
-        :param resource_group_name: The name of the resource group.
+        :param resource_group_name: The name of the resource group. Required.
         :type resource_group_name: str
-        :param virtual_network_name: The name of the virtual network.
+        :param virtual_network_name: The name of the virtual network. Required.
         :type virtual_network_name: str
-        :param parameters: Parameters supplied to list correct page.
-        :type parameters: ~azure.mgmt.network.v2022_01_01.models.QueryRequestOptions
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
+        :param parameters: Parameters supplied to list correct page. Is either a model type or a IO
+         type. Required.
+        :type parameters: ~azure.mgmt.network.v2022_05_01.models.QueryRequestOptions or IO
+        :param top: An optional query parameter which specifies the maximum number of records to be
+         returned by the server. Default value is None.
+        :type top: int
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: NetworkManagerEffectiveSecurityAdminRulesListResult, or the result of cls(response)
+        :return: NetworkManagerEffectiveSecurityAdminRulesListResult or the result of cls(response)
         :rtype:
-         ~azure.mgmt.network.v2022_01_01.models.NetworkManagerEffectiveSecurityAdminRulesListResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.mgmt.network.v2022_05_01.models.NetworkManagerEffectiveSecurityAdminRulesListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('list_network_manager_effective_security_admin_rules')
-        if api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        if api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'list_network_manager_effective_security_admin_rules'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
-        return mixin_instance.list_network_manager_effective_security_admin_rules(resource_group_name, virtual_network_name, parameters, **kwargs)
+        return mixin_instance.list_network_manager_effective_security_admin_rules(resource_group_name, virtual_network_name, parameters, top, **kwargs)
 
     def supported_security_providers(
         self,
-        resource_group_name,  # type: str
-        virtual_wan_name,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> _models.VirtualWanSecurityProviders
+        resource_group_name: str,
+        virtual_wan_name: str,
+        **kwargs: Any
+    ) -> _models.VirtualWanSecurityProviders:
         """Gives the supported security providers for the virtual wan.
 
-        :param resource_group_name: The resource group name.
+        :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
         :param virtual_wan_name: The name of the VirtualWAN for which supported security providers are
-         needed.
+         needed. Required.
         :type virtual_wan_name: str
-        :keyword api_version: Api Version. Default value is "2022-01-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: VirtualWanSecurityProviders, or the result of cls(response)
-        :rtype: ~azure.mgmt.network.v2022_01_01.models.VirtualWanSecurityProviders
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: VirtualWanSecurityProviders or the result of cls(response)
+        :rtype: ~azure.mgmt.network.v2022_05_01.models.VirtualWanSecurityProviders
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('supported_security_providers')
         if api_version == '2018-08-01':
@@ -759,13 +766,14 @@ class NetworkManagementClientOperationsMixin(object):
             from .v2020_11_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         elif api_version == '2021-02-01':
             from .v2021_02_01.operations import NetworkManagementClientOperationsMixin as OperationClass
-        elif api_version == '2022-01-01':
-            from .v2022_01_01.operations import NetworkManagementClientOperationsMixin as OperationClass
+        elif api_version == '2022-05-01':
+            from .v2022_05_01.operations import NetworkManagementClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'supported_security_providers'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))

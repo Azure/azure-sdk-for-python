@@ -798,12 +798,12 @@ class TestStorageShare(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        share = self._create_share('random1')
+        share = self._create_share('random2')
         snapshot1 = share.create_snapshot()
         snapshot2 = share.create_snapshot()
 
         # Act
-        shares = self.fsc.list_shares(include_snapshots=True)
+        shares = self.fsc.list_shares(name_starts_with=share.share_name, include_snapshots=True)
         # Assert
         assert shares is not None
         all_shares = list(shares)
@@ -821,8 +821,8 @@ class TestStorageShare(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         self._setup(storage_account_name, storage_account_key)
-        share = self._get_share_reference()
-        share.create_share()
+        self._create_share('othershare')
+        share = self._create_share('random2')
 
         # Act
         shares = list(self.fsc.list_shares(name_starts_with=share.share_name))
@@ -1052,6 +1052,7 @@ class TestStorageShare(StorageRecordedTestCase):
         assert share2_props.root_squash == ShareRootSquash.root_squash
         assert share2_props.protocols == ['NFS']
 
+    @pytest.mark.playback_test_only
     @FileSharePreparer()
     @recorded_by_proxy
     def test_list_shares_with_root_squash_and_protocols(self, **kwargs):
