@@ -8,7 +8,8 @@
 
 ### Bugs Fixed
 
-* `AzureCliCredential` now works even when `az` prints warnings to stderr. ([#26857](https://github.com/Azure/azure-sdk-for-python/issues/26857))
+- `AzureCliCredential` now works even when `az` prints warnings to stderr. ([#26857](https://github.com/Azure/azure-sdk-for-python/issues/26857))
+- Fixed issue where user-supplied `TokenCachePersistenceOptions` weren't propagated when using `SharedTokenCacheCredential` ([#26982](https://github.com/Azure/azure-sdk-for-python/issues/26982))
 
 ### Other Changes
 
@@ -135,7 +136,7 @@ Azure-identity is supported on Python 3.7 or later. For more details, please rea
 ### Bugs Fixed
 
 - Handle injected "tenant_id" and "claims" ([#23138](https://github.com/Azure/azure-sdk-for-python/issues/23138))
-  
+
   "tenant_id" argument in get_token() method is only supported by:
 
   - `AuthorizationCodeCredential`
@@ -165,7 +166,7 @@ Azure-identity is supported on Python 3.7 or later. For more details, please rea
 > Only code written against a beta version such as 1.7.0b1 may be affected.
 
 - The `allow_multitenant_authentication` argument has been removed and the default behavior is now as if it were true.
-  The multitenant authentication feature can be totally disabled by setting the environment variable 
+  The multitenant authentication feature can be totally disabled by setting the environment variable
   `AZURE_IDENTITY_DISABLE_MULTITENANTAUTH` to `True`.
 - `azure.identity.RegionalAuthority` is removed.
 - `regional_authority` argument is removed for `CertificateCredential` and `ClientSecretCredential`.

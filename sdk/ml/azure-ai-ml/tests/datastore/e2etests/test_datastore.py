@@ -65,6 +65,7 @@ def b64read(p):
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.data_experiences_test
 class TestDatastore(AzureRecordedTestCase):
     @pytest.mark.skip(reason="Disable until preview release")
     def test_hdfs_pw(

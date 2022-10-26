@@ -14,6 +14,7 @@ from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestUtils:
     def test_dict_eq(self) -> None:
         assert dict_eq(dict1={}, dict2=None)
