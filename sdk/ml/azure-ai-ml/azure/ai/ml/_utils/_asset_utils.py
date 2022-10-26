@@ -447,8 +447,6 @@ def upload_file(
     :type callback: Any
     :return: None
     """
-    validate_content = size > 0  # don't do checksum for empty files
-
     if (
         type(storage_client).__name__ == GEN2_STORAGE_CLIENT_NAME
     ):  # Only for Gen2StorageClient, Blob Storage doesn't have true directories
@@ -491,7 +489,7 @@ def upload_file(
                 storage_client.file_client.upload_data(
                     data=data.read(),
                     overwrite=True,
-                    validate_content=validate_content,
+                    validate_content=True,
                     raw_response_hook=callback,
                     max_concurrency=MAX_CONCURRENCY,
                 )
@@ -499,7 +497,7 @@ def upload_file(
                 storage_client.container_client.upload_blob(
                     name=dest,
                     data=data,
-                    validate_content=validate_content,
+                    validate_content=True,
                     overwrite=storage_client.overwrite,
                     raw_response_hook=callback,
                     max_concurrency=MAX_CONCURRENCY,
