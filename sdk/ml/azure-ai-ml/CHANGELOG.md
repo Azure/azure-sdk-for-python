@@ -8,12 +8,12 @@
 - Add registry delete operation.
 
 ### Breaking Changes
-- Make registry delete operation return an LROPoller.
 
 ### Bugs Fixed
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 - Registries now assign managed tags to match registry's tags.
 - Adjust registry experimental tags and imports to avoid warning printouts for unrelated operations.
+- Make registry delete operation return an LROPoller, and change name to begin_delete.
 
 ### Other Changes
 

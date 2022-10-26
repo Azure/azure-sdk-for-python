@@ -59,17 +59,3 @@ class TestRegistry(AzureRecordedTestCase):
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
         assert del_result is None
-        # give the delete operation time to fully take place in the backend
-        # before testing that the registry is gone with another get command
-        if is_live():
-            # Unfortunately the LRO poller for delete concludes BEFORE
-            # the deletion is properly propagated across replicas,
-            # resulting in eventual consistency bugs if we test
-            # too soon.
-            sleep(30)
-        try:
-            crud_registry_client.registries.get(name=reg_name)
-            # The above line should fail with a ResourceNotFoundError
-            assert False
-        except ResourceNotFoundError:
-            assert True
