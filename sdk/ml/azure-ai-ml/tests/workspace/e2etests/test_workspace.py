@@ -144,7 +144,7 @@ class TestWorkspace(AzureRecordedTestCase):
         # resource name key word
         wps_name = f"e2etest_{randstr('wps_name')}"
 
-        # uai creation
+        # get the pre-created UAIs
         msi_client = ManagedServiceIdentityClient(
             credential=client._credential, subscription_id=client._operation_scope.subscription_id
         )
@@ -222,20 +222,105 @@ class TestWorkspace(AzureRecordedTestCase):
         assert len(workspace.identity.user_assigned_identities) == 2
         assert workspace.primary_user_assigned_identity == user_assigned_identity2.id
 
-        # test uai removal
-        new_UAIs = [x for x in wps.identity.user_assigned_identities if x.resource_id == user_assigned_identity2.id]
-        wps.identity.user_assigned_identities = new_UAIs
-        workspace.identity = wps.identity
-        workspace_poller = client.workspaces.begin_create(workspace=workspace)
+        # test uai workspace deletion
+        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
+        # verify that request was accepted by checking if poller is returned
+        assert poller
+        assert isinstance(poller, LROPoller)
+
+    @pytest.mark.e2etest
+    @pytest.mark.mlc
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="ARM template makes playback complex, so the test is flaky when run against recording",
+    )
+    def test_update_sai_to_sai_and_uai_workspace_with_uai_deletion(
+        self, client: MLClient, randstr: Callable[[], str], location: str
+    ) -> None:
+        # resource name key word
+        wps_name = f"e2etest_{randstr('wps_name')}"
+        wps_description = f"{wps_name} description"
+        wps_display_name = f"{wps_name} display name"
+        params_override = [
+            {"name": wps_name},
+            {"location": location},
+            {"description": wps_description},
+            {"display_name": wps_display_name},
+        ]
+        wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
+
+        # test creating default system_assigned workspace
+        workspace_poller = client.workspaces.begin_create(workspace=wps)
         assert isinstance(workspace_poller, LROPoller)
         workspace = workspace_poller.result()
         assert isinstance(workspace, Workspace)
+        assert workspace.name == wps_name
+        assert workspace.location == location
+        assert workspace.description == wps_description
+        assert workspace.display_name == wps_display_name
+        assert workspace.public_network_access == PublicNetworkAccess.ENABLED
+        assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED)
+        assert workspace.identity.user_assigned_identities == None
+        assert workspace.primary_user_assigned_identity == None
 
-        ## PUT request is expected to update the whole workspace entity, this should be resolved on the service side.
-        # assert len(workspace.identity.user_assigned_identities) == 1 # currently 2 == 1, which is not expected.
-        # assert workspace.identity.user_assigned_identities[0].resource_id == user_assigned_identity2.id
 
-        # test uai workspace deletion
+        # test updating identity type from system_assgined to system_assigned and user_assigned
+        msi_client = ManagedServiceIdentityClient(
+            credential=client._credential, subscription_id=client._operation_scope.subscription_id
+        )
+        user_assigned_identity = msi_client.user_assigned_identities.get(
+            resource_group_name=client._operation_scope.resource_group_name,
+            resource_name="uai-mhe",
+        )
+        user_assigned_identity2 = msi_client.user_assigned_identities.get(
+            resource_group_name=client._operation_scope.resource_group_name,
+            resource_name="uai-mhe2",
+        )
+
+        params_override = [
+            {"name": wps_name},
+            {
+                "identity": {
+                    "type": "system_assigned, user_assigned",
+                    "user_assigned_identities":[
+                        {
+                            "client_id": user_assigned_identity.client_id,
+                            "resource_id": user_assigned_identity.id,
+                            "principal_id": user_assigned_identity.principal_id
+                        },
+                        {
+                            "client_id": user_assigned_identity2.client_id,
+                            "resource_id": user_assigned_identity2.id,
+                            "principal_id": user_assigned_identity2.principal_id
+                        }
+                    ],
+                }
+            },
+        ]
+        wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
+        workspace_poller = client.workspaces.begin_update(
+            wps,
+            # primary_user_assigned_identity=user_assigned_identity.id, # uncomment this when sai to sai|uai fixing pr released. 
+        )
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
+        assert len(workspace.identity.user_assigned_identities) == 2
+        # assert workspace.primary_user_assigned_identity == user_assigned_identity.id # uncomment this when sai to sai|uai fixing pr released. 
+        assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)
+
+        ## test uai removal. not supported yet, service returning "Code: FailedIdentityOperation, Removal of all user-assigned identities assigned to resource '...' with type 'SystemAssigned, UserAssigned' is invalid."
+        # new_UAIs = [x for x in wps.identity.user_assigned_identities if x.resource_id == user_assigned_identity.id]
+        # wps.identity.user_assigned_identities = new_UAIs
+        # workspace.identity = wps.identity
+        # workspace_poller = client.workspaces.begin_update(workspace=workspace)
+        # assert isinstance(workspace_poller, LROPoller)
+        # workspace = workspace_poller.result()
+        # assert isinstance(workspace, Workspace)
+        # assert len(workspace.identity.user_assigned_identities) == 1
+        # assert workspace.identity.user_assigned_identities[0].resource_id == user_assigned_identity.id
+
+        # test sai|uai workspace deletion
         poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned
         assert poller
