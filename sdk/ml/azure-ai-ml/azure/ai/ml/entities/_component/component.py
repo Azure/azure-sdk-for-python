@@ -472,6 +472,11 @@ class Component(
                     yield Code(base_path=self._base_path, path=code)
                 else:
                     # copy to temp folder to filter potential __pycache__
+                    # note that the dst here is one level deeper than the temp folder,
+                    # when upload code asset, the URL contains one level higher than the file,
+                    # if we simply copy to temp folder, the URL will contain random temp folder name,
+                    # that might result in unexpected issues and also break related tests.
+                    # therefore we copy deeper to avoid this break.
                     src_path = Path(self._base_path) / code
                     dst_path = Path(tmp_dir) / src_path.name
                     _copy_folder_ignore_pycache(src_path, dst_path)
