@@ -1,3 +1,4 @@
+import sys
 import tempfile
 from io import StringIO
 from pathlib import Path
@@ -184,6 +185,10 @@ class TestCommandComponentEntity:
         yaml_component = load_component(source=yaml_path)
         assert component.code == yaml_component.code
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_command_component_version_as_a_function(self):
         expected_rest_component = {
             "componentId": "fake_component",
