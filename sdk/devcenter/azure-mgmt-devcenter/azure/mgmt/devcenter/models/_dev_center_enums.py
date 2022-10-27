@@ -16,6 +16,15 @@ class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INTERNAL = "Internal"
 
 
+class CatalogSyncState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The synchronization state of the catalog."""
+
+    SUCCEEDED = "Succeeded"
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity that created the resource."""
 

@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
 
-from azure.core.rest import HttpRequest, HttpResponse
-from azure.mgmt.core import ARMPipelineClient
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+from azure.mgmt.core import AsyncARMPipelineClient
 
-from . import models
-from ._configuration import DevCenterClientConfiguration
-from ._serialization import Deserializer, Serializer
+from .. import models
+from .._serialization import Deserializer, Serializer
+from ._configuration import DevCenterConfiguration
 from .operations import (
     AttachedNetworksOperations,
     CatalogsOperations,
@@ -38,58 +38,57 @@ from .operations import (
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
+    from azure.core.credentials_async import AsyncTokenCredential
 
 
-class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class DevCenter:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """DevCenter Management API.
 
     :ivar dev_centers: DevCentersOperations operations
-    :vartype dev_centers: azure.mgmt.devcenter.operations.DevCentersOperations
+    :vartype dev_centers: azure.mgmt.devcenter.aio.operations.DevCentersOperations
     :ivar projects: ProjectsOperations operations
-    :vartype projects: azure.mgmt.devcenter.operations.ProjectsOperations
+    :vartype projects: azure.mgmt.devcenter.aio.operations.ProjectsOperations
     :ivar attached_networks: AttachedNetworksOperations operations
-    :vartype attached_networks: azure.mgmt.devcenter.operations.AttachedNetworksOperations
+    :vartype attached_networks: azure.mgmt.devcenter.aio.operations.AttachedNetworksOperations
     :ivar galleries: GalleriesOperations operations
-    :vartype galleries: azure.mgmt.devcenter.operations.GalleriesOperations
+    :vartype galleries: azure.mgmt.devcenter.aio.operations.GalleriesOperations
     :ivar images: ImagesOperations operations
-    :vartype images: azure.mgmt.devcenter.operations.ImagesOperations
+    :vartype images: azure.mgmt.devcenter.aio.operations.ImagesOperations
     :ivar image_versions: ImageVersionsOperations operations
-    :vartype image_versions: azure.mgmt.devcenter.operations.ImageVersionsOperations
+    :vartype image_versions: azure.mgmt.devcenter.aio.operations.ImageVersionsOperations
     :ivar catalogs: CatalogsOperations operations
-    :vartype catalogs: azure.mgmt.devcenter.operations.CatalogsOperations
+    :vartype catalogs: azure.mgmt.devcenter.aio.operations.CatalogsOperations
     :ivar environment_types: EnvironmentTypesOperations operations
-    :vartype environment_types: azure.mgmt.devcenter.operations.EnvironmentTypesOperations
+    :vartype environment_types: azure.mgmt.devcenter.aio.operations.EnvironmentTypesOperations
     :ivar project_allowed_environment_types: ProjectAllowedEnvironmentTypesOperations operations
     :vartype project_allowed_environment_types:
-     azure.mgmt.devcenter.operations.ProjectAllowedEnvironmentTypesOperations
+     azure.mgmt.devcenter.aio.operations.ProjectAllowedEnvironmentTypesOperations
     :ivar project_environment_types: ProjectEnvironmentTypesOperations operations
     :vartype project_environment_types:
-     azure.mgmt.devcenter.operations.ProjectEnvironmentTypesOperations
+     azure.mgmt.devcenter.aio.operations.ProjectEnvironmentTypesOperations
     :ivar dev_box_definitions: DevBoxDefinitionsOperations operations
-    :vartype dev_box_definitions: azure.mgmt.devcenter.operations.DevBoxDefinitionsOperations
+    :vartype dev_box_definitions: azure.mgmt.devcenter.aio.operations.DevBoxDefinitionsOperations
     :ivar operations: Operations operations
-    :vartype operations: azure.mgmt.devcenter.operations.Operations
+    :vartype operations: azure.mgmt.devcenter.aio.operations.Operations
     :ivar operation_statuses: OperationStatusesOperations operations
-    :vartype operation_statuses: azure.mgmt.devcenter.operations.OperationStatusesOperations
+    :vartype operation_statuses: azure.mgmt.devcenter.aio.operations.OperationStatusesOperations
     :ivar usages: UsagesOperations operations
-    :vartype usages: azure.mgmt.devcenter.operations.UsagesOperations
+    :vartype usages: azure.mgmt.devcenter.aio.operations.UsagesOperations
     :ivar skus: SkusOperations operations
-    :vartype skus: azure.mgmt.devcenter.operations.SkusOperations
+    :vartype skus: azure.mgmt.devcenter.aio.operations.SkusOperations
     :ivar pools: PoolsOperations operations
-    :vartype pools: azure.mgmt.devcenter.operations.PoolsOperations
+    :vartype pools: azure.mgmt.devcenter.aio.operations.PoolsOperations
     :ivar schedules: SchedulesOperations operations
-    :vartype schedules: azure.mgmt.devcenter.operations.SchedulesOperations
+    :vartype schedules: azure.mgmt.devcenter.aio.operations.SchedulesOperations
     :ivar network_connections: NetworkConnectionsOperations operations
-    :vartype network_connections: azure.mgmt.devcenter.operations.NetworkConnectionsOperations
+    :vartype network_connections: azure.mgmt.devcenter.aio.operations.NetworkConnectionsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Unique identifier of the Azure subscription. This is a GUID-formatted
-     string (e.g. 00000000-0000-0000-0000-000000000000). Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-09-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-10-12-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -98,13 +97,13 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword,too
 
     def __init__(
         self,
-        credential: "TokenCredential",
+        credential: "AsyncTokenCredential",
         subscription_id: str,
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = DevCenterClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
-        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._config = DevCenterConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -143,14 +142,14 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword,too
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = client._send_request(request)
-        <HttpResponse: 200 OK>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -158,22 +157,19 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword,too
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.HttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
-        self._client.close()
+    async def close(self) -> None:
+        await self._client.close()
 
-    def __enter__(self):
-        # type: () -> DevCenterClient
-        self._client.__enter__()
+    async def __aenter__(self) -> "DevCenter":
+        await self._client.__aenter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
-        self._client.__exit__(*exc_details)
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)

@@ -30,6 +30,8 @@ from ._models_py3 import EnvironmentRole
 from ._models_py3 import EnvironmentType
 from ._models_py3 import EnvironmentTypeListResult
 from ._models_py3 import EnvironmentTypeUpdate
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
 from ._models_py3 import Gallery
 from ._models_py3 import GalleryListResult
 from ._models_py3 import GitCatalog
@@ -53,7 +55,7 @@ from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationListResult
 from ._models_py3 import OperationStatus
-from ._models_py3 import OperationStatusError
+from ._models_py3 import OperationStatusResult
 from ._models_py3 import Pool
 from ._models_py3 import PoolListResult
 from ._models_py3 import PoolProperties
@@ -89,20 +91,21 @@ from ._models_py3 import UsageName
 from ._models_py3 import UserAssignedIdentity
 from ._models_py3 import UserRoleAssignmentValue
 
-from ._dev_center_client_enums import ActionType
-from ._dev_center_client_enums import CreatedByType
-from ._dev_center_client_enums import DomainJoinType
-from ._dev_center_client_enums import EnableStatus
-from ._dev_center_client_enums import HealthCheckStatus
-from ._dev_center_client_enums import ImageValidationStatus
-from ._dev_center_client_enums import LicenseType
-from ._dev_center_client_enums import LocalAdminStatus
-from ._dev_center_client_enums import ManagedServiceIdentityType
-from ._dev_center_client_enums import Origin
-from ._dev_center_client_enums import ScheduledFrequency
-from ._dev_center_client_enums import ScheduledType
-from ._dev_center_client_enums import SkuTier
-from ._dev_center_client_enums import UsageUnit
+from ._dev_center_enums import ActionType
+from ._dev_center_enums import CatalogSyncState
+from ._dev_center_enums import CreatedByType
+from ._dev_center_enums import DomainJoinType
+from ._dev_center_enums import EnableStatus
+from ._dev_center_enums import HealthCheckStatus
+from ._dev_center_enums import ImageValidationStatus
+from ._dev_center_enums import LicenseType
+from ._dev_center_enums import LocalAdminStatus
+from ._dev_center_enums import ManagedServiceIdentityType
+from ._dev_center_enums import Origin
+from ._dev_center_enums import ScheduledFrequency
+from ._dev_center_enums import ScheduledType
+from ._dev_center_enums import SkuTier
+from ._dev_center_enums import UsageUnit
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -132,6 +135,8 @@ __all__ = [
     "EnvironmentType",
     "EnvironmentTypeListResult",
     "EnvironmentTypeUpdate",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
     "Gallery",
     "GalleryListResult",
     "GitCatalog",
@@ -155,7 +160,7 @@ __all__ = [
     "OperationDisplay",
     "OperationListResult",
     "OperationStatus",
-    "OperationStatusError",
+    "OperationStatusResult",
     "Pool",
     "PoolListResult",
     "PoolProperties",
@@ -191,6 +196,7 @@ __all__ = [
     "UserAssignedIdentity",
     "UserRoleAssignmentValue",
     "ActionType",
+    "CatalogSyncState",
     "CreatedByType",
     "DomainJoinType",
     "EnableStatus",
