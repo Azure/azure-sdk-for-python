@@ -408,7 +408,7 @@ class CodegenTestPR:
     def check_ci_file_proc(self, dependency: str):
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
-            dependency_name = re.compile("[a-zA-Z-_]*").findall(dependency)[0]
+            dependency_name = re.compile("[a-zA-Z-]*").findall(dependency)[0]
             for i in range(len(content)):
                 if new_line in content[i]:
                     return
