@@ -183,13 +183,13 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, original_kwargs, non_pipeline_params_dict=None) -> PipelineComponent:
+    def build(self, *, original_kwargs, non_pipeline_params_dict=None) -> PipelineComponent:
         # Clear nodes as we may call build multiple times.
         self.nodes = []
 
         kwargs = _build_pipeline_parameter(
             func=self.func,
-            original_kwargs=original_kwargs,
+            user_provided_kwargs=original_kwargs,
             # TODO: support result() for pipeline input inside parameter group
             group_default_kwargs=self._get_group_parameter_defaults(),
             non_pipeline_parameter_dict=non_pipeline_params_dict
@@ -388,7 +388,8 @@ class PipelineComponentBuilder:
         return result
 
 
-def _build_pipeline_parameter(func, original_kwargs, group_default_kwargs=None, non_pipeline_parameter_dict=None):
+def _build_pipeline_parameter(
+        func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_parameter_dict=None):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
     # @parameter_group
@@ -423,7 +424,7 @@ def _build_pipeline_parameter(func, original_kwargs, group_default_kwargs=None, 
     for left_args in parameters:
         if left_args.name not in transformed_kwargs.keys():
             default_value = left_args.default if left_args.default is not Parameter.empty else None
-            actual_value = original_kwargs.get(left_args.name)
+            actual_value = user_provided_kwargs.get(left_args.name)
             transformed_kwargs[left_args.name] = _wrap_pipeline_parameter(
                 key=left_args.name, default_value=default_value, actual_value=actual_value
             )
