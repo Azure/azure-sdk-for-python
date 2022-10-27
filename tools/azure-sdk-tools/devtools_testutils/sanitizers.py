@@ -4,8 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import TYPE_CHECKING
-from urllib.error import HTTPError
-import requests
+
+
+from urllib3 import PoolManager, Retry
+
 
 from .config import PROXY_URL
 from .helpers import get_recording_id, is_live, is_live_and_not_recording
@@ -13,6 +15,9 @@ from .helpers import get_recording_id, is_live, is_live_and_not_recording
 if TYPE_CHECKING:
     from typing import Any, Iterable, Optional
 
+
+
+http_client = PoolManager(retries=Retry(total=3, raise_on_status=True))
 
 # This file contains methods for adjusting many aspects of test proxy behavior:
 #
@@ -553,8 +558,7 @@ def _send_matcher_request(matcher: str, headers: dict, parameters: "Optional[dic
 
     headers_to_send = {"x-abstraction-identifier": matcher}
     headers_to_send.update(headers)
-    response = requests.post(f"{PROXY_URL}/Admin/SetMatcher", headers=headers_to_send, json=parameters)
-    response.raise_for_status()
+    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetMatcher", headers=headers_to_send, fields=parameters)
 
 
 def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" = None) -> None:
@@ -571,8 +575,8 @@ def _send_recording_options_request(parameters: dict, headers: "Optional[dict]" 
     if is_live_and_not_recording():
         return
 
-    response = requests.post(f"{PROXY_URL}/Admin/SetRecordingOptions", headers=headers, json=parameters)
-    response.raise_for_status()
+    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/SetRecordingOptions", headers=headers, fields=parameters)
+
 
 
 def _send_reset_request(headers: dict) -> None:
@@ -587,8 +591,7 @@ def _send_reset_request(headers: dict) -> None:
     if is_live_and_not_recording():
         return
 
-    response = requests.post(f"{PROXY_URL}/Admin/Reset", headers=headers)
-    response.raise_for_status()
+    http_client.request(method="POST", url=f"{PROXY_URL}/Admin/Reset", headers=headers)
 
 
 def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
@@ -604,15 +607,14 @@ def _send_sanitizer_request(sanitizer: str, parameters: dict) -> None:
     if is_live_and_not_recording():
         return
 
-    response = requests.post(
+    http_client.request(method="POST", url=
         "{}/Admin/AddSanitizer".format(PROXY_URL),
         headers={
             "x-abstraction-identifier": sanitizer,
             "Content-Type": "application/json",
         },
-        json=parameters,
+        fields=parameters,
     )
-    response.raise_for_status()
 
 
 def _send_transform_request(transform: str, parameters: dict) -> None:
@@ -627,9 +629,8 @@ def _send_transform_request(transform: str, parameters: dict) -> None:
     if is_live():
         return
 
-    response = requests.post(
+    http_client.request(method="POST", url=
         f"{PROXY_URL}/Admin/AddTransform",
         headers={"x-abstraction-identifier": transform, "Content-Type": "application/json"},
-        json=parameters,
+        fields=parameters,
     )
-    response.raise_for_status()
