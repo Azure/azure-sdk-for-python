@@ -1,6 +1,6 @@
 # Release History
 
-## 0.0.0 (it should be perview) (2022-10-27)
+## 1.0.0b2 (2022-10-27)
 
 ### Other Changes
 
