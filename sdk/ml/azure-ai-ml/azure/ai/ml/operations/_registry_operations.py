@@ -118,9 +118,16 @@ class RegistryOperations:
         registry: Registry,
         **kwargs: Dict,
     ) -> LROPoller[Registry]:
-        """Create a new Azure Machine Learning Registry.
+        """Create a new Azure Machine Learning Registry,
+        or try to update if it already exists.
 
-        Returns the registry if already exists.
+        Note: Due to service limitations we have to sleep for
+        an additional 30~45 seconds AFTER the LRO Poller concludes
+        before the registry will be consistently deleted from the
+        perspective of subsequent operations.
+        If a deletion is required for subsequent operations to
+        work properly, callers should implement that logic until the
+        service has been fixed to return a reliable LRO.
 
         :param registry: Registry definition.
         :type registry: Registry
@@ -140,16 +147,18 @@ class RegistryOperations:
         return poller
 
 
-    @monitor_with_activity(logger, "Registry.Delete", ActivityType.PUBLICAPI)
+    @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
     @experimental
-    def delete(self, *, name: str, **kwargs: Dict) -> None:
-        """Delete a registry. Returns nothing on a successful operation.
+    def begin_delete(self, *, name: str, **kwargs: Dict) -> LROPoller[Registry]:
+        """Delete a registry if it exists. Returns nothing on a successful operation.
 
         :param name: Name of the registry
         :type name: str
+        :return: A poller to track the operation status.
+        :rtype: LROPoller
         """
         resource_group = kwargs.get("resource_group") or self._resource_group_name
-        return self._operation.delete(
+        return self._operation.begin_delete(
             resource_group_name=resource_group,
             registry_name=name,
             **self._init_kwargs,

@@ -111,4 +111,29 @@ class TestParallelComponent:
         assert component_dict["logging_level"] == "INFO"
 
         assert component_entity.code
-        assert component_entity.code == f"{str(Path('./tests/test_configs/python').resolve())}:1"
+
+    def test_serialize_deserialize_partition_keys(self, mock_machinelearning_client: MLClient):
+        test_path = "./tests/test_configs/components/parallel_component_with_partition_keys.yml"
+        component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
+        rest_path = "./tests/test_configs/components/parallel_component_with_partition_keys_rest.json"
+        target_entity = load_component_entity_from_rest_json(rest_path)
+
+        # skip check code and environment
+        component_dict = component_entity._to_dict()
+        assert component_dict["id"]
+        component_dict = pydash.omit(
+            dict(component_dict),
+            "task.code",
+            "id",
+        )
+        expected_dict = pydash.omit(
+            dict(target_entity._to_dict()),
+            "task.code",
+            "creation_context",
+            "id",
+        )
+
+        assert component_dict == expected_dict
+        assert component_dict["partition_keys"] == ["foo", "bar"]
+
+        assert component_entity.code
