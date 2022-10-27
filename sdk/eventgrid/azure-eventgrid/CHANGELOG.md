@@ -190,7 +190,7 @@ introduce breaking changes.
       - "is" should not be used at all.
       - "format" will return the string value, where "%s" string
         formatting will return `NameOfEnum.stringvalue`. Format syntax
-        should be prefered.
+        should be preferred.
   - New Long Running Operation:
       - Return type changes from
         `msrestazure.azure_operation.AzureOperationPoller` to

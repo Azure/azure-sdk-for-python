@@ -26,12 +26,11 @@ from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, _get_param_with_standard_annotation
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
-from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
+from azure.ai.ml.exceptions import UserErrorException
 
 _BUILDER_STACK_MAX_DEPTH = 100
 
@@ -278,7 +277,14 @@ class PipelineComponentBuilder:
         return output_dict
 
     def _get_group_parameter_defaults(self):
-        return {key: copy.deepcopy(val.default) for key, val in self.inputs.items() if isinstance(val, GroupInput)}
+        group_defaults = {}
+        for key, val in self.inputs.items():
+            if not isinstance(val, GroupInput):
+                continue
+            # Copy and insert top-level parameter name into group names for all items
+            group_defaults[key] = copy.deepcopy(val.default)
+            group_defaults[key].insert_group_name_for_items(key)
+        return group_defaults
 
     def _update_nodes_variable_names(self, func_variables: dict):
         """Update nodes list to ordered dict with variable name key and

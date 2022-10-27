@@ -8,13 +8,17 @@ import logging
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase, MLTableJobInput, ResourceConfiguration, TaskType
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import TYPE, AssetTypes
 from azure.ai.ml.constants._job.automl import AutoMLConstants
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+)
 from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.job_io_mixin import JobIOMixin
 from azure.ai.ml.entities._job.pipeline._io import AutoMLNodeIOMixin
@@ -30,7 +34,10 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         self,
         *,
         resources: ResourceConfiguration = None,
-        identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+        identity: Union[
+            ManagedIdentityConfiguration,
+            AmlTokenConfiguration,
+            UserIdentityConfiguration] = None,
         **kwargs: Any,
     ) -> None:
         """Initialize an AutoML job entity.
@@ -89,7 +96,6 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
         data: Dict,
         context: Dict,
         additional_message: str,
-        inside_pipeline=False,
         **kwargs,
     ) -> "AutoMLJob":
         task_type = data.get(AutoMLConstants.TASK_TYPE_YAML)
@@ -99,7 +105,6 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
                 data,
                 context,
                 additional_message,
-                inside_pipeline=inside_pipeline,
                 **kwargs,
             )
         msg = f"Unsupported task type: {task_type}"
@@ -150,7 +155,7 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
             camel_to_snake(TaskType.TEXT_CLASSIFICATION_MULTILABEL): TextClassificationMultilabelJob,
         }
 
-    def _resolve_data_inputs(self, rest_job):
+    def _resolve_data_inputs(self, rest_job):  # pylint: disable=no-self-use
         """Resolve JobInputs to MLTableJobInputs within data_settings."""
         if isinstance(rest_job.training_data, Input):
             rest_job.training_data = MLTableJobInput(uri=rest_job.training_data.path)
@@ -162,8 +167,12 @@ class AutoMLJob(Job, JobIOMixin, AutoMLNodeIOMixin, ABC):
     def _restore_data_inputs(self):
         """Restore MLTableJobInputs to JobInputs within data_settings."""
         if isinstance(self.training_data, MLTableJobInput):
-            self.training_data = Input(type=AssetTypes.MLTABLE, path=self.training_data.uri)
+            self.training_data = Input(
+                type=AssetTypes.MLTABLE, path=self.training_data.uri  # pylint: disable=no-member
+            )
         if isinstance(self.validation_data, MLTableJobInput):
-            self.validation_data = Input(type=AssetTypes.MLTABLE, path=self.validation_data.uri)
+            self.validation_data = Input(
+                type=AssetTypes.MLTABLE, path=self.validation_data.uri  # pylint: disable=no-member
+            )
         if hasattr(self, "test_data") and isinstance(self.test_data, MLTableJobInput):
-            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri)
+            self.test_data = Input(type=AssetTypes.MLTABLE, path=self.test_data.uri)  # pylint: disable=no-member

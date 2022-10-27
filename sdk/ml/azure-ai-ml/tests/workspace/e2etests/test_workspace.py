@@ -8,8 +8,11 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace
 from azure.ai.ml.constants._common import PublicNetworkAccess
-from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentityType
+from azure.ai.ml.entities._workspace.diagnose import DiagnoseResponseResultValue
+from azure.ai.ml.entities._workspace.workspace import Workspace
+from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
 from azure.core.paging import ItemPaged
+from azure.core.polling import LROPoller
 from azure.mgmt.msi._managed_service_identity_client import ManagedServiceIdentityClient
 
 from devtools_testutils import AzureRecordedTestCase, is_live
@@ -41,7 +44,10 @@ class TestWorkspace(AzureRecordedTestCase):
         # only test simple aspects of both a pointer and path-loaded workspace
         # save actual service calls for a single object (below).
         def workspace_validation(wps):
-            workspace = client.workspaces.begin_create(workspace=wps)
+            workspace_poller = client.workspaces.begin_create(workspace=wps)
+            assert isinstance(workspace_poller, LROPoller)
+            workspace = workspace_poller.result()
+            assert isinstance(workspace, Workspace)
             assert workspace.name == wps_name
             assert workspace.location == location
             assert workspace.description == wps_description
@@ -58,10 +64,11 @@ class TestWorkspace(AzureRecordedTestCase):
         workspace_list = client.workspaces.list()
         assert isinstance(workspace_list, ItemPaged)
         workspace = client.workspaces.get(wps_name)
+        assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
         assert workspace.container_registry is None
 
-        workspace = client.workspaces.begin_update(
+        workspace_poller = client.workspaces.begin_update(
             workspace,
             image_build_compute="compute",
             public_network_access=PublicNetworkAccess.DISABLED,
@@ -69,6 +76,9 @@ class TestWorkspace(AzureRecordedTestCase):
             application_insights=workspace.application_insights,
             update_dependent_resources=True,
         )
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
         assert workspace.image_build_compute == "compute"
         assert workspace.public_network_access == PublicNetworkAccess.DISABLED
         # verify updating acr
@@ -79,20 +89,24 @@ class TestWorkspace(AzureRecordedTestCase):
         # )
         # assert workspace.container_registry.lower() == static_acr.lower()
 
-        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True, no_wait=True)
+        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned
         assert poller
+        assert isinstance(poller, LROPoller)
 
     def test_workspace_diagnosis(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        diagnose_result = client.workspaces.begin_diagnose(client._operation_scope.workspace_name)
-        assert len(diagnose_result["container_registry_results"]) >= 0
-        assert len(diagnose_result["dns_resolution_results"]) >= 0
-        assert len(diagnose_result["key_vault_results"]) >= 0
-        assert len(diagnose_result["network_security_rule_results"]) >= 0
-        assert len(diagnose_result["other_results"]) >= 0
-        assert len(diagnose_result["resource_lock_results"]) >= 0
-        assert len(diagnose_result["storage_account_results"]) >= 0
-        assert len(diagnose_result["user_defined_route_results"]) >= 0
+        diagnose_result_poller = client.workspaces.begin_diagnose(client._operation_scope.workspace_name)
+        assert isinstance(diagnose_result_poller, LROPoller)
+        diagnose_result = diagnose_result_poller.result()
+        assert isinstance(diagnose_result, DiagnoseResponseResultValue)
+        assert len(diagnose_result.container_registry_results) >= 0
+        assert len(diagnose_result.dns_resolution_results) >= 0
+        assert len(diagnose_result.key_vault_results) >= 0
+        assert len(diagnose_result.network_security_rule_results) >= 0
+        assert len(diagnose_result.other_results) >= 0
+        assert len(diagnose_result.resource_lock_results) >= 0
+        assert len(diagnose_result.storage_account_results) >= 0
+        assert len(diagnose_result.user_defined_route_results) >= 0
 
     @pytest.mark.skip("Testing CMK workspace needs complicated setup, created TASK 1063112 to address that later")
     def test_workspace_cmk_create_and_delete(self, client: MLClient, randstr: Callable[[], str]) -> None:
@@ -105,10 +119,15 @@ class TestWorkspace(AzureRecordedTestCase):
         # the kv name "ws-e2e-test-cmk" is not in the ARM template since it causes name collision when re-creating a WS. Add it back when re-enabling this test.
         wps.customer_managed_key.key_vault = f"/subscriptions/{client._operation_scope.subscription_id}/resourceGroups/{client._operation_scope.resource_group_name}/providers/Microsoft.KeyVault/vaults/ws-e2e-test-cmk"
 
-        workspace = client.workspaces.begin_create(workspace=wps)
+        workspace_poller = client.workspaces.begin_create(workspace=wps)
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
         assert workspace.customer_managed_key.key_vault == wps.customer_managed_key.key_vault
-        client.workspaces.begin_delete(workspace_name=wps_name, delete_dependent_resources=True, no_wait=False)
+        outcome = client.workspaces.begin_delete(workspace_name=wps_name, delete_dependent_resources=True)
+        assert isinstance(outcome, LROPoller)
+        outcome.result()
         with pytest.raises(Exception) as e:
             client.workspaces.get(name=wps_name)
         assert e is not None
@@ -163,7 +182,10 @@ class TestWorkspace(AzureRecordedTestCase):
             {"primary_user_assigned_identity": user_assigned_identity.id},
         ]
         wps = load_workspace("./tests/test_configs/workspace/workspace_min.yaml", params_override=params_override)
-        workspace = client.workspaces.begin_create(workspace=wps)
+        workspace_poller = client.workspaces.begin_create(workspace=wps)
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
         assert workspace.location == location
         assert workspace.description == wps_description
@@ -183,11 +205,15 @@ class TestWorkspace(AzureRecordedTestCase):
         assert len(workspace.identity.user_assigned_identities) == 2
         assert workspace.primary_user_assigned_identity == user_assigned_identity.id
 
-        workspace = client.workspaces.begin_update(
+        workspace_poller = client.workspaces.begin_update(
             workspace,
             primary_user_assigned_identity=user_assigned_identity2.id,
         )
+        assert isinstance(workspace_poller, LROPoller)
+        workspace = workspace_poller.result()
+        assert isinstance(workspace, Workspace)
         assert workspace.primary_user_assigned_identity == user_assigned_identity2.id
-        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True, no_wait=True)
+        poller = client.workspaces.begin_delete(wps_name, delete_dependent_resources=True)
         # verify that request was accepted by checking if poller is returned
         assert poller
+        assert isinstance(poller, LROPoller)

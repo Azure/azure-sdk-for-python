@@ -9,20 +9,17 @@
 # regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
-
-from msrest import Deserializer, Serializer
+from typing import Any, Optional, TYPE_CHECKING
 
 from azure.mgmt.core import ARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
 from ._configuration import ResourceManagementClientConfiguration
+from ._serialization import Deserializer, Serializer
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-
     from azure.core.credentials import TokenCredential
 
 class _SDKClient(object):
@@ -43,9 +40,9 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The Microsoft Azure subscription ID.
+    :param subscription_id: The Microsoft Azure subscription ID. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -67,10 +64,10 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
 
     def __init__(
         self,
-        credential,  # type: "TokenCredential"
-        subscription_id,  # type: str
+        credential: "TokenCredential",
+        subscription_id: str,
         api_version=None, # type: Optional[str]
-        base_url="https://management.azure.com",  # type: str
+        base_url: str = "https://management.azure.com",
         profile=KnownProfiles.default, # type: KnownProfiles
         **kwargs  # type: Any
     ):
@@ -205,6 +202,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_04_01.operations import DeploymentOperationsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'deployment_operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -260,6 +258,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_04_01.operations import DeploymentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'deployments'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -303,6 +302,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_04_01.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -322,6 +322,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_04_01.operations import ProviderResourceTypesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'provider_resource_types'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -377,6 +378,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_04_01.operations import ProvidersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'providers'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -432,6 +434,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_04_01.operations import ResourceGroupsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resource_groups'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -487,6 +490,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_04_01.operations import ResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'resources'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -542,6 +546,7 @@ class ResourceManagementClient(MultiApiClientMixin, _SDKClient):
             from .v2021_04_01.operations import TagsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'tags'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     def close(self):

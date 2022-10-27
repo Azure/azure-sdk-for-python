@@ -3,9 +3,9 @@ from typing import Callable
 import pydash
 import pytest
 
-from azure.ai.ml import AmlToken, MLClient
+from azure.ai.ml import MLClient
 from azure.ai.ml.constants._common import LROConfigurations
-from azure.ai.ml.entities import CronTrigger, PipelineJob
+from azure.ai.ml.entities import CronTrigger, PipelineJob, AmlTokenConfiguration
 from azure.ai.ml.entities._load_functions import load_job, load_schedule
 
 from .._util import _SCHEDULE_TIMEOUT_SECOND, TRIGGER_ENDTIME, TRIGGER_ENDTIME_DICT
@@ -33,13 +33,13 @@ class TestSchedule(AzureRecordedTestCase):
         assert rest_schedule_list != []
         # update
         schedule.create_job.experiment_name = "test_schedule_exp"
-        schedule.create_job.identity = AmlToken()
+        schedule.create_job.identity = AmlTokenConfiguration()
         rest_schedule = client.schedules.begin_create_or_update(schedule).result(
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
         assert rest_schedule._is_enabled is True
         job: PipelineJob = rest_schedule.create_job
-        assert isinstance(job.identity, AmlToken)
+        assert isinstance(job.identity, AmlTokenConfiguration)
         # disable
         rest_schedule = client.schedules.begin_disable(schedule.name).result(timeout=LROConfigurations.POLLING_TIMEOUT)
         assert rest_schedule._is_enabled is False
@@ -67,7 +67,7 @@ class TestSchedule(AzureRecordedTestCase):
         client.schedules.begin_disable(schedule.name)
         # assert updates
         job: PipelineJob = rest_schedule.create_job
-        assert isinstance(job.identity, AmlToken)
+        assert isinstance(job.identity, AmlTokenConfiguration)
         assert job.inputs["hello_string_top_level_input"]._data == "${{creation_context.trigger_time}}"
 
     @pytest.mark.skip(reason="flaky test")

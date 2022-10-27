@@ -3,13 +3,14 @@ from pathlib import Path
 from time import sleep
 from typing import Callable
 
+from azure.ai.ml.entities import AmlTokenConfiguration
 from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
 import jwt
 import pytest
 
-from azure.ai.ml import AmlToken, Input, MLClient, command, load_environment, load_job
+from azure.ai.ml import Input, MLClient, command, load_environment, load_job
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata, _resource_to_scopes
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ListViewType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml.constants._common import COMMON_RUNTIME_ENV_VAR, LOCAL_COMPUTE_TARGET, TID_FMT, AssetTypes
 from azure.ai.ml.entities._assets._artifacts.data import Data
@@ -78,7 +79,7 @@ class TestCommandJob(AzureRecordedTestCase):
         command_job_2 = client.jobs.get(job_name)
         assert command_job.name == command_job_2.name
         assert command_job.identity.type == command_job_2.identity.type
-        assert command_job_2.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert command_job_2.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         assert command_job_2.compute == "cpu-cluster"
         check_tid_in_url(client, command_job_2)
 
@@ -95,14 +96,14 @@ class TestCommandJob(AzureRecordedTestCase):
         command_job: CommandJob = client.jobs.create_or_update(job=job)
 
         assert command_job.status in RunHistoryConstants.IN_PROGRESS_STATUSES
-        assert command_job.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert command_job.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         assert command_job.compute == "testCompute"
         check_tid_in_url(client, command_job)
 
         command_job_2 = client.jobs.get(job_name)
         assert command_job.name == command_job_2.name
         assert command_job.identity.type == command_job_2.identity.type
-        assert command_job_2.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert command_job_2.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         assert command_job_2.compute == "testCompute"
         check_tid_in_url(client, command_job_2)
 
@@ -119,17 +120,18 @@ class TestCommandJob(AzureRecordedTestCase):
         command_job: CommandJob = client.jobs.create_or_update(job=job)
 
         assert command_job.status in RunHistoryConstants.IN_PROGRESS_STATUSES
-        assert command_job.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert command_job.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         assert command_job.compute == "testCompute"
         check_tid_in_url(client, command_job)
 
         command_job_2 = client.jobs.get(job_name)
         assert command_job.name == command_job_2.name
         assert command_job.identity.type == command_job_2.identity.type
-        assert command_job_2.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert command_job_2.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         assert command_job_2.compute == "testCompute"
         check_tid_in_url(client, command_job_2)
 
+    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     @pytest.mark.e2etest
     def test_command_job_builder(self, data_with_2_versions: str, client: MLClient) -> None:
 
@@ -150,7 +152,7 @@ class TestCommandJob(AzureRecordedTestCase):
             display_name="builder_command_job",
             compute="testCompute",
             experiment_name="mfe-test1-dataset",
-            identity=AmlToken(),
+            identity=AmlTokenConfiguration(),
             distribution=MpiDistribution(process_count_per_instance=2),
         )
 
@@ -158,7 +160,7 @@ class TestCommandJob(AzureRecordedTestCase):
         assert node.display_name == "builder_command_job"
         assert node.compute == "testCompute"
         assert node.experiment_name == "mfe-test1-dataset"
-        assert node.identity == AmlToken()
+        assert node.identity == AmlTokenConfiguration()
 
         node.description = "new-description"
         node.display_name = "new_builder_command_job"
@@ -169,11 +171,11 @@ class TestCommandJob(AzureRecordedTestCase):
 
         result = client.create_or_update(node)
         assert result.description == "new-description"
-        assert result.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert result.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         assert result.display_name == "new_builder_command_job"
         assert result.compute == "testCompute"
         assert result.experiment_name == "mfe-test1-dataset"
-        assert result.identity == AmlToken()
+        assert result.identity == AmlTokenConfiguration()
         assert isinstance(result.distribution, MpiDistribution)
         assert result.distribution.process_count_per_instance == 2
 
@@ -201,7 +203,7 @@ class TestCommandJob(AzureRecordedTestCase):
         )
         command_job: CommandJob = client.jobs.create_or_update(job=job)
         assert command_job.name == job_name
-        assert command_job.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert command_job.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         assert command_job.compute == "local"
         assert command_job.environment_variables[COMMON_RUNTIME_ENV_VAR] == "true"
 
@@ -221,6 +223,7 @@ class TestCommandJob(AzureRecordedTestCase):
         client.jobs.stream(job_name)
         assert client.jobs.get(job_name).parameters
 
+    @pytest.mark.skip("https://dev.azure.com/msdata/Vienna/_workitems/edit/2009659")
     @pytest.mark.e2etest
     def test_command_job_with_modified_environment(self, randstr: Callable[[], str], client: MLClient) -> None:
         job_name = randstr("job_name")
@@ -235,9 +238,9 @@ class TestCommandJob(AzureRecordedTestCase):
         job.environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
 
         job = client.jobs.create_or_update(job=job)
-        assert job.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert job.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
         job = client.jobs.get(name=job.name)
-        assert job.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
+        assert job.environment == "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
 
     @pytest.mark.e2etest
     @pytest.mark.skip("Investigate why cancel does not record some upload requests of code assets")

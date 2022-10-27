@@ -46,7 +46,7 @@ class ControlFlowNode(YamlTranslatableMixin, SchemaValidatableMixin, ABC):
     def _to_dict(self) -> Dict:
         return self._dump_for_validation()
 
-    def _to_rest_object(self, **kwargs) -> dict:  # pylint disable=unused-argument
+    def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
         rest_obj = self._to_dict()
         return convert_ordered_dict_to_dict(rest_obj)
@@ -125,8 +125,8 @@ class LoopNode(ControlFlowNode, ABC):
                 return re.findall(regex, expression)[0]
 
             return expression
-        except Exception:  # pylint disable=broad-except
-            module_logger.warning(f"Cannot get the value from data binding expression {expression}.")
+        except Exception:  # pylint: disable=broad-except
+            module_logger.warning("Cannot get the value from data binding expression %s.", expression)
             return expression
 
     @staticmethod

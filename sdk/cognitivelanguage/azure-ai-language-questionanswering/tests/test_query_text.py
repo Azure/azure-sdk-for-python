@@ -202,3 +202,74 @@ class TestQueryText(QuestionAnsweringTestCase):
 
             with pytest.raises(TypeError):
                 client.get_answers_from_text(params, question="Why?")
+
+    def test_query_text_default_lang(self, recorded_test, qna_creds):
+        client = QuestionAnsweringClient(qna_creds["qna_endpoint"], AzureKeyCredential(qna_creds["qna_key"]), default_language="es")
+        params = {
+            "question": "How long it takes to charge surface?",
+            "records": [
+                {
+                    "text": "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
+                            "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+                    "id": "1"
+                },
+            ],
+        }
+
+        param_model = AnswersFromTextOptions(
+            question="How long it takes to charge surface?",
+            text_documents=[
+                TextDocument(
+                    text="Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
+                            "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+                    id="1"
+                ),
+            ],
+        )
+
+        def callback_es(response):
+            import json
+            resp = json.loads(response.http_request.content)
+            assert resp["language"] == "es"
+
+        def callback_en(response):
+            import json
+            resp = json.loads(response.http_request.content)
+            assert resp["language"] == "en"
+
+        # --- dict request ---
+        # check client default language
+        output = client.get_answers_from_text(params, raw_response_hook=callback_es)
+
+        # check that operation-level language overrides client-level default lang
+        params["language"] = "en"
+        output = client.get_answers_from_text(params, raw_response_hook=callback_en)
+
+        # --- model request ---
+        # check client default language
+        output = client.get_answers_from_text(param_model, raw_response_hook=callback_es)
+
+        # check that operation-level language overrides client-level default lang
+        param_model.language = "en"
+        output = client.get_answers_from_text(param_model, raw_response_hook=callback_en)
+
+        # --- kwargs request ---
+        # check client default language
+        output = client.get_answers_from_text(
+            question="How long it takes to charge surface?",
+            text_documents=[
+                "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
+                "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+            ],
+            raw_response_hook=callback_es
+        )
+        # check that operation-level language overrides client-level default lang
+        output = client.get_answers_from_text(
+            question="How long it takes to charge surface?",
+            text_documents=[
+                "Power and charging. It takes two to four hours to charge the Surface Pro 4 battery fully from an empty state. " +
+                "It can take longer if you’re using your Surface for power-intensive activities like gaming or video streaming while you’re charging it.",
+            ],
+            language="en",
+            raw_response_hook=callback_en
+        )

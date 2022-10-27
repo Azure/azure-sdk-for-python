@@ -15,7 +15,7 @@ class ContainerRegistryCredential:
         passwords: List[str] = None
     ):
         """Key for ACR associated with given workspace
-            
+
             :param location:  Location of the ACR
             :type location: str
             :param username: Username of the ACR
@@ -36,7 +36,7 @@ class NotebookAccessKeys:
         secondary_access_key: str = None
     ):
         """Key for notebook resource associated with given workspace
-            
+
             :param primary_access_key:  Primary access key of notebook resource
             :type primary_access_key: str
             :param secondary_access_key: Secondary access key of notebook resource
@@ -57,7 +57,7 @@ class WorkspaceKeys:
         notebook_access_keys: NotebookAccessKeys = None
     ):
         """Workspace Keys
-        
+
             :param user_storage_key: Key for storage account associated with given workspace
             :type user_storage_key: str
             :param user_storage_resource_id: Resource id of storage account associated with given workspace
@@ -80,7 +80,7 @@ class WorkspaceKeys:
 
         if not rest_obj:
             return None
-        
+
         container_registry_credentials = None
         notebook_access_keys = None
 
@@ -94,7 +94,7 @@ class WorkspaceKeys:
             notebook_access_keys = NotebookAccessKeys(
                 primary_access_key=rest_obj.notebook_access_keys.primary_access_key,
                 secondary_access_key=rest_obj.notebook_access_keys.secondary_access_key)
-        
+
         return WorkspaceKeys(
             user_storage_key=rest_obj.user_storage_key,
             user_storage_resource_id=rest_obj.user_storage_resource_id,

@@ -23,9 +23,14 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from typing import Any, TYPE_CHECKING, Union, cast
+from typing import Any, TYPE_CHECKING, Union, overload
 
-from .._utils import get_http_request_kwargs
+from azure.core.tracing.decorator_async import distributed_trace_async
+from .._utils import (
+    build_get_schema_props_request,
+    build_get_schema_request,
+    build_register_schema_request,
+)
 from .._common._constants import SchemaFormat, DEFAULT_VERSION
 from .._common._schema import Schema, SchemaProperties
 from .._common._response_handlers import (
@@ -34,7 +39,6 @@ from .._common._response_handlers import (
 )
 
 from .._generated.aio._client import AzureSchemaRegistry
-from .._generated.rest import schema as schema_rest
 
 if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
@@ -66,14 +70,14 @@ class SchemaRegistryClient(object):
         self,
         fully_qualified_namespace: str,
         credential: "AsyncTokenCredential",
-        **kwargs: Any
+        **kwargs: Any,
     ) -> None:
         api_version = kwargs.pop("api_version", DEFAULT_VERSION)
         self._generated_client = AzureSchemaRegistry(
             credential=credential,
             endpoint=fully_qualified_namespace,
             api_version=api_version,
-            **kwargs
+            **kwargs,
         )
 
     async def __aenter__(self):
@@ -89,13 +93,14 @@ class SchemaRegistryClient(object):
         """
         await self._generated_client.close()
 
+    @distributed_trace_async
     async def register_schema(
         self,
         group_name: str,
         name: str,
         definition: str,
         format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
-        **kwargs: Any
+        **kwargs: Any,
     ) -> SchemaProperties:
         """
         Register new schema. If schema of specified name does not exist in specified group,
@@ -121,34 +126,37 @@ class SchemaRegistryClient(object):
                 :caption: Register a new schema.
 
         """
-        try:
-            format = cast(SchemaFormat, format)
-            format = format.value
-        except AttributeError:
-            pass
-
-        format = format.capitalize()
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_register_request(
-            group_name=group_name,
-            schema_name=name,
-            content=definition,
-            content_type=kwargs.pop(
-                "content_type", "application/json; serialization={}".format(format)
-            ),
-            **http_request_kwargs
+        request = build_register_schema_request(
+            group_name, name, definition, format, kwargs
         )
-
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema_properties(response, format)
 
+    @overload
     async def get_schema(self, schema_id: str, **kwargs: Any) -> Schema:
-        """
-        Gets a registered schema by its unique ID.
-        Azure Schema Registry guarantees that ID is unique within a namespace.
+        ...
+
+    @overload
+    async def get_schema(
+        self, *, group_name: str, name: str, version: int, **kwargs
+    ) -> Schema:
+        ...
+
+    @distributed_trace_async
+    async def get_schema(self, *args: str, **kwargs: Any) -> Schema:
+        """Gets a registered schema. There are two ways to call this method:
+
+        1) To get a registered schema by its unique ID, pass the `schema_id` parameter and any optional
+        keyword arguments. Azure Schema Registry guarantees that ID is unique within a namespace.
+
+        2) To get a specific version of a schema within the specified schema group, pass in the required
+        keyword arguments `group_name`, `name`, and `version` and any optional keyword arguments.
 
         :param str schema_id: References specific schema in registry namespace.
+        :keyword str group_name: Name of schema group that contains the registered schema.
+        :keyword str name: Name of schema which should be retrieved.
+        :keyword int version: Version of schema which should be retrieved.
         :rtype: ~azure.schemaregistry.Schema
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
 
@@ -161,50 +169,26 @@ class SchemaRegistryClient(object):
                 :dedent: 4
                 :caption: Get schema by id.
 
-        """
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_get_by_id_request(
-            id=schema_id, **http_request_kwargs
-        )
-        response = await self._generated_client.send_request(request, **kwargs)
-        response.raise_for_status()
-        return _parse_response_schema(response)
-
-    async def get_schema_by_version(self, group_name: str, name: str, version: int, **kwargs: Any) -> Schema:
-        """
-        Gets a specific version of a schema within the specified schema group.
-
-        :param str group_name: Name of schema group that contains the registered schema.
-        :param str name: Name of schema which should be retrieved.
-        :param int version: Version of schema which should be retrieved.
-        :rtype: ~azure.schemaregistry.Schema
-        :raises: :class:`~azure.core.exceptions.HttpResponseError`
-
-        .. admonition:: Example:
-
             .. literalinclude:: ../samples/async_samples/sample_code_schemaregistry_async.py
                 :start-after: [START get_schema_by_version_async]
                 :end-before: [END get_schema_by_version_async]
                 :language: python
                 :dedent: 4
                 :caption: Get schema by version.
-
         """
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_get_schema_version_request(
-            group_name=group_name, schema_name=name, schema_version=version, **http_request_kwargs
-        )
+        request = build_get_schema_request(args, kwargs)
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema(response)
 
+    @distributed_trace_async
     async def get_schema_properties(
         self,
         group_name: str,
         name: str,
         definition: str,
         format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
-        **kwargs: Any
+        **kwargs: Any,
     ) -> SchemaProperties:
         """
         Gets the schema properties corresponding to an existing schema within the specified schema group,
@@ -228,24 +212,9 @@ class SchemaRegistryClient(object):
                 :caption: Get schema by id.
 
         """
-        try:
-            format = cast(SchemaFormat, format)
-            format = format.value
-        except AttributeError:
-            pass
-
-        format = format.capitalize()
-        http_request_kwargs = get_http_request_kwargs(kwargs)
-        request = schema_rest.build_query_id_by_content_request(
-            group_name=group_name,
-            schema_name=name,
-            content=definition,
-            content_type=kwargs.pop(
-                "content_type", "application/json; serialization={}".format(format)
-            ),
-            **http_request_kwargs
+        request = build_get_schema_props_request(
+            group_name, name, definition, format, kwargs
         )
-
         response = await self._generated_client.send_request(request, **kwargs)
         response.raise_for_status()
         return _parse_response_schema_properties(response, format)

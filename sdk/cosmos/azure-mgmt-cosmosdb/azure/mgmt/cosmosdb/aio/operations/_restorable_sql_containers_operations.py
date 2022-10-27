@@ -73,11 +73,9 @@ class RestorableSqlContainersOperations:
         :type instance_id: str
         :param restorable_sql_database_rid: The resource ID of the SQL database. Default value is None.
         :type restorable_sql_database_rid: str
-        :param start_time: The snapshot create timestamp after which snapshots need to be listed.
-         Default value is None.
+        :param start_time: Restorable Sql containers event feed start time. Default value is None.
         :type start_time: str
-        :param end_time: The snapshot create timestamp before which snapshots need to be listed.
-         Default value is None.
+        :param end_time: Restorable Sql containers event feed end time. Default value is None.
         :type end_time: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either RestorableSqlContainerGetResult or the result of

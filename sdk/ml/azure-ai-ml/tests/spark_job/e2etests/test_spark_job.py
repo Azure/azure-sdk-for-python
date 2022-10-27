@@ -2,8 +2,7 @@ from typing import Callable
 
 import pytest
 
-from azure.ai.ml import Input, MLClient, Output, load_job, spark
-from azure.ai.ml.entities._job.identity import ManagedIdentity
+from azure.ai.ml import Input, MLClient, Output, load_job, spark, ManagedIdentityConfiguration
 from azure.ai.ml.entities._job.spark_job import SparkJob
 
 from devtools_testutils import AzureRecordedTestCase
@@ -85,7 +84,7 @@ class TestSparkJob(AzureRecordedTestCase):
             dynamic_allocation_enabled=True,
             dynamic_allocation_min_executors=1,
             dynamic_allocation_max_executors=3,
-            identity=ManagedIdentity(),
+            identity=ManagedIdentityConfiguration(),
             inputs=inputs,
             outputs=outputs,
             args="--input1 ${{inputs.input1}} --output1 ${{outputs.output1}} --my_sample_rate 0.01",
@@ -96,13 +95,13 @@ class TestSparkJob(AzureRecordedTestCase):
         )
 
         assert node.experiment_name == "builder-spark-experiment-name"
-        assert node.identity == ManagedIdentity()
+        assert node.identity == ManagedIdentityConfiguration()
         assert node.description == "simply spark description"
 
         result = client.create_or_update(node)
         assert result.description == "simply spark description"
         assert result.experiment_name == "builder-spark-experiment-name"
-        assert result.identity == ManagedIdentity()
+        assert result.identity == ManagedIdentityConfiguration()
 
     @pytest.mark.e2etest
     def test_spark_job_with_input_output(self, client: MLClient, randstr: Callable[[], str]) -> None:

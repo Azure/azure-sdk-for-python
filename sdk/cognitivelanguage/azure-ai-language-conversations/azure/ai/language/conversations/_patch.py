@@ -52,7 +52,7 @@ def _authentication_policy(credential):
     return authentication_policy
 
 
-class ConversationAnalysisClient(GeneratedConversationAnalysisClient): # pylint: disable=client-accepts-api-version-keyword
+class ConversationAnalysisClient(GeneratedConversationAnalysisClient):
     """The language service conversations API is a suite of natural language processing (NLP) skills
     that can be used to analyze structured conversations (textual or spoken). The synchronous API
     in this suite accepts a request and mediates among multiple language projects, such as LUIS

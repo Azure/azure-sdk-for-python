@@ -86,7 +86,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
         return self._provisioning_state
 
     @abstractmethod
-    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]] = None, **kwargs) -> None:
         pass
 
     @abstractmethod

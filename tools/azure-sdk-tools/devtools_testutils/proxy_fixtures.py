@@ -116,7 +116,7 @@ def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
 
 
 @pytest.fixture
-async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Optional[Dict[str, Any]]":
+async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[str, Any]":
     """Fixture that redirects network requests to target the azure-sdk-tools test proxy.
 
     Use with recorded tests. For more details and usage examples, refer to
@@ -131,7 +131,7 @@ async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Optiona
         If the current test session is live but recording is disabled, yields None.
     """
     if is_live_and_not_recording():
-        yield
+        yield {"variables": {}}  # yield an empty set of variables since recordings aren't used
     else:
         test_id, recording_id, variables = start_proxy_session()
 

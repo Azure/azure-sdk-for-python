@@ -1,5 +1,12 @@
 # Release History
 
+## 21.2.0 (2022-10-10)
+
+### Features Added
+
+  - Added operation group VariableValuesOperations
+  - Added operation group VariablesOperations
+
 ## 21.1.0 (2022-05-05)
 
 **Features**

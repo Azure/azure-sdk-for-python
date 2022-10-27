@@ -9,25 +9,40 @@ from pathlib import Path
 from typing import Union
 
 from azure.ai.ml.entities._util import _general_copy
-from azure.ai.ml.entities._validation import ValidationResult, _ValidationResultBuilder
+from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 ADDITIONAL_INCLUDES_SUFFIX = "additional_includes"
 
 
 class _AdditionalIncludes:
     def __init__(self, code_path: Union[None, str], yaml_path: str):
-        self._yaml_path = Path(yaml_path)
-        self._yaml_name = self._yaml_path.name
-        self._code_path = self._yaml_path.parent
-        if code_path is not None:
-            self._code_path = (self._code_path / code_path).resolve()
+        self.__yaml_path = Path(yaml_path)
+        self.__code_path = code_path
+
         self._tmp_code_path = None
-        self._additional_includes_file_path = self._yaml_path.with_suffix(f".{ADDITIONAL_INCLUDES_SUFFIX}")
         self._includes = None
         if self._additional_includes_file_path.is_file():
             with open(self._additional_includes_file_path, "r") as f:
                 lines = f.readlines()
                 self._includes = [line.strip() for line in lines if len(line.strip()) > 0]
+
+    @property
+    def _yaml_path(self) -> Path:
+        return self.__yaml_path
+
+    @property
+    def _code_path(self) -> Path:
+        if self.__code_path is not None:
+            return (self._yaml_path.parent / self.__code_path).resolve()
+        return self._yaml_path.parent
+
+    @property
+    def _yaml_name(self) -> str:
+        return self._yaml_path.name
+
+    @property
+    def _additional_includes_file_path(self) -> Path:
+        return self._yaml_path.with_suffix(f".{ADDITIONAL_INCLUDES_SUFFIX}")
 
     @property
     def code(self) -> Path:
@@ -40,7 +55,7 @@ class _AdditionalIncludes:
         else:
             shutil.copytree(src, dst)
 
-    def validate(self) -> ValidationResult:
+    def _validate(self) -> MutableValidationResult:
         # pylint: disable=too-many-return-statements
         if self._includes is None:
             return _ValidationResultBuilder.success()

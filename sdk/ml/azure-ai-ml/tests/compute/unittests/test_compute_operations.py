@@ -7,7 +7,8 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, UserAssignedIdentity
+from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, \
+    ManagedIdentityConfiguration
 from azure.ai.ml.operations import ComputeOperations
 from azure.identity import DefaultAzureCredential
 
@@ -90,7 +91,7 @@ class TestComputeOperation:
             identity=IdentityConfiguration(
                 type="UserAssigned",
                 user_assigned_identities=[
-                    UserAssignedIdentity(
+                    ManagedIdentityConfiguration(
                         resource_id="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/MC_banibatch_bani-aks_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/omsagent-bani-aks"
                     )
                 ],

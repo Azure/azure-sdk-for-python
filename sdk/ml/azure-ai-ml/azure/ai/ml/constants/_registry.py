@@ -1,11 +1,13 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
 import re
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
 
-class StorageAccountType(str, Enum):
+class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_LRS = "Standard_LRS".lower()
     STANDARD_GRS = "Standard_GRS".lower()
     STANDARD_RAGRS = "Standard_RAGRS".lower()
@@ -17,7 +19,7 @@ class StorageAccountType(str, Enum):
 
 
 # When will other values be allowed?
-class AcrAccountSku(str, Enum):
+class AcrAccountSku(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PREMIUM = "Premium".lower()
 
 

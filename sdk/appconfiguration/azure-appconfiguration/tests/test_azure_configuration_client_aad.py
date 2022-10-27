@@ -29,22 +29,19 @@ from consts import (
     PAGE_SIZE,
     KEY_UUID,
 )
+from preparers import app_config_aad_decorator
+from devtools_testutils import recorded_by_proxy
 import pytest
 import copy
 import datetime
 import json
 import re
 
-from preparers import app_config_aad_decorator
 
-
-class AppConfigurationClientAADTest(AppConfigTestCase):
-    def __init__(self, method_name):
-        super(AppConfigurationClientAADTest, self).__init__(method_name)
-        self.vcr.match_on = ["path", "method", "query"]
-
+class TestAppConfigurationClientAAD(AppConfigTestCase):
     # method: add_configuration_setting
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_add_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         kv = ConfigurationSetting(
@@ -69,6 +66,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_add_existing_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         test_config_setting = self.create_config_setting()
@@ -84,6 +82,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
 
     # method: set_configuration_setting
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_set_existing_configuration_setting_label_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
@@ -101,6 +100,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(key=to_set_kv.key, label=to_set_kv.label)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_set_existing_configuration_setting_label_wrong_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
@@ -111,6 +111,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
             client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_set_configuration_setting_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         kv = ConfigurationSetting(
@@ -125,6 +126,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
             client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_set_configuration_setting_no_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = ConfigurationSetting(
@@ -147,6 +149,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
 
     # method: get_configuration_setting
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_get_configuration_setting_no_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting_no_label()
@@ -162,6 +165,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_get_configuration_setting_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
@@ -179,6 +183,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_get_non_existing_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         compare_kv = self.create_config_setting()
@@ -189,6 +194,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
 
     # method: delete_configuration_setting
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_delete_with_key_no_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -199,6 +205,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_delete_with_key_label(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting()
@@ -209,12 +216,14 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
             client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_delete_not_existing(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         deleted_kv = client.delete_configuration_setting("not_exist_" + KEY)
         assert deleted_kv is None
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_delete_correct_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -225,6 +234,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_delete_wrong_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -237,6 +247,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
 
     # method: list_configuration_settings
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_key_label(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = list(self.client.list_configuration_settings(
@@ -247,6 +258,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_only_label(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = list(self.client.list_configuration_settings(label_filter=LABEL))
@@ -255,6 +267,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_only_key(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = list(self.client.list_configuration_settings(key_filter=KEY))
@@ -263,6 +276,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_fields(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = list(self.client.list_configuration_settings(
@@ -273,6 +287,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         resered_char_kv = ConfigurationSetting(
@@ -290,6 +305,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(resered_char_kv.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_contains(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = list(self.client.list_configuration_settings(
@@ -300,10 +316,11 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_correct_etag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
-        self.add_for_test(client, to_list_kv)
+        to_list_kv = self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
         items = list(client.list_configuration_settings(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
@@ -313,6 +330,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(to_list_kv.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_multi_pages(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         # create PAGE_SIZE+1 configuration settings to have at least two pages
@@ -344,6 +362,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
             pass
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_configuration_settings_no_label(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = self.client.list_configuration_settings(label_filter="\0")
@@ -351,17 +370,23 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
-    def test_list_configuration_settings_only_accepttime(self, appconfiguration_endpoint_string):
+    @recorded_by_proxy
+    def test_list_configuration_settings_only_accepttime(self, appconfiguration_endpoint_string, **kwargs):
+        recorded_variables = kwargs.pop("variables", {})
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         exclude_today = self.client.list_configuration_settings(
-            accept_datetime=datetime.datetime.today() + datetime.timedelta(days=-1)
+            accept_datetime=recorded_variables.setdefault(
+                "datetime", str(datetime.datetime.today() + datetime.timedelta(days=-1))
+            )
         )
         all_inclusive = self.client.list_configuration_settings()
         assert len(list(all_inclusive)) > len(list(exclude_today))
         self.tear_down()
+        return recorded_variables
 
     # method: list_revisions
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_revisions_key_label(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         to_list = self.create_config_setting()
@@ -373,6 +398,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_revisions_only_label(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = list(self.client.list_revisions(label_filter=LABEL))
@@ -381,6 +407,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_revisions_key_no_label(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = list(self.client.list_revisions(key_filter=KEY))
@@ -389,6 +416,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_revisions_fields(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         items = list(self.client.list_revisions(
@@ -398,18 +426,21 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.tear_down()
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_list_revisions_correct_etag(self, appconfiguration_endpoint_string):
-        self.set_up(appconfiguration_endpoint_string, is_aad=True)
+        client = self.create_aad_client(appconfiguration_endpoint_string)
         to_list_kv = self.create_config_setting()
+        to_list_kv = self.add_for_test(client, to_list_kv)
         custom_headers = {"If-Match": to_list_kv.etag}
-        items = list(self.client.list_revisions(
+        items = list(client.list_revisions(
             key_filter=to_list_kv.key, label_filter=to_list_kv.label, headers=custom_headers
         ))
         assert len(items) >= 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
-        self.tear_down()
+        client.delete_configuration_setting(to_list_kv.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         kv = self.create_config_setting_no_label()
@@ -421,6 +452,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(kv.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_delete_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_delete_kv = self.create_config_setting_no_label()
@@ -434,6 +466,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
             client.get_configuration_setting(to_delete_kv.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_set_read_only(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         to_set_kv = self.create_config_setting()
@@ -461,6 +494,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(to_set_kv.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_sync_tokens_with_configuration_setting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         sync_tokens = copy.deepcopy(client._sync_token_policy._sync_tokens)
@@ -498,6 +532,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(new.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_sync_tokens_with_feature_flag_configuration_setting(self, appconfiguration_endpoint_string):
         self.set_up(appconfiguration_endpoint_string, is_aad=True)
         new = FeatureFlagConfigurationSetting(
@@ -566,6 +601,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         self.client.delete_configuration_setting(new.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_config_setting_feature_flag(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         feature_flag = FeatureFlagConfigurationSetting("test_feature", enabled=True)
@@ -596,6 +632,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(changed_flag.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_config_setting_secret_reference(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         secret_reference = SecretReferenceConfigurationSetting(
@@ -622,6 +659,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(secret_reference.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_feature_filter_targeting(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
@@ -682,6 +720,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(updated_sent_config.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_feature_filter_time_window(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
@@ -708,6 +747,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(new_sent.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_feature_filter_custom(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(
@@ -734,6 +774,7 @@ class AppConfigurationClientAADTest(AppConfigTestCase):
         client.delete_configuration_setting(new_sent.key)
 
     @app_config_aad_decorator
+    @recorded_by_proxy
     def test_feature_filter_multiple(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
         new = FeatureFlagConfigurationSetting(

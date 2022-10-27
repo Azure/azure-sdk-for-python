@@ -6,12 +6,14 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List
-from ._operations import \
-    ConversationAuthoringClientOperationsMixin as ConversationAuthoringClientOperationsMixinGenerated
 
-ConversationAuthoringClientOperationsMixinGenerated.list_projects.__doc__ = \
-    """Lists the existing projects.
+# pylint: disable=too-many-lines
+from typing import List
+from ._operations import (
+    ConversationAuthoringClientOperationsMixin as ConversationAuthoringClientOperationsMixinGenerated,
+)
+
+ConversationAuthoringClientOperationsMixinGenerated.list_projects.__doc__ = """Lists the existing projects.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/list-projects
     for more information.
@@ -56,8 +58,8 @@ ConversationAuthoringClientOperationsMixinGenerated.list_projects.__doc__ = \
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.create_project.__doc__ = \
-    """Creates a new project or updates an existing one.
+ConversationAuthoringClientOperationsMixinGenerated.create_project.__doc__ = """Creates a new project or updates
+    an existing one.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
     for more information.
@@ -121,8 +123,7 @@ ConversationAuthoringClientOperationsMixinGenerated.create_project.__doc__ = \
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_project.__doc__ = \
-    """Gets the details of a project.
+ConversationAuthoringClientOperationsMixinGenerated.get_project.__doc__ = """Gets the details of a project.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project for
     more information.
@@ -163,8 +164,7 @@ ConversationAuthoringClientOperationsMixinGenerated.get_project.__doc__ = \
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.begin_delete_project.__doc__ = \
-    """Deletes a project.
+ConversationAuthoringClientOperationsMixinGenerated.begin_delete_project.__doc__ = """Deletes a project.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-project
     for more information.
@@ -241,8 +241,8 @@ ConversationAuthoringClientOperationsMixinGenerated.begin_delete_project.__doc__
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.begin_export_project.__doc__ = \
-    """Triggers a job to export a project's data.
+ConversationAuthoringClientOperationsMixinGenerated.begin_export_project.__doc__ = """Triggers a job to export
+    a project's data.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/export for more
     information.
@@ -329,9 +329,8 @@ ConversationAuthoringClientOperationsMixinGenerated.begin_export_project.__doc__
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.begin_import_project.__doc__ = \
-    """Triggers a job to import a project. If a project with the same name already exists, the data of
-    that project is replaced.
+ConversationAuthoringClientOperationsMixinGenerated.begin_import_project.__doc__ = """Triggers a job to import a
+    project. If a project with the same name already exists, the data of that project is replaced.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/import for more
     information.
@@ -441,8 +440,7 @@ ConversationAuthoringClientOperationsMixinGenerated.begin_import_project.__doc__
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.begin_train.__doc__ = \
-    """Triggers a training job for a project.
+ConversationAuthoringClientOperationsMixinGenerated.begin_train.__doc__ = """Triggers a training job for a project.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/train for more
     information.
@@ -579,8 +577,8 @@ ConversationAuthoringClientOperationsMixinGenerated.begin_train.__doc__ = \
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.list_deployments.__doc__ = \
-    """Lists the deployments belonging to a project.
+ConversationAuthoringClientOperationsMixinGenerated.list_deployments.__doc__ = """Lists the deployments belonging
+    to a project.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/list-deployments
     for more information.
@@ -615,8 +613,8 @@ ConversationAuthoringClientOperationsMixinGenerated.list_deployments.__doc__ = \
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.begin_swap_deployments.__doc__ = \
-    """Swaps two existing deployments with each other.
+ConversationAuthoringClientOperationsMixinGenerated.begin_swap_deployments.__doc__ = """Swaps two existing deployments
+    with each other.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
     for more information.
@@ -707,8 +705,7 @@ ConversationAuthoringClientOperationsMixinGenerated.begin_swap_deployments.__doc
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_deployment.__doc__ = \
-    """Gets the details of a deployment.
+ConversationAuthoringClientOperationsMixinGenerated.get_deployment.__doc__ = """Gets the details of a deployment.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment
     for more information.
@@ -739,8 +736,8 @@ ConversationAuthoringClientOperationsMixinGenerated.get_deployment.__doc__ = \
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.begin_deploy_project.__doc__ = \
-    """Creates a new deployment or replaces an existing one.
+ConversationAuthoringClientOperationsMixinGenerated.begin_deploy_project.__doc__ = """Creates a new deployment or
+    replaces an existing one.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
     for more information.
@@ -788,8 +785,7 @@ ConversationAuthoringClientOperationsMixinGenerated.begin_deploy_project.__doc__
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.begin_delete_deployment.__doc__ = \
-    """Deletes a project deployment.
+ConversationAuthoringClientOperationsMixinGenerated.begin_delete_deployment.__doc__ = """Deletes a project deployment.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment
     for more information.
@@ -868,8 +864,8 @@ ConversationAuthoringClientOperationsMixinGenerated.begin_delete_deployment.__do
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_deployment_job_status.__doc__ = \
-    """Gets the status of an existing deployment job.
+ConversationAuthoringClientOperationsMixinGenerated.get_deployment_job_status.__doc__ = """Gets the status of an
+    existing deployment job.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment-status
     for more information.
@@ -943,8 +939,8 @@ ConversationAuthoringClientOperationsMixinGenerated.get_deployment_job_status.__
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_swap_deployments_job_status.__doc__ = \
-    """Gets the status of an existing swap deployment job.
+ConversationAuthoringClientOperationsMixinGenerated.get_swap_deployments_job_status.__doc__ = """Gets the status of
+    an existing swap deployment job.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-swap-deployments-status
     for more information.
@@ -1016,8 +1012,8 @@ ConversationAuthoringClientOperationsMixinGenerated.get_swap_deployments_job_sta
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_export_project_job_status.__doc__ = \
-    """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
+ConversationAuthoringClientOperationsMixinGenerated.get_export_project_job_status.__doc__ = """Gets the status of
+    an export job. Once job completes, returns the project metadata, and assets.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-export-status
     for more information.
@@ -1091,8 +1087,8 @@ ConversationAuthoringClientOperationsMixinGenerated.get_export_project_job_statu
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_import_project_job_status.__doc__ = \
-    """Gets the status for an import.
+ConversationAuthoringClientOperationsMixinGenerated.get_import_project_job_status.__doc__ = """Gets the status for
+    an import.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-import-status
     for more information.
@@ -1164,8 +1160,8 @@ ConversationAuthoringClientOperationsMixinGenerated.get_import_project_job_statu
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.list_trained_models.__doc__ = \
-    """Lists the trained models belonging to a project.
+ConversationAuthoringClientOperationsMixinGenerated.list_trained_models.__doc__ = """Lists the trained models
+    belonging to a project.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/list-trained-models
     for more information.
@@ -1199,8 +1195,7 @@ ConversationAuthoringClientOperationsMixinGenerated.list_trained_models.__doc__ 
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_trained_model.__doc__ = \
-    """Gets the details of a trained model.
+ConversationAuthoringClientOperationsMixinGenerated.get_trained_model.__doc__ = """Gets the details of a trained model.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-trained-model
     for more information.
@@ -1230,8 +1225,7 @@ ConversationAuthoringClientOperationsMixinGenerated.get_trained_model.__doc__ = 
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.delete_trained_model.__doc__ = \
-    """Deletes an existing trained model.
+ConversationAuthoringClientOperationsMixinGenerated.delete_trained_model.__doc__ = """Deletes an existing trained model.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-trained-model
     for more information.
@@ -1245,8 +1239,8 @@ ConversationAuthoringClientOperationsMixinGenerated.delete_trained_model.__doc__
     :raises ~azure.core.exceptions.HttpResponseError:
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.list_model_evaluation_results.__doc__ = \
-    """Gets the detailed results of the evaluation for a trained model. This includes the raw
+ConversationAuthoringClientOperationsMixinGenerated.list_model_evaluation_results.__doc__ = """Gets the detailed
+    results of the evaluation for a trained model. This includes the raw
     inference results for the data included in the evaluation process.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-results
@@ -1309,8 +1303,8 @@ ConversationAuthoringClientOperationsMixinGenerated.list_model_evaluation_result
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_model_evaluation_summary.__doc__ = \
-    """Gets the evaluation summary of a trained model. The summary includes high level performance
+ConversationAuthoringClientOperationsMixinGenerated.get_model_evaluation_summary.__doc__ = """Gets the evaluation
+    summary of a trained model. The summary includes high level performance
     measurements of the model e.g., F1, Precision, Recall, etc.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-summary
@@ -1415,8 +1409,8 @@ ConversationAuthoringClientOperationsMixinGenerated.get_model_evaluation_summary
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.list_training_jobs.__doc__ = \
-    """Lists the non-expired training jobs created for a project.
+ConversationAuthoringClientOperationsMixinGenerated.list_training_jobs.__doc__ = """Lists the non-expired training
+    jobs created for a project.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-jobs
     for more information.
@@ -1525,8 +1519,8 @@ ConversationAuthoringClientOperationsMixinGenerated.list_training_jobs.__doc__ =
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_training_job_status.__doc__ = \
-    """Gets the status for a training job.
+ConversationAuthoringClientOperationsMixinGenerated.get_training_job_status.__doc__ = """Gets the status for a
+    training job.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-training-status
     for more information.
@@ -1631,8 +1625,8 @@ ConversationAuthoringClientOperationsMixinGenerated.get_training_job_status.__do
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.begin_cancel_training_job.__doc__ = \
-    """Triggers a cancellation for a running training job.
+ConversationAuthoringClientOperationsMixinGenerated.begin_cancel_training_job.__doc__ = """Triggers a cancellation
+    for a running training job.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/cancel-training-job
     for more information.
@@ -1744,8 +1738,8 @@ ConversationAuthoringClientOperationsMixinGenerated.begin_cancel_training_job.__
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.get_project_deletion_job_status.__doc__ = \
-    """Gets the status for a project deletion job.
+ConversationAuthoringClientOperationsMixinGenerated.get_project_deletion_job_status.__doc__ = """Gets the status
+    for a project deletion job.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project-deletion-status
     for more information.
@@ -1815,8 +1809,8 @@ ConversationAuthoringClientOperationsMixinGenerated.get_project_deletion_job_sta
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.list_supported_languages.__doc__ = \
-    """Lists the supported languages for the given project type. 
+ConversationAuthoringClientOperationsMixinGenerated.list_supported_languages.__doc__ = """Lists the supported
+    languages for the given project type. 
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-languages
     for more information.
@@ -1846,8 +1840,8 @@ ConversationAuthoringClientOperationsMixinGenerated.list_supported_languages.__d
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.list_supported_prebuilt_entities.__doc__ = \
-    """Lists the supported prebuilt entities that can be used while creating composed entities.
+ConversationAuthoringClientOperationsMixinGenerated.list_supported_prebuilt_entities.__doc__ = """Lists the
+    supported prebuilt entities that can be used while creating composed entities.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-prebuilt-entities
     for more information.
@@ -1880,8 +1874,8 @@ ConversationAuthoringClientOperationsMixinGenerated.list_supported_prebuilt_enti
             }
     """
 
-ConversationAuthoringClientOperationsMixinGenerated.list_training_config_versions.__doc__ = \
-    """Lists the support training config version for a given project type.
+ConversationAuthoringClientOperationsMixinGenerated.list_training_config_versions.__doc__ = """Lists the support
+    training config version for a given project type.
 
     See https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-config-versions
     for more information.
@@ -1912,11 +1906,16 @@ ConversationAuthoringClientOperationsMixinGenerated.list_training_config_version
     """
 
 
-class ConversationAuthoringClientOperationsMixin(ConversationAuthoringClientOperationsMixinGenerated):
+class ConversationAuthoringClientOperationsMixin(
+    ConversationAuthoringClientOperationsMixinGenerated
+):
     ...
 
 
-__all__: List[str] = ["ConversationAuthoringClientOperationsMixin"]  # Add all objects you want publicly available to users at this package level
+__all__: List[str] = [
+    "ConversationAuthoringClientOperationsMixin"
+]  # Add all objects you want publicly available to users at this package level
+
 
 def patch_sdk():
     """Do not remove from this file.

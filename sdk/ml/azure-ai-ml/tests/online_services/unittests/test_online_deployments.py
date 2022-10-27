@@ -173,5 +173,5 @@ class TestOnlineDeploymentOperations:
     ) -> None:
         random_name = "random_string"
         mock_aml_services_2021_10_01.online_deployments.begin_delete.return_value = mock_delete_poller
-        mock_online_deployment_operations.delete(endpoint_name="k8sendpoint", name=random_name)
+        mock_online_deployment_operations.begin_delete(endpoint_name="k8sendpoint", name=random_name)
         mock_online_deployment_operations._online_deployment.begin_delete.assert_called_once()

@@ -12,7 +12,7 @@ from typing import Dict, List, Union
 
 from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.component import Component
@@ -25,7 +25,7 @@ from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 
 from ..._schema import PathAwareSchema
 from .._job.distribution import DistributionConfiguration
-from .._job.pipeline._io import NodeOutput, PipelineInput
+from .._job.pipeline._io import NodeOutput
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
 
@@ -86,7 +86,6 @@ class Parallel(BaseNode):
         inputs: Dict[
             str,
             Union[
-                PipelineInput,
                 NodeOutput,
                 Input,
                 str,

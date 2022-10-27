@@ -67,6 +67,8 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
     :type instance_count: int
     :param is_deterministic: Whether the parallel component is deterministic.
     :type is_deterministic: bool
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if ParallelComponent cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     def __init__(

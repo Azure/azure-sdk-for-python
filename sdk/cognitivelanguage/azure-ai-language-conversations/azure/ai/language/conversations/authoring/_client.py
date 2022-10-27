@@ -30,7 +30,8 @@ class ConversationAuthoringClient(
     best-in-class Microsoft machine learning algorithms. The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
     detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview">
+    https://docs.microsoft.com/en-us/azure/cognitive-services/language-service/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.cognitiveservices.azure.com). Required.

@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -85,7 +86,12 @@ class CatalogsOperations:
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.CatalogListResult]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -157,7 +163,12 @@ class CatalogsOperations:
         :rtype: ~azure.mgmt.devcenter.models.Catalog
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -206,7 +217,12 @@ class CatalogsOperations:
         body: Union[_models.Catalog, IO],
         **kwargs: Any
     ) -> _models.Catalog:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -428,7 +444,12 @@ class CatalogsOperations:
         body: Union[_models.CatalogUpdate, IO],
         **kwargs: Any
     ) -> Optional[_models.Catalog]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -647,7 +668,12 @@ class CatalogsOperations:
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, dev_center_name: str, catalog_name: str, **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -756,7 +782,12 @@ class CatalogsOperations:
     async def _sync_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, dev_center_name: str, catalog_name: str, **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}

@@ -7,7 +7,7 @@ from marshmallow.exceptions import ValidationError
 from azure.ai.ml._schema.registry import RegistrySchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PublicNetworkAccess
 from azure.ai.ml.constants._registry import AcrAccountSku, StorageAccountType
-from azure.ai.ml.entities import RegistryRegionArmDetails, SystemCreatedAcrAccount, SystemCreatedStorageAccount
+from azure.ai.ml.entities import RegistryRegionDetails, SystemCreatedAcrAccount, SystemCreatedStorageAccount
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -34,18 +34,13 @@ class TestRegistrySchema:
             assert len(registry["replication_locations"]) == 1
 
             detail = registry["replication_locations"][0]
-            assert isinstance(detail, RegistryRegionArmDetails)
+            assert isinstance(detail, RegistryRegionDetails)
             assert detail.location == "EastUS"
             storages = detail.storage_config
-            assert len(storages) == 2
 
-            assert (
-                storages[0]
-                == "/subscriptions/sub_id/resourceGroups/some_rg/providers/Microsoft.Storage/storageAccounts/some_storage_account"
-            )
-            assert isinstance(storages[1], SystemCreatedStorageAccount)
-            assert not storages[1].storage_account_hns
-            assert storages[1].storage_account_type == StorageAccountType.STANDARD_RAGRS
+            assert isinstance(storages, SystemCreatedStorageAccount)
+            assert not storages.storage_account_hns
+            assert storages.storage_account_type == StorageAccountType.STANDARD_RAGRS
 
     def test_deserialize_from_yaml_with_system_acr(self) -> None:
         path = Path("./tests/test_configs/registry/registry_valid_2.yaml")
@@ -76,7 +71,8 @@ class TestRegistrySchema:
                 load_from_dict(RegistrySchema, target, context)
             assert e_info
             assert isinstance(e_info._excinfo[1], ValidationError)
-            assert "Value 'NOT_A_REAL_ACCOUNT_TYPE' passed is not in set" in e_info._excinfo[1].messages[0]
+            assert "NOT_A_REAL_ACCOUNT_TYPE" in e_info._excinfo[1].messages[0]
+            assert "passed is not in set" in e_info._excinfo[1].messages[0]
 
     def test_deserialize_bad_arm_resource_id(self) -> None:
         path = Path("./tests/test_configs/registry/registry_bad_arm_resource_id.yaml")

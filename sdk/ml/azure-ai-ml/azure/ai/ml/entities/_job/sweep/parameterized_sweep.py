@@ -25,7 +25,18 @@ from .sampling_algorithm import (
     SamplingAlgorithm,
     SamplingAlgorithmType,
 )
-from .search_space import SweepDistribution
+from .search_space import (
+    Choice,
+    LogNormal,
+    LogUniform,
+    Normal,
+    QLogNormal,
+    QLogUniform,
+    QNormal,
+    QUniform,
+    Randint,
+    Uniform,
+)
 
 # pylint: disable=unnecessary-lambda
 SAMPLING_ALGORITHM_TO_REST_CONSTRUCTOR: Dict[SamplingAlgorithmType, Type[RestSamplingAlgorithm]] = {
@@ -50,8 +61,11 @@ class ParameterizedSweep:
         limits: SweepJobLimits = None,
         sampling_algorithm: Union[str, SamplingAlgorithm] = None,
         objective: Optional[Union[Dict, Objective]] = None,
-        early_termination: EarlyTerminationPolicy = None,
-        search_space: Dict[str, SweepDistribution] = None,
+        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
+        search_space: Dict[
+            str,
+            Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
+        ] = None,
     ):
         self.sampling_algorithm = sampling_algorithm
         self.early_termination = early_termination

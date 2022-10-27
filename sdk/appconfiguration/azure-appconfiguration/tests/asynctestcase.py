@@ -7,6 +7,7 @@
 from azure.appconfiguration.aio import (
     AzureAppConfigurationClient,
 )
+from azure.core.pipeline.transport import AioHttpTransport
 from testcase import AppConfigTestCase
 
 
@@ -25,7 +26,7 @@ class AsyncAppConfigTestCase(AppConfigTestCase):
         exist = bool(exist_list)
         if exist:
             await client.delete_configuration_setting(key=config_setting.key, label=config_setting.label)
-        await client.add_configuration_setting(config_setting)
+        return await client.add_configuration_setting(config_setting)
         
     async def convert_to_list(self, config_settings): # type: (AsyncItemPaged) -> list
         list = []

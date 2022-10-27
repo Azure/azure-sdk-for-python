@@ -91,7 +91,10 @@ class _PipelineNodeFactory:
             error_category=ErrorCategory.USER_ERROR,
         )
         if _type == NodeType._CONTAINER:
-            msg = "Component returned by 'list' is abbreviated and can not be used directly, please use result from 'get'."
+            msg = (
+                "Component returned by 'list' is abbreviated and can not be used directly, "
+                "please use result from 'get'."
+            )
             raise exception(
                 message=msg,
                 no_personal_data_message=msg,
