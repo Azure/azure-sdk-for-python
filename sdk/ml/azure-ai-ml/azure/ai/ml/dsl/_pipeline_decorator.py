@@ -146,7 +146,6 @@ def pipeline(
             version=version,
             display_name=display_name,
             description=description,
-            compute=compute,
             default_datastore=default_datastore,
             tags=tags,
             source_path=str(func_entry_path),
