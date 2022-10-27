@@ -24,6 +24,8 @@ from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
 from .component import Component
 
+# pylint: disable=protected-access
+
 
 class CommandComponent(Component, ParameterizedCommand):
     """Command component version, used to define a command component.
