@@ -96,6 +96,7 @@ except FileExistsError:
 #)
 @pytest.mark.core_sdk_test
 class TestUpload(AzureRecordedTestCase):
+    @pytest.mark.skip()
     def test_upload_file_blob(
         self, storage_account_name: str, storage_account_secret: str, dir_asset_id: str, file_asset_id: str
     ) -> None:
@@ -120,6 +121,7 @@ class TestUpload(AzureRecordedTestCase):
             directory, show_progress=False, asset_hash=dir_asset_id, name="name", version="version"
         )
 
+    @pytest.mark.skip()
     def test_upload_file_gen2(
         self, storage_account_name: str, storage_account_secret: str, dir_asset_id: str, file_asset_id: str
     ) -> None:
@@ -165,6 +167,7 @@ class TestUpload(AzureRecordedTestCase):
         )
         assert dir_asset_id1 == dir_asset_id2
 
+    @pytest.mark.skip()
     def test_artifact_blob_file_upload(
         self,
         storage_account_name: str,
@@ -346,6 +349,7 @@ class TestUpload(AzureRecordedTestCase):
 
         assert (name, str(version)) == (artifact_info["name"], artifact_info["version"])
 
+    @pytest.mark.skip()
     def test_update_blob_metadata(
         self,
         storage_account_name: str,
@@ -402,6 +406,7 @@ class TestUpload(AzureRecordedTestCase):
         metadata = client.get_blob_properties().get("metadata")
         assert metadata.get("version") == UPDATED_VERSION
 
+    @pytest.mark.skip()
     def test_update_gen2_metadata(
         self,
         storage_account_name: str,
