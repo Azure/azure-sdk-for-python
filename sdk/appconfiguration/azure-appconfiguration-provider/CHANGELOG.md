@@ -1,6 +1,18 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+
+* Geo-Replication support with endpoints. Adds endpoints value to load operation.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b1 (2022-10-13)
 
 New Azure App Configuration Provider
 
