@@ -42,12 +42,13 @@ from io import BytesIO
 import logging
 
 
+
 import certifi
 
 from .._platform import KNOWN_TCP_OPTS, SOL_TCP
 from .._encode import encode_frame
 from .._decode import decode_frame, decode_empty_frame
-from ..constants import TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
+from ..constants import DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS, TLS_HEADER_FRAME, WEBSOCKET_PORT, AMQP_WS_SUBPROTOCOL
 from .._transport import (
     AMQP_FRAME,
     get_errno,
@@ -492,6 +493,14 @@ class WebSocketTransportAsync(
                 url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
 
             try:
+                # Enabling heartbeat that sends a ping message every n seconds and waits for pong response.
+                # if pong response is not received then close connection. This raises an error when trying
+                # to communicate with the websocket which is no longer active.
+                # We are waiting a bug fix in aiohttp for these 2 bugs where aiohttp ws might hang on network disconnect
+                # and the heartbeat mechanism helps mitigate these two.
+                # https://github.com/aio-libs/aiohttp/pull/5860
+                # https://github.com/aio-libs/aiohttp/issues/2309
+
                 self.ws = await self.session.ws_connect(
                     url=url,
                     timeout=self._connect_timeout,
@@ -500,6 +509,7 @@ class WebSocketTransportAsync(
                     proxy=http_proxy_host,
                     proxy_auth=http_proxy_auth,
                     ssl=self.sslopts,
+                    heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
                 )
             except ClientConnectorError as exc:
                 if self._custom_endpoint:
@@ -511,7 +521,6 @@ class WebSocketTransportAsync(
                 else:
                     raise
             self.connected = True
-
         except ImportError:
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
@@ -537,8 +546,8 @@ class WebSocketTransportAsync(
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
             return view
-        except asyncio.TimeoutError:
-            raise TimeoutError()
+        except asyncio.TimeoutError as te:
+            raise ConnectionError('recv timed out (%s)' % te)
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -552,4 +561,7 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.ws.send_bytes(s)
+        try:
+            await self.ws.send_bytes(s)
+        except asyncio.TimeoutError as te:
+            raise ConnectionError('send timed out (%s)' % te)

@@ -85,6 +85,8 @@ SEND_DISPOSITION_REJECT = "rejected"
 AUTH_TYPE_SASL_PLAIN = "AUTH_SASL_PLAIN"
 AUTH_TYPE_CBS = "AUTH_CBS"
 
+DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS = 10
+
 
 class ConnectionState(Enum):
     #: In this state a Connection exists, but nothing has been sent or received. This is the state an
