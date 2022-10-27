@@ -8,6 +8,7 @@ from .._util import _DSL_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestInputOutputBuilder:
     def test_nested_input_output_builder(self):
         input1 = PipelineInput(name="input1", owner="pipeline", meta=None)

@@ -120,6 +120,10 @@
         "nsp_associations": "NspAssociationsOperations",
         "nsp_association_reconcile": "NspAssociationReconcileOperations",
         "perimeter_associable_resource_types": "PerimeterAssociableResourceTypesOperations",
-        "nsp_access_rules_reconcile": "NspAccessRulesReconcileOperations"
+        "nsp_access_rules_reconcile": "NspAccessRulesReconcileOperations",
+        "nsp_links": "NspLinksOperations",
+        "nsp_link_reconcile": "NspLinkReconcileOperations",
+        "nsp_link_references": "NspLinkReferencesOperations",
+        "nsp_link_reference_reconcile": "NspLinkReferenceReconcileOperations"
     }
 }

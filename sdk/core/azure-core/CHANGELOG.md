@@ -10,6 +10,8 @@
 
 ### Other Changes
 
+- Added example of RequestsTransport with custom session.  (thanks to @inirudebwoy for the contribution)   #26768 
+
 ## 1.26.0 (2022-10-06)
 
 ### Other Changes

@@ -112,7 +112,12 @@ class _VSCodeCredentialBase(ABC):
 
 
 class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
-    """Authenticates as the Azure user signed in to Visual Studio Code.
+    """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Account' extension.
+
+    It's a `known issue <https://github.com/Azure/azure-sdk-for-python/issues/23249>`_ that this credential doesn't
+    work with `Azure Account extension <https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account>`_
+    versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider
+    authenticating with :class:`AzureCliCredential`.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com".
         This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority

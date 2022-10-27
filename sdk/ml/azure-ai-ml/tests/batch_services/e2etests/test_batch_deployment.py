@@ -40,6 +40,7 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
     reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
 )
 @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.production_experience_test
 class TestBatchDeployment(AzureRecordedTestCase):
     @pytest.mark.e2etest
     @pytest.mark.skip(reason="TODO (1546262): Test failing constantly, so disabling it")
