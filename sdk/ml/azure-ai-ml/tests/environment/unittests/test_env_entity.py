@@ -72,7 +72,6 @@ class TestEnvironmentEntity:
 
     def test_anonymous_environment_version_changes_with_inference_config(self):
         tests_root_dir = Path(__file__).parent.parent.parent
-        components_dir = tests_root_dir / "test_configs/components/helloworld_components_with_env"
         inference_conf = """{"scoring_route":
                             {"port": "5001",
                             "path": "/predict"},
@@ -86,18 +85,18 @@ class TestEnvironmentEntity:
 
         inference_conf_obj = json.loads(inference_conf)
 
-        env_no_inference_config =  Environment(
-                    conda_file="tests/test_configs/deployments/model-1/environment/conda.yml",
+        env_no_inference_config = Environment(
+                    conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
                     image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1"
                 )
 
-        env_with_inference_config =  Environment(
-                    conda_file="tests/test_configs/deployments/model-1/environment/conda.yml",
+        env_with_inference_config = Environment(
+                    conda_file=tests_root_dir / "test_configs/deployments/model-1/environment/conda.yml",
                     image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20210727.v1",
                     inference_config=inference_conf_obj
                 )
 
         assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
-        assert env_no_inference_config.version != env_no_inference_config.version 
-        assert env_no_inference_config.version == "0632c75f179d48df46fb272e1f3a5e1d"
-        assert env_with_inference_config.version == "f57f23aca743e5cfc004c1ee023213ba"
+        assert env_no_inference_config.version != env_with_inference_config.version 
+        assert env_no_inference_config.version == "71fccbc128a554b5c3e23330ded8963b"
+        assert env_with_inference_config.version == "f223fcd33d34c386cf763b856300f3ce"

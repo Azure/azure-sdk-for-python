@@ -145,7 +145,11 @@ class Environment(Asset):
                 self._upload_hash = get_object_hash(path, self._ignore_file)
                 self._generate_anonymous_name_version(source="build")
             elif self.image:
-                self._generate_anonymous_name_version(source="image", conda_file=self._translated_conda_file, inference_config=self.inference_config)
+                self._generate_anonymous_name_version(
+                    source="image",
+                    conda_file=self._translated_conda_file,
+                    inference_config=self.inference_config
+                    )
 
     @property
     def conda_file(self) -> Dict:
