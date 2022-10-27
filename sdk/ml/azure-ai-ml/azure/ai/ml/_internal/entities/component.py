@@ -4,8 +4,9 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
+from os import PathLike
 from typing import Dict, Union
-import os
+from uuid import UUID
 
 from marshmallow import INCLUDE, Schema
 
@@ -17,13 +18,16 @@ from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.entities._validation import MutableValidationResult
+from ._merkle_tree import create_merkletree
 
 from ... import Input, Output
+from ..._utils._asset_utils import IgnoreFile, get_ignore_file
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
+from .code import InternalCode
 
 
 class InternalComponent(Component):
@@ -128,39 +132,15 @@ class InternalComponent(Component):
         self.ae365exepool = ae365exepool
         self.launcher = launcher
 
-        # add some internal specific attributes to inputs/outputs after super().__init__()
-        self._post_process_internal_inputs_outputs(inputs, outputs)
-
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
         component_io = {}
         for name, port in io_dict.items():
             if is_input:
-                component_io[name] = InternalInput._cast_from_input_or_dict(port)
+                component_io[name] = InternalInput._from_base(port)
             else:
-                component_io[name] = InternalOutput._cast_from_output_or_dict(port)
+                component_io[name] = InternalOutput._from_base(port)
         return component_io
-
-    def _post_process_internal_inputs_outputs(
-        self,
-        inputs_dict: Union[Dict, Input, Output],
-        outputs_dict: Union[Dict, Input, Output],
-    ):
-        for io_name, io_object in self.inputs.items():
-            original = inputs_dict[io_name]
-            # force append attribute for internal inputs
-            if isinstance(original, dict):
-                for attr_name in ["is_resource"]:
-                    if attr_name in original:
-                        io_object.__setattr__(attr_name, original[attr_name])
-
-        for io_name, io_object in self.outputs.items():
-            original = outputs_dict[io_name]
-            # force append attribute for internal inputs
-            if isinstance(original, dict):
-                for attr_name in ["datastore_mode"]:
-                    if attr_name in original:
-                        io_object.__setattr__(attr_name, original[attr_name])
 
     @property
     def _additional_includes(self):
@@ -177,30 +157,24 @@ class InternalComponent(Component):
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return InternalBaseComponentSchema(context=context)
 
-    def _validate(self, raise_error=False) -> MutableValidationResult:
-        if self._additional_includes is not None and self._additional_includes._validate().passed:
-            # update source path in case dependency file is in additional_includes
-            with self._resolve_local_code() as tmp_base_path:
-                origin_base_path, origin_source_path = self._base_path, self._source_path
-
-                try:
-                    self._base_path, self._source_path = \
-                        tmp_base_path, tmp_base_path / os.path.basename(self._source_path)
-                    return super()._validate(raise_error=raise_error)
-                finally:
-                    self._base_path, self._source_path = origin_base_path, origin_source_path
-
-        return super()._validate(raise_error=raise_error)
-
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
+        if self._additional_includes.with_includes:
+            validation_result.merge_with(self._additional_includes._validate())
+            # resolving additional includes & update self._base_path can be dangerous,
+            # so we just skip path validation if additional_includes is used
+            # note that there will still be runtime error in submission or execution
+            skip_path_validation = True
+        else:
+            skip_path_validation = False
         if isinstance(self.environment, InternalEnvironment):
             validation_result.merge_with(
-                self.environment._validate(self._source_path),
+                self.environment._validate(
+                    self._base_path,
+                    skip_path_validation=skip_path_validation
+                ),
                 field_name="environment",
             )
-        if self._additional_includes is not None:
-            validation_result.merge_with(self._additional_includes._validate())
         return validation_result
 
     @classmethod
@@ -215,8 +189,6 @@ class InternalComponent(Component):
         )
 
     def _to_rest_object(self) -> ComponentVersionData:
-        if isinstance(self.environment, InternalEnvironment):
-            self.environment.resolve(self._source_path)
         component = convert_ordered_dict_to_dict(self._to_dict())
 
         properties = ComponentVersionDetails(
@@ -230,17 +202,50 @@ class InternalComponent(Component):
         result.name = self.name
         return result
 
+    @classmethod
+    def _get_snapshot_id(cls, code_path: Union[str, PathLike]) -> str:
+        """Get the snapshot id of a component with specific working directory in ml-components.
+        Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
+
+        :param code_path: The path of the working directory.
+        :type code_path: str
+        :return: The snapshot id of a component in ml-components with code_path as its working directory.
+        """
+        _ignore_file: IgnoreFile = get_ignore_file(code_path)
+        curr_root = create_merkletree(code_path, lambda x: _ignore_file.is_file_excluded(code_path))
+        snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
+        return snapshot_id
+
     @contextmanager
     def _resolve_local_code(self):
-        # if `self._source_path` is None, component is not loaded from local yaml and
-        # no need to resolve
-        if self._source_path is None:
-            yield self.code
-        else:
-            self._additional_includes.resolve()
-            # use absolute path in case temp folder & work dir are in different drive
-            yield self._additional_includes.code.absolute()
-            self._additional_includes.cleanup()
+        """Create a Code object pointing to local code and yield it."""
+        # Note that if self.code is already a Code object, this function won't be called
+        # in create_or_update => _try_resolve_code_for_component, which is also
+        # forbidden by schema CodeFields for now.
+
+        self._additional_includes.resolve()
+
+        # file dependency in code will be read during internal environment resolution
+        # for example, docker file of the environment may be in additional includes
+        # and it will be read then insert to the environment object during resolution
+        # so we need to resolve environment based on the temporary code path
+        if isinstance(self.environment, InternalEnvironment):
+            self.environment.resolve(self._additional_includes.code)
+        # use absolute path in case temp folder & work dir are in different drive
+        tmp_code_dir = self._additional_includes.code.absolute()
+        # Use the snapshot id in ml-components as code name to enable anonymous
+        # component reuse from ml-component runs.
+        # calculate snapshot id here instead of inside InternalCode to ensure that
+        # snapshot id is calculated based on the resolved code path
+        yield InternalCode(
+            name=self._get_snapshot_id(tmp_code_dir),
+            version="1",
+            base_path=self._base_path,
+            path=tmp_code_dir,
+            is_anonymous=True,
+        )
+
+        self._additional_includes.cleanup()
 
     def __call__(self, *args, **kwargs) -> InternalBaseNode:  # pylint: disable=useless-super-delegation
         return super(InternalComponent, self).__call__(*args, **kwargs)

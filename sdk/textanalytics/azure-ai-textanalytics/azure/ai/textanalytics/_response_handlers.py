@@ -46,6 +46,7 @@ class CSODataV4Format(ODataV4Format):
                 super().__init__(
                     odata_error["error"]["innererror"]
                 )
+            self.details = odata_error["error"].get("details", [])
         except KeyError:
             super().__init__(odata_error)
 
@@ -409,8 +410,8 @@ def _get_doc_results(task, doc_id_order, returned_tasks_object):
     # if no results present, check for action errors
     if response_task_to_deserialize.results is None:
         return get_ordered_errors(returned_tasks_object, task_name, doc_id_order)
-    # if results obj present, but no document results (likely a canceled scenario)
-    if not response_task_to_deserialize.results.documents:
+    # if results obj present, but no document results or errors (likely a canceled scenario)
+    if not response_task_to_deserialize.results.documents and not response_task_to_deserialize.results.errors:
         return pad_result(returned_tasks_object, doc_id_order)
     return deserialization_callback(
         doc_id_order, response_task_to_deserialize.results, {}, lro=True

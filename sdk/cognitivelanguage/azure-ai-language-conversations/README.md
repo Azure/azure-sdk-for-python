@@ -7,7 +7,7 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 - Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions
 - Conversational PII: Used to extract and redact personally-identifiable info (PII)
 
-[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [Analysis REST API][conversationallanguage_restdocs] | [Authoring REST API][conversationallanguage_restdocs_authoring]
+[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [REST API][conversationallanguage_restdocs]
 
 ## _Disclaimer_
 
@@ -570,8 +570,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [conversationallanguage_refdocs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
 [conversationallanguage_docs]: https://docs.microsoft.com/azure/cognitive-services/language-service/conversational-language-understanding/overview
 [conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md
-[conversationallanguage_restdocs]: https://docs.microsoft.com/rest/api/language/conversation-analysis-runtime/
-[conversationallanguage_restdocs_authoring]: https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring
+[conversationallanguage_restdocs]: https://learn.microsoft.com/rest/api/language/
 [conversationanalysisclient_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAnalysisClient
 [conversationauthoringclient_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAuthoringClient
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md

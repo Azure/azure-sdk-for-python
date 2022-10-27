@@ -58,7 +58,7 @@ class RestMockResponse(RestHttpResponseImpl):
 
 MOCK_RESPONSES = [PipelineTransportMockResponse, RestMockResponse]
 
-@pytest.mark.skipif(sys.version_info < (3, 6), reason="Multipart serialization not supported on 2.7 + dict order not deterministic on 3.5")
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_http_request_serialization(http_request):
     # Method + Url
@@ -215,7 +215,6 @@ def test_response_deserialization_utf8_bom(http_request):
     assert response.body().startswith(b'\xef\xbb\xbf')
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_multipart_send(http_request):
 
@@ -262,7 +261,6 @@ def test_multipart_send(http_request):
     )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_multipart_send_with_context(http_request):
     transport = mock.MagicMock(spec=HttpTransport)
@@ -311,7 +309,6 @@ def test_multipart_send_with_context(http_request):
     )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_multipart_send_with_one_changeset(http_request):
 
@@ -370,7 +367,6 @@ def test_multipart_send_with_one_changeset(http_request):
     )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_multipart_send_with_multiple_changesets(http_request):
 
@@ -457,7 +453,6 @@ def test_multipart_send_with_multiple_changesets(http_request):
     )
 
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_multipart_send_with_combination_changeset_first(http_request):
 
@@ -521,7 +516,7 @@ def test_multipart_send_with_combination_changeset_first(http_request):
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
     )
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_multipart_send_with_combination_changeset_last(http_request):
 
@@ -585,7 +580,7 @@ def test_multipart_send_with_combination_changeset_last(http_request):
         b'--batch_357de4f7-6d0b-4e02-8cd2-6361411a9525--\r\n'
     )
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_multipart_send_with_combination_changeset_middle(http_request):
 

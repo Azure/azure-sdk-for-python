@@ -517,7 +517,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :type scoring_script: Union[str, PathLike], optional
     :param egress_public_network_access: Whether to restrict communication between a deployment
         and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
-    :param egress_public_network_access: str
+    :type egress_public_network_access: str
     """
 
     def __init__(

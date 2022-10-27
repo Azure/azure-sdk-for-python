@@ -36,6 +36,7 @@ class SilentAuthenticationCredential(object):
         self._tenant_id = kwargs.pop("tenant_id", None) or self._auth_record.tenant_id
         validate_tenant_id(self._tenant_id)
         self._cache = kwargs.pop("_cache", None)
+        self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
         self._client_applications = {}  # type: Dict[str, PublicClientApplication]
         self._additionally_allowed_tenants = kwargs.pop("additionally_allowed_tenants", [])
         self._client = MsalClient(**kwargs)
@@ -64,10 +65,13 @@ class SilentAuthenticationCredential(object):
     def _initialize(self):
         if not self._cache and platform.system() in {"Darwin", "Linux", "Windows"}:
             try:
-                # This credential accepts the user's default cache regardless of whether it's encrypted. It doesn't
-                # create a new cache. If the default cache exists, the user must have created it earlier. If it's
-                # unencrypted, the user must have allowed that.
-                self._cache = _load_persistent_cache(TokenCachePersistenceOptions(allow_unencrypted_storage=True))
+                # If no cache options were provided, the default cache will be used. This credential accepts the
+                # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
+                # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
+                # have allowed that.
+                options = self._cache_persistence_options or \
+                    TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+                self._cache = _load_persistent_cache(options)
             except Exception:  # pylint:disable=broad-except
                 pass
 

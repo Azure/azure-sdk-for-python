@@ -36,6 +36,7 @@ def assert_dsl_curated(pipeline, job_yaml, omit_fields):
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestDSLPipelineSamples:
     def test_e2e_local_components(self) -> None:
         from test_configs.dsl_pipeline.e2e_local_components.pipeline import generate_dsl_pipeline as e2e_local_components

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pydash
 
 from azure.ai.ml import Input
@@ -177,6 +179,12 @@ PARAMETERS_TO_TEST = [
     # Pipeline  we can't test this because we can't create a v1.5 pipeline component in v2, instead we test v2 pipeline
     # component containing v1.5 nodes
 ]
+
+# this is to shorten the test name
+TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
+    lambda params: Path(params[0]).name,
+    PARAMETERS_TO_TEST,
+)))
 
 
 def set_run_settings(node, runsettings_dict):

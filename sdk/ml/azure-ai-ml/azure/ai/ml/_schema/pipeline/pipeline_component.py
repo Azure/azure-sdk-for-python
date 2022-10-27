@@ -72,6 +72,8 @@ def PipelineJobsField():
         ],
     }
 
+    # Note: the private node types only available when private preview flag opened before init of pipeline job
+    # schema class.
     if is_private_preview_enabled():
         pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [NestedField(DoWhileSchema, unknown=INCLUDE)]
         pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
