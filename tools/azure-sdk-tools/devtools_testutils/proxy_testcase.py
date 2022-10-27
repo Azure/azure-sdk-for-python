@@ -4,7 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 import logging
-import requests
 import six
 import os
 from typing import TYPE_CHECKING

@@ -6,7 +6,6 @@
 
 import os
 import logging
-import requests
 import shlex
 import sys
 import time
