@@ -808,7 +808,8 @@
         "fnmatch",
         "posixpath",
         "SEPS",
-        "wargs"
+        "wargs",
+        "pycache"
       ]
     },
     {
