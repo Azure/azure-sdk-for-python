@@ -59,12 +59,8 @@ class AzureAppConfigurationProvider:
         if connection_strings and endpoints:
             raise AttributeError("Both connection_strings and endpoints are set. Only one of these should be set.")
 
-        if connection_strings:
-            for connection_string_geo in connection_strings:
-                endpoint = provider.__parse_connection_string(connection_string_geo)
-                provider._clients.append([endpoint, provider.__build_provider(connection_string_geo, None, None,
-                    key_vault_options)])
-        elif endpoints:
+        # TODO: Currently Connection Strings are not supported for Geo Replication
+        if endpoints:
             for endpoint_geo in endpoints:
                 provider._clients.append([endpoint_geo, provider.__build_provider(None, endpoint_geo, credential,
                     key_vault_options)])
