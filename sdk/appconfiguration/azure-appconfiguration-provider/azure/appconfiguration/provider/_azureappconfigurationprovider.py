@@ -34,7 +34,7 @@ class AzureAppConfigurationProvider:
         self._clients = []
 
     @classmethod
-    def load(cls, connection_string=None, endpoint=None, endpoints=None, credential=None,
+    def load(cls, *, connection_string=None, endpoint=None, endpoints=None, credential=None,
         **kwargs):
         """
         Loads configuration settings from Azure App Configuration into a Python application.
