@@ -7,13 +7,13 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_conditional_update.py
+FILE: sample_conditional_update_async.py
 
 DESCRIPTION:
     These samples demonstrate how to update Tables storage table conditionally. The way to update Tables cosmos table is similar.
 
 USAGE:
-    python sample_conditional_update.py
+    python sample_conditional_update_async.py
 
     Set the environment variables with your own values before running the sample:
     1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table storage service account URL suffix
@@ -28,6 +28,7 @@ from uuid import uuid4
 from azure.data.tables.aio import TableClient
 from azure.data.tables._models import UpdateMode
 from azure.core import MatchConditions
+from azure.core.exceptions import ResourceExistsError, ResourceModifiedError
 
 class ConditionalUpdateSamples(object):
     def __init__(self):
@@ -41,7 +42,7 @@ class ConditionalUpdateSamples(object):
                 self.account_name, self.access_key, self.endpoint_suffix
             )
         )
-        self.table_name = "SampleConditionalUpdate" + str(uuid4()).replace("-", "")
+        self.table_name_prefix = "SampleConditionalUpdate"
         self.entity1 = {
             "PartitionKey": "color",
             "RowKey": "brand",
@@ -59,30 +60,55 @@ class ConditionalUpdateSamples(object):
             "barcode": b"135aefg8oj0ld58" # cspell:disable-line
         }
 
-    async def conditional_update(self):
-        async with TableClient.from_connection_string(self.connection_string, self.table_name) as table_client:
+    async def conditional_update_basic(self):
+        async with TableClient.from_connection_string(self.connection_string, self.table_name_prefix + uuid4().hex) as table_client:
             await table_client.create_table()
             metadata1 = await table_client.create_entity(entity=self.entity1)
-            entity1 = await table_client.get_entity(partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"])
             print("Entity:")
-            print(entity1)
+            print(self.entity1)
 
-            metadata2 = await table_client.update_entity(entity=self.entity2, mode=UpdateMode.MERGE, match_condition=MatchConditions.IfNotModified, etag=metadata1["etag"])
+            # Merge properties of an entity with one that already existed in a table
+            try:
+                await table_client.update_entity(entity=self.entity2, mode=UpdateMode.MERGE, match_condition=MatchConditions.IfNotModified, etag=metadata1["etag"])
+            except ResourceModifiedError:
+                print("This entity has been altered and may no longer be in the expected state.")
             entity2 = await table_client.get_entity(partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"])
             print("Entity after merge:")
             print(entity2)
 
-            await table_client.update_entity(entity=self.entity2, mode=UpdateMode.REPLACE, match_condition=MatchConditions.IfNotModified, etag=metadata2["etag"])
+            # Replace properties of an entity with one that already existed in a table
+            try:
+                table_client.update_entity(entity=self.entity2, mode=UpdateMode.REPLACE, match_condition=MatchConditions.IfNotModified, etag=entity2.metadata["etag"])
+            except ResourceModifiedError:
+                print("This entity has been altered and may no longer be in the expected state.")
             entity3 = await table_client.get_entity(partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"])
             print("Entity after replace:")
             print(entity3)
 
             await table_client.delete_table()
 
+    async def conditional_update_with_a_target_filed(self):
+        async with TableClient.from_connection_string(self.connection_string, self.table_name_prefix + uuid4().hex) as table_client:
+            await table_client.create_table()
+            await table_client.create_entity(entity=self.entity1)
+            target_field = "barcode"
+
+            # In this scenario, will try to create an entity at first. If the entity with the same PartitionKey and RowKey already exists,
+            # will update the existing entity when target field is missing.
+            try:
+                await table_client.create_entity(entity=self.entity2)
+            except ResourceExistsError:
+                entity = await table_client.get_entity(partition_key=self.entity2["PartitionKey"], row_key=self.entity2["RowKey"])
+                if target_field not in entity:
+                    await table_client.update_entity(entity=self.entity2, mode=UpdateMode.MERGE, match_condition=MatchConditions.IfNotModified, etag=entity.metadata["etag"])
+
+            await table_client.delete_table()
+
 
 async def main():
     sample = ConditionalUpdateSamples()
-    await sample.conditional_update()
+    await sample.conditional_update_basic()
+    await sample.conditional_update_with_a_target_filed()
 
 
 if __name__ == "__main__":
