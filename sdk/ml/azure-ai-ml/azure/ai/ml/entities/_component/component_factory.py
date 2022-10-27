@@ -195,7 +195,7 @@ class _ComponentFactory:
                 jobs = PipelineComponent._resolve_sub_nodes(jobs)
             except Exception:  # pylint: disable=broad-except
                 # Skip parse jobs if error exists.
-                # TODOS: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
+                # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
                 pass
 
         new_instance = create_instance_func()
