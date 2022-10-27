@@ -191,7 +191,12 @@ class _ComponentFactory:
         # Note: we need to refine the logic here if more specific type logic here.
         jobs = rest_component_version.component_spec.pop("jobs", None)
         if _type == NodeType.PIPELINE and jobs:
-            jobs = PipelineComponent._resolve_sub_nodes(jobs)
+            try:
+                jobs = PipelineComponent._resolve_sub_nodes(jobs)
+            except Exception:  # pylint: disable=broad-except
+                # Skip parse jobs if error exists.
+                # TODOS: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
+                pass
 
         new_instance = create_instance_func()
         init_kwargs = dict(
