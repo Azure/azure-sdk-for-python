@@ -28,7 +28,7 @@
     },
     {
       "Config": {
-        "Ubuntu2004_310": {
+        "Ubuntu2004_311": {
           "OSVmImage": "MMSUbuntu20.04",
           "Pool": "azsdk-pool-mms-ubuntu-2004-general",
           "PythonVersion": "3.11.0",
