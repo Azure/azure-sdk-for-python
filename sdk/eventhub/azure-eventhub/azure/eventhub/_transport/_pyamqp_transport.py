@@ -462,6 +462,24 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
+    def open_mgmt_client(mgmt_client, conn):
+        """
+        Opens the mgmt AMQP client.
+        :param AMQPClient mgmt_client: pyamqp AMQPClient.
+        :param conn: Connection.
+        """
+        try:
+            mgmt_client.open(connection=conn)
+        except FileNotFoundError as exc:
+            # TODO: added for uamqp error parity with invalid connection_verify path
+            # consumer raises FileNotFoundError, producer raises EventHubError
+            # consumer opens connection through mgmt client first, producer through SendClient
+            # need to remove in the future
+            if exc.filename:
+                exc.filename2 = "consumer"
+            raise exc
+
+    @staticmethod
     def get_updated_token(mgmt_auth):
         """
         Return updated auth token.
@@ -542,7 +560,11 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         elif isinstance(exception, TimeoutError):
             error = ConnectionLostError(str(exception), exception)
         else:
-            error = EventHubError(str(exception), exception)
+            if isinstance(exception, FileNotFoundError) and exception.filename2 == "consumer":
+                del exception.filename2
+                error = exception
+            else:
+                error = EventHubError(str(exception), exception)
         return error
 
     @staticmethod

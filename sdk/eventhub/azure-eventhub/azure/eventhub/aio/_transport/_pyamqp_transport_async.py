@@ -277,6 +277,25 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
+    async def open_mgmt_client_async(mgmt_client, conn):
+        """
+        Opens the mgmt AMQP client.
+        :param AMQPClient mgmt_client: pyamqp AMQPClient.
+        :param conn: Connection.
+        """
+        try:
+            await mgmt_client.open_async(connection=conn)
+        except FileNotFoundError as exc:
+            # TODO: added for uamqp error parity with invalid connection_verify path
+            # consumer raises FileNotFoundError, producer raises EventHubError
+            # consumer opens connection through mgmt client first, producer through SendClient
+            # need to remove in the future
+            if exc.filename:
+                exc.filename2 = "consumer"
+            raise exc
+            
+
+    @staticmethod
     async def get_updated_token_async(mgmt_auth):
         """
         Return updated auth token.

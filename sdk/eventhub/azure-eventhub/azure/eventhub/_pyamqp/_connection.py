@@ -188,13 +188,13 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             else:
                 self._set_state(ConnectionState.HDR_SENT)
         except (OSError, IOError, SSLError, socket.error) as exc:
+            if isinstance(exc, FileNotFoundError) and exc.filename and "ca_certs" in exc.filename:
+                raise
             raise AMQPConnectionError(
                 ErrorCondition.SocketError,
                 description="Failed to initiate the connection due to exception: " + str(exc),
                 error=exc,
             )
-        except Exception:  # pylint:disable=try-except-raise
-            raise
 
     def _disconnect(self):
         # type: () -> None

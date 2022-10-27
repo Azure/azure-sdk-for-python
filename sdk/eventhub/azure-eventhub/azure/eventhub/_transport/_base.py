@@ -251,6 +251,15 @@ class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
+    def open_mgmt_client(mgmt_client, conn):
+        """
+        Opens the mgmt AMQP client.
+        :param AMQPClient mgmt_client: uamqp or pyamqp AMQPClient.
+        :param conn: Connection.
+        """
+
+    @staticmethod
+    @abstractmethod
     def get_updated_token(mgmt_auth):
         """
         Return updated auth token.

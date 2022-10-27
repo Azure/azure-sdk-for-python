@@ -312,6 +312,15 @@ if uamqp_installed:
             return mgmt_auth.token
 
         @staticmethod
+        async def open_mgmt_client_async(mgmt_client, conn):
+            """
+            Opens the mgmt AMQP client.
+            :param AMQPClient mgmt_client: uamqp AMQPClient.
+            :param conn: Connection.
+            """
+            await mgmt_client.open_async(connection=conn)
+
+        @staticmethod
         async def mgmt_client_request_async(mgmt_client, mgmt_msg, **kwargs):
             """
             Send mgmt request.

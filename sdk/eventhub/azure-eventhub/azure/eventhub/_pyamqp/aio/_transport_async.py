@@ -177,6 +177,11 @@ class AsyncTransportMixin:
                 if (certfile is not None) and (keyfile is not None):
                     context.load_cert_chain(certfile, keyfile)
                 return context
+            ca_certs = sslopts.get("ca_certs")
+            if ca_certs:
+                context = ssl.SSLContext(ssl_version)
+                context.load_verify_locations(ca_certs)
+                return context
             return True
         except TypeError:
             raise TypeError(
@@ -219,9 +224,8 @@ class AsyncTransport(
 
         self.connect_timeout = connect_timeout
         self.socket_settings = socket_settings
-        self.loop = asyncio.get_running_loop()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl_opts)
+        self.sslopts = ssl_opts
 
     async def connect(self):
         try:
@@ -262,7 +266,7 @@ class AsyncTransport(
         for n, family in enumerate(addr_types):
             # first, resolve the address for a single address family
             try:
-                entries = await self.loop.getaddrinfo(
+                entries = await asyncio.get_event_loop().getaddrinfo(
                     host, port, family=family, type=socket.SOCK_STREAM, proto=SOL_TCP
                 )
                 entries_num = len(entries)
@@ -284,7 +288,7 @@ class AsyncTransport(
                     except NotImplementedError:
                         pass
                     self.sock.settimeout(timeout)
-                    await self.loop.sock_connect(self.sock, sa)
+                    await asyncio.get_event_loop().sock_connect(self.sock, sa)
                 except socket.error as ex:
                     e = ex
                     if self.sock is not None:
@@ -301,6 +305,11 @@ class AsyncTransport(
         self.sock.settimeout(None)  # set socket back to blocking mode
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
+        try:
+            self.sslopts = self._build_ssl_opts(self.sslopts)
+        except FileNotFoundError as exc:
+            exc.filename = self.sslopts
+            raise exc
         self.sock.settimeout(1)  # set socket back to non-blocking mode
 
     def _get_tcp_socket_defaults(self, sock):  # pylint: disable=no-self-use
@@ -442,7 +451,7 @@ class WebSocketTransportAsync(
     ):
         self._read_buffer = BytesIO()
         self.socket_lock = asyncio.Lock()
-        self.sslopts = self._build_ssl_opts(ssl_opts) if isinstance(ssl_opts, dict) else None
+        self.sslopts = ssl_opts if isinstance(ssl_opts, dict) else None
         self._connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self._custom_endpoint = kwargs.get("custom_endpoint")
         self.host, self.port = to_host_port(host, port)
@@ -452,6 +461,7 @@ class WebSocketTransportAsync(
         self.connected = False
 
     async def connect(self):
+        self.sslopts = self._build_ssl_opts(self.sslopts)
         username, password = None, None
         http_proxy_host, http_proxy_port = None, None
         http_proxy_auth = None

@@ -202,15 +202,13 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
     
     credential = EventHubSharedKeyCredential(live_eventhub['key_name'], live_eventhub['access_key'])
     auth_uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-    token = await credential.get_token(auth_uri)
+    token = (await credential.get_token(auth_uri)).token
     producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
                                              eventhub_name=live_eventhub['event_hub'],
-                                             credential=EventHubSASTokenCredential(token.token, time.time() + 5),
+                                             credential=EventHubSASTokenCredential(token, time.time() + 5),
                                              uamqp_transport=uamqp_transport)
-    time.sleep(6)
+    await asyncio.sleep(6)
     # expired credential
-    # uamqp: EventHubError('expected bytes, AccessToken found\nexpected bytes, AccessToken found')
-    # pyamqp: AuthenticationError
     async with producer_client:
         with pytest.raises(AuthenticationError):
             await producer_client.create_batch(partition_id='0')
@@ -229,8 +227,6 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
     await task
 
     # expired credential
-    # uamqp: EventHubError('expected bytes, AccessToken found\nexpected bytes, AccessToken found')
-    # pyamqp: AuthenticationError
     assert isinstance(on_error.err, AuthenticationError)
 
     credential = EventHubSharedKeyCredential('fakekey', live_eventhub['access_key'])
@@ -249,8 +245,7 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
                                              connection_verify="cacert.pem",
                                              uamqp_transport=uamqp_transport)
     
-    # uamqp: EventHubError
-    # pyamqp: Not raising error
+    # TODO: this seems like a bug from uamqp, should be ConnectError?
     async with producer_client:
         with pytest.raises(EventHubError):
             await producer_client.create_batch(partition_id='0')
@@ -268,8 +263,7 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
         await asyncio.sleep(5)
     await task
 
-    # uamqp: FileNotFoundError
-    # pyamqp: Not raising error
+    # TODO: this seems like a bug from uamqp, should be ConnectError?
     assert isinstance(on_error.err, FileNotFoundError)
 
     producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],

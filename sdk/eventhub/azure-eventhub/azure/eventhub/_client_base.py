@@ -411,7 +411,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 conn = self._conn_manager.get_connection(  # pylint:disable=assignment-from-none
                     host=self._address.hostname, auth=mgmt_auth
                 )
-                mgmt_client.open(connection=conn)
+                self._amqp_transport.open_mgmt_client(mgmt_client, conn)
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
                 mgmt_msg.application_properties[

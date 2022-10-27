@@ -329,7 +329,7 @@ class ClientBaseAsync(ClientBase):
                 conn = await self._conn_manager_async.get_connection(
                     host=self._address.hostname, auth=mgmt_auth
                 )
-                await mgmt_client.open_async(connection=conn)
+                await self._amqp_transport.open_mgmt_client_async(mgmt_client, conn)
                 while not await mgmt_client.client_ready_async():
                     await asyncio.sleep(0.05)
                 mgmt_msg.application_properties[

@@ -255,8 +255,7 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
                                              connection_verify="cacert.pem",
                                              uamqp_transport=uamqp_transport)
     
-    # uamqp: EventHubError
-    # pyamqp: ConnectError
+    # TODO: this seems like a bug from uamqp, should be ConnectError?
     with producer_client:
         with pytest.raises(EventHubError):
             producer_client.create_batch(partition_id='0')
@@ -276,8 +275,7 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
         time.sleep(5)
     thread.join()
 
-    # uamqp: FileNotFoundError  TODO: this seems like a bug from uamqp, should be ConnectError?
-    # pyamqp: ConnectError
+    # TODO: this seems like a bug from uamqp, should be ConnectError?
     assert isinstance(on_error.err, FileNotFoundError)
 
     producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],

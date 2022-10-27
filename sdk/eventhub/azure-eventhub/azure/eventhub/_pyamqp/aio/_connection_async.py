@@ -200,6 +200,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             else:
                 await self._set_state(ConnectionState.HDR_SENT)
         except (OSError, IOError, SSLError, socket.error, asyncio.TimeoutError) as exc:
+            if isinstance(exc, FileNotFoundError) and exc.filename and "ca_certs" in exc.filename:
+                raise
             raise AMQPConnectionError(
                 ErrorCondition.SocketError,
                 description="Failed to initiate the connection due to exception: "

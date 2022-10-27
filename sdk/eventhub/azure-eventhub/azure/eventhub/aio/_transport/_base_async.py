@@ -235,6 +235,15 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
+    async def open_mgmt_client_async(mgmt_client, conn):
+        """
+        Opens the mgmt AMQP client.
+        :param AMQPClient mgmt_client: uamqp or pyamqp AMQPClient.
+        :param conn: Connection.
+        """
+
+    @staticmethod
+    @abstractmethod
     async def get_updated_token_async(mgmt_auth):
         """
         Return updated auth token.

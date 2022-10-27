@@ -5,7 +5,6 @@
 # license information.
 #--------------------------------------------------------------------------
 
-from asyncio import transports
 import pytest
 import threading
 import time

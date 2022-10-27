@@ -36,7 +36,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import errno
-from multiprocessing import AuthenticationError
 import re
 import socket
 import ssl
@@ -497,11 +496,7 @@ class SSLTransport(_AbstractTransport):
 
     def _setup_transport(self):
         """Wrap the socket in an SSL object."""
-        try:
-            self.sock = self._wrap_socket(self.sock, **self.sslopts)
-        except FileNotFoundError as exc:
-            # TODO: invalid connection_verify, should we raise some other error?
-            raise 
+        self.sock = self._wrap_socket(self.sock, **self.sslopts)
         self.sock.do_handshake()
         self._quick_recv = self.sock.recv
 
@@ -557,7 +552,11 @@ class SSLTransport(_AbstractTransport):
         }
 
         # TODO: We need to refactor this.
-        sock = ssl.wrap_socket(**opts)  # pylint: disable=deprecated-method
+        try:
+            sock = ssl.wrap_socket(**opts)  # pylint: disable=deprecated-method
+        except FileNotFoundError as exc:
+            exc.filename = {"ca_certs": ca_certs}
+            raise exc
         # Set SNI headers if supported
         if (
             (server_hostname is not None)

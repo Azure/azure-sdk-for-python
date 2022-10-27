@@ -507,6 +507,15 @@ if uamqp_installed:
             )
 
         @staticmethod
+        def open_mgmt_client(mgmt_client, conn):
+            """
+            Opens the mgmt AMQP client.
+            :param AMQPClient mgmt_client: uamqp AMQPClient.
+            :param conn: Connection.
+            """
+            mgmt_client.open(connection=conn)
+
+        @staticmethod
         def get_updated_token(mgmt_auth):
             """
             Return updated auth token.
