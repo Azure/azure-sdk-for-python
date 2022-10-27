@@ -99,10 +99,7 @@ class AzureAppConfigurationProvider:
             except HttpResponseError as e:
                 print("Failed to load configuration settings from " + client[0] + " from Http Response Error {}."
                     .format(e))
-
-                if e.status_code == 404 and not str(e).find("Unable to find a record") == -1:
-                    print("Failed PyTest")
-                elif not ((e.status_code == 408 or e.status_code == 429 or e.status_code == 500) and
+                if not ((e.status_code == 408 or e.status_code == 429 or e.status_code == 500) and
                     len(provider._clients) > 1) or len(provider._clients) == client_count:
                     raise e
                 

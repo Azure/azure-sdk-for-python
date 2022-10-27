@@ -12,7 +12,22 @@ from devtools_testutils import (
     recorded_by_proxy
 )
 from azure.appconfiguration import AzureAppConfigurationClient
+from azure.core.exceptions import HttpResponseError
 from preparers import app_config_decorator_aad
+
+invalid_endpoint = "https://invl.azconfig.io"
+
+real_method = AzureAppConfigurationClient.list_configuration_settings
+
+def new_method(self, key_filter=None, label_filter=None, **kwargs):
+    if self._config.endpoint == invalid_endpoint:
+        error = HttpResponseError("Invalid endpoint")
+        error.status_code = 500
+        raise error
+    else:
+        return real_method(self, key_filter, label_filter, **kwargs)
+
+AzureAppConfigurationClient.list_configuration_settings = new_method
 
 class TestAppConfigurationProvider(AzureRecordedTestCase):
 
@@ -33,6 +48,6 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     @app_config_decorator_aad
     def test_provider_creation_geo_invalid_endpoint(self, appconfiguration_endpoint_string):
         # invl is an invalid store name, store names are a minimum of 5 characters
-        client = self.build_provider_aad(["https://invl.azconfig.io", appconfiguration_endpoint_string])
+        client = self.build_provider_aad([invalid_endpoint, appconfiguration_endpoint_string])
         assert client["message"] == "hi"
         assert client["my_json"]["key"] == "value"
