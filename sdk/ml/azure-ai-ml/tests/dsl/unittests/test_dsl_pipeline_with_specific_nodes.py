@@ -1133,6 +1133,7 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": None,
                         "retry_settings": None,
                         "logging_level": None,
                         "max_concurrency_per_instance": 1,
@@ -1240,6 +1241,7 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": None,
                         "task": {
                             "type": "run_function",
                             "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
@@ -1274,6 +1276,7 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": None,
                         "task": {
                             "type": "run_function",
                             "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
@@ -1467,6 +1470,7 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                     "outputs": {},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "code": "./src",
@@ -1518,6 +1522,7 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                     "outputs": {"job_output_path": {"value": "${{parent.outputs.job_out_data}}", "type": "literal"}},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "code": "./src",

@@ -4,13 +4,12 @@
 from typing import Callable
 
 import pytest
+from time import sleep
 from azure.ai.ml import MLClient, load_registry
 from azure.ai.ml.constants._common import LROConfigurations
 from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import AzureRecordedTestCase, is_live
-from azure.ai.ml._restclient.v2022_10_01_preview.operations._registries_operations import RegistriesOperations 
-import time
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
@@ -56,15 +55,7 @@ class TestRegistry(AzureRecordedTestCase):
         assert rest_registry.properties.managed_resource_group_tags["one"] == "two"
         assert rest_registry.properties.managed_resource_group_tags["three"] == "five"
 
-        registry = crud_registry_client.registries.delete(name=reg_name)
-        assert registry is None
-        # give the delete operation time to fully take place in the backend
-        # before testing that the registry is gone with another get command
-        if is_live():
-            time.sleep(120)
-        try:
-            crud_registry_client.registries.get(name=reg_name)
-            # The above line should fail with a ResourceNotFoundError
-            assert False
-        except ResourceNotFoundError:
-            assert True
+        del_result = crud_registry_client.registries.begin_delete(name=reg_name).result(
+            timeout=LROConfigurations.POLLING_TIMEOUT
+        )
+        assert del_result is None
