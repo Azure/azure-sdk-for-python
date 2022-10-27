@@ -15,12 +15,12 @@ from azure.identity import DefaultAzureCredential
 
 @pytest.fixture
 def mock_compute_operation(
-    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2021_10_01: Mock
+    mock_workspace_scope: OperationScope, mock_operation_config: OperationConfig, mock_aml_services_2022_10_01_preview: Mock
 ) -> ComputeOperations:
     yield ComputeOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2021_10_01,
+        service_client=mock_aml_services_2022_10_01_preview,
     )
 
 
@@ -40,7 +40,7 @@ class TestComputeOperation:
         self, mock_compute_operation: ComputeOperations, mocker: MockFixture
     ) -> None:
         mocker.patch(
-            "azure.ai.ml._restclient.v2021_10_01.workspaces.get",
+            "azure.ai.ml._restclient.v2022_10_01_preview.workspaces.get",
             return_value=funny(),
         )
         mocker.patch(
@@ -55,7 +55,7 @@ class TestComputeOperation:
     def test_create_aml_compute(
         self, mock_compute_operation: ComputeOperations, mocker: MockFixture
     ) -> None:
-        mocker.patch("azure.ai.ml._restclient.v2021_10_01.workspaces.get", return_value=funny())
+        mocker.patch("azure.ai.ml._restclient.v2022_10_01_preview.workspaces.get", return_value=funny())
         compute = load_compute("./tests/test_configs/compute/compute-aml.yaml")
         mock_compute_operation.begin_create_or_update(compute=compute)
         mock_compute_operation._operation.begin_create_or_update.assert_called_once()
