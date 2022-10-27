@@ -178,9 +178,10 @@ class AzureAppConfigurationProvider:
         """
         if connection_string is None:
             raise ValueError("Connection string is None")
-        if "endpoint=" not in connection_string:
+        if "endpoint=" not in connection_string.lower():
+            print("Endpiont: " + endpoint)
             raise ValueError("Connection string is invalid")
-        endpoint = connection_string.split("endpoint=")[1].split(";")[0]
+        endpoint = connection_string.lower().split("endpoint=")[1].split(";")[0]
         return endpoint
 
     @staticmethod
