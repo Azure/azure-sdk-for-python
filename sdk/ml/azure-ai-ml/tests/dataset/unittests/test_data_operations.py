@@ -69,6 +69,7 @@ def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
 @patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
 @patch.object(Data, "_from_rest_object", new=Mock())
 @patch.object(Data, "_from_container_rest_object", new=Mock())
+@pytest.mark.data_experiences_test
 class TestDataOperations:
     def test_list(self, mock_data_operations: DataOperations) -> None:
         mock_data_operations._operation.list.return_value = [Mock(Data) for _ in range(10)]
@@ -91,8 +92,9 @@ class TestDataOperations:
 
     def test_get_no_version(self, mock_data_operations: DataOperations) -> None:
         name = "random_name"
-        with pytest.raises(Exception):
+        with pytest.raises(Exception) as ex:
             mock_data_operations.get(name=name)
+        assert "At least one required parameter is missing" in str(ex.value)
 
     def test_create_with_spec_file(
         self,

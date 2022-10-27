@@ -29,6 +29,7 @@ RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspace
 NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
 LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
+LABELLED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
 DATASTORE_RESOURCE_ID = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/datastores/{}"
 )
@@ -37,6 +38,7 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
 )
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
+LABELLED_RESOURCE_NAME = "{}@{}"
 PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
@@ -132,6 +134,8 @@ STORAGE_ACCOUNT_URLS = {
     "AzureFile": "https://{}.file.{}",
 }
 
+DEFAULT_LABEL_NAME = "default"
+DEFAULT_COMPONENT_VERSION = "azureml_default"
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
 SCHEMA_VALIDATION_ERROR_TEMPLATE = (
@@ -569,3 +573,9 @@ class RollingRate:
 class Scope:
     SUBSCRIPTION="subscription"
     RESOURCE_GROUP="resource_group"
+
+
+class IdentityType:
+    AML_TOKEN = "aml_token"
+    USER_IDENTITY = "user_identity"
+    MANAGED_IDENTITY = "managed_identity"
