@@ -28,8 +28,7 @@ class InputSchema(metaclass=PatchedSchemaMeta):
 
         if isinstance(data, Input):
             return data
-        else:
-            raise ValidationError("InputSchema needs type Input to dump")
+        raise ValidationError("InputSchema needs type Input to dump")
 
 
 def generate_path_property(azureml_type):
@@ -111,8 +110,7 @@ class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
     def check_dict(self, data, **kwargs):
         if hasattr(data, "value"):
             return data
-        else:
-            raise ValidationError("InputLiteralValue must have a field value")
+        raise ValidationError("InputLiteralValue must have a field value")
 
 
 class OutputSchema(PathAwareSchema):
@@ -149,6 +147,5 @@ class OutputSchema(PathAwareSchema):
 
         if isinstance(data, Output):
             return data
-        else:
-            # Assists with union schema
-            raise ValidationError("OutputSchema needs type Output to dump")
+        # Assists with union schema
+        raise ValidationError("OutputSchema needs type Output to dump")

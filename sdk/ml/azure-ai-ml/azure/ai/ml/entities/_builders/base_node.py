@@ -12,7 +12,7 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.entities import Data
+from azure.ai.ml.entities import Data, Model
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
@@ -23,7 +23,7 @@ from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpr
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -57,6 +57,7 @@ def pipeline_node_decorator(func):
     return wrapper
 
 
+# pylint: disable=too-many-instance-attributes
 class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin):
     """Base class for node in pipeline, used for component version consumption.
     Can't be instantiated directly.
@@ -80,6 +81,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     :type tags: dict[str, str]
     :param properties: The job property dictionary.
     :type properties: dict[str, str]
+    :param comment: Comment of the pipeline node, which will be shown in designer canvas.
+    :type comment: str
     :param display_name: Display name of the job.
     :type display_name: str
     :param compute: Compute definition containing the compute information for the step
@@ -114,6 +117,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         description: str = None,
         tags: Dict = None,
         properties: Dict = None,
+        comment: str = None,
         compute: str = None,
         experiment_name: str = None,
         **kwargs,
@@ -133,6 +137,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             experiment_name=experiment_name,
             **kwargs,
         )
+        self.comment = comment
 
         # initialize io
         inputs = resolve_pipeline_parameters(inputs)
@@ -184,6 +189,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             NodeOutput,
             Input,
             Data,
+            Model,
             str,
             bool,
             int,
@@ -226,7 +232,10 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 value = value._deepcopy()  # Decoupled input and output
                 io_dict[key] = value
                 value.mode = None
-            elif isinstance(value, dict):
+            elif type(value) == dict: # pylint: disable=unidiomatic-typecheck
+                # Use type comparison instead of is_instance to skip _GroupAttrDict
+                # when loading from yaml io will be a dict,
+                # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
                 # parse dict to allowed type
                 io_dict[key] = parse_cls(**value)
 
@@ -308,7 +317,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 )
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic.
 
         Override this method to add customized validation logic.
@@ -402,6 +411,9 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 **self._get_attrs(),
             )
         )
+        # only add comment in REST object when it is set
+        if self.comment is not None:
+            rest_obj.update(dict(comment=self.comment))
 
         return convert_ordered_dict_to_dict(rest_obj)
 

@@ -11,11 +11,11 @@ from azure.ai.ml._schema.core.fields import ArmStr, NestedField, StringTransform
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job import CreationContextSchema
 from azure.ai.ml._schema.workspace.connections.credentials import (
-    ManagedIdentityCredentialsSchema,
-    PatTokenCredentialsSchema,
-    SasTokenCredentialsSchema,
-    ServicePrincipalCredentialsSchema,
-    UsernamePasswordCredentialsSchema,
+    ManagedIdentityConfigurationSchema,
+    PatTokenConfigurationSchema,
+    SasTokenConfigurationSchema,
+    ServicePrincipalConfigurationSchema,
+    UsernamePasswordConfigurationSchema,
 )
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.constants._common import AzureMLResourceType
@@ -38,11 +38,11 @@ class WorkspaceConnectionSchema(PathAwareSchema):
     target = fields.Str()
     credentials = UnionField(
         [
-            NestedField(PatTokenCredentialsSchema),
-            NestedField(SasTokenCredentialsSchema),
-            NestedField(UsernamePasswordCredentialsSchema),
-            NestedField(ManagedIdentityCredentialsSchema),
-            NestedField(ServicePrincipalCredentialsSchema),
+            NestedField(PatTokenConfigurationSchema),
+            NestedField(SasTokenConfigurationSchema),
+            NestedField(UsernamePasswordConfigurationSchema),
+            NestedField(ManagedIdentityConfigurationSchema),
+            NestedField(ServicePrincipalConfigurationSchema),
         ]
     )
     metadata = fields.Dict(required=False, allow_none=True)

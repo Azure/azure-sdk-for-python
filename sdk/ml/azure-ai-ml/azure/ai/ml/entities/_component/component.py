@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import os
 import tempfile
 import typing
 from contextlib import contextmanager
@@ -26,12 +27,13 @@ from azure.ai.ml.constants._common import (
     REGISTRY_URI_FORMAT,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._util import find_type_in_override, _copy_folder_ignore_pycache
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 # pylint: disable=protected-access, redefined-builtin
@@ -81,6 +83,8 @@ class Component(
     :type _schema: str
     :param creation_context: Creation metadata of the component.
     :type creation_context: ~azure.ai.ml.entities.SystemData
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -249,7 +253,7 @@ class Component(
         )
 
     @classmethod
-    def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> ValidationResult:
+    def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> MutableValidationResult:
         """Validate input/output names, raise exception if invalid."""
         validation_result = cls._create_empty_validation_result()
         lower2original_kwargs = {}
@@ -376,7 +380,7 @@ class Component(
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(Component, self)._customized_validate()
         # If private features are enable and component has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationError
@@ -446,21 +450,34 @@ class Component(
 
     @contextmanager
     def _resolve_local_code(self):
-        """Resolve working directory path for the component."""
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            if hasattr(self, "code"):
-                code = getattr(self, "code")
-                # Hack: when code not specified, we generated a file which contains
-                # COMPONENT_PLACEHOLDER as code
-                # This hack was introduced because job does not allow running component without a
-                # code, and we need to make sure when component updated some field(eg: description),
-                # the code remains the same. Benefit of using a constant code for all components
-                # without code is this will generate same code for anonymous components which
-                # enables component reuse
+        """Create a Code object pointing to local code and yield it."""
+        if not hasattr(self, "code"):
+            raise ValueError(f"{self.__class__} does not have attribute code.")
+        code = getattr(self, "code")
+        if code is not None and os.path.isfile(code):
+            yield Code(base_path=self._base_path, path=code)
+        else:
+            with tempfile.TemporaryDirectory() as tmp_dir:
                 if code is None:
+                    # Hack: when code not specified, we generated a file which contains
+                    # COMPONENT_PLACEHOLDER as code
+                    # This hack was introduced because job does not allow running component without a
+                    # code, and we need to make sure when component updated some field(eg: description),
+                    # the code remains the same. Benefit of using a constant code for all components
+                    # without code is this will generate same code for anonymous components which
+                    # enables component reuse
                     code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
                     with open(code, "w") as f:
                         f.write(COMPONENT_CODE_PLACEHOLDER)
-                yield code
-            else:
-                yield tmp_dir
+                    yield Code(base_path=self._base_path, path=code)
+                else:
+                    # copy to temp folder to filter potential __pycache__
+                    # note that the dst here is one level deeper than the temp folder,
+                    # when upload code asset, the URL contains one level higher than the file,
+                    # if we simply copy to temp folder, the URL will contain random temp folder name,
+                    # that might result in unexpected issues and also break related tests.
+                    # therefore we copy deeper to avoid this break.
+                    src_path = Path(self._base_path) / code
+                    dst_path = Path(tmp_dir) / src_path.name
+                    _copy_folder_ignore_pycache(src_path, dst_path)
+                    yield Code(base_path=self._base_path, path=dst_path)

@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2021_10_01.models import DatastoreType
 from azure.ai.ml._utils._asset_utils import _parse_name_version, get_object_hash
 from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities import Model
-from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 
@@ -94,6 +94,7 @@ except FileExistsError:
     condition=not is_live(),
     reason="test are flaky in playback"
 )
+@pytest.mark.core_sdk_test
 class TestUpload(AzureRecordedTestCase):
     def test_upload_file_blob(
         self, storage_account_name: str, storage_account_secret: str, dir_asset_id: str, file_asset_id: str
@@ -467,7 +468,7 @@ class TestUpload(AzureRecordedTestCase):
         artifact_path: str,
     ):
         credentialless_ds = client.datastores.get(name=credentialless_datastore)
-        assert isinstance(credentialless_ds.credentials, NoneCredentials)
+        assert isinstance(credentialless_ds.credentials, NoneCredentialConfiguration)
 
         test_model = Model(path=artifact_path)
         created_model = client.models.create_or_update(test_model)

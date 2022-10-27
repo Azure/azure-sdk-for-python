@@ -5,20 +5,21 @@ from typing import Any, Tuple
 
 import pytest
 
-from azure.ai.ml import UserIdentity
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CustomNCrossValidations, MLTableJobInput
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UserIdentity as RestUserIdentity
+from azure.ai.ml import UserIdentityConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CustomNCrossValidations, MLTableJobInput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UserIdentity as RestUserIdentity
 from azure.ai.ml.automl import ClassificationModels, ClassificationPrimaryMetrics, classification
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLClassification:
     def test_classification_task(self):
         # Create AutoML Classification Task
-        identity = UserIdentity()
+        identity = UserIdentityConfiguration()
         classification_job = classification(
             training_data=Input(type=AssetTypes.MLTABLE, path="https://foo/bar/train.csv"),
             target_column_name="target",

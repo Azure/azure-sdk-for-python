@@ -1,4 +1,7 @@
+import sys
+import tempfile
 from io import StringIO
+from pathlib import Path
 from unittest.mock import patch
 
 import pydash
@@ -9,9 +12,8 @@ from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, 
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities import CommandComponent, CommandJobLimits, Component, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command, Sweep
-from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
-from azure.ai.ml.exceptions import ValidationException
+from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.sweep import Choice
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -19,6 +21,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestCommandComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
@@ -182,6 +185,10 @@ class TestCommandComponentEntity:
         yaml_component = load_component(source=yaml_path)
         assert component.code == yaml_component.code
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_command_component_version_as_a_function(self):
         expected_rest_component = {
             "componentId": "fake_component",
@@ -363,14 +370,14 @@ class TestCommandComponentEntity:
                 {"inputs": {"component_in_number": {"description": "1", "type": "number"}}},
             ],
         )
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert validation_result.passed
 
         # user can still overwrite input name to illegal
         component.inputs["COMPONENT_IN_NUMBER"] = Input(description="1", type="number")
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert not validation_result.passed
-        assert validation_result.invalid_fields[0] == "inputs.COMPONENT_IN_NUMBER"
+        assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
     def test_primitive_output(self):
         expected_rest_component = {
@@ -423,3 +430,18 @@ class TestCommandComponentEntity:
             component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
         assert actual_component_dict2 == expected_rest_component
+
+    def test_component_code_asset_ignoring_pycache(self) -> None:
+        component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
+        component = load_component(component_yaml)
+        code_folder = "./tests/test_configs/components/helloworld_components_with_env/"
+        with tempfile.TemporaryDirectory(dir=code_folder) as tmp_dir:
+            # create temp folder and write some files under pycache
+            tmp_pycache_folder = Path(tmp_dir) / "__pycache__"
+            tmp_pycache_folder.mkdir()
+            (tmp_pycache_folder / "a.pyc").touch()
+            (tmp_pycache_folder / "b.pyc").touch()
+            # resolve and check if pycache exists in code asset
+            with component._resolve_local_code() as code:
+                pycache_path = Path(component_yaml).parent / code.path / Path(tmp_dir).name / "__pycache__"
+                assert not pycache_path.exists()

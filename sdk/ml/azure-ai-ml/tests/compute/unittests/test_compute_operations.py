@@ -1,3 +1,4 @@
+import sys
 from typing import Callable
 from unittest.mock import Mock
 
@@ -7,7 +8,8 @@ from pytest_mock import MockFixture
 
 from azure.ai.ml import load_compute
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
-from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, UserAssignedIdentity
+from azure.ai.ml.entities import AmlCompute, Compute, ComputeInstance, IdentityConfiguration, \
+    ManagedIdentityConfiguration
 from azure.ai.ml.operations import ComputeOperations
 from azure.identity import DefaultAzureCredential
 
@@ -29,11 +31,16 @@ class funny:
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestComputeOperation:
     def test_list(self, mock_compute_operation: ComputeOperations) -> None:
         mock_compute_operation.list()
         mock_compute_operation._operation.list.assert_called_once()
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_create_compute_instance(
         self, mock_compute_operation: ComputeOperations, mocker: MockFixture
     ) -> None:
@@ -50,6 +57,10 @@ class TestComputeOperation:
         mock_compute_operation.begin_create_or_update(compute=compute)
         mock_compute_operation._operation.begin_create_or_update.assert_called_once()
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_create_aml_compute(
         self, mock_compute_operation: ComputeOperations, mocker: MockFixture
     ) -> None:
@@ -90,7 +101,7 @@ class TestComputeOperation:
             identity=IdentityConfiguration(
                 type="UserAssigned",
                 user_assigned_identities=[
-                    UserAssignedIdentity(
+                    ManagedIdentityConfiguration(
                         resource_id="/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourcegroups/MC_banibatch_bani-aks_eastus/providers/Microsoft.ManagedIdentity/userAssignedIdentities/omsagent-bani-aks"
                     )
                 ],

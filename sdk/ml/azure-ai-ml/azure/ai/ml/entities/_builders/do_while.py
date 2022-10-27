@@ -163,10 +163,15 @@ class DoWhile(LoopNode):
         obj = BaseNode._rest_object_to_init_params(obj)
         return cls._create_instance_from_schema_dict(reference_node_list, obj, validate_port=False)
 
-    def set_limits(self, *, max_iteration_count: int, **kwargs):
+    def set_limits(
+        self,
+        *,
+        max_iteration_count: int,
+        **kwargs, # pylint: disable=unused-argument
+    ):
         """Set max iteration count for do while job. The range of the iteration count is (0, 1000]."""
         if isinstance(self.limits, DoWhileJobLimits):
-            self.limits._max_iteration_count = max_iteration_count
+            self.limits._max_iteration_count = max_iteration_count # pylint: disable=protected-access
         else:
             self._limits = DoWhileJobLimits(max_iteration_count=max_iteration_count)
 
@@ -187,17 +192,23 @@ class DoWhile(LoopNode):
             port_obj = node_ports.get(port, None)
         else:
             port_obj = port
-        if port_obj and port_obj._owner._instance_id != self.body._instance_id:
+        if port_obj and port_obj._owner._instance_id != self.body._instance_id: # pylint: disable=protected-access
             # Check the port owner is dowhile body.
             validation_result.append_error(
                 yaml_path=yaml_path,
-                message=f"{port_obj._name} is the {port_type} of {port_obj._owner.name}, dowhile only accept {port_type} of the body: {self.body.name}.",
+                message=(
+                    f"{port_obj._name} is the {port_type} of {port_obj._owner.name}, " # pylint: disable=protected-access
+                    f"dowhile only accept {port_type} of the body: {self.body.name}."
+                ),
             )
-        elif not port_obj or port_obj._name not in node_ports:
+        elif not port_obj or port_obj._name not in node_ports: # pylint: disable=protected-access
             # Check port is exist in dowhile body.
             validation_result.append_error(
                 yaml_path=yaml_path,
-                message=f"The {port_type} of mapping {port_obj._name if port_obj else port} does not exist in {self.body.name} {port_type}, existing {port_type}: {node_ports.keys()}",
+                message=(
+                    f"The {port_type} of mapping {port_obj._name if port_obj else port} does not " # pylint: disable=protected-access
+                    f"exist in {self.body.name} {port_type}, existing {port_type}: {node_ports.keys()}"
+                ),
             )
         return validation_result
 
@@ -218,7 +229,10 @@ class DoWhile(LoopNode):
                 if not self.body.component.outputs[condition_name].is_control:
                     validation_result.append_error(
                         yaml_path="condition",
-                        message=f"{condition_name} is not a control output. The condition of dowhile must be the control output of the body.",
+                        message=(
+                            f"{condition_name} is not a control output. "
+                            "The condition of dowhile must be the control output of the body."
+                        ),
                     )
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
 
@@ -254,6 +268,7 @@ class DoWhile(LoopNode):
             input_output_mapping = {}
             # Validate mapping input&output should come from while body
             for output, inputs in self.mapping.items():
+                # pylint: disable=protected-access
                 output_name = output if isinstance(output, str) else output._name
                 validate_results = self._validate_port(
                     output, self.body.outputs, port_type="output", yaml_path="mapping"
@@ -266,24 +281,29 @@ class DoWhile(LoopNode):
                             item, self.body.inputs, port_type="input", yaml_path="mapping"
                         )
                         validation_result.merge_with(input_validate_results)
+                        # pylint: disable=protected-access
                         input_name = item if isinstance(item, str) else item._name
                         input_output_mapping[input_name] = input_output_mapping.get(input_name, []) + [output_name]
 
                         if (
                             input_validate_results.passed
                             and not is_control_output
-                            and self.body.component.inputs[input_name]._is_primitive_type
+                            and self.body.component.inputs[input_name]._is_primitive_type # pylint: disable=protected-access
                         ):
                             validate_results.append_error(
                                 yaml_path="mapping",
-                                message=f"{output_name} is a non-primitive type output and {input_name} is a primitive input. Non-primitive type output cannot be connected to an a primitive type input.",
+                                message=(
+                                    f"{output_name} is a non-primitive type output and {input_name} "
+                                    "is a primitive input. Non-primitive type output cannot be connected "
+                                    "to an a primitive type input.",
+                                ),
                             )
 
                 validation_result.merge_with(validate_results)
             # Validate whether input is linked to multiple outputs
-            for input, outputs in input_output_mapping.items():
+            for _input, outputs in input_output_mapping.items():
                 if len(outputs) > 1:
                     validation_result.append_error(
-                        yaml_path="mapping", message=f"Input {input} has been linked to multiple outputs {outputs}."
+                        yaml_path="mapping", message=f"Input {_input} has been linked to multiple outputs {outputs}."
                     )
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)

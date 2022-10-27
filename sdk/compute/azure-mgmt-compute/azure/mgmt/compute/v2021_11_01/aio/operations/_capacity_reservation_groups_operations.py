@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -411,7 +411,7 @@ class CapacityReservationGroupsOperations:
         self,
         resource_group_name: str,
         capacity_reservation_group_name: str,
-        expand: Optional[Union[str, "_models.CapacityReservationGroupInstanceViewTypes"]] = None,
+        expand: Optional[Union[str, _models.CapacityReservationGroupInstanceViewTypes]] = None,
         **kwargs: Any
     ) -> _models.CapacityReservationGroup:
         """The operation that retrieves information about a capacity reservation group.
@@ -482,7 +482,7 @@ class CapacityReservationGroupsOperations:
     def list_by_resource_group(
         self,
         resource_group_name: str,
-        expand: Optional[Union[str, "_models.ExpandTypesForGetCapacityReservationGroups"]] = None,
+        expand: Optional[Union[str, _models.ExpandTypesForGetCapacityReservationGroups]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.CapacityReservationGroup"]:
         """Lists all of the capacity reservation groups in the specified resource group. Use the nextLink
@@ -534,10 +534,17 @@ class CapacityReservationGroupsOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -570,7 +577,7 @@ class CapacityReservationGroupsOperations:
 
     @distributed_trace
     def list_by_subscription(
-        self, expand: Optional[Union[str, "_models.ExpandTypesForGetCapacityReservationGroups"]] = None, **kwargs: Any
+        self, expand: Optional[Union[str, _models.ExpandTypesForGetCapacityReservationGroups]] = None, **kwargs: Any
     ) -> AsyncIterable["_models.CapacityReservationGroup"]:
         """Lists all of the capacity reservation groups in the subscription. Use the nextLink property in
         the response to get the next page of capacity reservation groups.
@@ -618,10 +625,17 @@ class CapacityReservationGroupsOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"

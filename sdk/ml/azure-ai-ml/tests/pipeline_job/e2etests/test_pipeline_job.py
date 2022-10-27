@@ -1,11 +1,13 @@
 import json
+import os.path
 import re
 import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict
 
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import is_live
 import pydash
 import pytest
 from marshmallow import ValidationError
@@ -27,7 +29,8 @@ from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryC
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.polling import LROPoller
 
-from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES
+from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES, \
+    DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE
 
 
 def assert_job_input_output_types(job: PipelineJob):
@@ -94,6 +97,7 @@ def bodiless_matching(test_proxy):
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_create(
         self,
@@ -115,6 +119,21 @@ class TestPipelineJob(AzureRecordedTestCase):
         updated_job = client.jobs.create_or_update(job)
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
+
+    def test_pipeline_job_create_with_registries(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+    ) -> None:
+        params_override = [{"name": randstr("name")}]
+        pipeline_job = load_job(
+            source="./tests/test_configs/pipeline_jobs/hello_pipeline_job_with_registries.yml",
+            params_override=params_override,
+        )
+        assert pipeline_job.jobs.get("a").environment == "azureml://registries/testFeed/environments/sklearn-10-ubuntu2004-py38-cpu/versions/19.dev6"
+        job = client.jobs.create_or_update(pipeline_job)
+        assert job.name == params_override[0]["name"]
+        assert job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
 
     @pytest.mark.skip("Skip for compute reaource not ready.")
     @pytest.mark.parametrize(
@@ -172,20 +191,13 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert isinstance(retrieved_child_run, Job)
         assert retrieved_child_run.name == child_job.name
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
-        "pipeline_job_path, expected_error_type",
+        "pipeline_job_path",
         [
             # flaky parameterization
-            # ("./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_component.yml", Exception),
-            (
-                "tests/test_configs/pipeline_jobs/invalid/non_existent_remote_version.yml",
-                Exception,
-            ),
-            (
-                "tests/test_configs/pipeline_jobs/invalid/non_existent_compute.yml",
-                Exception,
-            ),
+            # "non_existent_remote_component.yml",
+            "non_existent_remote_version.yml",
+            "non_existent_compute.yml",
         ],
     )
     def test_pipeline_job_validation_remote(
@@ -193,14 +205,14 @@ class TestPipelineJob(AzureRecordedTestCase):
         client: MLClient,
         randstr: Callable[[str], str],
         pipeline_job_path: str,
-        expected_error_type,
     ) -> None:
+        base_dir = "./tests/test_configs/pipeline_jobs/invalid/"
         pipeline_job: PipelineJob = load_job(
-            source=pipeline_job_path,
+            source=os.path.join(base_dir, pipeline_job_path),
             params_override=[{"name": randstr("name")}],
         )
         with pytest.raises(
-            expected_error_type,
+            Exception,
             # hide this as server side error message is not consistent
             # match=str(expected_error),
         ):
@@ -399,10 +411,22 @@ class TestPipelineJob(AzureRecordedTestCase):
             else:
                 assert job.compute in pipeline_job.jobs[job_name].compute
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
-        "pipeline_job_path, converted_jobs, expected_dict, fields_to_omit",
+        "test_case_i,test_case_name",
         [
+            # TODO: enable this after identity support released to canary
+            # (0, "helloworld_pipeline_job_with_component_output"),
+            (1, "helloworld_pipeline_job_with_paths"),
+        ]
+    )
+    def test_pipeline_job_with_command_job(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+        test_case_i,
+        test_case_name,
+    ) -> None:
+        params = [
             (
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_command_job_e2e.yml",
                 2,
@@ -571,17 +595,9 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "source_job_id",
                 ],
             ),
-        ],
-    )
-    def test_pipeline_job_with_command_job(
-        self,
-        client: MLClient,
-        randstr: Callable[[str], str],
-        pipeline_job_path: str,
-        converted_jobs,
-        expected_dict,
-        fields_to_omit,
-    ) -> None:
+        ]
+        pipeline_job_path, converted_jobs, expected_dict, fields_to_omit = params[test_case_i]
+
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source=pipeline_job_path,
@@ -600,21 +616,24 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="need further investigation for these cases unreliability under none live mode")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
-            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_component_input_e2e.yml",
-            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_input_e2e.yml",
-            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml",
+            "file_component_input_e2e.yml",
+            "file_input_e2e.yml",
+            "tabular_input_e2e.yml",
         ],
     )
     def test_pipeline_job_with_parallel_job(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
+        base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            source=pipeline_job_path,
+            source=base_file_name + pipeline_job_path,
             params_override=params_override,
         )
         created_job = client.jobs.create_or_update(pipeline_job)
@@ -926,18 +945,19 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_pipeline_dict = created_pipeline._to_dict()
         assert pydash.get(created_pipeline_dict, "jobs.hello_sweep_inline_trial.early_termination") == policy_yaml_dict
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
-        "pipeline_job_path, expected_error",
-        DATABINDING_EXPRESSION_TEST_CASES,
+        "test_case_i, test_case_name",
+        DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
     )
     def test_pipeline_job_with_data_binding_expression(
         self,
         client: MLClient,
         randstr: Callable[[str], str],
-        pipeline_job_path: str,
-        expected_error: Optional[Exception],
+        test_case_i: int,
+        test_case_name: str,
     ):
+        pipeline_job_path, expected_error = DATABINDING_EXPRESSION_TEST_CASES[test_case_i]
+
         pipeline: PipelineJob = load_job(source=pipeline_job_path, params_override=[{"name": randstr("name")}])
         if expected_error is None:
             assert_job_cancel(pipeline, client)
@@ -1036,7 +1056,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         assert actual_dict == {
             "featurization": {"dataset_language": "eng"},
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "max_nodes": 1, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -1065,7 +1085,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "max_nodes": 1, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -1088,7 +1108,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"]["jobs"]["automl_text_ner"], fields_to_omit)
 
         assert actual_dict == {
-            "limits": {"max_trials": 1, "timeout_minutes": 60},
+            "limits": {"max_trials": 1, "max_nodes": 1, "timeout_minutes": 60},
             "log_verbosity": "info",
             "outputs": {},
             "primary_metric": "accuracy",
@@ -1527,6 +1547,33 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
+    @pytest.mark.skip(reason="request body still exits when re-record and will raise error "
+                             "'Unable to find a record for the request' in playback mode")
+    def test_pipeline_job_create_with_registry_model_as_input(
+        self,
+        client: MLClient,
+        registry_client: MLClient,
+        randstr: Callable[[str], str],
+    ) -> None:
+        params_override = [{"name": randstr("name")}]
+        pipeline_job = load_job(
+            source="./tests/test_configs/pipeline_jobs/job_with_registry_model_as_input/pipeline.yml",
+            params_override=params_override,
+        )
+        job = client.jobs.create_or_update(pipeline_job)
+        assert job.name == params_override[0]["name"]
+
+    def test_pipeline_node_with_default_component(self, client: MLClient, randstr: Callable[[str], str]):
+        params_override = [{"name": randstr("job_name")}]
+        pipeline_job = load_job(
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_default_component.yml",
+            params_override=params_override,
+        )
+
+        created_pipeline_job = client.jobs.create_or_update(pipeline_job)
+        assert created_pipeline_job.jobs["hello_world_component"].component == \
+               "microsoftsamples_command_component_basic@default"
+
 
 @pytest.mark.usefixtures(
     "recorded_test",
@@ -1537,6 +1584,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestPipelineJobReuse(AzureRecordedTestCase):
     @pytest.mark.skip(reason="flaky test")
     def test_reused_pipeline_child_job_download(

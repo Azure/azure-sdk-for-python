@@ -45,6 +45,8 @@ class Deployment(Resource, RestTranslatableMixin):
     :type code_path: Union[str, PathLike], optional
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
     :type scoring_script: Union[str, PathLike], optional
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     def __init__(

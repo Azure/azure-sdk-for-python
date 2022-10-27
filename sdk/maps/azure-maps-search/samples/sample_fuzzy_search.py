@@ -21,7 +21,6 @@ import os
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def fuzzy_search():
-    # [START fuzzy_search]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
     from azure.maps.search.models import BoundingBox
@@ -35,7 +34,6 @@ def fuzzy_search():
     print("Total results: {}".format(result.num_results))
     print("Address from the first item in results: ")
     print(result.results[0].address)
-    # [END fuzzy_search]
 
 if __name__ == '__main__':
     fuzzy_search()

@@ -5,6 +5,7 @@ import copy
 import os
 from pathlib import Path
 from typing import Dict
+from zipfile import ZipFile
 
 import pydash
 import pytest
@@ -24,14 +25,21 @@ from .._utils import PARAMETERS_TO_TEST
 
 @pytest.mark.usefixtures("enable_internal_components")
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestComponent:
     def test_load_v2_component(self):
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"
         load_component(yaml_path)
 
+    def test_validate_internal_component(self):
+        yaml_path = r"./tests/test_configs/internal/component_with_code/component_spec.yaml"
+        from azure.ai.ml.entities._validate_funcs import validate_component
+        validation_result = validate_component(yaml_path)
+        assert validation_result.passed, repr(validation_result)
+
     def test_specific_error_message_on_load_from_dict(self):
         os.environ[AZUREML_INTERNAL_COMPONENTS_ENV_VAR] = "false"
-        yaml_path = "./tests/test_configs/internal/helloworld_component_command.yml"
+        yaml_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
         with pytest.raises(
             ValidationException,
             match="Internal components is a private feature in v2, " "please set environment variable",
@@ -165,7 +173,6 @@ class TestComponent:
             },
         }
 
-    @pytest.mark.skip(reason="migration skip: sync pipeline changes during soft code complete.")
     @pytest.mark.parametrize(
         "yaml_path",
         list(map(lambda x: x[0], PARAMETERS_TO_TEST)),
@@ -266,7 +273,7 @@ class TestComponent:
     )
     def test_environment_dependencies_resolve(self, yaml_path: str, expected_dict: Dict) -> None:
         component: InternalComponent = load_component(source=yaml_path)
-        component.environment.resolve(component._source_path)
+        component.environment.resolve(component._base_path)
         rest_obj = component._to_rest_object()
         assert rest_obj.properties.component_spec["environment"] == expected_dict
 
@@ -279,14 +286,14 @@ class TestComponent:
     )
     def test_invalid_environment(self, yaml_path: str, invalid_field: str) -> None:
         component = load_component(source=yaml_path)
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert not validation_result.passed
-        assert validation_result.invalid_fields[0] == f"environment.conda.{invalid_field}"
+        assert f"environment.conda.{invalid_field}" in validation_result.error_messages
 
     def test_environment_duplicate_dependencies_warning(self) -> None:
         yaml_path = "./tests/test_configs/internal/env-duplicate-dependencies/component_spec.yaml"
         component = load_component(source=yaml_path)
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         # pass validate with warning message
         assert validation_result.passed
         expected_warning_message = (
@@ -320,13 +327,16 @@ class TestComponent:
             "./tests/test_configs/internal/component_with_additional_includes/helloworld_additional_includes.yml"
         )
         component: InternalComponent = load_component(source=yaml_path)
-        assert component._customized_validate().passed, component._customized_validate()._to_dict()
+        assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code_path:
+        with component._resolve_local_code() as code:
+            code_path = code.path
             assert code_path.is_dir()
-            assert (code_path / "LICENSE").exists(), component.code
-            assert (code_path / "library" / "hello.py").exists(), component.code
-            assert (code_path / "library" / "world.py").exists(), component.code
+            assert (code_path / "LICENSE").exists()
+            assert (code_path / "library.zip").exists()
+            assert ZipFile(code_path / "library.zip").namelist() == ["hello.py", "world.py"]
+            assert (code_path / "library1" / "hello.py").exists()
+            assert (code_path / "library1" / "world.py").exists()
 
         assert not code_path.is_dir()
 
@@ -341,9 +351,10 @@ class TestComponent:
     def test_additional_includes_with_code_specified(self, yaml_path: str, has_additional_includes: bool) -> None:
         yaml_path = os.path.join("./tests/test_configs/internal/component_with_additional_includes/", yaml_path)
         component: InternalComponent = load_component(source=yaml_path)
-        assert component._customized_validate().passed, component._customized_validate()._to_dict()
+        assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code_path:
+        with component._resolve_local_code() as code:
+            code_path = code.path
             assert code_path.is_dir()
             if has_additional_includes:
                 # additional includes is specified, code will be tmp folder and need to check each item
@@ -356,6 +367,46 @@ class TestComponent:
                 specified_code_path = Path(yaml_path).parent / yaml_dict.get("code", "./")
                 assert code_path.resolve() == specified_code_path.resolve()
 
+    def test_docker_file_in_additional_includes(self):
+        yaml_path = "./tests/test_configs/internal/component_with_dependency_" \
+                    "in_additional_includes/with_docker_file.yml"
+
+        docker_file_path = "./tests/test_configs/internal/additional_includes/docker/DockerFile"
+        with open(docker_file_path, "r") as docker_file:
+            docker_file_content = docker_file.read()
+
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code():
+            environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
+            assert environment_rest_obj == {
+                "docker": {
+                    "build": {
+                        "dockerfile": docker_file_content,
+                    }
+                },
+                "os": "Linux",
+            }
+
+    def test_conda_pip_in_additional_includes(self):
+        yaml_path = "./tests/test_configs/internal/component_with_dependency_" \
+                    "in_additional_includes/with_conda_pip.yml"
+
+        conda_file_path = "./tests/test_configs/internal/env-conda-dependencies/conda.yaml"
+        with open(conda_file_path, "r") as conda_file:
+            conda_file_content = yaml.safe_load(conda_file)
+
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code():
+            environment_rest_obj = component._to_rest_object().properties.component_spec["environment"]
+            assert environment_rest_obj == {
+                "conda": {
+                    "conda_dependencies": conda_file_content,
+                },
+                "os": "Linux",
+            }
+
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
         [
@@ -367,18 +418,22 @@ class TestComponent:
                 "helloworld_invalid_additional_includes_existing_file.yml",
                 "A file already exists for additional include",
             ),
+            (
+                "helloworld_invalid_additional_includes_zip_file_not_found.yml",
+                "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
+            ),
         ],
     )
     def test_invalid_additional_includes(self, yaml_path: str, expected_error_msg_prefix: str) -> None:
         component = load_component(
             os.path.join("./tests/test_configs/internal/component_with_additional_includes", yaml_path)
         )
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert validation_result.passed is False
-        assert validation_result.messages["*"].startswith(expected_error_msg_prefix), validation_result.messages["*"]
+        assert validation_result.error_messages["*"].startswith(expected_error_msg_prefix)
 
     def test_component_input_types(self) -> None:
-        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec.yaml"
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec.yaml"
         component: InternalComponent = load_component(yaml_path)
         component.code = "scope:1"
 
@@ -404,7 +459,7 @@ class TestComponent:
         assert component._validate().passed is True, repr(component._validate())
 
     def test_component_input_with_attrs(self) -> None:
-        yaml_path = "./tests/test_configs/internal/component_with_input_types/component_spec_with_attrs.yaml"
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec_with_attrs.yaml"
         component: InternalComponent = load_component(source=yaml_path)
 
         expected_inputs = {
@@ -434,10 +489,32 @@ class TestComponent:
         assert regenerated_component._to_rest_object().properties.component_spec["inputs"] == expected_inputs["inputs"]
         assert component._validate().passed is True, repr(component._validate())
 
+    def test_component_output_with_attrs(self) -> None:
+        yaml_path = "./tests/test_configs/internal/component_with_input_outputs/component_spec_with_outputs.yaml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component
+
+        expected_outputs = {
+            "path_with_optional": {
+                # unknown field optional will be ignored
+                "type": 'AnyDirectory',
+            },
+            "primitive_is_control": {
+                "is_control": True,
+                "type": "boolean",
+            }
+        }
+        assert component._to_rest_object().properties.component_spec["outputs"] == expected_outputs
+        assert component._validate().passed is True, repr(component._validate())
+
+        regenerated_component = Component._from_rest_object(component._to_rest_object())
+        assert regenerated_component._to_rest_object().properties.component_spec["outputs"] == expected_outputs
+        assert component._validate().passed is True, repr(component._validate())
+
     def test_component_input_list_type(self) -> None:
         yaml_path = "./tests/test_configs/internal/scope-component/component_spec.yaml"
         component: InternalComponent = load_component(yaml_path)
-        assert component._customized_validate().passed is True
+        assert component._validate().passed is True
         input_text_data_type = component._to_rest_object().properties.component_spec["inputs"]["TextData"]["type"]
         # for list type component input, REST object should remain type list for service contract
         assert isinstance(input_text_data_type, list)
@@ -447,10 +524,25 @@ class TestComponent:
         from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
         from azure.ai.ml.dsl._utils import environment_variable_overwrite
 
-        yaml_path = "./tests/test_configs/internal/helloworld_component_command.yml"
+        yaml_path = "./tests/test_configs/internal/helloworld/helloworld_component_command.yml"
         component_func = load_component(source=yaml_path)
         loop_node = LoopNode(body=component_func())
         loop_node.body._referenced_control_flow_node_instance_id = loop_node._instance_id
         with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
             validate_result = loop_node._validate_body(raise_error=False)
             assert validate_result.passed
+
+    def test_anonymous_component_reuse(self):
+        yaml_path = Path("./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml")
+        expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+
+        component: InternalComponent = load_component(source=yaml_path)
+        with component._resolve_local_code() as code:
+            assert code.name == expected_snapshot_id
+
+            code.name = expected_snapshot_id
+            with pytest.raises(
+                AttributeError,
+                match="InternalCode name are calculated based on its content and cannot be changed.*"
+            ):
+                code.name = expected_snapshot_id + "1"

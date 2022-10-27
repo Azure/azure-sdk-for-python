@@ -26,12 +26,11 @@ from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, _get_param_with_standard_annotation
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
-from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
+from azure.ai.ml.exceptions import UserErrorException
 
 _BUILDER_STACK_MAX_DEPTH = 100
 
@@ -146,6 +145,7 @@ class PipelineComponentBuilder:
         default_datastore=None,
         tags=None,
         source_path=None,
+        non_pipeline_inputs=None
     ):
         self.func = func
         name = name if name else func.__name__
@@ -156,6 +156,7 @@ class PipelineComponentBuilder:
             name = func.__name__
         # List of nodes, order by it's creation order in pipeline.
         self.nodes = []
+        self.non_pipeline_parameter_names = non_pipeline_inputs or []
         # A dict of inputs name to InputDefinition.
         # TODO: infer pipeline component input meta from assignment
         self.inputs = self._build_inputs(func)
@@ -182,10 +183,10 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self) -> PipelineComponent:
+    def build(self, non_pipeline_params_dict=None) -> PipelineComponent:
         # Clear nodes as we may call build multiple times.
         self.nodes = []
-        kwargs = _build_pipeline_parameter(self.func, self._get_group_parameter_defaults())
+        kwargs = _build_pipeline_parameter(self.func, self._get_group_parameter_defaults(), non_pipeline_params_dict)
         # We use this stack to store the dsl pipeline definition hierarchy
         _definition_builder_stack.push(self)
 
@@ -219,7 +220,7 @@ class PipelineComponentBuilder:
         return pipeline_component
 
     def _build_inputs(self, func):
-        inputs = _get_param_with_standard_annotation(func, is_func=True)
+        inputs = _get_param_with_standard_annotation(func, is_func=True, skip_params=self.non_pipeline_parameter_names)
         for k, v in inputs.items():
             # add arg description
             if k in self._args_description:
@@ -278,7 +279,14 @@ class PipelineComponentBuilder:
         return output_dict
 
     def _get_group_parameter_defaults(self):
-        return {key: copy.deepcopy(val.default) for key, val in self.inputs.items() if isinstance(val, GroupInput)}
+        group_defaults = {}
+        for key, val in self.inputs.items():
+            if not isinstance(val, GroupInput):
+                continue
+            # Copy and insert top-level parameter name into group names for all items
+            group_defaults[key] = copy.deepcopy(val.default)
+            group_defaults[key].insert_group_name_for_items(key)
+        return group_defaults
 
     def _update_nodes_variable_names(self, func_variables: dict):
         """Update nodes list to ordered dict with variable name key and
@@ -373,7 +381,7 @@ class PipelineComponentBuilder:
         return result
 
 
-def _build_pipeline_parameter(func, kwargs=None):
+def _build_pipeline_parameter(func, kwargs=None, non_pipeline_parameter_dict=None):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
     # @parameter_group
@@ -385,9 +393,14 @@ def _build_pipeline_parameter(func, kwargs=None):
     #   component_func(input=param.key)  <--- param.key should be val.
 
     # transform kwargs
-    transformed_kwargs = {}
+    transformed_kwargs = non_pipeline_parameter_dict or {}
     if kwargs:
-        transformed_kwargs.update({key: _wrap_pipeline_parameter(key, value) for key, value in kwargs.items()})
+        transformed_kwargs.update(
+            {
+                key: _wrap_pipeline_parameter(key, value) for key, value in kwargs.items()
+                if key not in non_pipeline_parameter_dict
+            }
+        )
 
     def all_params(parameters):
         for value in parameters.values():

@@ -15,6 +15,7 @@ from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultO
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
@@ -22,6 +23,7 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -88,6 +90,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -109,6 +112,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         assert passport["Sex"].value == "F"
         assert passport["CountryRegion"].value == "CAN"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -137,6 +141,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -159,6 +164,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         assert invoice.fields.get("Items").value[0].value["Amount"].value.symbol ==  "$"
         assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -173,6 +179,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         assert poller2._polling_method._timeout ==  7  # goes back to client default
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     def test_active_directory_auth(self):
         token = self.generate_oauth_token()
         endpoint = self.get_oauth_endpoint()
@@ -220,6 +227,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
                 poller = client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
             assert str(e.value) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a byte stream."
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -256,6 +264,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -277,6 +286,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
         assert len(result.pages) == 1
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -310,6 +320,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
 
         assert len(result.pages) == 2
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -348,6 +359,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     def test_receipt_continuation_token(self, **kwargs):
@@ -360,6 +372,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
         assert result is not None
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy
@@ -377,6 +390,7 @@ class TestDACAnalyzePrebuiltsFromUrl(FormRecognizerTest):
             client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
         assert "InvalidArgument" == e.value.error.code
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy

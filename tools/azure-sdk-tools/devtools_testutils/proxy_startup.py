@@ -25,12 +25,13 @@ _LOGGER = logging.getLogger()
 CONTAINER_NAME = "ambitious_azsdk_test_proxy"
 LINUX_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
 WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
-CONTAINER_STARTUP_TIMEOUT = 6000
+CONTAINER_STARTUP_TIMEOUT = 60
 PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 
-PROXY_CHECK_URL = PROXY_URL.rstrip("/") + "/Info/Available"
+PROXY_CHECK_URL = PROXY_URL + "/Info/Available"
 TOOL_ENV_VAR = "PROXY_PID"
 
+discovered_roots = []
 
 def get_image_tag(repo_root: str) -> str:
     """Gets the test proxy Docker image tag from the target_version.txt file in /eng/common/testproxy"""
@@ -59,6 +60,8 @@ def ascend_to_root(start_dir_or_file: str) -> str:
 
         # we need the git check to prevent ascending out of the repo
         if os.path.exists(possible_root):
+            if current_dir not in discovered_roots:
+                discovered_roots.append(current_dir)
             return current_dir
         else:
             current_dir = os.path.dirname(current_dir)
@@ -68,22 +71,27 @@ def ascend_to_root(start_dir_or_file: str) -> str:
 
 def delete_container() -> None:
     """Delete container if it remained"""
-    proc = subprocess.Popen(shlex.split(f"docker rm -f {CONTAINER_NAME}"))
-    output, stderr = proc.communicate()
+    proc = subprocess.Popen(
+        shlex.split(f"docker rm -f {CONTAINER_NAME}"),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        stdin=subprocess.DEVNULL,
+    )
+    output, stderr = proc.communicate(timeout=10)
     return None
 
 
 def check_availability() -> None:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
-        response = requests.get(PROXY_CHECK_URL, timeout=60)
+        response = requests.get(PROXY_CHECK_URL, timeout=10)
         return response.status_code
     # We get an SSLError if the container is started but the endpoint isn't available yet
     except requests.exceptions.SSLError as sslError:
         _LOGGER.debug(sslError)
         return 404
     except Exception as e:
-        _LOGGER.error(e)
+        _LOGGER.debug(e)
         return 404
 
 
@@ -118,7 +126,10 @@ def create_container(repo_root: str) -> None:
         shlex.split(
             f"docker run --rm --name {CONTAINER_NAME} -v '{repo_root}:{path_prefix}/srv/testproxy' "
             f"{linux_container_args} -p 5001:5001 -p 5000:5000 {image_prefix}:{image_tag}"
-        )
+        ),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        stdin=subprocess.DEVNULL,
     )
 
 
@@ -140,10 +151,15 @@ def start_test_proxy(request) -> None:
                 log = open(os.path.join(root, "_proxy_log_{}.log".format(envname)), "a")
 
                 _LOGGER.info("{} is calculated repo root".format(root))
+
+                os.environ["PROXY_ASSETS_FOLDER"] = os.path.join(root, "l", envname)
+                if not os.path.exists(os.environ["PROXY_ASSETS_FOLDER"]):
+                    os.makedirs(os.environ["PROXY_ASSETS_FOLDER"])
+
                 proc = subprocess.Popen(
-                    shlex.split('test-proxy --storage-location="{}" --urls "{}"'.format(root, PROXY_URL)),
+                    shlex.split('test-proxy start --storage-location="{}" -- --urls "{}"'.format(root, PROXY_URL)),
                     stdout=log,
-                    stderr=log,
+                    stderr=log
                 )
                 os.environ[TOOL_ENV_VAR] = str(proc.pid)
         else:
@@ -173,7 +189,12 @@ def stop_test_proxy() -> None:
 
         else:
             _LOGGER.info("Stopping the test proxy container...")
-            subprocess.Popen(shlex.split("docker stop " + CONTAINER_NAME))
+            subprocess.Popen(
+                shlex.split(f"docker stop {CONTAINER_NAME}"),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                stdin=subprocess.DEVNULL,
+            )
 
 
 @pytest.fixture(scope="session")

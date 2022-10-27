@@ -10,8 +10,8 @@ from azure.ai.ml import MpiDistribution, PyTorchDistribution, TensorFlowDistribu
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml._internal.entities.node import InternalBaseNode
-from azure.ai.ml._restclient.v2022_06_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.core.fields import DistributionField
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
@@ -42,8 +42,6 @@ class Command(InternalBaseNode):
     @compute.setter
     def compute(self, value: str):
         """Set the compute definition for the command."""
-        if value is not None and not isinstance(value, str):
-            raise ValueError(f"Failed in setting compute: only string is supported in DPv2 but got {type(value)}")
         self._compute = value
 
     @property
@@ -54,8 +52,6 @@ class Command(InternalBaseNode):
     @environment.setter
     def environment(self, value: str):
         """Set the environment definition for the command."""
-        if value is not None and not isinstance(value, str):
-            raise ValueError(f"Failed in setting environment: only string is supported in DPv2 but got {type(value)}")
         self._environment = value
 
     @property

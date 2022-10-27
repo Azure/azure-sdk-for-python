@@ -1,5 +1,11 @@
 # Release History
 
+## 5.0.1 (2022-09-30)
+
+### Bugs Fixed
+  
+  - Fix paging problem about `api_version`
+
 ## 5.0.0 (2022-09-19)
 
 ### Features Added

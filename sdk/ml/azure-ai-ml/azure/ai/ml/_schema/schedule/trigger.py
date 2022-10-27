@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump, post_load, validate
+from marshmallow import fields, post_dump, post_load
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import RecurrenceFrequency, TriggerType, WeekDay
 from azure.ai.ml._schema.core.fields import (
@@ -19,7 +19,7 @@ from azure.ai.ml.constants import TimeZone
 class TriggerSchema(metaclass=PatchedSchemaMeta):
     start_time = UnionField([fields.DateTime(), DateTimeStr()])
     end_time = UnionField([fields.DateTime(), DateTimeStr()])
-    time_zone = fields.Str(validate=validate.OneOf([o.value for o in TimeZone]))
+    time_zone = fields.Str()
 
     @post_dump(pass_original=True)
     def resolve_time_zone(self, data, original_data, **kwargs):  # pylint: disable=no-self-use, unused-argument

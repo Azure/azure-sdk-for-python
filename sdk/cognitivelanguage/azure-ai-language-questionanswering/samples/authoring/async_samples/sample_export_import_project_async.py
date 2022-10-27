@@ -24,14 +24,14 @@ async def sample_export_import_project_async():
     # [START export_import_project]
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.questionanswering.authoring.aio import QuestionAnsweringAuthoringClient
+    from azure.ai.language.questionanswering.authoring.aio import AuthoringClient
 
     # get service secrets
     endpoint = os.environ["AZURE_QUESTIONANSWERING_ENDPOINT"]
     key = os.environ["AZURE_QUESTIONANSWERING_KEY"]
 
     # create client
-    client = QuestionAnsweringAuthoringClient(endpoint, AzureKeyCredential(key))
+    client = AuthoringClient(endpoint, AzureKeyCredential(key))
     async with client:
 
         # create project
@@ -50,7 +50,7 @@ async def sample_export_import_project_async():
         # export
         export_poller = await client.begin_export(
             project_name=project_name,
-            format="json"
+            file_format="json"
         )
         export_result = await export_poller.result()
         export_url = export_result["resultUrl"]

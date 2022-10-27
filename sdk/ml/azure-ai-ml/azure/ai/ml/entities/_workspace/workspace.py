@@ -13,9 +13,9 @@ from azure.ai.ml._restclient.v2022_05_01.models import Workspace as RestWorkspac
 from azure.ai.ml._schema.workspace.workspace import WorkspaceSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, WorkspaceResourceConstants
+from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.entities._workspace.identity import ManagedServiceIdentity
 
 from .customer_managed_key import CustomerManagedKey
 
@@ -38,7 +38,7 @@ class Workspace(Resource):
         customer_managed_key: CustomerManagedKey = None,
         image_build_compute: str = None,
         public_network_access: str = None,
-        identity: ManagedServiceIdentity = None,
+        identity: IdentityConfiguration = None,
         primary_user_assigned_identity: str = None,
         **kwargs,
     ):
@@ -83,7 +83,7 @@ class Workspace(Resource):
             when a workspace is private link enabled.
         :type public_network_access: str
         :param identity: workspace's Managed Identity (user assigned, or system assigned)
-        :type identity: ManagedServiceIdentity
+        :type identity: IdentityConfiguration
         :param primary_user_assigned_identity: The workspace's primary user assigned identity
         :type primary_user_assigned_identity: str
         :param kwargs: A dictionary of additional configuration parameters.
@@ -185,7 +185,7 @@ class Workspace(Resource):
         group = None if len(armid_parts) < 4 else armid_parts[4]
         identity = None
         if rest_obj.identity and isinstance(rest_obj.identity, RestManagedServiceIdentity):
-            identity = ManagedServiceIdentity._from_rest_object(rest_obj.identity)
+            identity = IdentityConfiguration._from_workspace_rest_object(rest_obj.identity) # pylint: disable=protected-access
         return Workspace(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -206,4 +206,23 @@ class Workspace(Resource):
             mlflow_tracking_uri=mlflow_tracking_uri,
             identity=identity,
             primary_user_assigned_identity=rest_obj.primary_user_assigned_identity,
+        )
+
+    def _to_rest_object(self) -> RestWorkspace:
+        return RestWorkspace(
+            # pylint: disable=protected-access
+            identity=self.identity._to_workspace_rest_object() if self.identity else None,
+            location=self.location,
+            tags=self.tags,
+            description=self.description,
+            friendly_name=self.display_name,
+            key_vault=self.key_vault,
+            application_insights=self.application_insights,
+            container_registry=self.container_registry,
+            storage_account=self.storage_account,
+            discovery_url=self.discovery_url,
+            hbi_workspace=self.hbi_workspace,
+            image_build_compute=self.image_build_compute,
+            public_network_access=self.public_network_access,
+            primary_user_assigned_identity=self.primary_user_assigned_identity,
         )

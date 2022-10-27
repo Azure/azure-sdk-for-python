@@ -4,7 +4,7 @@
 
 # pylint: disable=protected-access
 
-from os import PathLike, getcwd, path
+from os import PathLike, path
 from typing import Dict, Iterable, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
@@ -43,7 +43,7 @@ from azure.ai.ml._utils._storage_utils import get_ds_name_and_path_prefix, get_s
 from azure.ai.ml._utils.utils import resolve_short_datastore_url, validate_ml_flow_folder
 from azure.ai.ml.constants._common import ASSET_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._assets import Model, WorkspaceModelReference
-from azure.ai.ml.entities._datastore.credentials import AccountKeyCredentials
+from azure.ai.ml.entities._credentials import AccountKeyConfiguration
 from azure.ai.ml.exceptions import (
     AssetPathException,
     ErrorCategory,
@@ -55,7 +55,7 @@ from azure.ai.ml.operations._datastore_operations import DatastoreOperations
 from azure.core.exceptions import ResourceNotFoundError
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class ModelOperations(_ScopeDependentOperations):
@@ -92,9 +92,14 @@ class ModelOperations(_ScopeDependentOperations):
         """Returns created or updated model asset.
 
         :param model: Model asset object.
-        :type model: Model
+        :type model: ~azure.ai.ml.entities.Model
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Model artifact path is
+            already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Model asset object.
-        :raises AssetPathException: Raised when the code asset is already linked to another asset
+        :rtype: ~azure.ai.ml.entities.Model
         """
         try:
             name = model.name
@@ -255,6 +260,10 @@ class ModelOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the model. (mutually exclusive with version)
         :type label: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Model cannot be successfully validated.
+            Details will be provided in the error message.
+        :return: Model asset object.
+        :rtype: ~azure.ai.ml.entities.Model
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -284,7 +293,7 @@ class ModelOperations(_ScopeDependentOperations):
         return Model._from_rest_object(model_version_resource)
 
     @monitor_with_activity(logger, "Model.Download", ActivityType.PUBLICAPI)
-    def download(self, name: str, version: str, download_path: Union[PathLike, str] = getcwd()) -> None:
+    def download(self, name: str, version: str, download_path: Union[PathLike, str] = ".") -> None:
         """Download files related to a model.
 
         :param str name: Name of the model.
@@ -313,7 +322,7 @@ class ModelOperations(_ScopeDependentOperations):
             ds = self._datastore_operation.get(ds_name, include_secrets=True)
             acc_name = ds.account_name
 
-            if isinstance(ds.credentials, AccountKeyCredentials):
+            if isinstance(ds.credentials, AccountKeyConfiguration):
                 credential = ds.credentials.account_key
             else:
                 try:

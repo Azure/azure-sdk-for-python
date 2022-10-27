@@ -20,7 +20,7 @@ from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -51,7 +51,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
@@ -117,39 +117,44 @@ class DataOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the data asset. (mutually exclusive with version)
         :type label: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully
+            identified and retrieved. Details will be provided in the error message.
         :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
         """
-        if version and label:
-            msg = "Cannot specify both version and label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.DATA,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
+        try:
+            if version and label:
+                msg = "Cannot specify both version and label."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.DATA,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
+
+            if label:
+                return _resolve_label_to_asset(self, name, label)
+
+            if not version:
+                msg = "Must provide either version or label."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.DATA,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.MISSING_FIELD,
+                )
+            data_version_resource = self._operation.get(
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                name=name,
+                version=version,
+                **self._init_kwargs,
             )
-
-        if label:
-            return _resolve_label_to_asset(self, name, label)
-
-        if not version:
-            msg = "Must provide either version or label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.DATA,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.MISSING_FIELD,
-            )
-        data_version_resource = self._operation.get(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            name=name,
-            version=version,
-            **self._init_kwargs,
-        )
-
-        return Data._from_rest_object(data_version_resource)
+            return Data._from_rest_object(data_version_resource)
+        except (ValidationException, SchemaValidationError) as ex:
+            log_and_raise_error(ex)
 
     @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:
@@ -158,8 +163,14 @@ class DataOperations(_ScopeDependentOperations):
         If not already in storage, asset will be uploaded to the workspace's blob storage.
 
         :param data: Data asset object.
-        :type data: Data
+        :type data: azure.ai.ml.entities.Data
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Data artifact path is
+            already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
         """
         try:
             name = data.name

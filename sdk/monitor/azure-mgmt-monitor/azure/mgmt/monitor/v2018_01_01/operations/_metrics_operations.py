@@ -45,7 +45,7 @@ def build_list_request(
     top: Optional[int] = None,
     orderby: Optional[str] = None,
     filter: Optional[str] = None,
-    result_type: Optional[Union[str, "_models.ResultType"]] = None,
+    result_type: Optional[Union[str, _models.ResultType]] = None,
     metricnamespace: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
@@ -120,7 +120,7 @@ class MetricsOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         filter: Optional[str] = None,
-        result_type: Optional[Union[str, "_models.ResultType"]] = None,
+        result_type: Optional[Union[str, _models.ResultType]] = None,
         metricnamespace: Optional[str] = None,
         **kwargs: Any
     ) -> _models.Response:
