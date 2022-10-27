@@ -106,53 +106,8 @@ class AzureAppConfigurationProvider:
 
         return provider
 
-    def __parse_connection_string(self, connection_string):
-        # type: (str) -> str
-        """Parses the connection string to get the endpoint.
-
-        :param connection_string: Connection string
-        :type connection_string: str
-        :return: Endpoint
-        :rtype: str
-        """
-        if connection_string is None:
-            raise ValueError("Connection string is None")
-        if "endpoint=" not in connection_string:
-            raise ValueError("Connection string is invalid")
-        endpoint = connection_string.split("endpoint=")[1].split(";")[0]
-        return endpoint
-
-    def __build_provider(self, connection_string, endpoint, credential, key_vault_options):
-        # type: (str, str, Union[AppConfigConnectionStringCredential, TokenCredential], KeyVaultOptions) -> AzureAppConfigurationClient
-        """Builds the Azure App Configuration client.
-
-        :param connection_string: Connection string
-        :type connection_string: str
-        :param endpoint: Endpoint
-        :type endpoint: str
-        :param credential: Credential
-        :type credential: Union[AppConfigConnectionStringCredential, TokenCredential]
-        :param key_vault_options: Options for resolving Key Vault references
-        :type key_vault_options: ~azure.appconfigurationprovider.KeyVaultOptions
-        :return: Azure App Configuration client
-        :rtype: ~azure.appconfiguration.AzureAppConfigurationClient
-        """
-        if connection_string is None and endpoint is None:
-            raise ValueError("Connection string and endpoint are None")
-        if connection_string is not None and endpoint is not None:
-            raise ValueError("Both connection string and endpoint are set. Only one of these should be set.")
-        if connection_string is not None:
-            return AzureAppConfigurationClient.from_connection_string(connection_string, user_agent=USER_AGENT)
-        if key_vault_options is not None:
-            return AzureAppConfigurationClient(endpoint, credential, user_agent=USER_AGENT,
-                secret_client=SecretClient(key_vault_options.vault_url, credential))
-        return AzureAppConfigurationClient(endpoint, credential, user_agent=USER_AGENT)
-
     def __load_selected_configurations(self, client, secret_clients, selects, key_vault_options):
-        # type: (list, dict, list[SettingSelector], KeyVaultOptions) ->
-        return provider
-
-    def __load_selected_configurations(self, client, secret_clients, selects, key_vault_options):
+        # type: (list, dict, list[SettingSelector], KeyVaultOptions) -> None
         self._dict = {}
         for select in selects:
             configurations = client[1].list_configuration_settings(key_filter=select.key_filter,
@@ -179,6 +134,20 @@ class AzureAppConfigurationProvider:
 
     @staticmethod
     def __build_provider(connection_string, endpoint, credential, key_vault_options):
+        """Builds the Azure App Configuration client.
+
+        :param connection_string: Connection string
+        :type connection_string: str
+        :param endpoint: Endpoint
+        :type endpoint: str
+        :param credential: Credential
+        :type credential: Union[AppConfigConnectionStringCredential, TokenCredential]
+        :param key_vault_options: Options for resolving Key Vault references
+        :type key_vault_options: ~azure.appconfigurationprovider.KeyVaultOptions
+        :return: Azure App Configuration client
+        :rtype: ~azure.appconfiguration.AzureAppConfigurationClient
+        """
+
         headers = {}
         correlation_context = "RequestType=Startup"
 
@@ -188,19 +157,31 @@ class AzureAppConfigurationProvider:
             correlation_context += ",UsesKeyVault"
 
         headers["Correlation-Context"] = correlation_context
-        useragent = USER_AGENT
 
-        if connection_string and endpoint:
-            raise AttributeError("Both connection_string and endpoint are set. Only one of these should be set.")
-
+        if connection_string is None and endpoint is None:
+            raise ValueError("No connection method provided.")
+        if connection_string is not None and endpoint is not None:
+            raise ValueError("Both connection string and endpoint are set. Only one of these should be set.")
         if connection_string:
-            return AzureAppConfigurationClient.from_connection_string(connection_string, user_agent=useragent,
+            return AzureAppConfigurationClient.from_connection_string(connection_string, user_agent=USER_AGENT,
                 headers=headers)
-        return AzureAppConfigurationClient(endpoint, credential, user_agent=useragent, headers=headers)
+        return AzureAppConfigurationClient(endpoint, credential, user_agent=USER_AGENT, headers=headers)
 
-    @staticmethod
-    def __parse_connection_string(connection_string):
-        return connection_string[connection_string.find("Endpoint=")+9:connection_string.find(";Id=")]
+    def __parse_connection_string(self, connection_string):
+        # type: (str) -> str
+        """Parses the connection string to get the endpoint.
+
+        :param connection_string: Connection string
+        :type connection_string: str
+        :return: Endpoint
+        :rtype: str
+        """
+        if connection_string is None:
+            raise ValueError("Connection string is None")
+        if "endpoint=" not in connection_string:
+            raise ValueError("Connection string is invalid")
+        endpoint = connection_string.split("endpoint=")[1].split(";")[0]
+        return endpoint
 
     @staticmethod
     def __resolve_keyvault_reference(config, key_vault_options, secret_clients):
