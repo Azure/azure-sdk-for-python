@@ -15,6 +15,7 @@ from azure.ai.ml.constants._component import ComponentParameterTypes, IOConstant
 from azure.ai.ml.exceptions import UserErrorException
 
 ExpressionInput = namedtuple("ExpressionInput", ["name", "type", "value"])
+NONE_PARAMETER_TYPE = "None"
 
 
 class PipelineExpressionOperator:
@@ -49,6 +50,7 @@ def _enumerate_operation_combination() -> Dict[str, Union[str, Exception]]:
     """Enumerate, leverage `eval` to validate operation and get its result type."""
     res = dict()
     primitive_types_values = {
+        NONE_PARAMETER_TYPE: repr(None),
         ComponentParameterTypes.BOOLEAN: repr(True),
         ComponentParameterTypes.INTEGER: repr(1),
         ComponentParameterTypes.NUMBER: repr(1.0),
@@ -87,12 +89,12 @@ class PipelineExpressionMixin:
     def _validate_binary_operation(self, other, operator: str):
         from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 
-        if not isinstance(other, self._SUPPORTED_PRIMITIVE_TYPES) and not isinstance(
+        if other is not None and not isinstance(other, self._SUPPORTED_PRIMITIVE_TYPES) and not isinstance(
             other, (PipelineInput, NodeOutput, PipelineExpression)
         ):
             error_message = (
                 f"Operator '{operator}' is not supported with {type(other)}; "
-                "currently only support primitive types (bool, int, float and str), "
+                "currently only support primitive types (None, bool, int, float and str), "
                 "pipeline input, component output and expression."
             )
             raise UserErrorException(message=error_message, no_personal_data_message=error_message)
@@ -349,7 +351,7 @@ class PipelineExpression(PipelineExpressionMixin):
             _expression_inputs[_name] = ExpressionInput(_name, _component_output.type, _component_output)
             return _postfix, _expression_inputs
 
-        if isinstance(operand, PipelineExpression._SUPPORTED_PRIMITIVE_TYPES):
+        if operand is None or isinstance(operand, PipelineExpression._SUPPORTED_PRIMITIVE_TYPES):
             postfix.append(repr(operand))
         elif isinstance(operand, PipelineInput):
             postfix, expression_inputs = _handle_pipeline_input(operand, postfix, expression_inputs)
@@ -447,10 +449,11 @@ class PipelineExpression(PipelineExpressionMixin):
     @staticmethod
     def _get_operation_result_type(type1: str, operator: str, type2: str) -> str:
         def _validate_operand_type(_type: str):
-            if _type not in PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES:
+            if _type != NONE_PARAMETER_TYPE and _type not in PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES:
                 error_message = (
                     f"Pipeline input type {_type!r} is not supported in expression; "
-                    f"currently only support " + ",".join(PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES) + "."
+                    f"currently only support None, " +
+                    ", ".join(PipelineExpression._SUPPORTED_PIPELINE_INPUT_TYPES) + "."
                 )
                 raise UserErrorException(message=error_message, no_personal_data_message=error_message)
 
@@ -465,7 +468,8 @@ class PipelineExpression(PipelineExpressionMixin):
     def _get_operand_type(self, operand: str) -> str:
         if operand in self._inputs:
             return self._inputs[operand].type
-        return IOConstants.PRIMITIVE_TYPE_2_STR[type(eval(operand))]  # pylint: disable=eval-used # nosec
+        primitive_type = type(eval(operand))  # pylint: disable=eval-used # nosec
+        return IOConstants.PRIMITIVE_TYPE_2_STR.get(primitive_type, NONE_PARAMETER_TYPE)
 
     @property
     def _component_code(self) -> str:
