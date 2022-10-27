@@ -94,6 +94,10 @@ def form_page(form_table, form_line):
     model_repr = "FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit=pixel, tables=[{}], lines=[{}])".format(
             form_table[1], form_line[1]
         )[:1024]
+    if sys.version_info[:2] == (3, 11):
+        model_repr = "FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit=LengthUnit.PIXEL, tables=[{}], lines=[{}])".format(
+                form_table[1], form_line[1]
+            )[:1024]
     assert repr(model) == model_repr
     return model, model_repr
 
