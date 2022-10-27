@@ -150,7 +150,7 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
 
 # PRLabel: %ML-AutoML
-/sdk/ml/automl.tests.yml                                             @skasturi @rtanase @raduk @sharma-riti @jialiu103 @nick863 @anupsms @MaurisLucis @novaturient95
+/sdk/ml/automl.tests.yml                                             @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @anupsms @MaurisLucis @novaturient95
 
 # PRLabel: %ML-Data
 /sdk/ml/data-experiences.tests.yml                                   @sogansky @MayankKumar91 @code-vicar
