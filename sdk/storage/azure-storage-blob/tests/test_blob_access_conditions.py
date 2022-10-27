@@ -3093,6 +3093,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
             metadata[c] = 'a'
 
         # Act
+        # If we hit invalid metadata error, that means we have successfully sorted headers properly to pass auth error
         with pytest.raises(HttpResponseError) as e:
             blob_client.upload_blob(data, length=len(data), metadata=metadata)
 
