@@ -52,26 +52,32 @@ def init_new_service(package_name, folder_name):
 
 def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, spec_folder, input_readme):
 
-    readme_file = str(Path(spec_folder, input_readme))
-    global_conf = config["meta"]
-    local_conf = config.get("projects", {}).get(readme_file, {})
-
-    if "resource-manager" in input_readme:
-        cmd = ["autorest", input_readme]
-    else:
-        # autorest for DPG will be executed in package folder like: sdk/deviceupdate/azure-iot-deviceupdate/swagger
-        cmd = ["autorest", _DPG_README]
-    cmd += build_autorest_options(global_conf, local_conf)
-
-    # metadata
     metadata = {
-        "autorest": global_conf["autorest_options"]["version"],
-        "use": global_conf["autorest_options"]["use"],
         "commit": data["headSha"],
         "repository_url": data["repoHttpsUrl"],
-        "autorest_command": " ".join(cmd),
-        "readme": input_readme,
     }
+    if "meta" in config:
+        readme_file = str(Path(spec_folder, input_readme))
+        global_conf = config["meta"]
+        local_conf = config.get("projects", {}).get(readme_file, {})
+
+        if "resource-manager" in input_readme:
+            cmd = ["autorest", input_readme]
+        else:
+            # autorest for DPG will be executed in package folder like: sdk/deviceupdate/azure-iot-deviceupdate/swagger
+            cmd = ["autorest", _DPG_README]
+        cmd += build_autorest_options(global_conf, local_conf)
+
+        # metadata
+        metadata.update({
+            "autorest": global_conf["autorest_options"]["version"],
+            "use": global_conf["autorest_options"]["use"],
+            "autorest_command": " ".join(cmd),
+            "readme": input_readme,
+        })
+    else:
+        metadata["cadl_src"] = input_readme
+        metadata.update(config)
 
     _LOGGER.info("Metadata json:\n {}".format(json.dumps(metadata, indent=2)))
 
@@ -322,3 +328,52 @@ def format_samples(sdk_code_path) -> None:
             fw.write(file_content)
 
     _LOGGER.info(f"format generated_samples successfully")
+
+def get_npm_package_version(package: str) -> Dict[any, any]:
+    temp_file = "python_temp.json"
+    check_call(f"npm list {package} -json > {temp_file}", shell=True)
+    with open(temp_file, "r") as file_in:
+        data = json.load(file_in)
+    if "dependencies" not in data:
+        _LOGGER.info(f"can not find {package}: {data}")
+        return {}
+    
+    return data["dependencies"]
+
+def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
+    # update config file
+    cadl_python = "@azure-tools/cadl-python"
+    autorest_python = "@autorest/python"
+    project_yaml_path = Path(spec_folder) / cadl_relative_path / "cadl-project.yaml"
+    with open(project_yaml_path, "r") as file_in:
+        project_yaml = yaml.safe_load(file_in)
+    if not project_yaml.get("emitters", {}).get(cadl_python):
+        return
+    if not project_yaml["emitters"][cadl_python].get("sdk-folder"):
+        raise Exception("no sdk-folder is defined")
+    output_path = Path(os.getcwd()) / project_yaml["emitters"][cadl_python]["sdk-folder"]
+    if not output_path.exists():
+        os.makedirs(output_path)
+
+    project_yaml["emitters"][cadl_python].pop("sdk-folder")
+    project_yaml["emitters"][cadl_python]["output-path"] = str(output_path)
+    with open(project_yaml_path, "w") as file_out:
+        yaml.safe_dump(project_yaml, file_out)
+
+    # npm install tool
+    origin_path = os.getcwd()
+    os.chdir(Path(spec_folder) / cadl_relative_path)
+    check_call("npm install", shell=True)
+
+    # generate code
+    check_call(f"npx cadl compile . --emit {cadl_python}", shell=True)
+    if Path(output_path / "output.yaml").exists():
+        os.remove(Path(output_path / "output.yaml"))
+
+    # get version of codegen used in generation
+    npm_package_verstion = get_npm_package_version(autorest_python)
+
+    # return to original folder
+    os.chdir(origin_path)
+
+    return npm_package_verstion

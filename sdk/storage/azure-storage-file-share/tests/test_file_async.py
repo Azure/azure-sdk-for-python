@@ -1685,8 +1685,8 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         actual_data = await content.readall()
         assert actual_data == data
 
+    @pytest.mark.live_test_only
     @FileSharePreparer()
-    @recorded_by_proxy_async
     async def test_abort_copy_file_async(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
@@ -1694,7 +1694,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         secondary_storage_account_key = kwargs.pop("secondary_storage_account_key")
 
         self._setup(storage_account_name, storage_account_key, secondary_storage_account_name, secondary_storage_account_key)
-        data = b'12345678' * 1024 * 256
+        data = b'12345678' * 1024 * 1024
         await self._setup_share(storage_account_name, storage_account_key)
         await self._create_remote_share()
         source_file = await self._create_remote_file(file_data=data)
@@ -2406,7 +2406,7 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
     async def test_sas_signed_identifier(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
-        variables = kwargs.pop("variables")
+        variables = kwargs.pop('variables', {})
 
         self._setup(storage_account_name, storage_account_key)
         file_client = await self._create_file(storage_account_name, storage_account_key)

@@ -27,31 +27,31 @@ stages:
       InjectedPackages: ${{parameters.InjectedPackages}}
       Artifacts: ${{parameters.Artifacts}}
 
-  - stage: Test_Emulator
-    dependsOn: []
-    jobs:
-    - job: Emulator
-      strategy:
-        matrix:
-          Windows_Python36:
-            OSVmImage: 'windows-2019'
-            PythonVersion: '3.6'
-      pool:
-        vmImage: $(OSVmImage)
-
-      steps:
-        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
-          parameters:
-            EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
-            StartParameters: ${{ parameters.EmulatorStartParameters }}
-
-        - template: /eng/pipelines/templates/steps/build-test.yml
-          parameters:
-            TestMarkArgument: not globaldb
-            EnvVars:
-              ACCOUNT_HOST: https://localhost:8081/
-            ServiceDirectory: ${{ parameters.ServiceDirectory }}
-            PythonVersion: $(PythonVersion)
-            OSVmImage: $(OSVmImage)
-            ToxTestEnv: 'whl,sdist'
-            InjectedPackages: ${{parameters.InjectedPackages}}
+#  - stage: Test_Emulator
+#    dependsOn: []
+#    jobs:
+#    - job: Emulator
+#      strategy:
+#        matrix:
+#          Windows_Python36:
+#            OSVmImage: 'windows-2019'
+#            PythonVersion: '3.6'
+#      pool:
+#        vmImage: $(OSVmImage)
+#
+#      steps:
+#        - template: /eng/common/pipelines/templates/steps/cosmos-emulator.yml
+#          parameters:
+#            EmulatorMsiUrl: ${{ parameters.EmulatorMsiUrl }}
+#            StartParameters: ${{ parameters.EmulatorStartParameters }}
+#
+#        - template: /eng/pipelines/templates/steps/build-test.yml
+#          parameters:
+#            TestMarkArgument: not globaldb
+#            EnvVars:
+#              ACCOUNT_HOST: https://localhost:8081/
+#            ServiceDirectory: ${{ parameters.ServiceDirectory }}
+#            PythonVersion: $(PythonVersion)
+#            OSVmImage: $(OSVmImage)
+#            ToxTestEnv: 'whl,sdist'
+#            InjectedPackages: ${{parameters.InjectedPackages}}

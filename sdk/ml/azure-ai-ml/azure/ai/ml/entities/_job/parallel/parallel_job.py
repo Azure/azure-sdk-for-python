@@ -54,6 +54,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     :type task: ParallelTask
     :param mini_batch_size: The mini batch size.
     :type mini_batch_size: str
+    :param partition_keys: The partition keys.
+    :type partition_keys: list
     :param input_data: The input data.
     :type input_data: str
     :param inputs: Inputs of the job.
@@ -107,6 +109,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         return ParallelComponent(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
             task=self.task,
             retry_settings=self.retry_settings,
@@ -137,6 +140,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
             inputs=self.inputs,
             outputs=self.outputs,
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
             # task will be inherited from component & base_path will be set correctly.
             retry_settings=self.retry_settings,

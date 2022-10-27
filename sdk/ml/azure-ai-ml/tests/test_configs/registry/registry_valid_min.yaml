@@ -1,5 +1,8 @@
 description: This is a registry description
 name: registry_name
 location: WestCentralUS
+tags:
+  one: two
+  three: five
 replication_locations:
   - location: WestCentralUS

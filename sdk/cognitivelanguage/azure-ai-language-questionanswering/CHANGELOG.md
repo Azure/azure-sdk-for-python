@@ -1,8 +1,21 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.1.1 (Unreleased)
+
+### Features Added
 
 ### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.1.0 (2022-10-13)
+
+### Breaking Changes
+> These changes do not impact the API of stable versions such as 1.0.0.
+> Only code written against a beta version such as 1.1.0b2 may be affected
+
 * `QuestionAnsweringProjectsClient` was renamed to `AuthoringClient`.
 * The `azure.ai.language.questionanswering.projects` namespace was renamed to `azure.ai.language.questionanswering.authoring`
 * Authoring client methods: `begin_deploy_project`, `begin_import_assets`, `begin_update_sources` 

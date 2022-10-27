@@ -8,13 +8,14 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.paging import ItemPaged
@@ -45,7 +46,7 @@ def build_list_projects_request(*, top: Optional[int] = None, skip: Optional[int
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -69,7 +70,7 @@ def build_create_project_request(project_name: str, **kwargs: Any) -> HttpReques
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -95,7 +96,7 @@ def build_get_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -119,7 +120,7 @@ def build_delete_project_request(project_name: str, **kwargs: Any) -> HttpReques
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -145,12 +146,13 @@ def build_export_project_request(
     string_index_type: str,
     exported_project_format: Optional[str] = None,
     asset_kind: Optional[str] = None,
+    trained_model_label: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -167,6 +169,8 @@ def build_export_project_request(
     _params["stringIndexType"] = _SERIALIZER.query("string_index_type", string_index_type, "str")
     if asset_kind is not None:
         _params["assetKind"] = _SERIALIZER.query("asset_kind", asset_kind, "str")
+    if trained_model_label is not None:
+        _params["trainedModelLabel"] = _SERIALIZER.query("trained_model_label", trained_model_label, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -175,13 +179,14 @@ def build_export_project_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_import_project_request(project_name: str, **kwargs: Any) -> HttpRequest:
+def build_import_project_request(
+    project_name: str, *, exported_project_format: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    exported_project_format = kwargs.pop("exported_project_format", _params.pop("format", None))  # type: Optional[str]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -210,7 +215,7 @@ def build_train_request(project_name: str, **kwargs: Any) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -238,7 +243,7 @@ def build_list_deployments_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -267,7 +272,7 @@ def build_swap_deployments_request(project_name: str, **kwargs: Any) -> HttpRequ
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -293,7 +298,7 @@ def build_get_deployment_request(project_name: str, deployment_name: str, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -319,7 +324,7 @@ def build_deploy_project_request(project_name: str, deployment_name: str, **kwar
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -346,7 +351,7 @@ def build_delete_deployment_request(project_name: str, deployment_name: str, **k
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -367,13 +372,71 @@ def build_delete_deployment_request(project_name: str, deployment_name: str, **k
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_delete_deployment_from_resources_request(
+    project_name: str, deployment_name: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}/:delete-from-resources"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_deployment_delete_from_resources_status_request(
+    project_name: str, deployment_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/deployments/{deploymentName}/delete-from-resources/jobs/{jobId}"  # pylint: disable=line-too-long
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "deploymentName": _SERIALIZER.url("deployment_name", deployment_name, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_get_deployment_job_status_request(
     project_name: str, deployment_name: str, job_id: str, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -399,7 +462,7 @@ def build_get_swap_deployments_job_status_request(project_name: str, job_id: str
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -424,7 +487,7 @@ def build_get_export_project_job_status_request(project_name: str, job_id: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -449,7 +512,7 @@ def build_get_import_project_job_status_request(project_name: str, job_id: str, 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -476,7 +539,7 @@ def build_list_trained_models_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -504,7 +567,7 @@ def build_get_trained_model_request(project_name: str, trained_model_label: str,
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -529,7 +592,7 @@ def build_delete_trained_model_request(project_name: str, trained_model_label: s
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -550,6 +613,31 @@ def build_delete_trained_model_request(project_name: str, trained_model_label: s
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_load_snapshot_request(project_name: str, trained_model_label: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}/:load-snapshot"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_list_model_evaluation_results_request(
     project_name: str,
     trained_model_label: str,
@@ -562,7 +650,7 @@ def build_list_model_evaluation_results_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -594,7 +682,7 @@ def build_get_model_evaluation_summary_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -617,13 +705,179 @@ def build_get_model_evaluation_summary_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_get_load_snapshot_status_request(
+    project_name: str, trained_model_label: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = (
+        "/authoring/analyze-conversations/projects/{projectName}/models/{trainedModelLabel}/load-snapshot/jobs/{jobId}"
+    )
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "trainedModelLabel": _SERIALIZER.url("trained_model_label", trained_model_label, "str"),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_list_deployment_resources_request(
+    project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/resources"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_assign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/resources/:assign"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_unassign_deployment_resources_request(project_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/resources/:unassign"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_assign_deployment_resources_status_request(project_name: str, job_id: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/resources/assign/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_unassign_deployment_resources_status_request(
+    project_name: str, job_id: str, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/{projectName}/resources/unassign/jobs/{jobId}"
+    path_format_arguments = {
+        "projectName": _SERIALIZER.url("project_name", project_name, "str", max_length=100),
+        "jobId": _SERIALIZER.url("job_id", job_id, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_list_training_jobs_request(
     project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -651,7 +905,7 @@ def build_get_training_job_status_request(project_name: str, job_id: str, **kwar
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -676,7 +930,7 @@ def build_cancel_training_job_request(project_name: str, job_id: str, **kwargs: 
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -701,7 +955,7 @@ def build_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) ->
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -721,13 +975,38 @@ def build_get_project_deletion_job_status_request(job_id: str, **kwargs: Any) ->
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_list_assigned_resource_deployments_request(
+    *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/authoring/analyze-conversations/projects/global/deployments/resources"
+
+    # Construct parameters
+    if top is not None:
+        _params["top"] = _SERIALIZER.query("top", top, "int")
+    if skip is not None:
+        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 def build_list_supported_languages_request(
     *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -758,7 +1037,7 @@ def build_list_supported_prebuilt_entities_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -787,7 +1066,7 @@ def build_list_training_config_versions_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-05-15-preview"))  # type: str
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -812,6 +1091,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def list_projects(self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any) -> Iterable[JSON]:
         """Lists the existing projects.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-projects
+        for more information.
+
         :keyword top: The maximum number of resources to return from the collection. Default value is
          None.
         :paramtype top: int
@@ -829,26 +1112,29 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation", "Orchestration", and "CustomConversationSummarization".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
-                          "None". Required.
-                    }
+                          "None". The value of the threshold should be between 0 and 1 inclusive.
+                          Required.
+                    },
+                    "storageInputContainerName": "str"  # Optional. The storage container name in
+                      case of conversation summarization.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -856,7 +1142,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -878,10 +1169,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -920,6 +1218,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> JSON:
         """Creates a new project or updates an existing one.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param project: The project parameters. Required.
@@ -936,46 +1238,52 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
                 # JSON input template you can fill out and use as your body input.
                 project = {
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation", "Orchestration", and "CustomConversationSummarization".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
-                          "None". Required.
-                    }
+                          "None". The value of the threshold should be between 0 and 1 inclusive.
+                          Required.
+                    },
+                    "storageInputContainerName": "str"  # Optional. The storage container name in
+                      case of conversation summarization.
                 }
 
                 # response body for status code(s): 200, 201
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation", "Orchestration", and "CustomConversationSummarization".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
-                          "None". Required.
-                    }
+                          "None". The value of the threshold should be between 0 and 1 inclusive.
+                          Required.
+                    },
+                    "storageInputContainerName": "str"  # Optional. The storage container name in
+                      case of conversation summarization.
                 }
         """
 
@@ -984,6 +1292,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         self, project_name: str, project: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Creates a new project or updates an existing one.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1003,32 +1315,39 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation", "Orchestration", and "CustomConversationSummarization".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
-                          "None". Required.
-                    }
+                          "None". The value of the threshold should be between 0 and 1 inclusive.
+                          Required.
+                    },
+                    "storageInputContainerName": "str"  # Optional. The storage container name in
+                      case of conversation summarization.
                 }
         """
 
     @distributed_trace
     def create_project(self, project_name: str, project: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Creates a new project or updates an existing one.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1048,29 +1367,37 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation", "Orchestration", and "CustomConversationSummarization".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
-                          "None". Required.
-                    }
+                          "None". The value of the threshold should be between 0 and 1 inclusive.
+                          Required.
+                    },
+                    "storageInputContainerName": "str"  # Optional. The storage container name in
+                      case of conversation summarization.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1132,6 +1459,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def get_project(self, project_name: str, **kwargs: Any) -> JSON:
         """Gets the details of a project.
 
+        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :return: JSON object
@@ -1145,29 +1475,37 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # Represents the project creation
                       datetime. Required.
-                    "description": "str",  # Optional. The project description.
                     "language": "str",  # The project language. This is BCP-47 representation of
                       a language. For example, use "en" for English, "en-gb" for English (UK), "es" for
                       Spanish etc. Required.
-                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
-                      project last deployed datetime.
                     "lastModifiedDateTime": "2020-02-20 00:00:00",  # Represents the project
                       creation datetime. Required.
+                    "projectKind": "str",  # Represents the project kind. Required. Known values
+                      are: "Conversation", "Orchestration", and "CustomConversationSummarization".
+                    "projectName": "str",  # The new project name. Required.
+                    "description": "str",  # Optional. The project description.
+                    "lastDeployedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
+                      project last deployed datetime.
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Optional. Represents the
                       project last trained datetime.
                     "multilingual": bool,  # Optional. Whether the project would be used for
                       multiple languages or not.
-                    "projectKind": "str",  # Represents the project kind. Required. Known values
-                      are: "Conversation" and "Orchestration".
-                    "projectName": "str",  # The new project name. Required.
                     "settings": {
                         "confidenceThreshold": 0.0  # The threshold of the intent with the
                           highest confidence, at which the prediction will automatically be changed to
-                          "None". Required.
-                    }
+                          "None". The value of the threshold should be between 0 and 1 inclusive.
+                          Required.
+                    },
+                    "storageInputContainerName": "str"  # Optional. The storage container name in
+                      case of conversation summarization.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1207,7 +1545,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return cast(JSON, deserialized)
 
     def _delete_project_initial(self, project_name: str, **kwargs: Any) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1258,6 +1601,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def begin_delete_project(self, project_name: str, **kwargs: Any) -> LROPoller[JSON]:
         """Deletes a project.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-project
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
@@ -1278,6 +1625,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1289,6 +1642,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1301,26 +1656,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1380,9 +1727,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         string_index_type: str,
         exported_project_format: Optional[str] = None,
         asset_kind: Optional[str] = None,
+        trained_model_label: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -1395,6 +1748,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             string_index_type=string_index_type,
             exported_project_format=exported_project_format,
             asset_kind=asset_kind,
+            trained_model_label=trained_model_label,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1440,9 +1794,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         string_index_type: str,
         exported_project_format: Optional[str] = None,
         asset_kind: Optional[str] = None,
+        trained_model_label: Optional[str] = None,
         **kwargs: Any
     ) -> LROPoller[JSON]:
         """Triggers a job to export a project's data.
+
+        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/export for
+        more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1454,6 +1812,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :paramtype exported_project_format: str
         :keyword asset_kind: Kind of asset to export. Default value is None.
         :paramtype asset_kind: str
+        :keyword trained_model_label: Trained model label to export. If the trainedModelLabel is null,
+         the default behavior is to export the current working copy. Default value is None.
+        :paramtype trained_model_label: str
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
          this operation to not poll, or pass in your own initialized polling object for a personal
@@ -1472,6 +1833,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1483,6 +1850,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1495,28 +1864,20 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
                     "resultUrl": "str",  # Optional. The URL to use in order to download the
                       exported project.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1538,6 +1899,7 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 string_index_type=string_index_type,
                 exported_project_format=exported_project_format,
                 asset_kind=asset_kind,
+                trained_model_label=trained_model_label,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -1584,7 +1946,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         exported_project_format: Optional[str] = None,
         **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -1657,6 +2024,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
+        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for
+        more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param project: The project data to import. Required.
@@ -1681,35 +2051,155 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         Example:
             .. code-block:: python
 
+                # The input is polymorphic. The following are possible polymorphic inputs based off
+                  discriminator "projectKind":
+
+                # JSON input template for discriminator value "Conversation":
+                exported_project_assets = {
+                    "projectKind": "Conversation",
+                    "entities": [
+                        {
+                            "category": "str",  # The category of the entity. Required.
+                            "compositionSetting": "str",  # Optional. The behavior to
+                              follow when the entity's components overlap with each other. Known values
+                              are: "returnLongestOverlap", "requireExactOverlap", "separateComponents",
+                              and "combineComponents".
+                            "list": {
+                                "sublists": [
+                                    {
+                                        "listKey": "str",  # Optional. The
+                                          key of the sub-list.
+                                        "synonyms": [
+                                            {
+                                                "language": "str",  #
+                                                  Optional. Represents the language of the synonyms.
+                                                  This is BCP-47 representation of a language. For
+                                                  example, use "en" for English, "en-gb" for English
+                                                  (UK), "es" for Spanish etc.
+                                                "values": [
+                                                    "str"  #
+                                                      Optional. The list of synonyms.
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            },
+                            "prebuilts": [
+                                {
+                                    "category": "str"  # The prebuilt entity
+                                      category. Required.
+                                }
+                            ],
+                            "regex": {
+                                "expressions": [
+                                    {
+                                        "language": "str",  # Optional.
+                                          Represents the language of the regex expression. This is
+                                          BCP-47 representation of a language. For example, use "en"
+                                          for English, "en-gb" for English (UK), "es" for Spanish etc.
+                                        "regexKey": "str",  # Optional. The
+                                          key of the regex expression.
+                                        "regexPattern": "str"  # Optional.
+                                          The regex pattern.
+                                    }
+                                ]
+                            },
+                            "requiredComponents": [
+                                "str"  # Optional. The required components. Allowed
+                                  values are 'learned', 'list', 'prebuilts' and 'regex'.
+                            ]
+                        }
+                    ],
+                    "intents": [
+                        {
+                            "category": "str"  # The intent category. Required.
+                        }
+                    ],
+                    "utterances": [
+                        {
+                            "intent": "str",  # The intent of the utterance. Required.
+                            "text": "str",  # The utterance text. Required.
+                            "dataset": "str",  # Optional. The dataset for this
+                              utterance. Allowed values are 'Train' and 'Test'.
+                            "entities": [
+                                {
+                                    "category": "str",  # The category of the
+                                      entity label. Required.
+                                    "length": 0,  # Length for the entity text.
+                                      Required.
+                                    "offset": 0  # Start position for the entity
+                                      text. Required.
+                                }
+                            ],
+                            "language": "str"  # Optional. Represents the utterance's
+                              language. This is BCP-47 representation of a language. For example, use
+                              "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
+                        }
+                    ]
+                }
+
+                # JSON input template for discriminator value "Orchestration":
+                exported_project_assets = {
+                    "projectKind": "Orchestration",
+                    "intents": [
+                        {
+                            "category": "str",  # The intent category. Required.
+                            "orchestration": exported_orchestration_options
+                        }
+                    ],
+                    "utterances": [
+                        {
+                            "intent": "str",  # The intent of the utterance. Required.
+                            "text": "str",  # The utterance text. Required.
+                            "dataset": "str",  # Optional. The dataset for this
+                              utterance. Allowed values are 'Train' and 'Test'.
+                            "language": "str"  # Optional. Represents the utterance's
+                              language. This is BCP-47 representation of a language. For example, use
+                              "en" for English, "en-gb" for English (UK), "es" for Spanish etc.
+                        }
+                    ]
+                }
+
                 # JSON input template you can fill out and use as your body input.
                 project = {
-                    "assets": exported_project_assets,
                     "metadata": {
-                        "description": "str",  # Optional. The project description.
                         "language": "str",  # The project language. This is BCP-47
                           representation of a language. For example, use "en" for English, "en-gb" for
                           English (UK), "es" for Spanish etc. Required.
+                        "projectKind": "str",  # Represents the project kind. Required. Known
+                          values are: "Conversation", "Orchestration", and
+                          "CustomConversationSummarization".
+                        "projectName": "str",  # The new project name. Required.
+                        "description": "str",  # Optional. The project description.
                         "multilingual": bool,  # Optional. Whether the project would be used
                           for multiple languages or not.
-                        "projectKind": "str",  # Represents the project kind. Required. Known
-                          values are: "Conversation" and "Orchestration".
-                        "projectName": "str",  # The new project name. Required.
                         "settings": {
                             "confidenceThreshold": 0.0  # The threshold of the intent
                               with the highest confidence, at which the prediction will automatically
-                              be changed to "None". Required.
-                        }
+                              be changed to "None". The value of the threshold should be between 0 and
+                              1 inclusive. Required.
+                        },
+                        "storageInputContainerName": "str"  # Optional. The storage container
+                          name in case of conversation summarization.
                     },
                     "projectFileVersion": "str",  # The version of the exported file. Required.
-                    "stringIndexType": "str"  # Specifies the method used to interpret string
+                    "stringIndexType": "str",  # Specifies the method used to interpret string
                       offsets. For additional information see https://aka.ms/text-analytics-offsets.
                       Required. "Utf16CodeUnit"
+                    "assets": exported_project_assets
                 }
 
                 # response body for status code(s): 200
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1721,6 +2211,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1733,26 +2225,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1774,6 +2258,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> LROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
+
+        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for
+        more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1803,6 +2290,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1814,6 +2307,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1826,26 +2321,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1866,6 +2353,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> LROPoller[JSON]:
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
+
+        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for
+        more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1895,6 +2385,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -1906,6 +2402,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -1918,26 +2416,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -1999,7 +2489,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     def _train_initial(self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2064,6 +2559,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> LROPoller[JSON]:
         """Triggers a training job for a project.
 
+        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for
+        more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param configuration: The training input parameters. Required.
@@ -2087,6 +2585,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
                 # JSON input template you can fill out and use as your body input.
                 configuration = {
+                    "modelLabel": "str",  # Represents the output model label. Required.
+                    "trainingMode": "str",  # Represents the mode of the training operation.
+                      Required. Known values are: "advanced" and "standard".
                     "evaluationOptions": {
                         "kind": "str",  # Optional. Represents the evaluation kind. By
                           default, the evaluation kind is set to percentage. Known values are:
@@ -2098,18 +2599,54 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                           dataset split percentage. Only needed in case the evaluation kind is
                           percentage.
                     },
-                    "modelLabel": "str",  # Represents the output model label. Required.
-                    "trainingConfigVersion": "str",  # Optional. Represents training config
+                    "trainingConfigVersion": "str"  # Optional. Represents training config
                       version. By default, "latest" value is used which uses the latest released
                       training config version.
-                    "trainingMode": "str"  # Represents the mode of the training operation.
-                      Required. Known values are: "advanced" and "standard".
                 }
 
                 # response body for status code(s): 200
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2121,6 +2658,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2133,59 +2672,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2200,6 +2698,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         self, project_name: str, configuration: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Triggers a training job for a project.
+
+        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for
+        more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2226,6 +2727,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2237,6 +2777,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2249,59 +2791,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2314,6 +2815,9 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     @distributed_trace
     def begin_train(self, project_name: str, configuration: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
         """Triggers a training job for a project.
+
+        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for
+        more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2341,6 +2845,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2352,6 +2895,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2364,59 +2909,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2482,6 +2986,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> Iterable[JSON]:
         """Lists the deployments belonging to a project.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-deployments
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -2507,8 +3015,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Represents deployment last
                       trained time. Required.
                     "modelId": "str",  # Represents deployment modelId. Required.
-                    "modelTrainingConfigVersion": "str"  # Represents model training config
+                    "modelTrainingConfigVersion": "str",  # Represents model training config
                       version. Required.
+                    "assignedResources": [
+                        {
+                            "region": "str",  # Represents the resource region. Required.
+                            "resourceId": "str"  # Represents the Azure resource Id.
+                              Required.
+                        }
+                    ]
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -2516,7 +3031,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -2539,10 +3059,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -2578,7 +3105,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def _swap_deployments_initial(
         self, project_name: str, deployments: Union[JSON, IO], **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -2643,6 +3175,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> LROPoller[JSON]:
         """Swaps two existing deployments with each other.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param deployments: The job object to swap two deployments. Required.
@@ -2676,6 +3212,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2687,6 +3229,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2699,26 +3243,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2733,6 +3269,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         self, project_name: str, deployments: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> LROPoller[JSON]:
         """Swaps two existing deployments with each other.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2759,6 +3299,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2770,6 +3316,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2782,26 +3330,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2814,6 +3354,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     @distributed_trace
     def begin_swap_deployments(self, project_name: str, deployments: Union[JSON, IO], **kwargs: Any) -> LROPoller[JSON]:
         """Swaps two existing deployments with each other.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -2841,6 +3385,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -2852,6 +3402,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -2864,26 +3416,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -2947,6 +3491,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def get_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> JSON:
         """Gets the details of a deployment.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -2968,11 +3516,23 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Represents deployment last
                       trained time. Required.
                     "modelId": "str",  # Represents deployment modelId. Required.
-                    "modelTrainingConfigVersion": "str"  # Represents model training config
+                    "modelTrainingConfigVersion": "str",  # Represents model training config
                       version. Required.
+                    "assignedResources": [
+                        {
+                            "region": "str",  # Represents the resource region. Required.
+                            "resourceId": "str"  # Represents the Azure resource Id.
+                              Required.
+                        }
+                    ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3015,7 +3575,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def _deploy_project_initial(
         self, project_name: str, deployment_name: str, deployment: Union[JSON, IO], **kwargs: Any
     ) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3087,6 +3652,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> LROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -3112,7 +3681,13 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
                 # JSON input template you can fill out and use as your body input.
                 deployment = {
-                    "trainedModelLabel": "str"  # Represents the trained model label. Required.
+                    "trainedModelLabel": "str",  # Represents the trained model label. Required.
+                    "assignedResourceIds": [
+                        "str"  # Optional. Represents the resource IDs to be assigned to the
+                          deployment."n            If provided, the deployment will be rolled out to
+                          the resources provided here as well as the original resource in which the
+                          project is created.
+                    ]
                 }
 
                 # response body for status code(s): 200
@@ -3125,8 +3700,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Represents deployment last
                       trained time. Required.
                     "modelId": "str",  # Represents deployment modelId. Required.
-                    "modelTrainingConfigVersion": "str"  # Represents model training config
+                    "modelTrainingConfigVersion": "str",  # Represents model training config
                       version. Required.
+                    "assignedResources": [
+                        {
+                            "region": "str",  # Represents the resource region. Required.
+                            "resourceId": "str"  # Represents the Azure resource Id.
+                              Required.
+                        }
+                    ]
                 }
         """
 
@@ -3141,6 +3723,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         **kwargs: Any
     ) -> LROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3175,8 +3761,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Represents deployment last
                       trained time. Required.
                     "modelId": "str",  # Represents deployment modelId. Required.
-                    "modelTrainingConfigVersion": "str"  # Represents model training config
+                    "modelTrainingConfigVersion": "str",  # Represents model training config
                       version. Required.
+                    "assignedResources": [
+                        {
+                            "region": "str",  # Represents the resource region. Required.
+                            "resourceId": "str"  # Represents the Azure resource Id.
+                              Required.
+                        }
+                    ]
                 }
         """
 
@@ -3185,6 +3778,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         self, project_name: str, deployment_name: str, deployment: Union[JSON, IO], **kwargs: Any
     ) -> LROPoller[JSON]:
         """Creates a new deployment or replaces an existing one.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3219,8 +3816,15 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     "lastTrainedDateTime": "2020-02-20 00:00:00",  # Represents deployment last
                       trained time. Required.
                     "modelId": "str",  # Represents deployment modelId. Required.
-                    "modelTrainingConfigVersion": "str"  # Represents model training config
+                    "modelTrainingConfigVersion": "str",  # Represents model training config
                       version. Required.
+                    "assignedResources": [
+                        {
+                            "region": "str",  # Represents the resource region. Required.
+                            "resourceId": "str"  # Represents the Azure resource Id.
+                              Required.
+                        }
+                    ]
                 }
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -3276,7 +3880,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     def _delete_deployment_initial(self, project_name: str, deployment_name: str, **kwargs: Any) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3328,6 +3937,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def begin_delete_deployment(self, project_name: str, deployment_name: str, **kwargs: Any) -> LROPoller[JSON]:
         """Deletes a project deployment.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param deployment_name: The name of the specific deployment of the project to use. Required.
@@ -3350,6 +3963,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3361,6 +3980,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3373,26 +3994,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3450,9 +4063,236 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
+    def _delete_deployment_from_resources_initial(  # pylint: disable=inconsistent-return-statements
+        self, project_name: str, deployment_name: str, body: Union[JSON, IO], **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
+
+        request = build_delete_deployment_from_resources_request(
+            project_name=project_name,
+            deployment_name=deployment_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    @overload
+    def begin_delete_deployment_from_resources(
+        self,
+        project_name: str,
+        deployment_name: str,
+        body: JSON,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes a project deployment from the specified assigned resources.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment-from-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The options for deleting the deployment. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "assignedResourceIds": [
+                        "str"  # Optional. Represents the resource IDs to delete the
+                          deployment from."n            If not provided, the deployment will be rolled
+                          out from all the resources it is deployed to."n            If provided, it
+                          will delete the deployment only from the specified assigned resources, and
+                          leave it for the rest.
+                    ]
+                }
+        """
+
+    @overload
+    def begin_delete_deployment_from_resources(
+        self,
+        project_name: str,
+        deployment_name: str,
+        body: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes a project deployment from the specified assigned resources.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment-from-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The options for deleting the deployment. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
     @distributed_trace
-    def get_deployment_job_status(self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any) -> JSON:
-        """Gets the status of an existing deployment job.
+    def begin_delete_deployment_from_resources(
+        self, project_name: str, deployment_name: str, body: Union[JSON, IO], **kwargs: Any
+    ) -> LROPoller[None]:
+        """Deletes a project deployment from the specified assigned resources.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment-from-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param body: The options for deleting the deployment. Is either a model type or a IO type.
+         Required.
+        :type body: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._delete_deployment_from_resources_initial(  # type: ignore
+                project_name=project_name,
+                deployment_name=deployment_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    @distributed_trace
+    def get_deployment_delete_from_resources_status(
+        self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any
+    ) -> JSON:
+        """Gets the status of an existing delete deployment from specific resources job.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment-delete-from-resources-status
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -3471,6 +4311,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3482,6 +4328,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3494,26 +4342,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3522,7 +4362,134 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        request = build_get_deployment_delete_from_resources_status_request(
+            project_name=project_name,
+            deployment_name=deployment_name,
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace
+    def get_deployment_job_status(self, project_name: str, deployment_name: str, job_id: str, **kwargs: Any) -> JSON:
+        """Gets the status of an existing deployment job.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment-status
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param deployment_name: The name of the specific deployment of the project to use. Required.
+        :type deployment_name: str
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3567,6 +4534,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def get_swap_deployments_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an existing swap deployment job.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-swap-deployments-status
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
@@ -3582,6 +4553,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3593,6 +4570,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3605,26 +4584,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3633,7 +4604,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3677,6 +4653,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def get_export_project_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-export-status
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
@@ -3692,6 +4672,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3703,6 +4689,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3715,28 +4703,20 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
                     "resultUrl": "str",  # Optional. The URL to use in order to download the
                       exported project.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3745,7 +4725,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3789,6 +4774,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def get_import_project_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for an import.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-import-status
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
@@ -3804,6 +4793,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -3815,6 +4810,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -3827,26 +4824,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -3855,7 +4844,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -3901,6 +4895,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> Iterable[JSON]:
         """Lists the trained models belonging to a project.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-trained-models
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -3925,8 +4923,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                       training request in seconds. Required.
                     "modelExpirationDate": "2020-02-20",  # The model expiration date. Required.
                     "modelId": "str",  # The model ID. Required.
-                    "modelTrainingConfigVersion": "str"  # The model training config version.
+                    "modelTrainingConfigVersion": "str",  # The model training config version.
                       Required.
+                    "hasSnapshot": bool  # Optional. The flag to indicate if the trained model
+                      has a snapshot ready.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -3934,7 +4934,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -3957,10 +4962,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -3997,6 +5009,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def get_trained_model(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
         """Gets the details of a trained model.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-trained-model
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param trained_model_label: The trained model label. Required.
@@ -4017,11 +5033,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                       training request in seconds. Required.
                     "modelExpirationDate": "2020-02-20",  # The model expiration date. Required.
                     "modelId": "str",  # The model ID. Required.
-                    "modelTrainingConfigVersion": "str"  # The model training config version.
+                    "modelTrainingConfigVersion": "str",  # The model training config version.
                       Required.
+                    "hasSnapshot": bool  # Optional. The flag to indicate if the trained model
+                      has a snapshot ready.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4067,6 +5090,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> None:
         """Deletes an existing trained model.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-trained-model
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param trained_model_label: The trained model label. Required.
@@ -4075,7 +5102,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4108,6 +5140,116 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         if cls:
             return cls(pipeline_response, None, {})
 
+    def _load_snapshot_initial(  # pylint: disable=inconsistent-return-statements
+        self, project_name: str, trained_model_label: str, **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_load_snapshot_request(
+            project_name=project_name,
+            trained_model_label=trained_model_label,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    @distributed_trace
+    def begin_load_snapshot(self, project_name: str, trained_model_label: str, **kwargs: Any) -> LROPoller[None]:
+        """Restores the snapshot of this trained model to be the current working directory of the project.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/load-snapshot
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._load_snapshot_initial(  # type: ignore
+                project_name=project_name,
+                trained_model_label=trained_model_label,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
     @distributed_trace
     def list_model_evaluation_results(
         self,
@@ -4121,6 +5263,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> Iterable[JSON]:
         """Gets the detailed results of the evaluation for a trained model. This includes the raw
         inference results for the data included in the evaluation process.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-results
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -4183,7 +5329,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -4208,10 +5359,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -4248,6 +5406,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def get_model_evaluation_summary(self, project_name: str, trained_model_label: str, **kwargs: Any) -> JSON:
         """Gets the evaluation summary of a trained model. The summary includes high level performance
         measurements of the model e.g., F1, Precision, Recall, etc.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-summary
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -4298,17 +5460,6 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "microPrecision": 0.0,  # Represents the micro precision. Required.
                         "microRecall": 0.0  # Represents the micro recall. Required.
                     },
-                    "evaluationOptions": {
-                        "kind": "str",  # Optional. Represents the evaluation kind. By
-                          default, the evaluation kind is set to percentage. Known values are:
-                          "percentage" and "manual".
-                        "testingSplitPercentage": 0,  # Optional. Represents the testing
-                          dataset split percentage. Only needed in case the evaluation kind is
-                          percentage.
-                        "trainingSplitPercentage": 0  # Optional. Represents the training
-                          dataset split percentage. Only needed in case the evaluation kind is
-                          percentage.
-                    },
                     "intentsEvaluation": {
                         "confusionMatrix": {
                             "str": {
@@ -4344,10 +5495,26 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                         "microF1": 0.0,  # Represents the micro F1. Required.
                         "microPrecision": 0.0,  # Represents the micro precision. Required.
                         "microRecall": 0.0  # Represents the micro recall. Required.
+                    },
+                    "evaluationOptions": {
+                        "kind": "str",  # Optional. Represents the evaluation kind. By
+                          default, the evaluation kind is set to percentage. Known values are:
+                          "percentage" and "manual".
+                        "testingSplitPercentage": 0,  # Optional. Represents the testing
+                          dataset split percentage. Only needed in case the evaluation kind is
+                          percentage.
+                        "trainingSplitPercentage": 0  # Optional. Represents the training
+                          dataset split percentage. Only needed in case the evaluation kind is
+                          percentage.
                     }
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4388,10 +5555,894 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return cast(JSON, deserialized)
 
     @distributed_trace
+    def get_load_snapshot_status(self, project_name: str, trained_model_label: str, job_id: str, **kwargs: Any) -> JSON:
+        """Gets the status for loading a snapshot.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-load-snapshot-status
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param trained_model_label: The trained model label. Required.
+        :type trained_model_label: str
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        request = build_get_load_snapshot_status_request(
+            project_name=project_name,
+            trained_model_label=trained_model_label,
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace
+    def list_deployment_resources(
+        self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> Iterable[JSON]:
+        """Lists the deployments resources assigned to the project.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-deployment-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :keyword top: The maximum number of resources to return from the collection. Default value is
+         None.
+        :paramtype top: int
+        :keyword skip: An offset into the collection of the first resource to be returned. Default
+         value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "azureResourceId": "str",  # The resource ID. Required.
+                    "region": "str"  # The resource region. Required.
+                }
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_list_deployment_resources_request(
+                    project_name=project_name,
+                    top=top,
+                    skip=skip,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    def _assign_deployment_resources_initial(  # pylint: disable=inconsistent-return-statements
+        self, project_name: str, body: Union[JSON, IO], **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
+
+        request = build_assign_deployment_resources_request(
+            project_name=project_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    @overload
+    def begin_assign_deployment_resources(
+        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/assign-deployment-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The new project resources info. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "resourcesMetadata": [
+                        {
+                            "azureResourceId": "str",  # Represents the Azure resource
+                              ID. Required.
+                            "customDomain": "str",  # Represents the Azure resource
+                              custom domain. Required.
+                            "region": "str"  # Represents the Azure resource region.
+                              Required.
+                        }
+                    ]
+                }
+        """
+
+    @overload
+    def begin_assign_deployment_resources(
+        self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/assign-deployment-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The new project resources info. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_assign_deployment_resources(
+        self, project_name: str, body: Union[JSON, IO], **kwargs: Any
+    ) -> LROPoller[None]:
+        """Assign new Azure resources to a project to allow deploying new deployments to them. This API is
+        available only via AAD authentication and not supported via subscription key authentication.
+        For more details about AAD authentication, check here:
+        https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/assign-deployment-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The new project resources info. Is either a model type or a IO type. Required.
+        :type body: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._assign_deployment_resources_initial(  # type: ignore
+                project_name=project_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    def _unassign_deployment_resources_initial(  # pylint: disable=inconsistent-return-statements
+        self, project_name: str, body: Union[JSON, IO], **kwargs: Any
+    ) -> None:
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
+
+        request = build_unassign_deployment_resources_request(
+            project_name=project_name,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
+
+        if cls:
+            return cls(pipeline_response, None, response_headers)
+
+    @overload
+    def begin_unassign_deployment_resources(
+        self, project_name: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/unassign-deployment-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "assignedResourceIds": [
+                        "str"  # Represents the assigned resource IDs to be unassigned.
+                          Required.
+                    ]
+                }
+        """
+
+    @overload
+    def begin_unassign_deployment_resources(
+        self, project_name: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/unassign-deployment-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The info for the deployment resources to be deleted. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def begin_unassign_deployment_resources(
+        self, project_name: str, body: Union[JSON, IO], **kwargs: Any
+    ) -> LROPoller[None]:
+        """Unassign resources from a project. This disallows deploying new deployments to these resources,
+        and deletes existing deployments assigned to them.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/unassign-deployment-resources
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param body: The info for the deployment resources to be deleted. Is either a model type or a
+         IO type. Required.
+        :type body: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns None
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._unassign_deployment_resources_initial(  # type: ignore
+                project_name=project_name,
+                body=body,
+                content_type=content_type,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+
+        if polling is True:
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    @distributed_trace
+    def get_assign_deployment_resources_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+        """Gets the status of an existing assign deployment resources job.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-assign-deployment-resources-status
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        request = build_get_assign_deployment_resources_status_request(
+            project_name=project_name,
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace
+    def get_unassign_deployment_resources_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
+        """Gets the status of an existing unassign deployment resources job.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-unassign-deployment-resources-status
+        for more information.
+
+        :param project_name: The name of the project to use. Required.
+        :type project_name: str
+        :param job_id: The job ID. Required.
+        :type job_id: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
+                      job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
+                    "errors": [
+                        {
+                            "code": "str",  # One of a server-defined set of error codes.
+                              Required. Known values are: "InvalidRequest", "InvalidArgument",
+                              "Unauthorized", "Forbidden", "NotFound", "ProjectNotFound",
+                              "OperationNotFound", "AzureCognitiveSearchNotFound",
+                              "AzureCognitiveSearchIndexNotFound", "TooManyRequests",
+                              "AzureCognitiveSearchThrottling",
+                              "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
+                              "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
+                              "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
+                            "details": [
+                                ...
+                            ],
+                            "innererror": {
+                                "code": "str",  # One of a server-defined set of
+                                  error codes. Required. Known values are: "InvalidRequest",
+                                  "InvalidParameterValue", "KnowledgeBaseNotFound",
+                                  "AzureCognitiveSearchNotFound", "AzureCognitiveSearchThrottling",
+                                  "ExtractionFailure", "InvalidRequestBodyFormat", "EmptyRequest",
+                                  "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
+                                  "InvalidDocumentBatch", "UnsupportedLanguageCode", and
+                                  "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
+                                "details": {
+                                    "str": "str"  # Optional. Error details.
+                                },
+                                "innererror": ...,
+                                "target": "str"  # Optional. Error target.
+                            },
+                            "target": "str"  # Optional. The target of the error.
+                        }
+                    ],
+                    "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
+                      time of the job.
+                    "warnings": [
+                        {
+                            "code": "str",  # The warning code. Required.
+                            "message": "str"  # The warning message. Required.
+                        }
+                    ]
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        request = build_get_unassign_deployment_resources_status_request(
+            project_name=project_name,
+            job_id=job_id,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace
     def list_training_jobs(
         self, project_name: str, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the non-expired training jobs created for a project.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-jobs
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -4412,6 +6463,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -4423,6 +6513,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -4435,59 +6527,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -4501,7 +6552,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -4524,10 +6580,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -4564,6 +6627,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def get_training_job_status(self, project_name: str, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for a training job.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-training-status
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
@@ -4579,6 +6646,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -4590,6 +6696,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -4602,59 +6710,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -4663,7 +6730,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4704,7 +6776,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return cast(JSON, deserialized)
 
     def _cancel_training_job_initial(self, project_name: str, job_id: str, **kwargs: Any) -> Optional[JSON]:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -4756,6 +6833,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def begin_cancel_training_job(self, project_name: str, job_id: str, **kwargs: Any) -> LROPoller[JSON]:
         """Triggers a cancellation for a running training job.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/cancel-training-job
+        for more information.
+
         :param project_name: The name of the project to use. Required.
         :type project_name: str
         :param job_id: The job ID. Required.
@@ -4778,6 +6859,45 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "result": {
+                        "modelLabel": "str",  # Represents trained model label. Required.
+                        "trainingConfigVersion": "str",  # Represents training config
+                          version. Required.
+                        "trainingStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
+                          Represents the estimated end date time for training and evaluation.
+                        "evaluationStatus": {
+                            "percentComplete": 0,  # Represents progress percentage.
+                              Required.
+                            "status": "str",  # Represents the status of the
+                              sub-operation. Required. Known values are: "notStarted", "running",
+                              "succeeded", "failed", "cancelled", "cancelling", and
+                              "partiallyCompleted".
+                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
+                              the end date time.
+                            "startDateTime": "2020-02-20 00:00:00"  # Optional.
+                              Represents the start date time.
+                        },
+                        "trainingMode": "str"  # Optional. Represents the mode of the
+                          training operation. Known values are: "advanced" and "standard".
+                    },
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -4789,6 +6909,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -4801,59 +6923,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "result": {
-                        "estimatedEndDateTime": "2020-02-20 00:00:00",  # Optional.
-                          Represents the estimated end date time for training and evaluation.
-                        "evaluationStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        },
-                        "modelLabel": "str",  # Represents trained model label. Required.
-                        "trainingConfigVersion": "str",  # Represents training config
-                          version. Required.
-                        "trainingMode": "str",  # Optional. Represents the mode of the
-                          training operation. Known values are: "advanced" and "standard".
-                        "trainingStatus": {
-                            "endDateTime": "2020-02-20 00:00:00",  # Optional. Represents
-                              the end date time.
-                            "percentComplete": 0,  # Represents progress percentage.
-                              Required.
-                            "startDateTime": "2020-02-20 00:00:00",  # Optional.
-                              Represents the start date time.
-                            "status": "str"  # Represents the status of the
-                              sub-operation. Required. Known values are: "notStarted", "running",
-                              "succeeded", "failed", "cancelled", "cancelling", and
-                              "partiallyCompleted".
-                        }
-                    },
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -4915,6 +6996,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     def get_project_deletion_job_status(self, job_id: str, **kwargs: Any) -> JSON:
         """Gets the status for a project deletion job.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project-deletion-status
+        for more information.
+
         :param job_id: The job ID. Required.
         :type job_id: str
         :return: JSON object
@@ -4928,6 +7013,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                 response == {
                     "createdDateTime": "2020-02-20 00:00:00",  # The creation date time of the
                       job. Required.
+                    "jobId": "str",  # The job ID. Required.
+                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
+                      was updated. Required.
+                    "status": "str",  # The job status. Required. Known values are: "notStarted",
+                      "running", "succeeded", "failed", "cancelled", "cancelling", and
+                      "partiallyCompleted".
                     "errors": [
                         {
                             "code": "str",  # One of a server-defined set of error codes.
@@ -4939,6 +7030,8 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                               "AzureCognitiveSearchIndexLimitReached", "InternalServerError",
                               "ServiceUnavailable", "Timeout", "QuotaExceeded", "Conflict", and
                               "Warning".
+                            "message": "str",  # A human-readable representation of the
+                              error. Required.
                             "details": [
                                 ...
                             ],
@@ -4951,26 +7044,18 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                                   "MissingInputDocuments", "InvalidDocument", "ModelVersionIncorrect",
                                   "InvalidDocumentBatch", "UnsupportedLanguageCode", and
                                   "InvalidCountryHint".
+                                "message": "str",  # Error message. Required.
                                 "details": {
                                     "str": "str"  # Optional. Error details.
                                 },
                                 "innererror": ...,
-                                "message": "str",  # Error message. Required.
                                 "target": "str"  # Optional. Error target.
                             },
-                            "message": "str",  # A human-readable representation of the
-                              error. Required.
                             "target": "str"  # Optional. The target of the error.
                         }
                     ],
                     "expirationDateTime": "2020-02-20 00:00:00",  # Optional. The expiration date
                       time of the job.
-                    "jobId": "str",  # The job ID. Required.
-                    "lastUpdatedDateTime": "2020-02-20 00:00:00",  # The last date time the job
-                      was updated. Required.
-                    "status": "str",  # The job status. Required. Known values are: "notStarted",
-                      "running", "succeeded", "failed", "cancelled", "cancelling", and
-                      "partiallyCompleted".
                     "warnings": [
                         {
                             "code": "str",  # The warning code. Required.
@@ -4979,7 +7064,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
                     ]
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
@@ -5019,13 +7109,132 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
         return cast(JSON, deserialized)
 
     @distributed_trace
+    def list_assigned_resource_deployments(
+        self, *, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
+    ) -> Iterable[JSON]:
+        """Lists the deployments to which an Azure resource is assigned. This doesn't return deployments
+        belonging to projects owned by this resource. It only returns deployments belonging to projects
+        owned by other resources.
+
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-assigned-resource-deployments
+        for more information.
+
+        :keyword top: The maximum number of resources to return from the collection. Default value is
+         None.
+        :paramtype top: int
+        :keyword skip: An offset into the collection of the first resource to be returned. Default
+         value is None.
+        :paramtype skip: int
+        :return: An iterator like instance of JSON object
+        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "deploymentsMetadata": [
+                        {
+                            "deploymentExpirationDate": "2020-02-20",  # Represents
+                              deployment expiration date in the runtime. Required.
+                            "deploymentName": "str",  # Represents the deployment name.
+                              Required.
+                            "lastDeployedDateTime": "2020-02-20 00:00:00"  # Represents
+                              deployment last deployed time. Required.
+                        }
+                    ],
+                    "projectName": "str"  # Represents the project name. Required.
+                }
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_list_assigned_resource_deployments_request(
+                    top=top,
+                    skip=skip,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+            return request
+
+        def extract_data(pipeline_response):
+            deserialized = pipeline_response.http_response.json()
+            list_of_elem = deserialized["value"]
+            if cls:
+                list_of_elem = cls(list_of_elem)
+            return deserialized.get("nextLink", None), iter(list_of_elem)
+
+        def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                raise HttpResponseError(response=response)
+
+            return pipeline_response
+
+        return ItemPaged(get_next, extract_data)
+
+    @distributed_trace
     def list_supported_languages(
         self, *, project_kind: str, top: Optional[int] = None, skip: Optional[int] = None, **kwargs: Any
     ) -> Iterable[JSON]:
         """Lists the supported languages for the given project type.
 
-        :keyword project_kind: The project kind. Known values are: "Conversation" and "Orchestration".
-         Required.
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-languages
+        for more information.
+
+        :keyword project_kind: The project kind. Known values are: "Conversation", "Orchestration", and
+         "CustomConversationSummarization". Required.
         :paramtype project_kind: str
         :keyword top: The maximum number of resources to return from the collection. Default value is
          None.
@@ -5053,7 +7262,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -5076,10 +7290,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -5124,6 +7345,10 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> Iterable[JSON]:
         """Lists the supported prebuilt entities that can be used while creating composed entities.
 
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-prebuilt-entities
+        for more information.
+
         :keyword language: The language to get supported prebuilt entities for. Required if
          multilingual is false. This is BCP-47 representation of a language. For example, use "en" for
          English, "en-gb" for English (UK), "es" for Spanish etc. Default value is None.
@@ -5156,7 +7381,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -5180,10 +7410,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
@@ -5222,8 +7459,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
     ) -> Iterable[JSON]:
         """Lists the support training config version for a given project type.
 
-        :keyword project_kind: The project kind. Known values are: "Conversation" and "Orchestration".
-         Required.
+        See
+        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-config-versions
+        for more information.
+
+        :keyword project_kind: The project kind. Known values are: "Conversation", "Orchestration", and
+         "CustomConversationSummarization". Required.
         :paramtype project_kind: str
         :keyword top: The maximum number of resources to return from the collection. Default value is
          None.
@@ -5251,7 +7492,12 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -5274,10 +7520,17 @@ class ConversationAuthoringClientOperationsMixin(MixinABC):  # pylint: disable=t
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 path_format_arguments = {
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True

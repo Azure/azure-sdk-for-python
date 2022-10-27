@@ -540,6 +540,7 @@ class TestAnalyze(TextAnalyticsTest):
         for document_results in response:
             for doc in document_results:
                 assert doc.is_error
+                assert doc.error.code == "UnsupportedLanguageCode"
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -547,7 +548,7 @@ class TestAnalyze(TextAnalyticsTest):
     def test_bad_model_version_error_multiple_tasks(self, client):
         docs = [{"id": "1", "language": "en", "text": "I did not like the hotel we stayed at."}]
 
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(HttpResponseError) as e:
             res = client.begin_analyze_actions(
                 docs,
                 actions=[
@@ -559,6 +560,7 @@ class TestAnalyze(TextAnalyticsTest):
                 ],
                 polling_interval=self._interval(),
             ).result()
+        assert e.value.error.details
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1687,7 +1689,7 @@ class TestAnalyze(TextAnalyticsTest):
                     assert res.error.code == "InvalidDocument"
                 else:
                     assert res.entities
-                    assert res.statistics
+                    # assert res.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1762,7 +1764,6 @@ class TestAnalyze(TextAnalyticsTest):
             polling_interval=self._interval(),
         )
         poller.result()
-        assert poller.status() == "succeeded"
         with pytest.raises(HttpResponseError):
             poller.cancel()  # can't cancel when already in terminal state
 
