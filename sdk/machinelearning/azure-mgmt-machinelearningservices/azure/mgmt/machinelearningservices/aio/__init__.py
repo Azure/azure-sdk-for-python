@@ -6,5 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._azure_machine_learning_workspaces import AzureMachineLearningWorkspaces
-__all__ = ['AzureMachineLearningWorkspaces']
+from ._azure_machine_learning_services import AzureMachineLearningServices
+
+try:
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+except ImportError:
+    _patch_all = []
+from ._patch import patch_sdk as _patch_sdk
+
+__all__ = [
+    "AzureMachineLearningServices",
+]
+__all__.extend([p for p in _patch_all if p not in __all__])
+
+_patch_sdk()
