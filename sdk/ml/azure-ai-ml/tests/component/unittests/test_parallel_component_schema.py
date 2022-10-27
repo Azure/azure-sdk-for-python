@@ -137,4 +137,3 @@ class TestParallelComponent:
         assert component_dict["partition_keys"] == ["foo", "bar"]
 
         assert component_entity.code
-        assert component_entity.code == f"{str(Path('./tests/test_configs/python').resolve())}:1"
