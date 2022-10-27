@@ -29,7 +29,6 @@ from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
-from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
@@ -386,11 +385,6 @@ class Component(
             _input["type"] = Input._map_from_rest_type(_input["type"])
         outputs = rest_component_version.component_spec.pop("outputs", {})
 
-        # put it here as distribution is shared by some components, e.g. command
-        distribution = rest_component_version.component_spec.pop("distribution", None)
-        if distribution:
-            distribution = DistributionConfiguration._from_rest_object(distribution)
-
         origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
         rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
         init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
@@ -402,7 +396,6 @@ class Component(
             creation_context=obj.system_data,
             inputs=inputs,
             outputs=outputs,
-            distribution=distribution,
             name=origin_name,
         ))
 

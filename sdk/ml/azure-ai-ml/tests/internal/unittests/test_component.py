@@ -209,7 +209,12 @@ class TestComponent:
         assert entity._to_dict() == expected_dict
         rest_obj = entity._to_rest_object()
         assert rest_obj.properties.component_spec == expected_dict
-        assert InternalComponent._load_from_rest(rest_obj)._to_dict() == expected_dict
+
+        # inherit input type map from Component._from_rest_object
+        for input_port in expected_dict["inputs"].values():
+            if input_port["type"] == "String":
+                input_port["type"] = input_port["type"].lower()
+        assert InternalComponent._from_rest_object(rest_obj)._to_dict() == expected_dict
         result = entity._validate()
         assert result._to_dict() == {"result": "Succeeded"}
 

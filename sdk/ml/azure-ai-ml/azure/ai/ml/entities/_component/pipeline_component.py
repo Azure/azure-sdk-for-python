@@ -375,12 +375,10 @@ class PipelineComponent(Component):
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
-        init_kwargs = super()._from_rest_object_to_init_params(obj)
-        jobs = obj.properties.component_spec.pop("jobs", None)
+        jobs = obj.properties.component_spec.get("jobs", None)
         if jobs:
-            jobs = PipelineComponent._resolve_sub_nodes(jobs)
-        init_kwargs["jobs"] = jobs
-        return init_kwargs
+            obj.properties.component_spec["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
+        return super()._from_rest_object_to_init_params(obj)
 
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""
