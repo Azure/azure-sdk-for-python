@@ -34,7 +34,7 @@ class AzureAppConfigurationProvider:
         self._clients = []
 
     @classmethod
-    def load(cls, connection_string=None, endpoint=None, connection_strings=None, endpoints=None, credential=None,
+    def load(cls, connection_string=None, endpoint=None, endpoints=None, credential=None,
         **kwargs):
         """
         Loads configuration settings from Azure App Configuration into a Python application.
@@ -56,8 +56,10 @@ class AzureAppConfigurationProvider:
 
         key_vault_options = kwargs.pop("key_vault_options", None)
 
-        if connection_strings and endpoints:
-            raise AttributeError("Both connection_strings and endpoints are set. Only one of these should be set.")
+        if connection_string and endpoints:
+            raise AttributeError("Both connection_string and endpoints are set. Only one of these should be set.")
+        elif endpoint and endpoints:
+            raise AttributeError("Both endpoint and endpoints are set. Only one of these should be set.")
 
         # TODO: Currently Connection Strings are not supported for Geo Replication
         if endpoints:
