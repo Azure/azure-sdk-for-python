@@ -171,7 +171,7 @@ def pipeline(
 
                 # TODO: cache built pipeline component
                 pipeline_component = pipeline_builder.build(
-                    original_kwargs=kwargs,
+                    user_provided_kwargs=kwargs,
                     non_pipeline_params_dict=non_pipeline_params_dict
                 )
             finally:

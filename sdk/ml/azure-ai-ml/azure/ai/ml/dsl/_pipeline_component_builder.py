@@ -183,13 +183,13 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, *, original_kwargs, non_pipeline_params_dict=None) -> PipelineComponent:
+    def build(self, *, user_provided_kwargs, non_pipeline_params_dict=None) -> PipelineComponent:
         # Clear nodes as we may call build multiple times.
         self.nodes = []
 
         kwargs = _build_pipeline_parameter(
             func=self.func,
-            user_provided_kwargs=original_kwargs,
+            user_provided_kwargs=user_provided_kwargs,
             # TODO: support result() for pipeline input inside parameter group
             group_default_kwargs=self._get_group_parameter_defaults(),
             non_pipeline_parameter_dict=non_pipeline_params_dict

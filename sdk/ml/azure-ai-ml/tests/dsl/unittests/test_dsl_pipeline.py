@@ -1674,7 +1674,7 @@ class TestDSLPipeline:
             node.outputs.component_out_path.mode = "upload"
             return node.outputs
 
-        component = pipeline_func._pipeline_builder.build(original_kwargs={})
+        component = pipeline_func._pipeline_builder.build(user_provided_kwargs={})
 
         expected_dict = {
             "name": "pipeline_comp",
