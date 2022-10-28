@@ -225,6 +225,13 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations.list()
         mock_online_endpoint_operations._online_operation.list.assert_called_once()
 
+    def test_online_list_local(
+        self,
+        mock_online_endpoint_operations: OnlineEndpointOperations
+    ) -> None:
+        mock_online_endpoint_operations.list(local=True)
+        mock_online_endpoint_operations._local_endpoint_helper.list.assert_called_once()
+
     def test_online_get(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
@@ -249,6 +256,29 @@ class TestOnlineEndpointsOperations:
 
         mock_online_endpoint_operations.get(name=random_name)
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
+
+    def test_online_get_local(
+        self,
+        mock_online_endpoint_operations: OnlineEndpointOperations,
+        mock_aml_services_2022_02_01_preview: Mock,
+    ) -> None:
+        random_name = "random_name"
+        mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
+            name=random_name,
+            location="local",
+            properties={}
+        )
+
+        mock_aml_services_2022_02_01_preview.online_deployments.list.return_value = [
+            OnlineDeploymentData(
+                name=random_name,
+                location="local",
+                properties={}
+            )
+        ]
+
+        mock_online_endpoint_operations.get(name=random_name, local=True)
+        mock_online_endpoint_operations._local_endpoint_helper.get.assert_called_once()
 
     def test_online_get_keys(
         self,
@@ -292,11 +322,25 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations.begin_delete(name=random_name)
         mock_online_endpoint_operations._online_operation.begin_delete.assert_called_once()
 
+    def test_online_delete_local(
+        self,
+        mock_online_endpoint_operations: OnlineEndpointOperations,
+        mock_aml_services_2022_02_01_preview: Mock,
+        mocker: MockFixture,
+        mock_delete_poller: LROPoller,
+    ) -> None:
+        random_name = "random_name"
+        mock_aml_services_2022_02_01_preview._local_endpoint_helper.delete.return_value = mock_delete_poller
+        mock_online_endpoint_operations.begin_delete(name=random_name, local=True)
+        mock_online_endpoint_operations._local_endpoint_helper.delete.assert_called_once()
+
+    @pytest.mark.parametrize("local", [True, False])
     def test_online_create(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
         create_yaml_happy_path: str,
         mocker: MockFixture,
+        local: bool,
     ) -> None:
         mocker.patch(
             "azure.ai.ml.operations._online_endpoint_operations.OnlineEndpointOperations._get_workspace_location",
@@ -309,9 +353,8 @@ class TestOnlineEndpointsOperations:
 
         online_endpoint = load_online_endpoint(create_yaml_happy_path)
         online_endpoint.name = "random_name"
-        mock_online_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
+        mock_online_endpoint_operations.begin_create_or_update(endpoint=online_endpoint, local=local)
         mock_create_or_update_online_endpoint.assert_called_once()
-        # mock_online_endpoint_operations.create_or_update.assert_called_once()
 
     def test_online_create_bad_names(
         self,
@@ -345,11 +388,13 @@ class TestOnlineEndpointsOperations:
             online_endpoint.name = "0_this_has%%%%%_bad#char.,.cters"
             mock_online_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
 
+    @pytest.mark.parametrize("local", [True, False])
     def test_online_create_without_oldendpoint(
         self,
         mock_online_endpoint_operations: OnlineEndpointOperations,
         create_yaml_happy_path: str,
         mocker: MockFixture,
+        local: bool
     ) -> None:
         mocker.patch(
             "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator._get_code_asset_arm_id",
@@ -364,12 +409,14 @@ class TestOnlineEndpointsOperations:
         http_err = HttpResponseError()
         http_err.status_code = HttpResponseStatusCode.NOT_FOUND
         mock_online_endpoint_operations._online_operation.get = Mock(side_effect=http_err)
+        mock_online_endpoint_operations._local_endpoint_helper.get = Mock(side_effect=http_err)
         mock_online_endpoint_operations.begin_create_or_update(endpoint=online_endpoint)
 
-    def test_online_create_without_entity_type(self, create_yaml_without_identity_type: str) -> None:
+    @pytest.mark.parametrize("local", [True, False])
+    def test_online_create_without_entity_type(self, create_yaml_without_identity_type: str, local: bool) -> None:
         online_endpoint = load_online_endpoint(create_yaml_without_identity_type)
         with pytest.raises(Exception):
-            mock_online_endpoint_operations.begin_create(endpoint=online_endpoint)
+            mock_online_endpoint_operations.begin_create(endpoint=online_endpoint, local=local)
 
     def test_online_invoke(
         self,
@@ -393,23 +440,47 @@ class TestOnlineEndpointsOperations:
         mock_online_endpoint_operations._online_operation.get.assert_called_once()
         mock_online_endpoint_operations._online_operation.list_keys.assert_called_once()
 
+    def test_online_invoke_local(
+        self,
+        mock_online_endpoint_operations: OnlineEndpointOperations,
+        request_file: str,
+        mocker: MockFixture,
+        mock_aml_services_2022_02_01_preview: Mock,
+    ) -> None:
+        random_name = "random_name"
+        mock_aml_services_2022_02_01_preview.online_endpoints.get.return_value = OnlineEndpointData(
+            name=random_name,
+            location="local",
+            properties={}
+        )
+        mockresponse = Mock()
+        mockresponse.text = lambda: '{"key": "value"}'
+        mockresponse.status_code = 200
+
+        mocker.patch.object(mock_online_endpoint_operations._requests_pipeline, "post", return_value=mockresponse)
+        assert mock_online_endpoint_operations.invoke(endpoint_name=random_name, request_file=request_file, local=True)
+        mock_online_endpoint_operations._local_endpoint_helper.invoke.assert_called_once()
+
+    @pytest.mark.parametrize("local", [True, False])
     def test_create_no_file_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
+            self, mock_online_endpoint_operations: OnlineEndpointOperations, local: bool
     ) -> None:
         with pytest.raises(Exception):
-            mock_online_endpoint_operations.begin_create(name="random_name", file=None)
+            mock_online_endpoint_operations.begin_create(name="random_name", file=None, local=local)
 
+    @pytest.mark.parametrize("local", [True, False])
     def test_create_no_type_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations
+            self, mock_online_endpoint_operations: OnlineEndpointOperations, local: bool
     ) -> None:
         with pytest.raises(Exception):
-            mock_online_endpoint_operations.begin_create(name="random_name", file=None)
+            mock_online_endpoint_operations.begin_create(name="random_name", file=None, local=local)
 
+    @pytest.mark.parametrize("local", [True, False])
     def test_create_no_type_in_file_throw_exception(
-        self, mock_online_endpoint_operations: OnlineEndpointOperations,  create_yaml_no_type
+            self, mock_online_endpoint_operations: OnlineEndpointOperations,  create_yaml_no_type, local: bool
     ) -> None:
         with pytest.raises(Exception):
-            mock_online_endpoint_operations.begin_create(name="random_name", file=None)
+            mock_online_endpoint_operations.begin_create(name="random_name", file=None, local=local)
 
     def test_online_regenerate_keys(
         self,
