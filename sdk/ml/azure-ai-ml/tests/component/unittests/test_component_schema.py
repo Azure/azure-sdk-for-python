@@ -304,6 +304,20 @@ class TestCommandComponent:
         validation_result = component_entity._validate()
         assert validation_result.passed is True
 
+    def test_component_factory(self):
+        test_path = "./tests/test_configs/components/helloworld_component_with_properties.yml"
+        component_entity = load_component(source=test_path)
+        recreated_component = component_factory.load_from_dict(
+            data=component_entity._to_dict(),
+            context={
+                "source_path": test_path,
+            }
+        )
+        assert recreated_component._to_dict() == component_entity._to_dict()
+
+        recreated_component = component_factory.load_from_rest(obj=component_entity._to_rest_object())
+        assert recreated_component._to_dict() == component_entity._to_dict()
+
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
