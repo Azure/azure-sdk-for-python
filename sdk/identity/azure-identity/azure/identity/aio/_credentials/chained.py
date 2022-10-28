@@ -4,17 +4,16 @@
 # ------------------------------------
 import asyncio
 import logging
-from typing import TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
 from azure.core.exceptions import ClientAuthenticationError
+from azure.core.credentials import AccessToken
 from .._internal import AsyncContextManager
 from ... import CredentialUnavailableError
 from ..._credentials.chained import _get_error_message
 from ..._internal import within_credential_chain
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -42,7 +41,7 @@ class ChainedTokenCredential(AsyncContextManager):
 
         await asyncio.gather(*(credential.close() for credential in self.credentials))
 
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Asynchronously request a token from each credential, in order, returning the first token received.
 
         If no credential provides a token, raises :class:`azure.core.exceptions.ClientAuthenticationError`
