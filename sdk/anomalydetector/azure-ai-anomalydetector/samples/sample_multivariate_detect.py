@@ -81,11 +81,10 @@ class MultivariateSample:
             if model_status == 'FAILED':
                 print("Creating model failed.")
                 print("Errors:")
-                if len(model_info['errors']) > 0:
-                    print("Error code: {}. Message: {}".format(model_info['errors'][0]['code'], model_info['errors'][0]['message']))
+                if len(model_info['modelInfo']['errors']) > 0:
+                    print("Error code: {}. Message: {}".format(model_info['modelInfo']['errors'][0]['code'], model_info['modelInfo']['errors'][0]['message']))
                 else:
                     print("None")
-                return None
 
             if model_status == 'READY':
                 # Model list after training
@@ -95,7 +94,7 @@ class MultivariateSample:
                 print("{:d} available models after training.".format(len(model_list)))
 
                 # Return the latest model id
-                return trained_model_id
+            return trained_model_id
         except HttpResponseError as e:
             print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
         except Exception as e:
