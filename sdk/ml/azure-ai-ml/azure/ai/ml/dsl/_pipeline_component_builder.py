@@ -249,7 +249,7 @@ class PipelineComponentBuilder:
             else:
                 meta = Output(
                     type=value.type, path=value.path, mode=value.mode,
-                    description=value.description, is_control=meta.is_control
+                    description=value.description, is_control=value.is_control
                 )
 
             # hack: map component output type to valid pipeline output type
