@@ -132,7 +132,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
-    def test_batch_job_download(self, client: MLClient, tmp_path: Path) -> str:
+    def test_batch_job_download(self, client: MLClient, tmp_path: Path, variable_recorder: VariableRecorder) -> str:
         def wait_until_done(job: Job, timeout: int = None) -> None:
             poll_start_time = time.time()
             while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
