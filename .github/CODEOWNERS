@@ -57,6 +57,9 @@
 # PRLabel: %CognitiveServices
 /sdk/cognitiveservices/                                              @kristapratico
 
+# PRLabel: %Communication
+/sdk/communication/                                                  @acsdevx-msft
+
 # PRLabel: %Communication - Chat
 /sdk/communication/azure-communication-chat/                         @AikoBB @LuChen-Microsoft
 
@@ -76,16 +79,13 @@
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
 
 # PRLabel: %Communication - Identity
-/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @ostoliarova-msft
 
 # PRLabel: %Communication - NetworkTraversal
 /sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
 
 # PRLabel: %Communication - Common
-/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @martinbarnas-ms
-
-# PRLabel: %Communication
-/sdk/communication/                                                  @acsdevx-msft
+/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @ostoliarova-msft
 
 # PRLabel: %Confidential Ledger
 sdk/confidentialledger/azure-confidentialledger                      @lynshi
@@ -149,12 +149,19 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 # PRLabel: %Machine Learning
 /sdk/ml/                                                             @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
 
+# PRLabel: %ML-AutoML
+/sdk/ml/automl.tests.yml                                             @skasturi @rtanase @raduk @PhaniShekhar @sharma-riti @jialiu103 @nick863 @anupsms @MaurisLucis @novaturient95
+
+# PRLabel: %ML-Data
+/sdk/ml/data-experiences.tests.yml                                   @sogansky @MayankKumar91 @code-vicar
+
 # PRLabel: %ML-Local Endpoints
 /sdk/ml/azure-ai-ml/azure/ai/ml/_local_endpoints/                    @NonStatic2014 @arunsu @stanley-msft @JustinFirsching
 
 # PRLabel: %ML-Jobs
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job                          @DouglasXiaoMS @TonyJ1 @wangchao1230
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job                        @DouglasXiaoMS @TonyJ1 @wangchao1230
+/sdk/ml/training-experiences.tests.yml                               @DouglasXiaoMS @TonyJ1
 
 # PRLabel: %ML-Pipelines
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline                     @wangchao1230
@@ -165,6 +172,7 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_component                  @wangchao1230
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders                   @wangchao1230
 /sdk/ml/azure-ai-ml/azure/ai/ml/_internal                            @wangchao1230
+/sdk/ml/pipeline.tests.yml                                           @wangchao1230 @eniac871
 
 # PRLabel: %ML-RegistryManagement
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/registry                            @hugoaponte @Man-MSFT @banibrata
@@ -190,6 +198,7 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 /sdk/ml/azure-ai-ml/azure/ai/ml/operations/_online_endpoint_operations.py     @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft @banibrata
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_deployment                           @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft @banibrata
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_endpoint                             @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft @banibrata
+/sdk/ml/production-experiences.tests.yml                                      @hugoaponte @Man-MSFT @nancy-mejia @TajiHarrisMicrosoft @banibrata
 
 # PRLabel: %Maps
 /sdk/maps/                                                           @alextts627
@@ -352,7 +361,7 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 #/<NotInRepo>/          @maertendMSFT
 
 # ServiceLabel: %Cognitive - Text Analytics %Service Attention
-#/<NotInRepo>/          @assafi
+#/<NotInRepo>/          @mikaelsitruk
 
 # ServiceLabel: %Cognitive - Form Recognizer %Service Attention
 #/<NotInRepo>/          @ctstone @vkurpad

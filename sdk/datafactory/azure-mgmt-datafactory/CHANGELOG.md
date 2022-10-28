@@ -1,5 +1,16 @@
 # Release History
 
+## 2.9.0 (2022-10-24)
+
+### Features Added
+
+  - Model AzureSynapseArtifactsLinkedService has a new parameter workspace_resource_id
+  - Model FactoryGitHubConfiguration has a new parameter disable_publish
+  - Model FactoryRepoConfiguration has a new parameter disable_publish
+  - Model FactoryVSTSConfiguration has a new parameter disable_publish
+  - Model SynapseSparkJobDefinitionActivity has a new parameter files_v2
+  - Model SynapseSparkJobDefinitionActivity has a new parameter python_code_reference
+
 ## 2.8.1 (2022-10-17)
 
 ### Other Changes

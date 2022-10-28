@@ -1,5 +1,6 @@
 import copy
 import json
+import os
 from pathlib import Path
 from unittest import mock
 
@@ -58,7 +59,10 @@ def load_component_entity_from_yaml(
                     # for generated code, return content in it
                     with open(arg.path) as f:
                         return f.read()
-                return f"{str(arg.path)}:1"
+                elif os.path.isfile(arg.path):
+                    return f"{str(arg.path)}:1"
+                else:
+                    return f"{Path(arg.path).name}:1"
         return "xxx"
 
     # change internal assets into arm id
@@ -187,8 +191,6 @@ class TestCommandComponent:
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
         # make sure code has "created"
         assert component_entity.code
-        expected_path = Path("./tests/test_configs/components/helloworld_components_with_env").resolve()
-        assert component_entity.code == f"{str(expected_path)}:1"
 
     def test_serialize_deserialize_default_code(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
@@ -293,6 +295,14 @@ class TestCommandComponent:
         )
         component_hash2 = component_entity2._get_anonymous_hash()
         assert component_hash1 != component_hash2
+
+    def test_command_component_with_properties(self):
+        test_path = "./tests/test_configs/components/helloworld_component_with_properties.yml"
+        component_entity = load_component(source=test_path)
+        assert component_entity.properties == {"azureml.pipelines.dynamic": "true"}
+
+        validation_result = component_entity._validate()
+        assert validation_result.passed is True
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
