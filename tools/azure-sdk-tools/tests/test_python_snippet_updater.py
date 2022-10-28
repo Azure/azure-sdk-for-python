@@ -1,9 +1,8 @@
-import imp
 import os
 import logging
 import sys
 import pytest
-from python_snippet_updater import get_snippet, update_snippet, check_snippets, check_not_up_to_date
+from ci_tools.snippet_update.python_snippet_updater import get_snippet, update_snippet, check_snippets, check_not_up_to_date
 
 
 def test_get_snippet():
