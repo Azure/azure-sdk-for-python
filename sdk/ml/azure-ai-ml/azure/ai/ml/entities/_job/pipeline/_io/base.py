@@ -197,8 +197,7 @@ class InputOutputBase(ABC):
         # pipeline level inputs won't pass mode to bound node level inputs
         if isinstance(original_data, PipelineInput):
             return None
-        else:
-            return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
+        return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
 
 
 class NodeInput(InputOutputBase):
