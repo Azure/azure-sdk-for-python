@@ -400,8 +400,7 @@ class Component(
             name=origin_name,
         ))
 
-        # remove empty values, because some property only works for specific component, eg: distribution for command
-        return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
+        return init_kwargs
 
     def _set_is_anonymous(self, is_anonymous: bool):
         """Mark this component as anonymous and overwrite component name to
