@@ -1,5 +1,19 @@
 # Release History
 
+## 2.0.0b1 (2022-10-27)
+
+### Breaking Changes
+
+  - Operation ManagementAssociationsOperations.create_or_update has a new parameter provider_name
+  - Operation ManagementAssociationsOperations.create_or_update has a new parameter resource_name
+  - Operation ManagementAssociationsOperations.create_or_update has a new parameter resource_type
+  - Operation ManagementAssociationsOperations.delete has a new parameter provider_name
+  - Operation ManagementAssociationsOperations.delete has a new parameter resource_name
+  - Operation ManagementAssociationsOperations.delete has a new parameter resource_type
+  - Operation ManagementAssociationsOperations.get has a new parameter provider_name
+  - Operation ManagementAssociationsOperations.get has a new parameter resource_name
+  - Operation ManagementAssociationsOperations.get has a new parameter resource_type
+
 ## 1.0.0 (2020-12-16)
 
 - GA release

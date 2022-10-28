@@ -7,7 +7,6 @@ from typing import Callable
 
 import pydash
 import pytest
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ListViewType
@@ -876,3 +875,43 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
             node = default_component()
             assert node._to_rest_object()["componentId"] == default_component.id
+
+    def test_command_component_with_properties_e2e_flow(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        command_component = load_component(
+            source="./tests/test_configs/components/helloworld_component_with_properties.yml",
+        )
+        expected_dict = {
+            '$schema': 'https://azuremlschemas.azureedge.net/development/commandComponent.schema.json',
+            '_source': 'YAML.COMPONENT',
+            'command': 'echo Hello World & echo $[[${{inputs.component_in_number}}]] & '
+                       'echo ${{inputs.component_in_path}} & echo '
+                       '${{outputs.component_out_path}} > '
+                       '${{outputs.component_out_path}}/component_in_number',
+            'description': 'This is the basic command component',
+            'display_name': 'CommandComponentBasic',
+            'inputs': {'component_in_number': {'default': '10.99',
+                                               'description': 'A number',
+                                               'optional': True,
+                                               'type': 'number'},
+                       'component_in_path': {'description': 'A path',
+                                             'type': 'uri_folder'}},
+            'is_deterministic': True,
+            'outputs': {'component_out_path': {'type': 'uri_folder'}},
+            'properties': {'azureml.pipelines.dynamic': 'true'},
+            'tags': {'owner': 'sdkteam', 'tag': 'tagvalue'},
+            'type': 'command',
+        }
+        omit_fields = ["name", "creation_context", "id", "code", "environment", "version"]
+        rest_component = pydash.omit(
+            command_component._to_rest_object().as_dict()["properties"]["component_spec"],
+            omit_fields,
+        )
+
+        assert rest_component == expected_dict
+
+        from_rest_component = client.components.create_or_update(command_component, is_anonymous=True)
+
+        previous_dict = pydash.omit(command_component._to_dict(), omit_fields)
+        current_dict = pydash.omit(from_rest_component._to_dict(), omit_fields)
+        # TODO(2037030): verify when backend ready
+        # assert previous_dict == current_dict

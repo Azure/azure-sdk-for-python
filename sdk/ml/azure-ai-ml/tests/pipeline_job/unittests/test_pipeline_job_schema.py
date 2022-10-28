@@ -1686,8 +1686,8 @@ class TestPipelineJobSchema:
         rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
         # rest object of node in pipeline should be pure dict
         assert rest_services == {
-            "my_jupyter": {
-                "job_service_type": "Jupyter",
+            "my_ssh": {
+                "job_service_type": "SSH",
             },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
@@ -1710,8 +1710,8 @@ class TestPipelineJobSchema:
 
         # rest object of node in pipeline should be pure dict
         assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
-            "my_jupyter": {
-                "job_service_type": "Jupyter",
+            "my_ssh": {
+                "job_service_type": "SSH",
             },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",

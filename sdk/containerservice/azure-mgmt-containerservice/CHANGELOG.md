@@ -1,5 +1,14 @@
 # Release History
 
+## 20.6.0 (2022-10-25)
+
+### Features Added
+
+  - Model AgentPoolNetworkProfile has a new parameter allowed_host_ports
+  - Model AgentPoolNetworkProfile has a new parameter application_security_groups
+  - Model ContainerServiceNetworkProfile has a new parameter ebpf_dataplane
+  - Model ManagedClusterSecurityProfile has a new parameter custom_ca_trust_certificates
+
 ## 20.5.0 (2022-10-18)
 
 ### Features Added

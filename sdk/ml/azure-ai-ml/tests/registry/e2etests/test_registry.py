@@ -4,19 +4,19 @@
 from typing import Callable
 
 import pytest
+from time import sleep
 from azure.ai.ml import MLClient, load_registry
 from azure.ai.ml.constants._common import LROConfigurations
 from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, is_live
-import time
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experiences_test
 class TestRegistry(AzureRecordedTestCase):
     @pytest.mark.e2etest
-    def test_registry_list_and_get(
+    def test_registry_operations(
         self,
         crud_registry_client: MLClient,
         randstr: Callable[[], str],
@@ -45,15 +45,17 @@ class TestRegistry(AzureRecordedTestCase):
         registry = crud_registry_client.registries.get(name=reg_name)
         assert registry.name == reg_name
 
-        registry = crud_registry_client.registries.delete(name=reg_name)
-        assert registry is None
-        # give the delete operation time to fully take place in the backend
-        # before testing that the registry is gone with another get command
-        if is_live():
-            time.sleep(120)
-        try:
-            crud_registry_client.registries.get(name=reg_name)
-            # The above line should fail with a ResourceNotFoundError
-            assert False
-        except ResourceNotFoundError:
-            assert True
+        # Some values are assigned by registries, but hidden in the local representation to avoid confusing users.
+        # Double check that they're set properly by examining the raw registry format.
+        rest_registry = crud_registry_client.registries._operation.get(resource_group_name=crud_registry_client.resource_group_name, registry_name=reg_name)
+        assert rest_registry
+        # don't do a standard dictionary equality check to avoid being surprised by auto-set tags
+        assert rest_registry.tags["one"] == "two"
+        assert rest_registry.tags["three"] == "five"
+        assert rest_registry.properties.managed_resource_group_tags["one"] == "two"
+        assert rest_registry.properties.managed_resource_group_tags["three"] == "five"
+
+        del_result = crud_registry_client.registries.begin_delete(name=reg_name).result(
+            timeout=LROConfigurations.POLLING_TIMEOUT
+        )
+        assert del_result is None

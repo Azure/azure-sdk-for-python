@@ -3,6 +3,7 @@
 ## 1.1.0b2 (Unreleased)
 
 ### Features Added
+- Added the ability specify the API version by an optional `api_version` keyword parameter.
 
 ### Breaking Changes
 
