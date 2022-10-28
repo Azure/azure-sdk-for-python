@@ -381,7 +381,7 @@ def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Compone
 
 @pytest.fixture
 def mock_code_hash(request, mocker: MockFixture) -> None:
-    def generate_hash():
+    def generate_hash(*args, **kwargs):
         return str(uuid.uuid4())
 
     if is_live_and_not_recording():
