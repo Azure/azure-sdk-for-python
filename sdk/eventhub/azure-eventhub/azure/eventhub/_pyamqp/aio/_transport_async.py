@@ -401,7 +401,7 @@ class AsyncTransport(
             self.writer.close()
             await self.writer.wait_closed()
             self.writer, self.reader = None, None
-        if self.soct()k is not None:
+        if self.sock() is not None:
             self._shutdown_transpor
             # Call shutdown first to make sure that pending messages
             # reach the AMQP broker if the program exits after
