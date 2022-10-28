@@ -18,11 +18,16 @@ class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
             from azure.identity.aio import DefaultAzureCredential
             credential = DefaultAzureCredential()
         else:
-            credential = Mock(get_token=asyncio.coroutine(lambda _: AccessToken("fake-token", 0)))
+            credential = Mock(get_token=lambda _: self.mock_completed_future(AccessToken("fake-token", 0)))
         return client(
             credential=credential,
             subscription_id=self.settings.SUBSCRIPTION_ID
         )
+    
+    def mock_completed_future(self, result=None):
+        future = asyncio.Future()
+        future.set_result = result
+        return future
 
     def to_list(self, ait):
         async def lst():
