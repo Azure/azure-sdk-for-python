@@ -377,7 +377,12 @@ class PipelineComponent(Component):
     def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
         jobs = obj.properties.component_spec.get("jobs", None)
         if jobs:
-            obj.properties.component_spec["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
+            try:
+                obj.properties.component_spec["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
+            except Exception:  # pylint: disable=broad-except
+                # Skip parse jobs if error exists.
+                # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
+                obj.properties.component_spec["jobs"] = None
         return super()._from_rest_object_to_init_params(obj)
 
     def _to_dict(self) -> Dict:
