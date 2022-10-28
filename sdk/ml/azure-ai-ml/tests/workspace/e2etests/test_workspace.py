@@ -168,18 +168,16 @@ class TestWorkspace(AzureRecordedTestCase):
             {
                 "identity": {
                     "type": "user_assigned",
-                    "user_assigned_identities":[
-                        {
+                    "user_assigned_identities":{
+                        user_assigned_identity.id: {
                             "client_id": user_assigned_identity.client_id,
-                            "resource_id": user_assigned_identity.id,
                             "principal_id": user_assigned_identity.principal_id
                         },
-                        {
+                        user_assigned_identity2.id: {
                             "client_id": user_assigned_identity2.client_id,
-                            "resource_id": user_assigned_identity2.id,
                             "principal_id": user_assigned_identity2.principal_id
                         }
-                    ],
+                    },
                 }
             },
             {"primary_user_assigned_identity": user_assigned_identity.id},
@@ -286,18 +284,16 @@ class TestWorkspace(AzureRecordedTestCase):
             {
                 "identity": {
                     "type": "system_assigned, user_assigned",
-                    "user_assigned_identities":[
-                        {
+                    "user_assigned_identities":{
+                        user_assigned_identity.id: {
                             "client_id": user_assigned_identity.client_id,
-                            "resource_id": user_assigned_identity.id,
                             "principal_id": user_assigned_identity.principal_id
                         },
-                        {
+                        user_assigned_identity2.id: {
                             "client_id": user_assigned_identity2.client_id,
-                            "resource_id": user_assigned_identity2.id,
                             "principal_id": user_assigned_identity2.principal_id
                         }
-                    ],
+                    },
                 }
             },
         ]
