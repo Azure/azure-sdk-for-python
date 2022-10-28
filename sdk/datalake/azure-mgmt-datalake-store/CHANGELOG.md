@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0 (2022-10-28)
+
+### Features Added
+
+  - Added model CheckNameAvailabilityParametersType
+
 ## 1.0.0 (2020-12-21)
 
 **Breaking changes**
