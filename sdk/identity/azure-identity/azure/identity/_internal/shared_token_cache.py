@@ -6,8 +6,8 @@ import abc
 import platform
 import time
 from typing import Any, Iterable, List, Mapping, Optional
-import six
 from urllib.parse import urlparse
+import six
 import msal
 
 from azure.core.credentials import AccessToken

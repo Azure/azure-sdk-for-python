@@ -3,20 +3,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import TYPE_CHECKING, Any, Optional
+from typing import Any, Optional
 
 import six
 
 from azure.core.exceptions import ClientAuthenticationError, HttpResponseError
 from azure.core.pipeline.transport import HttpRequest
+from azure.core.credentials import AccessToken
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import ManagedIdentityClient
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken
 
 IMDS_AUTHORITY = "http://169.254.169.254"
 IMDS_TOKEN_PATH = "/metadata/identity/oauth2/token"

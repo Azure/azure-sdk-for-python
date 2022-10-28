@@ -3,9 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-
-from azure.core import CaseInsensitiveEnumMeta
 from msal import ConfidentialClientApplication
+from azure.core import CaseInsensitiveEnumMeta
 
 
 class RegionalAuthority(str, Enum, metaclass=CaseInsensitiveEnumMeta):

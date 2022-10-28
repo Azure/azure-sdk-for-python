@@ -8,8 +8,8 @@ from typing import Iterable, Union
 from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
-from .._internal import AadClientCertificate
 from .aad_client_base import AadClientBase
+from .._internal.aadclient_certificate import AadClientCertificate
 from .._internal.pipeline import build_pipeline
 
 

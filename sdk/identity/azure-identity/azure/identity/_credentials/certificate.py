@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from binascii import hexlify
-from typing import cast, NamedTuple, Union, Dict
+from typing import cast, NamedTuple, Union, Dict, Any, Optional
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
