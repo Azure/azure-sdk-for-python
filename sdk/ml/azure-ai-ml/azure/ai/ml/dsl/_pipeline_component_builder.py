@@ -141,7 +141,6 @@ class PipelineComponentBuilder:
         version=None,
         display_name=None,
         description=None,
-        compute=None,
         default_datastore=None,
         tags=None,
         source_path=None,
@@ -164,7 +163,6 @@ class PipelineComponentBuilder:
         self.version = version
         self.display_name = display_name
         self.description = description
-        self.compute = compute
         self.default_datastore = default_datastore
         self.tags = tags
         self.source_path = source_path
@@ -246,7 +244,13 @@ class PipelineComponentBuilder:
         for key, value in outputs.items():
             if not isinstance(key, str) or not isinstance(value, NodeOutput) or value._owner is None:
                 raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
-            meta = value._meta or value
+            if value._meta is not None:
+                meta = value._meta
+            else:
+                meta = Output(
+                    type=value.type, path=value.path, mode=value.mode,
+                    description=value.description, is_control=value.is_control
+                )
 
             # hack: map component output type to valid pipeline output type
             def _map_type(_meta):

@@ -284,7 +284,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 continue
             # raise error when required input with no default value not set
             if (
-                not self.inputs.get(key, None)  # input not provided
+                self.inputs.get(key, None) is None  # input not provided
                 and meta.optional is not True  # and it's required
                 and meta.default is None  # and it does not have default
             ):
