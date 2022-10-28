@@ -160,7 +160,7 @@ class DoWhile(LoopNode):
     def _from_rest_object(cls, obj: dict, reference_node_list: List) -> "DoWhile":
         # pylint: disable=protected-access
 
-        obj = BaseNode._rest_object_to_init_params(obj)
+        obj = BaseNode._from_rest_object_to_init_params(obj)
         return cls._create_instance_from_schema_dict(reference_node_list, obj, validate_port=False)
 
     def set_limits(

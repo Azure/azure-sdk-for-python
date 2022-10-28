@@ -1,4 +1,5 @@
 import os
+import sys
 from copy import deepcopy
 from email.mime import image
 from pathlib import Path
@@ -601,6 +602,10 @@ class TestAutoMLImageSchema:
         with pytest.raises(ValidationError):
             load_job(test_yaml_path)
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_image_classification_schema_validation(self, tmp_path: Path):
         test_schema_path = Path("./tests/test_configs/automl_job/automl_image_classification_job_mock.yaml")
         test_config = load_yaml(test_schema_path)
@@ -733,6 +738,10 @@ class TestAutoMLImageSchema:
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_object_detection_schema_validation(self, tmp_path: Path):
         test_schema_path = Path("./tests/test_configs/automl_job/automl_image_object_detection_job_mock.yaml")
         test_config = load_yaml(test_schema_path)
@@ -772,6 +781,10 @@ class TestAutoMLImageSchema:
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_object_detection_job.ImageObjectDetectionJob)
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_instance_segmentation_schema_validation(self, tmp_path: Path):
         test_schema_path = Path("./tests/test_configs/automl_job/automl_image_instance_segmentation_job_mock.yaml")
         test_config = load_yaml(test_schema_path)

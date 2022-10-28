@@ -25,7 +25,6 @@ from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 
 from ..._schema import PathAwareSchema
-from .._job.distribution import DistributionConfiguration
 from .._job.pipeline._io import NodeOutput
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
@@ -339,8 +338,8 @@ class Parallel(BaseNode):
         return rest_obj
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Parallel":
-        obj = BaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
+        obj = super()._from_rest_object_to_init_params(obj)
         # retry_settings
         if "retry_settings" in obj and obj["retry_settings"]:
             obj["retry_settings"] = RetrySettings._from_dict(obj["retry_settings"])
@@ -355,21 +354,13 @@ class Parallel(BaseNode):
             if task_env and isinstance(task_env, str) and task_env.startswith(ARM_ID_PREFIX):
                 obj["task"].environment = task_env[len(ARM_ID_PREFIX) :]
 
-        # resources, sweep won't have resources
         if "resources" in obj and obj["resources"]:
             resources = RestJobResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
 
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        # distribution, sweep won't have distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
         if "partition_keys" in obj and obj["partition_keys"]:
             obj["partition_keys"] = json.dumps(obj["partition_keys"])
-        return Parallel(**obj)
+        return obj
 
     def _build_inputs(self):
         inputs = super(Parallel, self)._build_inputs()
