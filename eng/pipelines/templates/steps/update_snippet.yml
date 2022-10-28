@@ -13,7 +13,7 @@ steps:
   - task: PythonScript@0
     displayName: 'Update Snippets'
     inputs:
-      scriptPath: 'scripts/devops_tasks/python_snippet_updater.py'
+      scriptPath: 'tools/azure-sdk-tools/ci_tools/snippet_update/python_snippet_updater.py'
       arguments: >-
         ${{ parameters.ScanPath }}
     condition: and(succeededOrFailed(), ne(variables['Skip.UpdateSnippet'],'true'))
