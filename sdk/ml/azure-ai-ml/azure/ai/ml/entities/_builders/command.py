@@ -14,8 +14,8 @@ from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
@@ -497,21 +497,12 @@ class Command(BaseNode):
         return command_job
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Command":
-        obj = BaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
+        obj = BaseNode._from_rest_object_to_init_params(obj)
 
-        # resources, sweep won't have resources
         if "resources" in obj and obj["resources"]:
             resources = RestJobResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        # distribution, sweep won't have distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
 
         # services, sweep won't have services
         if "services" in obj and obj["services"]:
@@ -533,7 +524,7 @@ class Command(BaseNode):
         if "identity" in obj and obj["identity"]:
             obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
 
-        return Command(**obj)
+        return obj
 
     @classmethod
     def _load_from_rest_job(cls, obj: JobBase) -> "Command":

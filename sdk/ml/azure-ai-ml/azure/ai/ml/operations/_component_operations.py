@@ -603,7 +603,10 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 component_func._job_settings,
                 component_func.__name__,
             )
-        return component_func._pipeline_builder.build()
+        # Normally pipeline component are created when dsl.pipeline inputs are provided
+        # so pipeline input .result() can resolve to correct value.
+        # When pipeline component created without dsl.pipeline inputs, pipeline input .result() won't work.
+        return component_func._pipeline_builder.build(user_provided_kwargs={})
     msg = "Function must be a dsl or mldesigner component function： {!r}"
     raise ValidationException(
         message=msg.format(component_func),

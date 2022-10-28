@@ -2,12 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any
 
 from .._internal import InteractiveCredential, wrap_exceptions
-
-if TYPE_CHECKING:
-    from typing import Any, List
 
 
 class UsernamePasswordCredential(InteractiveCredential):
@@ -42,9 +39,13 @@ class UsernamePasswordCredential(InteractiveCredential):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, client_id, username, password, **kwargs):
-        # type: (str, str, str, Any) -> None
-
+    def __init__(
+            self,
+            client_id: str,
+            username: str,
+            password: str,
+            **kwargs
+    ) -> None:
         # The base class will accept an AuthenticationRecord, allowing this credential to authenticate silently the
         # first time it's asked for a token. However, we want to ensure this first authentication is not silent, to
         # validate the given password. This class therefore doesn't document the authentication_record argument, and we
