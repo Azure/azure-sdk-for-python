@@ -3,6 +3,7 @@ import logging
 from pathlib import Path
 import argparse
 import re
+from typing import Dict
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -12,9 +13,15 @@ not_up_to_date = False
 target_snippet_sources = ["samples/*.py", "samples/*/*.py"]
 target_md_files = ["README.md"]
 
+def check_snippets() -> Dict:
+    return snippets
+
+def check_not_up_to_date() -> bool:
+    return not_up_to_date
 
 def get_snippet(file: str) -> None:
-    with open(file, 'r') as f:
+    file_obj = Path(file)
+    with open(file_obj, 'r') as f:
         content = f.read()
     pattern = "# \\[START(?P<name>[A-Z a-z0-9_]+)\\](?P<body>[\\s\\S]+?)# \\[END[A-Z a-z0-9_]+\\]"
     matches = re.findall(pattern, content)
@@ -35,17 +42,18 @@ def get_snippet(file: str) -> None:
         if snippet[-1] == "\n":
             snippet = snippet[:-1]
 
-        file_name = str(file.name)[:-3]
+        file_name = str(file_obj.name)[:-3]
         identifier = ".".join([file_name, name])
         if identifier in snippets.keys():
             _LOGGER.warning(f'Found duplicated snippet name "{identifier}".')
             _LOGGER.warning(file)
-        _LOGGER.debug(f"Found: {file.name}.{name}")
+        _LOGGER.debug(f"Found: {file_obj.name}.{name}")
         snippets[identifier] = snippet
 
 
 def update_snippet(file: str) -> None:
-    with open(file, 'r') as f:
+    file_obj = Path(file)
+    with open(file_obj, 'r') as f:
         content = f.read()
     pattern = "(?P<content>(?P<header><!-- SNIPPET:(?P<name>[A-Z a-z0-9_.]+)-->)\\n```python\\n[\\s\\S]*?\\n<!-- END SNIPPET -->)"
     matches = re.findall(pattern, content)
@@ -64,7 +72,7 @@ def update_snippet(file: str) -> None:
             global not_up_to_date
             not_up_to_date = True
             content = content.replace(body, target_code)
-    with open(file, 'w') as f:
+    with open(file_obj, 'w') as f:
         f.write(content)
 
 
