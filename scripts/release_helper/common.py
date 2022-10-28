@@ -279,7 +279,7 @@ class IssueProcess:
     def get_target_date(self):
         body = self.get_issue_body()
         try:
-            self.target_date = [line.split(':')[-1].strip() for line in body if 'Target release date' in line][0]
+            self.target_date = [re.compile(r"\d{4}-\d{1,2}-\d{1,2}").findall(l)[0] for l in body if 'Target release date' in l][0]
             self.date_from_target = int((time.mktime(time.strptime(self.target_date, '%Y-%m-%d')) - time.time()) / 3600 / 24)
         except Exception:
             self.target_date = 'fail to get.'

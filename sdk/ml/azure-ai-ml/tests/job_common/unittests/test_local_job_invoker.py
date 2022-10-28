@@ -10,6 +10,7 @@ from azure.ai.ml.operations._local_job_invoker import (
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestLocalJobInvoker:
     def test_serialize_patch(self):
         dummy_file = Path("./dummy_file1.txt").resolve()

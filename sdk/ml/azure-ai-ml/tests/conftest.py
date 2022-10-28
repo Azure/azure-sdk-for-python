@@ -76,6 +76,14 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_general_regex_sanitizer(
         value="00000000000000000000000000000000", regex="\\/az-ml-artifacts\\/(\\S{32})\\/", group_for_replace="1"
     )
+    # for internal code whose upload_hash is of length 36
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s]{36})\\/?", group_for_replace="1"
+    )
+    add_general_regex_sanitizer(
+        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s]{36})\\/",
+        group_for_replace="1"
+    )
 
 
 def pytest_addoption(parser):
@@ -373,7 +381,7 @@ def pipeline_samples_e2e_registered_eval_components(client: MLClient) -> Compone
 
 @pytest.fixture
 def mock_code_hash(request, mocker: MockFixture) -> None:
-    def generate_hash():
+    def generate_hash(*args, **kwargs):
         return str(uuid.uuid4())
 
     if is_live_and_not_recording():
@@ -529,7 +537,7 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 
 @pytest.fixture()
 def enable_environment_id_arm_expansion(mocker: MockFixture):
-    mocker.patch("azure.ai.ml.operations._operation_orchestrator.is_private_preview_enabled", return_value=False)
+    mocker.patch("azure.ai.ml._utils.utils.is_private_preview_enabled", return_value=False)
 
 
 @pytest.fixture(autouse=True)
