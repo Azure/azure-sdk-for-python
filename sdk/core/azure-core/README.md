@@ -230,14 +230,6 @@ foo = Foo(
     attr=NULL
 )
 ```
-<!-- SNIPPET: test_example_async.trio -->
-```python
-from azure.core.pipeline.transport import TrioRequestsTransport
-
-async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline:
-    return await pipeline.run(request)
-```
-<!-- END SNIPPET -->
 
 ## Contributing
 

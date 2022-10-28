@@ -17,11 +17,7 @@ def get_snippet(file: str) -> None:
     with open(file, 'r') as f:
         content = f.read()
     pattern = "# \\[START(?P<name>[A-Z a-z0-9_]+)\\](?P<body>[\\s\\S]+?)# \\[END[A-Z a-z0-9_]+\\]"
-    p = re.compile(pattern)
-    t = p.search(content)
     matches = re.findall(pattern, content)
-    if not matches:
-        return
     for match in matches:
         s = match
         name = s[0].strip()
