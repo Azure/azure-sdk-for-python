@@ -70,7 +70,7 @@ async def sample_abstractive_summarization_async() -> None:
         async for abstract_summary_results in document_results:
             for result in abstract_summary_results:
                 if result.kind == "AbstractiveSummarization":
-                    print(f"Summaries abstracted:")
+                    print("Summaries abstracted:")
                     [print(f"{summary.text}\n") for summary in result.summaries]
                 elif result.is_error is True:
                     print("...Is an error with code '{}' and message '{}'".format(
