@@ -243,7 +243,6 @@ class ComputeInstance(Compute):
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
             idle_time_before_shutdown=self.idle_time_before_shutdown,
-            os_image_metadata=self.os_image_metadata
         )
         compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
         compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
