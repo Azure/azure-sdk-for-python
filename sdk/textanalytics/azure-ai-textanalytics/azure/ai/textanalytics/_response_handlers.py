@@ -174,6 +174,9 @@ def entities_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            entity.detected_language
+        ) if hasattr(entity, "detected_language") and entity.detected_language else None
     )
 
 
@@ -194,6 +197,9 @@ def linked_entities_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            entity.detected_language
+        ) if hasattr(entity, "detected_language") and entity.detected_language else None
     )
 
 
@@ -211,6 +217,9 @@ def key_phrases_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             phrases.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            phrases.detected_language
+        ) if hasattr(phrases, "detected_language") and phrases.detected_language else None
     )
 
 
@@ -237,6 +246,9 @@ def sentiment_result(
             )
             for s in sentiment.sentences
         ],
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            sentiment.detected_language
+        ) if hasattr(sentiment, "detected_language") and sentiment.detected_language else None
     )
 
 
@@ -260,6 +272,9 @@ def pii_entities_result(
         statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
             entity.statistics
         ),
+        detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            entity.detected_language
+        ) if hasattr(entity, "detected_language") and entity.detected_language else None
     )
 
 
