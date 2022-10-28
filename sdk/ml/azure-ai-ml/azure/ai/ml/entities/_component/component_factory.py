@@ -4,14 +4,15 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Callable, Tuple
+from typing import Any, Callable, Tuple, Dict
 
 from marshmallow import Schema
 
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils.utils import is_internal_components_enabled
 from azure.ai.ml.constants._common import (
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
-    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
+    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX, SOURCE_PATH_CONTEXT_KEY,
 )
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.automl_component import AutoMLComponent
@@ -114,6 +115,35 @@ class _ComponentFactory:
         """
         self._create_instance_funcs[_type] = create_instance_func
         self._create_schema_funcs[_type] = create_schema_func
+
+    @classmethod
+    def load_from_dict(cls, *, data: Dict, context: Dict, _type: str = None, **kwargs) -> Component:
+        """Load a component from a yaml dict.
+
+        param data: the yaml dict. type data: Dict param context: the
+        context of the yaml dict. type context: Dict param _type: the
+        type name of the component. When None, it will be inferred from
+        the yaml dict. type _type: str
+        """
+
+        return Component._load(
+            data=data,
+            yaml_path=context.get(SOURCE_PATH_CONTEXT_KEY, None),
+            params_override=[{"type": _type}] if _type is not None else [],
+            **kwargs,
+        )
+
+    @classmethod
+    def load_from_rest(cls, *, obj: ComponentVersionData, _type: str = None) -> Component:
+        """Load a component from a rest object.
+
+        param obj: the rest object. type obj: ComponentVersionData param
+        _type: the type name of the component. When None, it will be
+        inferred from the rest object. type _type: str
+        """
+        if _type is not None:
+            obj.properties.component_spec["type"] = _type
+        return Component._from_rest_object(obj)
 
 
 component_factory = _ComponentFactory()
