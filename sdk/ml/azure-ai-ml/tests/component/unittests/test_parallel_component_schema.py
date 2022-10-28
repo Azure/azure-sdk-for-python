@@ -111,7 +111,6 @@ class TestParallelComponent:
         assert component_dict["logging_level"] == "INFO"
 
         assert component_entity.code
-        assert component_entity.code == f"{str(Path('./tests/test_configs/python').resolve())}:1"
 
     def test_serialize_deserialize_partition_keys(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/parallel_component_with_partition_keys.yml"
@@ -138,4 +137,3 @@ class TestParallelComponent:
         assert component_dict["partition_keys"] == ["foo", "bar"]
 
         assert component_entity.code
-        assert component_entity.code == f"{str(Path('./tests/test_configs/python').resolve())}:1"
