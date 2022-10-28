@@ -401,8 +401,28 @@ class AsyncTransport(
             self.writer.close()
             await self.writer.wait_closed()
             self.writer, self.reader = None, None
-        self.sock = None
+        if self.soct()k is not None:
+            self._shutdown_transpor
+            # Call shutdown first to make sure that pending messages
+            # reach the AMQP broker if the program exits after
+            # calling this method.
+            try:
+                self.sock.shutdown(socket.SHUT_RDWR)
+            except Exception as exc:  # pylint: disable=broad-except
+                # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
+                #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
+                _LOGGER.info("Transport endpoint is already disconnected: %r", exc)
+            self.sock.close()
+            self.sock = None
         self.connected = False
+
+    def _shutdown_transport(self):
+        """Unwrap a SSL socket, so we can call shutdown()."""
+        if self.sock is not None:
+            try:
+                self.sock = self.sock.unwrap()
+            except OSError:
+                pass
 
     async def write(self, s):
         try:

@@ -707,6 +707,18 @@ class WebSocketTransport(_AbstractTransport):
                 description="Failed to authenticate the connection due to exception: " + str(exc),
                 error=exc,
             )
+        except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:
+            self.close()
+            if isinstance(exc, WebSocketTimeoutException):
+                message = f'send timed out ({str(exc)})' 
+            elif isinstance(exc, SSLError):
+                message = f'send disconnected by SSL ({str(exc)})' 
+            else:
+                message = f'send disconnected ({str(exc)})' 
+            raise ConnectionError(message)
+        except (OSError, IOError, SSLError):
+            self.close()
+            raise
         except ImportError:
             raise ValueError(
                 "Please install websocket-client library to use websocket transport."
@@ -734,6 +746,11 @@ class WebSocketTransport(_AbstractTransport):
             return view
         except WebSocketTimeoutException as wte:
             raise ConnectionError('recv timed out (%s)' % wte)
+
+    def close(self):
+        if self.ws:
+            self._shutdown_transport()
+            self.ws = None
 
     def _shutdown_transport(self):
         # TODO Sync and Async close functions named differently
