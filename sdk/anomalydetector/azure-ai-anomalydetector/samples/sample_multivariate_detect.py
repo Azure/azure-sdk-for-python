@@ -122,7 +122,7 @@ class MultivariateSample:
             if r['summary']['status'] == 'FAILED':
                 print("Detection failed.")
                 print("Errors:")
-                if lend(r['summary']['errors']) > 0:
+                if len(r['summary']['errors']) > 0:
                     print("Error code: {}. Message: {}".format(r['summary']['errors'][0]['code'], r['summary']['errors'][0]['message']))
                 else:
                     print("None")
