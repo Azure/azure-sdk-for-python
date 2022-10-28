@@ -110,6 +110,8 @@ class Asset(Resource):
         dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def __eq__(self, other) -> bool:
+        if not isinstance(other, Asset):
+            return False
         return (
             self.name == other.name
             and self.id == other.id
