@@ -135,16 +135,6 @@ class Import(BaseNode):
         return import_job
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Import":
-        obj = BaseNode._rest_object_to_init_params(obj)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        return Import(**obj)
-
-    @classmethod
     def _load_from_rest_job(cls, obj: JobBaseData) -> "Import":
         from .import_func import import_job
 

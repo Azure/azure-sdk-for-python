@@ -16,6 +16,7 @@ from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestCloudEnvironments:
     @mock.patch.dict(os.environ, {AZUREML_CLOUD_ENV_NAME: AzureEnvironments.ENV_DEFAULT}, clear=True)
     def test_set_valid_cloud_details_china(self):

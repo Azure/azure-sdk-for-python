@@ -1,6 +1,6 @@
 # Release History
 
-## 5.2.1 (Unreleased)
+## 5.2.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,11 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 5.2.1 (2022-10-26)
+
+### Bugs Fixed
+- Returns a more helpful message in the document error when all documents fail for an action in the `begin_analyze_actions` API.
 
 ## 5.2.0 (2022-09-08)
 

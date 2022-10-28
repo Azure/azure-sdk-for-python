@@ -36,3 +36,4 @@ scope:
     Output_SSPath {outputs.SSPath}
     Input_TextData {inputs.TextData}
     ExtractionClause {inputs.ExtractionClause}
+

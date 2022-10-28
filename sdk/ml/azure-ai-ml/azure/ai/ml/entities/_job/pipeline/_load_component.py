@@ -11,7 +11,7 @@ from marshmallow import INCLUDE
 from azure.ai.ml import Output
 from azure.ai.ml._schema import NestedField
 from azure.ai.ml._schema.pipeline.component_job import SweepSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, CommonYamlFields
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, CommonYamlFields, SOURCE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import ControlFlowType, NodeType
 from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.dsl._component_func import to_component_func
@@ -60,7 +60,7 @@ class _PipelineNodeFactory:
         )
         self.register_type(
             _type=NodeType.SWEEP,
-            create_instance_func=None,
+            create_instance_func=lambda: Sweep.__new__(Sweep),
             load_from_rest_object_func=Sweep._from_rest_object,
             nested_schema=NestedField(SweepSchema, unknown=INCLUDE),
         )
@@ -179,7 +179,17 @@ class _PipelineNodeFactory:
         else:
             data[CommonYamlFields.TYPE] = _type
 
-        new_instance = self.get_create_instance_func(_type)()
+        new_instance: Union[BaseNode, AutoMLJob] = self.get_create_instance_func(_type)()
+
+        if isinstance(new_instance, BaseNode):
+            # parse component
+            component_key = new_instance._get_component_attr_name()
+            if component_key in data and isinstance(data[component_key], dict):
+                data[component_key] = Component._load(
+                    data=data[component_key],
+                    yaml_path=data[component_key].pop(SOURCE_PATH_CONTEXT_KEY, None),
+                )
+
         new_instance.__init__(**data)
         return new_instance
 
