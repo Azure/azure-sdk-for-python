@@ -381,7 +381,7 @@ class CodegenTestPR:
     @staticmethod
     def get_need_dependency() -> List[str]:
         template_path = Path('tools/azure-sdk-tools/packaging_tools/templates/setup.py')
-        items = ["msrest>", "azure-mgmt-core", "typing_extensions"]
+        items = ["msrest>", "azure-mgmt-core", "typing-extensions"]
         with open(template_path, 'r') as fr:
             content = fr.readlines()
         dependencies = []
@@ -408,7 +408,7 @@ class CodegenTestPR:
     def check_ci_file_proc(self, dependency: str):
         def edit_ci_file(content: List[str]):
             new_line = f'#override azure-mgmt-{self.package_name} {dependency}'
-            dependency_name = re.compile("[a-zA-Z-_]*").findall(dependency)[0]
+            dependency_name = re.compile("[a-zA-Z-]*").findall(dependency)[0]
             for i in range(len(content)):
                 if new_line in content[i]:
                     return

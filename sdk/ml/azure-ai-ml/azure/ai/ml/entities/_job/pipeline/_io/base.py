@@ -78,11 +78,11 @@ class InputOutputBase(ABC):
         self._original_data = data
         self._data = self._build_data(data)
         self._default_data = default_data
-        self._type = meta.type if meta else kwargs.pop("type", None)
+        self._type = meta.type if meta is not None else kwargs.pop("type", None)
         self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
         self._description = (
             self._data.description
-            if self._data and hasattr(self._data, "description") and self._data.description
+            if self._data is not None and hasattr(self._data, "description") and self._data.description
             else kwargs.pop("description", None)
         )
         # TODO: remove this
@@ -198,7 +198,7 @@ class InputOutputBase(ABC):
         if isinstance(original_data, PipelineInput):
             return None
         else:
-            return data.mode if data and hasattr(data, "mode") else kwargs.pop("mode", None)
+            return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
 
 
 class NodeInput(InputOutputBase):
@@ -372,7 +372,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._name = name
         self._owner = owner
-        self._is_control = meta.is_control if meta else None
+        self._is_control = meta.is_control if meta is not None else None
 
     @property
     def is_control(self) -> str:
@@ -410,7 +410,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
-            is_control = self._meta.is_control if self._meta else None
+            is_control = self._meta.is_control if self._meta is not None else None
             result = Output(path=self._data._data_binding(), mode=self.mode, is_control=is_control)
         else:
             msg = "Got unexpected type for output: {}."

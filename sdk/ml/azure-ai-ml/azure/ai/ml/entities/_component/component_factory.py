@@ -4,20 +4,16 @@
 
 # pylint: disable=protected-access
 
-from typing import Any, Callable, Dict, Tuple
+from typing import Any, Callable, Tuple
 
-from marshmallow import INCLUDE, Schema
+from marshmallow import Schema
 
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils.utils import is_internal_components_enabled
 from azure.ai.ml.constants._common import (
-    ANONYMOUS_COMPONENT_NAME,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
-    BASE_PATH_CONTEXT_KEY,
-    CommonYamlFields,
 )
-from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._component.automl_component import AutoMLComponent
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._component.component import Component
@@ -25,8 +21,6 @@ from azure.ai.ml.entities._component.import_component import ImportComponent
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._util import extract_label
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
@@ -120,98 +114,6 @@ class _ComponentFactory:
         """
         self._create_instance_funcs[_type] = create_instance_func
         self._create_schema_funcs[_type] = create_schema_func
-
-    def load_from_dict(self, *, data: Dict, context: Dict, _type: str = None, **kwargs) -> Component:
-        """Load a component from a yaml dict.
-
-        param data: the yaml dict. type data: Dict param context: the
-        context of the yaml dict. type context: Dict param _type: the
-        type name of the component. When None, it will be inferred from
-        the yaml dict. type _type: str
-        """
-        if _type is None:
-            _type = data.get(CommonYamlFields.TYPE, NodeType.COMMAND)
-        else:
-            data[CommonYamlFields.TYPE] = _type
-
-        create_instance_func, create_schema_func = self.get_create_funcs(
-            _type,
-            schema=data.get(CommonYamlFields.SCHEMA) if CommonYamlFields.SCHEMA in data else None,
-        )
-        new_instance = create_instance_func()
-        new_instance.__init__(
-            yaml_str=kwargs.pop("yaml_str", None),
-            _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
-        )
-        return new_instance
-
-    def load_from_rest(self, *, obj: ComponentVersionData, _type: str = None) -> Component:
-        """Load a component from a rest object.
-
-        param obj: the rest object. type obj: ComponentVersionData param
-        _type: the type name of the component. When None, it will be
-        inferred from the rest object. type _type: str
-        """
-        rest_component_version = obj.properties
-        # type name may be invalid?
-        if _type is None:
-            _type = rest_component_version.component_spec[CommonYamlFields.TYPE]
-        else:
-            rest_component_version.component_spec[CommonYamlFields.TYPE] = _type
-
-        # shouldn't block serialization when name is not valid
-        # maybe override serialization method for name field?
-        create_instance_func, create_schema_func = self.get_create_funcs(
-            _type,
-            schema=obj.properties.component_spec[CommonYamlFields.SCHEMA]
-            if CommonYamlFields.SCHEMA in obj.properties.component_spec
-            else None,
-        )
-
-        origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
-        rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
-
-        # inputs/outputs will be parsed by instance._build_io in instance's __init__
-        inputs = rest_component_version.component_spec.pop("inputs", {})
-        # parse String -> string, Integer -> integer, etc
-        for _input in inputs.values():
-            _input["type"] = Input._map_from_rest_type(_input["type"])
-        outputs = rest_component_version.component_spec.pop("outputs", {})
-
-        distribution = rest_component_version.component_spec.pop("distribution", None)
-        if distribution:
-            distribution = DistributionConfiguration._from_rest_object(distribution)
-
-        # Note: we need to refine the logic here if more specific type logic here.
-        jobs = rest_component_version.component_spec.pop("jobs", None)
-        if _type == NodeType.PIPELINE and jobs:
-            jobs = PipelineComponent._resolve_sub_nodes(jobs)
-
-        new_instance = create_instance_func()
-        init_kwargs = dict(
-            id=obj.id,
-            is_anonymous=rest_component_version.is_anonymous,
-            creation_context=obj.system_data,
-            inputs=inputs,
-            outputs=outputs,
-            distribution=distribution,
-            jobs=jobs,
-            **(
-                create_schema_func({BASE_PATH_CONTEXT_KEY: "./"}).load(
-                    rest_component_version.component_spec, unknown=INCLUDE
-                )
-            ),
-        )
-
-        # remove empty values, because some property only works for specific component, eg: distribution for command
-        init_kwargs = {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
-
-        new_instance.__init__(
-            **init_kwargs,
-        )
-        new_instance.name = origin_name
-        return new_instance
 
 
 component_factory = _ComponentFactory()

@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import typing
 from typing import Dict
-
-from marshmallow import Schema
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants._component import ControlFlowType
@@ -31,7 +28,7 @@ class ConditionNode(ControlFlowNode):
     @classmethod
     def _create_schema_for_validation(
         cls, context
-    ) -> typing.Union[PathAwareSchema, Schema]:  # pylint: disable=unused-argument
+    ) -> PathAwareSchema:  # pylint: disable=unused-argument
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)
