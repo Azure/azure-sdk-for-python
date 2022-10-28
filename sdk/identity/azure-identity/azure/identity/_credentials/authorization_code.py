@@ -2,15 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional, List
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional, List
     from azure.core.credentials import AccessToken
 
 
@@ -35,8 +33,14 @@ class AuthorizationCodeCredential(GetTokenMixin):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id, client_id, authorization_code, redirect_uri, **kwargs):
-        # type: (str, str, str, str, **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            authorization_code: str,
+            redirect_uri: str,
+            **kwargs
+    ) -> None:
         self._authorization_code = authorization_code  # type: Optional[str]
         self._client_id = client_id
         self._client_secret = kwargs.pop("client_secret", None)

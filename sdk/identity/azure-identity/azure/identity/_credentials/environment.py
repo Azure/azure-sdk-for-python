@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-
+from typing import Any, Mapping, Optional, Union, TYPE_CHECKING
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
@@ -14,13 +14,7 @@ from .client_secret import ClientSecretCredential
 from .user_password import UsernamePasswordCredential
 
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    from typing import Any, Mapping, Optional, Union
     from azure.core.credentials import AccessToken
 
     EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]

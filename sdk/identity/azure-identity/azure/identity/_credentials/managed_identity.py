@@ -4,19 +4,13 @@
 # ------------------------------------
 import logging
 import os
+from typing import Any, Optional, TYPE_CHECKING
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.decorators import log_get_token
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Any, Optional
     from azure.core.credentials import AccessToken, TokenCredential
 
 _LOGGER = logging.getLogger(__name__)

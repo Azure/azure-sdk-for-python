@@ -7,7 +7,7 @@ import logging
 import platform
 import subprocess
 import sys
-from typing import TYPE_CHECKING, List
+from typing import List, Any, Tuple
 
 import six
 
@@ -18,10 +18,6 @@ from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource, resolve_tenant
 from .._internal.decorators import log_get_token
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Tuple
 
 
 _LOGGER = logging.getLogger(__name__)

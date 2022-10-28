@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from binascii import hexlify
-from typing import cast, NamedTuple, TYPE_CHECKING
+from typing import cast, NamedTuple, Any, Optional, Union, Dict
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -13,10 +13,6 @@ import six
 
 from .._internal import validate_tenant_id
 from .._internal.client_credential_base import ClientCredentialBase
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Optional, Union, List
 
 
 class CertificateCredential(ClientCredentialBase):
@@ -77,16 +73,20 @@ def extract_cert_chain(pem_bytes):
 _Cert = NamedTuple("_Cert", [("pem_bytes", bytes), ("private_key", "Any"), ("fingerprint", bytes)])
 
 
-def load_pem_certificate(certificate_data, password):
-    # type: (bytes, Optional[bytes]) -> _Cert
+def load_pem_certificate(
+        certificate_data: bytes,
+        password: bytes = None
+) -> _Cert:
     private_key = serialization.load_pem_private_key(certificate_data, password, backend=default_backend())
     cert = x509.load_pem_x509_certificate(certificate_data, default_backend())
     fingerprint = cert.fingerprint(hashes.SHA1())  # nosec
     return _Cert(certificate_data, private_key, fingerprint)
 
 
-def load_pkcs12_certificate(certificate_data, password):
-    # type: (bytes, Optional[bytes]) -> _Cert
+def load_pkcs12_certificate(
+        certificate_data: bytes,
+        password: bytes = None
+) -> _Cert:
     from cryptography.hazmat.primitives.serialization import Encoding, NoEncryption, pkcs12, PrivateFormat
 
     try:
@@ -113,8 +113,13 @@ def load_pkcs12_certificate(certificate_data, password):
     return _Cert(pem_bytes, private_key, fingerprint)
 
 
-def get_client_credential(certificate_path, password=None, certificate_data=None, send_certificate_chain=False, **_):
-    # type: (Optional[str], Optional[Union[bytes, str]], Optional[bytes], bool, **Any) -> dict
+def get_client_credential(
+        certificate_path: str = None,
+        password: Union[bytes, str] = None,
+        certificate_data: bytes = None,
+        send_certificate_chain: bool = False,
+        **_
+) -> Dict:
     """Load a certificate from a filesystem path or bytes, return it as a dict suitable for msal.ClientApplication"""
 
     if certificate_path:

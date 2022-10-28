@@ -4,7 +4,7 @@
 # ------------------------------------
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
@@ -13,8 +13,6 @@ from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any
     from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)

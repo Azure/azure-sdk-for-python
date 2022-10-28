@@ -5,34 +5,18 @@
 import os
 import logging
 from typing import List
-
-from six.moves.urllib_parse import urlparse
+from contextvars import ContextVar
+from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 from .._constants import EnvironmentVariables, KnownAuthorities
 
+within_credential_chain = ContextVar("within_credential_chain", default=False)
 
-try:
-    from contextvars import ContextVar
-
-    within_credential_chain = ContextVar("within_credential_chain", default=False)
-except ImportError:
-    # No ContextVar on Python < 3.7. Credentials will behave as if they're never in a chain i.e. they will log fully.
-
-    class AlwaysFalse:
-        # pylint:disable=no-self-use
-        def get(self):
-            return False
-
-        def set(self, _):
-            pass
-
-    within_credential_chain = AlwaysFalse()  # type: ignore
 
 _LOGGER = logging.getLogger(__name__)
 
-def normalize_authority(authority):
-    # type: (str) -> str
+def normalize_authority(authority: str) -> str:
     """Ensure authority uses https, strip trailing spaces and /"""
 
     parsed = urlparse(authority)
@@ -46,8 +30,7 @@ def normalize_authority(authority):
     return authority.rstrip(" /")
 
 
-def get_default_authority():
-    # type: () -> str
+def get_default_authority() -> str:
     authority = os.environ.get(EnvironmentVariables.AZURE_AUTHORITY_HOST, KnownAuthorities.AZURE_PUBLIC_CLOUD)
     return normalize_authority(authority)
 
@@ -55,8 +38,7 @@ def get_default_authority():
 VALID_TENANT_ID_CHARACTERS = frozenset("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" + "0123456789" + "-.")
 
 
-def validate_tenant_id(tenant_id):
-    # type: (str) -> None
+def validate_tenant_id(tenant_id: str) -> None:
     """Raise ValueError if tenant_id is empty or contains a character invalid for a tenant id"""
     if not tenant_id or any(c not in VALID_TENANT_ID_CHARACTERS for c in tenant_id):
         raise ValueError(

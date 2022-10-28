@@ -4,7 +4,7 @@
 # ------------------------------------
 import functools
 import os
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.transport import HttpRequest
@@ -13,11 +13,7 @@ from azure.core.pipeline.policies import HTTPPolicy
 from .._constants import EnvironmentVariables
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
-    from azure.core.pipeline import PipelineRequest, PipelineResponse
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 class AzureArcCredential(ManagedIdentityBase):
@@ -87,8 +83,7 @@ def _get_secret_key(response):
 class ArcChallengeAuthPolicy(HTTPPolicy):
     """Policy for handling Azure Arc's challenge authentication"""
 
-    def send(self, request):
-        # type: (PipelineRequest) -> PipelineResponse
+    def send(self, request: PipelineRequest) -> PipelineResponse:
         request.http_request.headers["Metadata"] = "true"
         response = self.next.send(request)
 

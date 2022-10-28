@@ -4,6 +4,7 @@
 # ------------------------------------
 import logging
 import os
+from typing import Any, List, TYPE_CHECKING
 
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority
@@ -17,13 +18,7 @@ from .azure_cli import AzureCliCredential
 from .vscode import VisualStudioCodeCredential
 
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    from typing import Any, List
     from azure.core.credentials import AccessToken, TokenCredential
 
 _LOGGER = logging.getLogger(__name__)

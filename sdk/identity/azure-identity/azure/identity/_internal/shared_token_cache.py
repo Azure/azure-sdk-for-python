@@ -5,10 +5,11 @@
 import abc
 import platform
 import time
+from typing import TYPE_CHECKING, Any, Iterable, List, Mapping, Optional
 
 import msal
 import six
-from six.moves.urllib_parse import urlparse
+from urllib.parse import urlparse
 
 from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
@@ -16,23 +17,12 @@ from .._constants import KnownAuthorities
 from .._internal import get_default_authority, normalize_authority, wrap_exceptions
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, List, Mapping, Optional
     from .._internal import AadClientBase
 
     CacheItem = Mapping[str, str]
 
+ABC = abc.ABC
 
 MULTIPLE_ACCOUNTS = """SharedTokenCacheCredential authentication unavailable. Multiple accounts
 were found in the cache. Use username and tenant id to disambiguate."""

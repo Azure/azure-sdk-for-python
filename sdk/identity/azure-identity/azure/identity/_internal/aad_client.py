@@ -3,14 +3,12 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Iterable, Optional, Union
 
 from .aad_client_base import AadClientBase
 from .._internal.pipeline import build_pipeline
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional, Union
     from azure.core.credentials import AccessToken
     from azure.core.pipeline import Pipeline
     from azure.core.pipeline.transport import HttpRequest

@@ -4,16 +4,13 @@
 # ------------------------------------
 import functools
 import os
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 
 from azure.core.pipeline.transport import HttpRequest
 
 from .._constants import EnvironmentVariables
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
-
-if TYPE_CHECKING:
-    from typing import Any, Optional
 
 
 class AzureMLCredential(ManagedIdentityBase):

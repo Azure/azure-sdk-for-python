@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
 import six
 
@@ -16,8 +16,6 @@ from .._internal.get_token_mixin import GetTokenMixin
 from .._internal.managed_identity_client import ManagedIdentityClient
 
 if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
 IMDS_AUTHORITY = "http://169.254.169.254"

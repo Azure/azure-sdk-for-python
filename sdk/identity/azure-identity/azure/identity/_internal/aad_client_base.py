@@ -7,7 +7,7 @@ import base64
 import json
 import time
 from uuid import uuid4
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union
 
 import six
 from msal import TokenCache
@@ -21,8 +21,6 @@ from .._internal import resolve_tenant
 from .._internal.aadclient_certificate import AadClientCertificate
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Iterable, Optional, Union
     from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
     from azure.core.pipeline.policies import AsyncHTTPPolicy, HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import AsyncHttpTransport, HttpTransport

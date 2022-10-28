@@ -6,23 +6,14 @@ import platform
 import socket
 import subprocess
 import webbrowser
-
-from six.moves.urllib_parse import urlparse
+from typing import Any
+from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Any
 
 
 class InteractiveBrowserCredential(InteractiveCredential):

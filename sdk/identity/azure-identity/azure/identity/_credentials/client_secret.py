@@ -2,13 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any
 
 from .._internal.client_credential_base import ClientCredentialBase
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, List
 
 
 class ClientSecretCredential(ClientCredentialBase):
@@ -29,8 +25,13 @@ class ClientSecretCredential(ClientCredentialBase):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id, client_id, client_secret, **kwargs):
-        # type: (str, str, str, **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            client_secret: str,
+            **kwargs
+    ) -> None:
         if not client_id:
             raise ValueError("client_id should be the id of an Azure Active Directory application")
         if not client_secret:

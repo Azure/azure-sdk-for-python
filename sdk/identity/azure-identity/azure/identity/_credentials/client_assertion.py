@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Optional
 
 from .._internal import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, Optional, List
     from azure.core.credentials import AccessToken
 
 
@@ -32,8 +31,13 @@ class ClientAssertionCredential(GetTokenMixin):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id, client_id, func, **kwargs):
-        # type: (str, str, Callable[[], str], **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            func: Callable[[], str],
+            **kwargs
+    ) -> None:
         self._func = func
         self._client = AadClient(tenant_id, client_id, **kwargs)
         super(ClientAssertionCredential, self).__init__(**kwargs)
