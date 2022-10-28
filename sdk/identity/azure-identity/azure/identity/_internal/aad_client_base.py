@@ -7,7 +7,7 @@ import base64
 import json
 import time
 from uuid import uuid4
-from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union
+from typing import TYPE_CHECKING, List, Any, Iterable, Optional, Union, Dict
 
 import six
 from msal import TokenCache
@@ -54,8 +54,7 @@ class AadClientBase(abc.ABC):
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
         self._pipeline = self._build_pipeline(**kwargs)
 
-    def get_cached_access_token(self, scopes, **kwargs):
-        # type: (Iterable[str], **Any) -> Optional[AccessToken]
+    def get_cached_access_token(self, scopes: Iterable[str], **kwargs) -> Optional[AccessToken]:
         tenant = resolve_tenant(
             self._tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,
@@ -72,8 +71,7 @@ class AadClientBase(abc.ABC):
                 return AccessToken(token["secret"], expires_on)
         return None
 
-    def get_cached_refresh_tokens(self, scopes):
-        # type: (Iterable[str]) -> List[dict]
+    def get_cached_refresh_tokens(self, scopes: Iterable[str]) -> List[Dict]:
         """Assumes all cached refresh tokens belong to the same user"""
         return self._cache.find(TokenCache.CredentialType.REFRESH_TOKEN, target=list(scopes))
 

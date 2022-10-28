@@ -13,7 +13,6 @@ from .._constants import EnvironmentVariables, KnownAuthorities
 
 within_credential_chain = ContextVar("within_credential_chain", default=False)
 
-
 _LOGGER = logging.getLogger(__name__)
 
 def normalize_authority(authority: str) -> str:

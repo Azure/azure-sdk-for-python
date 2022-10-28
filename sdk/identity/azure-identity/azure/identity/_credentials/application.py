@@ -4,16 +4,13 @@
 # ------------------------------------
 import logging
 import os
-from typing import TYPE_CHECKING, Any
 
+from azure.core.credentials import AccessToken
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -54,8 +51,7 @@ class AzureApplicationCredential(ChainedTokenCredential):
         of the environment variable AZURE_CLIENT_ID, if any. If not specified, a system-assigned identity will be used.
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs) -> None:
         authority = kwargs.pop("authority", None)
         authority = normalize_authority(authority) if authority else get_default_authority()
         managed_identity_client_id = kwargs.pop(
@@ -66,8 +62,7 @@ class AzureApplicationCredential(ChainedTokenCredential):
             ManagedIdentityCredential(client_id=managed_identity_client_id, **kwargs),
         )
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

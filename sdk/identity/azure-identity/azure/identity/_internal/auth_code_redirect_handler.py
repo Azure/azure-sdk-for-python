@@ -4,8 +4,8 @@
 # ------------------------------------
 from typing import Any, Mapping
 
-from six.moves.urllib_parse import parse_qs
 from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import parse_qs
 
 
 class AuthCodeRedirectHandler(BaseHTTPRequestHandler):

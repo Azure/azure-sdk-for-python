@@ -4,14 +4,15 @@
 # ------------------------------------
 import logging
 import os
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Optional, TYPE_CHECKING
 
+from azure.core.credentials import AccessToken
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
 from .._internal.decorators import log_get_token
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken, TokenCredential
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -32,8 +33,7 @@ class ManagedIdentityCredential(object):
     :paramtype identity_config: Mapping[str, str]
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs) -> None:
         self._credential = None  # type: Optional[TokenCredential]
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
             if os.environ.get(EnvironmentVariables.IDENTITY_HEADER):
@@ -90,14 +90,12 @@ class ManagedIdentityCredential(object):
     def __exit__(self, *args):
         self._credential.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the credential's transport session."""
         self.__exit__()
 
     @log_get_token("ManagedIdentityCredential")
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

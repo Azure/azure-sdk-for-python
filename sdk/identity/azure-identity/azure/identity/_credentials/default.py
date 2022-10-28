@@ -4,8 +4,9 @@
 # ------------------------------------
 import logging
 import os
-from typing import Any, List, TYPE_CHECKING
+from typing import List, TYPE_CHECKING
 
+from azure.core.credentials import AccessToken
 from .._constants import EnvironmentVariables
 from .._internal import get_default_authority, normalize_authority
 from .azure_powershell import AzurePowerShellCredential
@@ -19,7 +20,7 @@ from .vscode import VisualStudioCodeCredential
 
 
 if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken, TokenCredential
+    from azure.core.credentials import TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -73,8 +74,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
         Directory work or school accounts.
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs) -> None:
         if "tenant_id" in kwargs:
             raise TypeError("'tenant_id' is not supported in DefaultAzureCredential.")
 
@@ -145,8 +145,7 @@ class DefaultAzureCredential(ChainedTokenCredential):
 
         super(DefaultAzureCredential, self).__init__(*credentials)
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

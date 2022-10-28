@@ -4,7 +4,7 @@
 # ------------------------------------
 from datetime import datetime
 import time
-from typing import Any, Optional
+from typing import Dict, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 
@@ -59,9 +59,7 @@ class DeviceCodeCredential(InteractiveCredential):
         super(DeviceCodeCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> dict
-
+    def _request_token(self, *scopes: str, **kwargs) -> Dict:
         # MSAL requires scopes be a list
         scopes = list(scopes)  # type: ignore
 

@@ -2,14 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Optional, List
+from typing import Optional
 
+from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 from .._internal.aad_client import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken
 
 
 class AuthorizationCodeCredential(GetTokenMixin):
@@ -55,13 +53,11 @@ class AuthorizationCodeCredential(GetTokenMixin):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the credential's transport session."""
         self.__exit__()
 
-    def get_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.
@@ -81,12 +77,10 @@ class AuthorizationCodeCredential(GetTokenMixin):
         # pylint:disable=useless-super-delegation
         return super(AuthorizationCodeCredential, self).get_token(*scopes, **kwargs)
 
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
         if self._authorization_code:
             token = self._client.obtain_token_by_authorization_code(
                 scopes=scopes, code=self._authorization_code, redirect_uri=self._redirect_uri, **kwargs

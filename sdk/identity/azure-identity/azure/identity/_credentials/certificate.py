@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from binascii import hexlify
-from typing import cast, NamedTuple, Any, Optional, Union, Dict
+from typing import cast, NamedTuple, Union, Dict
 
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
@@ -46,8 +46,13 @@ class CertificateCredential(ClientCredentialBase):
         acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id, client_id, certificate_path=None, **kwargs):
-        # type: (str, str, Optional[str], **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            certificate_path: str = None,
+            **kwargs
+    ) -> None:
         validate_tenant_id(tenant_id)
 
         client_credential = get_client_credential(certificate_path, **kwargs)
@@ -57,8 +62,7 @@ class CertificateCredential(ClientCredentialBase):
         )
 
 
-def extract_cert_chain(pem_bytes):
-    # type: (bytes) -> bytes
+def extract_cert_chain(pem_bytes: bytes) -> bytes:
     """Extract a certificate chain from a PEM file's bytes, removing line breaks."""
 
     # if index raises ValueError, there's no PEM-encoded cert

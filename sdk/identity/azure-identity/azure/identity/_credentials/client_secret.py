@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any
-
 from .._internal.client_credential_base import ClientCredentialBase
 
 

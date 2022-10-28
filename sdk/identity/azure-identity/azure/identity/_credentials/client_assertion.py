@@ -2,13 +2,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING, Any, Callable, Optional
+from typing import Callable, Optional
 
+from azure.core.credentials import AccessToken
 from .._internal import AadClient
 from .._internal.get_token_mixin import GetTokenMixin
-
-if TYPE_CHECKING:
-    from azure.core.credentials import AccessToken
 
 
 class ClientAssertionCredential(GetTokenMixin):
@@ -53,12 +51,10 @@ class ClientAssertionCredential(GetTokenMixin):
         # type: () -> None
         self.__exit__()
 
-    def _acquire_token_silently(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> Optional[AccessToken]
+    def _acquire_token_silently(self, *scopes: str, **kwargs)  -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
         assertion = self._func()
         token = self._client.obtain_token_by_jwt_assertion(scopes, assertion, **kwargs)
         return token

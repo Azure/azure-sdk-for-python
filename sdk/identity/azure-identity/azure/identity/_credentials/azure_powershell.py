@@ -64,13 +64,11 @@ class AzurePowerShellCredential(object):
     def __exit__(self, *args):
         pass
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Calling this method is unnecessary."""
 
     @log_get_token("AzurePowerShellCredential")
-    def get_token(self, *scopes, **kwargs): # pylint: disable=no-self-use
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -97,8 +95,7 @@ class AzurePowerShellCredential(object):
         return token
 
 
-def run_command_line(command_line):
-    # type: (List[str]) -> str
+def run_command_line(command_line: List[str]) -> str:
     stdout = stderr = ""
     proc = None
     kwargs = {}

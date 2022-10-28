@@ -4,21 +4,20 @@
 # ------------------------------------
 import functools
 import os
-from typing import Any, Optional
+from typing import Dict, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.pipeline.policies import HTTPPolicy
+from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 from .._constants import EnvironmentVariables
 from .._internal.managed_identity_base import ManagedIdentityBase
 from .._internal.managed_identity_client import ManagedIdentityClient
-from azure.core.pipeline import PipelineRequest, PipelineResponse
 
 
 class AzureArcCredential(ManagedIdentityBase):
-    def get_client(self, **kwargs):
-        # type: (**Any) -> Optional[ManagedIdentityClient]
+    def get_client(self, **kwargs) -> Optional[ManagedIdentityClient]:
         url = os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT)
         imds = os.environ.get(EnvironmentVariables.IMDS_ENDPOINT)
         if url and imds:
@@ -39,13 +38,11 @@ class AzureArcCredential(ManagedIdentityBase):
     def close(self):
         self.__exit__()
 
-    def get_unavailable_message(self):
-        # type: () -> str
+    def get_unavailable_message(self) -> str:
         return "Azure Arc managed identity configuration not found in environment"
 
 
-def _get_request(url, scope, identity_config):
-    # type: (str, str, dict) -> HttpRequest
+def _get_request(url: str, scope: str, identity_config: Dict) -> HttpRequest:
     if identity_config:
         raise ClientAuthenticationError(
             message="User assigned managed identities are not supported by Azure Arc. To authenticate with the system "
@@ -58,8 +55,7 @@ def _get_request(url, scope, identity_config):
     return request
 
 
-def _get_secret_key(response):
-    # type: (PipelineResponse) -> str
+def _get_secret_key(response: PipelineResponse) -> str:
     # expecting header containing path to secret key file
     header = response.http_response.headers.get("WWW-Authenticate")
     if not header:

@@ -5,7 +5,7 @@
 import os
 import platform
 import time
-from typing import TYPE_CHECKING, Any, Dict
+from typing import Dict
 
 from msal import PublicClientApplication
 
@@ -48,8 +48,7 @@ class SilentAuthenticationCredential(object):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
@@ -95,8 +94,7 @@ class SilentAuthenticationCredential(object):
         return self._client_applications[tenant_id]
 
     @wrap_exceptions
-    def _acquire_token_silent(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _acquire_token_silent(self, *scopes: str, **kwargs) -> AccessToken:
         """Silently acquire a token from MSAL."""
 
         result = None

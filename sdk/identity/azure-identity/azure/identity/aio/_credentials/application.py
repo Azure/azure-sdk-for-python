@@ -5,12 +5,12 @@
 import logging
 import os
 
+from azure.core.credentials import AccessToken
 from .chained import ChainedTokenCredential
 from .environment import EnvironmentCredential
 from .managed_identity import ManagedIdentityCredential
 from ..._constants import EnvironmentVariables
 from ..._internal import get_default_authority, normalize_authority
-from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
