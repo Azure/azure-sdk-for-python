@@ -69,8 +69,8 @@ class InputOutputBase(ABC):
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
-        :param original_data: default value of input/output, None means un-configured data.
-        :type original_data: Union[None, int, bool, float, str
+        :param default_data: default value of input/output, None means un-configured data.
+        :type default_data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
         """
@@ -79,11 +79,7 @@ class InputOutputBase(ABC):
         self._data = self._build_data(data)
         self._default_data = default_data
         self._type = meta.type if meta else kwargs.pop("type", None)
-        # pipeline level inputs won't pass mode to bound node level inputs
-        if isinstance(self._original_data, PipelineInput):
-            self._mode = None
-        else:
-            self._mode = self._data.mode if self._data and hasattr(self._data, "mode") else kwargs.pop("mode", None)
+        self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
         self._description = (
             self._data.description
             if self._data and hasattr(self._data, "description") and self._data.description
@@ -179,6 +175,30 @@ class InputOutputBase(ABC):
             return self._data_binding()
         except AttributeError:
             return super(InputOutputBase, self).__str__()
+
+    def __hash__(self):
+        return id(self)
+
+    @classmethod
+    def _get_mode(cls, original_data, data, kwargs):
+        """Get mode of this input/output builder.
+
+        :param original_data: Original value of input/output.
+        :type original_data: Union[None, int, bool, float, str
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output,
+                          azure.ai.ml.entities._job.pipeline._io.PipelineInput]
+        :param data: Built input/output data.
+        :type data: Union[None, int, bool, float, str
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output]
+
+        """
+        # pipeline level inputs won't pass mode to bound node level inputs
+        if isinstance(original_data, PipelineInput):
+            return None
+        else:
+            return data.mode if data and hasattr(data, "mode") else kwargs.pop("mode", None)
 
 
 class NodeInput(InputOutputBase):
@@ -420,9 +440,6 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             meta=self._meta,
         )
 
-    def __hash__(self):
-        return id(self)
-
 
 class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
@@ -449,7 +466,13 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         # def pipeline_func(param1):
         #   node1 = component_func(param1=param1.result())
         #   # node1's param1 will get actual value of param1 instead of a input binding.
-        return self._original_data
+        # use this to break self loop
+        original_data_cache = set()
+        original_data = self._original_data
+        while isinstance(original_data, PipelineInput) and original_data not in original_data_cache:
+            original_data_cache.add(original_data)
+            original_data = original_data._original_data
+        return original_data
 
     def __str__(self) -> str:
         return self._data_binding()

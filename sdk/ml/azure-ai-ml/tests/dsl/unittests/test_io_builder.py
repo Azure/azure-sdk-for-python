@@ -13,8 +13,14 @@ from .._util import _DSL_TIMEOUT_SECOND
 
 tests_root_dir = Path(__file__).parent.parent.parent
 components_dir = tests_root_dir / "test_configs/components/"
+common_omit_fields = [
+    "jobs.*.componentId",
+    "jobs.*._source",
+    "jobs.*.properties",
+]
 
 
+@pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
@@ -65,12 +71,6 @@ class TestInputOutputBuilder:
         pipeline_job1 = my_pipeline(
             job_in_number=1, job_in_path=Input(path="fake_path1")
         )
-
-        common_omit_fields = [
-            "jobs.*.componentId",
-            "jobs.*._source",
-            "jobs.*.properties",
-        ]
 
         rest_pipeline_job = omit_with_wildcard(pipeline_job1._to_rest_object().properties.as_dict(),
                                                *common_omit_fields)
@@ -158,3 +158,62 @@ class TestInputOutputBuilder:
         rest_pipeline_job = omit_with_wildcard(pipeline_job1._to_rest_object().properties.as_dict(),
                                                *common_omit_fields)
         assert rest_pipeline_job["jobs"] == expected_pipeline_job1
+
+    def test_pipeline_input_result_multiple_levle(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func = load_component(source=component_yaml)
+
+        @pipeline
+        def my_pipeline_level_1(job_in_number, job_in_path):
+            assert isinstance(job_in_number, PipelineInput)
+            assert isinstance(job_in_path, PipelineInput)
+            # Note: call result will get actual value
+            assert isinstance(job_in_number.result(), int)
+            assert isinstance(job_in_path.result(), Input)
+            component_func(component_in_number=job_in_number, component_in_path=job_in_path)
+
+        @pipeline
+        def my_pipeline_level_2(job_in_number, job_in_path):
+            assert isinstance(job_in_number, PipelineInput)
+            assert isinstance(job_in_path, PipelineInput)
+            assert isinstance(job_in_number.result(), int)
+            assert isinstance(job_in_path.result(), Input)
+            my_pipeline_level_1(job_in_number=job_in_number, job_in_path=job_in_path)
+            component_func(component_in_number=job_in_number, component_in_path=job_in_path)
+
+        pipeline_job2 = my_pipeline_level_2(
+            job_in_number=2, job_in_path=Input(path="fake_path2")
+        )
+
+        rest_pipeline_job = omit_with_wildcard(pipeline_job2._to_rest_object().properties.as_dict(),
+                                               *common_omit_fields)
+
+        expected_pipeline_job = {
+            'microsoftsamples_command_component_basic': {
+                'computeId': None,
+                'display_name': None,
+                'distribution': None,
+                'environment_variables': {},
+                'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                   'value': '${{parent.inputs.job_in_number}}'},
+                           'component_in_path': {'job_input_type': 'literal',
+                                                 'value': '${{parent.inputs.job_in_path}}'}},
+                'limits': None,
+                'name': 'microsoftsamples_command_component_basic',
+                'outputs': {},
+                'resources': None,
+                'tags': {},
+                'type': 'command'},
+            'my_pipeline_level_1': {
+                'computeId': None,
+                'display_name': None,
+                'inputs': {'job_in_number': {'job_input_type': 'literal',
+                                             'value': '${{parent.inputs.job_in_number}}'},
+                           'job_in_path': {'job_input_type': 'literal',
+                                           'value': '${{parent.inputs.job_in_path}}'}},
+                'name': 'my_pipeline_level_1',
+                'outputs': {},
+                'tags': {},
+                'type': 'pipeline'}
+        }
+        assert rest_pipeline_job["jobs"] == expected_pipeline_job
