@@ -147,15 +147,6 @@ class Pipeline(BaseNode):
             validation_result.merge_with(self.component._customized_validate())
         return validation_result
 
-    @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Pipeline":
-        obj = BaseNode._rest_object_to_init_params(obj)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-        return Pipeline(**obj)
-
     def _to_rest_object(self, **kwargs) -> dict:
         rest_obj = super()._to_rest_object(**kwargs)
         rest_obj.update(

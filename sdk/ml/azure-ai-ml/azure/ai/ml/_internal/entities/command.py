@@ -15,7 +15,6 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfig
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.core.fields import DistributionField
 from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
-from azure.ai.ml.entities._job.distribution import DistributionConfiguration
 from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
 
 
@@ -92,10 +91,9 @@ class Command(InternalBaseNode):
         return rest_obj
 
     @classmethod
-    def _rest_object_to_init_params(cls, obj):
-        obj = InternalBaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj):
+        obj = InternalBaseNode._from_rest_object_to_init_params(obj)
 
-        # resources
         if "resources" in obj and obj["resources"]:
             resources = RestJobResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
@@ -149,16 +147,6 @@ class Distributed(Command):
         from .._schema.command import DistributedSchema
 
         return DistributedSchema(context=context)
-
-    @classmethod
-    def _rest_object_to_init_params(cls, obj: dict):
-        obj = Command._rest_object_to_init_params(obj)
-
-        # distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
-
-        return obj
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:

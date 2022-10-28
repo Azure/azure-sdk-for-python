@@ -74,12 +74,12 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param deployment: The deployment entity.
         :type deployment: ~azure.ai.ml.entities.BatchDeployment
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot be
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be
             successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchDeployment assets
             (e.g. Data, Code, Model, Environment) cannot be successfully validated.
             Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if BatchDeployment model
             cannot be successfully validated. Details will be provided in the error message.
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchDeployment]
@@ -213,7 +213,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs
-        :rtype: ItemPaged[BatchJob]
+        :rtype: ~azure.core.paging.ItemPaged[BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]

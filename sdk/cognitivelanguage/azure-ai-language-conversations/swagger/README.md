@@ -78,14 +78,17 @@ directive:
   where: $.paths.*.*
   transform: |
     var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + operationId + " for more information.";
+    var apiVersion = "2022-10-01-preview/"
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + operationId + " for more information.";
 
 - where-operation: AnalyzeConversation_SubmitJob
-  transform: >
-    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more information.";
+  transform: |
+    var apiVersion = "2022-10-01-preview/"
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis-runtime/submit-job for more information.";
 - where-operation: ConversationAnalysis_AnalyzeConversation
-  transform: >
-    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation for more information.";
+  transform: |
+    var apiVersion = "2022-10-01-preview/"
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis-runtime/analyze-conversation for more information.";
 ```
 
 
