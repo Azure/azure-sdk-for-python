@@ -3,13 +3,12 @@
 # ---------------------------------------------------------
 import os
 import tempfile
-import typing
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Union
 
-from marshmallow import Schema
+from marshmallow import INCLUDE
 
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentContainerData,
@@ -25,6 +24,7 @@ from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     REGISTRY_URI_FORMAT,
+    CommonYamlFields,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.entities._assets import Code
@@ -286,7 +286,7 @@ class Component(
         return component_io
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         return ComponentSchema(context=context)
 
     @classmethod
@@ -309,12 +309,26 @@ class Component(
         }
 
         type_in_override = find_type_in_override(params_override)
-        from azure.ai.ml.entities._component.component_factory import component_factory
 
-        component = component_factory.load_from_dict(_type=type_in_override, data=data, context=context, **kwargs)
+        # type_in_override > type_in_yaml > default (command)
+        if type_in_override is None:
+            type_in_override = data.get(CommonYamlFields.TYPE, NodeType.COMMAND)
+        data[CommonYamlFields.TYPE] = type_in_override
+
+        from azure.ai.ml.entities._component.component_factory import component_factory
+        create_instance_func, create_schema_func = component_factory.get_create_funcs(
+            data[CommonYamlFields.TYPE],
+            schema=data.get(CommonYamlFields.SCHEMA) if CommonYamlFields.SCHEMA in data else None,
+        )
+        new_instance = create_instance_func()
+        new_instance.__init__(
+            yaml_str=kwargs.pop("yaml_str", None),
+            _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
+            **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
+        )
         if yaml_path:
-            component._source_path = yaml_path
-        return component
+            new_instance._source_path = yaml_path
+        return new_instance
 
     @classmethod
     def _from_container_rest_object(cls, component_container_rest_object: ComponentContainerData) -> "Component":
@@ -334,21 +348,60 @@ class Component(
 
     @classmethod
     def _from_rest_object(cls, obj: ComponentVersionData) -> "Component":
-        from azure.ai.ml.entities._component.component_factory import component_factory
-
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # Convert command component back to import component private preview
         component_spec = obj.properties.component_spec
-        type = component_spec["type"]
-        if type == NodeType.COMMAND and component_spec["command"] == NodeType.IMPORT:
-            component_spec["type"] = NodeType.IMPORT
+        if component_spec[CommonYamlFields.TYPE] == NodeType.COMMAND and component_spec["command"] == NodeType.IMPORT:
+            component_spec[CommonYamlFields.TYPE] = NodeType.IMPORT
             component_spec["source"] = component_spec.pop("inputs")
             component_spec["output"] = component_spec.pop("outputs")["output"]
 
+        # shouldn't block serialization when name is not valid
+        # maybe override serialization method for name field?
+        from azure.ai.ml.entities._component.component_factory import component_factory
+        create_instance_func, _ = component_factory.get_create_funcs(
+            obj.properties.component_spec[CommonYamlFields.TYPE],
+            schema=obj.properties.component_spec[CommonYamlFields.SCHEMA]
+            if CommonYamlFields.SCHEMA in obj.properties.component_spec
+            else None,
+        )
+
+        instance = create_instance_func()
+        instance.__init__(**instance._from_rest_object_to_init_params(obj))
+        return instance
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
         # Object got from rest data contain _source, we delete it.
         if "_source" in obj.properties.component_spec:
             del obj.properties.component_spec["_source"]
-        return component_factory.load_from_rest(obj=obj)
+
+        rest_component_version = obj.properties
+        _type = rest_component_version.component_spec[CommonYamlFields.TYPE]
+
+        # inputs/outputs will be parsed by instance._build_io in instance's __init__
+        inputs = rest_component_version.component_spec.pop("inputs", {})
+        # parse String -> string, Integer -> integer, etc
+        for _input in inputs.values():
+            _input["type"] = Input._map_from_rest_type(_input["type"])
+        outputs = rest_component_version.component_spec.pop("outputs", {})
+
+        origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
+        rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
+        init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
+            rest_component_version.component_spec, unknown=INCLUDE
+        )
+        init_kwargs.update(dict(
+            id=obj.id,
+            is_anonymous=rest_component_version.is_anonymous,
+            creation_context=obj.system_data,
+            inputs=inputs,
+            outputs=outputs,
+            name=origin_name,
+        ))
+
+        # remove empty values, because some property only works for specific component, eg: distribution for command
+        return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
 
     def _set_is_anonymous(self, is_anonymous: bool):
         """Mark this component as anonymous and overwrite component name to
@@ -431,7 +484,6 @@ class Component(
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""
 
-        # Distribution inherits from autorest generated class, use as_dist() to dump to json
         # Replace the name of $schema to schema.
         component_schema_dict = self._dump_for_validation()
         component_schema_dict.pop("base_path", None)

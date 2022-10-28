@@ -284,8 +284,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
             )
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Spark":
-        obj = BaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
+        obj = super()._from_rest_object_to_init_params(obj)
 
         if "resources" in obj and obj["resources"]:
             resources = RestSparkResourceConfiguration.from_dict(obj["resources"])
@@ -312,11 +312,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 if value is not None:
                     obj[field_name] = value
 
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        return Spark(**obj)
+        return obj
 
     @classmethod
     def _load_from_dict(cls, data: Dict, context: Dict, additional_message: str, **kwargs) -> "Spark":

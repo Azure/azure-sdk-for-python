@@ -237,10 +237,20 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
 
     def _to_rest_object(self) -> ComponentVersionData:
         rest_object = super()._to_rest_object()
+        # schema required list while backend accept json string
         if self.partition_keys:
-            rest_object.properties.component_spec["partition_keys"]= \
+            rest_object.properties.component_spec["partition_keys"] = \
                 json.dumps(self.partition_keys)
         return rest_object
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+        # schema required list while backend accept json string
+        # update rest obj as it will be
+        partition_keys = obj.properties.component_spec.get("partition_keys", None)
+        if partition_keys:
+            obj.properties.component_spec["partition_keys"] = json.loads(partition_keys)
+        return super()._from_rest_object_to_init_params(obj)
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
