@@ -10,7 +10,8 @@
 
 ### Other Changes
 - Updated minimum `azure-core` version to 1.24.0
-- Updated minimum `msrest` version to 0.7.1
+- Dropped `msrest` requirement
+- Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
 
 ## 4.2.0 (2022-09-19)
 
