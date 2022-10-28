@@ -100,12 +100,13 @@ async def _run_command(command: str) -> str:
         proc = await asyncio.create_subprocess_exec(
             *args,
             stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.STDOUT,
+            stderr=asyncio.subprocess.PIPE,
             cwd=working_directory,
             env=dict(os.environ, AZURE_CORE_NO_COLOR="true")
         )
-        stdout, _ = await asyncio.wait_for(proc.communicate(), 10)
-        output = stdout.decode()
+        stdout_b, stderr_b = await asyncio.wait_for(proc.communicate(), 10)
+        output = stdout_b.decode()
+        stderr = stderr_b.decode()
     except OSError as ex:
         # failed to execute 'cmd' or '/bin/sh'; CLI may or may not be installed
         error = CredentialUnavailableError(message="Failed to execute '{}'".format(args[0]))
@@ -117,11 +118,11 @@ async def _run_command(command: str) -> str:
     if proc.returncode == 0:
         return output
 
-    if proc.returncode == 127 or output.startswith("'az' is not recognized"):
+    if proc.returncode == 127 or stderr.startswith("'az' is not recognized"):
         raise CredentialUnavailableError(CLI_NOT_FOUND)
 
-    if "az login" in output or "az account set" in output:
+    if "az login" in stderr or "az account set" in stderr:
         raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
-    message = sanitize_output(output) if output else "Failed to invoke Azure CLI"
+    message = sanitize_output(stderr) if stderr else "Failed to invoke Azure CLI"
     raise ClientAuthenticationError(message=message)

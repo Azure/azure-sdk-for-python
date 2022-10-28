@@ -10,9 +10,9 @@ from collections import OrderedDict
 from functools import wraps
 from inspect import Parameter, signature
 from pathlib import Path
-from typing import Any, Callable, Dict, TypeVar
+from typing import Any, Callable, Dict, TypeVar, List
 
-from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings
+from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings, Model
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._inputs_outputs import Input, is_parameter_group
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, _GroupAttrDict
@@ -24,6 +24,8 @@ from azure.ai.ml.exceptions import (
     UnexpectedKeywordError,
     UnsupportedParameterKindError,
     UserErrorException,
+    NonExistParamValueError,
+    UnExpectedNonPipelineParameterTypeError,
 )
 
 from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
@@ -36,6 +38,7 @@ SUPPORTED_INPUT_TYPES = (
     PipelineInput,
     NodeOutput,
     Input,
+    Model,
     Data,  # For the case use a Data object as an input, we will convert it to Input object
     Pipeline,  # For the case use a pipeline node as the input, we use its only one output as the real input.
     str,
@@ -112,6 +115,7 @@ def pipeline(
         if not isinstance(func, Callable): # pylint: disable=isinstance-second-argument-not-valid-type
             raise UserErrorException(f"Dsl pipeline decorator accept only function type, got {type(func)}.")
 
+        non_pipeline_inputs = kwargs.get("non_pipeline_inputs", []) or kwargs.get("non_pipeline_parameters", [])
         # compute variable names changed from default_compute_targe -> compute -> default_compute -> none
         # to support legacy usage, we support them with priority.
         compute = kwargs.get("compute", None)
@@ -145,10 +149,10 @@ def pipeline(
             version=version,
             display_name=display_name,
             description=description,
-            compute=compute,
             default_datastore=default_datastore,
             tags=tags,
             source_path=str(func_entry_path),
+            non_pipeline_inputs=non_pipeline_inputs,
         )
 
         @wraps(func)
@@ -159,12 +163,16 @@ def pipeline(
             # Because we only want to enable dsl settings on top level pipeline
             _dsl_settings_stack.push()  # use this stack to track on_init/on_finalize settings
             try:
-                provided_positional_args = _validate_args(func, args, kwargs)
+                provided_positional_args = _validate_args(func, args, kwargs, non_pipeline_inputs)
                 # Convert args to kwargs
                 kwargs.update(provided_positional_args)
+                non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
 
                 # TODO: cache built pipeline component
-                pipeline_component = pipeline_builder.build()
+                pipeline_component = pipeline_builder.build(
+                    user_provided_kwargs=kwargs,
+                    non_pipeline_params_dict=non_pipeline_params_dict
+                )
             finally:
                 # use `finally` to ensure pop operation from the stack
                 dsl_settings = _dsl_settings_stack.pop()
@@ -215,8 +223,11 @@ def pipeline(
     return pipeline_decorator
 
 
-def _validate_args(func, args, kwargs):
+def _validate_args(func, args, kwargs, non_pipeline_inputs):
     """Validate customer function args and convert them to kwargs."""
+    if not isinstance(non_pipeline_inputs, List) or \
+            any(not isinstance(param, str) for param in non_pipeline_inputs):
+        raise UnExpectedNonPipelineParameterTypeError()
     # Positional arguments validate
     all_parameters = [param for _, param in signature(func).parameters.items()]
     # Implicit parameter are *args and **kwargs
@@ -224,6 +235,11 @@ def _validate_args(func, args, kwargs):
         raise UnsupportedParameterKindError(func.__name__)
 
     all_parameter_keys = [param.name for param in all_parameters]
+    non_pipeline_inputs = non_pipeline_inputs or []
+    unexpected_non_pipeline_inputs = [param for param in non_pipeline_inputs if param not in all_parameter_keys]
+    if unexpected_non_pipeline_inputs:
+        raise NonExistParamValueError(func.__name__, unexpected_non_pipeline_inputs)
+
     empty_parameters = {param.name: param for param in all_parameters if param.default is Parameter.empty}
     min_num = len(empty_parameters)
     max_num = len(all_parameters)
@@ -250,7 +266,8 @@ def _validate_args(func, args, kwargs):
 
     for pipeline_input_name in provided_args:
         data = provided_args[pipeline_input_name]
-        if data is not None and not _is_supported_data_type(data):
+        if data is not None and not _is_supported_data_type(data) and \
+                pipeline_input_name not in non_pipeline_inputs:
             msg = (
                 "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), "
                 "but got type {}."

@@ -36,6 +36,7 @@ from azure.ai.ml.sweep import (
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestSweepJobSchema:
     @pytest.mark.parametrize(
         "search_space, expected",
