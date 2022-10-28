@@ -16,16 +16,16 @@ target_md_files = ["README.md"]
 def get_snippet(file: str) -> None:
     with open(file, 'r') as f:
         content = f.read()
-    pattern = "# \\[START[A-Z a-z0-9_]+\\][\\s\\S]+?# \\[END[A-Z a-z0-9_]+\\]"
+    pattern = "# \\[START(?P<name>[A-Z a-z0-9_]+)\\](?P<body>[\\s\\S]+?)# \\[END[A-Z a-z0-9_]+\\]"
+    p = re.compile(pattern)
+    t = p.search(content)
     matches = re.findall(pattern, content)
+    if not matches:
+        return
     for match in matches:
         s = match
-        pos1 = s.index("[START")
-        pos2 = s.index("]")
-        name = s[pos1 + 6:pos2].strip()
-        s = s[pos2 + 1:]
-        pos1 = s.index("# [END")
-        snippet = s[:pos1 - 1]
+        name = s[0].strip()
+        snippet = s[1]
         # Remove extra spaces
         spaces = ""
         for char in snippet[1:]:
@@ -48,26 +48,26 @@ def get_snippet(file: str) -> None:
         snippets[identifier] = snippet
 
 
-def update_snippet(file:str) -> None:
+def update_snippet(file: str) -> None:
     with open(file, 'r') as f:
         content = f.read()
-    pattern = "<!-- SNIPPET:[A-Z a-z0-9_.]+-->[\\s\\S]*?<!-- END SNIPPET -->"
+    pattern = "(?P<content>(?P<header><!-- SNIPPET:(?P<name>[A-Z a-z0-9_.]+)-->)\\n```python\\n[\\s\\S]*?\\n<!-- END SNIPPET -->)"
     matches = re.findall(pattern, content)
     for match in matches:
         s = match
-        pos1 = s.index("-->")
-        header = s[:pos1 + 3]
-        name = s[13:pos1].strip()
+        body = s[0].strip()
+        header = s[1].strip()
+        name = s[2].strip()
         _LOGGER.debug(f"Found name: {name}")
         if name not in snippets.keys():
-            _LOGGER.error(f'Cannot found snippet name "{name}".')
+            _LOGGER.error(f'In {file}, failed to found snippet name "{name}".')
             exit(1)
         target_code = "".join([header, "\n```python\n", snippets[name], "\n```\n", "<!-- END SNIPPET -->"])
-        if s != target_code:
+        if body != target_code:
             _LOGGER.warning(f'Snippet "{name}" is not up to date.')
             global not_up_to_date
             not_up_to_date = True
-            content = content.replace(s, target_code)
+            content = content.replace(body, target_code)
     with open(file, 'w') as f:
         f.write(content)
 
