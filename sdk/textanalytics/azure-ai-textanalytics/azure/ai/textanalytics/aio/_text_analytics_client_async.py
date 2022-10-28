@@ -53,6 +53,8 @@ from .._models import (
     AnalyzeHealthcareEntitiesAction,
     ExtractSummaryAction,
     ExtractSummaryResult,
+    AbstractSummaryAction,
+    AbstractSummaryResult,
 )
 from .._check import is_language_api, string_index_type_compatibility
 from .._lro import TextAnalyticsOperationResourcePolling
@@ -78,6 +80,7 @@ AsyncAnalyzeActionsResponse = AsyncTextAnalysisLROPoller[
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
                 ExtractSummaryResult,
+                AbstractSummaryResult,
                 DocumentError,
             ]
         ]
@@ -1074,6 +1077,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
                 ExtractSummaryAction,
+                AbstractSummaryAction,
             ]
         ],
         **kwargs: Any,
@@ -1090,6 +1094,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
                     ExtractSummaryResult,
+                    AbstractSummaryResult,
                     DocumentError,
                 ]
             ]
@@ -1118,7 +1123,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
-            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or ExtractSummaryAction]
+            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or
+            AbstractSummaryAction or ExtractSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
@@ -1147,7 +1153,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ~azure.ai.textanalytics.aio.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
-            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult or DocumentError]]]
+            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult
+            or AbstractSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1158,8 +1165,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
         .. versionadded:: 2022-10-01-preview
-            The *ExtractSummaryAction* input option and the corresponding *ExtractSummaryResult*
-            result object.
+            The *ExtractSummaryAction* and *AbstractSummaryAction* input options and the corresponding
+            *ExtractSummaryResult* and *AbstractSummaryResult* result objects.
 
         .. admonition:: Example:
 

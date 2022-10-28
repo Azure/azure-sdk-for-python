@@ -16,6 +16,8 @@
   `TemporalSpanResolution`, `VolumeResolution`, `WeightResolution`, `AgeUnit`, `AreaUnit`, `TemporalModifier`,
   `InformationUnit`, `LengthUnit`, `NumberKind`, `RangeKind`, `RelativeTo`, `SpeedUnit`, `TemperatureUnit`,
   `VolumeUnit`, and `WeightUnit`.
+- Added the Abstractive Summarization feature and related models: `AbstractSummaryAction`, `AbstractSummaryResult`, `AbstractiveSummary`,
+  `SummaryContext`, `PhraseControl`, and `PhraseControlStrategy`. Access the feature through the `begin_analyze_actions` API.
 
 ### Breaking Changes
 
