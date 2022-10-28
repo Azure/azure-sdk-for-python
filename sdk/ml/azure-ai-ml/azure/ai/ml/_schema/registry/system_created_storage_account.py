@@ -4,6 +4,7 @@
 
 # pylint: disable=no-self-use,unused-argument
 
+from email.policy import default
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
 
@@ -15,8 +16,9 @@ from azure.ai.ml._utils._experimental import experimental
 @experimental
 class SystemCreatedStorageAccountSchema(metaclass=PatchedSchemaMeta):
     arm_resource_id = fields.Str(dump_only=True)
-    storage_account_hns = fields.Bool()
+    storage_account_hns = fields.Bool(load_default=False)
     storage_account_type = StringTransformedEnum(
+        load_default=StorageAccountType.STANDARD_LRS,
         allowed_values=[accountType.value for accountType in StorageAccountType], casing_transform=lambda x: x.lower()
     )
     replication_count = fields.Int(load_default=1, validate=lambda count : count > 0)

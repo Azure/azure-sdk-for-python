@@ -204,6 +204,7 @@ class RegistryRegionDetails:
             ))
             # duplicate this value based on the replication_count
             count = storage.replication_count
+            import pdb; pdb.set_trace()
             return [deepcopy(account) for _ in range(0, count)]
         elif storage is not None and len(storage) > 0:
             return [make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]

@@ -106,3 +106,12 @@ class TestRegistrySchema:
             assert isinstance(e_info._excinfo[1], ValidationError)
             assert "replication_count" in e_info._excinfo[1].messages[0]
             assert "Invalid value" in e_info._excinfo[1].messages[0]
+
+        path = Path("./tests/test_configs/registry/registry_valid_lone_replication_count.yaml")
+        with open(path, "r") as f:
+            target = yaml.safe_load(f)
+            context = {BASE_PATH_CONTEXT_KEY: path.parent}
+            registry = load_from_dict(RegistrySchema, target, context)
+            registry["replication_locations"][0].storage_config.replication_count == 6
+            registry["replication_locations"][0].storage_config.storage_account_hns == False
+            registry["replication_locations"][0].storage_config.storage_account_type == StorageAccountType.STANDARD_LRS
