@@ -219,7 +219,7 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
         self.name = None
         self.description = description
 
-        if path and not isinstance(path, str):
+        if path is not None and not isinstance(path, str):
             # this logic will make dsl data binding expression working in the same way as yaml
             # it's written to handle InputOutputBase, but there will be loop import if we import InputOutputBase here
             self.path = str(path)

@@ -90,7 +90,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Required.
@@ -209,7 +209,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Required.
@@ -286,7 +286,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Is either a model type or a IO type.
@@ -486,8 +486,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more
-        information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -609,8 +610,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more
-        information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -717,8 +719,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more
-        information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute. Is
          either a model type or a IO type. Required.

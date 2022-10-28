@@ -326,11 +326,15 @@ class PipelineComponent(Component):
     @classmethod
     def _resolve_sub_nodes(cls, rest_jobs):
         sub_nodes = {}
+        if rest_jobs is None:
+            return sub_nodes
         for node_name, node in rest_jobs.items():
             if LoopNode._is_loop_node_dict(node):
                 sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
             else:
-                sub_nodes[node_name] = BaseNode._from_rest_object(node)
+                # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode
+                from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node)
         return sub_nodes
 
     @classmethod
@@ -368,6 +372,18 @@ class PipelineComponent(Component):
             }
         )
         return telemetry_values
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+        jobs = obj.properties.component_spec.get("jobs", None)
+        if jobs:
+            try:
+                obj.properties.component_spec["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
+            except Exception:  # pylint: disable=broad-except
+                # Skip parse jobs if error exists.
+                # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
+                obj.properties.component_spec["jobs"] = None
+        return super()._from_rest_object_to_init_params(obj)
 
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""

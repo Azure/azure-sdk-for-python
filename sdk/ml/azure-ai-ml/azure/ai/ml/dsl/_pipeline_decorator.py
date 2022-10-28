@@ -149,7 +149,6 @@ def pipeline(
             version=version,
             display_name=display_name,
             description=description,
-            compute=compute,
             default_datastore=default_datastore,
             tags=tags,
             source_path=str(func_entry_path),
@@ -170,7 +169,10 @@ def pipeline(
                 non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
 
                 # TODO: cache built pipeline component
-                pipeline_component = pipeline_builder.build(non_pipeline_params_dict=non_pipeline_params_dict)
+                pipeline_component = pipeline_builder.build(
+                    user_provided_kwargs=kwargs,
+                    non_pipeline_params_dict=non_pipeline_params_dict
+                )
             finally:
                 # use `finally` to ensure pop operation from the stack
                 dsl_settings = _dsl_settings_stack.pop()
