@@ -622,19 +622,12 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.tenant_id = obj.tenant_id
         return result
 
-    def _to_workspace_rest_object(self, existing_workspace = None) -> RestManagedServiceIdentityConfiguration:
+    def _to_workspace_rest_object(self) -> RestManagedServiceIdentityConfiguration:
         rest_user_assigned_identities = (
             {uai.resource_id: uai._to_workspace_rest_object() for uai in self.user_assigned_identities}
             if self.user_assigned_identities
             else None
         )
-        # add the uai resource_id which needs to be deleted (which is not provided in the list)
-        if existing_workspace and existing_workspace.identity and existing_workspace.identity.user_assigned_identities:
-            if rest_user_assigned_identities is None:
-                rest_user_assigned_identities = {}
-            for uai in existing_workspace.identity.user_assigned_identities:
-                if uai.resource_id not in rest_user_assigned_identities:
-                    rest_user_assigned_identities[uai.resource_id] = None
         return RestManagedServiceIdentityConfiguration(
             type=snake_to_pascal(self.type), user_assigned_identities=rest_user_assigned_identities
         )

@@ -142,6 +142,7 @@ class WorkspaceOperations:
     def begin_create(
         self,
         workspace: Workspace,
+        update_dependent_resources: bool = False,
         **kwargs: Dict,
     ) -> LROPoller[Workspace]:
         """Create a new Azure Machine Learning Workspace.
@@ -150,6 +151,7 @@ class WorkspaceOperations:
 
         :param workspace: Workspace definition.
         :type workspace: Workspace
+        :type update_dependent_resources: boolean
         :return: An instance of LROPoller that returns a Workspace.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
@@ -162,21 +164,26 @@ class WorkspaceOperations:
 
         # idempotent behavior
         if existing_workspace:
-            existing_workspace.container_registry = workspace.container_registry \
-                or existing_workspace.container_registry
-            existing_workspace.application_insights = workspace.application_insights \
-                or existing_workspace.application_insights
-            existing_workspace.identity = workspace.identity or existing_workspace.identity
-            existing_workspace.primary_user_assigned_identity = (
+            if workspace.tags.get("createdByToolkit") is not None:
+                workspace.tags.pop("createdByToolkit")
+            existing_workspace.tags.update(workspace.tags)
+            workspace.tags = existing_workspace.tags
+            workspace.container_registry = workspace.container_registry or existing_workspace.container_registry
+            workspace.application_insights = workspace.application_insights or existing_workspace.application_insights
+            workspace.identity = workspace.identity or existing_workspace.identity
+            workspace.primary_user_assigned_identity = (
                 workspace.primary_user_assigned_identity or existing_workspace.primary_user_assigned_identity
             )
-            workspace = existing_workspace
-        else:
-            # add tag in the workspace to indicate which sdk version the workspace is created from
-            if workspace.tags is None:
-                workspace.tags = {}
-            if workspace.tags.get("createdByToolkit") is None:
-                workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
+            return self.begin_update(
+                workspace,
+                update_dependent_resources=update_dependent_resources,
+                kwargs=kwargs,
+            )
+        # add tag in the workspace to indicate which sdk version the workspace is created from
+        if workspace.tags is None:
+            workspace.tags = {}
+        if workspace.tags.get("createdByToolkit") is None:
+            workspace.tags["createdByToolkit"] = "sdk-v2-{}".format(VERSION)
 
         workspace.resource_group = resource_group
         template, param, resources_being_deployed = self._populate_arm_paramaters(workspace)
@@ -234,7 +241,16 @@ class WorkspaceOperations:
         identity = kwargs.get("identity", workspace.identity)
         existing_workspace = self.get(workspace.name, **kwargs)
         if identity:
-            identity = identity._to_workspace_rest_object(existing_workspace)
+            identity = identity._to_workspace_rest_object()
+            rest_user_assigned_identities = identity.user_assigned_identities
+            # add the uai resource_id which needs to be deleted (which is not provided in the list)
+            if existing_workspace and existing_workspace.identity and existing_workspace.identity.user_assigned_identities:
+                if rest_user_assigned_identities is None:
+                    rest_user_assigned_identities = {}
+                for uai in existing_workspace.identity.user_assigned_identities:
+                    if uai.resource_id not in rest_user_assigned_identities:
+                        rest_user_assigned_identities[uai.resource_id] = None
+                identity.user_assigned_identities = rest_user_assigned_identities
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
         # Empty string is for erasing the value of container_registry, None is to be ignored value

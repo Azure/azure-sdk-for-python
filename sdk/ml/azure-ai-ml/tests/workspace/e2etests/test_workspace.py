@@ -9,6 +9,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import MLClient, load_workspace
 from azure.ai.ml.constants._common import PublicNetworkAccess
+from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml.entities._workspace.diagnose import DiagnoseResponseResultValue
 from azure.ai.ml.entities._workspace.workspace import Workspace
 from azure.ai.ml.constants._workspace import ManagedServiceIdentityType
@@ -207,6 +208,9 @@ class TestWorkspace(AzureRecordedTestCase):
         workspace = client.workspaces.get(name=wps_name)
         assert isinstance(workspace, Workspace)
         assert workspace.name == wps_name
+        assert isinstance(workspace.identity, IdentityConfiguration)
+        assert isinstance(workspace.identity.user_assigned_identities, list)
+        assert isinstance(workspace.identity.user_assigned_identities[0], ManagedIdentityConfiguration)
         assert workspace.identity.type == camel_to_snake(ManagedServiceIdentityType.USER_ASSIGNED)
         assert len(workspace.identity.user_assigned_identities) == 2
         assert workspace.primary_user_assigned_identity == user_assigned_identity.id

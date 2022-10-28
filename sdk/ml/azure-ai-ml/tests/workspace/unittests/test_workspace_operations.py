@@ -103,11 +103,13 @@ class TestWorkspaceOperation:
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
 
     def test_begin_create_existing_ws(self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture):
-        mocker.patch("azure.ai.ml.operations.WorkspaceOperations._populate_arm_paramaters", return_value=({}, {}, {}))
-        mocker.patch("azure.ai.ml._arm_deployments.ArmDeploymentExecutor.deploy_resource", return_value=LROPoller)
+        def outgoing_call(rg, name, params, polling, cls):
+            assert name == "name"
+            return DEFAULT
+        mock_workspace_operation._operation.begin_update.side_effect = outgoing_call
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=Workspace(name="name"))
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
-        mock_workspace_operation._operation.begin_update.assert_not_called()
+        mock_workspace_operation._operation.begin_update.assert_called()
 
     def test_update(self, mock_workspace_operation: WorkspaceOperations) -> None:
         ws = Workspace(
