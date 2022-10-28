@@ -1096,7 +1096,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             )
             node2.compute = node_compute
 
-        component = valid_pipeline_func._pipeline_builder.build()
+        component = valid_pipeline_func._pipeline_builder.build(user_provided_kwargs={})
         assert component._auto_increment_version is True
         # Set original module_logger with pkg name to 'Operation' to enable caplog capture logs
         from azure.ai.ml.operations import _component_operations
