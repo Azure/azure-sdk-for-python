@@ -2020,7 +2020,6 @@ class TestAnalyze(TextAnalyticsTest):
                         assert context.length is not None
                     assert summary.text
 
-
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -2031,8 +2030,10 @@ class TestAnalyze(TextAnalyticsTest):
             RecognizeEntitiesAction(),
             ExtractKeyPhrasesAction(),
             RecognizePiiEntitiesAction(),
-            RecognizeLinkedEntitiesAction(),
+            # RecognizeLinkedEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15859145
             AnalyzeSentimentAction(),
+            # AnalyzeHealthcareEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
+            ExtractSummaryAction(),
         ]
         poller = client.begin_analyze_actions(
             docs,
@@ -2041,17 +2042,64 @@ class TestAnalyze(TextAnalyticsTest):
         )
 
         result = list(poller.result())
-        for doc in result:
-            if doc.id == "1":
-                assert doc.detected_language.iso6391_name == "en"
-            else:
-                assert doc.detected_language.iso6391_name == "es"
+        for res in result:
+            for doc in res:
+                if doc.id == "1":
+                    assert doc.detected_language.iso6391_name == "en"
+                else:
+                    assert doc.detected_language.iso6391_name == "es"
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsPreparer()
+    @TextAnalyticsCustomPreparer()
+    @recorded_by_proxy
+    def test_autodetect_lang_document_custom(self, **kwargs):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_single_label_classify_project_name = kwargs.pop("textanalytics_single_label_classify_project_name")
+        textanalytics_single_label_classify_deployment_name = kwargs.pop("textanalytics_single_label_classify_deployment_name")
+        textanalytics_multi_label_classify_project_name = kwargs.pop("textanalytics_multi_label_classify_project_name")
+        textanalytics_multi_label_classify_deployment_name = kwargs.pop("textanalytics_multi_label_classify_deployment_name")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+
+        docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+                {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        actions=[
+            RecognizeCustomEntitiesAction(
+                project_name=textanalytics_custom_entities_project_name,
+                deployment_name=textanalytics_custom_entities_deployment_name,
+            ),
+            SingleLabelClassifyAction(
+                project_name=textanalytics_single_label_classify_project_name,
+                deployment_name=textanalytics_single_label_classify_deployment_name,
+            ),
+            MultiLabelClassifyAction(
+                project_name=textanalytics_multi_label_classify_project_name,
+                deployment_name=textanalytics_multi_label_classify_deployment_name,
+            ),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            polling_interval=self._interval(),
+        )
+
+        result = list(poller.result())
+        for res in result:
+            for doc in res:
+                if doc.id == "1":
+                    assert doc.detected_language.iso6391_name == "en"
+                else:
+                    assert doc.detected_language.iso6391_name == "es"
 
     @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15816856")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
-    def test_autodetect_lang_with_default(self, client):
+    def test_autodetect_with_default_and_script(self, client):
         single_doc = "Tumhara naam kya hai?"
         docs = [{"id": "1", "text": single_doc}]
         actions=[
