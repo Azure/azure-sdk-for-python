@@ -346,6 +346,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-cognitiveservices-search-newssearch azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-search-videosearch azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-search-visualsearch azure-mgmt-core>=1.2.0,<2.0.0
+#override azure-mgmt-machinelearningservices typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-cognitiveservices-search-websearch azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-vision-contentmoderator azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-vision-customvision azure-mgmt-core>=1.2.0,<2.0.0
