@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (it should be stable) (2022-10-28)
+
+
+
 ## 6.0.0 (2021-03-29)
 
  - GA release
