@@ -34,21 +34,22 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
     service, business customers can discover incidents and establish a logic flow for root cause
     analysis.
 
-	:param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
+    :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://westus2.api.cognitive.microsoft.com). Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "v1.1". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: Api Version. Known values are "v1.1" and None. Default value is None.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        _endpoint = "{Endpoint}/anomalydetector"
-        self._config = AnomalyDetectorClientConfiguration(endpoint=endpoint, credential=credential, api_version='v1.1', **kwargs)
+        api_version = 'v1.1'
+        _endpoint = f"{endpoint.rstrip('/')}/anomalydetector/{api_version}"
+        self._config = AnomalyDetectorClientConfiguration(endpoint=endpoint, credential=credential, api_version=api_version, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()

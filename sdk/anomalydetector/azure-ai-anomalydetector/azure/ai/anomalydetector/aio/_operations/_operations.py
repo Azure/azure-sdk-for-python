@@ -8,6 +8,7 @@
 # --------------------------------------------------------------------------
 import sys
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -28,18 +29,18 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ..._operations._operations import (
-    build_create_and_train_multivariate_model_request,
-    build_delete_multivariate_model_request,
-    build_detect_multivariate_batch_anomaly_request,
-    build_detect_multivariate_last_anomaly_request,
-    build_detect_univariate_change_point_request,
-    build_detect_univariate_entire_series_request,
-    build_detect_univariate_last_point_request,
-    build_get_multivariate_batch_detection_result_request,
-    build_get_multivariate_model_request,
-    build_list_multivariate_models_request,
+    build_anomaly_detector_create_and_train_multivariate_model_request,
+    build_anomaly_detector_delete_multivariate_model_request,
+    build_anomaly_detector_detect_multivariate_batch_anomaly_request,
+    build_anomaly_detector_detect_multivariate_last_anomaly_request,
+    build_anomaly_detector_detect_univariate_change_point_request,
+    build_anomaly_detector_detect_univariate_entire_series_request,
+    build_anomaly_detector_detect_univariate_last_point_request,
+    build_anomaly_detector_get_multivariate_batch_detection_result_request,
+    build_anomaly_detector_get_multivariate_model_request,
+    build_anomaly_detector_list_multivariate_models_request,
 )
-from .._vendor import MixinABC
+from .._vendor import AnomalyDetectorClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -50,7 +51,7 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class AnomalyDetectorClientOperationsMixin(MixinABC):
+class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
     @overload
     async def detect_univariate_entire_series(
         self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
@@ -323,7 +324,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_detect_univariate_entire_series_request(
+        request = build_anomaly_detector_detect_univariate_entire_series_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -565,7 +566,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_detect_univariate_last_point_request(
+        request = build_anomaly_detector_detect_univariate_last_point_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -752,7 +753,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_detect_univariate_change_point_request(
+        request = build_anomaly_detector_detect_univariate_change_point_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -900,7 +901,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_multivariate_batch_detection_result_request(
+        request = build_anomaly_detector_get_multivariate_batch_detection_result_request(
             result_id=result_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1353,7 +1354,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_create_and_train_multivariate_model_request(
+        request = build_anomaly_detector_create_and_train_multivariate_model_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1508,7 +1509,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_multivariate_models_request(
+                request = build_anomaly_detector_list_multivariate_models_request(
                     skip=skip,
                     top=top,
                     api_version=self._config.api_version,
@@ -1583,7 +1584,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_delete_multivariate_model_request(
+        request = build_anomaly_detector_delete_multivariate_model_request(
             model_id=model_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1720,7 +1721,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_get_multivariate_model_request(
+        request = build_anomaly_detector_get_multivariate_model_request(
             model_id=model_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1776,7 +1777,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_detect_multivariate_batch_anomaly_request(
+        request = build_anomaly_detector_detect_multivariate_batch_anomaly_request(
             model_id=model_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2531,7 +2532,7 @@ class AnomalyDetectorClientOperationsMixin(MixinABC):
         else:
             _json = body
 
-        request = build_detect_multivariate_last_anomaly_request(
+        request = build_anomaly_detector_detect_multivariate_last_anomaly_request(
             model_id=model_id,
             content_type=content_type,
             api_version=self._config.api_version,

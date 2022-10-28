@@ -6,13 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+import sys
+from typing import Any, Optional
 
 from azure.core.configuration import Configuration
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
 
 from ._version import VERSION
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 
 class AnomalyDetectorClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
@@ -26,14 +32,14 @@ class AnomalyDetectorClientConfiguration(Configuration):  # pylint: disable=too-
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Default value is "v1.1". Note that overriding this default
-     value may result in unsupported behavior.
+    :keyword api_version: Api Version. Known values are "v1.1" and None. Default value is None.
+     Note that overriding this default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         super(AnomalyDetectorClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "v1.1")  # type: str
+        api_version = kwargs.pop("api_version", None)  # type: Optional[Literal["v1.1"]]
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

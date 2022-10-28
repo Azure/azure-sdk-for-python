@@ -78,7 +78,6 @@ class MultivariateSample:
                 print("Model is {}".format(model_status))
                 time.sleep(30)
 
-            print(model_info)
             if model_status == 'FAILED':
                 print("Creating model failed.")
                 print("Errors:")
