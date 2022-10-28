@@ -244,7 +244,8 @@ class WorkspaceOperations:
             identity = identity._to_workspace_rest_object()
             rest_user_assigned_identities = identity.user_assigned_identities
             # add the uai resource_id which needs to be deleted (which is not provided in the list)
-            if existing_workspace and existing_workspace.identity and existing_workspace.identity.user_assigned_identities:
+            if existing_workspace and existing_workspace.identity and \
+                existing_workspace.identity.user_assigned_identities:
                 if rest_user_assigned_identities is None:
                     rest_user_assigned_identities = {}
                 for uai in existing_workspace.identity.user_assigned_identities:
