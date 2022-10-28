@@ -4,9 +4,9 @@
 # ------------------------------------
 
 from ._version import VERSION
-from ._geolocation_client import GeolocationClient
+from ._geolocation_client import MapsGeolocationClient
 
 __all__ = [
-    'GeolocationClient'
+    'MapsGeolocationClient'
 ]
 __version__ = VERSION

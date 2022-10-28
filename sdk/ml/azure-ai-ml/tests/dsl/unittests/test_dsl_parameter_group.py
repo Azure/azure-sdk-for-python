@@ -10,6 +10,7 @@ from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, is_parameter_group
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
+from test_utilities.utils import omit_with_wildcard
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -17,6 +18,7 @@ from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestDSLPipeline:
     def test_validate_conflict_key(self) -> None:
         def validator(keys, assert_valid=True):
@@ -332,3 +334,59 @@ class TestDSLPipeline:
         with pytest.raises(Exception) as e:
             pipeline_job.inputs.group = "test"
         assert "'group' is expected to be a parameter group, but got <class 'str'>." in str(e)
+
+    @pytest.mark.skip(reason="Parameter group item .result() is not supported currently.")
+    def test_parameter_group_result(self):
+        @parameter_group
+        class SubParamClass:
+            int_param: Input(min=1.0, max=5.0, type="integer") = 1
+
+        @parameter_group
+        class ParamClass:
+            str_param: str
+            sub: SubParamClass = SubParamClass()
+
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(hello_world_component_yaml)
+
+        @pipeline()
+        def pipeline_with_group(group: ParamClass, int_param: int):
+            assert isinstance(group.str_param.result(), str)
+            assert isinstance(group.sub.int_param.result(), int)
+            assert isinstance(int_param.result(), int)
+            node1 = hello_world_component_func(
+                component_in_path=group.str_param, component_in_number=group.sub.int_param.result()
+            )
+            node2 = hello_world_component_func(
+                component_in_path=group.str_param.result(), component_in_number=int_param.result()
+            )
+
+            return {
+                "output1": node1.outputs.component_out_path,
+                "output2": node2.outputs.component_out_path
+            }
+
+        pipeline_job1 = pipeline_with_group(
+            group=ParamClass(str_param="str_1"), int_param=1
+        )
+
+        common_omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source",
+            "jobs.*.properties",
+        ]
+
+        rest_pipeline_job = omit_with_wildcard(pipeline_job1._to_rest_object().properties.as_dict(),
+                                               *common_omit_fields)
+
+        expected_pipeline_job1 = {}
+        assert rest_pipeline_job == expected_pipeline_job1
+
+        pipeline_job2 = pipeline_with_group(
+            group=ParamClass(str_param="str_2"), int_param=1
+        )
+
+        rest_pipeline_job = omit_with_wildcard(pipeline_job2._to_rest_object().properties.as_dict(),
+                                               *common_omit_fields)
+        expected_pipeline_job2 = {}
+        assert rest_pipeline_job == expected_pipeline_job2

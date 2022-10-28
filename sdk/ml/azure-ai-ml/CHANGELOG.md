@@ -1,16 +1,25 @@
 # Release History
 
-## 0.2.0 (Unreleased)
+## 1.1.0 (Unreleased)
 
 ### Features Added
+- Registry list operation now accepts scope value to allow subscription-only based requests.
+- Most configuration classes from the entity package now implement the standard mapping protocol.
+- Add registry delete operation.
+- The values of JobService.job_service_type are now using the snake case. e.g jupyter_lab, ssh, tensor_board, vs_code.
 
 ### Breaking Changes
 
 ### Bugs Fixed
+- MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
+- Registries now assign managed tags to match registry's tags.
+- Adjust registry experimental tags and imports to avoid warning printouts for unrelated operations.
+- Make registry delete operation return an LROPoller, and change name to begin_delete.
+- Prevent registering an already existing environment that references conda file.
 
 ### Other Changes
 
-## 0.1.0 (In Progress)
+## 1.0.0 (2022-10-10)
 - GA release
 - Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
 
@@ -29,8 +38,7 @@
  - Switched Compute operations to use Oct preview API version.
  - Updated batch deployment/endpoint invoke and list-jobs function signatures with curated BatchJob class.
 
-
-## 0.1.0b8 (In Progress)
+## 0.1.0b8 (2022-10-07)
 
 ### Features Added
  - Support passing JobService as argument to Command()

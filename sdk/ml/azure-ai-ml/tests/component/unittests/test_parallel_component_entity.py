@@ -12,6 +12,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestParallelComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
@@ -98,6 +99,7 @@ class TestParallelComponentEntity:
             "error_threshold": None,
             "logging_level": None,
             "max_concurrency_per_instance": None,
+            "partition_keys": None,
             "mini_batch_error_threshold": None,
             "mini_batch_size": 10485760,
             "retry_settings": None,

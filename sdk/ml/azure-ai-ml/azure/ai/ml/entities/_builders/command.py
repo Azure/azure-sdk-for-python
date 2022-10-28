@@ -14,8 +14,8 @@ from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
@@ -264,9 +264,9 @@ class Command(BaseNode):
         if isinstance(self.component, Component):
             self.component.command = value
         else:
-            msg = "Can't set command property for a registered component {}"
+            msg = "Can't set command property for a registered component {}. Tried to set it to {}."
             raise ValidationException(
-                message=msg.format(self.component),
+                message=msg.format(self.component, value),
                 no_personal_data_message=msg,
                 target=ErrorTarget.COMMAND_JOB,
                 error_category=ErrorCategory.USER_ERROR,
@@ -474,6 +474,7 @@ class Command(BaseNode):
             "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
             "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             "services": get_rest_dict_for_node_attrs(self.services),
+            "identity": self.identity._to_dict() if self.identity else None,
         }.items():
             if value is not None:
                 rest_obj[key] = value
@@ -496,21 +497,12 @@ class Command(BaseNode):
         return command_job
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Command":
-        obj = BaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
+        obj = BaseNode._from_rest_object_to_init_params(obj)
 
-        # resources, sweep won't have resources
         if "resources" in obj and obj["resources"]:
             resources = RestJobResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        # distribution, sweep won't have distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
 
         # services, sweep won't have services
         if "services" in obj and obj["services"]:
@@ -529,7 +521,10 @@ class Command(BaseNode):
             rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
             obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
 
-        return Command(**obj)
+        if "identity" in obj and obj["identity"]:
+            obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
+
+        return obj
 
     @classmethod
     def _load_from_rest_job(cls, obj: JobBase) -> "Command":
@@ -621,6 +616,7 @@ class Command(BaseNode):
             node.distribution = copy.deepcopy(self.distribution)
             node.resources = copy.deepcopy(self.resources)
             node.services = copy.deepcopy(self.services)
+            node.identity = copy.deepcopy(self.identity)
             return node
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(

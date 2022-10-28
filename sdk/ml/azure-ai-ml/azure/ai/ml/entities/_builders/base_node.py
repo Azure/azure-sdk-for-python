@@ -12,7 +12,9 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.entities import Data
+from azure.ai.ml.constants._common import CommonYamlFields
+from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.entities import Data, Model
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
@@ -23,7 +25,7 @@ from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpr
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -189,6 +191,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             NodeOutput,
             Input,
             Data,
+            Model,
             str,
             bool,
             int,
@@ -231,7 +234,10 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 value = value._deepcopy()  # Decoupled input and output
                 io_dict[key] = value
                 value.mode = None
-            elif isinstance(value, dict):
+            elif type(value) == dict: # pylint: disable=unidiomatic-typecheck
+                # Use type comparison instead of is_instance to skip _GroupAttrDict
+                # when loading from yaml io will be a dict,
+                # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
                 # parse dict to allowed type
                 io_dict[key] = parse_cls(**value)
 
@@ -351,16 +357,22 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @classmethod
     def _from_rest_object(cls, obj: dict) -> "BaseNode":
-        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+        if CommonYamlFields.TYPE not in obj:
+            obj[CommonYamlFields.TYPE] = NodeType.COMMAND
 
-        return pipeline_node_factory.load_from_rest_object(obj=obj)
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+        instance: BaseNode = pipeline_node_factory.get_create_instance_func(obj[CommonYamlFields.TYPE])()
+        init_kwargs = instance._from_rest_object_to_init_params(obj)
+        instance.__init__(**init_kwargs)
+        return instance
 
     @classmethod
-    def _rest_object_to_init_params(cls, obj: dict):
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
         """Transfer the rest object to a dict containing items to init the
         node.
 
-        Will be used in _from_rest_object in subclasses.
+        Will be used in _from_rest_object. Please override this method instead of
+        _from_rest_object to make the logic reusable.
         """
         inputs = obj.get("inputs", {})
         outputs = obj.get("outputs", {})
@@ -371,6 +383,15 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         # Change computeId -> compute
         compute_id = obj.pop("computeId", None)
         obj["compute"] = get_resource_name_from_arm_id_safe(compute_id)
+
+        # Change componentId -> component. Note that sweep node has no componentId.
+        if "componentId" in obj:
+            obj["component"] = obj.pop("componentId")
+
+        # distribution, sweep won't have distribution
+        if "distribution" in obj and obj["distribution"]:
+            from azure.ai.ml.entities._job.distribution import DistributionConfiguration
+            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
 
         return obj
 

@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pydash
 
 from azure.ai.ml import Input
@@ -11,7 +13,7 @@ DATA_VERSION = "2"
 PARAMETERS_TO_TEST = [
     # which of them are available for other components?
     (
-        "tests/test_configs/internal/ls_command_component.yaml",
+        "tests/test_configs/internal/command-component-ls/ls_command_component.yaml",
         {},
         {
             "compute": "cpu-cluster",  # runsettings.target
@@ -106,6 +108,7 @@ PARAMETERS_TO_TEST = [
             "input_path": Input(type=AssetTypes.MLTABLE, path="mltable_imdb_reviews_train@latest"),
         },
         {
+            "compute_name": "cpu-cluster",  # runsettings.hdinsight.compute_name
             "queue": "default",  # runsettings.hdinsight.queue
             "driver_memory": "1g",  # runsettings.hdinsight.driver_memory
             "driver_cores": 2,  # runsettings.hdinsight.driver_cores
@@ -176,6 +179,12 @@ PARAMETERS_TO_TEST = [
     # Pipeline  we can't test this because we can't create a v1.5 pipeline component in v2, instead we test v2 pipeline
     # component containing v1.5 nodes
 ]
+
+# this is to shorten the test name
+TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
+    lambda params: Path(params[0]).name,
+    PARAMETERS_TO_TEST,
+)))
 
 
 def set_run_settings(node, runsettings_dict):

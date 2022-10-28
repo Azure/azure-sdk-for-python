@@ -7,7 +7,7 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 - Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions
 - Conversational PII: Used to extract and redact personally-identifiable info (PII)
 
-[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [Analysis REST API][conversationallanguage_restdocs] | [Authoring REST API][conversationallanguage_restdocs_authoring]
+[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [REST API][conversationallanguage_restdocs]
 
 ## _Disclaimer_
 
@@ -294,37 +294,44 @@ with client:
             },
             "tasks": [
                 {
-                    "taskName": "analyze 1",
+                    "taskName": "Issue task",
                     "kind": "ConversationalSummarizationTask",
                     "parameters": {
-                        "summaryAspects": ["Issue, Resolution"]
+                        "summaryAspects": ["issue"]
                     }
-                }
+                },
+                {
+                    "taskName": "Resolution task",
+                    "kind": "ConversationalSummarizationTask",
+                    "parameters": {
+                        "summaryAspects": ["resolution"]
+                    }
+                },
             ]
         }
     )
 
     # view result
     result = poller.result()
-    task_result = result["tasks"]["items"][0]
-    print("... view task status ...")
-    print("status: {}".format(task_result["status"]))
-    resolution_result = task_result["results"]
-    if resolution_result["errors"]:
-        print("... errors occurred ...")
-        for error in resolution_result["errors"]:
-            print(error)
-    else:
-        conversation_result = resolution_result["conversations"][0]
-        if conversation_result["warnings"]:
-            print("... view warnings ...")
-            for warning in conversation_result["warnings"]:
-                print(warning)
+    task_results = result["tasks"]["items"]
+    for task in task_results:
+        print(f"\n{task['taskName']} status: {task['status']}")
+        task_result = task["results"]
+        if task_result["errors"]:
+            print("... errors occurred ...")
+            for error in task_result["errors"]:
+                print(error)
         else:
-            summaries = conversation_result["summaries"]
-            print("... view task result ...")
-            print("issue: {}".format(summaries[0]["text"]))
-            print("resolution: {}".format(summaries[1]["text"]))
+            conversation_result = task_result["conversations"][0]
+            if conversation_result["warnings"]:
+                print("... view warnings ...")
+                for warning in conversation_result["warnings"]:
+                    print(warning)
+            else:
+                summaries = conversation_result["summaries"]
+                print("... view task result ...")
+                for summary in summaries:
+                    print(f"{summary['aspect']}: {summary['text']}")
 ```
 
 ### Conversational PII
@@ -570,8 +577,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [conversationallanguage_refdocs]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations
 [conversationallanguage_docs]: https://docs.microsoft.com/azure/cognitive-services/language-service/conversational-language-understanding/overview
 [conversationallanguage_samples]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/README.md
-[conversationallanguage_restdocs]: https://docs.microsoft.com/rest/api/language/conversation-analysis-runtime/
-[conversationallanguage_restdocs_authoring]: https://docs.microsoft.com/rest/api/language/conversational-analysis-authoring
+[conversationallanguage_restdocs]: https://learn.microsoft.com/rest/api/language/
 [conversationanalysisclient_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAnalysisClient
 [conversationauthoringclient_class]: https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-language-conversations/latest/azure.ai.language.conversations.html#azure.ai.language.conversations.ConversationAuthoringClient
 [azure_core_exceptions]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/README.md

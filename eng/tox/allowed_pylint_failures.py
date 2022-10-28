@@ -58,5 +58,6 @@ PYLINT_ACCEPTABLE_FAILURES = [
     "azure-purview-administration",
     "azure-messaging-nspkg",
     "azure-agrifood-farming",
-    "azure-developer-loadtesting"
+    "azure-developer-loadtesting",
+    "azure-developer-devcenter"
 ]

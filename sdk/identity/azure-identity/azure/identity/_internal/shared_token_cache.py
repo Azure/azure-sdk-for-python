@@ -95,6 +95,7 @@ class SharedTokenCacheBase(ABC):
         self._username = username
         self._tenant_id = kwargs.pop("tenant_id", None)
         self._cache = kwargs.pop("_cache", None)
+        self._cache_persistence_options = kwargs.pop("cache_persistence_options", None)
         self._client = None  # type: Optional[AadClientBase]
         self._client_kwargs = kwargs
         self._client_kwargs["tenant_id"] = "organizations"
@@ -116,10 +117,13 @@ class SharedTokenCacheBase(ABC):
     def _load_cache(self):
         if not self._cache and self.supported():
             try:
-                # This credential accepts the user's default cache regardless of whether it's encrypted. It doesn't
-                # create a new cache. If the default cache exists, the user must have created it earlier. If it's
-                # unencrypted, the user must have allowed that.
-                self._cache = _load_persistent_cache(TokenCachePersistenceOptions(allow_unencrypted_storage=True))
+                # If no cache options were provided, the default cache will be used. This credential accepts the
+                # user's default cache regardless of whether it's encrypted. It doesn't create a new cache. If the
+                # default cache exists, the user must have created it earlier. If it's unencrypted, the user must
+                # have allowed that.
+                options = self._cache_persistence_options or \
+                    TokenCachePersistenceOptions(allow_unencrypted_storage=True)
+                self._cache = _load_persistent_cache(options)
             except Exception:  # pylint:disable=broad-except
                 pass
 
