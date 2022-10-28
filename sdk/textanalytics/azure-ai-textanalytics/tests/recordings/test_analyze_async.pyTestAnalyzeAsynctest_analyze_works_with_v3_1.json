@@ -78,18 +78,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "edc54292-6e4a-4453-b523-5f7000d5cea1",
-        "Date": "Mon, 10 Oct 2022 20:48:24 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/0f20ae61-036e-4ec9-891d-872ad8e67683",
+        "apim-request-id": "0e11b801-3636-46e0-99f0-ef1399bd924f",
+        "Date": "Mon, 17 Oct 2022 18:55:01 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/b70f74f6-4f7a-47de-a68b-61ba350b1fde",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "346"
+        "x-envoy-upstream-service-time": "336"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/0f20ae61-036e-4ec9-891d-872ad8e67683",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/analyze/jobs/b70f74f6-4f7a-47de-a68b-61ba350b1fde",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -99,19 +99,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f10915de-0d9f-432e-bab7-300a85231d65",
+        "apim-request-id": "12d1b70f-8b0d-49f2-8add-5cfddb766680",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 20:48:31 GMT",
+        "Date": "Mon, 17 Oct 2022 18:55:07 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "735"
+        "x-envoy-upstream-service-time": "301"
       },
       "ResponseBody": {
-        "jobId": "0f20ae61-036e-4ec9-891d-872ad8e67683",
-        "lastUpdateDateTime": "2022-10-10T20:48:28Z",
-        "createdDateTime": "2022-10-10T20:48:25Z",
-        "expirationDateTime": "2022-10-11T20:48:25Z",
+        "jobId": "b70f74f6-4f7a-47de-a68b-61ba350b1fde",
+        "lastUpdateDateTime": "2022-10-17T18:55:03Z",
+        "createdDateTime": "2022-10-17T18:55:01Z",
+        "expirationDateTime": "2022-10-18T18:55:01Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -121,7 +121,7 @@
           "total": 5,
           "entityRecognitionTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:48:28.6434766Z",
+              "lastUpdateDateTime": "2022-10-17T18:55:03.7588671Z",
               "taskName": "0",
               "state": "succeeded",
               "results": {
@@ -154,7 +154,7 @@
           ],
           "entityLinkingTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:48:28.3106692Z",
+              "lastUpdateDateTime": "2022-10-17T18:55:03.6535289Z",
               "taskName": "3",
               "state": "succeeded",
               "results": {
@@ -187,7 +187,7 @@
           ],
           "entityRecognitionPiiTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:48:27.5399834Z",
+              "lastUpdateDateTime": "2022-10-17T18:55:03.794183Z",
               "taskName": "2",
               "state": "succeeded",
               "results": {
@@ -224,7 +224,7 @@
           ],
           "keyPhraseExtractionTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:48:27.3447294Z",
+              "lastUpdateDateTime": "2022-10-17T18:55:03.4779123Z",
               "taskName": "1",
               "state": "succeeded",
               "results": {
@@ -257,7 +257,7 @@
           ],
           "sentimentAnalysisTasks": [
             {
-              "lastUpdateDateTime": "2022-10-10T20:48:27.252661Z",
+              "lastUpdateDateTime": "2022-10-17T18:55:03.6635812Z",
               "taskName": "4",
               "state": "succeeded",
               "results": {

@@ -45,18 +45,18 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "9939ae65-a28f-4dc7-8c59-46dda1cb7844",
+        "apim-request-id": "6cdac8e0-958f-4c3c-916e-d83b051ef1f0",
         "Content-Length": "0",
-        "Date": "Mon, 10 Oct 2022 19:21:42 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4bd2ff80-7c13-4b6f-8911-254407e5f11e?api-version=2022-10-01-preview",
+        "Date": "Mon, 17 Oct 2022 18:50:41 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/f0323a18-b843-4c33-84fa-b62309964b0b?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "241"
+        "x-envoy-upstream-service-time": "165"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/4bd2ff80-7c13-4b6f-8911-254407e5f11e?api-version=2022-10-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/f0323a18-b843-4c33-84fa-b62309964b0b?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -67,19 +67,19 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "776e57cf-2e52-491e-b06c-cd4ac82a72fe",
+        "apim-request-id": "d664a21a-d33a-44a5-85ac-e3921200034c",
         "Content-Length": "1685",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 10 Oct 2022 19:21:47 GMT",
+        "Date": "Mon, 17 Oct 2022 18:50:46 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "122"
+        "x-envoy-upstream-service-time": "74"
       },
       "ResponseBody": {
-        "jobId": "4bd2ff80-7c13-4b6f-8911-254407e5f11e",
-        "lastUpdateDateTime": "2022-10-10T19:21:45Z",
-        "createdDateTime": "2022-10-10T19:21:42Z",
-        "expirationDateTime": "2022-10-11T19:21:42Z",
+        "jobId": "f0323a18-b843-4c33-84fa-b62309964b0b",
+        "lastUpdateDateTime": "2022-10-17T18:50:43Z",
+        "createdDateTime": "2022-10-17T18:50:41Z",
+        "expirationDateTime": "2022-10-18T18:50:41Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -91,7 +91,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-10T19:21:44.6420617Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:43.4486863Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -149,7 +149,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-10-10T19:21:45.3645062Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:43.4839122Z",
               "status": "succeeded",
               "results": {
                 "documents": [

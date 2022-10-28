@@ -37,15 +37,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "cb865bc5-5e5b-427d-a160-4609be8945ba",
+        "apim-request-id": "b3c598f3-a24d-4468-a884-e47b11274af9",
         "Content-Length": "371",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Mon, 10 Oct 2022 21:23:38 GMT",
+        "Date": "Mon, 17 Oct 2022 19:04:54 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "35"
+        "x-envoy-upstream-service-time": "41"
       },
       "ResponseBody": {
         "kind": "PiiEntityRecognitionResults",
@@ -112,10 +112,10 @@
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "0d19e5e2-e9ad-4903-b5f5-0e53efeed189",
+        "apim-request-id": "bc756cec-e8ba-455d-b48f-99e02635ec98",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Mon, 10 Oct 2022 21:23:38 GMT"
+        "Date": "Mon, 17 Oct 2022 19:04:54 GMT"
       },
       "ResponseBody": {
         "error": {
@@ -161,15 +161,15 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "48b81eea-251f-42bf-a653-288fe6262c75",
+        "apim-request-id": "efaff78d-00d6-4d18-83dc-4ab8536b75f7",
         "Content-Length": "371",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.TextAnalytics.BatchScoring=3,CognitiveServices.TextAnalytics.TextRecords=3",
-        "Date": "Mon, 10 Oct 2022 21:23:38 GMT",
+        "Date": "Mon, 17 Oct 2022 19:04:54 GMT",
         "Set-Cookie": ".AspNetCore.Mvc.CookieTempDataProvider=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; samesite=lax; httponly",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "31"
+        "x-envoy-upstream-service-time": "25"
       },
       "ResponseBody": {
         "kind": "PiiEntityRecognitionResults",
