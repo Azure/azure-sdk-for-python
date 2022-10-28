@@ -9,8 +9,8 @@ from azure.core.credentials import AccessToken
 from azure.core.pipeline import Pipeline
 from azure.core.pipeline.transport import HttpRequest
 from .aad_client_base import AadClientBase
-from .._internal.aadclient_certificate import AadClientCertificate
-from .._internal.pipeline import build_pipeline
+from .aadclient_certificate import AadClientCertificate
+from .pipeline import build_pipeline
 
 
 class AadClient(AadClientBase):

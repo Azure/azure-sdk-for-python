@@ -16,9 +16,8 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
 from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
-from . import get_default_authority, normalize_authority
-from .._internal import resolve_tenant
-from .._internal.aadclient_certificate import AadClientCertificate
+from .utils import get_default_authority, normalize_authority, resolve_tenant
+from .aadclient_certificate import AadClientCertificate
 
 if TYPE_CHECKING:
     from azure.core.pipeline import AsyncPipeline, Pipeline, PipelineResponse
