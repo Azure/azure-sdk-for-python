@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Callable
 
 from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils.proxy_fixtures import VariableRecorder
 import pytest
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
@@ -35,9 +36,7 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
     client.batch_endpoints.begin_delete(name=endpoint.name)
 
 
-@pytest.mark.skip(
-    reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
-)
+@pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experience_test
 class TestBatchDeployment(AzureRecordedTestCase):
@@ -76,14 +75,13 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
-    @pytest.mark.e2etest
-    def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str], variable_recorder: VariableRecorder) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
-        name = "batch-ept-" + uuid.uuid4().hex[:15]
+        name = variable_recorder.get_or_record("name", "batch-ept-" + uuid.uuid4().hex[:15])
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_mlflow_new.yaml"
-        deployment_name = "batch-dpm-" + uuid.uuid4().hex[:15]
+        deployment_name = variable_recorder.get_or_record("deployment_name", "batch-dpm-" + uuid.uuid4().hex[:15])
 
-        environment_name = randstr()
+        environment_name = randstr("environment_name")
         environment_versions = ["foo", "bar"]
 
         for version in environment_versions:
@@ -94,7 +92,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
                 )
             )
 
-        model_name = randstr()
+        model_name = randstr("model_name")
         model_versions = ["1", "2"]
 
         for version in model_versions:
@@ -134,15 +132,29 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
-    @pytest.mark.e2etest
     def test_batch_job_download(self, client: MLClient, tmp_path: Path) -> str:
+        def wait_until_done(job: Job, timeout: int = None) -> None:
+            poll_start_time = time.time()
+            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
+                time.sleep(_wait_before_polling(time.time() - poll_start_time))
+                job = client.jobs.get(job.name)
+                if timeout is not None and time.time() - poll_start_time > timeout:
+                    # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
+                    cancel_poller = client.jobs.begin_cancel(job.name)
+                    assert isinstance(cancel_poller, LROPoller)
+                    assert cancel_poller.result() is None
+                    return JobStatus.CANCELED
+            return job.status
+
+        endpoint_name = variable_recorder.get_or_record("name", "batch-ept-" + uuid.uuid4().hex[:15])
         endpoint = load_batch_endpoint(
             "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml",
-            params_override=[{"name": "batch-ept-" + uuid.uuid4().hex[:15]}],
+            params_override=[{"name": endpoint_name}],
         )
+        deployment_name = variable_recorder.get_or_record("deployment_name", "batch-dpm-" + uuid.uuid4().hex[:15])
         deployment = load_batch_deployment(
             "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml",
-            params_override=[{"endpoint_name": endpoint.name}, {"name": "batch-dpm-" + uuid.uuid4().hex[:15]}],
+            params_override=[{"endpoint_name": endpoint.name}, {"name": deployment_name}],
         )
         endpoint.traffic = {deployment.name: 100}
 
