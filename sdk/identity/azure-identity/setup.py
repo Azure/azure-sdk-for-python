@@ -58,7 +58,7 @@ setup(
     ),
     python_requires=">=3.7",
     install_requires=[
-        "azure-core<2.0.0,>=1.23.0",
+        "azure-core<2.0.0,>=1.11.0",
         "cryptography>=2.5",
         "msal<2.0.0,>=1.12.0",
         "msal-extensions<2.0.0,>=0.3.0",
