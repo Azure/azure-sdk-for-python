@@ -78,16 +78,13 @@ directive:
   where: $.paths.*.*
   transform: |
     var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-    var apiVersion = "2022-10-01-preview/"
+    var apiVersion = $doc.info.version + "/";
     $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + operationId + " for more information.";
 
-- where-operation: AnalyzeConversation_SubmitJob
+- from: analyzeconversations.json
+  where: $.paths.*.*
   transform: |
-    var apiVersion = "2022-10-01-preview/"
-    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis-runtime/submit-job for more information.";
-- where-operation: ConversationAnalysis_AnalyzeConversation
-  transform: |
-    var apiVersion = "2022-10-01-preview/"
+    var apiVersion = $doc.info.version + "/";
     $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis-runtime/analyze-conversation for more information.";
 ```
 
