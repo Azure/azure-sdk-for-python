@@ -53,7 +53,7 @@ def _parse_response_schema(response):
     try:
         schema_props_dict["format"] = SchemaFormat(format)
     except ValueError:
-        schema_props_dict["format"] = SchemaFormat(format.upper())
+        schema_props_dict["format"] = SchemaFormat(format.capitalize())
 
     return Schema(
         definition=response.text(), properties=SchemaProperties(**schema_props_dict)

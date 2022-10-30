@@ -31,8 +31,9 @@ SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
     schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/",
-#    schemaregistry_group_avro="fakegroupavro",
+    schemaregistry_group_avro="fakegroupavro",
     schemaregistry_group_json="fakegroupjson",
+    schemaregistry_group_custom="fakegroupcustom",
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 JSON_SCHEMA = {
@@ -57,17 +58,18 @@ JSON_SCHEMA = {
     }
 }
 JSON_SCHEMA_STR = json.dumps(JSON_SCHEMA, separators=(",", ":"))
+CUSTOM_SCHEMA_STR = """{"customSchema": "https://customschema.com/schemaexample.txt", "name": "sampleSchema", "props": [{"name": "str"}, {"favorite_number": "int"}, {"favorite_color": "str"}]"""
 
 AVRO_FORMAT = "Avro"
-JSON_FORMAT = "JSON"
+JSON_FORMAT = "Json"
+CUSTOM_FORMAT = "Custom"
 
 avro_args = (AVRO_FORMAT, AVRO_SCHEMA_STR)
 json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
+custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
 
-format_params = [avro_args, json_args]
-format_ids = [AVRO_FORMAT, JSON_FORMAT]
-format_params = [json_args]
-format_ids = [JSON_FORMAT]
+format_params = [avro_args, json_args, custom_args]
+format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
 
 class ArgPasser:
     def __call__(self, fn):

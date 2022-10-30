@@ -47,7 +47,8 @@
       "apiVersion": "2018-01-01-preview",
       "schemaRegistryEndpoint": "[format('{0}.servicebus.windows.net', parameters('baseName'))]",
       "schemaRegistryGroupJson": "azsdk_python_test_group_json",
-      "schemaRegistryGroupAvro": "azsdk_python_test_group_avro"
+      "schemaRegistryGroupAvro": "azsdk_python_test_group_avro",
+      "schemaRegistryGroupCustom": "azsdk_python_test_group_custom"
     },
     "resources": [
       {
@@ -82,9 +83,19 @@
       //  "apiVersion": "[variables('apiVersion')]",
       //  "name": "[format('{0}/{1}', parameters('baseName'), variables('schemaRegistryGroupJson'))]",
       //  "location": "[parameters('location')]",
-      //  "dependsOn": ["[resourceId('Microsoft.EventHub/namespaces',parameters('baseName'))]"],
+      //  "dependsOn": ["[resourceId('Microsoft.EventHub/namespaces', parameters('baseName'))]"],
       //  "properties": {
       //    "schemaType": "json"
+      //  }
+      //},
+      //{
+      //  "type": "Microsoft.EventHub/namespaces/schemagroups",
+      //  "apiVersion": "[variables('apiVersion')]",
+      //  "name": "[format('{0}/{1}', parameters('baseName'), variables('schemaRegistryGroupCustom'))]",
+      //  "location": "[parameters('location')]",
+      //  "dependsOn": ["[resourceId('Microsoft.EventHub/namespaces', parameters('baseName'))]"],
+      //  "properties": {
+      //    "schemaType": "custom"
       //  }
       //}
     ],
@@ -104,6 +115,10 @@
       //"SCHEMAREGISTRY_GROUP_JSON": {
       //  "type": "string",
       //  "value": "[variables('schemaRegistryGroupJson')]"
+      //},
+      //"SCHEMAREGISTRY_GROUP_CUSTOM": {
+      //  "type": "string",
+      //  "value": "[variables('schemaRegistryGroupCustom')]"
       //}
     }
   }

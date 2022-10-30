@@ -19,6 +19,10 @@ def get_http_request_kwargs(kwargs):
     }
     return http_request_kwargs
 
+def get_content_type(format: str):
+    if format.lower() == SchemaFormat.CUSTOM.value.lower():
+        return "text/plain; charset=utf-8"
+    return "application/json; serialization={}".format(format)
 
 def build_register_schema_request(
     group_name: str,
@@ -33,14 +37,13 @@ def build_register_schema_request(
     except AttributeError:
         pass
 
-    format = format.capitalize()
     http_request_kwargs = get_http_request_kwargs(kwargs)
     return schema_rest.build_register_request(
         group_name=group_name,
         schema_name=name,
         content=definition,
         content_type=kwargs.pop(
-            "content_type", "application/json; serialization={}".format(format)
+            "content_type", get_content_type(format)
         ),
         **http_request_kwargs,
     )
@@ -59,14 +62,13 @@ def build_get_schema_props_request(
     except AttributeError:
         pass
 
-    format = format.capitalize()
     http_request_kwargs = get_http_request_kwargs(kwargs)
     return schema_rest.build_query_id_by_content_request(
         group_name=group_name,
         schema_name=name,
         content=definition,
         content_type=kwargs.pop(
-            "content_type", "application/json; serialization={}".format(format)
+            "content_type", get_content_type(format)
         ),
         **http_request_kwargs,
     )

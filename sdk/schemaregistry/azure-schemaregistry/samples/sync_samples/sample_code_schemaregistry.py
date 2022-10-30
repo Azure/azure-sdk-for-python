@@ -72,9 +72,9 @@ def register_schema(schema_registry_client):
             {"name": "favorite_color", "type": ["string", "null"]},
         ],
     }
-    DEFINTION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
+    DEFINITION = json.dumps(SCHEMA_JSON, separators=(",", ":"))
     schema_properties = schema_registry_client.register_schema(
-        GROUP_NAME, NAME, DEFINTION, FORMAT
+        GROUP_NAME, NAME, DEFINITION, FORMAT
     )
     schema_id = schema_properties.id
     # [END register_schema_sync]
