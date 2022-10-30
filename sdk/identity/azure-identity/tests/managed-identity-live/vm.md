@@ -123,7 +123,7 @@ passing `--ids $VM_ID_USER_ASSIGNED`:
 
 ```sh
 echo -e `az vm run-command invoke \
-    --ids $VM_ID_USER_ASSIGNED \
+    --ids $VM_ID_SYSTEM_ASSIGNED \
     --command-id RunShellScript \
     --scripts "cd /sdk/sdk/identity/azure-identity/tests/managed-identity-live && \
                export AZURE_IDENTITY_TEST_VAULT_URL=https://$KEY_VAULT_NAME.vault.azure.net && \
