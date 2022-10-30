@@ -17,16 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Oct 2022 23:19:37 GMT",
+        "Date": "Sun, 30 Oct 2022 03:07:01 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6BwAAAPOT2toOAAAA; expires=Sat, 12-Nov-2022 23:19:37 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=Aq_MO4mHb65Mm_u5LK7gk9EawS9yBwAAADnh79oOAAAA; expires=Tue, 29-Nov-2022 03:07:02 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13943.6 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -104,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6BwAAAPOT2toOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=Aq_MO4mHb65Mm_u5LK7gk9EawS9yBwAAADnh79oOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -115,16 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Oct 2022 23:19:37 GMT",
+        "Date": "Sun, 30 Oct 2022 03:07:01 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6BwAAAPOT2toOAAAA; expires=Sat, 12-Nov-2022 23:19:38 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=Aq_MO4mHb65Mm_u5LK7gk9EawS9yBwAAADnh79oOAAAA; expires=Tue, 29-Nov-2022 03:07:02 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13871.7 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -175,7 +173,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/fakeschemaid?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/$schemas/fakeschemaid?api-version=2021-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro",
@@ -187,7 +185,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 13 Oct 2022 23:19:38 GMT",
+        "Date": "Sun, 30 Oct 2022 03:07:03 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -196,7 +194,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:0b0bc7e4-c362-4b64-a513-6a6d1bf0001d_G7, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/fakeschemaid, Timestamp:2022-10-13T23:19:38"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:58141ca2-07e1-418e-b5e7-f575728c3cf9_G0, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/fakeschemaid, Timestamp:2022-10-30T03:07:03"
         }
       }
     }

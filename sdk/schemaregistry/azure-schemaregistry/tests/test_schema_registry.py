@@ -31,7 +31,7 @@ SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
     schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/",
-    schemaregistry_group_avro="fakegroupavro",
+#    schemaregistry_group_avro="fakegroupavro",
     schemaregistry_group_json="fakegroupjson",
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
@@ -43,15 +43,15 @@ JSON_SCHEMA = {
     "properties": {
         "name": {
             "type": "string",
-            "description": "The person's name."
+            "description": "Name"
         },
         "favoriteNumber": {
             "type": "integer",
-            "description": "The person's favorite positive number.",
+            "description": "Favorite positive number",
             "minimum": 0
         },
         "favoriteColor": {
-            "description": "The person's favorite color",
+            "description": "Favorite color",
             "type": "string",
         }
     }
@@ -63,6 +63,11 @@ JSON_FORMAT = "JSON"
 
 avro_args = (AVRO_FORMAT, AVRO_SCHEMA_STR)
 json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
+
+format_params = [avro_args, json_args]
+format_ids = [AVRO_FORMAT, JSON_FORMAT]
+format_params = [json_args]
+format_ids = [JSON_FORMAT]
 
 class ArgPasser:
     def __call__(self, fn):
@@ -78,14 +83,14 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         return self.create_client_from_credential(SchemaRegistryClient, credential, fully_qualified_namespace=fully_qualified_namespace)
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_basic(self, format, schema_str, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        name = self.get_resource_name('test-schema-basic')
+        name = self.get_resource_name(f"test-schema-basic-{format.lower()}")
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
         assert schema_properties.id is not None
@@ -97,7 +102,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert returned_schema.properties.format == format
         assert returned_schema.properties.group_name == schemaregistry_group
         assert returned_schema.properties.name == name
-        assert returned_schema.definition == schema_str
+        assert returned_schema.definition.replace("\/", "/") == schema_str
 
         returned_version_schema = client.get_schema(group_name=schemaregistry_group, name=name, version=schema_properties.version, logging_enable=True)
 
@@ -110,7 +115,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert returned_version_schema.properties.group_name == schemaregistry_group
         assert returned_version_schema.properties.name == name
         assert returned_version_schema.properties.version == schema_properties.version
-        assert returned_version_schema.definition == schema_str
+        assert returned_version_schema.definition.replace("\/", "/") == schema_str
 
         returned_schema_properties = client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
 
@@ -120,14 +125,14 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert returned_schema.properties.name == name
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_update(self, format, schema_str, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        name = self.get_resource_name('test-schema-update')
+        name = self.get_resource_name(f"test-schema-update-{format.lower()}")
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
 
         assert schema_properties.id is not None
@@ -145,7 +150,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         assert new_schema.properties.id != schema_properties.id
         assert new_schema.properties.id == new_schema_properties.id
-        assert new_schema.definition == schema_str_new
+        assert new_schema.definition.replace("\/", "/") == schema_str_new
         assert new_schema.properties.format == format
         assert new_schema.properties.group_name == schemaregistry_group
         assert new_schema.properties.name == name
@@ -154,28 +159,27 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
         assert old_schema.properties.id != new_schema_properties.id
         assert old_schema.properties.id == schema_properties.id
-        assert old_schema.definition == schema_str
+        assert old_schema.definition.replace("\/", "/") == schema_str
         assert old_schema.properties.format == format
         assert old_schema.properties.group_name == schemaregistry_group
         assert old_schema.properties.name == name
         assert old_schema.properties.version == schema_properties.version
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_same_twice(self, format, schema_str, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        name = self.get_resource_name('test-schema-twice')
-        schema_str = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"age","type":["int","null"]},{"name":"city","type":["string","null"]}]}"""
+        name = self.get_resource_name(f"test-schema-twice-{format.lower()}")
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
         schema_properties_second = client.register_schema(schemaregistry_group, name, schema_str, format)
         assert schema_properties.id == schema_properties_second.id
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_negative_wrong_credential(self, format, schema_str, **kwargs):
@@ -183,19 +187,19 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
         client = SchemaRegistryClient(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, credential=credential)
-        name = self.get_resource_name('test-schema-negative')
+        name = self.get_resource_name(f"test-schema-negative-{format.lower()}")
         with pytest.raises(ClientAuthenticationError):
             client.register_schema(schemaregistry_group, name, schema_str, format)
 
     @pytest.mark.live_test_only
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_negative_wrong_endpoint(self, format, schema_str, **kwargs):
         schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
         client = self.create_client(fully_qualified_namespace="fake.servicebus.windows.net")
-        name = self.get_resource_name('test-schema-nonexist')
+        name = self.get_resource_name(f"test-schema-nonexist-{format.lower()}")
         # accepting both errors for now due to: https://github.com/Azure/azure-sdk-tools/issues/2907
         with pytest.raises((ServiceRequestError, HttpResponseError)) as exc_info:
             client.register_schema(schemaregistry_group, name, schema_str, format)
@@ -215,14 +219,14 @@ class TestSchemaRegistry(AzureRecordedTestCase):
             client.get_schema('a' * 32)
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_negative_no_schema_version(self, format, schema_str, **kwargs):
         schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
         schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
-        name = self.get_resource_name('test-schema-negative-version')
+        name = self.get_resource_name(f"test-schema-negative-version-{format.lower()}")
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
         version = schema_properties.version + 1
         with pytest.raises(HttpResponseError):
@@ -230,7 +234,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
 
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
     @ArgPasser()
     @recorded_by_proxy
     def test_register_schema_errors(self, format, schema_str, **kwargs):
@@ -262,7 +266,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
 
     
     @SchemaRegistryEnvironmentVariableLoader()
-    @pytest.mark.parametrize("format, schema_str", [avro_args, json_args], ids=[AVRO_FORMAT, JSON_FORMAT])
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
     @ArgPasser()
     @recorded_by_proxy
     def test_get_schema_properties_errors(self, format, schema_str, **kwargs):

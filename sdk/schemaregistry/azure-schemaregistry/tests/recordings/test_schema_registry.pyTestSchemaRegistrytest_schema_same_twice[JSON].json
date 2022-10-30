@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.11.0b1 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,17 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 03 May 2022 17:48:43 GMT",
+        "Date": "Sun, 30 Oct 2022 03:06:42 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AoD1_emhIRBPlY4j-1hX05c; expires=Thu, 02-Jun-2022 17:48:43 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevrd9MojfbASMuQPkj9bL_9u999HjAg7nMltlq-BJxJ5fczPy1EKMMdVbSqfLp9UpijSWnSm_1LXnVJM3p2GgT4Ec3i7iUIBGhynWXpMTmLdnDOyBa4ZbKp7BA7mZsV6Xv0w14l9ArLF67qIk1a_4yiMzwubBbaTLo05dyiuOdFN7QgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=Aq_MO4mHb65Mm_u5LK7gk9EawS9yAgAAADnh79oOAAAA; expires=Tue, 29-Nov-2022 03:06:43 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12707.10 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -105,8 +103,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AoD1_emhIRBPlY4j-1hX05c; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.11.0b1 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+        "Cookie": "fpc=Aq_MO4mHb65Mm_u5LK7gk9EawS9yAgAAADnh79oOAAAA; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -116,16 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 03 May 2022 17:48:43 GMT",
+        "Date": "Sun, 30 Oct 2022 03:06:42 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AoD1_emhIRBPlY4j-1hX05c; expires=Thu, 02-Jun-2022 17:48:44 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=Aq_MO4mHb65Mm_u5LK7gk9EawS9yAgAAADnh79oOAAAA; expires=Tue, 29-Nov-2022 03:06:43 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12651.9 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13943.8 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -174,6 +171,102 @@
           }
         ]
       }
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/fakegroupjson/schemas/test-schema-twice-json7269311a?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "351",
+        "Content-Type": "application/json; serialization=Json",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "Favorite positive number",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "Favorite color",
+            "type": "string"
+          }
+        }
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Sun, 30 Oct 2022 03:06:44 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net//$schemagroups/fakegroupjson/schemas/test-schema-twice-json7269311a/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupjson",
+        "Schema-Id": "f843a0bcfb5745acbfa03773c1ec2d18",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/$schemas/f843a0bcfb5745acbfa03773c1ec2d18?api-version=2021-10",
+        "Schema-Name": "test-schema-twice-json7269311a",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-json7269311a/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/fakegroupjson/schemas/test-schema-twice-json7269311a?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "351",
+        "Content-Type": "application/json; serialization=Json",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "Favorite positive number",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "Favorite color",
+            "type": "string"
+          }
+        }
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Sun, 30 Oct 2022 03:06:44 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net//$schemagroups/fakegroupjson/schemas/test-schema-twice-json7269311a/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupjson",
+        "Schema-Id": "f843a0bcfb5745acbfa03773c1ec2d18",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/$schemas/f843a0bcfb5745acbfa03773c1ec2d18?api-version=2021-10",
+        "Schema-Name": "test-schema-twice-json7269311a",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-json7269311a/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
     }
   ],
   "Variables": {}

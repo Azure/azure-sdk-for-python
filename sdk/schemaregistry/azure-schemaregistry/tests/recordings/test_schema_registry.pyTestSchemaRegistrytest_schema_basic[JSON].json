@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,17 +17,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 13 Sep 2022 17:43:14 GMT",
+        "Date": "Sun, 30 Oct 2022 03:06:33 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ApfvugnkHp9Di9JVMV0E2oM; expires=Thu, 13-Oct-2022 17:43:14 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrtvQNWDahkZTrZLrluDZKjI6uzdXLk-vwT2SsR5NiQVgXQWr8Z9Udgg2_Ch8HcgyGlxglW5-8ndh-7k1_h4LCuL25WPqT0c3geOqCK43r8J9nyWE6BppsRdnI9HgctpGTQrnArhLNawq_hKyJZn4dS5QLe_QEu-GvOGlHnQVO1lMgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Aq_MO4mHb65Mm_u5LK7gk9E; expires=Tue, 29-Nov-2022 03:06:34 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrccYOXpru_AQoKVVgFuM0LTXkFO-34Af9SJ3zKdjHjSGIbtPyFnuiHLVLP30pr69tARmbAQkSr-l-TtoR6l5zL05eAZFkDMCIw2JZtm4VjiabYykyIjluAamvTJOwa9kd4Tk0pUJag1kKcvrMJlhkNaSJYT3LXYMMkgRrEQmrz-uRYGAg4rrJRn3SXCwULBTOCZYuJOMepDUPQDwXi8tF2UGQ8on3vWRQJ3wgxrap3jkgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13672.7 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -105,8 +105,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=ApfvugnkHp9Di9JVMV0E2oM; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.11.0b4 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+        "Cookie": "fpc=Aq_MO4mHb65Mm_u5LK7gk9E; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -116,16 +116,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 13 Sep 2022 17:43:14 GMT",
+        "Date": "Sun, 30 Oct 2022 03:06:33 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=ApfvugnkHp9Di9JVMV0E2oM; expires=Thu, 13-Oct-2022 17:43:14 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=Aq_MO4mHb65Mm_u5LK7gk9E; expires=Tue, 29-Nov-2022 03:06:34 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13622.7 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.13943.8 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -176,206 +175,190 @@
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-basic62b42d09?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/fakegroupjson/schemas/test-schema-basic-json790f2efb?api-version=2021-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "201",
-        "Content-Type": "application/json; serialization=Avro",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+        "Content-Length": "351",
+        "Content-Type": "application/json; serialization=Json",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
-        "namespace": "example.avro",
-        "type": "record",
-        "name": "User",
-        "fields": [
-          {
-            "name": "name",
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "Favorite positive number",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "Favorite color",
             "type": "string"
-          },
-          {
-            "name": "favorite_number",
-            "type": [
-              "int",
-              "null"
-            ]
-          },
-          {
-            "name": "favorite_color",
-            "type": [
-              "string",
-              "null"
-            ]
           }
-        ]
+        }
       },
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 13 Sep 2022 17:43:16 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic62b42d09/versions/1?api-version=2021-10",
-        "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "6d3613ef1ae1438fa662cfa644607556",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/6d3613ef1ae1438fa662cfa644607556?api-version=2021-10",
-        "Schema-Name": "test-schema-basic62b42d09",
+        "Date": "Sun, 30 Oct 2022 03:06:36 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net//$schemagroups/fakegroupjson/schemas/test-schema-basic-json790f2efb/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupjson",
+        "Schema-Id": "696c112a2a7f4595b1515d7650d6a397",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/$schemas/696c112a2a7f4595b1515d7650d6a397?api-version=2021-10",
+        "Schema-Name": "test-schema-basic-json790f2efb",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic62b42d09/versions?api-version=2021-10",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroupjson/schemas/test-schema-basic-json790f2efb/versions?api-version=2021-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/6d3613ef1ae1438fa662cfa644607556?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/$schemas/696c112a2a7f4595b1515d7650d6a397?api-version=2021-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Content-Type": "application/json; serialization=Avro",
-        "Date": "Tue, 13 Sep 2022 17:43:16 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic62b42d09/versions/1?api-version=2021-10",
-        "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "6d3613ef1ae1438fa662cfa644607556",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/6d3613ef1ae1438fa662cfa644607556?api-version=2021-10",
-        "Schema-Name": "test-schema-basic62b42d09",
+        "Content-Type": "application/schema\u002Bjson",
+        "Date": "Sun, 30 Oct 2022 03:06:36 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net//$schemagroups/fakegroupjson/schemas/test-schema-basic-json790f2efb/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupjson",
+        "Schema-Id": "696c112a2a7f4595b1515d7650d6a397",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/$schemas/696c112a2a7f4595b1515d7650d6a397?api-version=2021-10",
+        "Schema-Name": "test-schema-basic-json790f2efb",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic62b42d09/versions?api-version=2021-10",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroupjson/schemas/test-schema-basic-json790f2efb/versions?api-version=2021-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
-        "namespace": "example.avro",
-        "type": "record",
-        "name": "User",
-        "fields": [
-          {
-            "name": "name",
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "Favorite positive number",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "Favorite color",
             "type": "string"
-          },
-          {
-            "name": "favorite_number",
-            "type": [
-              "int",
-              "null"
-            ]
-          },
-          {
-            "name": "favorite_color",
-            "type": [
-              "string",
-              "null"
-            ]
           }
-        ]
+        }
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-basic62b42d09/versions/1?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/fakegroupjson/schemas/test-schema-basic-json790f2efb/versions/1?api-version=2021-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "Content-Type": "application/json; serialization=Avro",
-        "Date": "Tue, 13 Sep 2022 17:43:17 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic62b42d09/versions/1?api-version=2021-10",
-        "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "6d3613ef1ae1438fa662cfa644607556",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/6d3613ef1ae1438fa662cfa644607556?api-version=2021-10",
-        "Schema-Name": "test-schema-basic62b42d09",
+        "Content-Type": "application/schema\u002Bjson",
+        "Date": "Sun, 30 Oct 2022 03:06:38 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net//$schemagroups/fakegroupjson/schemas/test-schema-basic-json790f2efb/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupjson",
+        "Schema-Id": "696c112a2a7f4595b1515d7650d6a397",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/$schemas/696c112a2a7f4595b1515d7650d6a397?api-version=2021-10",
+        "Schema-Name": "test-schema-basic-json790f2efb",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic62b42d09/versions?api-version=2021-10",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroupjson/schemas/test-schema-basic-json790f2efb/versions?api-version=2021-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
-        "namespace": "example.avro",
-        "type": "record",
-        "name": "User",
-        "fields": [
-          {
-            "name": "name",
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "Favorite positive number",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "Favorite color",
             "type": "string"
-          },
-          {
-            "name": "favorite_number",
-            "type": [
-              "int",
-              "null"
-            ]
-          },
-          {
-            "name": "favorite_color",
-            "type": [
-              "string",
-              "null"
-            ]
           }
-        ]
+        }
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-basic62b42d09:get-id?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/fakegroupjson/schemas/test-schema-basic-json790f2efb:get-id?api-version=2021-10",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "201",
-        "Content-Type": "application/json; serialization=Avro",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22000-SP0)"
+        "Content-Length": "351",
+        "Content-Type": "application/json; serialization=Json",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
-        "namespace": "example.avro",
-        "type": "record",
-        "name": "User",
-        "fields": [
-          {
-            "name": "name",
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name"
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "Favorite positive number",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "Favorite color",
             "type": "string"
-          },
-          {
-            "name": "favorite_number",
-            "type": [
-              "int",
-              "null"
-            ]
-          },
-          {
-            "name": "favorite_color",
-            "type": [
-              "string",
-              "null"
-            ]
           }
-        ]
+        }
       },
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Tue, 13 Sep 2022 17:43:17 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic62b42d09/versions/1?api-version=2021-10",
-        "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "6d3613ef1ae1438fa662cfa644607556",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/6d3613ef1ae1438fa662cfa644607556?api-version=2021-10",
-        "Schema-Name": "test-schema-basic62b42d09",
+        "Date": "Sun, 30 Oct 2022 03:06:38 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net//$schemagroups/fakegroupjson/schemas/test-schema-basic-json790f2efb/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupjson",
+        "Schema-Id": "696c112a2a7f4595b1515d7650d6a397",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/$schemas/696c112a2a7f4595b1515d7650d6a397?api-version=2021-10",
+        "Schema-Name": "test-schema-basic-json790f2efb",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic62b42d09/versions?api-version=2021-10",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net/:443/$schemagroups/fakegroupjson/schemas/test-schema-basic-json790f2efb/versions?api-version=2021-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },

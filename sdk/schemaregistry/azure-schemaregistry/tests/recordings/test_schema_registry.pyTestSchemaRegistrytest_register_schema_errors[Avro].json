@@ -17,16 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Oct 2022 23:19:34 GMT",
+        "Date": "Sun, 30 Oct 2022 03:02:41 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6BgAAAPOT2toOAAAA; expires=Sat, 12-Nov-2022 23:19:34 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xBQAAADzg79oOAAAA; expires=Tue, 29-Nov-2022 03:02:41 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13943.6 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -104,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6BgAAAPOT2toOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xBQAAADzg79oOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -115,16 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 13 Oct 2022 23:19:34 GMT",
+        "Date": "Sun, 30 Oct 2022 03:02:41 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ag8EHFGFDBtOqvWSwOKVucQ3mOj6BgAAAPOT2toOAAAA; expires=Sat, 12-Nov-2022 23:19:34 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xBQAAADzg79oOAAAA; expires=Tue, 29-Nov-2022 03:02:41 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13845.9 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -189,7 +187,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 13 Oct 2022 23:19:35 GMT",
+        "Date": "Sun, 30 Oct 2022 03:02:41 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -198,7 +196,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:70cca1c1-3885-4763-8087-27698ff22145_G7, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema, Timestamp:2022-10-13T23:19:35"
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:9fdf5bf4-9b1b-481f-86bc-e64cc43a2e4b_G14S2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema, Timestamp:2022-10-30T03:02:42"
         }
       }
     },
@@ -241,7 +239,7 @@
       "StatusCode": 415,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 13 Oct 2022 23:19:35 GMT",
+        "Date": "Sun, 30 Oct 2022 03:02:42 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -250,7 +248,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidSchemaType",
-          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:4653b969-5746-4795-9652-3ae805fe0ef1_G7, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema, Timestamp:2022-10-13T23:19:35"
+          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:ffa9718e-fc09-4162-a528-49bd9eb5de10_G14S2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema, Timestamp:2022-10-30T03:02:43"
         }
       }
     }
