@@ -17,10 +17,10 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 05:42:44 GMT",
+        "Date": "Sun, 30 Oct 2022 05:40:16 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AnthLc7X4t1Jt_23CU9pWRYawS9yAwAAAMoF8NoOAAAA; expires=Tue, 29-Nov-2022 05:42:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AsUeyyEzgVJIkjk8Q8jBKIoawS9yBAAAADAF8NoOAAAA; expires=Tue, 29-Nov-2022 05:40:16 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AnthLc7X4t1Jt_23CU9pWRYawS9yAwAAAMoF8NoOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AsUeyyEzgVJIkjk8Q8jBKIoawS9yBAAAADAF8NoOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 05:42:44 GMT",
+        "Date": "Sun, 30 Oct 2022 05:40:16 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AnthLc7X4t1Jt_23CU9pWRYawS9yAwAAAMoF8NoOAAAA; expires=Tue, 29-Nov-2022 05:42:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AsUeyyEzgVJIkjk8Q8jBKIoawS9yBAAAADAF8NoOAAAA; expires=Tue, 29-Nov-2022 05:40:16 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13943.8 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13943.8 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -170,6 +170,34 @@
             ]
           }
         ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/fakegroupcustom/schemas/test-schema:get-id?api-version=2021-10",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "Content-Type": "text/plain; charset=utf-8",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 415,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Sun, 30 Oct 2022 05:40:16 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidSchemaType"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidSchemaType",
+          "message": "Invalid schema type for POST request. \u0027\u0027 is not supported. TrackingId:73fe6311-3739-48ae-a961-72905d7eca1e_G2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupcustom/schemas/test-schema:get-id, Timestamp:2022-10-30T05:40:16"
+        }
       }
     }
   ],

@@ -17,10 +17,10 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 03:02:39 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:38 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xBAAAADzg79oOAAAA; expires=Tue, 29-Nov-2022 03:02:39 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xBQAAADYG8NoOAAAA; expires=Tue, 29-Nov-2022 05:44:38 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xBAAAADzg79oOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xBQAAADYG8NoOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,10 +114,10 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 03:02:39 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:38 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xBAAAADzg79oOAAAA; expires=Tue, 29-Nov-2022 03:02:39 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xBQAAADYG8NoOAAAA; expires=Tue, 29-Nov-2022 05:44:38 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -211,7 +211,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sun, 30 Oct 2022 03:02:39 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:38 GMT",
         "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-negative-version-avrod5c8381b/versions/1?api-version=2021-10",
         "Schema-Group-Name": "fakegroupavro",
         "Schema-Id": "cbf9634901664721b33e6b4633a329ed",
@@ -237,7 +237,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Sun, 30 Oct 2022 03:02:40 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:39 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -246,7 +246,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema fakegroupavro/test-schema-negative-version-avrod5c8381b/ver.2 does not exist. TrackingId:e2e2132a-a7c9-4bda-bbf8-788ad8aa2457_G14S2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema-negative-version-avrod5c8381b/versions/2, Timestamp:2022-10-30T03:02:41"
+          "message": "Schema fakegroupavro/test-schema-negative-version-avrod5c8381b/ver.2 does not exist. TrackingId:a14d1583-cb77-486d-a439-2491be66c8e4_G13S3, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema-negative-version-avrod5c8381b/versions/2, Timestamp:2022-10-30T05:44:39"
         }
       }
     }

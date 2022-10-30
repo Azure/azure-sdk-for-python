@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/$schemas/fakeschemaid?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/fakeschemaid?api-version=2021-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro",
@@ -12,7 +12,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Sun, 30 Oct 2022 03:25:39 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:46 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -21,7 +21,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:6b3b8706-771a-4a20-a8bb-31235d0126e8_G2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/fakeschemaid, Timestamp:2022-10-30T03:25:39"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:818ecf9a-b813-49c8-9e7a-6c3995a2f2e9_G13S3, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/fakeschemaid, Timestamp:2022-10-30T05:44:46"
         }
       }
     }

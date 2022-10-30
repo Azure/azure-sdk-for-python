@@ -17,15 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 03:02:28 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:29 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xAgAAADzg79oOAAAA; expires=Tue, 29-Nov-2022 03:02:28 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xAgAAADYG8NoOAAAA; expires=Tue, 29-Nov-2022 05:44:29 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xAgAAADzg79oOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xAgAAADYG8NoOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 03:02:28 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:29 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xAgAAADzg79oOAAAA; expires=Tue, 29-Nov-2022 03:02:29 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xAgAAADYG8NoOAAAA; expires=Tue, 29-Nov-2022 05:44:29 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.13943.8 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -211,7 +211,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sun, 30 Oct 2022 03:02:29 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:29 GMT",
         "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-twice-avro76053178/versions/1?api-version=2021-10",
         "Schema-Group-Name": "fakegroupavro",
         "Schema-Id": "aac4cc801be04be6afa665c87bd661fb",
@@ -263,7 +263,7 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sun, 30 Oct 2022 03:02:30 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:30 GMT",
         "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-twice-avro76053178/versions/1?api-version=2021-10",
         "Schema-Group-Name": "fakegroupavro",
         "Schema-Id": "aac4cc801be04be6afa665c87bd661fb",

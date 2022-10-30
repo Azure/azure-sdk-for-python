@@ -17,15 +17,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 05:42:44 GMT",
+        "Date": "Sun, 30 Oct 2022 05:40:00 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AnthLc7X4t1Jt_23CU9pWRYawS9yAwAAAMoF8NoOAAAA; expires=Tue, 29-Nov-2022 05:42:44 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=AsUeyyEzgVJIkjk8Q8jBKIo; expires=Tue, 29-Nov-2022 05:40:01 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevryJi3ciPbIBiiWPGVwAqtiqVU2Dagd6_hrRe9m1JdaJRVxppHjrMi9dMwGZFY6wEmTAXz07o5t1yozYC7K1lEer2nNlicCeKAKUJbYh7qC-lGNiBvuDuR_Nx7gE7kX8UizHEj0SfR5G6TZdeuF2eEzL9JfF37Tkkog9vSvFbtEVWDA79khn0D5M_pZw8cfZuZk5zj0liYz0FnMehmk3pVWTo1EsFliwVXsFZ4csoRRB0gAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
+          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +105,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AnthLc7X4t1Jt_23CU9pWRYawS9yAwAAAMoF8NoOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AsUeyyEzgVJIkjk8Q8jBKIo; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +116,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 05:42:44 GMT",
+        "Date": "Sun, 30 Oct 2022 05:40:00 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AnthLc7X4t1Jt_23CU9pWRYawS9yAwAAAMoF8NoOAAAA; expires=Tue, 29-Nov-2022 05:42:44 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AsUeyyEzgVJIkjk8Q8jBKIo; expires=Tue, 29-Nov-2022 05:40:01 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.13943.8 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -170,6 +172,34 @@
             ]
           }
         ]
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net//$schemaGroups/fakegroupcustom/schemas/test-schema-basic-customdf06303c?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "168",
+        "Content-Type": "text/plain; charset=utf-8",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "{\u0022customSchema\u0022: \u0022https://customschema.com/schemaexample.txt\u0022, \u0022name\u0022: \u0022sampleSchema\u0022, \u0022props\u0022: [{\u0022name\u0022: \u0022str\u0022}, {\u0022favorite_number\u0022: \u0022int\u0022}, {\u0022favorite_color\u0022: \u0022str\u0022}]",
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Sun, 30 Oct 2022 05:40:02 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Missing required header for PUT request. Schema/serialization type must be provided. TrackingId:38dbe179-7587-4a82-b822-c5c3961e9611_G2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupcustom/schemas/test-schema-basic-customdf06303c, Timestamp:2022-10-30T05:40:02"
+        }
       }
     }
   ],

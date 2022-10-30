@@ -17,15 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 03:02:43 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:41 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xBQAAADzg79oOAAAA; expires=Tue, 29-Nov-2022 03:02:43 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xBgAAADYG8NoOAAAA; expires=Tue, 29-Nov-2022 05:44:41 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xBQAAADzg79oOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xBgAAADYG8NoOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 03:02:43 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:41 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Am9pukJs8sJLgPgqyFQ05TalEE-xBQAAADzg79oOAAAA; expires=Tue, 29-Nov-2022 03:02:43 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xBgAAADYG8NoOAAAA; expires=Tue, 29-Nov-2022 05:44:41 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -187,7 +187,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Sun, 30 Oct 2022 03:02:43 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:41 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -196,7 +196,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:e42745bc-bc7d-4483-92f8-d201e453b8d8_G14S2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema:get-id, Timestamp:2022-10-30T03:02:44"
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:8fa665cf-6f95-4e59-9de9-de9cbede3ef7_G13S3, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema:get-id, Timestamp:2022-10-30T05:44:42"
         }
       }
     },
@@ -208,7 +208,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "201",
-        "Content-Type": "application/json; serialization=Invalid-format",
+        "Content-Type": "application/json; serialization=invalid-format",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
@@ -239,7 +239,7 @@
       "StatusCode": 415,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Sun, 30 Oct 2022 03:02:44 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:42 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -248,7 +248,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidSchemaType",
-          "message": "Invalid schema type for POST request. \u0027invalid-format\u0027 is not supported. TrackingId:c2a11d2d-c160-4125-9034-910c93a86e11_G14S2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema:get-id, Timestamp:2022-10-30T03:02:45"
+          "message": "Invalid schema type for POST request. \u0027invalid-format\u0027 is not supported. TrackingId:a45eed0a-8f8c-4e61-a3ec-5c3e9dcf2a1a_G13S3, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/test-schema:get-id, Timestamp:2022-10-30T05:44:42"
         }
       }
     },
@@ -291,7 +291,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Sun, 30 Oct 2022 03:02:45 GMT",
+        "Date": "Sun, 30 Oct 2022 05:44:42 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -300,7 +300,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema fakegroupavro/never-registered does not exist. TrackingId:2c4eb679-e54b-4abe-8d47-e29f29bb1fca_G14S2, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/never-registered:get-id, Timestamp:2022-10-30T03:02:46"
+          "message": "Schema fakegroupavro/never-registered does not exist. TrackingId:705a8896-604d-467a-91d4-23877f4a8058_G13S3, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/fakegroupavro/schemas/never-registered:get-id, Timestamp:2022-10-30T05:44:43"
         }
       }
     }
