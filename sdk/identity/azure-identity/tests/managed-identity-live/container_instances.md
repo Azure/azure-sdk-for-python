@@ -142,10 +142,10 @@ plugins: asyncio-0.20.1, cov-4.0.0
 asyncio: mode=strict
 collecting ... collected 4 items
 
-test_cloud_shell.py::test_cloud_shell_live SKIPPED (Cloud Shell MSI ...) [ 25%]
-test_cloud_shell_async.py::test_cloud_shell_live SKIPPED (Cloud Shel...) [ 50%]
-test_managed_identity_live.py::test_managed_identity_live PASSED         [ 75%]
-test_managed_identity_live_async.py::test_managed_identity_live PASSED   [100%]
+test_cloud_shell.py::test_cloud_shell_live SKIPPED (Cloud Shell MSI ...)  [ 25%]
+test_cloud_shell_async.py::test_cloud_shell_live SKIPPED (Cloud Shell...) [ 50%]
+test_managed_identity_live.py::test_managed_identity_live PASSED          [ 75%]
+test_managed_identity_live_async.py::test_managed_identity_live PASSED    [100%]
 
 =========================== short test summary info ============================
 SKIPPED [2] conftest.py:46: Cloud Shell MSI unavailable
