@@ -314,8 +314,7 @@ class Environment(Asset):
                 and self._is_anonymous == other._is_anonymous
                 and self.os_type == other.os_type
             )
-        else:
-            return False
+        return False
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
