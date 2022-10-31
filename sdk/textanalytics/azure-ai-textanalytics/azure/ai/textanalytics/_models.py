@@ -1271,6 +1271,7 @@ class DocumentError(DictMixin):
             + ClassifyDocumentResult().keys()
             + ExtractSummaryResult().keys()
             + AbstractSummaryResult().keys()
+            + DynamicClassificationResult().keys()
         )
         result_attrs = result_set.difference(DocumentError().keys())
         if attr in result_attrs:
@@ -2554,7 +2555,7 @@ class SingleLabelClassifyAction(DictMixin):
 class ClassificationCategory(DictMixin):
     """ClassificationCategory represents a classification of the input document.
 
-    :ivar str category: Custom classification category for the document.
+    :ivar str category: Classification category for the document.
     :ivar float confidence_score: Confidence score between 0 and 1 of the recognized classification.
     """
 
@@ -2573,6 +2574,12 @@ class ClassificationCategory(DictMixin):
 
     @classmethod
     def _from_generated(cls, result):
+        # FIXME: https://github.com/Azure/azure-sdk-for-python/issues/27089
+        if isinstance(result, dict):
+            return cls(
+                category=result["category"],
+                confidence_score=result["confidenceScore"]
+            )
         return cls(
             category=result.category,
             confidence_score=result.confidence_score
@@ -2737,7 +2744,6 @@ class ExtractSummaryAction(DictMixin):
                 sort_by=self.order_by,
             )
         )
-
 
 
 class ExtractSummaryResult(DictMixin):
@@ -3106,4 +3112,68 @@ class PhraseControl(DictMixin):
         return _v2022_10_01_preview_models.PhraseControl(
             target_phrase=self.target_phrase,
             strategy=self.strategy
+        )
+
+class DynamicClassificationResult(DictMixin):
+    """DynamicClassificationResult is a result object which contains
+    the classifications for a particular document.
+
+    :ivar str id: Unique, non-empty document identifier.
+    :ivar classifications: Recognized classification results in the document.
+    :vartype classifications: list[~azure.ai.textanalytics.ClassificationCategory]
+    :ivar warnings: Warnings encountered while processing document.
+    :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
+    :ivar statistics: If `show_stats=True` was specified in the request this
+        field will contain information about the document payload.
+    :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
+    :ivar bool is_error: Boolean check for error item when iterating over list of
+        results. Always False for an instance of a DynamicClassificationResult.
+    :ivar str kind: The text analysis kind - "DynamicClassification".
+
+    .. versionadded:: 2022-10-01-preview
+        The *DynamicClassificationResult* model.
+    """
+
+    def __init__(
+        self,
+        **kwargs
+    ):
+        self.id = kwargs.get('id', None)
+        self.classifications = kwargs.get('classifications', None)
+        self.warnings = kwargs.get('warnings', [])
+        self.statistics = kwargs.get('statistics', None)
+        self.is_error: Literal[False] = False
+        self.kind: Literal["DynamicClassification"] = "DynamicClassification"
+
+    def __repr__(self):
+        return "DynamicClassificationResult(id={}, classifications={}, warnings={}, statistics={}, " \
+               "is_error={})".format(
+                self.id,
+                repr(self.classifications),
+                repr(self.warnings),
+                repr(self.statistics),
+                self.is_error,
+            )[
+                :1024
+            ]
+
+    @classmethod
+    def _from_generated(cls, result):
+        # FIXME: https://github.com/Azure/azure-sdk-for-python/issues/27089
+        classes = result.class_property or result.additional_properties.get("classifications", None)
+        return cls(
+            id=result.id,
+            classifications=[
+                ClassificationCategory._from_generated(c)  # pylint: disable=protected-access
+                for c in classes
+            ],
+            warnings=[
+                TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
+                    w
+                )
+                for w in result.warnings
+            ],
+            statistics=TextDocumentStatistics._from_generated(  # pylint: disable=protected-access
+                result.statistics
+            ),
         )

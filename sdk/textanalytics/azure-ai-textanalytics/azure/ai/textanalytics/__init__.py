@@ -65,6 +65,7 @@ from ._models import (
     SummaryContext,
     PhraseControl,
     AbstractSummaryAction,
+    DynamicClassificationResult,
 )
 from ._generated.models import (
     HealthcareDocumentType,
@@ -98,6 +99,7 @@ from ._generated.models import (
     VolumeUnit,
     WeightUnit,
     PhraseControlStrategy,
+    ClassificationType,
 )
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
 
@@ -195,7 +197,9 @@ __all__ = [
     "SummaryContext",
     "PhraseControlStrategy",
     "PhraseControl",
-    "AbstractSummaryAction"
+    "AbstractSummaryAction",
+    "ClassificationType",
+    "DynamicClassificationResult",
 ]
 
 __version__ = VERSION

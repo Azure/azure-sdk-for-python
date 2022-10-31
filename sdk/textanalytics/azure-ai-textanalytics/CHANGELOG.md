@@ -24,6 +24,7 @@
   `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`, `RecognizeCustomEntitiesResult`,
   `ClassifyDocumentResult`, `ExtractSummaryResult`, and `AbstractSummaryResult` to indicate the language detected by automatic language detection.
 - Added property `script` to `DetectedLanguage` to indicate the script of the input document.
+- Added the `dynamic_classification` client method to perform dynamic classification on documents without needing to train a model.
 
 ### Breaking Changes
 
