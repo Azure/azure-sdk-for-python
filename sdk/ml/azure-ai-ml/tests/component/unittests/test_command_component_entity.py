@@ -1,3 +1,4 @@
+import os
 import sys
 import tempfile
 from io import StringIO
@@ -184,6 +185,17 @@ class TestCommandComponentEntity:
         yaml_path = "./tests/test_configs/components/basic_component_code_local_path.yml"
         yaml_component = load_component(source=yaml_path)
         assert component.code == yaml_component.code
+
+    def test_command_component_code_with_current_folder(self):
+        old_cwd = os.getcwd()
+        os.chdir("./tests/test_configs/components")
+        try:
+            yaml_path = "./basic_component_code_current_folder.yml"
+            component = load_component(yaml_path)
+            with component._resolve_local_code() as code:
+                Path(code.path).resolve().name == "components"
+        finally:
+            os.chdir(old_cwd)
 
     def test_command_component_code_git_path(self):
         yaml_path = "./tests/test_configs/components/component_git_path.yml"
