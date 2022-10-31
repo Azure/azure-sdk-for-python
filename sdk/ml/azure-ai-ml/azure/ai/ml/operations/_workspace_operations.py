@@ -243,26 +243,25 @@ class WorkspaceOperations:
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.Workspace]
         """
         identity = kwargs.get("identity", workspace.identity)
+        existing_workspace = self.get(workspace.name, **kwargs)
         if identity:
             identity = identity._to_workspace_rest_object()
-        update_param = WorkspaceUpdateParameters(
-            tags=workspace.tags,
-            description=kwargs.get("description", workspace.description),
-            friendly_name=kwargs.get("display_name", workspace.display_name),
-            public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
-            image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
-            identity=identity,
-            primary_user_assigned_identity=kwargs.get(
-                "primary_user_assigned_identity", workspace.primary_user_assigned_identity
-            ),
-        )
+            rest_user_assigned_identities = identity.user_assigned_identities
+            # add the uai resource_id which needs to be deleted (which is not provided in the list)
+            if existing_workspace and existing_workspace.identity and \
+                existing_workspace.identity.user_assigned_identities:
+                if rest_user_assigned_identities is None:
+                    rest_user_assigned_identities = {}
+                for uai in existing_workspace.identity.user_assigned_identities:
+                    if uai.resource_id not in rest_user_assigned_identities:
+                        rest_user_assigned_identities[uai.resource_id] = None
+                identity.user_assigned_identities = rest_user_assigned_identities
 
         container_registry = kwargs.get("container_registry", workspace.container_registry)
-        old_workspace = self.get(workspace.name, **kwargs)
         # Empty string is for erasing the value of container_registry, None is to be ignored value
         if (
             container_registry is not None
-            and container_registry != old_workspace.container_registry
+            and container_registry != existing_workspace.container_registry
             and not update_dependent_resources
         ):
             msg = (
@@ -281,7 +280,7 @@ class WorkspaceOperations:
         # Empty string is for erasing the value of application_insights, None is to be ignored value
         if (
             application_insights is not None
-            and application_insights != old_workspace.application_insights
+            and application_insights != existing_workspace.application_insights
             and not update_dependent_resources
         ):
             msg = (
@@ -295,8 +294,20 @@ class WorkspaceOperations:
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        update_param.container_registry = container_registry
-        update_param.application_insights = application_insights
+
+        update_param = WorkspaceUpdateParameters(
+            tags=workspace.tags,
+            description=kwargs.get("description", workspace.description),
+            friendly_name=kwargs.get("display_name", workspace.display_name),
+            public_network_access=kwargs.get("public_network_access", workspace.public_network_access),
+            image_build_compute=kwargs.get("image_build_compute", workspace.image_build_compute),
+            identity=identity,
+            primary_user_assigned_identity=kwargs.get(
+                "primary_user_assigned_identity", workspace.primary_user_assigned_identity
+            ),
+        )
+        update_param.container_registry = container_registry or None
+        update_param.application_insights = application_insights or None
 
         # Only the key uri property of customer_managed_key can be updated.
         # Check if user is updating CMK key uri, if so, add to update_param
