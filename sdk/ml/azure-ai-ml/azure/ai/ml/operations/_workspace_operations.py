@@ -318,7 +318,7 @@ class WorkspaceOperations:
                     key_identifier=customer_managed_key_uri,
                 )
             )
-            
+
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
 
         # pylint: disable=unused-argument
