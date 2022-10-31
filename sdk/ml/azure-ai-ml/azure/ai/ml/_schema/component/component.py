@@ -49,11 +49,6 @@ class ComponentSchema(AssetSchema):
         self._declared_fields.pop("schema_ignored", None)  # pylint: disable=no-member
         super().__init__(*args, **kwargs)
 
-    @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument,
-        data[BASE_PATH_CONTEXT_KEY] = self.context[BASE_PATH_CONTEXT_KEY]
-        return data
-
     @pre_load
     def convert_version_to_str(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use
         if isinstance(data, dict) and data.get("version", None):

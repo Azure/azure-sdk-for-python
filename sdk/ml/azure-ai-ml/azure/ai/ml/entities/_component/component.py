@@ -328,6 +328,7 @@ class Component(
         )
         if yaml_path:
             new_instance._source_path = yaml_path
+            new_instance._base_path = context[BASE_PATH_CONTEXT_KEY]
         return new_instance
 
     @classmethod
