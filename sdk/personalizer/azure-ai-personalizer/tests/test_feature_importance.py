@@ -9,7 +9,6 @@ import uuid
 class TestFeatureImportances(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.skip('Feature importances are not completing successfully')
     @recorded_by_proxy
     def test_run_feature_importance(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
@@ -29,7 +28,7 @@ class TestFeatureImportances(AzureRecordedTestCase):
         feature_importance = client.get_feature_importance(feature_importance_id)
         assert feature_importance["id"] == feature_importance_id
         assert feature_importance["name"] == feature_importance_name
-        assert feature_importance["status"] == "Completed"
+        assert feature_importance["status"] == "Succeeded"
         client.delete_feature_importance(feature_importance_id)
 
     @personalizer_helpers.PersonalizerPreparer()
