@@ -73,6 +73,7 @@ class TestPipelineComponentEntity:
     def test_helloworld_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
         component: PipelineComponent = load_component(source=component_path)
+        assert component._base_path is not None
         exptected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
             "description": "This is the basic pipeline component",

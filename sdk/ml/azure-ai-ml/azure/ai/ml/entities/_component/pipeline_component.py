@@ -381,10 +381,10 @@ class PipelineComponent(Component):
         if jobs:
             try:
                 init_params_dict["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
-            except Exception:  # pylint: disable=broad-except
+            except Exception as e:  # pylint: disable=broad-except
                 # Skip parse jobs if error exists.
                 # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
-                pass
+                module_logger.debug("Parse pipeline component jobs failed with: %s", e)
         init_params_dict.update(super()._from_rest_object_to_init_params(obj))
         return init_params_dict
 
