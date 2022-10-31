@@ -689,7 +689,12 @@ class WebSocketTransport(_AbstractTransport):
             if username or password:
                 http_proxy_auth = (username, password)
         try:
-            from websocket import create_connection, WebSocketAddressException
+            from websocket import (
+                create_connection,
+                WebSocketAddressException,
+                WebSocketTimeoutException,
+                WebSocketConnectionClosedException
+            )
 
             self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
@@ -707,7 +712,7 @@ class WebSocketTransport(_AbstractTransport):
                 description="Failed to authenticate the connection due to exception: " + str(exc),
                 error=exc,
             )
-        except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:
+        except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:    # type: ignore
             self.close()
             if isinstance(exc, WebSocketTimeoutException):
                 message = f'send timed out ({str(exc)})' 
