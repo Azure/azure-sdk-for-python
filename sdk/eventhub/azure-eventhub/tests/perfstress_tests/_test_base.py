@@ -57,6 +57,14 @@ class _EventHubProcessorTest(EventPerfTest):
         if arguments.preload:
             self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name, transport_type=transport_type, uamqp_transport=arguments.uamqp_transport)
 
+    def _build_event(self, data):
+        event = EventData(data)
+        if self.args.event_header:
+            event.raw_amqp_message.header.durable = True
+        if self.args.event_props:
+            event.raw_amqp_message.properties.subject = 'perf'
+        return event
+
     async def _preload_eventhub(self):
         data = get_random_bytes(self.args.event_size)
         async with self.async_producer as producer:
@@ -71,13 +79,13 @@ class _EventHubProcessorTest(EventPerfTest):
                 batch = await producer.create_batch()
                 for i in range(events_to_add):
                     try:
-                        batch.add(EventData(data))
+                        batch.add(self._build_event(data))
                     except ValueError:
                         # Batch full
                         await producer.send_batch(batch)
                         print(f"Loaded {i} of {events_to_add} events.")
                         batch = await producer.create_batch()
-                        batch.add(EventData(data))
+                        batch.add(self._build_event(data))
                 await producer.send_batch(batch)
                 print(f"Finished loading {events_to_add} events.")
 
@@ -128,6 +136,8 @@ class _EventHubProcessorTest(EventPerfTest):
         parser.add_argument('--use-storage-checkpoint', action="store_true", help="Use Blob storage for checkpointing. Default is False (in-memory checkpointing).", default=False)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)        
+        parser.add_argument('--event-props', action="store_true", help="Add properties to the events to increase payload and serialization. Default is False.", default=False)
+        parser.add_argument('--event-header', action="store_true", help="Add a header to the events to increase payload and serialization. Default is False.", default=False)
 
 
 
@@ -174,3 +184,5 @@ class _SendTest(BatchPerfTest):
         parser.add_argument('--batch-size', nargs='?', type=int, help='The number of events that should be included in each batch. Defaults to 100', default=100)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)    
+        parser.add_argument('--event-props', action="store_true", help="Add properties to the events to increase payload and serialization. Default is False.", default=False)
+        parser.add_argument('--event-header', action="store_true", help="Add a header to the events to increase payload and serialization. Default is False.", default=False)
