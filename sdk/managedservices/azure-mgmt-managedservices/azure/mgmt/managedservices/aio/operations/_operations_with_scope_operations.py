@@ -26,7 +26,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._operations import build_list_request
+from ...operations._operations_with_scope_operations import build_list_request
 
 if sys.version_info >= (3, 8):
     from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
@@ -36,14 +36,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class Operations:
+class OperationsWithScopeOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.managedservices.aio.ManagedServicesClient`'s
-        :attr:`operations` attribute.
+        :attr:`operations_with_scope` attribute.
     """
 
     models = _models
@@ -56,9 +56,11 @@ class Operations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace_async
-    async def list(self, **kwargs: Any) -> _models.OperationList:
-        """Gets a list of the operations.
+    async def list(self, scope: str, **kwargs: Any) -> _models.OperationList:
+        """Gets a list of the operations with the scope.
 
+        :param scope: The scope of the resource. Required.
+        :type scope: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: OperationList or the result of cls(response)
         :rtype: ~azure.mgmt.managedservices.models.OperationList
@@ -81,6 +83,7 @@ class Operations:
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.OperationList]
 
         request = build_list_request(
+            scope=scope,
             api_version=api_version,
             template_url=self.list.metadata["url"],
             headers=_headers,
@@ -107,4 +110,4 @@ class Operations:
 
         return deserialized
 
-    list.metadata = {"url": "/providers/Microsoft.ManagedServices/operations"}  # type: ignore
+    list.metadata = {"url": "/{scope}/providers/Microsoft.ManagedServices/operations"}  # type: ignore
