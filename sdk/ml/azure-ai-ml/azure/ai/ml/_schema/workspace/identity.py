@@ -42,5 +42,16 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
+        data["user_assigned_identities"] = self.uai_dict2list(data.pop("user_assigned_identities"))
         data["type"] = snake_to_camel(data.pop("type"))
         return IdentityConfiguration(**data)
+
+    def uai_dict2list(self, uai_dict):
+        res = []
+        for resource_id, meta in uai_dict.items():
+            if not isinstance(meta, ManagedIdentityConfiguration):
+                continue
+            c_id = meta.client_id
+            p_id = meta.principal_id
+            res.append(ManagedIdentityConfiguration(resource_id=resource_id, client_id=c_id, principal_id=p_id))
+        return res
