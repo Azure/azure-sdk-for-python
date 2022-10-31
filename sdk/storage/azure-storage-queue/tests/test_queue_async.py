@@ -879,7 +879,6 @@ class TestAsyncStorageQueue(AsyncStorageRecordedTestCase):
         assert result is not None
 
     @QueuePreparer()
-    @recorded_by_proxy_async
     async def test_account_sas_raises_if_sas_already_in_uri(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
