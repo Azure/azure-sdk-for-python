@@ -506,6 +506,9 @@ class Component(
         if not hasattr(self, "code"):
             raise ValueError(f"{self.__class__} does not have attribute code.")
         code = getattr(self, "code")
+        # special check for git path code value
+        if code is not None and isinstance(code, str) and code.startswith("git+"):
+            yield code
         if code is not None and os.path.isfile(code):
             yield Code(base_path=self._base_path, path=code)
         else:
