@@ -401,8 +401,7 @@ class AsyncTransport(
             self.writer.close()
             await self.writer.wait_closed()
             self.writer, self.reader = None, None
-        if self.sock() is not None:
-            self._shutdown_transpor
+        if self.sock is not None:
             # Call shutdown first to make sure that pending messages
             # reach the AMQP broker if the program exits after
             # calling this method.
@@ -415,14 +414,6 @@ class AsyncTransport(
             self.sock.close()
             self.sock = None
         self.connected = False
-
-    def _shutdown_transport(self):
-        """Unwrap a SSL socket, so we can call shutdown()."""
-        if self.sock is not None:
-            try:
-                self.sock = self.sock.unwrap()
-            except OSError:
-                pass
 
     async def write(self, s):
         try:
