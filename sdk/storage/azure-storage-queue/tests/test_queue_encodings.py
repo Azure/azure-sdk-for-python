@@ -151,7 +151,7 @@ class TestStorageQueueEncoding(StorageRecordedTestCase):
 
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
-        queue = qsc.get_queue_client(self.get_resource_name(TEST_QUEUE_PREFIX))
+        queue = qsc.get_queue_client(self.get_resource_name('failqueue'))
         queue.create_queue()
 
 
