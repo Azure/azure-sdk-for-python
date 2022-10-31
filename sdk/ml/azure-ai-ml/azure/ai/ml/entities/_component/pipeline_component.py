@@ -377,7 +377,7 @@ class PipelineComponent(Component):
     def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
         # Pop jobs to avoid it goes with schema load
         jobs = obj.properties.component_spec.pop("jobs", None)
-        init_params_dict = {}
+        init_params_dict = super()._from_rest_object_to_init_params(obj)
         if jobs:
             try:
                 init_params_dict["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
@@ -385,7 +385,6 @@ class PipelineComponent(Component):
                 # Skip parse jobs if error exists.
                 # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
                 module_logger.debug("Parse pipeline component jobs failed with: %s", e)
-        init_params_dict.update(super()._from_rest_object_to_init_params(obj))
         return init_params_dict
 
     def _to_dict(self) -> Dict:
