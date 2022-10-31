@@ -298,8 +298,9 @@ class Environment(Asset):
             log_and_raise_error(err)
 
     def __eq__(self, other) -> bool:
-        if isinstance(other, Environment):
-            return (
+        if not isinstance(other, Environment):
+            return NotImplemented
+        return (
                 self.name == other.name
                 and self.id == other.id
                 and self.version == other.version
@@ -314,7 +315,6 @@ class Environment(Asset):
                 and self._is_anonymous == other._is_anonymous
                 and self.os_type == other.os_type
             )
-        return False
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
