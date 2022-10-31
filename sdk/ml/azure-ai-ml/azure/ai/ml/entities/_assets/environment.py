@@ -298,21 +298,24 @@ class Environment(Asset):
             log_and_raise_error(err)
 
     def __eq__(self, other) -> bool:
-        return (
-            self.name == other.name
-            and self.id == other.id
-            and self.version == other.version
-            and self.description == other.description
-            and self.tags == other.tags
-            and self.properties == other.properties
-            and self.base_path == other.base_path
-            and self.image == other.image
-            and self.build == other.build
-            and self.conda_file == other.conda_file
-            and self.inference_config == other.inference_config
-            and self._is_anonymous == other._is_anonymous
-            and self.os_type == other.os_type
-        )
+        if other:
+            return (
+                self.name == other.name
+                and self.id == other.id
+                and self.version == other.version
+                and self.description == other.description
+                and self.tags == other.tags
+                and self.properties == other.properties
+                and self.base_path == other.base_path
+                and self.image == other.image
+                and self.build == other.build
+                and self.conda_file == other.conda_file
+                and self.inference_config == other.inference_config
+                and self._is_anonymous == other._is_anonymous
+                and self.os_type == other.os_type
+            )
+        else:
+            return False
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
