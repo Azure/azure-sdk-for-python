@@ -9,7 +9,7 @@ import base64
 import json
 import logging
 import time
-from typing import TYPE_CHECKING
+from typing import Any, Optional
 
 import six
 from azure.core.credentials import AccessToken
@@ -21,14 +21,7 @@ from .._constants import KnownAuthorities
 from .._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from .._internal import wrap_exceptions
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports,unused-import
-    from typing import Any, Optional
+ABC = abc.ABC
 
 _LOGGER = logging.getLogger(__name__)
 

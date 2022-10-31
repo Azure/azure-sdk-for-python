@@ -2,6 +2,7 @@ from typing import Callable
 from unittest.mock import DEFAULT, Mock, call, patch
 
 import pytest
+from azure.ai.ml import MLClient, load_workspace
 from azure.ai.ml._utils.utils import camel_to_snake
 from pytest_mock import MockFixture
 
@@ -106,7 +107,6 @@ class TestWorkspaceOperation:
         def outgoing_call(rg, name, params, polling, cls):
             assert name == "name"
             return DEFAULT
-
         mock_workspace_operation._operation.begin_update.side_effect = outgoing_call
         mocker.patch("azure.ai.ml.operations.WorkspaceOperations.get", return_value=Workspace(name="name"))
         mock_workspace_operation.begin_create(workspace=Workspace(name="name"))
@@ -243,3 +243,10 @@ class TestWorkspaceOperation:
         mock_workspace_operation._default_workspace_name = None
         with pytest.raises(Exception):
             mock_workspace_operation._check_workspace_name(None)
+
+    def test_load_uai_workspace_from_yaml(self, mock_workspace_operation: WorkspaceOperations):
+        params_override = []
+        wps = load_workspace("./tests/test_configs/workspace/workspace_uai.yaml", params_override=params_override)
+        assert isinstance(wps.identity, IdentityConfiguration)
+        assert isinstance(wps.identity.user_assigned_identities, list)
+        assert isinstance(wps.identity.user_assigned_identities[0], ManagedIdentityConfiguration) 
