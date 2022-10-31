@@ -19,7 +19,7 @@ class SendEventBatchTest(_SendTest):
         batch = self.producer.create_batch()
         for _ in range(self.args.batch_size):
             ed = EventData(self.data)
-            ed.raw_amqp_message.header.durable = True
+            ed.raw_amqp_message.header.durable = False
             ed.raw_amqp_message.properties.subject = 'perf'
             batch.add(ed)
         self.producer.send_batch(batch)
@@ -29,7 +29,7 @@ class SendEventBatchTest(_SendTest):
         batch = await self.async_producer.create_batch()
         for _ in range(self.args.batch_size):
             ed = EventData(self.data)
-            ed.raw_amqp_message.header.durable = True
+            ed.raw_amqp_message.header.durable = False
             ed.raw_amqp_message.properties.subject = 'perf'
             batch.add(ed)
         await self.async_producer.send_batch(batch)
