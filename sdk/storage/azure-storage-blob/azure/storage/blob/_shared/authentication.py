@@ -47,11 +47,10 @@ def _wrap_exception(ex, desired_type):
     # TODO: In the future we will log the trace
     return desired_type('{}: {}'.format(ex.__class__.__name__, msg))
 
-
 # This method attempts to emulate the sorting done by the service
 def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str, str]]:
     # Define the custom alphabet for weights
-    custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@[]abcdefghijklmnopqrstuvwxyz{}"
+    custom_weights = "-!#$%&*.^_|~+\"\'(),/`~0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]abcdefghijklmnopqrstuvwxyz{}"
 
     # Build dict of tuples and list of keys
     header_dict = dict()
