@@ -92,9 +92,9 @@ def check_system_proxy_availability() -> None:
     ssl_cert = "SSL_CERT_DIR"
     ca_bundle = "REQUESTS_CA_BUNDLE"
 
-    if not os.environ.get(ssl_cert):
+    if PROXY_URL.startswith("https") and not os.environ.get(ssl_cert):
         _LOGGER.error(f"Please ensure the '{ssl_cert}' environment variable is correctly set in your test environment")
-    if not os.environ.get(ca_bundle):
+    if PROXY_URL.startswith("https") and not os.environ.get(ca_bundle):
         _LOGGER.error(f"Please ensure the '{ca_bundle}' environment variable is correctly set in your test environment")
 
 
