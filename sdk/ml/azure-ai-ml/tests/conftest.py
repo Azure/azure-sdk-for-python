@@ -321,8 +321,8 @@ def batch_endpoint_model(client: MLClient) -> Model:
 
 
 @pytest.fixture
-def light_gbm_model(client: MLClient) -> Model:
-    job_name = "light_gbm_job_" + uuid.uuid4().hex
+def light_gbm_model(client: MLClient, variable_recorder: VariableRecorder) -> Model:
+    job_name = variable_recorder.get_or_record("job_name", "light_gbm_job_" + uuid.uuid4().hex)
     model_name = "lightgbm_predict"  # specified in the mlflow training script
 
     try:
