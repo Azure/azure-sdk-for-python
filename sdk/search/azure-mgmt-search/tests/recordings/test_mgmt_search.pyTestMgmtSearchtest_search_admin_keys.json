@@ -309,8 +309,8 @@
         "x-ms-routing-request-id": "SOUTHEASTASIA:20221031T075940Z:d3832c86-6ff4-43b8-997f-37c2f5fe2034"
       },
       "ResponseBody": {
-        "primaryKey": "m995k06PviWC59Cul5J8Lhm2DbGtAq4GBEEBQKWC0RAzSeCFsy0b",
-        "secondaryKey": "mmWhWv9FLuvKRze6BfNQ8qW2pDNHZXhDf2vtvGp6QnAzSeBeZlXF"
+        "primaryKey": "primaryKey",
+        "secondaryKey": "secondaryKey"
       }
     },
     {
@@ -346,8 +346,8 @@
         "x-ms-routing-request-id": "SOUTHEASTASIA:20221031T075941Z:813ac5da-215a-4440-a30c-135bff0b23f9"
       },
       "ResponseBody": {
-        "primaryKey": "8uV792l9f2F1Xyj940b2xuFjsIQUdNzLR8uFg82cp8AzSeA4DVv3",
-        "secondaryKey": "mmWhWv9FLuvKRze6BfNQ8qW2pDNHZXhDf2vtvGp6QnAzSeBeZlXF"
+        "primaryKey": "primaryKey",
+        "secondaryKey": "secondaryKey"
       }
     }
   ],
