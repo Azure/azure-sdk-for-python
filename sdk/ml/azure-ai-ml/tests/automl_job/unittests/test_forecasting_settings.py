@@ -17,6 +17,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import ShortSeriesHandli
 from azure.ai.ml.entities._job.automl.tabular.forecasting_settings import ForecastingSettings
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestForecastingSettings:
     @pytest.mark.parametrize(

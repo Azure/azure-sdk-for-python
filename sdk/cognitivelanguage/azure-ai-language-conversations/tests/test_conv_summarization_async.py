@@ -39,18 +39,21 @@ class TestConversationalSummarizationAsync(AzureRecordedTestCase):
                                         "text": "Hello, how can I help you?",
                                         "modality": "text",
                                         "id": "1",
+                                        "role": "Agent",
                                         "participantId": "Agent"
                                     },
                                     {
                                         "text": "How to upgrade Office? I am getting error messages the whole day.",
                                         "modality": "text",
                                         "id": "2",
+                                        "role": "Customer",
                                         "participantId": "Customer"
                                     },
                                     {
                                         "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                         "modality": "text",
                                         "id": "3",
+                                        "role": "Agent",
                                         "participantId": "Agent"
                                     }
                                 ],
@@ -62,12 +65,19 @@ class TestConversationalSummarizationAsync(AzureRecordedTestCase):
                     },
                     "tasks": [
                         {
-                            "taskName": "analyze 1",
+                            "taskName": "Issue task",
                             "kind": "ConversationalSummarizationTask",
                             "parameters": {
-                                "summaryAspects": ["Issue, Resolution"]
+                                "summaryAspects": ["issue"]
                             }
-                        }
+                        },
+                        {
+                            "taskName": "Resolution task",
+                            "kind": "ConversationalSummarizationTask",
+                            "parameters": {
+                                "summaryAspects": ["resolution"]
+                            }
+                        },
                     ]
                 }
             )
@@ -85,4 +95,7 @@ class TestConversationalSummarizationAsync(AzureRecordedTestCase):
             # assert - conv result
             conversation_result = task_result["results"]["conversations"][0]
             summaries = conversation_result["summaries"]
-            assert summaries is not None
+            assert summaries
+            for summary in summaries:
+                assert summary["aspect"] in ["issue", "resolution"]
+                assert summary["text"]

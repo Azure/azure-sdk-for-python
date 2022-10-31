@@ -7,11 +7,10 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DeploymentMode(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class DeploymentMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The mode that is used to deploy resources. This value can be either Incremental or Complete. In
     Incremental mode, resources are deployed without deleting existing resources that are not
     included in the template. In Complete mode, resources are deployed and existing resources in

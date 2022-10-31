@@ -16,6 +16,14 @@
   `TemporalSpanResolution`, `VolumeResolution`, `WeightResolution`, `AgeUnit`, `AreaUnit`, `TemporalModifier`,
   `InformationUnit`, `LengthUnit`, `NumberKind`, `RangeKind`, `RelativeTo`, `SpeedUnit`, `TemperatureUnit`,
   `VolumeUnit`, and `WeightUnit`.
+- Added the Abstractive Summarization feature and related models: `AbstractSummaryAction`, `AbstractSummaryResult`, `AbstractiveSummary`,
+  `SummaryContext`, `PhraseControl`, and `PhraseControlStrategy`. Access the feature through the `begin_analyze_actions` API.
+- Added automatic language detection to long-running operation APIs. Pass `auto` into the document `language` hint to use this feature.
+- Added `autodetect_default_language` to long-running operation APIs. Pass as the default/fallback language for automatic language detection.
+- Added property `detected_language` to `RecognizeEntitiesResult`, `RecognizePiiEntitiesResult`, `AnalyzeHealthcareEntitiesResult`,
+  `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`, `RecognizeCustomEntitiesResult`,
+  `ClassifyDocumentResult`, `ExtractSummaryResult`, and `AbstractSummaryResult` to indicate the language detected by automatic language detection.
+- Added property `script` to `DetectedLanguage` to indicate the script of the input document.
 - Added the `dynamic_classification` client method to perform dynamic classification on documents without needing to train a model.
 
 ### Breaking Changes
@@ -23,6 +31,11 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 5.2.1 (2022-10-26)
+
+### Bugs Fixed
+- Returns a more helpful message in the document error when all documents fail for an action in the `begin_analyze_actions` API.
 
 ## 5.2.0 (2022-09-08)
 

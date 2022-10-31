@@ -38,10 +38,10 @@ class QuestionAnsweringClient(QuestionAnsweringClientGenerated):
 
     The API can be used to analyze unstructured text for tasks such as sentiment
     analysis, key phrase extraction, language detection and question answering.
-    Further documentation can be found in https://docs.microsoft.com/azure/cognitive-services/text-analytics/overview
+    Further documentation can be found in https://learn.microsoft.com/azure/cognitive-services/language-service/overview
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
-     https://<resource-name>.api.cognitiveservices.azure.com).
+     https://:code:`<resource-name>`.cognitiveservices.azure.com).
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure.
         This can be the an instance of AzureKeyCredential if using a Language API key

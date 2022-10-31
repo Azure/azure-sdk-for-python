@@ -60,6 +60,11 @@ from ._models import (
     ExtractSummaryAction,
     ExtractSummaryResult,
     SummarySentence,
+    AbstractSummaryResult,
+    AbstractiveSummary,
+    SummaryContext,
+    PhraseControl,
+    AbstractSummaryAction,
     DynamicClassificationResult,
 )
 from ._generated.models import (
@@ -93,6 +98,7 @@ from ._generated.models import (
     TemperatureUnit,
     VolumeUnit,
     WeightUnit,
+    PhraseControlStrategy,
     ClassificationType,
 )
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
@@ -186,6 +192,12 @@ __all__ = [
     "TemperatureUnit",
     "VolumeUnit",
     "WeightUnit",
+    "AbstractSummaryResult",
+    "AbstractiveSummary",
+    "SummaryContext",
+    "PhraseControlStrategy",
+    "PhraseControl",
+    "AbstractSummaryAction",
     "ClassificationType",
     "DynamicClassificationResult",
 ]

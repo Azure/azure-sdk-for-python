@@ -35,6 +35,7 @@ These sample programs show common scenarios for the Text Analytics client's offe
 |[sample_model_version.py][sample_model_version] and [sample_model_version_async.py][sample_model_version_async]|Set the model version for pre-built Text Analytics models|
 |[sample_analyze_healthcare_action.py][sample_analyze_healthcare_action] and [sample_analyze_healthcare_action_async.py][sample_analyze_healthcare_action_async]|Run a healthcare and PII analysis together|
 |[sample_extract_summary.py][extract_summary_sample] and [sample_extract_summary_async.py][extract_summary_sample_async]|As part of the analyze API, run extractive text summarization on documents|
+|[sample_abstract_summary.py][abstract_summary_sample] and [sample_abstract_summary_async.py][abstract_summary_sample_async]|As part of the analyze API, run abstractive text summarization on documents|
 |[sample_dynamic_classification.py][dynamic_classification_sample] and [sample_dynamic_classification_async.py][dynamic_classification_sample_async]|Dynamically classify documents without needing to train a model.|
 
 ## Prerequisites
@@ -116,6 +117,8 @@ what you can do with the Azure Text Analytics client library.
 [sample_analyze_healthcare_action_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_analyze_healthcare_action_async.py
 [extract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_extract_summary.py
 [extract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_extract_summary_async.py
+[abstract_summary_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_abstract_summary.py
+[abstract_summary_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_abstract_summary_async.py
 [dynamic_classification_sample]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/sample_dynamic_classification.py
 [dynamic_classification_sample_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/textanalytics/azure-ai-textanalytics/samples/async_samples/sample_dynamic_classification_async.py
 [pip]: https://pypi.org/project/pip/

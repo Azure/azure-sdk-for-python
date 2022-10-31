@@ -15,7 +15,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 @pytest.mark.xdist_group(name="workspace_connection")
 @pytest.mark.e2etest
-@pytest.mark.mlc
+@pytest.mark.core_sdk_test
 @pytest.mark.usefixtures("recorded_test")
 class TestWorkspaceConnections(AzureRecordedTestCase):
     def test_workspace_connections_create_update_and_delete_python_feed(

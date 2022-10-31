@@ -29,6 +29,7 @@ RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspace
 NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
 LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
+LABELLED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
 DATASTORE_RESOURCE_ID = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/datastores/{}"
 )
@@ -37,6 +38,7 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
 )
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
+LABELLED_RESOURCE_NAME = "{}@{}"
 PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
@@ -102,7 +104,7 @@ EXPERIMENTAL_FIELD_MESSAGE = "This is an experimental field,"
 EXPERIMENTAL_LINK_MESSAGE = (
     "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
 )
-REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "For a more detailed breakdown of the {} schema, please see: {}."
+REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "Visit this link to refer to the {} schema if needed: {}."
 STORAGE_AUTH_MISMATCH_ERROR = "AuthorizationPermissionMismatch"
 SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
 BATCH_JOB_CHILD_RUN_NAME = "batchscoring"
@@ -132,6 +134,8 @@ STORAGE_ACCOUNT_URLS = {
     "AzureFile": "https://{}.file.{}",
 }
 
+DEFAULT_LABEL_NAME = "default"
+DEFAULT_COMPONENT_VERSION = "azureml_default"
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
 SCHEMA_VALIDATION_ERROR_TEMPLATE = (
@@ -562,3 +566,14 @@ class RollingRate:
     DAY = "day"
     HOUR = "hour"
     MINUTE = "minute"
+
+
+class Scope:
+    SUBSCRIPTION="subscription"
+    RESOURCE_GROUP="resource_group"
+
+
+class IdentityType:
+    AML_TOKEN = "aml_token"
+    USER_IDENTITY = "user_identity"
+    MANAGED_IDENTITY = "managed_identity"
