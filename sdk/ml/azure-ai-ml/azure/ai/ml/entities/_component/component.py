@@ -533,7 +533,9 @@ class Component(
                     # that might result in unexpected issues and also break related tests.
                     # therefore we copy deeper to avoid this break.
                     src_path = Path(self._base_path) / code
-                    # .name will return empty string for UNC drive names, so use Path(code).resolve() here
-                    dst_path = Path(tmp_dir) / Path(code).resolve().name
+                    # .name will return empty string for UNC drive names
+                    # so we need src_path.resolve() here to avoid empty string
+                    # that leads to FileExistsError during shutil.copytree
+                    dst_path = Path(tmp_dir) / src_path.resolve().name
                     _copy_folder_ignore_pycache(src_path, dst_path)
                     yield Code(base_path=self._base_path, path=dst_path)
