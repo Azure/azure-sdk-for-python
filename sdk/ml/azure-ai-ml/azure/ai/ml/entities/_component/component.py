@@ -536,6 +536,7 @@ class Component(
                     # .name will return empty string for UNC drive names
                     # so we need src_path.resolve() here to avoid empty string
                     # that leads to FileExistsError during shutil.copytree
+                    # TODO(2056980): replace temp code folder name with constant value
                     dst_path = Path(tmp_dir) / src_path.resolve().name
                     _copy_folder_ignore_pycache(src_path, dst_path)
                     yield Code(base_path=self._base_path, path=dst_path)
