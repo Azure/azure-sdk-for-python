@@ -63,7 +63,7 @@ def _storage_header_sort(input_headers: List[Tuple[str, str]]) -> List[Tuple[str
     for key in header_keys:
         sorted_headers.append((key, header_dict.get(key)))
     return sorted_headers
-    
+
 
 class AzureSigningError(ClientAuthenticationError):
     """
