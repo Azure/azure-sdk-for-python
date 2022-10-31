@@ -2484,6 +2484,12 @@ class ClassificationCategory(DictMixin):
 
     @classmethod
     def _from_generated(cls, result):
+        # FIXME: https://github.com/Azure/azure-sdk-for-python/issues/27089
+        if isinstance(result, dict):
+            return cls(
+                category=result["category"],
+                confidence_score=result["confidenceScore"]
+            )
         return cls(
             category=result.category,
             confidence_score=result.confidence_score
@@ -2806,11 +2812,13 @@ class DynamicClassificationResult(DictMixin):
 
     @classmethod
     def _from_generated(cls, result):
+        # FIXME: https://github.com/Azure/azure-sdk-for-python/issues/27089
+        classes = result.class_property or result.additional_properties.get("classifications", None)
         return cls(
             id=result.id,
             classifications=[
-                ClassificationCategory._from_generated(e)  # pylint: disable=protected-access
-                for e in result.class_property
+                ClassificationCategory._from_generated(c)  # pylint: disable=protected-access
+                for c in classes
             ],
             warnings=[
                 TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access

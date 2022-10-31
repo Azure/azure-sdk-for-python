@@ -31,5 +31,31 @@ class TestDynamicClassification(TextAnalyticsTest):
         ]
         result = client.dynamic_classification(
             documents,
-            categories=["Health", "Politics", "Music", "Sports"]
+            categories=["Health", "Politics", "Music", "Sports"],
+            show_stats=True
         )
+        for res in result:
+            assert res.id
+            assert res.statistics
+            for classification in res.classifications:
+                assert classification.category
+                assert classification.confidence_score is not None
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_dynamic_classification_single(self, client):
+        documents = [
+            "The WHO is issuing a warning about Monkey Pox.",
+            "Mo Salah plays in Liverpool FC in England.",
+        ]
+        result = client.dynamic_classification(
+            documents,
+            categories=["Health", "Politics", "Music", "Sports"],
+            classification_type="single"
+        )
+        for res in result:
+            assert res.id
+            assert len(res.classifications) == 1
+            assert res.classifications[0].category
+            assert res.classifications[0].confidence_score is not None
