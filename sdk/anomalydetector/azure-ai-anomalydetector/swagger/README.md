@@ -4,7 +4,7 @@
 input-file: 
  - https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AnomalyDetector/stable/v1.1/UnivariateAnomalyDetector.json
  - https://github.com/Azure/azure-rest-api-specs/blob/main/specification/cognitiveservices/data-plane/AnomalyDetector/stable/v1.1/MultivariateAnomalyDetector.json
-output-folder: ../azure-ai-anomalydetector-new
+output-folder: ../azure-ai-anomalydetector
 namespace: azure.ai.anomalydetector
 package-name: azure-ai-anomalydetector
 license-header: MICROSOFT_MIT_NO_VERSION
