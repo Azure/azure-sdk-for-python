@@ -18,13 +18,19 @@ class SendEventBatchTest(_SendTest):
     def run_batch_sync(self):
         batch = self.producer.create_batch()
         for _ in range(self.args.batch_size):
-            batch.add(EventData(self.data))
+            ed = EventData(self.data)
+            ed.raw_amqp_message.header.durable = True
+            ed.raw_amqp_message.properties.subject = 'perf'
+            batch.add(ed)
         self.producer.send_batch(batch)
         return self.args.batch_size
 
     async def run_batch_async(self):
         batch = await self.async_producer.create_batch()
         for _ in range(self.args.batch_size):
-            batch.add(EventData(self.data))
+            ed = EventData(self.data)
+            ed.raw_amqp_message.header.durable = True
+            ed.raw_amqp_message.properties.subject = 'perf'
+            batch.add(ed)
         await self.async_producer.send_batch(batch)
         return self.args.batch_size
