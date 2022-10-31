@@ -7,7 +7,7 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 - Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions
 - Conversational PII: Used to extract and redact personally-identifiable info (PII)
 
-[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [REST API][conversationallanguage_restdocs]
+[Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [Analysis REST API documentation][conversationanalysis_restdocs] | [Authoring REST API documentation][conversationanalysis_restdocs_authoring]
 
 ## _Disclaimer_
 
@@ -589,5 +589,7 @@ This project has adopted the [Microsoft Open Source Code of Conduct][code_of_con
 [register_aad_app]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [grant_role_access]: https://docs.microsoft.com/azure/cognitive-services/authentication#assign-a-role-to-a-service-principal
 [default_azure_credential]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential
+[conversationanalysis_restdocs]: https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime
+[conversationanalysis_restdocs_authoring]: https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring
 
 ![Impressions](https://azure-sdk-impressions.azurewebsites.net/api/impressions/azure-sdk-for-python%2Fsdk%2Ftemplate%2Fazure-template%2FREADME.png)
