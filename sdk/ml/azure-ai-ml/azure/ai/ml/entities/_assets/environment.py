@@ -298,7 +298,7 @@ class Environment(Asset):
             log_and_raise_error(err)
 
     def __eq__(self, other) -> bool:
-        if other:
+        if isinstance(other, Environment):
             return (
                 self.name == other.name
                 and self.id == other.id
