@@ -1,0 +1,79 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "Content-Type": "application/json; serialization=Json",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Mon, 31 Oct 2022 19:35:41 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:b6c3025c-7902-40a9-b15e-71c473ce8225_G0, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/test-schema, Timestamp:2022-10-31T19:35:42"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "392",
+        "Content-Type": "application/json; serialization=invalid-format",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The person\u0027s name."
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "The person\u0027s favorite positive number.",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "The person\u0027s favorite color",
+            "type": "string"
+          }
+        }
+      },
+      "StatusCode": 415,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Mon, 31 Oct 2022 19:35:42 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidSchemaType"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidSchemaType",
+          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:4ce5e13c-d4e0-44f6-97b1-a8eadf45572a_G0, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/test-schema, Timestamp:2022-10-31T19:35:42"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

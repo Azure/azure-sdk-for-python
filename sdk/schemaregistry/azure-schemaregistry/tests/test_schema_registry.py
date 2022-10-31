@@ -30,8 +30,8 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader,
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
-    schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net/",
-    schemaregistry_group_avro="fakegroupavro",
+    schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net",
+#    schemaregistry_group_avro="fakegroupavro",
     schemaregistry_group_json="fakegroupjson",
     schemaregistry_group_custom="fakegroupcustom",
 )
@@ -58,7 +58,7 @@ JSON_SCHEMA = {
     }
 }
 JSON_SCHEMA_STR = json.dumps(JSON_SCHEMA, separators=(",", ":"))
-CUSTOM_SCHEMA_STR = """{"customSchema": "https://customschema.com/schemaexample.txt", "name": "sampleSchema", "props": [{"name": "str"}, {"favorite_number": "int"}, {"favorite_color": "str"}]"""
+CUSTOM_SCHEMA_STR = "My favorite color is yellow."
 
 AVRO_FORMAT = "Avro"
 JSON_FORMAT = "Json"

@@ -1,0 +1,99 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "392",
+        "Content-Type": "application/json; serialization=Json",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The person\u0027s name."
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "The person\u0027s favorite positive number.",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "The person\u0027s favorite color",
+            "type": "string"
+          }
+        }
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Mon, 31 Oct 2022 19:35:23 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupjson",
+        "Schema-Id": "55a9ed5b42de46e8bbcefc841678d33f",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/55a9ed5b42de46e8bbcefc841678d33f?api-version=2021-10",
+        "Schema-Name": "test-schema-twice-async-jsoneaa23d51",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51?api-version=2021-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "392",
+        "Content-Type": "application/json; serialization=Json",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The person\u0027s name."
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "The person\u0027s favorite positive number.",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "The person\u0027s favorite color",
+            "type": "string"
+          }
+        }
+      },
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Mon, 31 Oct 2022 19:35:23 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions/1?api-version=2021-10",
+        "Schema-Group-Name": "fakegroupjson",
+        "Schema-Id": "55a9ed5b42de46e8bbcefc841678d33f",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/55a9ed5b42de46e8bbcefc841678d33f?api-version=2021-10",
+        "Schema-Name": "test-schema-twice-async-jsoneaa23d51",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions?api-version=2021-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

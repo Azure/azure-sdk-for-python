@@ -1,0 +1,126 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema:get-id?api-version=2021-10",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "Content-Type": "application/json; serialization=Json",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Mon, 31 Oct 2022 19:35:44 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:0b778c38-ad46-469c-a483-c33198cb6060_G0, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/test-schema:get-id, Timestamp:2022-10-31T19:35:44"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema:get-id?api-version=2021-10",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "392",
+        "Content-Type": "application/json; serialization=invalid-format",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The person\u0027s name."
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "The person\u0027s favorite positive number.",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "The person\u0027s favorite color",
+            "type": "string"
+          }
+        }
+      },
+      "StatusCode": 415,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Mon, 31 Oct 2022 19:35:44 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidSchemaType"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidSchemaType",
+          "message": "Invalid schema type for POST request. \u0027invalid-format\u0027 is not supported. TrackingId:8b3ae41b-faa5-494a-984f-848ecc4746d7_G0, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/test-schema:get-id, Timestamp:2022-10-31T19:35:45"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/never-registered:get-id?api-version=2021-10",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "392",
+        "Content-Type": "application/json; serialization=Json",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": {
+        "$id": "https://example.com/person.schema.json",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "User",
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The person\u0027s name."
+          },
+          "favoriteNumber": {
+            "type": "integer",
+            "description": "The person\u0027s favorite positive number.",
+            "minimum": 0
+          },
+          "favoriteColor": {
+            "description": "The person\u0027s favorite color",
+            "type": "string"
+          }
+        }
+      },
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Mon, 31 Oct 2022 19:35:46 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "ItemNotFound"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "ItemNotFound",
+          "message": "Schema fakegroupjson/never-registered does not exist. TrackingId:8059310a-0c8d-4b0a-93b8-6b8a2cfbbf10_G0, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/never-registered:get-id, Timestamp:2022-10-31T19:35:46"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
