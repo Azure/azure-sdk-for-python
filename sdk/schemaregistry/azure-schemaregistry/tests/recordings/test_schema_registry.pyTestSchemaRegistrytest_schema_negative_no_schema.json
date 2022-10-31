@@ -17,15 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 05:44:36 GMT",
+        "Date": "Mon, 31 Oct 2022 20:17:43 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xBAAAADYG8NoOAAAA; expires=Tue, 29-Nov-2022 05:44:36 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Aqqv3jvDPNNMlgaVc4-yN1EawS9yBAAAAFck8toOAAAA; expires=Wed, 30-Nov-2022 20:17:43 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14059.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xBAAAADYG8NoOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=Aqqv3jvDPNNMlgaVc4-yN1EawS9yBAAAAFck8toOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Sun, 30 Oct 2022 05:44:36 GMT",
+        "Date": "Mon, 31 Oct 2022 20:17:43 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AhcqATHMTEpNjoHsVapr4vulEE-xBAAAADYG8NoOAAAA; expires=Tue, 29-Nov-2022 05:44:36 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=Aqqv3jvDPNNMlgaVc4-yN1EawS9yBAAAAFck8toOAAAA; expires=Wed, 30-Nov-2022 20:17:43 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.13943.8 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -173,10 +173,10 @@
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/a?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/a?api-version=2022-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Accept": "application/json; serialization=Avro",
+        "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
@@ -185,7 +185,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Sun, 30 Oct 2022 05:44:37 GMT",
+        "Date": "Mon, 31 Oct 2022 20:17:44 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -194,15 +194,15 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:a7adaefc-4d83-4814-a8c5-fca077cdc567_G13S3, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/a, Timestamp:2022-10-30T05:44:37"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:06a89c98-ddc9-48f3-8cf9-f2bfbb46e2e9_G3, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-10-31T20:17:44"
         }
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2022-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
-        "Accept": "application/json; serialization=Avro",
+        "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
@@ -211,7 +211,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Sun, 30 Oct 2022 05:44:37 GMT",
+        "Date": "Mon, 31 Oct 2022 20:17:44 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -220,7 +220,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:1b2f707a-2362-417f-8c77-fd62cc83f4d8_G13S3, SystemTracker:fake_resource.servicebus.windows.net/:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-10-30T05:44:38"
+          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:e3b883de-0291-47b0-a527-e5377197f53a_G3, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-10-31T20:17:45"
         }
       }
     }

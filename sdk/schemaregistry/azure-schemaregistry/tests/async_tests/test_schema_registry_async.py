@@ -34,7 +34,7 @@ SchemaRegistryEnvironmentVariableLoader = functools.partial(
     schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net",
 #    schemaregistry_group_avro="fakegroupavro",
     schemaregistry_group_json="fakegroupjson",
-    schemaregistry_group_custom="fakegroupcustom",
+#    schemaregistry_group_custom="fakegroupcustom",
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 JSON_SCHEMA = {
@@ -71,9 +71,11 @@ custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
 
 format_params = [avro_args]
 format_ids = [AVRO_FORMAT]
+format_params = [json_args]
+format_ids = [JSON_FORMAT]
 
-format_params = [json_args, custom_args]
-format_ids = [JSON_FORMAT, CUSTOM_FORMAT]
+#format_params = [json_args, custom_args]
+#format_ids = [JSON_FORMAT, CUSTOM_FORMAT]
 
 class ArgPasser:
     def __call__(self, fn):

@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema:get-id?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema:get-id?api-version=2022-10",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -14,7 +14,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Mon, 31 Oct 2022 19:35:44 GMT",
+        "Date": "Mon, 31 Oct 2022 20:18:10 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -23,12 +23,12 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:0b778c38-ad46-469c-a483-c33198cb6060_G0, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/test-schema:get-id, Timestamp:2022-10-31T19:35:44"
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:8c8b5388-0dfc-407b-b627-5469f693124e_G3, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/test-schema:get-id, Timestamp:2022-10-31T20:18:10"
         }
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema:get-id?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema:get-id?api-version=2022-10",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -61,7 +61,7 @@
       "StatusCode": 415,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Mon, 31 Oct 2022 19:35:44 GMT",
+        "Date": "Mon, 31 Oct 2022 20:18:10 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -70,12 +70,12 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidSchemaType",
-          "message": "Invalid schema type for POST request. \u0027invalid-format\u0027 is not supported. TrackingId:8b3ae41b-faa5-494a-984f-848ecc4746d7_G0, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/test-schema:get-id, Timestamp:2022-10-31T19:35:45"
+          "message": "Invalid schema type for POST request. \u0027invalid-format\u0027 is not supported. TrackingId:6f01b38b-eb21-44de-81cf-bddbe9b24337_G3, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/test-schema:get-id, Timestamp:2022-10-31T20:18:10"
         }
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/never-registered:get-id?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/never-registered:get-id?api-version=2022-10",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -108,7 +108,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Mon, 31 Oct 2022 19:35:46 GMT",
+        "Date": "Mon, 31 Oct 2022 20:18:11 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -117,7 +117,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema fakegroupjson/never-registered does not exist. TrackingId:8059310a-0c8d-4b0a-93b8-6b8a2cfbbf10_G0, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/never-registered:get-id, Timestamp:2022-10-31T19:35:46"
+          "message": "Schema fakegroupjson/never-registered does not exist. TrackingId:36dd0b79-88d5-461a-b9d8-1acf8695415a_G3, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupjson/schemas/never-registered:get-id, Timestamp:2022-10-31T20:18:11"
         }
       }
     }

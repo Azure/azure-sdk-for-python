@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51?api-version=2022-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -34,21 +34,21 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 31 Oct 2022 19:35:23 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions/1?api-version=2021-10",
+        "Date": "Mon, 31 Oct 2022 20:17:59 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroupjson",
         "Schema-Id": "55a9ed5b42de46e8bbcefc841678d33f",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/55a9ed5b42de46e8bbcefc841678d33f?api-version=2021-10",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/55a9ed5b42de46e8bbcefc841678d33f?api-version=2022-10",
         "Schema-Name": "test-schema-twice-async-jsoneaa23d51",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions?api-version=2021-10",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51?api-version=2021-10",
+      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51?api-version=2022-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -81,14 +81,14 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 31 Oct 2022 19:35:23 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions/1?api-version=2021-10",
+        "Date": "Mon, 31 Oct 2022 20:17:59 GMT",
+        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroupjson",
         "Schema-Id": "55a9ed5b42de46e8bbcefc841678d33f",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/55a9ed5b42de46e8bbcefc841678d33f?api-version=2021-10",
+        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/55a9ed5b42de46e8bbcefc841678d33f?api-version=2022-10",
         "Schema-Name": "test-schema-twice-async-jsoneaa23d51",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions?api-version=2021-10",
+        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-async-jsoneaa23d51/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
