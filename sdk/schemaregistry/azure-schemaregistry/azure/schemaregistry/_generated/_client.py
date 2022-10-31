@@ -34,7 +34,7 @@ class AzureSchemaRegistry:  # pylint: disable=client-accepts-api-version-keyword
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :keyword api_version: Api Version. Default value is "2021-10". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-10". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """

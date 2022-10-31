@@ -6,12 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+import sys
 from typing import Any, TYPE_CHECKING
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from .._version import VERSION
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -29,14 +35,14 @@ class AzureSchemaRegistryConfiguration(Configuration):  # pylint: disable=too-ma
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2021-10". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-10". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(AzureSchemaRegistryConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2021-10")  # type: str
+        api_version = kwargs.pop("api_version", "2022-10")  # type: Literal["2022-10"]
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
