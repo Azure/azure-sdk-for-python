@@ -48,11 +48,8 @@ async def sample_dynamic_classification_async() -> None:
             categories=["Health", "Politics", "Music", "Sports"],
             classification_type="Multi"
         )
-        document_results = []
-        async for result in results:
-            document_results.append(result)
 
-    for doc, classification_result in zip(documents, document_results):
+    for doc, classification_result in zip(documents, results):
         if classification_result.kind == "DynamicClassification":
             classifications = classification_result.classifications
             print(f"\n'{doc}' classifications:\n")
