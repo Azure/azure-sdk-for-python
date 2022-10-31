@@ -216,7 +216,7 @@ class DoWhile(LoopNode):
         # pylint: disable=protected-access
 
         validation_result = self._create_empty_validation_result()
-        if not self.condition:
+        if self.condition is None:
             validation_result.append_error(yaml_path="condition", message="The condition cannot be empty.")
         else:
             # Check condition exists in dowhile body.
