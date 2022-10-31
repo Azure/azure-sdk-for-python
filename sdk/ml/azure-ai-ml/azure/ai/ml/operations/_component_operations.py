@@ -603,7 +603,10 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 component_func._job_settings,
                 component_func.__name__,
             )
-        return component_func._pipeline_builder.build()
+        # Normally pipeline component are created when dsl.pipeline inputs are provided
+        # so pipeline input .result() can resolve to correct value.
+        # When pipeline component created without dsl.pipeline inputs, pipeline input .result() won't work.
+        return component_func._pipeline_builder.build(user_provided_kwargs={})
     msg = "Function must be a dsl or mldesigner component function： {!r}"
     raise ValidationException(
         message=msg.format(component_func),
@@ -620,9 +623,12 @@ def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_ba
             pass
         elif isinstance(component.code, Code) or is_registry_id_for_resource(component.code):
             # Code object & registry id need to be resolved into arm id
+            # note that:
+            # 1. Code & CodeOperation are not public for now
+            # 2. AnonymousCodeSchema is not supported in Component for now
+            # So isinstance(component.code, Code) will always be true, or an exception will be raised
+            # in validation stage.
             component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
         else:
-            with component._resolve_local_code() as code_path:
-                component.code = get_arm_id_and_fill_back(
-                    Code(base_path=component._base_path, path=code_path), azureml_type=AzureMLResourceType.CODE
-                )
+            with component._resolve_local_code() as code:
+                component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)

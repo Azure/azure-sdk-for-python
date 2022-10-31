@@ -195,7 +195,6 @@ def test_timeout():
             AzurePowerShellCredential().get_token("scope")
 
     assert proc.communicate.call_count == 1
-    assert proc.kill.call_count == 1
 
 
 def test_unexpected_error():

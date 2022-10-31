@@ -808,7 +808,8 @@
         "fnmatch",
         "posixpath",
         "SEPS",
-        "wargs"
+        "wargs",
+        "pycache"
       ]
     },
     {
@@ -1000,7 +1001,8 @@
         "mybytes",
         "myid",
         "jsonify",
-        "ints"
+        "ints",
+        "inirudebwoy"
       ]
     },
     {

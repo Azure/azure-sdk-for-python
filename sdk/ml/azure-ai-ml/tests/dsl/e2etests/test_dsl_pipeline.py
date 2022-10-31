@@ -1096,7 +1096,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             )
             node2.compute = node_compute
 
-        component = valid_pipeline_func._pipeline_builder.build()
+        component = valid_pipeline_func._pipeline_builder.build(user_provided_kwargs={})
         assert component._auto_increment_version is True
         # Set original module_logger with pkg name to 'Operation' to enable caplog capture logs
         from azure.ai.ml.operations import _component_operations
@@ -1726,6 +1726,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "name": "node1",
                     "mini_batch_size": 5,
+                    "partition_keys": None,
                     "retry_settings": None,
                     "logging_level": "DEBUG",
                     "max_concurrency_per_instance": 1,
@@ -1945,6 +1946,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "outputs": {},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "type": "run_function",
                         "entry_script": "score.py",
@@ -1992,6 +1994,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "outputs": {"job_output_path": {"value": "${{parent.outputs.job_out_data}}", "type": "literal"}},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "type": "run_function",
                         "entry_script": "score.py",
