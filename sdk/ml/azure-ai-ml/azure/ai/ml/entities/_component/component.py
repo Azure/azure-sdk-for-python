@@ -509,7 +509,7 @@ class Component(
         # special check for git path code value
         if code is not None and isinstance(code, str) and code.startswith("git+"):
             yield code
-        if code is not None and os.path.isfile(code):
+        elif code is not None and os.path.isfile(code):
             yield Code(base_path=self._base_path, path=code)
         else:
             with tempfile.TemporaryDirectory() as tmp_dir:

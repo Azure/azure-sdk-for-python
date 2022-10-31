@@ -185,6 +185,13 @@ class TestCommandComponentEntity:
         yaml_component = load_component(source=yaml_path)
         assert component.code == yaml_component.code
 
+    def test_command_component_code_git_path(self):
+        yaml_path = "./tests/test_configs/components/component_git_path.yml"
+        yaml_dict = load_yaml(yaml_path)
+        component = load_component(yaml_path)
+        with component._resolve_local_code() as code:
+            assert code == yaml_dict["code"]
+
     @pytest.mark.skipif(
         sys.version_info[1] == 11,
         reason=f"This test is not compatible with Python 3.11, skip in CI.",
