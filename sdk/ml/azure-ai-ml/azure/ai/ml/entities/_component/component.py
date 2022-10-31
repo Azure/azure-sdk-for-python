@@ -326,7 +326,8 @@ class Component(
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
             **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
         )
-        # Set base path separately to avoid doing this in post load.
+        # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
+        # could be object or dict.
         new_instance._base_path = context[BASE_PATH_CONTEXT_KEY]
         if yaml_path:
             new_instance._source_path = yaml_path
