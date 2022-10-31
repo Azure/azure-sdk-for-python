@@ -779,7 +779,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "version": "1",
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
             "display_name": "Hello World Pipeline Component",
-            "is_deterministic": True,
+            "is_deterministic": False,
             "inputs": {
                 "component_in_path": {"type": "uri_folder", "description": "A path"},
                 "component_in_number": {
@@ -818,7 +818,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "version": "1",
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
             "display_name": "Hello World Pipeline Component",
-            "is_deterministic": True,
+            "is_deterministic": False,
             "inputs": {
                 "component_in_path": {"type": "uri_folder", "description": "A path for pipeline component"},
                 "component_in_number": {

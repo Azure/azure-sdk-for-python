@@ -1160,6 +1160,27 @@
             ]
           },
           {
+            "label": "ML-Workspace",
+            "pathFilter": [
+              "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_workspace_operations.py",
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
+            "label": "ML-WorkspaceConnections",
+            "pathFilter": [
+              "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections",
+              "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
             "label": "Tables",
             "pathFilter": [
               "sdk/tables/"
@@ -1740,7 +1761,7 @@
               "Cognitive - Text Analytics"
             ],
             "mentionees": [
-              "assafi"
+              "mikaelsitruk"
             ]
           },
           {

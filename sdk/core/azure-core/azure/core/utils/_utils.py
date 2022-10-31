@@ -6,7 +6,9 @@
 # --------------------------------------------------------------------------
 import datetime
 from typing import Any, Dict, Iterable, Iterator, Mapping, MutableMapping, Optional, Tuple, Union
+from datetime import timezone
 
+TZ_UTC = timezone.utc  # type: ignore
 
 class _FixedOffset(datetime.tzinfo):
     """Fixed offset in minutes east from UTC.
@@ -30,15 +32,6 @@ class _FixedOffset(datetime.tzinfo):
 
     def dst(self, dt):
         return datetime.timedelta(0)
-
-
-try:
-    from datetime import timezone
-
-    TZ_UTC = timezone.utc  # type: ignore
-except ImportError:
-    TZ_UTC = _FixedOffset(0)  # type: ignore
-
 
 def _convert_to_isoformat(date_time):
     """Deserialize a date in RFC 3339 format to datetime object.
@@ -68,10 +61,7 @@ def _convert_to_isoformat(date_time):
     if delta == 0:
         tzinfo = TZ_UTC
     else:
-        try:
-            tzinfo = datetime.timezone(datetime.timedelta(minutes=delta))
-        except AttributeError:
-            tzinfo = _FixedOffset(delta)
+        tzinfo = timezone(datetime.timedelta(minutes=delta))
 
     try:
         deserialized = datetime.datetime.strptime(timestamp, "%Y-%m-%dT%H:%M:%S.%f")

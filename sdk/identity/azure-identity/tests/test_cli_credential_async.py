@@ -182,7 +182,6 @@ async def test_timeout():
             await AzureCliCredential().get_token("scope")
 
     assert proc.communicate.call_count == 1
-    assert proc.kill.call_count == 1
 
 
 async def test_multitenant_authentication():

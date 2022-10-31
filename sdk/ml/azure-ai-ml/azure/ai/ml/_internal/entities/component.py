@@ -8,12 +8,10 @@ from os import PathLike
 from typing import Dict, Union
 from uuid import UUID
 
-from marshmallow import INCLUDE, Schema
+from marshmallow import Schema
 
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData, ComponentVersionDetails
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
@@ -28,6 +26,7 @@ from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
 from .code import InternalCode
+from ...entities._job.distribution import DistributionConfiguration
 
 
 class InternalComponent(Component):
@@ -178,15 +177,13 @@ class InternalComponent(Component):
         return validation_result
 
     @classmethod
-    def _load_from_rest(cls, obj: ComponentVersionData) -> "InternalComponent":
-        # pylint: disable=no-member
-        loaded_data = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
-            obj.properties.component_spec, unknown=INCLUDE
-        )
-        return InternalComponent(
-            _source=ComponentSource.REMOTE_WORKSPACE_COMPONENT,
-            **loaded_data,
-        )
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+        # put it here as distribution is shared by some components, e.g. command
+        distribution = obj.properties.component_spec.pop("distribution", None)
+        init_kwargs = super()._from_rest_object_to_init_params(obj)
+        if distribution:
+            init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
+        return init_kwargs
 
     def _to_rest_object(self) -> ComponentVersionData:
         component = convert_ordered_dict_to_dict(self._to_dict())
