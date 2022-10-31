@@ -2,7 +2,6 @@ import json
 import os.path
 import re
 import time
-import importlib
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict
@@ -26,7 +25,6 @@ from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.exceptions import JobException, ValidationException
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-from azure.ai.ml._schema.pipeline import pipeline_job
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.polling import LROPoller
 
@@ -67,13 +65,6 @@ def generate_weekly_fixed_job_name(variable_recorder) -> str:
         return variable_recorder.get_or_record(job_name, f"{job_name}_{c[0]}W{c[1]}")
 
     return create_or_record_weekly_fixed_job_name
-
-
-@pytest.fixture()
-def update_pipeline_schema():
-    # Update the job type that the pipeline is supported.
-    schema = pipeline_job.PipelineJobSchema
-    schema._declared_fields['jobs'] = pipeline_job.PipelineJobsField()
 
 
 def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
@@ -1581,70 +1572,3 @@ class TestPipelineJobReuse(AzureRecordedTestCase):
         assert next(artifact_dir.iterdir(), None), "No artifacts were downloaded"
         assert output_dir.exists()
         assert next(output_dir.iterdir(), None), "No outputs were downloaded"
-
-
-@pytest.mark.usefixtures(
-    "recorded_test",
-    "mock_code_hash",
-    "enable_pipeline_private_preview_features",
-    "update_pipeline_schema",
-    "mock_asset_name",
-    "mock_component_hash",
-)
-@pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
-@pytest.mark.e2etest
-@pytest.mark.pipeline_test
-class TestConditionalNodeInPipeline(AzureRecordedTestCase):
-    def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr('name')}]
-        pipeline_job = load_job(
-            "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline.yml",
-            params_override=params_override,
-        )
-        created_pipeline = assert_job_cancel(pipeline_job, client)
-        assert len(created_pipeline.jobs) == 5
-        assert isinstance(created_pipeline.jobs["pipeline_body_node"], Pipeline)
-        assert isinstance(created_pipeline.jobs["do_while_job_with_pipeline_job"], DoWhile)
-        assert isinstance(created_pipeline.jobs["do_while_job_with_command_component"], DoWhile)
-        assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
-        assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
-
-    def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr('name')}]
-        pipeline_job = load_job(
-            "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline_with_primitive_inputs.yml",
-            params_override=params_override,
-        )
-        created_pipeline = assert_job_cancel(pipeline_job, client)
-        assert len(created_pipeline.jobs) == 5
-        assert isinstance(created_pipeline.jobs["pipeline_body_node"], Pipeline)
-        assert isinstance(created_pipeline.jobs["do_while_job_with_pipeline_job"], DoWhile)
-        assert isinstance(created_pipeline.jobs["do_while_job_with_command_component"], DoWhile)
-        assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
-        assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
-
-    def test_pipeline_with_invalid_do_while_node(self, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr('name')}]
-        with pytest.raises(ValidationError) as exception:
-            load_job(
-                "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
-                params_override=params_override,
-            )
-        error_message_str = re.findall(r"(\{.*\})", exception.value.args[0].replace("\n", ""))[0]
-        error_messages = json.loads(error_message_str.replace("\\", "\\\\"))
-
-        def assert_error_message(path, except_message, error_messages):
-            msgs = next(filter(lambda item: item["path"] == path, error_messages))
-            assert except_message == msgs["message"]
-
-        assert_error_message("jobs.empty_mapping.mapping", "Missing data for required field.", error_messages["errors"])
-        assert_error_message(
-            "jobs.out_of_range_max_iteration_count.limits.max_iteration_count",
-            "Must be greater than or equal to 1 and less than or equal to 1000.",
-            error_messages["errors"],
-        )
-        assert_error_message(
-            "jobs.invalid_max_iteration_count.limits.max_iteration_count",
-            "Not a valid integer.",
-            error_messages["errors"],
-        )
