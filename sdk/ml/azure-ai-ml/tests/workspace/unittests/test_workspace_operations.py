@@ -10,6 +10,10 @@ from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.constants import ManagedServiceIdentityType
 from azure.ai.ml.entities import CustomerManagedKey, Workspace, \
     IdentityConfiguration, ManagedIdentityConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    EncryptionKeyVaultUpdateProperties,
+    EncryptionUpdateProperties,
+)
 from azure.ai.ml.operations import WorkspaceOperations
 from azure.core.polling import LROPoller
 
@@ -130,6 +134,7 @@ class TestWorkspaceOperation:
                 ],
             ),
             primary_user_assigned_identity="resource2",
+            customer_managed_key = CustomerManagedKey(key_uri="new_cmk_uri")
         )
 
         def outgoing_call(rg, name, params, polling, cls):
@@ -145,6 +150,11 @@ class TestWorkspaceOperation:
             assert params.identity.type == ManagedServiceIdentityType.USER_ASSIGNED
             assert len(params.identity.user_assigned_identities) == 2
             assert params.primary_user_assigned_identity == "resource2"
+            assert params.encryption == EncryptionUpdateProperties(
+                key_vault_properties=EncryptionKeyVaultUpdateProperties(
+                    key_identifier="new_cmk_uri",
+                )
+            )            
             assert polling is True
             assert callable(cls)
             return DEFAULT
@@ -166,7 +176,7 @@ class TestWorkspaceOperation:
             assert params.friendly_name == ""  # empty string is supported for friendly name.
             assert params.image_build_compute == ""  # was set to empty string, for user to remove the property value.
             assert params.identity is None
-            assert params.primary_user_assigned_identity is None
+            assert params.primary_user_assigned_identity is None        
             assert (
                 params.public_network_access is None
             )  # was not set for update, no change on service side for this property.
