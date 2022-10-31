@@ -1072,6 +1072,14 @@
           {
             "label": "ML-Data",
             "pathFilter": [
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_data",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/_datastore",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/assets/data.py",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_assets/_artifacts/data.py",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_data",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_datastore",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_data_operations.py",
+              "/sdk/ml/azure-ai-ml/azure/ai/ml/operations/_datastore_operations.py",
               "/sdk/ml/data-experiences.tests.yml"
             ],
             "exclude": [
