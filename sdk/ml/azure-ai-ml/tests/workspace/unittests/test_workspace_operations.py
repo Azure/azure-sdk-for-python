@@ -176,7 +176,7 @@ class TestWorkspaceOperation:
             assert params.friendly_name == ""  # empty string is supported for friendly name.
             assert params.image_build_compute == ""  # was set to empty string, for user to remove the property value.
             assert params.identity is None
-            assert params.primary_user_assigned_identity is None        
+            assert params.primary_user_assigned_identity is None
             assert (
                 params.public_network_access is None
             )  # was not set for update, no change on service side for this property.
