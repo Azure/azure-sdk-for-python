@@ -214,6 +214,11 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 # PRLabel: %ML-WorkspaceConnections
 /sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/connections                 @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
 /sdk/ml/azure-ai-ml/azure/ai/ml/entities/_workspace/connections               @paulshealy1 @singankit @diondrapeck @luigiw @harneetvirk @kdestin @MilesHolland @needuv @nthandeMS
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/job/import_job.py                     @xiongrenyi
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_job/import_job.py                   @xiongrenyi
+/sdk/ml/azure-ai-ml/azure/ai/ml/_schema/pipeline/pipeline_import_job.py       @xiongrenyi
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/import_func.py             @xiongrenyi
+/sdk/ml/azure-ai-ml/azure/ai/ml/entities/_builders/import_node.py             @xiongrenyi
 
 # PRLabel: %Maps
 /sdk/maps/                                                           @alextts627
