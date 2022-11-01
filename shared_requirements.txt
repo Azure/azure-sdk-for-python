@@ -151,6 +151,7 @@ yarl<2.0,>=1.0
 #override azure-keyvault-certificates azure-core<2.0.0,>=1.20.0
 #override azure-keyvault-keys azure-core<2.0.0,>=1.24.0
 #override azure-keyvault-keys msrest>=0.7.1
+#override azure-mgmt-datashare msrest>=0.7.1
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.20.0
 #override azure-identity cryptography>=2.5
 #override azure-ai-textanalytics azure-core<2.0.0,>=1.24.0
@@ -496,6 +497,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-hanaonazure typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-eventhub msrest>=0.7.1
 #override azure-mgmt-eventhub azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-datashare typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-redis typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-marketplaceordering typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-logic msrest>=0.7.1
@@ -548,6 +550,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-devcenter msrest>=0.7.1
 #override azure-mgmt-devcenter azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-fluidrelay msrest>=0.6.21
+#override azure-mgmt-datashare azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-fluidrelay azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-developer-loadtesting azure-core<2.0.0,>=1.24.0
 #override azure-developer-loadtesting isodate<1.0.0,>=0.6.1
