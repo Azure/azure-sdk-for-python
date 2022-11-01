@@ -84,10 +84,7 @@ def tensorflow_distribution():
 
     return create_tensorflow_distribution
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 def assert_component_basic_workflow(

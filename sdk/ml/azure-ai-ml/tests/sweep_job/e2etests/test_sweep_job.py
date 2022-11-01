@@ -3,7 +3,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
 
 from azure.ai.ml import MLClient, load_job
@@ -16,10 +16,7 @@ from azure.ai.ml.entities._job.sweep.search_space import LogUniform
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.usefixtures(

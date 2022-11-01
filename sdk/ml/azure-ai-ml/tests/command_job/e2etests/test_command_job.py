@@ -27,10 +27,7 @@ from azure.core.polling import LROPoller
 # here and in the script.
 TEST_PARAMS = {"a_param": "1", "another_param": "2"}
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.timeout(600)
