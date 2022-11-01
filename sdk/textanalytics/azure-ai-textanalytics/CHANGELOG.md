@@ -31,6 +31,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Removed dependencies on `msrest` and `azure-common`.
 
 ## 5.2.1 (2022-10-26)
 
