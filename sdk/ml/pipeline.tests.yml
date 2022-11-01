@@ -4,3 +4,7 @@ extends:
   template: ./tests.yml
   parameters:
     TestMarkArgument: "pipeline_test"
+    CloudConfig:
+      Public:
+        SubscriptionConfiguration: $(python-ml-pipeline-sub-scope)
+        Location: eastus2euap
