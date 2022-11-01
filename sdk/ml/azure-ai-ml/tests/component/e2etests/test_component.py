@@ -9,7 +9,7 @@ import pydash
 import pytest
 
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ListViewType
+from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
@@ -22,8 +22,8 @@ from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
 
+from test_utilities.utils import assert_job_cancel
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
 
@@ -84,10 +84,7 @@ def tensorflow_distribution():
 
     return create_tensorflow_distribution
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 def assert_component_basic_workflow(
@@ -839,13 +836,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline.yml",
             params_override=params_override,
         )
-        job = client.jobs.create_or_update(pipeline_job)
-        try:
-            cancel_poller = client.jobs.begin_cancel(job.name)
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
-        except Exception:
-            pass
+        job = assert_job_cancel(pipeline_job, client)
         name = randstr("component_name_1")
         component = PipelineComponent(name=name, source_job_id=job.id)
         rest_component = client.components.create_or_update(component)

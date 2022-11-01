@@ -6,12 +6,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict
 
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils import is_live
 import pydash
 import pytest
 from marshmallow import ValidationError
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, wait_until_done
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -23,11 +23,9 @@ from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
-from azure.ai.ml.exceptions import JobException, ValidationException
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.ai.ml.exceptions import JobException
+from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES, \
     DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE
@@ -47,18 +45,6 @@ def assert_job_input_output_types(job: PipelineJob):
             assert isinstance(output, NodeOutput)
 
 
-def assert_job_cancel(pipeline, client: MLClient):
-    job = client.jobs.create_or_update(pipeline)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        # skip wait for cancel result to reduce test run duration.
-        # assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
-    return job
-
-
 @pytest.fixture
 def generate_weekly_fixed_job_name(variable_recorder) -> str:
     def create_or_record_weekly_fixed_job_name(job_name: str):
@@ -69,23 +55,7 @@ def generate_weekly_fixed_job_name(variable_recorder) -> str:
     return create_or_record_weekly_fixed_job_name
 
 
-def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
-    poll_start_time = time.time()
-    while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-        time.sleep(_wait_before_polling(time.time() - poll_start_time))
-        job = client.jobs.get(job.name)
-        if timeout is not None and time.time() - poll_start_time > timeout:
-            # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
-            cancel_poller = client.jobs.begin_cancel(job.name)
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
-            return JobStatus.CANCELED
-    return job.status
-
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.usefixtures(
@@ -171,15 +141,13 @@ class TestPipelineJob(AzureRecordedTestCase):
         try:
             job = client.jobs.get(job_name)
         except ResourceNotFoundError:
-            job = client.jobs.create_or_update(
+            job = assert_job_cancel(
                 load_job(
                     source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
                     params_override=[{"name": job_name}],
-                )
+                ),
+                client=client,
             )
-            cancel_poller = client.jobs.begin_cancel(job.name)
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
 
         child_job = next(
             job
@@ -967,7 +935,6 @@ class TestPipelineJob(AzureRecordedTestCase):
                 client.jobs.create_or_update(pipeline)
         elif isinstance(expected_error, JobException):
             assert_job_cancel(pipeline, client)
-            # skip streaming to avoid timeout due to no compute resources. Expected to fail with runtime error
         else:
             raise Exception("Unexpected error type {}".format(type(expected_error)))
 
