@@ -86,9 +86,29 @@ directive:
 - where-operation: ConversationAnalysis_AnalyzeConversation
   transform: >
     $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation for more information.";
+
+# Work around https://github.com/Azure/azure-sdk-for-net/issues/29141
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationResultsKind
+  transform: >
+    $["enum"] = [
+      "conversationalPIIResults",
+      "conversationalSummarizationResults",
+      "conversationalSentimentResults"
+    ];
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationConversationPIIResult
+  transform: >
+    $["x-ms-discriminator-value"] = "conversationalPIIResults";
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationSummarizationResult
+  transform: >
+    $["x-ms-discriminator-value"] = "conversationalSummarizationResults";
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationSentimentResult
+  transform: >
+    $["x-ms-discriminator-value"] = "conversationalSentimentResults";
 ```
-
-
 
 ```yaml
 directive:
