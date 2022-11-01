@@ -154,6 +154,7 @@ yarl<2.0,>=1.0
 #override azure-keyvault-keys isodate>=0.6.1
 #override azure-keyvault-secrets azure-core<2.0.0,>=1.24.0
 #override azure-keyvault-secrets isodate>=0.6.1
+#override azure-mgmt-datashare msrest>=0.7.1
 #override azure-identity cryptography>=2.5
 #override azure-ai-textanalytics azure-core<2.0.0,>=1.24.0
 #override azure-ai-textanalytics msrest>=0.7.0
