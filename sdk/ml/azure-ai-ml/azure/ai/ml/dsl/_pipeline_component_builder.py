@@ -181,7 +181,15 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, *, user_provided_kwargs, non_pipeline_params_dict=None) -> PipelineComponent:
+    def build(self, *, user_provided_kwargs=None, non_pipeline_params_dict=None) -> PipelineComponent:
+        """
+        Build a pipeline component from current pipeline builder.
+
+        :param user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
+        :param non_pipeline_params_dict: Non-pipeline parameters to provided value. None if not exist.
+        """
+        if user_provided_kwargs is None:
+            user_provided_kwargs = {}
         # Clear nodes as we may call build multiple times.
         self.nodes = []
 

@@ -375,15 +375,17 @@ class PipelineComponent(Component):
 
     @classmethod
     def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
-        jobs = obj.properties.component_spec.get("jobs", None)
+        # Pop jobs to avoid it goes with schema load
+        jobs = obj.properties.component_spec.pop("jobs", None)
+        init_params_dict = super()._from_rest_object_to_init_params(obj)
         if jobs:
             try:
-                obj.properties.component_spec["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
-            except Exception:  # pylint: disable=broad-except
+                init_params_dict["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
+            except Exception as e:  # pylint: disable=broad-except
                 # Skip parse jobs if error exists.
                 # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
-                obj.properties.component_spec["jobs"] = None
-        return super()._from_rest_object_to_init_params(obj)
+                module_logger.debug("Parse pipeline component jobs failed with: %s", e)
+        return init_params_dict
 
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""

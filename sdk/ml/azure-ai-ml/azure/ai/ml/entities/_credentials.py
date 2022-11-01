@@ -606,36 +606,30 @@ class IdentityConfiguration(RestTranslatableMixin):
 
     @classmethod
     def _from_workspace_rest_object(cls, obj: RestManagedServiceIdentityConfiguration) -> "IdentityConfiguration":
-        user_assigned_identities = None
-        if obj.user_assigned_identities:
-            user_assigned_identities = {}
-            for k, v in obj.user_assigned_identities.items():
-                metadata = None
-                if v and isinstance(v, RestUserAssignedIdentity):
-                    metadata = ManagedIdentityConfiguration._from_workspace_rest_object(
-                        v
-                    )  # pylint: disable=protected-access
-                user_assigned_identities[k] = metadata
-        return cls(
-            type=obj.type,
-            principal_id=obj.principal_id,
-            tenant_id=obj.tenant_id,
-            user_assigned_identities=user_assigned_identities,
+        from_rest_user_assigned_identities = (
+            [
+                ManagedIdentityConfiguration._from_identity_configuration_rest_object(uai, resource_id=resource_id)
+                for (resource_id, uai) in obj.user_assigned_identities.items()
+            ]
+            if obj.user_assigned_identities
+            else None
         )
+        result = cls(
+            type=camel_to_snake(obj.type),
+            user_assigned_identities=from_rest_user_assigned_identities,
+        )
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
+        return result
 
     def _to_workspace_rest_object(self) -> RestManagedServiceIdentityConfiguration:
-
-        user_assigned_identities = (
+        rest_user_assigned_identities = (
             {uai.resource_id: uai._to_workspace_rest_object() for uai in self.user_assigned_identities}
             if self.user_assigned_identities
             else None
         )
-
         return RestManagedServiceIdentityConfiguration(
-            type=snake_to_pascal(self.type),
-            principal_id=self.principal_id,
-            tenant_id=self.tenant_id,
-            user_assigned_identities=user_assigned_identities,
+            type=snake_to_pascal(self.type), user_assigned_identities=rest_user_assigned_identities
         )
 
     def _to_rest_object(self) -> RestRegistryManagedIdentity:

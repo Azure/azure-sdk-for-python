@@ -498,7 +498,7 @@
             "name": "azureml_anonymous",
             "version": "a4a3a6b6-f20a-42c1-9c33-7ccac0311bda",
             "display_name": "Hello World Pipeline Component",
-            "is_deterministic": "True",
+            "is_deterministic": "False",
             "type": "pipeline",
             "description": "This is the basic pipeline component",
             "tags": {
@@ -649,7 +649,7 @@
             "name": "test_453736630983",
             "version": "1",
             "display_name": "Hello World Pipeline Component",
-            "is_deterministic": "True",
+            "is_deterministic": "False",
             "type": "pipeline",
             "description": "This is the basic pipeline component",
             "tags": {
