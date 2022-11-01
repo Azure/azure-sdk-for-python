@@ -5,6 +5,7 @@ import hashlib
 import json
 import os
 import shutil
+import sys
 from collections import OrderedDict
 from typing import Any, Dict, List, Optional, Union
 from unittest import mock
@@ -223,9 +224,27 @@ def _general_copy(src, dst):
         shutil.copy2(src, dst)
 
 
+def _copy_tree(src, dst, dirs_exist_ok: bool = False, **kwargs) -> None:
+    """Wrap shutil.copytree to handle parameter compatibility with dirs_exist_ok,
+    which is new in Python 3.8.
+
+    For Python version lower than 3.8, manually remove dst path using shutil.rmtree
+    to avoid FileExistsError.
+    """
+    # default value, no extra action needed
+    if dirs_exist_ok is False:
+        shutil.copytree(src=src, dst=dst, **kwargs)
+    elif sys.version_info >= (3, 8):
+        shutil.copytree(src=src, dst=dst, dirs_exist_ok=dirs_exist_ok, **kwargs)
+    else:
+        # for Python version lower than 3.8, manually remove dst path before copy
+        shutil.rmtree(dst)
+        shutil.copytree(src=src, dst=dst, **kwargs)
+
+
 def _copy_folder_ignore_pycache(src, dst):
     """Wrapped `shutil.copytree` function to ignore `__pycache__` during copy folder."""
-    shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    _copy_tree(src, dst, ignore=shutil.ignore_patterns("__pycache__"), dirs_exist_ok=True)
 
 
 def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
