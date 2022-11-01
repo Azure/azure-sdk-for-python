@@ -233,13 +233,13 @@ def _copy_tree(src, dst, dirs_exist_ok: bool = False, **kwargs) -> None:
     """
     # default value, no extra action needed
     if dirs_exist_ok is False:
-        shutil.copytree(src=src, dst=dst, **kwargs)
+        shutil.copytree(src, dst, **kwargs)
     elif sys.version_info >= (3, 8):
-        shutil.copytree(src=src, dst=dst, dirs_exist_ok=dirs_exist_ok, **kwargs)
+        shutil.copytree(src, dst, dirs_exist_ok=dirs_exist_ok, **kwargs)  # pylint: disable=unexpected-keyword-arg
     else:
         # for Python version lower than 3.8, manually remove dst path before copy
         shutil.rmtree(dst)
-        shutil.copytree(src=src, dst=dst, **kwargs)
+        shutil.copytree(src, dst, **kwargs)
 
 
 def _copy_folder_ignore_pycache(src, dst):
