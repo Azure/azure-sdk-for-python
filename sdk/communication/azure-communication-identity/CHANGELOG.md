@@ -1,5 +1,15 @@
 # Release History
 
+## 1.3.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.3.1 (2022-10-28)
 
 ### Bug Fixes
