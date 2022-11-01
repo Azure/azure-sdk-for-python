@@ -555,3 +555,13 @@ def enable_internal_components():
     with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
         # need to call _try_init_internal_components manually as environment variable is set after _internal is imported
         try_enable_internal_components()
+
+
+@pytest.fixture()
+def code_asset_upload_folder_sanitizer(test_proxy, fake_datastore_key):
+    add_general_regex_sanitizer(
+        value="tmp_dir", regex="\\/LocalUpload\\/\\S{32}\\/(\\S+)\\/+", group_for_replace="1"
+    )
+    add_general_regex_sanitizer(
+        value="tmp_dir", regex="\\/LocalUpload\\/[^/\\s]{36}\\/(\\S+)\\/+", group_for_replace="1"
+    )  # for internal code
