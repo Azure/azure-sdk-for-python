@@ -6,6 +6,7 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 - Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, Luis, and Conversation App
 - Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions
 - Conversational PII: Used to extract and redact personally-identifiable info (PII)
+- Conversational Sentiment Analysis: Used to analyze sentiment of conversations
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [Analysis REST API][conversationallanguage_restdocs] | [Authoring REST API][conversationallanguage_restdocs_authoring]
 
@@ -419,6 +420,80 @@ with client:
                     print("offset: {}".format(entity["offset"]))
                     print("length: {}".format(entity["length"]))
 ```
+
+
+### Conversational Sentiment Analysis
+
+Analyze sentiment in conversations.
+
+```python
+# import libraries
+import os
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.language.conversations import ConversationAnalysisClient
+# get secrets
+endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
+key = os.environ["AZURE_CONVERSATIONS_KEY"]
+# analyze query
+client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
+
+with client:
+    poller = client.begin_conversation_analysis(
+        task={
+          "displayName": "Sentiment Analysis from a call center conversation",
+          "analysisInput": {
+            "conversations": [
+              {
+                "id": "1",
+                "language": "en",
+                "modality": "transcript",
+                "conversationItems": [
+                  {
+                    "participantId": "1",
+                    "id": "1",
+                    "text": "I like the service. I do not like the food",
+                    "lexical": "i like the service i do not like the food",
+                  }
+                ]
+              }
+            ]
+          },
+          "tasks": [
+            {
+              "taskName": "Conversation Sentiment Analysis",
+              "kind": "ConversationalSentimentTask",
+              "parameters": {
+                "modelVersion": "latest",
+                "predictionSource": "text"
+              }
+            }
+          ]
+        }
+    )
+
+    result = poller.result()
+    task_result = result["tasks"]["items"][0]
+    print("... view task status ...")
+    print(f"status: {task_result['status']}")
+    conv_sentiment_result = task_result["results"]
+    if conv_sentiment_result["errors"]:
+        print("... errors occurred ...")
+        for error in conv_sentiment_result["errors"]:
+            print(error)
+    else:
+        conversation_result = conv_sentiment_result["conversations"][0]
+        if conversation_result["warnings"]:
+            print("... view warnings ...")
+            for warning in conversation_result["warnings"]:
+                print(warning)
+        else:
+            print("... view task result ...")
+            for conversation in conversation_result["conversationItems"]:
+                print(f"Participant ID: {conversation['participantId']}")
+                print(f"Sentiment: {conversation['sentiment']}")
+                print(f"confidenceScores: {conversation['confidenceScores']}")
+```
+
 
 ### Import a Conversation Project
 This sample shows a common scenario for the authoring part of the SDK
