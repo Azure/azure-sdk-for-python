@@ -1,5 +1,3 @@
-import os
-import time
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable
@@ -12,14 +10,13 @@ from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._job.import_job import DatabaseImportSource, ImportJob
 from azure.ai.ml.entities._job.pipeline.pipeline_job import PipelineJob
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 
 
 from devtools_testutils import AzureRecordedTestCase
 from pytest_mock import MockFixture
 
-from test_utilities.utils import assert_job_cancel
+from test_utilities.utils import assert_job_cancel, wait_until_done
 
 
 @pytest.fixture(autouse=True)
@@ -188,13 +185,6 @@ class TestImportJob(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_import_job_download(self, randstr: Callable[[str], str], client: MLClient) -> None:
-        def wait_until_done(job: Job) -> None:
-            poll_start_time = time.time()
-            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                job = client.jobs.get(job.name)
-            time.sleep(_wait_before_polling(time.time() - poll_start_time))
-
         job = client.jobs.create_or_update(
             load_job(
                 "./tests/test_configs/import_job/import_job_test.yml",
@@ -202,7 +192,7 @@ class TestImportJob(AzureRecordedTestCase):
             )
         )
 
-        wait_until_done(job)
+        wait_until_done(client=client, job=job)
 
         with TemporaryDirectory() as tmp_dirname:
             tmp_path = Path(tmp_dirname)

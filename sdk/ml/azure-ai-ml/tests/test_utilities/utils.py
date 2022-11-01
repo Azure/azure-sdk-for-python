@@ -19,7 +19,8 @@ from devtools_testutils import is_live
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
 from azure.ai.ml.entities import Job, PipelineJob
-from azure.ai.ml.operations._run_history_constants import RunHistoryConstants
+from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
+from azure.ai.ml.operations._run_history_constants import RunHistoryConstants, JobStatus
 from azure.core.polling import LROPoller
 
 _PYTEST_TIMEOUT_METHOD = "signal" if hasattr(signal, "SIGALRM") else "thread"  # use signal when os support SIGALRM
@@ -272,6 +273,17 @@ def delete_file_if_exists(file_path: str):
         os.remove(file_path)
 
 
+def cancel_job(client: MLClient, job: Job) -> None:
+    try:
+        cancel_poller = client.jobs.begin_cancel(job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        # skip wait in recording mode to reduce test run duration.
+        if is_live():
+            assert cancel_poller.result() is None
+    except HttpResponseError:
+        pass
+
+
 def assert_job_cancel(
     job: Job,
     client: MLClient,
@@ -282,12 +294,17 @@ def assert_job_cancel(
     created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
     if check_before_cancelled is not None:
         assert check_before_cancelled(created_job)
-    try:
-        cancel_poller = client.jobs.begin_cancel(created_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        # skip wait for cancel result to reduce test run duration.
-        if is_live():
-            assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
+        cancel_job(client, created_job)
     return created_job
+
+
+def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
+    poll_start_time = time.time()
+    while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
+        time.sleep(_wait_before_polling(time.time() - poll_start_time))
+        job = client.jobs.get(job.name)
+        if timeout is not None and time.time() - poll_start_time > timeout:
+            # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
+            cancel_job(client, job)
+            return JobStatus.CANCELED
+    return job.status

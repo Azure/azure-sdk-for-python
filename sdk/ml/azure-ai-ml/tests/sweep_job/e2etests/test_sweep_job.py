@@ -10,11 +10,11 @@ from azure.ai.ml import MLClient, load_job
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities._builders.command_func import command
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.entities._job.job import Job
 from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from test_utilities.utils import wait_until_done
+
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
@@ -107,13 +107,6 @@ class TestSweepJob(AzureRecordedTestCase):
     @pytest.mark.e2etest
     @pytest.mark.skip(reason="flaky test")
     def test_sweep_job_download(self, randstr: Callable[[str], str], client: MLClient) -> None:
-        def wait_until_done(job: Job) -> None:
-            poll_start_time = time.time()
-            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                job = client.jobs.get(job.name)
-            time.sleep(_wait_before_polling(time.time() - poll_start_time))
-
         job = client.jobs.create_or_update(
             load_job(
                 source="./tests/test_configs/sweep_job/sweep_job_minimal_outputs.yaml",
@@ -121,7 +114,7 @@ class TestSweepJob(AzureRecordedTestCase):
             )
         )
 
-        wait_until_done(job)
+        wait_until_done(job=job, client=client)
 
         with TemporaryDirectory() as tmp_dirname:
             tmp_path = Path(tmp_dirname)
