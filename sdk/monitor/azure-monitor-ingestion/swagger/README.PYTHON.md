@@ -5,7 +5,7 @@
 ### Configuration
 
 ```yaml
-title: MonitorIngestionClient
+title: LogsIngestionClient
 description: Azure Monitor Data Collection Python Client
 generated-metadata: false
 

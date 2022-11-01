@@ -6,16 +6,27 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import List, Any
-from ._operations import MonitorIngestionClientOperationsMixin as GeneratedOps
-from ..._models import UploadLogsStatus, UploadLogsResult
+import sys
+from typing import List, Any, Union, IO, Iterable, Tuple
+from azure.core.exceptions import HttpResponseError
+from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._helpers import _create_gzip_requests
 
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
-class MonitorIngestionClientOperationsMixin(GeneratedOps):
-    async def upload( # pylint: disable=arguments-renamed, arguments-differ
-        self, rule_id: str, stream_name: str, logs: List[Any], **kwargs: Any
-    ) -> UploadLogsResult:
+
+class LogsIngestionClientOperationsMixin(GeneratedOps):
+    async def upload(  # pylint: disable=arguments-renamed, arguments-differ
+        self,
+        rule_id: str,
+        stream_name: str,
+        logs: Union[List[JSON], IO],
+        **kwargs: Any
+    ) -> Iterable[Tuple[HttpResponseError, List[JSON]]]:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
         See error response code and error response message for more detail.
@@ -24,31 +35,23 @@ class MonitorIngestionClientOperationsMixin(GeneratedOps):
         :type rule_id: str
         :param stream: The streamDeclaration name as defined in the Data Collection Rule.
         :type stream: str
-        :param body: An array of objects matching the schema defined by the provided stream.
-        :type body: list[any]
-        :return: UploadLogsResult
-        :rtype: UploadLogsResult
+        :param logs: An array of objects matching the schema defined by the provided stream.
+        :type logs: list[JSON] or IO
+        :return: Iterable[Tuple[HttpResponseError, List[JSON]]]
+        :rtype: Iterable[Tuple[HttpResponseError, List[JSON]]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         requests = _create_gzip_requests(logs)
         results = []
-        status = UploadLogsStatus.SUCCESS
         for request in requests:
-            response = await super().upload(
-                rule_id,
-                stream=stream_name,
-                body=request,
-                content_encoding="gzip",
-                **kwargs
-            )
-            if response is not None:
-                results.append(request)
-                status = UploadLogsStatus.PARTIAL_FAILURE
-        return UploadLogsResult(failed_logs=results, status=status)
-
+            try:
+                await super().upload(rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs)
+            except Exception as err:  # pylint: disable=broad-except
+                results.append((err, request))
+        return results
 
 __all__: List[str] = [
-    "MonitorIngestionClientOperationsMixin"
+    "LogsIngestionClientOperationsMixin"
 ]  # Add all objects you want publicly available to users at this package level
 
 
