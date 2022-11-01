@@ -13,6 +13,18 @@ from .._util import _DSL_TIMEOUT_SECOND
 from devtools_testutils import AzureRecordedTestCase
 
 
+def assert_job_cancel(pipeline, client: MLClient, experiment_name=None):
+    job = client.jobs.create_or_update(pipeline, experiment_name=experiment_name)
+    try:
+        cancel_poller = client.jobs.begin_cancel(job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        # skip wait for cancel result to reduce test run duration.
+        # assert cancel_poller.result() is None
+    except HttpResponseError:
+        pass
+    return job
+
+
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features", "recorded_test")
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
@@ -65,9 +77,7 @@ class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
             test_data=test_data
         )
         pipeline_job.settings.default_compute = "cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline_job)
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
+        assert_job_cancel(pipeline_job, client)
 
     @pytest.mark.skip(reason="request body still exits when re-record and will raise error "
                              "'Unable to find a record for the request' in playback mode")
@@ -101,9 +111,7 @@ class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
             model_input=pipeline_score_model, test_data=test_data
         )
         pipeline_job.settings.default_compute = "cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline_job)
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
+        assert_job_cancel(pipeline_job, client)
 
     @pytest.mark.skip(reason="request body still exits when re-record and will raise error "
                              "'Unable to find a record for the request' in playback mode")
@@ -136,6 +144,4 @@ class TestDSLPipelineOnRegistry(AzureRecordedTestCase):
             test_data=test_data
         )
         pipeline_job.settings.default_compute = "cpu-cluster"
-        pipeline_job = client.jobs.create_or_update(pipeline_job)
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
+        assert_job_cancel(pipeline_job, client)
