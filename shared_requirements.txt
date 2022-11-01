@@ -458,6 +458,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-appconfiguration azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-imagebuilder msrest>=0.6.21
 #override azure-mgmt-imagebuilder azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-search typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-sqlvirtualmachine azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-batch azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-managedservices msrest>=0.7.1
@@ -479,8 +480,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-devtestlabs azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-dataprotection azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-workloadmonitor typing-extensions>=4.3.0; python_version<'3.8.0'
-#override azure-mgmt-search msrest>=0.6.21
-#override azure-mgmt-search azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-search msrest>=0.7.1
+#override azure-mgmt-search azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-notificationhubs azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-commerce msrest>=0.6.21
 #override azure-mgmt-commerce azure-mgmt-core>=1.3.1,<2.0.0
