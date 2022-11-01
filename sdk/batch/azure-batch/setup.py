@@ -67,7 +67,7 @@ setup(
     },
     python_requires=">=3.6",
     install_requires=[
-        'msrest>=0.6.21',
+        'msrest>=0.7.1',
         'msrestazure>=0.4.32,<2.0.0',
         'azure-common~=1.1',
     ],
