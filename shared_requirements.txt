@@ -374,6 +374,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-storagecache msrest>=0.6.21
 #override azure-mgmt-storagecache azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-monitor azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-hanaonazure azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-labservices azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-securityinsight msrest>=0.7.1
 #override azure-mgmt-securityinsight azure-mgmt-core>=1.3.2,<2.0.0
@@ -492,6 +493,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-relay azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-nginx msrest>=0.7.1
 #override azure-mgmt-nginx azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-hanaonazure typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-eventhub msrest>=0.7.1
 #override azure-mgmt-eventhub azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-redis typing-extensions>=4.3.0; python_version<'3.8.0'
@@ -534,6 +536,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-alertsmanagement azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-timeseriesinsights azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-education msrest>=0.6.21
+#override azure-mgmt-hanaonazure msrest>=0.7.1
 #override azure-mgmt-education azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-web azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourceconnector azure-mgmt-core>=1.3.1,<2.0.0
