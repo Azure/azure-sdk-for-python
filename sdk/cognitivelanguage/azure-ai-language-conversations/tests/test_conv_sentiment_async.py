@@ -60,7 +60,7 @@ class TestConversationalSentimentTaskAsync(AzureRecordedTestCase):
             # assert - task result
             task_result = result["tasks"]["items"][0]
             assert task_result["status"] == "succeeded"
-            # assert task_result["kind"] == "conversationalSentimentResults"
+            assert task_result["kind"] == "conversationalSentimentResults"
 
             # assert - conv result
             sentiment_result = task_result["results"]["conversations"][0]

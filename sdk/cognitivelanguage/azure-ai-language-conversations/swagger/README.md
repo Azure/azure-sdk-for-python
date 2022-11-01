@@ -156,7 +156,7 @@ directive:
   - where-operation: AnalyzeConversation_SubmitJob
     transform: >
       $["responses"]["200"] = {
-          "description": "dummy schema to get poller response when calling .result()",
+          "description": "mock schema to get poller response when calling .result()",
           "schema": {
               "$ref": "#/definitions/AnalyzeConversationJobState"
           }
@@ -223,7 +223,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_CancelTrainingJob
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringTrainingJobState"
         }
@@ -231,7 +231,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_DeleteDeployment
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentJobState"
         }
@@ -239,7 +239,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_DeleteProject
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringProjectDeletionJobState"
         }
@@ -247,7 +247,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_DeployProject
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringProjectDeployment"
         }
@@ -255,7 +255,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_Export
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringExportProjectJobState"
         }
@@ -263,7 +263,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_Import
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringImportProjectJobState"
         }
@@ -271,7 +271,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_SwapDeployments
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentJobState"
         }
@@ -279,7 +279,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_Train
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringTrainingJobState"
         }
@@ -287,7 +287,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_AssignDeploymentResources
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
         }
@@ -295,7 +295,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_LoadSnapshot
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringLoadSnapshotJobState"
         }
@@ -303,7 +303,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_UnassignDeploymentResources
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
         }
