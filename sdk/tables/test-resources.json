@@ -15,7 +15,21 @@
           "type": "string",
           "defaultValue": "core.windows.net",
           "metadata": {
-              "description": "The url suffix to use when accessing the storage data plane."
+              "description": "The url suffix to use when accessing the storage data plane in public cloud."
+          }
+        },
+        "tablesStorageUsGovEndpointSuffix": {
+          "type": "string",
+          "defaultValue": "core.usgovcloudapi.net",
+          "metadata": {
+              "description": "The url suffix to use when accessing the storage data plane in UsGov cloud."
+          }
+        },
+        "tablesStorageChinaEndpointSuffix": {
+          "type": "string",
+          "defaultValue": "core.chinacloudapi.cn",
+          "metadata": {
+              "description": "The url suffix to use when accessing the storage data plane in China cloud."
           }
         }
     },
@@ -116,7 +130,7 @@
     "outputs": {
         "TABLES_STORAGE_ENDPOINT_SUFFIX": {
             "type": "string",
-            "value": "[parameters('tablesStorageEndpointSuffix')]"
+            "value": "[if(equals(variables('location'),'usgov'), parameters('tablesStorageUsGovEndpointSuffix'), if(equals(variables('location'),'china'), parameters('tablesStorageChinaEndpointSuffix'), parameters('tablesStorageEndpointSuffix')))]"
         },
         "TABLES_STORAGE_ACCOUNT_NAME": {
             "type": "string",
