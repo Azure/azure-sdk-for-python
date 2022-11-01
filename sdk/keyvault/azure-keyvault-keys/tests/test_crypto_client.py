@@ -725,36 +725,36 @@ def test_local_only_mode_raise():
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
         client.decrypt(EncryptionAlgorithm.a256_gcm, b"...", iv=b"...", authentication_tag=b"...")
-    assert EncryptionAlgorithm.a256_gcm in str(ex.value)
-    assert KeyOperation.decrypt in str(ex.value)
+    assert EncryptionAlgorithm.a256_gcm.value in str(ex.value)
+    assert KeyOperation.decrypt.value in str(ex.value)
 
     # Operation not included in JWK permissions
     with pytest.raises(AzureError) as ex:
         client.encrypt(EncryptionAlgorithm.rsa_oaep, b"...")
-    assert KeyOperation.encrypt in str(ex.value)
+    assert KeyOperation.encrypt.value in str(ex.value)
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
         client.verify(SignatureAlgorithm.es256, b"...", b"...")
-    assert SignatureAlgorithm.es256 in str(ex.value)
-    assert KeyOperation.verify in str(ex.value)
+    assert SignatureAlgorithm.es256.value in str(ex.value)
+    assert KeyOperation.verify.value in str(ex.value)
 
     # Algorithm not supported locally, and operation not included in JWK permissions
     with pytest.raises(NotImplementedError) as ex:
         client.sign(SignatureAlgorithm.rs256, b"...")
-    assert SignatureAlgorithm.rs256 in str(ex.value)
-    assert KeyOperation.sign in str(ex.value)
+    assert SignatureAlgorithm.rs256.value in str(ex.value)
+    assert KeyOperation.sign.value in str(ex.value)
 
     # Algorithm not supported locally
     with pytest.raises(NotImplementedError) as ex:
         client.unwrap_key(KeyWrapAlgorithm.aes_256, b"...")
-    assert KeyWrapAlgorithm.aes_256 in str(ex.value)
-    assert KeyOperation.unwrap_key in str(ex.value)
+    assert KeyWrapAlgorithm.aes_256.value in str(ex.value)
+    assert KeyOperation.unwrap_key.value in str(ex.value)
 
     # Operation not included in JWK permissions
     with pytest.raises(AzureError) as ex:
         client.wrap_key(KeyWrapAlgorithm.rsa_oaep, b"...")
-    assert KeyOperation.wrap_key in str(ex.value)
+    assert KeyOperation.wrap_key.value in str(ex.value)
 
 
 def test_prefers_local_provider():
