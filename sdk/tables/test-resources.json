@@ -130,7 +130,7 @@
     "outputs": {
         "TABLES_STORAGE_ENDPOINT_SUFFIX": {
             "type": "string",
-            "value": "[if(equals(variables('location'),'usgov'), parameters('tablesStorageUsGovEndpointSuffix'), if(equals(variables('location'),'china'), parameters('tablesStorageChinaEndpointSuffix'), parameters('tablesStorageEndpointSuffix')))]"
+            "value": "[if(contains(variables('location'),'usgov'), parameters('tablesStorageUsGovEndpointSuffix'), if(contains(variables('location'),'china'), parameters('tablesStorageChinaEndpointSuffix'), parameters('tablesStorageEndpointSuffix')))]"
         },
         "TABLES_STORAGE_ACCOUNT_NAME": {
             "type": "string",
