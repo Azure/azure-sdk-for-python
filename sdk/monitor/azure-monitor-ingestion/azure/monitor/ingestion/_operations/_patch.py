@@ -8,9 +8,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys
 import concurrent.futures
-from typing import List, Any, Optional, Union, IO, overload
+from typing import List, Any, Optional, Union, IO, Iterable, Tuple
+from azure.core.exceptions import HttpResponseError
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
-from .._models import UploadLogsStatus, UploadLogsResult, UploadLogsError
 from .._helpers import _create_gzip_requests
 
 if sys.version_info >= (3, 9):
@@ -26,10 +26,8 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         rule_id: str,
         stream_name: str,
         logs: Union[List[JSON], IO],
-        *,
-        max_concurrency: Optional[int] = None,
         **kwargs: Any
-    ) -> UploadLogsResult:
+    ) -> Iterable[Tuple[HttpResponseError, List[JSON]]]:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
         See error response code and error response message for more detail.
@@ -40,50 +38,20 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         :type stream_name: str
         :param logs: An array of objects matching the schema defined by the provided stream.
         :type logs: list[JSON] or IO
-        :keyword max_concurrency: Number of parallel threads to use when logs size is > 1mb.
-        :paramtype max_concurrency: int
-        :return: UploadLogsResult
-        :rtype: UploadLogsResult
+        :return: Iterable[Tuple[HttpResponseError, List[JSON]]]
+        :rtype: Iterable[Tuple[HttpResponseError, List[JSON]]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         requests = _create_gzip_requests(logs)
         results = []
-        status = UploadLogsStatus.SUCCESS
-        parallel = max_concurrency and max_concurrency > 1 and len(requests) > 1
-        if parallel:
-            with concurrent.futures.ThreadPoolExecutor(max_concurrency) as executor:
-                future_to_req = {
-                    executor.submit(
-                        super(LogsIngestionClientOperationsMixin, self).upload,
-                        rule_id,
-                        stream=stream_name,
-                        body=request,
-                        content_encoding="gzip",
-                        **kwargs
-                    ): request
-                    for request in requests
-                }
-                for future in concurrent.futures.as_completed(future_to_req):
-                    try:
-                        req = future_to_req[future]
-                        response = future.result()
-                    except Exception as err:  # pylint: disable=bare-exception
-                        results.append(UploadLogsError(error=err, failed_logs=req))
-        else:
-            for request in requests:
-                try:
-                    response = super().upload(
-                        rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs
-                    )
-                except Exception as err:  # pylint: disable=bare-exception
-                    results.append(UploadLogsError(error=err, failed_logs=request))
-        if not results:
-            status = UploadLogsStatus.SUCCESS
-        elif 0 < len(results) < len(requests):
-            status = UploadLogsStatus.PARTIAL_FAILURE
-        else:
-            status = UploadLogsStatus.FAILURE
-        return UploadLogsResult(errors=results, status=status)
+        for request in requests:
+            try:
+                response = super().upload(
+                    rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs
+                )
+            except Exception as err:  # pylint: disable=bare-exception
+                results.append((err, request))
+        return results
 
 __all__: List[str] = [
     "LogsIngestionClientOperationsMixin"

@@ -8,9 +8,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 import sys
 import asyncio
-from typing import List, Any, Optional, Union, IO
+from typing import List, Any, Optional, Union, IO, Iterable, Tuple
+from azure.core.exceptions import HttpResponseError
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
-from ..._models import UploadLogsStatus, UploadLogsResult, UploadLogsError
 from ..._helpers import _create_gzip_requests
 
 if sys.version_info >= (3, 9):
@@ -26,10 +26,8 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         rule_id: str,
         stream_name: str,
         logs: Union[List[JSON], IO],
-        *,
-        max_concurrency: Optional[int] = None,
         **kwargs: Any
-    ) -> UploadLogsResult:
+    ) -> Iterable[Tuple[HttpResponseError, List[JSON]]]:
         """Ingestion API used to directly ingest data using Data Collection Rules.
 
         See error response code and error response message for more detail.
@@ -40,54 +38,18 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         :type stream: str
         :param logs: An array of objects matching the schema defined by the provided stream.
         :type logs: list[JSON] or IO
-        :keyword max_concurrency: Number of parallel threads to use when logs size is > 1mb.
-        :paramtype max_concurrency: int
-        :return: UploadLogsResult
-        :rtype: UploadLogsResult
+        :return: Iterable[Tuple[HttpResponseError, List[JSON]]]
+        :rtype: Iterable[Tuple[HttpResponseError, List[JSON]]]
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         requests = _create_gzip_requests(logs)
         results = []
-        status = UploadLogsStatus.SUCCESS
-        parallel = max_concurrency and max_concurrency > 1 and len(requests) > 1
-        if parallel:
-            tasks = set()
-            results = []
-            for request in requests:
-                if len(tasks) >= max_concurrency:
-                    done, tasks = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
-                    for task in done:
-                        try:
-                            res = task.result()
-                        except Exception as err:  # pylint: disable=bare-exception
-                            results.append(UploadLogsError(error=err, failed_logs=request))
-                tasks.add(
-                    asyncio.create_task(
-                        super(LogsIngestionClientOperationsMixin, self).upload(
-                            rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs
-                        )
-                    )
-                )
-            done, _pending = await asyncio.wait(tasks)
-            for task in done:
-                try:
-                    res = task.result()
-                except Exception as err:  # pylint: disable=bare-exception
-                    results.append(UploadLogsError(error=err, failed_logs=request))
-        else:
-            for request in requests:
-                try:
-                    await super().upload(rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs)
-                except Exception as err:  # pylint: disable=bare-exception
-                    results.append(UploadLogsError(error=err, failed_logs=request))
-        if not results:
-            status = UploadLogsStatus.SUCCESS
-        elif 0 < len(results) < len(requests):
-            status = UploadLogsStatus.PARTIAL_FAILURE
-        else:
-            status = UploadLogsStatus.FAILURE
-        return UploadLogsResult(errors=results, status=status)
-
+        for request in requests:
+            try:
+                await super().upload(rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs)
+            except Exception as err:  # pylint: disable=bare-exception
+                results.append((err, request))
+        return results
 
 __all__: List[str] = [
     "LogsIngestionClientOperationsMixin"
