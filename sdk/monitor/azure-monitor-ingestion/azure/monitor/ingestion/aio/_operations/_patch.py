@@ -7,8 +7,7 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 import sys
-import asyncio
-from typing import List, Any, Optional, Union, IO, Iterable, Tuple
+from typing import List, Any, Union, IO, Iterable, Tuple
 from azure.core.exceptions import HttpResponseError
 from ._operations import LogsIngestionClientOperationsMixin as GeneratedOps
 from ..._helpers import _create_gzip_requests
@@ -47,7 +46,7 @@ class LogsIngestionClientOperationsMixin(GeneratedOps):
         for request in requests:
             try:
                 await super().upload(rule_id, stream=stream_name, body=request, content_encoding="gzip", **kwargs)
-            except Exception as err:  # pylint: disable=bare-exception
+            except Exception as err:  # pylint: disable=broad-except
                 results.append((err, request))
         return results
 
