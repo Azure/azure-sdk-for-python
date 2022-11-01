@@ -18,6 +18,8 @@ class TextAnalyticsApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Cognitive Service for Language or Text Analytics API versions supported by this package"""
 
     #: This is the default version and corresponds to the Cognitive Service for Language API.
+    V2022_10_01_PREVIEW = "2022-10-01-preview"
+    #: This version corresponds to the Cognitive Service for Language API.
     V2022_05_01 = "2022-05-01"
     #: This version corresponds to Text Analytics API.
     V3_1 = "v3.1"
