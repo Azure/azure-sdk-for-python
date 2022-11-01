@@ -9,11 +9,6 @@ Conversational Language Understanding - aka **CLU** for short - is a cloud-based
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [Analysis REST API][conversationallanguage_restdocs] | [Authoring REST API][conversationallanguage_restdocs_authoring]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
-
 ## Getting started
 
 ### Prerequisites
@@ -31,7 +26,7 @@ Install the Azure Conversations client library for Python with [pip][pip_link]:
 pip install azure-ai-language-conversations --pre
 ```
 
-> Note: This version of the client library defaults to the 2022-05-15-preview version of the service
+> Note: This version of the client library defaults to the 2022-10-01-preview version of the service
 
 ### Authenticate the client
 In order to interact with the CLU service, you'll need to create an instance of the [ConversationAnalysisClient][conversationanalysisclient_class] class, or [ConversationAuthoringClient][conversationauthoringclient_class] class. You will need an **endpoint**, and an **API key** to instantiate a client object. For more information regarding authenticating with Cognitive Services, see [Authenticate requests to Azure Cognitive Services][cognitive_auth].
@@ -94,7 +89,7 @@ Set the values of the client ID, tenant ID, and client secret of the AAD applica
 Use the returned token credential to authenticate the client:
 
 ```python
-from azure.ai.textanalytics import ConversationAnalysisClient
+from azure.ai.language.conversations import ConversationAnalysisClient
 from azure.identity import DefaultAzureCredential
 
 credential = DefaultAzureCredential()
