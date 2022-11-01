@@ -33,7 +33,7 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -55,18 +55,6 @@ common_omit_fields = [
     "settings._source",
     "source_job_id",
 ]
-
-
-def assert_job_cancel(pipeline, client: MLClient, experiment_name=None):
-    job = client.jobs.create_or_update(pipeline, experiment_name=experiment_name)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        # skip wait for cancel result to reduce test run duration.
-        # assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
-    return job
 
 
 @pytest.mark.usefixtures(

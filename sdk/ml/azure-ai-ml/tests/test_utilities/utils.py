@@ -1,15 +1,20 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
 import copy
 import os
 import signal
 import tempfile
 import time
-from io import StringIO
 from typing import Dict
 from zipfile import ZipFile
 from io import StringIO
 
 import pydash
 import urllib3
+from azure.core.exceptions import HttpResponseError
+from devtools_testutils import is_live
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -63,8 +68,7 @@ def omit_single_with_wildcard(obj, omit_field: str):
                 new_obj[key] = omit_single_with_wildcard(value, next_omit_field)
             pydash.set_(obj, prefix, new_obj)
         return obj
-    else:
-        return pydash.omit(obj, omit_field)
+    return pydash.omit(obj, omit_field)
 
 
 def omit_with_wildcard(obj, *properties: str):
@@ -84,8 +88,8 @@ def prepare_dsl_curated(
         omit_fields = []
     pipeline_from_yaml = load_job(source=job_yaml)
     if in_rest:
-        dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()
-        pipeline_job_dict = pipeline_from_yaml._to_rest_object().as_dict()
+        dsl_pipeline_job_dict = pipeline._to_rest_object().as_dict()  # pylint: disable=protected-access
+        pipeline_job_dict = pipeline_from_yaml._to_rest_object().as_dict()  # pylint: disable=protected-access
 
         if enable_default_omit_fields:
             omit_fields.extend(
@@ -103,8 +107,8 @@ def prepare_dsl_curated(
                 ]
             )
     else:
-        dsl_pipeline_job_dict = pipeline._to_dict()
-        pipeline_job_dict = pipeline_from_yaml._to_dict()
+        dsl_pipeline_job_dict = pipeline._to_dict()  # pylint: disable=protected-access
+        pipeline_job_dict = pipeline_from_yaml._to_dict()  # pylint: disable=protected-access
         if enable_default_omit_fields:
             omit_fields.extend(
                 [
@@ -136,8 +140,7 @@ def submit_and_wait(ml_client, pipeline_job: PipelineJob, expected_state: str = 
         raise Exception(
             f"Job finished with unexpected status. Got {created_job.status!r} while expecting {expected_state!r}"
         )
-    else:
-        print(f"Job finished: {expected_state!r}")
+    print(f"Job finished: {expected_state!r}")
     assert created_job.status == expected_state
     return created_job
 
@@ -174,9 +177,9 @@ def download_dataset(download_url: str, data_file: str, retries=3) -> None:
     resp.release_conn()
 
     # extract files
-    with ZipFile(data_file, "r") as zip:
+    with ZipFile(data_file, "r") as _zip:
         print("extracting files...")
-        zip.extractall()
+        _zip.extractall()
         print("done")
     # delete zip file
     os.remove(data_file)
@@ -267,3 +270,16 @@ def get_file_contents(file_path: str):
 def delete_file_if_exists(file_path: str):
     if file_path is not None and os.path.exists(file_path):
         os.remove(file_path)
+
+
+def assert_job_cancel(pipeline, client: MLClient, experiment_name=None):
+    job = client.jobs.create_or_update(pipeline, experiment_name=experiment_name)
+    try:
+        cancel_poller = client.jobs.begin_cancel(job.name)
+        assert isinstance(cancel_poller, LROPoller)
+        # skip wait for cancel result to reduce test run duration.
+        if is_live():
+            assert cancel_poller.result() is None
+    except HttpResponseError:
+        pass
+    return job

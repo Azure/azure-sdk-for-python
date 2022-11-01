@@ -1,6 +1,6 @@
 import pytest
 from pathlib import Path
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
 
 from azure.ai.ml import MLClient, load_component, Input, load_model
 from azure.ai.ml.dsl import pipeline
@@ -11,18 +11,6 @@ from azure.core.polling import LROPoller
 from .._util import _DSL_TIMEOUT_SECOND
 
 from devtools_testutils import AzureRecordedTestCase
-
-
-def assert_job_cancel(pipeline, client: MLClient, experiment_name=None):
-    job = client.jobs.create_or_update(pipeline, experiment_name=experiment_name)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        # skip wait for cancel result to reduce test run duration.
-        # assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
-    return job
 
 
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features", "recorded_test")

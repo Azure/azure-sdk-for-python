@@ -11,7 +11,7 @@ from devtools_testutils import is_live
 import pydash
 import pytest
 from marshmallow import ValidationError
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -45,18 +45,6 @@ def assert_job_input_output_types(job: PipelineJob):
             assert isinstance(input, NodeInput)
         for _, output in component.outputs.items():
             assert isinstance(output, NodeOutput)
-
-
-def assert_job_cancel(pipeline, client: MLClient):
-    job = client.jobs.create_or_update(pipeline)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        # skip wait for cancel result to reduce test run duration.
-        # assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
-    return job
 
 
 @pytest.fixture
