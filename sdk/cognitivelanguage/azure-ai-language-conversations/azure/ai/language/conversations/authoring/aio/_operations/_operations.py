@@ -89,7 +89,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Lists the existing projects.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-projects
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-projects
         for more information.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -216,7 +216,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Creates a new project or updates an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/create-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -291,7 +291,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Creates a new project or updates an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/create-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -343,7 +343,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Creates a new project or updates an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/create-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/create-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -456,7 +456,8 @@ class ConversationAuthoringClientOperationsMixin(
     async def get_project(self, project_name: str, **kwargs: Any) -> JSON:
         """Gets the details of a project.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -599,7 +600,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Deletes a project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -797,8 +798,9 @@ class ConversationAuthoringClientOperationsMixin(
     ) -> AsyncLROPoller[JSON]:
         """Triggers a job to export a project's data.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/export for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/export
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1023,8 +1025,9 @@ class ConversationAuthoringClientOperationsMixin(
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/import
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1258,8 +1261,9 @@ class ConversationAuthoringClientOperationsMixin(
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/import
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1353,8 +1357,9 @@ class ConversationAuthoringClientOperationsMixin(
         """Triggers a job to import a project. If a project with the same name already exists, the data of
         that project is replaced.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/import for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/import
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1559,8 +1564,9 @@ class ConversationAuthoringClientOperationsMixin(
     ) -> AsyncLROPoller[JSON]:
         """Triggers a training job for a project.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/train
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1699,8 +1705,9 @@ class ConversationAuthoringClientOperationsMixin(
     ) -> AsyncLROPoller[JSON]:
         """Triggers a training job for a project.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/train
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1818,8 +1825,9 @@ class ConversationAuthoringClientOperationsMixin(
     ) -> AsyncLROPoller[JSON]:
         """Triggers a training job for a project.
 
-        See https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/train for
-        more information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/train
+        for more information.
 
         :param project_name: The name of the project to use. Required.
         :type project_name: str
@@ -1990,7 +1998,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Lists the deployments belonging to a project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-deployments
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -2179,7 +2187,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Swaps two existing deployments with each other.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/swap-deployments
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -2274,7 +2282,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Swaps two existing deployments with each other.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/swap-deployments
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -2361,7 +2369,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Swaps two existing deployments with each other.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/swap-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/swap-deployments
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -2498,7 +2506,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the details of a deployment.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-deployment
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -2659,7 +2667,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Creates a new deployment or replaces an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/deploy-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -2731,7 +2739,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Creates a new deployment or replaces an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/deploy-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -2786,7 +2794,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Creates a new deployment or replaces an existing one.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/deploy-project
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/deploy-project
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -2949,7 +2957,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Deletes a project deployment.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-deployment
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3144,7 +3152,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Deletes a project deployment from the specified assigned resources.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment-from-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-deployment-from-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3195,7 +3203,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Deletes a project deployment from the specified assigned resources.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment-from-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-deployment-from-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3226,7 +3234,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Deletes a project deployment from the specified assigned resources.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-deployment-from-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-deployment-from-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3304,7 +3312,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status of an existing delete deployment from specific resources job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment-delete-from-resources-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-deployment-delete-from-resources-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3428,7 +3436,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status of an existing deployment job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-deployment-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-deployment-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3550,7 +3558,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status of an existing swap deployment job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-swap-deployments-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-swap-deployments-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3669,7 +3677,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status of an export job. Once job completes, returns the project metadata, and assets.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-export-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-export-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3790,7 +3798,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status for an import.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-import-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-import-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -3911,7 +3919,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Lists the trained models belonging to a project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-trained-models
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-trained-models
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4025,7 +4033,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the details of a trained model.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-trained-model
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-trained-model
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4106,7 +4114,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Deletes an existing trained model.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/delete-trained-model
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/delete-trained-model
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4218,7 +4226,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Restores the snapshot of this trained model to be the current working directory of the project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/load-snapshot
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/load-snapshot
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4359,7 +4367,7 @@ class ConversationAuthoringClientOperationsMixin(
         inference results for the data included in the evaluation process.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-results
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-model-evaluation-results
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4502,7 +4510,7 @@ class ConversationAuthoringClientOperationsMixin(
         measurements of the model e.g., F1, Precision, Recall, etc.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-model-evaluation-summary
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-model-evaluation-summary
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4655,7 +4663,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status for loading a snapshot.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-load-snapshot-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-load-snapshot-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4779,7 +4787,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Lists the deployments resources assigned to the project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -4956,7 +4964,7 @@ class ConversationAuthoringClientOperationsMixin(
         https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/assign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/assign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5060,7 +5068,7 @@ class ConversationAuthoringClientOperationsMixin(
         https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/assign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/assign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5150,7 +5158,7 @@ class ConversationAuthoringClientOperationsMixin(
         https://learn.microsoft.com/en-us/azure/cognitive-services/authentication?tabs=powershell#authenticate-with-azure-active-directory
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/assign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/assign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5356,7 +5364,7 @@ class ConversationAuthoringClientOperationsMixin(
         and deletes existing deployments assigned to them.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/unassign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/unassign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5452,7 +5460,7 @@ class ConversationAuthoringClientOperationsMixin(
         and deletes existing deployments assigned to them.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/unassign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/unassign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5540,7 +5548,7 @@ class ConversationAuthoringClientOperationsMixin(
         and deletes existing deployments assigned to them.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/unassign-deployment-resources
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/unassign-deployment-resources
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5677,7 +5685,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status of an existing assign deployment resources job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-assign-deployment-resources-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-assign-deployment-resources-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5796,7 +5804,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status of an existing unassign deployment resources job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-unassign-deployment-resources-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-unassign-deployment-resources-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -5917,7 +5925,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Lists the non-expired training jobs created for a project.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-jobs
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-training-jobs
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6104,7 +6112,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status for a training job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-training-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-training-status
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6310,7 +6318,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Triggers a cancellation for a running training job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/cancel-training-job
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/cancel-training-job
         for more information.
 
         :param project_name: The name of the project to use. Required.
@@ -6474,7 +6482,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Gets the status for a project deletion job.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-project-deletion-status
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-project-deletion-status
         for more information.
 
         :param job_id: The job ID. Required.
@@ -6594,7 +6602,7 @@ class ConversationAuthoringClientOperationsMixin(
         owned by other resources.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-assigned-resource-deployments
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-assigned-resource-deployments
         for more information.
 
         :keyword top: The maximum number of resources to return from the collection. Default value is
@@ -6707,7 +6715,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Lists the supported languages for the given project type.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-languages
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-supported-languages
         for more information.
 
         :keyword project_kind: The project kind. Known values are: "Conversation", "Orchestration", and
@@ -6823,7 +6831,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Lists the supported prebuilt entities that can be used while creating composed entities.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/get-supported-prebuilt-entities
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/get-supported-prebuilt-entities
         for more information.
 
         :keyword language: The language to get supported prebuilt entities for. Required if
@@ -6937,7 +6945,7 @@ class ConversationAuthoringClientOperationsMixin(
         """Lists the support training config version for a given project type.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversational-analysis-authoring/list-training-config-versions
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversational-analysis-authoring/list-training-config-versions
         for more information.
 
         :keyword project_kind: The project kind. Known values are: "Conversation", "Orchestration", and
