@@ -202,7 +202,7 @@ class TestCommandComponentEntity:
         yaml_dict = load_yaml(yaml_path)
         component = load_component(yaml_path)
         with component._resolve_local_code() as code:
-            assert code == yaml_dict["code"]
+            assert code.path == yaml_dict["code"]
 
     @pytest.mark.skipif(
         sys.version_info[1] == 11,

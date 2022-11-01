@@ -192,7 +192,10 @@ class DoWhile(LoopNode):
             port_obj = node_ports.get(port, None)
         else:
             port_obj = port
-        if port_obj is not None and port_obj._owner._instance_id != self.body._instance_id: # pylint: disable=protected-access
+        if (
+            port_obj is not None
+            and port_obj._owner._instance_id != self.body._instance_id  # pylint: disable=protected-access
+        ):
             # Check the port owner is dowhile body.
             validation_result.append_error(
                 yaml_path=yaml_path,

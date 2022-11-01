@@ -30,11 +30,11 @@ from devtools_testutils import (
     add_remove_header_sanitizer,
     is_live,
     set_custom_default_matcher,
-    test_proxy,
+    set_bodiless_matcher,
 )
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
-from devtools_testutils.proxy_fixtures import VariableRecorder, variable_recorder
+from devtools_testutils.proxy_fixtures import VariableRecorder
 from pytest_mock import MockFixture
 
 from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
@@ -555,3 +555,22 @@ def enable_internal_components():
     with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
         # need to call _try_init_internal_components manually as environment variable is set after _internal is imported
         try_enable_internal_components()
+
+
+@pytest.fixture()
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
+
+
+def pytest_configure(config):
+    # register customized pytest markers
+    for marker, description in [
+        ("e2etest", "marks tests as end to end tests, which involve requests to the server"),
+        ("unittest", "marks tests as unit tests, which do not involve requests to the server"),
+        ("pipeline_test", "marks tests as pipeline tests, which will create pipeline jobs during testing"),
+        ("automl_test", "marks tests as automl tests, which will create automl jobs during testing"),
+        ("production_experience_test", "marks tests as production experience tests"),
+    ]:
+        config.addinivalue_line("markers", f"{marker}: {description}")
+
+    config.addinivalue_line("markers", f"{marker}: {description}")

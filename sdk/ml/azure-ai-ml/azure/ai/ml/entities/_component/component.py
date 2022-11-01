@@ -326,6 +326,9 @@ class Component(
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
             **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
         )
+        # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
+        # could be object or dict.
+        new_instance._base_path = context[BASE_PATH_CONTEXT_KEY]
         if yaml_path:
             new_instance._source_path = yaml_path
         return new_instance
@@ -508,7 +511,7 @@ class Component(
         code = getattr(self, "code")
         # special check for git path code value
         if code is not None and isinstance(code, str) and code.startswith("git+"):
-            yield code
+            yield Code(base_path=self._base_path, path=code)
         elif code is not None and os.path.isfile(code):
             yield Code(base_path=self._base_path, path=code)
         else:
