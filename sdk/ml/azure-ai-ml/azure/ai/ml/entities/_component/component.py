@@ -530,16 +530,8 @@ class Component(
                     yield Code(base_path=self._base_path, path=code)
                 else:
                     # copy to temp folder to filter potential __pycache__
-                    # note that the dst here is one level deeper than the temp folder,
-                    # when upload code asset, the URL contains one level higher than the file,
-                    # if we simply copy to temp folder, the URL will contain random temp folder name,
-                    # that might result in unexpected issues and also break related tests.
-                    # therefore we copy deeper to avoid this break.
-                    src_path = Path(self._base_path) / code
-                    # .name will return empty string for UNC drive names
-                    # so we need src_path.resolve() here to avoid empty string
-                    # that leads to FileExistsError during shutil.copytree
-                    # TODO(2056980): replace temp code folder name with constant value
-                    dst_path = Path(tmp_dir) / src_path.resolve().name
+                    # this shall be implemented using ignore file to improve performance
+                    src_path = (Path(self._base_path) / code).resolve()
+                    dst_path = Path(tmp_dir).resolve()
                     _copy_folder_ignore_pycache(src_path, dst_path)
                     yield Code(base_path=self._base_path, path=dst_path)
