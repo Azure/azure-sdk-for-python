@@ -1,12 +1,11 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/0dd327e7-c93e-474f-8f08-d8fde5a01a05?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/ec5e02b9-2769-44cd-8cfe-6af2897f3120?api-version=2022-09-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "91",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
@@ -18,86 +17,84 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "0022bdf4-2261-4226-9976-744a70e2ab8c",
+        "apim-request-id": "813cdcbf-d520-488c-8e96-383b526d381f",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 01 Nov 2022 20:34:29 GMT",
+        "Date": "Tue, 01 Nov 2022 20:35:31 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1212",
+        "x-envoy-upstream-service-time": "1538",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/0dd327e7-c93e-474f-8f08-d8fde5a01a05?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/ec5e02b9-2769-44cd-8cfe-6af2897f3120?api-version=2022-09-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "b471d2f2-eac4-415d-9e52-8d053b2980fd",
+        "apim-request-id": "d4030efb-b5fb-47e9-bff4-a5a4fab58493",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "263",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 01 Nov 2022 20:34:29 GMT",
+        "Date": "Tue, 01 Nov 2022 20:35:31 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "227",
+        "x-envoy-upstream-service-time": "186",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "id": "0dd327e7-c93e-474f-8f08-d8fde5a01a05",
+        "id": "ec5e02b9-2769-44cd-8cfe-6af2897f3120",
         "name": "python_sdk_test_feature_imp",
         "startTime": "2022-09-20T00:00:00Z",
         "endTime": "2022-09-30T00:00:00Z",
-        "creationTime": "2022-11-01T20:34:28.0352203Z",
+        "creationTime": "2022-11-01T20:35:30.6780165Z",
         "status": "Running",
         "featureScores": []
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/0dd327e7-c93e-474f-8f08-d8fde5a01a05?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/ec5e02b9-2769-44cd-8cfe-6af2897f3120?api-version=2022-09-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1f66439e-5eaf-44b6-918f-6b09052e27d2",
+        "apim-request-id": "73786f25-dade-4c1e-852d-4fc8dfcdb275",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "4029",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 01 Nov 2022 20:35:29 GMT",
+        "Date": "Tue, 01 Nov 2022 20:36:32 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "63",
+        "x-envoy-upstream-service-time": "61",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "id": "0dd327e7-c93e-474f-8f08-d8fde5a01a05",
+        "id": "ec5e02b9-2769-44cd-8cfe-6af2897f3120",
         "name": "python_sdk_test_feature_imp",
         "startTime": "2022-09-20T00:00:00Z",
         "endTime": "2022-09-30T00:00:00Z",
-        "creationTime": "2022-11-01T20:34:28.0352203Z",
+        "creationTime": "2022-11-01T20:35:30.6780165Z",
         "status": "Succeeded",
         "featureScores": [
           {
@@ -299,22 +296,21 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/0dd327e7-c93e-474f-8f08-d8fde5a01a05?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/ec5e02b9-2769-44cd-8cfe-6af2897f3120?api-version=2022-09-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "75227268-64a3-41b4-83a7-fe24643e9d0a",
+        "apim-request-id": "639e69f6-a3dc-439e-8c20-ed2236ab81b5",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "4029",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 01 Nov 2022 20:35:29 GMT",
+        "Date": "Tue, 01 Nov 2022 20:36:32 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
@@ -324,11 +320,11 @@
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "id": "0dd327e7-c93e-474f-8f08-d8fde5a01a05",
+        "id": "ec5e02b9-2769-44cd-8cfe-6af2897f3120",
         "name": "python_sdk_test_feature_imp",
         "startTime": "2022-09-20T00:00:00Z",
         "endTime": "2022-09-30T00:00:00Z",
-        "creationTime": "2022-11-01T20:34:28.0352203Z",
+        "creationTime": "2022-11-01T20:35:30.6780165Z",
         "status": "Succeeded",
         "featureScores": [
           {
@@ -530,28 +526,27 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/0dd327e7-c93e-474f-8f08-d8fde5a01a05?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/ec5e02b9-2769-44cd-8cfe-6af2897f3120?api-version=2022-09-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-ai-personalizer/1.0.0b1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "0a6412fd-a9df-45d4-8caf-111d397ea668",
+        "apim-request-id": "4d7ff21a-35ca-4bcb-983f-8fa49b89088b",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Tue, 01 Nov 2022 20:35:29 GMT",
+        "Date": "Tue, 01 Nov 2022 20:36:33 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "397",
+        "x-envoy-upstream-service-time": "340",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": null

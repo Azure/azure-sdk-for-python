@@ -9,7 +9,6 @@ import uuid
 class TestEvaluations(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.skip('Get evaluation api is currently failing')
     @recorded_by_proxy
     def test_run_evaluation(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
@@ -33,7 +32,7 @@ class TestEvaluations(AzureRecordedTestCase):
         evaluation = client.get_evaluation(evaluation_id, start_time=iso_start_time, end_time=iso_end_time)
         assert evaluation["id"] == evaluation_id
         assert evaluation["name"] == evaluation_name
-        assert evaluation["status"] == "Completed"
+        assert evaluation["status"] == "Succeeded"
         client.delete_evaluation(evaluation_id)
 
     @personalizer_helpers.PersonalizerPreparer()
@@ -46,9 +45,10 @@ class TestEvaluations(AzureRecordedTestCase):
 
     def is_evaluation_final(self, client, evaluation_id, iso_start_time, iso_end_time):
         evaluation = client.get_evaluation(evaluation_id, start_time=iso_start_time, end_time=iso_end_time)
-        return evaluation["status"] == "Completed" \
+        return evaluation["status"] == "Succeeded" \
                or evaluation["status"] == "Failed" \
-               or evaluation["status"] == "Timeout"
+               or evaluation["status"] == "Timeout" \
+               or evaluation["status"] == "Canceled"
 
     def wait_for_evaluation_to_finish(self, client, evaluation_id, iso_start_time, iso_end_time):
         while not self.is_evaluation_final(client, evaluation_id, iso_start_time, iso_end_time):

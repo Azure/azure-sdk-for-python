@@ -13,7 +13,6 @@ import personalizer_helpers
 class TestEvaluationsAsync(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.skip('Get evaluation api is currently failing')
     @recorded_by_proxy_async
     async def test_run_evaluation(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
@@ -22,8 +21,8 @@ class TestEvaluationsAsync(AzureRecordedTestCase):
             personalizer_endpoint, personalizer_api_key)
         evaluation_id = str(uuid.uuid4())
         evaluation_name = "python_sdk_test_evaluation"
-        start_time = date.fromisoformat("2022-09-24")
-        end_time = date.fromisoformat("2022-09-26")
+        start_time = date.fromisoformat("2022-09-20")
+        end_time = date.fromisoformat("2022-09-30")
         iso_start_time = start_time.strftime("%Y%m%dT%H%M%S")
         iso_end_time = end_time.strftime("%Y%m%dT%H%M%S")
         evaluation_contract = {
@@ -38,7 +37,7 @@ class TestEvaluationsAsync(AzureRecordedTestCase):
         evaluation = await client.get_evaluation(evaluation_id, start_time=iso_start_time, end_time=iso_end_time)
         assert evaluation["id"] == evaluation_id
         assert evaluation["name"] == evaluation_name
-        assert evaluation["status"] == "Completed"
+        assert evaluation["status"] == "Succeeded"
         await client.delete_evaluation(evaluation_id)
 
     @personalizer_helpers.PersonalizerPreparer()
@@ -52,9 +51,10 @@ class TestEvaluationsAsync(AzureRecordedTestCase):
 
     async def is_evaluation_final(self, client, evaluation_id, iso_start_time, iso_end_time):
         evaluation = await client.get_evaluation(evaluation_id, start_time=iso_start_time, end_time=iso_end_time)
-        return evaluation["status"] == "Completed" \
+        return evaluation["status"] == "Succeeded" \
                or evaluation["status"] == "Failed" \
-               or evaluation["status"] == "Timeout"
+               or evaluation["status"] == "Timeout" \
+               or evaluation["status"] == "Canceled"
 
     async def wait_for_evaluation_to_finish(self, client, evaluation_id, iso_start_time, iso_end_time):
         while not await self.is_evaluation_final(client, evaluation_id, iso_start_time, iso_end_time):

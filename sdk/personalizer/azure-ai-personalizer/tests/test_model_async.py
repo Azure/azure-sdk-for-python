@@ -8,7 +8,6 @@ import personalizer_helpers_async
 class TestModelAsync(AzureRecordedTestCase):
 
     @personalizer_helpers.PersonalizerPreparer()
-    @pytest.mark.skip('Get model is returning bad request')
     @recorded_by_proxy_async
     async def test_model_import_export(self, **kwargs):
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')

@@ -15,48 +15,16 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
 from ._configuration import PersonalizerClientConfiguration
-from .operations import (
-    EvaluationsOperations,
-    EventsOperations,
-    FeatureImportancesOperations,
-    LogOperations,
-    ModelOperations,
-    MultiSlotEventsOperations,
-    MultiSlotOperations,
-    PersonalizerClientOperationsMixin,
-    PolicyOperations,
-    ServiceConfigurationOperations,
-)
+from ._operations import PersonalizerClientOperationsMixin
 
 
-class PersonalizerClient(
-    PersonalizerClientOperationsMixin
-):  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class PersonalizerClient(PersonalizerClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """Personalizer Service is an Azure Cognitive Service that makes it easy to target content and
     experiences without complex pre-analysis or cleanup of past data. Given a context and
     featurized content, the Personalizer Service returns which content item to show to users in
     rewardActionId. As rewards are sent in response to the use of rewardActionId, the reinforcement
     learning algorithm will improve the model and improve performance of future rank calls.
 
-    :ivar service_configuration: ServiceConfigurationOperations operations
-    :vartype service_configuration:
-     azure.ai.personalizer.aio.operations.ServiceConfigurationOperations
-    :ivar policy: PolicyOperations operations
-    :vartype policy: azure.ai.personalizer.aio.operations.PolicyOperations
-    :ivar evaluations: EvaluationsOperations operations
-    :vartype evaluations: azure.ai.personalizer.aio.operations.EvaluationsOperations
-    :ivar events: EventsOperations operations
-    :vartype events: azure.ai.personalizer.aio.operations.EventsOperations
-    :ivar feature_importances: FeatureImportancesOperations operations
-    :vartype feature_importances: azure.ai.personalizer.aio.operations.FeatureImportancesOperations
-    :ivar log: LogOperations operations
-    :vartype log: azure.ai.personalizer.aio.operations.LogOperations
-    :ivar model: ModelOperations operations
-    :vartype model: azure.ai.personalizer.aio.operations.ModelOperations
-    :ivar multi_slot_events: MultiSlotEventsOperations operations
-    :vartype multi_slot_events: azure.ai.personalizer.aio.operations.MultiSlotEventsOperations
-    :ivar multi_slot: MultiSlotOperations operations
-    :vartype multi_slot: azure.ai.personalizer.aio.operations.MultiSlotOperations
     :param endpoint: Supported Cognitive Services endpoint. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
@@ -74,21 +42,6 @@ class PersonalizerClient(
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.service_configuration = ServiceConfigurationOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.policy = PolicyOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.evaluations = EvaluationsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.events = EventsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.feature_importances = FeatureImportancesOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.log = LogOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.model = ModelOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.multi_slot_events = MultiSlotEventsOperations(
-            self._client, self._config, self._serialize, self._deserialize
-        )
-        self.multi_slot = MultiSlotOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.

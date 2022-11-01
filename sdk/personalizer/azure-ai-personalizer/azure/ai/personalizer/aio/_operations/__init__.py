@@ -6,15 +6,6 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from ._operations import ServiceConfigurationOperations
-from ._operations import PolicyOperations
-from ._operations import EvaluationsOperations
-from ._operations import EventsOperations
-from ._operations import FeatureImportancesOperations
-from ._operations import LogOperations
-from ._operations import ModelOperations
-from ._operations import MultiSlotEventsOperations
-from ._operations import MultiSlotOperations
 from ._operations import PersonalizerClientOperationsMixin
 
 from ._patch import __all__ as _patch_all
@@ -22,15 +13,6 @@ from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    "ServiceConfigurationOperations",
-    "PolicyOperations",
-    "EvaluationsOperations",
-    "EventsOperations",
-    "FeatureImportancesOperations",
-    "LogOperations",
-    "ModelOperations",
-    "MultiSlotEventsOperations",
-    "MultiSlotOperations",
     "PersonalizerClientOperationsMixin",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])

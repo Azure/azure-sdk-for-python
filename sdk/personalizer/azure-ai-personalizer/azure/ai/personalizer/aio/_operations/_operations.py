@@ -8,9 +8,10 @@
 # --------------------------------------------------------------------------
 import datetime
 import sys
-from typing import Any, Callable, Dict, IO, Iterable, Iterator, Optional, TypeVar, Union, cast, overload
+from typing import Any, AsyncIterable, AsyncIterator, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
 import urllib.parse
 
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -19,15 +20,42 @@ from azure.core.exceptions import (
     ResourceNotModifiedError,
     map_error,
 )
-from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
-from azure.core.pipeline.transport import HttpResponse
+from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from .._serialization import Serializer
-from .._vendor import MixinABC, _format_url_section
+from ..._operations._operations import (
+    build_personalizer_activate_multi_slot_event_request,
+    build_personalizer_activate_single_slot_event_request,
+    build_personalizer_apply_from_evaluation_request,
+    build_personalizer_create_evaluation_request,
+    build_personalizer_create_feature_importance_request,
+    build_personalizer_delete_evaluation_request,
+    build_personalizer_delete_feature_importance_request,
+    build_personalizer_delete_log_request,
+    build_personalizer_get_evaluation_request,
+    build_personalizer_get_feature_importance_request,
+    build_personalizer_get_log_properties_request,
+    build_personalizer_get_model_properties_request,
+    build_personalizer_get_model_request,
+    build_personalizer_get_policy_request,
+    build_personalizer_get_service_configuration_request,
+    build_personalizer_import_model_request,
+    build_personalizer_list_evaluations_request,
+    build_personalizer_list_feature_importances_request,
+    build_personalizer_rank_multi_slot_request,
+    build_personalizer_rank_single_slot_request,
+    build_personalizer_reset_model_request,
+    build_personalizer_reset_policy_request,
+    build_personalizer_reward_multi_slot_event_request,
+    build_personalizer_reward_single_slot_event_request,
+    build_personalizer_update_policy_request,
+    build_personalizer_update_service_configuration_request,
+)
+from .._vendor import PersonalizerClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -35,633 +63,12 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
-ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
+ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
-_SERIALIZER = Serializer()
-_SERIALIZER.client_side_validation = False
 
-
-def build_service_configuration_get_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/configurations/service"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_service_configuration_update_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/configurations/service"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_service_configuration_apply_from_evaluation_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/configurations/applyFromEvaluation"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_policy_get_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/configurations/policy"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_policy_update_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/configurations/policy"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_policy_reset_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/configurations/policy"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluations_get_request(
-    evaluation_id: str,
-    *,
-    start_time: datetime.datetime,
-    end_time: datetime.datetime,
-    interval_in_minutes: Optional[int] = None,
-    window: Optional[str] = None,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluations/{evaluationId}"
-    path_format_arguments = {
-        "evaluationId": _SERIALIZER.url("evaluation_id", evaluation_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if interval_in_minutes is not None:
-        _params["intervalInMinutes"] = _SERIALIZER.query("interval_in_minutes", interval_in_minutes, "int")
-    _params["startTime"] = _SERIALIZER.query("start_time", start_time, "iso-8601")
-    _params["endTime"] = _SERIALIZER.query("end_time", end_time, "iso-8601")
-    if window is not None:
-        _params["window"] = _SERIALIZER.query("window", window, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluations_delete_request(evaluation_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluations/{evaluationId}"
-    path_format_arguments = {
-        "evaluationId": _SERIALIZER.url("evaluation_id", evaluation_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluations_create_request(evaluation_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluations/{evaluationId}"
-    path_format_arguments = {
-        "evaluationId": _SERIALIZER.url("evaluation_id", evaluation_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_evaluations_list_request(
-    *, filter_expression: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/evaluations"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter_expression is not None:
-        _params["filter"] = _SERIALIZER.query("filter_expression", filter_expression, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_events_reward_request(event_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/events/{eventId}/reward"
-    path_format_arguments = {
-        "eventId": _SERIALIZER.url("event_id", event_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_events_activate_request(event_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/events/{eventId}/activate"
-    path_format_arguments = {
-        "eventId": _SERIALIZER.url("event_id", event_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_feature_importances_delete_request(feature_importance_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/featureImportances/{featureImportanceId}"
-    path_format_arguments = {
-        "featureImportanceId": _SERIALIZER.url("feature_importance_id", feature_importance_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_feature_importances_get_request(feature_importance_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/featureImportances/{featureImportanceId}"
-    path_format_arguments = {
-        "featureImportanceId": _SERIALIZER.url("feature_importance_id", feature_importance_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_feature_importances_create_request(feature_importance_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/featureImportances/{featureImportanceId}"
-    path_format_arguments = {
-        "featureImportanceId": _SERIALIZER.url("feature_importance_id", feature_importance_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_feature_importances_list_request(*, top: Optional[int] = None, skip: int = 0, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/featureImportances"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if top is not None:
-        _params["top"] = _SERIALIZER.query("top", top, "int")
-    if skip is not None:
-        _params["skip"] = _SERIALIZER.query("skip", skip, "int")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_log_delete_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/logs"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_log_get_properties_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/logs/properties"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_model_get_request(*, signed: bool = False, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/octet-stream, application/json")
-
-    # Construct URL
-    _url = "/model"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if signed is not None:
-        _params["signed"] = _SERIALIZER.query("signed", signed, "bool")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_model_import_model_request(*, content: IO, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/model"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
-
-
-def build_model_reset_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/model"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_model_get_properties_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/model/properties"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_multi_slot_events_reward_request(event_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/multislot/events/{eventId}/reward"
-    path_format_arguments = {
-        "eventId": _SERIALIZER.url("event_id", event_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_multi_slot_events_activate_request(event_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/multislot/events/{eventId}/activate"
-    path_format_arguments = {
-        "eventId": _SERIALIZER.url("event_id", event_id, "str", max_length=256),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_multi_slot_rank_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/multislot/rank"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_rank_request(**kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-09-01-preview"))  # type: str
-    accept = _headers.pop("Accept", "application/json")
-
-    # Construct URL
-    _url = "/rank"
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    if content_type is not None:
-        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-class ServiceConfigurationOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.personalizer.PersonalizerClient`'s
-        :attr:`service_configuration` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, **kwargs: Any) -> JSON:
+class PersonalizerClientOperationsMixin(PersonalizerClientMixinABC):  # pylint: disable=too-many-public-methods
+    @distributed_trace_async
+    async def get_service_configuration(self, **kwargs: Any) -> JSON:
         """Service Configuration.
 
         Get the Personalizer service configuration.
@@ -740,7 +147,7 @@ class ServiceConfigurationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_service_configuration_get_request(
+        request = build_personalizer_get_service_configuration_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -750,7 +157,7 @@ class ServiceConfigurationOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -771,7 +178,9 @@ class ServiceConfigurationOperations:
         return cast(JSON, deserialized)
 
     @overload
-    def update(self, config: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def update_service_configuration(
+        self, config: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Update Service Configuration.
 
         Update the Personalizer service configuration.
@@ -898,7 +307,9 @@ class ServiceConfigurationOperations:
         """
 
     @overload
-    def update(self, config: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def update_service_configuration(
+        self, config: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Update Service Configuration.
 
         Update the Personalizer service configuration.
@@ -970,8 +381,8 @@ class ServiceConfigurationOperations:
                 }
         """
 
-    @distributed_trace
-    def update(self, config: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def update_service_configuration(self, config: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Update Service Configuration.
 
         Update the Personalizer service configuration.
@@ -1065,7 +476,7 @@ class ServiceConfigurationOperations:
         else:
             _json = config
 
-        request = build_service_configuration_update_request(
+        request = build_personalizer_update_service_configuration_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1078,7 +489,7 @@ class ServiceConfigurationOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1098,140 +509,8 @@ class ServiceConfigurationOperations:
 
         return cast(JSON, deserialized)
 
-    @overload
-    def apply_from_evaluation(  # pylint: disable=inconsistent-return-statements
-        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Apply Learning Settings and Model.
-
-        Apply Learning Settings and model from a pre-existing Offline Evaluation, making them the
-        current online Learning Settings and model and replacing the previous ones.
-
-        :param body: Reference to the policy within the evaluation. Required.
-        :type body: JSON
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-
-        Example:
-            .. code-block:: python
-
-                # JSON input template you can fill out and use as your body input.
-                body = {
-                    "evaluationId": "str",  # Evaluation Id of the evaluation. Required.
-                    "policyName": "str"  # Name of the learning settings. Required.
-                }
-        """
-
-    @overload
-    def apply_from_evaluation(  # pylint: disable=inconsistent-return-statements
-        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> None:
-        """Apply Learning Settings and Model.
-
-        Apply Learning Settings and model from a pre-existing Offline Evaluation, making them the
-        current online Learning Settings and model and replacing the previous ones.
-
-        :param body: Reference to the policy within the evaluation. Required.
-        :type body: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace
-    def apply_from_evaluation(  # pylint: disable=inconsistent-return-statements
-        self, body: Union[JSON, IO], **kwargs: Any
-    ) -> None:
-        """Apply Learning Settings and Model.
-
-        Apply Learning Settings and model from a pre-existing Offline Evaluation, making them the
-        current online Learning Settings and model and replacing the previous ones.
-
-        :param body: Reference to the policy within the evaluation. Is either a model type or a IO
-         type. Required.
-        :type body: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        request = build_service_configuration_apply_from_evaluation_request(
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-
-class PolicyOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.personalizer.PersonalizerClient`'s
-        :attr:`policy` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def get_policy(self, **kwargs: Any) -> JSON:
         """Policy.
 
         Get the Learning Settings currently used by the Personalizer service.
@@ -1262,7 +541,7 @@ class PolicyOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_policy_get_request(
+        request = build_personalizer_get_policy_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1272,7 +551,7 @@ class PolicyOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1293,7 +572,7 @@ class PolicyOperations:
         return cast(JSON, deserialized)
 
     @overload
-    def update(self, policy: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def update_policy(self, policy: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Update Policy.
 
         Update the Learning Settings that the Personalizer service will use to train models.
@@ -1324,7 +603,7 @@ class PolicyOperations:
         """
 
     @overload
-    def update(self, policy: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def update_policy(self, policy: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Update Policy.
 
         Update the Learning Settings that the Personalizer service will use to train models.
@@ -1348,8 +627,8 @@ class PolicyOperations:
                 }
         """
 
-    @distributed_trace
-    def update(self, policy: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def update_policy(self, policy: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Update Policy.
 
         Update the Learning Settings that the Personalizer service will use to train models.
@@ -1394,7 +673,7 @@ class PolicyOperations:
         else:
             _json = policy
 
-        request = build_policy_update_request(
+        request = build_personalizer_update_policy_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -1407,7 +686,7 @@ class PolicyOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1427,8 +706,8 @@ class PolicyOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace
-    def reset(self, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def reset_policy(self, **kwargs: Any) -> JSON:
         """Reset Policy.
 
         Resets the learning settings of the Personalizer service to default.
@@ -1459,7 +738,7 @@ class PolicyOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_policy_reset_request(
+        request = build_personalizer_reset_policy_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1469,7 +748,7 @@ class PolicyOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1489,26 +768,8 @@ class PolicyOperations:
 
         return cast(JSON, deserialized)
 
-
-class EvaluationsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.personalizer.PersonalizerClient`'s
-        :attr:`evaluations` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(
+    @distributed_trace_async
+    async def get_evaluation(
         self,
         evaluation_id: str,
         *,
@@ -1617,7 +878,7 @@ class EvaluationsOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_evaluations_get_request(
+        request = build_personalizer_get_evaluation_request(
             evaluation_id=evaluation_id,
             start_time=start_time,
             end_time=end_time,
@@ -1632,7 +893,7 @@ class EvaluationsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1652,8 +913,10 @@ class EvaluationsOperations:
 
         return cast(JSON, deserialized)
 
-    @distributed_trace
-    def delete(self, evaluation_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def delete_evaluation(  # pylint: disable=inconsistent-return-statements
+        self, evaluation_id: str, **kwargs: Any
+    ) -> None:
         """Offline Evaluation.
 
         Delete the Offline Evaluation associated with the Id.
@@ -1677,7 +940,7 @@ class EvaluationsOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_evaluations_delete_request(
+        request = build_personalizer_delete_evaluation_request(
             evaluation_id=evaluation_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1688,7 +951,7 @@ class EvaluationsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1702,7 +965,7 @@ class EvaluationsOperations:
             return cls(pipeline_response, None, {})
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    async def create_evaluation(  # pylint: disable=inconsistent-return-statements
         self, evaluation_id: str, evaluation: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Create Offline Evaluation.
@@ -1743,7 +1006,7 @@ class EvaluationsOperations:
         """
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    async def create_evaluation(  # pylint: disable=inconsistent-return-statements
         self, evaluation_id: str, evaluation: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Create Offline Evaluation.
@@ -1762,8 +1025,8 @@ class EvaluationsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def create_evaluation(  # pylint: disable=inconsistent-return-statements
         self, evaluation_id: str, evaluation: Union[JSON, IO], **kwargs: Any
     ) -> None:
         """Create Offline Evaluation.
@@ -1804,7 +1067,7 @@ class EvaluationsOperations:
         else:
             _json = evaluation
 
-        request = build_evaluations_create_request(
+        request = build_personalizer_create_evaluation_request(
             evaluation_id=evaluation_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1818,7 +1081,7 @@ class EvaluationsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1832,9 +1095,9 @@ class EvaluationsOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list(
+    def list_evaluations(
         self, *, filter_expression: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
-    ) -> Iterable[JSON]:
+    ) -> AsyncIterable[JSON]:
         """All Offline Evaluations.
 
         List of all Offline Evaluations.
@@ -1850,7 +1113,7 @@ class EvaluationsOperations:
          0. Default value is 0.
         :paramtype skip: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1889,7 +1152,7 @@ class EvaluationsOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_evaluations_list_request(
+                request = build_personalizer_list_evaluations_request(
                     filter_expression=filter_expression,
                     top=top,
                     skip=skip,
@@ -1926,17 +1189,17 @@ class EvaluationsOperations:
 
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -1947,28 +1210,10 @@ class EvaluationsOperations:
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
-
-
-class EventsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.personalizer.PersonalizerClient`'s
-        :attr:`events` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    def reward(  # pylint: disable=inconsistent-return-statements
+    async def reward_single_slot_event(  # pylint: disable=inconsistent-return-statements
         self, event_id: str, reward: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reward.
@@ -2000,7 +1245,7 @@ class EventsOperations:
         """
 
     @overload
-    def reward(  # pylint: disable=inconsistent-return-statements
+    async def reward_single_slot_event(  # pylint: disable=inconsistent-return-statements
         self, event_id: str, reward: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reward.
@@ -2021,8 +1266,8 @@ class EventsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def reward(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def reward_single_slot_event(  # pylint: disable=inconsistent-return-statements
         self, event_id: str, reward: Union[JSON, IO], **kwargs: Any
     ) -> None:
         """Reward.
@@ -2064,7 +1309,7 @@ class EventsOperations:
         else:
             _json = reward
 
-        request = build_events_reward_request(
+        request = build_personalizer_reward_single_slot_event_request(
             event_id=event_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2078,7 +1323,7 @@ class EventsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2091,8 +1336,10 @@ class EventsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def activate(self, event_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def activate_single_slot_event(  # pylint: disable=inconsistent-return-statements
+        self, event_id: str, **kwargs: Any
+    ) -> None:
         """Activate Event.
 
         Report that the specified event was actually used (e.g. by being displayed to the user) and a
@@ -2117,7 +1364,7 @@ class EventsOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_events_activate_request(
+        request = build_personalizer_activate_single_slot_event_request(
             event_id=event_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2128,7 +1375,7 @@ class EventsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2141,26 +1388,122 @@ class EventsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
+    @overload
+    async def apply_from_evaluation(  # pylint: disable=inconsistent-return-statements
+        self, body: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Apply Learning Settings and Model.
 
-class FeatureImportancesOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
+        Apply Learning Settings and model from a pre-existing Offline Evaluation, making them the
+        current online Learning Settings and model and replacing the previous ones.
 
-        Instead, you should access the following operations through
-        :class:`~azure.ai.personalizer.PersonalizerClient`'s
-        :attr:`feature_importances` attribute.
-    """
+        :param body: Reference to the policy within the evaluation. Required.
+        :type body: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
 
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
+        Example:
+            .. code-block:: python
 
-    @distributed_trace
-    def delete(  # pylint: disable=inconsistent-return-statements
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "evaluationId": "str",  # Evaluation Id of the evaluation. Required.
+                    "policyName": "str"  # Name of the learning settings. Required.
+                }
+        """
+
+    @overload
+    async def apply_from_evaluation(  # pylint: disable=inconsistent-return-statements
+        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> None:
+        """Apply Learning Settings and Model.
+
+        Apply Learning Settings and model from a pre-existing Offline Evaluation, making them the
+        current online Learning Settings and model and replacing the previous ones.
+
+        :param body: Reference to the policy within the evaluation. Required.
+        :type body: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def apply_from_evaluation(  # pylint: disable=inconsistent-return-statements
+        self, body: Union[JSON, IO], **kwargs: Any
+    ) -> None:
+        """Apply Learning Settings and Model.
+
+        Apply Learning Settings and model from a pre-existing Offline Evaluation, making them the
+        current online Learning Settings and model and replacing the previous ones.
+
+        :param body: Reference to the policy within the evaluation. Is either a model type or a IO
+         type. Required.
+        :type body: JSON or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
+
+        request = build_personalizer_apply_from_evaluation_request(
+            content_type=content_type,
+            api_version=self._config.api_version,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @distributed_trace_async
+    async def delete_feature_importance(  # pylint: disable=inconsistent-return-statements
         self, feature_importance_id: str, **kwargs: Any
     ) -> None:
         """Feature Importance.
@@ -2186,7 +1529,7 @@ class FeatureImportancesOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_feature_importances_delete_request(
+        request = build_personalizer_delete_feature_importance_request(
             feature_importance_id=feature_importance_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2197,7 +1540,7 @@ class FeatureImportancesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2210,8 +1553,8 @@ class FeatureImportancesOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def get(self, feature_importance_id: str, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def get_feature_importance(self, feature_importance_id: str, **kwargs: Any) -> JSON:
         """Feature Importance.
 
         Get the Feature Importance associated with the Id.
@@ -2261,7 +1604,7 @@ class FeatureImportancesOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_feature_importances_get_request(
+        request = build_personalizer_get_feature_importance_request(
             feature_importance_id=feature_importance_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2272,7 +1615,7 @@ class FeatureImportancesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2293,7 +1636,7 @@ class FeatureImportancesOperations:
         return cast(JSON, deserialized)
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    async def create_feature_importance(  # pylint: disable=inconsistent-return-statements
         self,
         feature_importance_id: str,
         feature_importance: JSON,
@@ -2330,7 +1673,7 @@ class FeatureImportancesOperations:
         """
 
     @overload
-    def create(  # pylint: disable=inconsistent-return-statements
+    async def create_feature_importance(  # pylint: disable=inconsistent-return-statements
         self,
         feature_importance_id: str,
         feature_importance: IO,
@@ -2354,8 +1697,8 @@ class FeatureImportancesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def create(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def create_feature_importance(  # pylint: disable=inconsistent-return-statements
         self, feature_importance_id: str, feature_importance: Union[JSON, IO], **kwargs: Any
     ) -> None:
         """Create Feature Importance.
@@ -2396,7 +1739,7 @@ class FeatureImportancesOperations:
         else:
             _json = feature_importance
 
-        request = build_feature_importances_create_request(
+        request = build_personalizer_create_feature_importance_request(
             feature_importance_id=feature_importance_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -2410,7 +1753,7 @@ class FeatureImportancesOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2424,7 +1767,9 @@ class FeatureImportancesOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def list(self, *, top: Optional[int] = None, skip: int = 0, **kwargs: Any) -> Iterable[JSON]:
+    def list_feature_importances(
+        self, *, top: Optional[int] = None, skip: int = 0, **kwargs: Any
+    ) -> AsyncIterable[JSON]:
         """All Feature Importances.
 
         List of all Feature Importances.
@@ -2436,7 +1781,7 @@ class FeatureImportancesOperations:
          0. Default value is 0.
         :paramtype skip: int
         :return: An iterator like instance of JSON object
-        :rtype: ~azure.core.paging.ItemPaged[JSON]
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[JSON]
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2470,7 +1815,7 @@ class FeatureImportancesOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_feature_importances_list_request(
+                request = build_personalizer_list_feature_importances_request(
                     top=top,
                     skip=skip,
                     api_version=self._config.api_version,
@@ -2506,17 +1851,17 @@ class FeatureImportancesOperations:
 
             return request
 
-        def extract_data(pipeline_response):
+        async def extract_data(pipeline_response):
             deserialized = pipeline_response.http_response.json()
             list_of_elem = deserialized["value"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
 
-        def get_next(next_link=None):
+        async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -2527,28 +1872,10 @@ class FeatureImportancesOperations:
 
             return pipeline_response
 
-        return ItemPaged(get_next, extract_data)
+        return AsyncItemPaged(get_next, extract_data)
 
-
-class LogOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.personalizer.PersonalizerClient`'s
-        :attr:`log` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def delete(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def delete_log(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Logs.
 
         Delete all logs of Rank and Reward calls stored by Personalizer.
@@ -2570,7 +1897,7 @@ class LogOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_log_delete_request(
+        request = build_personalizer_delete_log_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2580,7 +1907,7 @@ class LogOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2593,8 +1920,8 @@ class LogOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def get_properties(self, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def get_log_properties(self, **kwargs: Any) -> JSON:
         """Log Properties.
 
         Get properties of the Personalizer logs.
@@ -2627,7 +1954,7 @@ class LogOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_log_get_properties_request(
+        request = build_personalizer_get_log_properties_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2637,7 +1964,7 @@ class LogOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2657,26 +1984,8 @@ class LogOperations:
 
         return cast(JSON, deserialized)
 
-
-class ModelOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.personalizer.PersonalizerClient`'s
-        :attr:`model` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
-    @distributed_trace
-    def get(self, *, signed: bool = False, **kwargs: Any) -> Iterator[bytes]:
+    @distributed_trace_async
+    async def get_model(self, *, signed: bool = False, **kwargs: Any) -> AsyncIterator[bytes]:
         """Model.
 
         Get the model file generated by Personalizer service.
@@ -2684,8 +1993,8 @@ class ModelOperations:
         :keyword signed: True if requesting signed model zip archive, false otherwise. Default value is
          False.
         :paramtype signed: bool
-        :return: Iterator of the response bytes
-        :rtype: Iterator[bytes]
+        :return: Async iterator of the response bytes
+        :rtype: AsyncIterator[bytes]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -2699,9 +2008,9 @@ class ModelOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[Iterator[bytes]]
+        cls = kwargs.pop("cls", None)  # type: ClsType[AsyncIterator[bytes]]
 
-        request = build_model_get_request(
+        request = build_personalizer_get_model_request(
             signed=signed,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2712,7 +2021,7 @@ class ModelOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=True, **kwargs
         )
 
@@ -2725,12 +2034,12 @@ class ModelOperations:
         deserialized = response.iter_bytes()
 
         if cls:
-            return cls(pipeline_response, cast(Iterator[bytes], deserialized), {})
+            return cls(pipeline_response, cast(AsyncIterator[bytes], deserialized), {})
 
-        return cast(Iterator[bytes], deserialized)
+        return cast(AsyncIterator[bytes], deserialized)
 
-    @distributed_trace
-    def import_model(self, body: IO, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def import_model(self, body: IO, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Model File.
 
         Replace the existing model file for the Personalizer service.
@@ -2757,7 +2066,7 @@ class ModelOperations:
 
         _content = body
 
-        request = build_model_import_model_request(
+        request = build_personalizer_import_model_request(
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -2769,7 +2078,7 @@ class ModelOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2782,8 +2091,8 @@ class ModelOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def reset(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def reset_model(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Reset Model.
 
         Resets the model file generated by Personalizer service.
@@ -2805,7 +2114,7 @@ class ModelOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_model_reset_request(
+        request = build_personalizer_reset_model_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2815,7 +2124,7 @@ class ModelOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2828,8 +2137,8 @@ class ModelOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def get_properties(self, **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def get_model_properties(self, **kwargs: Any) -> JSON:
         """Model Properties.
 
         Get properties of the model file generated by Personalizer service.
@@ -2862,7 +2171,7 @@ class ModelOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_model_get_properties_request(
+        request = build_personalizer_get_model_properties_request(
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2872,7 +2181,7 @@ class ModelOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2892,26 +2201,8 @@ class ModelOperations:
 
         return cast(JSON, deserialized)
 
-
-class MultiSlotEventsOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.personalizer.PersonalizerClient`'s
-        :attr:`multi_slot_events` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @overload
-    def reward(  # pylint: disable=inconsistent-return-statements
+    async def reward_multi_slot_event(  # pylint: disable=inconsistent-return-statements
         self, event_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reward (MultiSlot).
@@ -2947,7 +2238,7 @@ class MultiSlotEventsOperations:
         """
 
     @overload
-    def reward(  # pylint: disable=inconsistent-return-statements
+    async def reward_multi_slot_event(  # pylint: disable=inconsistent-return-statements
         self, event_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> None:
         """Reward (MultiSlot).
@@ -2967,8 +2258,8 @@ class MultiSlotEventsOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
-    @distributed_trace
-    def reward(  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def reward_multi_slot_event(  # pylint: disable=inconsistent-return-statements
         self, event_id: str, body: Union[JSON, IO], **kwargs: Any
     ) -> None:
         """Reward (MultiSlot).
@@ -3009,7 +2300,7 @@ class MultiSlotEventsOperations:
         else:
             _json = body
 
-        request = build_multi_slot_events_reward_request(
+        request = build_personalizer_reward_multi_slot_event_request(
             event_id=event_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -3023,7 +2314,7 @@ class MultiSlotEventsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3036,8 +2327,10 @@ class MultiSlotEventsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    @distributed_trace
-    def activate(self, event_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+    @distributed_trace_async
+    async def activate_multi_slot_event(  # pylint: disable=inconsistent-return-statements
+        self, event_id: str, **kwargs: Any
+    ) -> None:
         """Activate Event (MultiSlot).
 
         Report that the specified event was actually used or displayed to the user and a rewards should
@@ -3062,7 +2355,7 @@ class MultiSlotEventsOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_multi_slot_events_activate_request(
+        request = build_personalizer_activate_multi_slot_event_request(
             event_id=event_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -3073,7 +2366,7 @@ class MultiSlotEventsOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3086,26 +2379,8 @@ class MultiSlotEventsOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-
-class MultiSlotOperations:
-    """
-    .. warning::
-        **DO NOT** instantiate this class directly.
-
-        Instead, you should access the following operations through
-        :class:`~azure.ai.personalizer.PersonalizerClient`'s
-        :attr:`multi_slot` attribute.
-    """
-
-    def __init__(self, *args, **kwargs):
-        input_args = list(args)
-        self._client = input_args.pop(0) if input_args else kwargs.pop("client")
-        self._config = input_args.pop(0) if input_args else kwargs.pop("config")
-        self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
-        self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-
     @overload
-    def rank(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def rank_multi_slot(self, body: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Rank (MultiSlot).
 
         Submit a Personalizer multi-slot rank request. Receives a context, a list of actions, and a
@@ -3190,7 +2465,7 @@ class MultiSlotOperations:
         """
 
     @overload
-    def rank(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def rank_multi_slot(self, body: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Rank (MultiSlot).
 
         Submit a Personalizer multi-slot rank request. Receives a context, a list of actions, and a
@@ -3223,8 +2498,8 @@ class MultiSlotOperations:
                 }
         """
 
-    @distributed_trace
-    def rank(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def rank_multi_slot(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Rank (MultiSlot).
 
         Submit a Personalizer multi-slot rank request. Receives a context, a list of actions, and a
@@ -3279,7 +2554,7 @@ class MultiSlotOperations:
         else:
             _json = body
 
-        request = build_multi_slot_rank_request(
+        request = build_personalizer_rank_multi_slot_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -3292,7 +2567,7 @@ class MultiSlotOperations:
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -3312,10 +2587,10 @@ class MultiSlotOperations:
 
         return cast(JSON, deserialized)
 
-
-class PersonalizerClientOperationsMixin(MixinABC):
     @overload
-    def rank(self, rank_request: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def rank_single_slot(
+        self, rank_request: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Rank.
 
         Submit a Personalizer rank request. Receives a context and a list of actions. Returns which of
@@ -3388,7 +2663,9 @@ class PersonalizerClientOperationsMixin(MixinABC):
         """
 
     @overload
-    def rank(self, rank_request: IO, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
+    async def rank_single_slot(
+        self, rank_request: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> JSON:
         """Rank.
 
         Submit a Personalizer rank request. Receives a context and a list of actions. Returns which of
@@ -3422,8 +2699,8 @@ class PersonalizerClientOperationsMixin(MixinABC):
                 }
         """
 
-    @distributed_trace
-    def rank(self, rank_request: Union[JSON, IO], **kwargs: Any) -> JSON:
+    @distributed_trace_async
+    async def rank_single_slot(self, rank_request: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Rank.
 
         Submit a Personalizer rank request. Receives a context and a list of actions. Returns which of
@@ -3479,7 +2756,7 @@ class PersonalizerClientOperationsMixin(MixinABC):
         else:
             _json = rank_request
 
-        request = build_rank_request(
+        request = build_personalizer_rank_single_slot_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -3492,7 +2769,7 @@ class PersonalizerClientOperationsMixin(MixinABC):
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
