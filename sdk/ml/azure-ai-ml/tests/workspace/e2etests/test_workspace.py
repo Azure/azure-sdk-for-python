@@ -5,7 +5,7 @@ from typing import Callable
 
 import pytest
 from azure.ai.ml._utils.utils import camel_to_snake
-from test_utilities.utils import verify_entity_load_and_dump
+from test_utilities.utils import verify_entity_load_and_dump, skip_sleep_in_lro_polling
 
 from azure.ai.ml import MLClient, load_workspace
 from azure.ai.ml.constants._common import PublicNetworkAccess
@@ -98,7 +98,8 @@ class TestWorkspace(AzureRecordedTestCase):
     def test_workspace_diagnosis(self, client: MLClient, randstr: Callable[[], str]) -> None:
         diagnose_result_poller = client.workspaces.begin_diagnose(client._operation_scope.workspace_name)
         assert isinstance(diagnose_result_poller, LROPoller)
-        diagnose_result = diagnose_result_poller.result()
+        with skip_sleep_in_lro_polling():
+            diagnose_result = diagnose_result_poller.result()
         assert isinstance(diagnose_result, DiagnoseResponseResultValue)
         assert len(diagnose_result.container_registry_results) >= 0
         assert len(diagnose_result.dns_resolution_results) >= 0

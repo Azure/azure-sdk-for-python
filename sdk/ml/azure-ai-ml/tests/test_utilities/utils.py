@@ -7,7 +7,9 @@ import os
 import signal
 import tempfile
 import time
+from contextlib import contextmanager
 from typing import Dict, Callable
+from unittest.mock import patch
 from zipfile import ZipFile
 from io import StringIO
 
@@ -273,12 +275,22 @@ def delete_file_if_exists(file_path: str):
         os.remove(file_path)
 
 
+@contextmanager
+def skip_sleep_in_lro_polling(work_only_if_not_live=True):
+    if work_only_if_not_live and is_live():
+        yield
+        return
+
+    from azure.core.polling.base_polling import LROBasePolling
+    with patch.object(LROBasePolling, "_sleep", return_value=None):
+        yield
+
+
 def cancel_job(client: MLClient, job: Job) -> None:
     try:
         cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        # skip wait in recording mode to reduce test run duration.
-        if is_live():
+        with skip_sleep_in_lro_polling():
+            assert isinstance(cancel_poller, LROPoller)
             assert cancel_poller.result() is None
     except HttpResponseError:
         pass

@@ -3,6 +3,7 @@ import re
 from time import sleep
 from typing import Callable
 
+import mock
 from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
 
@@ -10,6 +11,8 @@ from azure.ai.ml import MLClient, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, PROVIDER_RESOURCE_ID_WITH_VERSION, AzureMLResourceType
 from azure.core.paging import ItemPaged
+
+from test_utilities.utils import skip_sleep_in_lro_polling
 
 
 @pytest.fixture
@@ -237,7 +240,8 @@ class TestEnvironment(AzureRecordedTestCase):
             source="./tests/test_configs/environment/environment_conda.yml", params_override=params_override
         )
 
-        environment = only_registry_client._environments.create_or_update(env)
+        with skip_sleep_in_lro_polling():
+            environment = only_registry_client._environments.create_or_update(env)
 
         environment_id = f"azureml://registries/testFeed/environments/{env.name}/versions/{env.version}"
 

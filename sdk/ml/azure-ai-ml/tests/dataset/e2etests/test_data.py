@@ -11,7 +11,8 @@ from azure.ai.ml._utils._arm_id_utils import generate_data_arm_id
 from azure.core.paging import ItemPaged
 
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
+
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
@@ -218,7 +219,8 @@ sepal_length,sepal_width,petal_length,petal_width,species
 
         def get_data_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            if is_live():
+                sleep(30)
             data_list = client.data.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [d.version for d in data_list if d is not None]
 

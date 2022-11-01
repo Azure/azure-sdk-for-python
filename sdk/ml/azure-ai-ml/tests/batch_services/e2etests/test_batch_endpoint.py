@@ -9,6 +9,8 @@ from azure.core.exceptions import ResourceNotFoundError
 
 from devtools_testutils import AzureRecordedTestCase
 
+from test_utilities.utils import skip_sleep_in_lro_polling
+
 
 @pytest.mark.e2etest
 @pytest.mark.production_experience_test
@@ -75,7 +77,6 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
-
     def test_batch_invoke(self, client: MLClient, variable_recorder) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
         endpoint_name = variable_recorder.get_or_record("endpoint_name", "be-e2e-" + uuid.uuid4().hex[:15])
@@ -89,10 +90,11 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         deployment.endpoint_name = endpoint_name
         deployment.name = deployment_name
 
-        # create the batch endpoint
-        client.batch_endpoints.begin_create_or_update(endpoint).result()
-        # create a deployment
-        client.batch_deployments.begin_create_or_update(deployment).result()
+        with skip_sleep_in_lro_polling():
+            # create the batch endpoint
+            client.batch_endpoints.begin_create_or_update(endpoint).result()
+            # create a deployment
+            client.batch_deployments.begin_create_or_update(deployment).result()
 
         # Invoke using inputs: Dict[str, Input]
         input_1 = Input(
