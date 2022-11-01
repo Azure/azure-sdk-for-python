@@ -39,7 +39,11 @@ from azure.ai.textanalytics import (
     RecognizeCustomEntitiesAction,
     ClassifyDocumentResult,
     RecognizeCustomEntitiesResult,
-    AnalyzeHealthcareEntitiesAction
+    AnalyzeHealthcareEntitiesAction,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
+    AbstractSummaryAction,
+    PhraseControl,
 )
 
 # pre-apply the client_cls positional argument so it needn't be explicitly passed below
@@ -120,7 +124,7 @@ class TestAnalyze(TextAnalyticsTest):
             assert isinstance(document_result, AnalyzeSentimentResult)
             assert document_result.id is not None
             assert document_result.statistics is not None
-            self.validateConfidenceScores(document_result.confidence_scores)
+            # self.validateConfidenceScores(document_result.confidence_scores) https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15794991
             assert document_result.sentences is not None
             if idx == 0:
                 assert document_result.sentiment == "neutral"
@@ -492,6 +496,7 @@ class TestAnalyze(TextAnalyticsTest):
                 assert document_result.statistics.character_count
                 assert document_result.statistics.transaction_count
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -809,6 +814,7 @@ class TestAnalyze(TextAnalyticsTest):
         assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
         assert action_results[1][1].id == "2"
 
+    @pytest.mark.skip("test is hanging with PPE")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy
@@ -1676,6 +1682,8 @@ class TestAnalyze(TextAnalyticsTest):
             actions=[
                 AnalyzeHealthcareEntitiesAction(
                     model_version="latest",
+                    fhir_version="4.0.1",
+                    document_type="HistoryAndPhysical",
                 )
             ],
             show_stats=True,
@@ -1690,6 +1698,7 @@ class TestAnalyze(TextAnalyticsTest):
                 else:
                     assert res.entities
                     # assert res.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714
+                    assert res.fhir_bundle
 
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
@@ -1790,3 +1799,327 @@ class TestAnalyze(TextAnalyticsTest):
         with pytest.raises(ValueError) as e:
             poller.cancel()
         assert"Cancellation not supported by API versions v3.0, v3.1." in str(e.value)
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_passing_dict_extract_summary_action(self, client):
+        docs = [{"id": "1", "language": "en", "text":
+            "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
+            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
+            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
+            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
+            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
+            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
+            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
+            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
+            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
+            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
+            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
+            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
+            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
+            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
+            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
+            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."},
+            {"id": "2", "language": "es", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction()],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+
+        assert len(document_results) == 2
+        for document_result in document_results:
+            assert len(document_result) == 1
+            for result in document_result:
+                assert isinstance(result, ExtractSummaryResult)
+                assert result.statistics
+                assert len(result.sentences) == 3 if result.id == 0 else 1
+                for sentence in result.sentences:
+                    assert sentence.text
+                    assert sentence.rank_score is not None
+                    assert sentence.offset is not None
+                    assert sentence.length is not None
+                assert result.id is not None
+
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15772270")
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_extract_summary_action_with_options(self, client):
+        docs = ["The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
+            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
+            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
+            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
+            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
+            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
+            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
+            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
+            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
+            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
+            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
+            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
+            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
+            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
+            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
+            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction(max_sentence_count=5, order_by="Rank")],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+
+        assert len(document_results) == 1
+        for document_result in document_results:
+            assert len(document_result) == 1
+            for result in document_result:
+                assert isinstance(result, ExtractSummaryResult)
+                assert result.statistics
+                assert len(result.sentences) == 5
+                previous_score = 1.0
+                for sentence in result.sentences:
+                    assert sentence.rank_score <= previous_score
+                    previous_score = sentence.rank_score
+                    assert sentence.text
+                    assert sentence.offset is not None
+                    assert sentence.length is not None
+                assert result.id is not None
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_extract_summary_partial_results(self, client):
+        docs = [{"id": "1", "language": "en", "text": ""}, {"id": "2", "language": "en", "text": "hello world"}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[ExtractSummaryAction()],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+        assert document_results[0][0].is_error
+        assert document_results[0][0].error.code == "InvalidDocument"
+
+        assert not document_results[1][0].is_error
+        assert isinstance(document_results[1][0], ExtractSummaryResult)
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_entity_action_resolutions(self, client):
+        docs = [
+            "The cat is 1 year old and weighs 10 pounds."
+        ]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[RecognizeEntitiesAction(
+                model_version="2022-10-01-preview"
+            )],
+            polling_interval=self._interval(),
+        ).result()
+
+        pages = list(response)
+        for document_results in pages:
+            document_result = document_results[0]
+            for entity in document_result.entities:
+                assert entity.text is not None
+                assert entity.category is not None
+                assert entity.offset is not None
+                assert entity.confidence_score is not None
+                for res in entity.resolutions:
+                    assert res.resolution_kind in ["WeightResolution", "AgeResolution"]
+                    if res.resolution_kind == "WeightResolution":
+                        assert res.value == 10
+                    if res.resolution_kind == "AgeResolution":
+                        assert res.value == 1
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_passing_dict_abstract_summary_action(self, client):
+        docs = [{"id": "1", "language": "en", "text":
+            "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation"
+            " of two senior Cabinet ministers in a deep split over her Brexit strategy. The Foreign Secretary Boris "
+            "Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of "
+            "Brexit negotiations, David Davis. Their decision to leave the government came three days after May "
+            "appeared to have agreed a deal with her fractured Cabinet on the UK's post Brexit relationship with "
+            "the EU. That plan is now in tatters and her political future appears uncertain. May appeared in Parliament"
+            " on Monday afternoon to defend her plan, minutes after Downing Street confirmed the departure of Johnson. "
+            "May acknowledged the splits in her statement to MPs, saying of the ministers who quit: We do not agree "
+            "about the best way of delivering our shared commitment to honoring the result of the referendum. The "
+            "Prime Minister's latest political drama began late on Sunday night when Davis quit, declaring he could "
+            "not support May's Brexit plan. He said it involved too close a relationship with the EU and gave only "
+            "an illusion of control being returned to the UK after it left the EU. It seems to me we're giving too "
+            "much away, too easily, and that's a dangerous strategy at this time, Davis said in a BBC radio "
+            "interview Monday morning. Johnson's resignation came Monday afternoon local time, just before the "
+            "Prime Minister was due to make a scheduled statement in Parliament. This afternoon, the Prime Minister "
+            "accepted the resignation of Boris Johnson as Foreign Secretary, a statement from Downing Street said."}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[AbstractSummaryAction()],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+
+        for document_result in document_results:
+            for result in document_result:
+                assert result.statistics is not None
+                assert result.id is not None
+                for summary in result.summaries:
+                    for context in summary.contexts:
+                        assert context.offset is not None
+                        assert context.length is not None
+                    assert summary.text
+
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15919116")
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_abstract_summary_action_with_options(self, client):
+        docs = [{"id": "1", "language": "en", "text": "At Microsoft, we have been on a quest to advance AI beyond existing techniques, by taking a more holistic, human-centric approach to learning and understanding. As Chief Technology Officer of Azure AI Cognitive Services, I have been working with a team of amazing scientists and engineers to turn this quest into a reality. In my role, I enjoy a unique perspective in viewing the relationship among three attributes of human cognition: monolingual text (X), audio or visual sensory signals, (Y) and multilingual (Z). At the intersection of all three, there’s magic—what we call XYZ-code as illustrated in Figure 1—a joint representation to create more powerful AI that can speak, hear, see, and understand humans better. We believe XYZ-code will enable us to fulfill our long-term vision: cross-domain transfer learning, spanning modalities and languages. The goal is to have pre-trained models that can jointly learn representations to support a broad range of downstream AI tasks, much in the way humans do today. Over the past five years, we have achieved human performance on benchmarks in conversational speech recognition, machine translation, conversational question answering, machine reading comprehension, and image captioning. These five breakthroughs provided us with strong signals toward our more ambitious aspiration to produce a leap in AI capabilities, achieving multi-sensory and multilingual learning that is closer in line with how humans learn and understand. I believe the joint XYZ-code is a foundational component of this aspiration, if grounded with external knowledge sources in the downstream AI tasks."}]
+
+        response = client.begin_analyze_actions(
+            docs,
+            actions=[
+                AbstractSummaryAction(
+                    sentence_count=4,
+                    phrase_controls=[
+                        PhraseControl(
+                            target_phrase="Microsoft",
+                            strategy="encourage"
+                        )
+                    ]
+                )
+            ],
+            show_stats=True,
+            polling_interval=self._interval(),
+        ).result()
+
+        document_results = list(response)
+
+        for document_result in document_results:
+            for result in document_result:
+                assert result.statistics is not None
+                assert result.id is not None
+                for summary in result.summaries:
+                    for context in summary.contexts:
+                        assert context.offset is not None
+                        assert context.length is not None
+                    assert summary.text
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_autodetect_lang_document(self, client):
+        docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+                {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            # RecognizeLinkedEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15859145
+            AnalyzeSentimentAction(),
+            # AnalyzeHealthcareEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
+            ExtractSummaryAction(),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            polling_interval=self._interval(),
+        )
+
+        result = list(poller.result())
+        for res in result:
+            for doc in res:
+                if doc.id == "1":
+                    assert doc.detected_language.iso6391_name == "en"
+                else:
+                    assert doc.detected_language.iso6391_name == "es"
+
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
+    @TextAnalyticsPreparer()
+    @TextAnalyticsCustomPreparer()
+    @recorded_by_proxy
+    def test_autodetect_lang_document_custom(self, **kwargs):
+        textanalytics_custom_text_endpoint = kwargs.pop("textanalytics_custom_text_endpoint")
+        textanalytics_custom_text_key = kwargs.pop("textanalytics_custom_text_key")
+        textanalytics_single_label_classify_project_name = kwargs.pop("textanalytics_single_label_classify_project_name")
+        textanalytics_single_label_classify_deployment_name = kwargs.pop("textanalytics_single_label_classify_deployment_name")
+        textanalytics_multi_label_classify_project_name = kwargs.pop("textanalytics_multi_label_classify_project_name")
+        textanalytics_multi_label_classify_deployment_name = kwargs.pop("textanalytics_multi_label_classify_deployment_name")
+        textanalytics_custom_entities_project_name = kwargs.pop("textanalytics_custom_entities_project_name")
+        textanalytics_custom_entities_deployment_name = kwargs.pop("textanalytics_custom_entities_deployment_name")
+        set_bodiless_matcher()  # don't match on body for this test since we scrub the proj/deployment values
+        client = TextAnalyticsClient(textanalytics_custom_text_endpoint, AzureKeyCredential(textanalytics_custom_text_key))
+
+        docs = [{"id": "1", "language": "auto", "text": "Microsoft was founded by Bill Gates and Paul Allen"},
+                {"id": "2", "language": "auto", "text": "Microsoft fue fundado por Bill Gates y Paul Allen"}]
+        actions=[
+            RecognizeCustomEntitiesAction(
+                project_name=textanalytics_custom_entities_project_name,
+                deployment_name=textanalytics_custom_entities_deployment_name,
+            ),
+            SingleLabelClassifyAction(
+                project_name=textanalytics_single_label_classify_project_name,
+                deployment_name=textanalytics_single_label_classify_deployment_name,
+            ),
+            MultiLabelClassifyAction(
+                project_name=textanalytics_multi_label_classify_project_name,
+                deployment_name=textanalytics_multi_label_classify_deployment_name,
+            ),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            polling_interval=self._interval(),
+        )
+
+        result = list(poller.result())
+        for res in result:
+            for doc in res:
+                if doc.id == "1":
+                    assert doc.detected_language.iso6391_name == "en"
+                else:
+                    assert doc.detected_language.iso6391_name == "es"
+
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15816856")
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy
+    def test_autodetect_with_default_and_script(self, client):
+        single_doc = "Tumhara naam kya hai?"
+        docs = [{"id": "1", "text": single_doc}]
+        actions=[
+            RecognizeEntitiesAction(),
+            ExtractKeyPhrasesAction(),
+            RecognizePiiEntitiesAction(),
+            RecognizeLinkedEntitiesAction(),
+            AnalyzeSentimentAction(),
+        ]
+        poller = client.begin_analyze_actions(
+            docs,
+            actions,
+            language="auto",
+            autodetect_default_language="en",
+            polling_interval=self._interval(),
+        )
+
+        result = list(poller.result())
+        for res in result:
+            for doc in res:
+                assert doc.detected_language.iso6391_name == "hi"
+                assert doc.detected_language.script == "Latin"
