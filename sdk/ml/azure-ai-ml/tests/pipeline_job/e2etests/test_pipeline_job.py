@@ -52,7 +52,8 @@ def assert_job_cancel(pipeline, client: MLClient):
     try:
         cancel_poller = client.jobs.begin_cancel(job.name)
         assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        # skip wait for cancel result to reduce test run duration.
+        # assert cancel_poller.result() is None
     except HttpResponseError:
         pass
     return job
