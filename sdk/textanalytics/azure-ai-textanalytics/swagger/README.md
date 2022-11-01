@@ -80,7 +80,7 @@ output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/
 These settings apply only when `--tag=release_2022_10_01_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_2022_10_01_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/98891f186eba7baaf7e14c3d5b2930172c1e1386/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzetext.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/ca4d7c3d698436728278e8a8330c786d7edec8e6/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzetext.json
 namespace: azure.ai.textanalytics.v2022_10_01_preview
 output-folder: $(python-sdks-folder)/textanalytics/azure-ai-textanalytics/azure/ai/textanalytics/_generated/v2022_10_01_preview
 ```

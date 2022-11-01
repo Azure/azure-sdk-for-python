@@ -1843,7 +1843,7 @@ class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 class ActionPointerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """v3.1 only"""
     RECOGNIZE_ENTITIES = "entityRecognitionTasks"
-    RECOGNIZE_PII_ENTITIES = "entityRecognitionPiiTasks"
+    RECOGNIZE_PII_ENTITIES = "piiEntityRecognitionTasks"
     EXTRACT_KEY_PHRASES = "keyPhraseExtractionTasks"
     RECOGNIZE_LINKED_ENTITIES = "entityLinkingTasks"
     ANALYZE_SENTIMENT = "sentimentAnalysisTasks"
