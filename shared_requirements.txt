@@ -157,6 +157,7 @@ yarl<2.0,>=1.0
 #override azure-ai-textanalytics msrest>=0.7.0
 #override azure-ai-textanalytics typing-extensions>=4.0.1
 #override azure-ai-language-questionanswering azure-core<2.0.0,>=1.24.0
+#override azure-mgmt-customproviders typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-powerbidedicated msrest>=0.7.1
 #override azure-search-documents azure-core<2.0.0,>=1.19.0
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.23.0
@@ -309,6 +310,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-apimanagement msrest>=0.7.1
 #override azure-mgmt-apimanagement azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-compute msrest>=0.7.1
+#override azure-mgmt-customproviders msrest>=0.7.1
 #override azure-mgmt-streamanalytics msrest>=0.6.21
 #override azure-mgmt-consumption msrest>=0.7.1
 #override azure-mgmt-oep msrest>=0.6.21
@@ -548,6 +550,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-datalake-analytics azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-datalake-store msrest>=0.7.1
 #override azure-mgmt-operationsmanagement msrest>=0.7.1
+#override azure-mgmt-customproviders azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datalake-store azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-recoveryservices msrest>=0.7.1
 #override azure-mgmt-recoveryservices azure-mgmt-core>=1.3.2,<2.0.0
