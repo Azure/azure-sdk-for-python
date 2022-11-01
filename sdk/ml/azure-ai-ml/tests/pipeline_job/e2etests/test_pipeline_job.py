@@ -23,11 +23,10 @@ from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
-from azure.ai.ml.exceptions import JobException, ValidationException
+from azure.ai.ml.exceptions import JobException
 from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES, \
     DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE
@@ -65,6 +64,7 @@ def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
         if timeout is not None and time.time() - poll_start_time > timeout:
             # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
             cancel_poller = client.jobs.begin_cancel(job.name)
+            from azure.core.polling import LROPoller
             assert isinstance(cancel_poller, LROPoller)
             assert cancel_poller.result() is None
             return JobStatus.CANCELED
@@ -159,15 +159,13 @@ class TestPipelineJob(AzureRecordedTestCase):
         try:
             job = client.jobs.get(job_name)
         except ResourceNotFoundError:
-            job = client.jobs.create_or_update(
+            job = assert_job_cancel(
                 load_job(
                     source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
                     params_override=[{"name": job_name}],
-                )
+                ),
+                client=client,
             )
-            cancel_poller = client.jobs.begin_cancel(job.name)
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
 
         child_job = next(
             job

@@ -29,8 +29,6 @@ from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
-from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel

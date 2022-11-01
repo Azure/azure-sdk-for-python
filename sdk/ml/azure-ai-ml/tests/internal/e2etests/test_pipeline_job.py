@@ -15,7 +15,6 @@ from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller
 
 from test_utilities.utils import assert_job_cancel
 from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings, TEST_CASE_NAME_ENUMERATE

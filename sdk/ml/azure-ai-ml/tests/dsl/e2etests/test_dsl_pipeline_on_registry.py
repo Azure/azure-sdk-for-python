@@ -6,7 +6,6 @@ from azure.ai.ml import MLClient, load_component, Input, load_model
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.constants import AssetTypes
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
 
 from .._util import _DSL_TIMEOUT_SECOND
 
