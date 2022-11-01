@@ -5,13 +5,11 @@
 # ------------------------------------
 import re
 from enum import Enum
-from typing import Union
 from typing_extensions import Literal
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
     LanguageInput,
     MultiLanguageInput,
-    PhraseControlStrategy
 )
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_1 import models as _v3_1_models
@@ -3009,8 +3007,6 @@ class AbstractSummaryAction(DictMixin):
     summarization involves paraphrasing the document using novel sentences.
 
     :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
-    :keyword phrase_controls: Control the phrases to be used in the summary.
-    :paramtype phrase_controls: Optional[list[~azure.ai.textanalytics.PhraseControl]]
     :keyword Optional[str] model_version: The model version to use for the analysis.
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -3038,8 +3034,6 @@ class AbstractSummaryAction(DictMixin):
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
     :ivar Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
-    :ivar phrase_controls: Control the phrases to be used in the summary.
-    :vartype phrase_controls: Optional[list[~azure.ai.textanalytics.PhraseControl]]
 
     .. versionadded:: 2022-10-01-preview
         The *AbstractSummaryAction* model.
@@ -3047,19 +3041,17 @@ class AbstractSummaryAction(DictMixin):
 
     def __init__(self, **kwargs):
         self.sentence_count = kwargs.get("sentence_count", None)
-        self.phrase_controls = kwargs.get("phrase_controls", None)
         self.model_version = kwargs.get("model_version", None)
         self.string_index_type = kwargs.get("string_index_type", "UnicodeCodePoint")
         self.disable_service_logs = kwargs.get("disable_service_logs", None)
 
     def __repr__(self):
         return "AbstractSummaryAction(model_version={}, string_index_type={}, disable_service_logs={}, " \
-               "sentence_count={}, phrase_controls={})".format(
+               "sentence_count={})".format(
             self.model_version,
             self.string_index_type,
             self.disable_service_logs,
             self.sentence_count,
-            repr(self.phrase_controls),
         )[
             :1024
         ]
@@ -3072,47 +3064,9 @@ class AbstractSummaryAction(DictMixin):
                 string_index_type=string_index_type_compatibility(self.string_index_type),
                 logging_opt_out=self.disable_service_logs,
                 sentence_count=self.sentence_count,
-                phrase_controls=[phrase_control._to_generated()  # pylint: disable=protected-access
-                for phrase_control in self.phrase_controls]
-                if self.phrase_controls else None,
             )
         )
 
-
-class PhraseControl(DictMixin):
-    """Control the phrases to be used in the summary.
-
-    :ivar target_phrase: The target phrase to control. Required.
-    :vartype target_phrase: str
-    :ivar strategy: The strategy to use in phrase control. Required. Known values are: "encourage",
-        "discourage", and "disallow".
-    :vartype strategy: str or ~azure.ai.textanalytics.PhraseControlStrategy
-
-    .. versionadded:: 2022-10-01-preview
-        The *PhraseControl* model.
-    """
-
-    def __init__(
-        self,
-        target_phrase: str,
-        strategy: Union[str, PhraseControlStrategy],
-    ):
-        self.target_phrase = target_phrase
-        self.strategy = strategy
-
-    def __repr__(self):
-        return "PhraseControl(target_phrase={}, strategy={})".format(
-                self.target_phrase,
-                self.strategy,
-            )[
-                :1024
-            ]
-
-    def _to_generated(self):
-        return _v2022_10_01_preview_models.PhraseControl(
-            target_phrase=self.target_phrase,
-            strategy=self.strategy
-        )
 
 class DynamicClassificationResult(DictMixin):
     """DynamicClassificationResult is a result object which contains

@@ -17,7 +17,7 @@
   `InformationUnit`, `LengthUnit`, `NumberKind`, `RangeKind`, `RelativeTo`, `SpeedUnit`, `TemperatureUnit`,
   `VolumeUnit`, and `WeightUnit`.
 - Added the Abstractive Summarization feature and related models: `AbstractSummaryAction`, `AbstractSummaryResult`, `AbstractiveSummary`,
-  `SummaryContext`, `PhraseControl`, and `PhraseControlStrategy`. Access the feature through the `begin_analyze_actions` API.
+  and `SummaryContext`. Access the feature through the `begin_analyze_actions` API.
 - Added automatic language detection to long-running operation APIs. Pass `auto` into the document `language` hint to use this feature.
 - Added `autodetect_default_language` to long-running operation APIs. Pass as the default/fallback language for automatic language detection.
 - Added property `detected_language` to `RecognizeEntitiesResult`, `RecognizePiiEntitiesResult`, `AnalyzeHealthcareEntitiesResult`,
