@@ -1,5 +1,11 @@
 # Release History
 
+## 9.0.0b2 (2022-10-26)
+
+### Features Added
+
+  - Added model CosmosMongoDataTransferDataSourceSink
+
 ## 9.0.0b1 (2022-10-10)
 
 ### Features Added
