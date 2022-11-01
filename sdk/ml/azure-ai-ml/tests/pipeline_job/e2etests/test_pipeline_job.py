@@ -953,7 +953,6 @@ class TestPipelineJob(AzureRecordedTestCase):
                 client.jobs.create_or_update(pipeline)
         elif isinstance(expected_error, JobException):
             assert_job_cancel(pipeline, client)
-            # skip streaming to avoid timeout due to no compute resources. Expected to fail with runtime error
         else:
             raise Exception("Unexpected error type {}".format(type(expected_error)))
 

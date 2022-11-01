@@ -7,7 +7,7 @@ import os
 import signal
 import tempfile
 import time
-from typing import Dict
+from typing import Dict, Callable
 from zipfile import ZipFile
 from io import StringIO
 
@@ -272,14 +272,22 @@ def delete_file_if_exists(file_path: str):
         os.remove(file_path)
 
 
-def assert_job_cancel(pipeline, client: MLClient, experiment_name=None):
-    job = client.jobs.create_or_update(pipeline, experiment_name=experiment_name)
+def assert_job_cancel(
+    job: Job,
+    client: MLClient,
+    *,
+    experiment_name=None,
+    check_before_cancelled: Callable[[Job], bool] = None,
+) -> Job:
+    created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
+    if check_before_cancelled is not None:
+        assert check_before_cancelled(created_job)
     try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
+        cancel_poller = client.jobs.begin_cancel(created_job.name)
         assert isinstance(cancel_poller, LROPoller)
         # skip wait for cancel result to reduce test run duration.
         if is_live():
             assert cancel_poller.result() is None
     except HttpResponseError:
         pass
-    return job
+    return created_job
