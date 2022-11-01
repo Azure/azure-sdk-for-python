@@ -5,6 +5,7 @@
 ### Features Added
 
 ### Breaking Changes
+  - Removed support for max_concurrency
 
 ### Bugs Fixed
 

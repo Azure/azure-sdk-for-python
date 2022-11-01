@@ -1,0 +1,55 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueueasync9d8b2dcb",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:35:08 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 27 Oct 2022 22:35:07 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/?comp=list\u0026se=end\u0026sp=l\u0026sv=2021-02-12\u0026ss=q\u0026srt=s\u0026sig=fake_token_value",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:35:08 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Type": "application/xml",
+        "Date": "Thu, 27 Oct 2022 22:35:07 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Transfer-Encoding": "chunked",
+        "Vary": "Origin",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CEnumerationResults ServiceEndpoint=\u0022https://storagename.queue.core.windows.net/\u0022\u003E\u003CQueues\u003E\u003CQueue\u003E\u003CName\u003Elistqueue0cf1d2e5f\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Elistqueue0dcba29e4\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Elistqueue1cf1d2e5f\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Elistqueue1dcba29e4\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Elistqueue2cf1d2e5f\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Elistqueue2dcba29e4\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Elistqueue3cf1d2e5f\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Elistqueue3dcba29e4\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Emytestqueue54a1333f\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasync272e2ee1\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasync537d338d\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasync58bc2f4e\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasync825033b2\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasync89ba28d9\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasync9d8b2dcb\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasyncb19e291e\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasyncec0c3094\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasyncfa822ea4\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasyncfc6d2e94\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueueasyncfde23697\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync1ab524fe\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync1ab92507\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync1b83310e\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync1ba5250a\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync24792ef3\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync26db2f12\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync2bd52a66\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync2dff2a6e\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync2e722a8d\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync381b2cdb\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync3b22a28\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync3b32a29\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync3d36227a\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync40412562\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync40552569\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync41a22572\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync4e1c3181\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync51332f37\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync5844284d\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync58e82ad3\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync59e2a19\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync6092773\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync616d22ed\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync651a2d29\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync65682d27\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync69ca2d5c\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesync830b28cc\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncab1723d4\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncad68321c\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncafa32950\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncc30c2df7\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesynccfa6243e\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncd0cc2450\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncd1032448\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncd196245e\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncde062711\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncdec72c19\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncdf3f2c11\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncdf8c271b\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncf4ff24a3\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncf50b24a2\u003C/Name\u003E\u003C/Queue\u003E\u003CQueue\u003E\u003CName\u003Epyqueuesyncf75b24cf\u003C/Name\u003E\u003C/Queue\u003E\u003C/Queues\u003E\u003CNextMarker /\u003E\u003C/EnumerationResults\u003E"
+    }
+  ],
+  "Variables": {}
+}
