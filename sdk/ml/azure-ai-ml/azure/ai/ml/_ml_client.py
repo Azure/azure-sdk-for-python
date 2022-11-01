@@ -830,6 +830,63 @@ class MLClient(object):
         "R", Workspace, Registry, Compute, OnlineDeployment, OnlineEndpoint, BatchDeployment, BatchEndpoint, JobSchedule
     )
 
+    def create_vnet(self):
+        """Create VNet.
+
+        This Api will associate VNet with scoped workspace in scoped subscription
+        """
+        self._vnet.create_vnet()
+
+    def get_vnet(self):
+        """Get VNet.
+
+        This Api will return associated VNet with scoped workspace in scoped subscription
+        """
+        self._vnet.get_vnet()
+
+    def delete_vnet(self):
+        """Delete VNet.
+
+        This Api will disassociate VNet from scoped workspace in scoped subscription
+        """
+        self._vnet.delete_vnet()
+
+    def create_pe(self, name, plsResourceObject):
+        """Create PE for managed Vnet.
+
+        This Api will create PE for VNet associated with scoped workspace in scoped subscription
+        :param name: Name of the PE
+        :type name: str
+        :param name: plsResourceObject is object of Private Linked Service Details
+        :type name: SynapseVnetPE
+        """
+        self._vnet.create_pe(name, plsResourceObject)
+
+    def get_pe(self, name):
+        """Get PE with provided name associated with workspave vnet.
+
+        This Api will get PE for VNet associated with scoped workspace in scoped subscription
+        :param name: Name of the PE
+        :type name: str
+        """
+        self._vnet.get_pe(name)
+
+    def delete_pe(self, name):
+        """Delete PE with provided name and associated with workspave vnet.
+
+        This Api will delete PE from VNet associated with scoped workspace in scoped subscription
+        :param name: Name of the PE
+        :type name: str
+        """
+        self._vnet.delete_pe(name)
+
+    def list_pe(self):
+        """List PE associated with workspave vnet.
+
+        This Api will list PE for VNet associated with scoped workspace in scoped subscription
+        """
+        self._vnet.list_pe()
+
     def begin_create_or_update(
         self,
         entity: R,

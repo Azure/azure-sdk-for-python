@@ -7,6 +7,7 @@
 from sys import prefix
 import requests
 import json
+from azure.ai.ml._utils._experimental import experimental
 from azure.core.credentials import TokenCredential
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations, OperationsContainer
 from azure.ai.ml.constants._common import AZUREML_RESOURCE_PROVIDER, NAMED_RESOURCE_ID_FORMAT, AzureMLResourceType
@@ -17,6 +18,7 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml.entities import SynapseVnetPE, PrivateLinkServiceTargetResource
 
+@experimental
 class VNetOperations(_ScopeDependentOperations):
     """VNetOperations.
 
@@ -40,49 +42,47 @@ class VNetOperations(_ScopeDependentOperations):
         self._api_base_url = None
         self._requests_pipeline: HttpPipeline = kwargs.pop("requests_pipeline")
     
-    def CreateVnet(self):
+    def create_vnet(self):
         """Create VNet.
 
         This Api will associate VNet with scoped workspace in scoped subscription
         """
-        path = f"http://localhost:22425/sparkvnet/v1.0/subscriptions/{self._operation_scope.subscription_id}/resourceGroups/{self._operation_scope.resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._operation_scope.workspace_name}/managedvnet"
-        print(path)        
-        url = self._api_url("managedvnet")
-        print(url)
+        path = self._api_url("managedvnet")
+        print(f"Calling aml spark service for associating vnet with ml client workspace, request url {path}")
         extra_headers= self._get_header()
         x = requests.put(url = path, headers = extra_headers)
-        print(x.text)       
+        print(f"Create Vnet API response result \n {x.text}")
+        if x.status_code == 403:
+            print("Failed : User need Contributor role for creating vnet")
         print(x)
 
-    def GetVnet(self):
+    def get_vnet(self):
         """Get VNet.
 
         This Api will return associated VNet with scoped workspace in scoped subscription
         """
-        path = f"http://localhost:22425/sparkvnet/v1.0/subscriptions/{self._operation_scope.subscription_id}/resourceGroups/{self._operation_scope.resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._operation_scope.workspace_name}/managedvnet"
-        print(path)        
-        url = self._api_url("managedvnet")
-        print(url)
+        path = self._api_url("managedvnet")
+        print(f"Calling aml spark service for getting vnet details, request url {path}")
         extra_headers= self._get_header()
         x = requests.get(url = path, headers = extra_headers)
-        print(x.text)       
+        print(f"Get Vnet API response result \n {x.text}")       
         print(x)
 
-    def DeleteVnet(self):
+    def delete_vnet(self):
         """Delete VNet.
 
         This Api will disassociate VNet from scoped workspace in scoped subscription
         """
-        path = f"http://localhost:22425/sparkvnet/v1.0/subscriptions/{self._operation_scope.subscription_id}/resourceGroups/{self._operation_scope.resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._operation_scope.workspace_name}/managedvnet"
-        print(path)        
-        url = self._api_url("managedvnet")
-        print(url)
+        path = self._api_url("managedvnet")
+        print(f"Calling aml spark service for removing vnet from ml client workspace, request url {path}")
         extra_headers= self._get_header()
         x = requests.delete(url = path, headers = extra_headers)
-        print(x.text)       
+        print(f"Delete Vnet API response result \n {x.text}")
+        if x.status_code == 403:
+            print("Failed : User need Contributor role for deleting vnet")       
         print(x)
 
-    def CreatePE(self, name, plsResourceObject):
+    def create_pe(self, name, plsResourceObject):
         """Create PE for managed Vnet.
 
         This Api will create PE for VNet associated with scoped workspace in scoped subscription
@@ -91,61 +91,60 @@ class VNetOperations(_ScopeDependentOperations):
         :param name: plsResourceObject is object of Private Linked Service Details
         :type name: SynapseVnetPE
         """
-        path = f"http://localhost:22425/sparkvnet/v1.0/subscriptions/{self._operation_scope.subscription_id}/resourceGroups/{self._operation_scope.resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._operation_scope.workspace_name}/privateEndpoints/vjPE"
-        print(path)
         plsResource = plsResourceObject._to_rest_object()
         print(plsResource)
         url = self._api_url("privateEndpoints/")
-        print(url+name)
+        path = url+name
+        print(f"Calling aml spark service for creating private enpoint to vnet associated with ml client workspace, request url {path}")
         extra_headers= self._get_header()
         x = requests.put(url = path, headers = extra_headers, json = plsResource)
-        print(x.text)       
+        print(f"Create private enpoint API response result \n {x.text}")
+        if x.status_code == 403:
+            print("Failed : User need Contributor role for creating PE")       
         print(x)
 
-    def GetPE(self, name):
+    def get_pe(self, name):
         """Get PE with provided name associated with workspave vnet.
 
         This Api will get PE for VNet associated with scoped workspace in scoped subscription
         :param name: Name of the PE
         :type name: str
         """
-        path = f"http://localhost:22425/sparkvnet/v1.0/subscriptions/{self._operation_scope.subscription_id}/resourceGroups/{self._operation_scope.resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._operation_scope.workspace_name}/privateEndpoints/vjPE"
-        print(path)
-        url = self._api_url("privateEndpoints/")
-        print(url+name)
+        url = self._api_url("privateEndpoints/")        
+        path = url+name
+        print(f"Calling aml spark service for getting PE details {path}")
         extra_headers= self._get_header()
         x = requests.get(url = path, headers = extra_headers)
-        print(x.text)       
+        print(f"Get PE API response result \n {x.text}")       
         print(x)
 
-    def ListPE(self):
+    def list_pe(self):
         """List PE associated with workspave vnet.
 
         This Api will list PE for VNet associated with scoped workspace in scoped subscription
         """
-        path = f"http://localhost:22425/sparkvnet/v1.0/subscriptions/{self._operation_scope.subscription_id}/resourceGroups/{self._operation_scope.resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._operation_scope.workspace_name}/privateEndpoints"
-        print(path)
-        url = self._api_url("privateEndpoints")
-        print(url)
+        path = self._api_url("privateEndpoints")
+        print(f"Calling aml spark service for listing vnet private endpoints associated with ml client workspace, request url {path}")
         extra_headers= self._get_header()
         x = requests.get(url = path, headers = extra_headers)
-        print(x.text)       
+        print(f"List PE API response result \n {x.text}")       
         print(x)
 
-    def DeletePE(self, name):
+    def delete_pe(self, name):
         """Delete PE with provided name and associated with workspave vnet.
 
         This Api will delete PE from VNet associated with scoped workspace in scoped subscription
         :param name: Name of the PE
         :type name: str
         """
-        path = f"http://localhost:22425/sparkvnet/v1.0/subscriptions/{self._operation_scope.subscription_id}/resourceGroups/{self._operation_scope.resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._operation_scope.workspace_name}/privateEndpoints/vjPE"
-        print(path)
         url = self._api_url("privateEndpoints/")
-        print(url+name)
+        path=url+name
+        print(f"Calling aml spark service for removing vnet PE from ml client workspace, request url {path}")
         extra_headers= self._get_header()
         x = requests.delete(url = path, headers = extra_headers)
-        print(x.text)       
+        print(f"Delete PE API response result \n {x.text}")
+        if x.status_code == 403:
+            print("Failed : User need Contributor role for deleting PE")       
         print(x)
 
     def _api_url_prefix(self):
@@ -168,7 +167,7 @@ class VNetOperations(_ScopeDependentOperations):
 
     def _api_url(self, suffix):
         prefix = self._api_url_prefix()
-        resourceString = f"/sparkvnet/v1.0/subscriptions/{self._operation_scope.subscription_id}/resourceGroups/{self._operation_scope.resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._operation_scope.workspace_name}/"
+        resourceString = f"/sparksession/v1.0/subscriptions/{self._operation_scope.subscription_id}/resourceGroups/{self._operation_scope.resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/{self._operation_scope.workspace_name}/"
         url = prefix + resourceString + suffix
         return url
     
@@ -179,5 +178,10 @@ class VNetOperations(_ScopeDependentOperations):
 
     def _get_token(self):
         return self._credential.get_token("https://management.core.windows.net/.default").token
+
+    def retry_if_connection_error(exception):
+        """ Specify an exception you need. or just True"""
+        #return True
+        return isinstance(exception, ConnectionError)
 
        
