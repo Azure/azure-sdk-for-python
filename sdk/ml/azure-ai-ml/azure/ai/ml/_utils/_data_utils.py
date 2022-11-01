@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Dict, Union
-from urllib.parse import urlparse
+from urllib.parse import urljoin, urlparse
 
 import yaml
 from jsonschema import Draft7Validator, ValidationError
@@ -38,24 +38,22 @@ def read_local_mltable_metadata_contents(*, path: str) -> Dict:
 
 def read_remote_mltable_metadata_contents(
     *,
-    path: str,
+    base_uri: str,
     datastore_operations: DatastoreOperations,
     requests_pipeline: HttpPipeline,
 ) -> Union[Dict, None]:
-    mltable_path = str(path)
-    metadata_path = str(Path(path, "MLTable"))
-    scheme = urlparse(mltable_path).scheme
+    scheme = urlparse(base_uri).scheme
     if scheme == "https":
-        response = requests_pipeline.get(metadata_path)
+        response = requests_pipeline.get(urljoin(base_uri, "MLTable"))
         yaml_file = io.BytesIO(response.content)
         return yaml.safe_load(yaml_file)
     if scheme == "azureml":
-        datastore_path_uri = AzureMLDatastorePathUri(mltable_path)
+        datastore_path_uri = AzureMLDatastorePathUri(base_uri)
         datastore_info = get_datastore_info(datastore_operations, datastore_path_uri.datastore)
         storage_client = get_storage_client(**datastore_info)
         with TemporaryDirectory() as tmp_dir:
             starts_with = datastore_path_uri.path.rstrip("/")
-            storage_client.download(Path(starts_with, "MLTable"), tmp_dir)
+            storage_client.download(f"{starts_with}/MLTable", tmp_dir)
             downloaded_mltable_path = Path(tmp_dir, "MLTable")
             with open(downloaded_mltable_path, "r") as f:
                 return yaml.safe_load(f)
