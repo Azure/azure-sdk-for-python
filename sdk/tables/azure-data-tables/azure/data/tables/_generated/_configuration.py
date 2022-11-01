@@ -6,7 +6,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any
+from typing import Any, Union
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
@@ -25,10 +25,10 @@ class AzureTableConfiguration(Configuration):  # pylint: disable=too-many-instan
     :type url: str
     :param version: Specifies the version of the operation to use for this request. "2019-02-02"
      Required.
-    :type version: str
+    :type version: str or ~azure.table.models.Enum0
     """
 
-    def __init__(self, url: str, version: str, **kwargs: Any) -> None:
+    def __init__(self, url: str, version: Union[str, _models.Enum0], **kwargs: Any) -> None:
         super(AzureTableConfiguration, self).__init__(**kwargs)
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")

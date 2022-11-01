@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable
+from typing import Any, Awaitable, Union
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
+from .. import models
 from .._serialization import Deserializer, Serializer
 from ._configuration import AzureTableConfiguration
 from .operations import ServiceOperations, TableOperations
@@ -29,18 +30,19 @@ class AzureTable:  # pylint: disable=client-accepts-api-version-keyword
     :type url: str
     :param version: Specifies the version of the operation to use for this request. "2019-02-02"
      Required.
-    :type version: str
+    :type version: str or ~azure.table.models.Enum0
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, url: str, version: str, **kwargs: Any
+        self, url: str, version: Union[str, _models.Enum0], **kwargs: Any
     ) -> None:
         _endpoint = "{url}"
         self._config = AzureTableConfiguration(url=url, version=version, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        self._serialize = Serializer()
-        self._deserialize = Deserializer()
+        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        self._serialize = Serializer(client_models)
+        self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
         self.table = TableOperations(self._client, self._config, self._serialize, self._deserialize)
         self.service = ServiceOperations(self._client, self._config, self._serialize, self._deserialize)
