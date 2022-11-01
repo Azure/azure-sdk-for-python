@@ -192,8 +192,8 @@ class Sweep(ParameterizedSweep, BaseNode):
         return rest_obj
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Sweep":
-        obj = BaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
+        obj = super()._from_rest_object_to_init_params(obj)
 
         # hack: only early termination policy does not follow yaml schema now, should be removed after server-side made
         # the change
@@ -215,7 +215,7 @@ class Sweep(ParameterizedSweep, BaseNode):
         trial_component_id = pydash.get(obj, "trial.componentId", None)
         obj["trial"] = trial_component_id  # check this
 
-        return Sweep(**obj)
+        return obj
 
     def _get_trial_component_rest_obj(self):
         # trial component to rest object is different from usual component

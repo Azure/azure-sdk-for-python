@@ -6,7 +6,6 @@ parameters:
 stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
-      TestProxy: true
       ServiceDirectory: ml
       MatrixReplace:
         - TestSamples=.*/true

@@ -3,24 +3,16 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import threading
-
+from typing import Any, Dict, Optional, Union, TYPE_CHECKING
 import six
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.pipeline.transport import HttpRequest
-
+from azure.core.pipeline import PipelineResponse
 from .pipeline import build_pipeline
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional, Union
-    from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.transport import HttpResponse
 
     RequestData = Union[Dict[str, str], str]
@@ -32,18 +24,15 @@ _POST = ["POST"]
 class MsalResponse(object):
     """Wraps HttpResponse according to msal.oauth2cli.http"""
 
-    def __init__(self, response):
-        # type: (PipelineResponse) -> None
+    def __init__(self, response: PipelineResponse) -> None:
         self._response = response
 
     @property
-    def status_code(self):
-        # type: () -> int
+    def status_code(self) -> int:
         return self._response.http_response.status_code
 
     @property
-    def text(self):
-        # type: () -> str
+    def text(self) -> str:
         return self._response.http_response.text(encoding="utf-8")
 
     def raise_for_status(self):

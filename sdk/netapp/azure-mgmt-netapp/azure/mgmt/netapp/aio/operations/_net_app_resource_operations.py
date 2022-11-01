@@ -60,7 +60,7 @@ class NetAppResourceOperations:
         self,
         location: str,
         name: str,
-        type: Union[str, "_models.CheckNameResourceTypes"],
+        type: Union[str, _models.CheckNameResourceTypes],
         resource_group: str,
         **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
@@ -209,7 +209,7 @@ class NetAppResourceOperations:
         self,
         location: str,
         name: str,
-        type: Union[str, "_models.CheckQuotaNameResourceTypes"],
+        type: Union[str, _models.CheckQuotaNameResourceTypes],
         resource_group: str,
         **kwargs: Any
     ) -> _models.CheckAvailabilityResponse:
