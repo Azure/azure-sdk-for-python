@@ -3,14 +3,12 @@ import re
 from time import sleep
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher, is_live
+from devtools_testutils import AzureRecordedTestCase, is_live
 import pytest
 
 from azure.ai.ml import MLClient, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, PROVIDER_RESOURCE_ID_WITH_VERSION, AzureMLResourceType
-from azure.ai.ml.entities._assets import Environment
-from azure.core.exceptions import ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
 
@@ -21,10 +19,7 @@ def env_name(variable_recorder) -> Callable[[str], str]:
         return variable_recorder.get_or_record(env_name, random_env_name)
     return generate_random_environment_name
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.e2etest

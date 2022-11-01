@@ -15,8 +15,8 @@ from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller
 
+from test_utilities.utils import assert_job_cancel
 from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings, TEST_CASE_NAME_ENUMERATE
 
 _dependent_datasets = {}
@@ -51,18 +51,6 @@ def create_internal_sample_dependent_datasets(client: MLClient):
                 )
 
 
-def assert_job_cancel(pipeline, client: MLClient, expriment_name=None):
-    job = client.jobs.create_or_update(pipeline, experiment_name=expriment_name)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        # skip wait for cancel result to reduce test run duration.
-        # assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
-    return job
-
-
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_code_hash",
@@ -71,10 +59,6 @@ def assert_job_cancel(pipeline, client: MLClient, expriment_name=None):
     "enable_pipeline_private_preview_features",
     "create_internal_sample_dependent_datasets",
     "enable_internal_components",
-)
-@pytest.mark.skipif(
-    condition=not is_live(),
-    reason="Only run in live mode to save time & unblock CI, need to remove after CI is divided."
 )
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test

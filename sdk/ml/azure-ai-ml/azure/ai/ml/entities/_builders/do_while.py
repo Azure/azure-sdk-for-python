@@ -192,7 +192,10 @@ class DoWhile(LoopNode):
             port_obj = node_ports.get(port, None)
         else:
             port_obj = port
-        if port_obj and port_obj._owner._instance_id != self.body._instance_id: # pylint: disable=protected-access
+        if (
+            port_obj is not None
+            and port_obj._owner._instance_id != self.body._instance_id  # pylint: disable=protected-access
+        ):
             # Check the port owner is dowhile body.
             validation_result.append_error(
                 yaml_path=yaml_path,
@@ -201,7 +204,7 @@ class DoWhile(LoopNode):
                     f"dowhile only accept {port_type} of the body: {self.body.name}."
                 ),
             )
-        elif not port_obj or port_obj._name not in node_ports: # pylint: disable=protected-access
+        elif port_obj is None or port_obj._name not in node_ports: # pylint: disable=protected-access
             # Check port is exist in dowhile body.
             validation_result.append_error(
                 yaml_path=yaml_path,
