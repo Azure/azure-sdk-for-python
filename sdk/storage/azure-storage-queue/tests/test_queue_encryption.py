@@ -6,26 +6,19 @@
 
 import os
 import unittest
-from base64 import (
-    b64decode,
-    b64encode,
-)
-from json import (
-    dumps,
-    loads,
-)
+from base64 import b64decode, b64encode
+from json import dumps, loads
 from unittest import mock
 
 import pytest
 import six
-from azure.core.exceptions import HttpResponseError, ResourceExistsError
+from azure.core.exceptions import ResourceExistsError, HttpResponseError
 from azure.storage.queue import (
     BinaryBase64DecodePolicy,
     BinaryBase64EncodePolicy,
     QueueServiceClient,
     VERSION,
 )
-from azure.storage.queue._shared import decode_base64_to_bytes
 from azure.storage.queue._encryption import (
     _dict_to_encryption_data,
     _EncryptionAgent,
@@ -36,6 +29,7 @@ from azure.storage.queue._encryption import (
     _validate_and_unwrap_cek,
     _WrappedContentKey,
 )
+from azure.storage.queue._shared import decode_base64_to_bytes
 from cryptography.hazmat import backends
 from cryptography.hazmat.primitives.ciphers import Cipher
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
@@ -44,13 +38,8 @@ from cryptography.hazmat.primitives.ciphers.modes import CBC
 from cryptography.hazmat.primitives.padding import PKCS7
 
 from devtools_testutils import recorded_by_proxy
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
-from encryption_test_helper import (
-    KeyResolver,
-    KeyWrapper,
-    mock_urandom
-    RSAKeyWrapper,
-)
+from devtools_testutils.storage import StorageRecordedTestCase
+from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import QueuePreparer
 
 
