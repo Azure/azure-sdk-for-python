@@ -59,6 +59,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     USER_AGENT_SYMBOL = "user-agent"
     PROP_PARTITION_KEY_AMQP_SYMBOL = PROP_PARTITION_KEY
 
+    ERROR_CONDITIONS = [condition.value for condition in errors.ErrorCondition]
+
     @staticmethod
     def build_message(**kwargs):
         """
@@ -550,7 +552,10 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         if isinstance(exception, errors.AuthenticationException):
             error = AuthenticationError(str(exception), exception)
         elif isinstance(exception, errors.AMQPLinkError):
-            error = ConnectError(str(exception), exception)
+            if exception.condition in PyamqpTransport.ERROR_CONDITIONS:
+                error = ConnectionLostError(str(exception), exception)
+            else:
+                error = ConnectError(str(exception), exception)
         # TODO: do we need MessageHandlerError in amqp any more
         #  if connection/session/link error are enough?
         # elif isinstance(exception, errors.MessageHandlerError):

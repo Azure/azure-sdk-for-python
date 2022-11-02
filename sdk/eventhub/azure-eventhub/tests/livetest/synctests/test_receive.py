@@ -9,7 +9,6 @@ import pytest
 import time
 import datetime
 
-from azure.mgmt.eventhub import EventHubManagementClient
 from azure.identity import EnvironmentCredential
 
 from azure.eventhub import EventData, TransportType, EventHubConsumerClient
