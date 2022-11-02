@@ -16,7 +16,6 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 
 # the functions we patch
 from azure.core.pipeline.transport import RequestsTransport
-from azure.core.polling.base_polling import LROBasePolling
 
 from .helpers import get_test_id, is_live, is_live_and_not_recording
 from .proxy_testcase import start_record_or_playback, stop_record_or_playback, transform_request
@@ -118,9 +117,8 @@ def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
 
 def skip_sleep_in_lro_polling():
     """Skip sleep in LRO polling for playback mode.
-    Note that it works in sync mode only for now.
     """
-    LROBasePolling._sleep = lambda *_, **__: None
+    RequestsTransport.sleep = lambda *_, **__: None
 
 
 @pytest.fixture
