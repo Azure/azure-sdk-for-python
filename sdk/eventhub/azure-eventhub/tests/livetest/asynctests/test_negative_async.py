@@ -7,6 +7,7 @@
 import asyncio
 import pytest
 import sys
+import time
 
 from azure.eventhub import (
     EventData,
@@ -340,6 +341,46 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
     async with producer_client:
         with pytest.raises(AuthenticationError):
             await producer_client.create_batch(partition_id='0')
+
+    consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=credential,
+                                             consumer_group='$Default',
+                                             retry_total=0,
+                                             uamqp_transport=uamqp_transport)
+    on_error.err = None
+    async with consumer_client:
+        task = asyncio.ensure_future(consumer_client.receive(on_event,
+                                                                starting_position= "-1", on_error=on_error))
+        await asyncio.sleep(5)
+    await task
+
+    assert isinstance(on_error.err, AuthenticationError)
+
+    credential = EventHubSharedKeyCredential(live_eventhub['key_name'], 'fakekey')
+    producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=credential,
+                                             uamqp_transport=uamqp_transport)
+
+    async with producer_client:
+        with pytest.raises(AuthenticationError):
+            await producer_client.create_batch(partition_id='0')
+
+    consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                             eventhub_name=live_eventhub['event_hub'],
+                                             credential=credential,
+                                             consumer_group='$Default',
+                                             retry_total=0,
+                                             uamqp_transport=uamqp_transport)
+    on_error.err = None
+    async with consumer_client:
+        task = asyncio.ensure_future(consumer_client.receive(on_event,
+                                                                starting_position= "-1", on_error=on_error))
+        await asyncio.sleep(5)
+    await task
+
+    assert isinstance(on_error.err, AuthenticationError)
 
     producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
                                              eventhub_name=live_eventhub['event_hub'],
