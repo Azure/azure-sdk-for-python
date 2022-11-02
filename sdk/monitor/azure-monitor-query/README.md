@@ -14,15 +14,11 @@ The Azure Monitor Query client library is used to execute read-only queries agai
 - [Samples][samples]
 - [Change log][changelog]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended on 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 ## Getting started
 
 ### Prerequisites
 
-- Python 3.6 or later
+- Python 3.7 or later
 - An [Azure subscription][azure_subscription]
 - A [TokenCredential](https://docs.microsoft.com/python/api/azure-core/azure.core.credentials.tokencredential?view=azure-python) implementation, such as an [Azure Identity library credential type](https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#credential-classes).
 - To query Logs, you need an [Azure Log Analytics workspace][azure_monitor_create_using_portal].

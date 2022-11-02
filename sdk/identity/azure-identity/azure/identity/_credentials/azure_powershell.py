@@ -7,7 +7,7 @@ import logging
 import platform
 import subprocess
 import sys
-from typing import TYPE_CHECKING, List
+from typing import List, Any, Tuple
 
 import six
 
@@ -18,10 +18,6 @@ from .azure_cli import get_safe_working_dir
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource, resolve_tenant
 from .._internal.decorators import log_get_token
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Tuple
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -68,13 +64,11 @@ class AzurePowerShellCredential(object):
     def __exit__(self, *args):
         pass
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Calling this method is unnecessary."""
 
     @log_get_token("AzurePowerShellCredential")
-    def get_token(self, *scopes, **kwargs): # pylint: disable=no-self-use
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -101,8 +95,7 @@ class AzurePowerShellCredential(object):
         return token
 
 
-def run_command_line(command_line):
-    # type: (List[str]) -> str
+def run_command_line(command_line: List[str]) -> str:
     stdout = stderr = ""
     proc = None
     kwargs = {}
