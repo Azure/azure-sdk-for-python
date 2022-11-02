@@ -214,7 +214,7 @@ class TestDataOperations:
         mock_data_operations.create_or_update(data)
 
         _mock_read_remote_mltable_metadata_contents.assert_called_once_with(
-            path=data_path,
+            base_uri=data_path,
             datastore_operations=mock_datastore_operation,
             requests_pipeline=mock_data_operations._requests_pipeline,
         )
