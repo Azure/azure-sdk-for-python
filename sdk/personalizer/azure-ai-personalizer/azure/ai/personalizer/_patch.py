@@ -11,6 +11,7 @@ import sys
 from typing import List, Union, Any, IO, Iterator, Iterable, Optional
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
+from azure.core.tracing.decorator import distributed_trace
 from ._client import PersonalizerClient as PersonalizerClientGenerated
 
 if sys.version_info >= (3, 9):
@@ -51,7 +52,7 @@ class PersonalizerAdministrationClient:
     :param endpoint: Supported Cognitive Services endpoint. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword api_version: Api Version. Default value is "2022-09-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -65,6 +66,7 @@ class PersonalizerAdministrationClient:
             **kwargs
         )
 
+    @distributed_trace
     def export_model(self, *, signed: bool = False, **kwargs: Any) -> Iterator[bytes]:
         """Model.
 
@@ -79,6 +81,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.get_model(signed=signed, **kwargs)
 
+    @distributed_trace
     def import_model(self, body: IO, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Model File.
 
@@ -92,6 +95,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.import_model(body, **kwargs)
 
+    @distributed_trace
     def reset_model(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Reset Model.
 
@@ -103,6 +107,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.reset_model(**kwargs)
 
+    @distributed_trace
     def get_model_properties(self, **kwargs: Any) -> JSON:
         """Model Properties.
 
@@ -125,6 +130,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.get_model_properties(**kwargs)
 
+    @distributed_trace
     def get_log_properties(self, **kwargs: Any) -> JSON:
         """Log Properties.
 
@@ -147,6 +153,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.get_log_properties(**kwargs)
 
+    @distributed_trace
     def delete_logs(self, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Logs.
 
@@ -158,6 +165,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.delete_log(**kwargs)
 
+    @distributed_trace
     def get_policy(self, **kwargs: Any) -> JSON:
         """Policy.
 
@@ -178,15 +186,16 @@ class PersonalizerAdministrationClient:
         """
         return self._client.get_policy(**kwargs)
 
+    @distributed_trace
     def update_policy(self, policy: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Update Policy.
 
         Update the Learning Settings that the Personalizer service will use to train models.
 
-        :param policy: The learning settings. Is either a model type or a IO type. Required.
+        :param policy: The learning settings. Required.
         :type policy: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
@@ -194,6 +203,12 @@ class PersonalizerAdministrationClient:
 
         Example:
             .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                policy = {
+                    "arguments": "str",  # Arguments of the learning settings. Required.
+                    "name": "str"  # Name of the learning settings. Required.
+                }
 
                 # response body for status code(s): 200
                 response == {
@@ -203,6 +218,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.update_policy(policy, **kwargs)
 
+    @distributed_trace
     def reset_policy(self, **kwargs: Any) -> JSON:
         """Reset Policy.
 
@@ -223,6 +239,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.reset_policy(**kwargs)
 
+    @distributed_trace
     def get_service_configuration(self, **kwargs: Any) -> JSON:
         """Service Configuration.
 
@@ -291,16 +308,16 @@ class PersonalizerAdministrationClient:
         """
         return self._client.get_service_configuration(**kwargs)
 
+    @distributed_trace
     def update_service_configuration(self, config: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Update Service Configuration.
 
         Update the Personalizer service configuration.
 
-        :param config: The personalizer service configuration. Is either a model type or a IO type.
-         Required.
+        :param config: The personalizer service configuration. Required.
         :type config: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
@@ -308,6 +325,60 @@ class PersonalizerAdministrationClient:
 
         Example:
             .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                config = {
+                    "defaultReward": 0.0,  # The reward given if a reward is not received within
+                      the specified wait time. Required.
+                    "explorationPercentage": 0.0,  # The percentage of rank responses that will
+                      use exploration. Required.
+                    "logRetentionDays": 0,  # Number of days historical logs are to be
+                      maintained. -1 implies the logs will never be deleted. Required.
+                    "modelExportFrequency": "1 day, 0:00:00",  # Personalizer will start using
+                      the most updated trained model for online ranks automatically every specified
+                      time period."nFor example, PT5M (5 mins). For information about the time
+                      format,"nsee http://en.wikipedia.org/wiki/ISO_8601#Durations. Required.
+                    "modelRetrainDays": 0,  # Default value is 0. Number of days of historical
+                      logs used when a model retrain is triggered. Required.
+                    "rewardAggregation": "str",  # The function used to process rewards, if
+                      multiple reward scores are received before rewardWaitTime is over. Required.
+                    "rewardWaitTime": "1 day, 0:00:00",  # The time span waited until a request
+                      is marked with the default reward"nand should be between 5 seconds and 2
+                      days."nFor example, PT5M (5 mins). For information about the time format,"nsee
+                      http://en.wikipedia.org/wiki/ISO_8601#Durations. Required.
+                    "autoOptimizationFrequency": "1 day, 0:00:00",  # Optional. Frequency of
+                      automatic optimization. Only relevant if IsAutoOptimizationEnabled is true."nFor
+                      example, PT5M (5 mins). For information about the time format,"n""r""nsee
+                      http://en.wikipedia.org/wiki/ISO_8601#Durations.
+                    "autoOptimizationStartDate": "2020-02-20 00:00:00",  # Optional. Date when
+                      the first automatic optimization evaluation must be performed. Only relevant if
+                      IsAutoOptimizationEnabled is true.
+                    "isAutoOptimizationEnabled": bool,  # Optional. Flag indicating whether
+                      Personalizer will automatically optimize Learning Settings by running Offline
+                      Evaluations periodically.
+                    "lastConfigurationEditDate": "2020-02-20 00:00:00",  # Optional. Last time
+                      model training configuration was updated.
+                    "latestApprenticeModeMetrics": {
+                        "lastProcessedEventTime": "2020-02-20 00:00:00",  # Required.
+                        "numberOfEvents": 0,  # Required.
+                        "numberOfImitatedEvents": 0,  # Required.
+                        "startTime": "2020-02-20 00:00:00",  # Required.
+                        "sumOfImitatedRewards": 0.0,  # Required.
+                        "sumOfRewards": 0.0,  # Required.
+                        "lastBatchMetrics": {
+                            "numberOfEvents": 0,  # Required.
+                            "numberOfImitatedEvents": 0,  # Required.
+                            "sumOfImitatedRewards": 0.0,  # Required.
+                            "sumOfRewards": 0.0  # Required.
+                        }
+                    },
+                    "learningMode": "str",  # Optional. Learning Modes for Personalizer. Known
+                      values are: "Online", "Apprentice", and "LoggingOnly".
+                    "logMirrorEnabled": bool,  # Optional. Flag indicates whether log mirroring
+                      is enabled.
+                    "logMirrorSasUri": "str"  # Optional. Azure storage account container SAS URI
+                      for log mirroring.
+                }
 
                 # response body for status code(s): 200
                 response == {
@@ -365,6 +436,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.update_service_configuration(config, **kwargs)
 
+    @distributed_trace
     def apply_from_evaluation(  # pylint: disable=inconsistent-return-statements
         self, body: Union[JSON, IO], **kwargs: Any
     ) -> None:
@@ -374,7 +446,7 @@ class PersonalizerAdministrationClient:
         current online Learning Settings and model and replacing the previous ones.
 
         :param body: Reference to the policy within the evaluation. Required.
-        :type body: JSON
+        :type body: JSON or IO
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -393,6 +465,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.apply_from_evaluation(body, **kwargs)
 
+    @distributed_trace
     def create_evaluation(  # pylint: disable=inconsistent-return-statements
         self, evaluation_id: str, evaluation: Union[JSON, IO], **kwargs: Any
     ) -> None:
@@ -402,18 +475,39 @@ class PersonalizerAdministrationClient:
 
         :param evaluation_id: Id of the Offline Evaluation to create. Required.
         :type evaluation_id: str
-        :param evaluation: The Offline Evaluation job definition. Is either a model type or a IO type.
-         Required.
-        :type evaluation: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :param evaluation: The Offline Evaluation job definition. Required.
+        :type evaluation: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                evaluation = {
+                    "endTime": "2020-02-20 00:00:00",  # The end time of the evaluation.
+                      Required.
+                    "name": "str",  # The name of the evaluation. Required.
+                    "startTime": "2020-02-20 00:00:00",  # The start time of the evaluation.
+                      Required.
+                    "enablePolicyOptimization": bool,  # Optional. True if the evaluation should
+                      explore for a more optimal learning settings.
+                    "policies": [
+                        {
+                            "arguments": "str",  # Arguments of the learning settings.
+                              Required.
+                            "name": "str"  # Name of the learning settings. Required.
+                        }
+                    ]
+                }
         """
         return self._client.create_evaluation(evaluation_id, evaluation, **kwargs)
 
+    @distributed_trace
     def get_evaluation(
         self,
         evaluation_id: str,
@@ -519,6 +613,7 @@ class PersonalizerAdministrationClient:
             **kwargs
         )
 
+    @distributed_trace
     def list_evaluations(
         self, *, filter_expression: Optional[str] = None, top: Optional[int] = None, skip: int = 0, **kwargs: Any
     ) -> Iterable[JSON]:
@@ -562,6 +657,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.list_evaluations(filter_expression=filter_expression, top=top, skip=skip, **kwargs)
 
+    @distributed_trace
     def delete_evaluation(
         self, evaluation_id: str, **kwargs: Any
     ) -> None:  # pylint: disable=inconsistent-return-statements
@@ -577,6 +673,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.delete_evaluation(evaluation_id, **kwargs)
 
+    @distributed_trace
     def create_feature_importance(  # pylint: disable=inconsistent-return-statements
         self, feature_importance_id: str, feature_importance: Union[JSON, IO], **kwargs: Any
     ) -> None:
@@ -586,18 +683,30 @@ class PersonalizerAdministrationClient:
 
         :param feature_importance_id: Id of the Feature Importance to create. Required.
         :type feature_importance_id: str
-        :param feature_importance: The Feature Importance job definition. Is either a model type or a
-         IO type. Required.
+        :param feature_importance: The Feature Importance job definition. Required.
         :type feature_importance: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                feature_importance = {
+                    "endTime": "2020-02-20 00:00:00",  # The end time of the feature importance.
+                      Required.
+                    "name": "str",  # The name of the feature importance. Required.
+                    "startTime": "2020-02-20 00:00:00"  # The start time of the feature
+                      importance. Required.
+                }
         """
         return self._client.create_feature_importance(feature_importance_id, feature_importance, **kwargs)
 
+    @distributed_trace
     def get_feature_importance(self, feature_importance_id: str, **kwargs: Any) -> JSON:
         """Feature Importance.
 
@@ -637,6 +746,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.get_feature_importance(feature_importance_id, **kwargs)
 
+    @distributed_trace
     def list_feature_importances(self, *, top: Optional[int] = None, skip: int = 0, **kwargs: Any) -> Iterable[JSON]:
         """All Feature Importances.
 
@@ -669,6 +779,7 @@ class PersonalizerAdministrationClient:
         """
         return self._client.list_feature_importances(top=top, skip=skip, **kwargs)
 
+    @distributed_trace
     def delete_feature_importance(  # pylint: disable=inconsistent-return-statements
         self, feature_importance_id: str, **kwargs: Any
     ) -> None:
@@ -695,7 +806,7 @@ class PersonalizerClient:
     :param endpoint: Supported Cognitive Services endpoint. Required.
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials.AzureKeyCredential
+    :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials.TokenCredential
     :keyword api_version: Api Version. Default value is "2022-09-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -709,17 +820,17 @@ class PersonalizerClient:
             **kwargs
         )
 
+    @distributed_trace
     def rank(self, rank_request: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Rank.
 
         Submit a Personalizer rank request. Receives a context and a list of actions. Returns which of
         the provided actions should be used by your application, in rewardActionId.
 
-        :param rank_request: A Personalizer Rank request. Is either a model type or a IO type.
-         Required.
+        :param rank_request: A Personalizer Rank request. Required.
         :type rank_request: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
@@ -727,6 +838,44 @@ class PersonalizerClient:
 
         Example:
             .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                rank_request = {
+                    "actions": [
+                        {
+                            "features": [
+                                {}  # List of dictionaries containing features.
+                                  Required.
+                            ],
+                            "id": "str"  # Id of the action. Required.
+                        }
+                    ],
+                    "contextFeatures": [
+                        {}  # Optional. Features of the context used for Personalizer as
+                          a"ndictionary of dictionaries. This is determined by your application,
+                          and"ntypically includes features about the current user, their"ndevice,
+                          profile information, aggregated data about time and date, etc."nFeatures
+                          should not include personally identifiable information (PII),"nunique
+                          UserIDs, or precise timestamps.
+                    ],
+                    "deferActivation": False,  # Optional. Default value is False. Send false if
+                      it is certain the rewardActionId in rank results will be shown to the user,
+                      therefore"nPersonalizer will expect a Reward call, otherwise it will assign the
+                      default"nReward to the event. Send true if it is possible the user will not see
+                      the action specified in the rank results,"n(e.g. because the page is rendering
+                      later, or the Rank results may be overridden by code further downstream)."nYou
+                      must call the Activate Event API if the event output is shown to users, otherwise
+                      Rewards will be ignored.
+                    "eventId": "str",  # Optional. Optionally pass an eventId that uniquely
+                      identifies this Rank event."nIf null, the service generates a unique eventId. The
+                      eventId will be used for"nassociating this request with its reward, as well as
+                      seeding the pseudo-random"ngenerator when making a Personalizer call.
+                    "excludedActions": [
+                        "str"  # Optional. The set of action ids to exclude from
+                          ranking."nPersonalizer will consider the first non-excluded item in the array
+                          as the Baseline action when performing Offline Evaluations.
+                    ]
+                }
 
                 # response body for status code(s): 201
                 response == {
@@ -745,6 +894,7 @@ class PersonalizerClient:
         """
         return self._client.rank_single_slot(rank_request, **kwargs)
 
+    @distributed_trace
     def reward(  # pylint: disable=inconsistent-return-statements
         self, event_id: str, reward: Union[JSON, IO], **kwargs: Any
     ) -> None:
@@ -755,18 +905,29 @@ class PersonalizerClient:
 
         :param event_id: The event id this reward applies to. Required.
         :type event_id: str
-        :param reward: The reward should be a floating point number, typically between 0 and 1. Is
-         either a model type or a IO type. Required.
+        :param reward: The reward should be a floating point number, typically between 0 and 1.
+         Required.
         :type reward: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                reward = {
+                    "value": 0.0  # Reward to be assigned to an action. Value is a float
+                      calculated by your application, typically between 0 and 1, and must be between -1
+                      and 1. Required.
+                }
         """
         return self._client.reward_single_slot_event(event_id, reward, **kwargs)
 
+    @distributed_trace
     def activate(self, event_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Activate Event.
 
@@ -781,6 +942,7 @@ class PersonalizerClient:
         """
         return self._client.activate_single_slot_event(event_id, **kwargs)
 
+    @distributed_trace
     def rank_multi_slot(self, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Rank (MultiSlot).
 
@@ -788,11 +950,10 @@ class PersonalizerClient:
         list of slots. Returns which of the provided actions should be used in each slot, in each
         rewardActionId.
 
-        :param body: A Personalizer multi-slot Rank request. Is either a model type or a IO type.
-         Required.
+        :param body: A Personalizer multi-slot Rank request. Required.
         :type body: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: JSON object
         :rtype: JSON
@@ -800,6 +961,57 @@ class PersonalizerClient:
 
         Example:
             .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "actions": [
+                        {
+                            "features": [
+                                {}  # List of dictionaries containing features.
+                                  Required.
+                            ],
+                            "id": "str"  # Id of the action. Required.
+                        }
+                    ],
+                    "slots": [
+                        {
+                            "baselineAction": "str",  # The 'baseline action' ID for the
+                              slot."nThe BaselineAction is the Id of the Action your application would
+                              use in that slot if Personalizer didn't exist."nBaselineAction must be
+                              defined for every slot."nBaselineAction should never be part of
+                              ExcludedActions."nEach slot must have a unique BaselineAction which
+                              corresponds to an an action from the event's Actions list. Required.
+                            "id": "str",  # Slot ID. Required.
+                            "excludedActions": [
+                                "str"  # Optional. List of excluded action Ids.
+                            ],
+                            "features": [
+                                {}  # Optional. List of dictionaries containing slot
+                                  features.
+                            ]
+                        }
+                    ],
+                    "contextFeatures": [
+                        {}  # Optional. Features of the context used for Personalizer as
+                          a"ndictionary of dictionaries. This is determined by your application,
+                          and"ntypically includes features about the current user, their"ndevice,
+                          profile information, aggregated data about time and date, etc."nFeatures
+                          should not include personally identifiable information (PII),"nunique
+                          UserIDs, or precise timestamps.
+                    ],
+                    "deferActivation": False,  # Optional. Default value is False. Send false if
+                      it is certain the rewardActionId in rank results will be shown to the user,
+                      therefore"nPersonalizer will expect a Reward call, otherwise it will assign the
+                      default"nReward to the event. Send true if it is possible the user will not see
+                      the action specified in the rank results,"n(e.g. because the page is rendering
+                      later, or the Rank results may be overridden by code further downstream)."nYou
+                      must call the Activate Event API if the event output is shown to users, otherwise
+                      Rewards will be ignored.
+                    "eventId": "str"  # Optional. Optionally pass an eventId that uniquely
+                      identifies this Rank event."nIf null, the service generates a unique eventId. The
+                      eventId will be used for"nassociating this request with its reward, as well as
+                      seeding the pseudo-random"ngenerator when making a Personalizer call.
+                }
 
                 # response body for status code(s): 201
                 response == {
@@ -816,6 +1028,7 @@ class PersonalizerClient:
         """
         return self._client.rank_multi_slot(body, **kwargs)
 
+    @distributed_trace
     def reward_multi_slot(  # pylint: disable=inconsistent-return-statements
         self, event_id: str, body: Union[JSON, IO], **kwargs: Any
     ) -> None:
@@ -826,17 +1039,33 @@ class PersonalizerClient:
         :param event_id: The event id this reward applies to. Required.
         :type event_id: str
         :param body: List of slot id and reward values. The reward should be a floating point number,
-         typically between 0 and 1. Is either a model type or a IO type. Required.
+         typically between 0 and 1. Required.
         :type body: JSON or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
         :paramtype content_type: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # JSON input template you can fill out and use as your body input.
+                body = {
+                    "reward": [
+                        {
+                            "slotId": "str",  # Slot id for which we are sending the
+                              reward. Required.
+                            "value": 0.0  # Reward to be assigned to slotId. Value should
+                              be between -1 and 1 inclusive. Required.
+                        }
+                    ]
+                }
         """
         return self._client.reward_multi_slot_event(event_id, body, **kwargs)
 
+    @distributed_trace
     def activate_multi_slot(
         self, event_id: str, **kwargs: Any
     ) -> None:  # pylint: disable=inconsistent-return-statements

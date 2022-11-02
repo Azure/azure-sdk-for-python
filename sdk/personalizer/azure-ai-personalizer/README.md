@@ -1,7 +1,5 @@
 # Azure Personalizer client library for Python
 
-Azure Personalizer is a cloud service that uses machine learning to analyze text and structured data from your documents. It includes the following main features:
-
 [Azure Personalizer][personalizer_doc]
 is a cloud-based service that helps your applications choose the best content item to show your users. You can use the Personalizer service to determine what product to suggest to shoppers or to figure out the optimal position for an advertisement. After the content is shown to the user, your application monitors the user's reaction and reports a reward score back to the Personalizer service. This ensures continuous improvement of the machine learning model, and Personalizer's ability to select the best content item based on the contextual information it receives.
 
@@ -29,9 +27,9 @@ This table shows the relationship between SDK versions and supported API version
 
 ## Key concepts
 
-### DocumentAnalysisClient
+### PersonalizerClient
 The [synchronous PersonalizerClient][personalizer_sync_client] and
-[asynchronous PersonalizerClient][personalizer_async_client] provide both synchronous and asynchronous operations to:
+[asynchronous PersonalizerClient][personalizer_async_client] provide synchronous and asynchronous operations to:
 - Manage the machine learning model and learning settings for the Personalizer service.
 - Manage the properties of the Personalizer service such as the [learning mode][learning_mode], [exploration percentage][exploration].
 - Run counterfactual evaluations on prior historical event data.
@@ -42,7 +40,114 @@ The [synchronous PersonalizerClient][personalizer_sync_client] and
 
 
 ## Examples
-Please refer the sample scenarios outlined in the [examples][examples].
+The following examples outline the main scenarios when using personalizer in single-slot and multi-slot configurations.
+
+* [Send rank and reward when using a single slot](#rank-and-reward "Send rank and reward")
+* [Send rank and reward when using multiple slots](#multi-slot-rank-and-reward "Send multi-slot rank and reward")
+
+### Send rank and reward
+
+```python
+from azure.ai.personalizer import PersonalizerClient
+from azure.core.credentials import AzureKeyCredential
+
+endpoint = "https://<my-personalizer-instance>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+
+client = PersonalizerClient(endpoint, credential)
+
+# The list of actions to be ranked with metadata associated for each action.
+actions = [
+    {
+        "id": "Video1",
+        "features": [
+            {"videoType": "documentary", "videoLength": 35, "director": "CarlSagan"},
+            {"mostWatchedByAge": "50-55"},
+        ],
+    },
+    {
+        "id": "Video2",
+        "features": [
+            {"videoType": "movie", "videoLength": 120, "director": "StevenSpielberg"},
+            {"mostWatchedByAge": "40-45"},
+        ],
+    },
+]
+
+# Context of the user to which the action must be presented.
+context_features = [
+    {"currentContext": {"day": "tuesday", "time": "night", "weather": "rainy"}},
+    {
+        "userContext": {
+            "payingUser": True,
+            "favoriteGenre": "documentary",
+            "hoursOnSite": 0.12,
+            "lastWatchedType": "movie",
+        },
+    },
+]
+
+request = {
+    "actions": actions,
+    "contextFeatures": context_features,
+}
+
+rank_response = client.rank(request)
+print("Sending reward event")
+client.reward(rank_response.get("eventId"), {"value": 1.0})
+```
+
+### Send multi-slot rank and reward
+
+```python
+from azure.ai.personalizer import PersonalizerClient
+from azure.core.credentials import AzureKeyCredential
+
+endpoint = "https://<my-personalizer-instance>.cognitiveservices.azure.com/"
+credential = AzureKeyCredential("<api_key>")
+
+client = PersonalizerClient(endpoint, credential)
+
+# We want to rank the actions for two slots.
+slots = [
+    {
+        "id": "Main Article",
+        "baselineAction": "NewsArticle",
+        "positionFeatures": [{"Size": "Large", "Position": "Top Middle"}],
+    },
+    {
+        "id": "Side Bar",
+        "baselineAction": "SportsArticle",
+        "positionFeatures": [{"Size": "Small", "Position": "Bottom Right"}],
+    },
+]
+
+# The list of actions to be ranked with metadata associated for each action.
+actions = [
+    {"id": "NewsArticle", "features": [{"type": "News"}]},
+    {"id": "SportsArticle", "features": [{"type": "Sports"}]},
+    {"id": "EntertainmentArticle", "features": [{"type": "Entertainment"}]},
+]
+
+# Context of the user to which the action must be presented.
+context_features = [
+    {"user": {"profileType": "AnonymousUser", "latLong": "47.6,-122.1"}},
+    {"environment": {"dayOfMonth": "28", "monthOfYear": "8", "weather": "Sunny"}},
+    {"device": {"mobile": True, "windows": True}},
+    {"recentActivity": {"itemsInCart": 3}},
+]
+
+request = {
+    "slots": slots,
+    "actions": actions,
+    "contextFeatures": context_features,
+}
+rank_response = client.rank_multi_slot(request)
+print("Sending reward event for Main Article slot")
+client.reward_multi_slot(
+    rank_response.get("eventId"),
+    {"reward": [{"slotId": "Main Article", "value": 1.0}]})
+```
 
 ## Troubleshooting
 
