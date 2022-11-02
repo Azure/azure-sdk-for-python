@@ -14,6 +14,7 @@ from io import StringIO
 import pydash
 import urllib3
 from azure.core.exceptions import HttpResponseError
+from devtools_testutils import is_live
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -133,7 +134,7 @@ def submit_and_wait(ml_client, pipeline_job: PipelineJob, expected_state: str = 
     assert expected_state in terminal_states
 
     while created_job.status not in terminal_states:
-        time.sleep(30)
+        sleep_if_live(30)
         created_job = ml_client.jobs.get(created_job.name)
         print("Latest status : {0}".format(created_job.status))
     if created_job.status != expected_state:
@@ -152,7 +153,7 @@ def assert_final_job_status(
 
     poll_start_time = time.time()
     while job.status not in RunHistoryConstants.TERMINAL_STATUSES and time.time() < (poll_start_time + deadline):
-        time.sleep(THREAD_WAIT_TIME_BEFORE_POLL)
+        sleep_if_live(THREAD_WAIT_TIME_BEFORE_POLL)
         job = client.jobs.get(job.name)
 
     if job.status not in RunHistoryConstants.TERMINAL_STATUSES:
@@ -298,10 +299,22 @@ def assert_job_cancel(
 def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
     poll_start_time = time.time()
     while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-        time.sleep(_wait_before_polling(time.time() - poll_start_time))
+        sleep_if_live(_wait_before_polling(time.time() - poll_start_time))
         job = client.jobs.get(job.name)
         if timeout is not None and time.time() - poll_start_time > timeout:
             # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
             cancel_job(client, job)
             return JobStatus.CANCELED
     return job.status
+
+
+def sleep_if_live(seconds):
+    """Sleeps for the given number of seconds if the test is live.
+    In playback mode, this function does nothing.
+    Please use this function instead of time.sleep() in tests if you want to wait for some remote operations.
+    """
+    # another solution is to automatically mock time.sleep when running in playback mode,
+    # but it will impact all tests silently, no matter what is the sleep for.
+    # so we choose to explicitly call this function in tests
+    if is_live():
+        time.sleep(seconds)

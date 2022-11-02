@@ -1,15 +1,16 @@
 import random
 import re
-from time import sleep
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase
 import pytest
 
 from azure.ai.ml import MLClient, load_environment
 from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
-from azure.ai.ml.constants._common import ARM_ID_PREFIX, PROVIDER_RESOURCE_ID_WITH_VERSION, AzureMLResourceType
+from azure.ai.ml.constants._common import ARM_ID_PREFIX
 from azure.core.paging import ItemPaged
+
+from test_utilities.utils import sleep_if_live
 
 
 @pytest.fixture
@@ -181,8 +182,7 @@ class TestEnvironment(AzureRecordedTestCase):
 
         def get_environment_list():
             # Wait for list index to update before calling list command
-            if is_live():
-                sleep(30)
+            sleep_if_live(30)
             environment_list = client.environments.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [e.version for e in environment_list if e is not None]
 
@@ -203,7 +203,7 @@ class TestEnvironment(AzureRecordedTestCase):
 
         def get_environment_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            sleep_if_live(30)
             environment_list = client.environments.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [e.name for e in environment_list if e is not None]
 
@@ -214,7 +214,6 @@ class TestEnvironment(AzureRecordedTestCase):
         assert name in get_environment_list()
 
     def test_environment_get_latest_label(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        from time import sleep
 
         name = randstr("name")
         versions = ["foo", "bar", "baz", "foobar"]
@@ -228,7 +227,7 @@ class TestEnvironment(AzureRecordedTestCase):
             )
             assert created.name == name
             assert created.version == version
-            sleep(2)
+            sleep_if_live(2)
             assert client.environments.get(name, label="latest").version == version
 
     def test_registry_environment_create_conda_and_get(self, only_registry_client: MLClient, env_name: Callable[[str], str]) -> None:

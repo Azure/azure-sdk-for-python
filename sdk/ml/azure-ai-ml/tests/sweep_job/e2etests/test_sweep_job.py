@@ -3,7 +3,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Callable
 
-from devtools_testutils import AzureRecordedTestCase, is_live
+from devtools_testutils import AzureRecordedTestCase
 import pytest
 
 from azure.ai.ml import MLClient, load_job
@@ -13,7 +13,7 @@ from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.sweep.early_termination_policy import TruncationSelectionPolicy
 from azure.ai.ml.entities._job.sweep.search_space import LogUniform
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-from test_utilities.utils import wait_until_done
+from test_utilities.utils import wait_until_done, sleep_if_live
 
 
 # previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
@@ -99,8 +99,7 @@ class TestSweepJob(AzureRecordedTestCase):
 
         assert sweep_job_resource.name == job_name
         # wait 3 minutes to check job has not failed.
-        if is_live():
-            time.sleep(3 * 60)
+        sleep_if_live(3 * 60)
         sweep_job_resource = client.jobs.get(job_name)
         assert sweep_job_resource.status in [JobStatus.COMPLETED, JobStatus.RUNNING]
 
