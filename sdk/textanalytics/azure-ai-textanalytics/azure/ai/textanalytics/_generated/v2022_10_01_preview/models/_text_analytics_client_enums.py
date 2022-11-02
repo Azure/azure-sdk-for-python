@@ -302,19 +302,6 @@ class NumberKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PERCENT = "Percent"
     UNSPECIFIED = "Unspecified"
 
-class PhraseControlStrategy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The strategy to use in phrase control.
-    """
-
-    #: The model will have higher probability to select the target phrase in the summary if there are
-    #: multiple alternates.
-    ENCOURAGE = "encourage"
-    #: The model will have lower probability to select the target phrase in the summary if there are
-    #: multiple alternates.
-    DISCOURAGE = "discourage"
-    #: The model will avoid to select the target phrase in the summary.
-    DISALLOW = "disallow"
-
 class PiiCategory(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """PiiCategory.
     """

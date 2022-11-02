@@ -63,7 +63,6 @@ from ._models import (
     AbstractSummaryResult,
     AbstractiveSummary,
     SummaryContext,
-    PhraseControl,
     AbstractSummaryAction,
     DynamicClassificationResult,
 )
@@ -98,7 +97,6 @@ from ._generated.models import (
     TemperatureUnit,
     VolumeUnit,
     WeightUnit,
-    PhraseControlStrategy,
     ClassificationType,
 )
 from ._lro import AnalyzeHealthcareEntitiesLROPoller, AnalyzeActionsLROPoller, TextAnalysisLROPoller
@@ -195,8 +193,6 @@ __all__ = [
     "AbstractSummaryResult",
     "AbstractiveSummary",
     "SummaryContext",
-    "PhraseControlStrategy",
-    "PhraseControl",
     "AbstractSummaryAction",
     "ClassificationType",
     "DynamicClassificationResult",
