@@ -60,7 +60,6 @@ class RecurrenceTriggerSchema(BaseTriggerSchema):
     frequency = StringTransformedEnum(
         required=True,
         allowed_values=[
-            RecurrenceFrequency.SECOND,
             RecurrenceFrequency.MINUTE,
             RecurrenceFrequency.HOUR,
             RecurrenceFrequency.DAY,
