@@ -51,7 +51,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         train_path, val_path = image_segmentation_dataset
 
         # Create jsonl file
-        self._create_jsonl_segmentation(client=client, train_path=train_path, val_path=val_path)
+        #self._create_jsonl_segmentation(client=client, train_path=train_path, val_path=val_path)
 
         training_data = Input(type=AssetTypes.MLTABLE, path=train_path)
         validation_data = Input(type=AssetTypes.MLTABLE, path=val_path)
