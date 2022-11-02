@@ -27,6 +27,7 @@ obj/
 dist/
 MANIFEST
 _docs
+*.pyd
 
 # Result of running python setup.py install/pip install -e
 RECORD.txt

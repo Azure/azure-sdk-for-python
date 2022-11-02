@@ -10,7 +10,7 @@
 import os
 import re
 
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, Extension
 
 
 # Change the PACKAGE_NAME only to change folder and different name
@@ -64,6 +64,15 @@ setup(
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
         'License :: OSI Approved :: MIT License',
+    ],
+    ext_modules=[
+        Extension(
+            "crc64",
+            [
+                os.path.join(package_folder_path, 'crc64/crc64module.c'),
+                os.path.join(package_folder_path, 'crc64/crc64.c')
+            ]
+        )
     ],
     zip_safe=False,
     packages=find_packages(exclude=[

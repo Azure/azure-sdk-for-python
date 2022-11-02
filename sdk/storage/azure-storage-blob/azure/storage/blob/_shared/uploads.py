@@ -5,11 +5,13 @@
 # --------------------------------------------------------------------------
 # pylint: disable=no-self-use
 
+import hashlib
 from concurrent import futures
 from io import BytesIO, IOBase, SEEK_CUR, SEEK_END, SEEK_SET, UnsupportedOperation
 from itertools import islice
 from math import ceil
 from threading import Lock
+from typing import Optional, Tuple
 
 import six
 from azure.core.tracing.common import with_current_context
@@ -18,9 +20,31 @@ from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
 
+from ..crc64 import compute_crc64
+
 
 _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
+
+
+def calculate_content_md5(data: bytes) -> Optional[bytes]:
+    md5 = hashlib.md5()
+    md5.update(data)
+    return md5.digest()
+
+
+def calculate_content_crc64(data: bytes) -> Optional[bytes]:
+    crc64 = compute_crc64(data, 0)
+    return crc64.to_bytes(8, 'little')
+
+
+def get_content_checksum(checksum: str, data: bytes) -> Tuple[Optional[bytes], Optional[bytes]]:
+    content_md5, content_crc64 = None, None
+    if checksum == 'md5':
+        content_md5 = calculate_content_md5(data)
+    elif checksum == 'crc64':
+        content_crc64 = calculate_content_crc64(data)
+    return content_md5, content_crc64
 
 
 def _parallel_uploads(executor, uploader, pending, running):
@@ -130,12 +154,14 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             encryptor=None,
             padder=None,
             progress_hook=None,
+            checksum=None,
             **kwargs):
         self.service = service
         self.total_size = total_size
         self.chunk_size = chunk_size
         self.stream = stream
         self.parallel = parallel
+        self.checksum = checksum
 
         # Stream management
         self.stream_lock = Lock() if parallel else None
@@ -148,6 +174,7 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         # Encryption
         self.encryptor = encryptor
         self.padder = padder
+
         self.response_headers = None
         self.etag = None
         self.last_modified = None
@@ -173,26 +200,28 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 if temp == b"" or len(data) == self.chunk_size:
                     break
 
+            content_md5, content_crc64 = get_content_checksum(self.checksum, data)
+            chunk_info = ChunkInfo(index, data, content_md5, content_crc64)
+
+            # TODO: Handle encryption V1
             if len(data) == self.chunk_size:
                 if self.padder:
                     data = self.padder.update(data)
                 if self.encryptor:
                     data = self.encryptor.update(data)
-                yield index, data
+                yield chunk_info
             else:
                 if self.padder:
                     data = self.padder.update(data) + self.padder.finalize()
                 if self.encryptor:
                     data = self.encryptor.update(data) + self.encryptor.finalize()
                 if data:
-                    yield index, data
+                    yield chunk_info
                 break
             index += len(data)
 
-    def process_chunk(self, chunk_data):
-        chunk_bytes = chunk_data[1]
-        chunk_offset = chunk_data[0]
-        return self._upload_chunk_with_progress(chunk_offset, chunk_bytes)
+    def process_chunk(self, chunk_info: "ChunkInfo"):
+        return self._upload_chunk_with_progress(chunk_info)
 
     def _update_progress(self, length):
         if self.progress_lock is not None:
@@ -204,12 +233,12 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         if self.progress_hook:
             self.progress_hook(self.progress_total, self.total_size)
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
+    def _upload_chunk(self, chunk_info: "ChunkInfo"):
         raise NotImplementedError("Must be implemented by child class.")
 
-    def _upload_chunk_with_progress(self, chunk_offset, chunk_data):
-        range_id = self._upload_chunk(chunk_offset, chunk_data)
-        self._update_progress(len(chunk_data))
+    def _upload_chunk_with_progress(self, chunk_info: "ChunkInfo"):
+        range_id = self._upload_chunk(chunk_info)
+        self._update_progress(chunk_info.length)
         return range_id
 
     def get_substream_blocks(self):
@@ -253,16 +282,18 @@ class BlockBlobChunkUploader(_ChunkUploader):
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
-    def _upload_chunk(self, chunk_offset, chunk_data):
+    def _upload_chunk(self, chunk_info: "ChunkInfo"):
         # TODO: This is incorrect, but works with recording.
-        index = '{0:032d}'.format(chunk_offset)
+        index = '{0:032d}'.format(chunk_info.offset)
         block_id = encode_base64(url_quote(encode_base64(index)))
         self.service.stage_block(
             block_id,
-            len(chunk_data),
-            chunk_data,
+            chunk_info.length,
+            chunk_info.data,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
+            transactional_content_md5=chunk_info.md5,
+            transactional_content_crc64=chunk_info.crc64,
             **self.request_options
         )
         return index, block_id
@@ -606,3 +637,11 @@ class IterStreamer(object):
             self.leftover = data[size:]
 
         return data[:size]
+
+class ChunkInfo():
+    def __init__(self, offset, data, md5, crc64):
+        self.offset = offset
+        self.data = data
+        self.md5 = md5
+        self.crc64 = crc64
+        self.length = len(data)

@@ -66,6 +66,8 @@ from ._upload_helpers import (
     _any_conditions
 )
 
+from .crc64 import compute_crc64
+
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
