@@ -1,7 +1,6 @@
 import json
 import os.path
 import re
-import time
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict
@@ -11,7 +10,7 @@ from devtools_testutils import is_live
 import pydash
 import pytest
 from marshmallow import ValidationError
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, wait_until_done
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, wait_until_done, sleep_if_live
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -739,7 +738,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             params_override=[{"name": randstr("job_name")}],
         )
         # sleep for some time to so more likely to resolve the correct component latest version
-        time.sleep(10)
+        sleep_if_live(10)
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
