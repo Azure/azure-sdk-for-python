@@ -105,3 +105,9 @@ class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BUILT_IN_ROLE = "AKVBuiltInRole"
     #: Custom role.
     CUSTOM_ROLE = "CustomRole"
+
+
+class SettingTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type specifier of the value."""
+
+    BOOLEAN = "boolean"

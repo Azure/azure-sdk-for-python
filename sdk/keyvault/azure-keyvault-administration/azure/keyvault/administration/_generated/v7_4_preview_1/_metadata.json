@@ -171,6 +171,45 @@
                     "doc": "\"\"\"Restores all key versions of a given key using user supplied SAS token pointing to a previously\nstored Azure Blob storage backup folder.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.\n:type vault_base_url: str\n:param key_name: The name of the key to be restored from the user supplied backup. Required.\n:type key_name: str\n:param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous\n successful full backup was stored. Is either a model type or a IO type. Default value is None.\n:type restore_blob_details:\n ~azure.keyvault.v7_4_preview_1.models.SelectiveKeyRestoreOperationParameters or IO\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:keyword str continuation_token: A continuation token to restart a poller from a saved state.\n:keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False\n for this operation to not poll, or pass in your own initialized polling object for a personal\n polling strategy.\n:paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod\n:keyword int polling_interval: Default waiting time between two polls for LRO operations if no\n Retry-After header is present.\n:return: An instance of AsyncLROPoller that returns either SelectiveKeyRestoreOperation or the\n result of cls(response)\n:rtype:\n ~azure.core.polling.AsyncLROPoller[~azure.keyvault.v7_4_preview_1.models.SelectiveKeyRestoreOperation]\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
                     "call": "vault_base_url, key_name, restore_blob_details, **kwargs"
                 }
+            },
+            "update_settings" : {
+                "sync": {
+                    "signature": "def update_settings(\n    self,\n    vault_base_url: str,\n    setting_name: str,\n    parameters: Union[_models.UpdateSettingsRequest, IO],\n    **kwargs: Any\n) -\u003e _models.Setting:\n",
+                    "doc": "\"\"\"Updates key vault account setting, stores it, then returns the setting name and value to the\nclient.\n\nDescription of the pool setting to be updated.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.\n:type vault_base_url: str\n:param setting_name: The name of the account setting. Must be a valid settings option.\n Required.\n:type setting_name: str\n:param parameters: The parameters to update an account setting. Is either a model type or a IO\n type. Required.\n:type parameters: ~azure.keyvault.v7_4_preview_1.models.UpdateSettingsRequest or IO\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Setting or the result of cls(response)\n:rtype: ~azure.keyvault.v7_4_preview_1.models.Setting\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "vault_base_url, setting_name, parameters, **kwargs"
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def update_settings(\n    self,\n    vault_base_url: str,\n    setting_name: str,\n    parameters: Union[_models.UpdateSettingsRequest, IO],\n    **kwargs: Any\n) -\u003e _models.Setting:\n",
+                    "doc": "\"\"\"Updates key vault account setting, stores it, then returns the setting name and value to the\nclient.\n\nDescription of the pool setting to be updated.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.\n:type vault_base_url: str\n:param setting_name: The name of the account setting. Must be a valid settings option.\n Required.\n:type setting_name: str\n:param parameters: The parameters to update an account setting. Is either a model type or a IO\n type. Required.\n:type parameters: ~azure.keyvault.v7_4_preview_1.models.UpdateSettingsRequest or IO\n:keyword content_type: Body Parameter content-type. Known values are: \u0027application/json\u0027.\n Default value is None.\n:paramtype content_type: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Setting or the result of cls(response)\n:rtype: ~azure.keyvault.v7_4_preview_1.models.Setting\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "vault_base_url, setting_name, parameters, **kwargs"
+                }
+            },
+            "get_setting_value" : {
+                "sync": {
+                    "signature": "def get_setting_value(\n    self,\n    vault_base_url: str,\n    setting_name: str,\n    **kwargs: Any\n) -\u003e _models.Setting:\n",
+                    "doc": "\"\"\"Get specified account setting value.\n\nRetrieves the value of a specified, value account setting.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.\n:type vault_base_url: str\n:param setting_name: The name of the account setting. Must be a valid settings option.\n Required.\n:type setting_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Setting or the result of cls(response)\n:rtype: ~azure.keyvault.v7_4_preview_1.models.Setting\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "vault_base_url, setting_name, **kwargs"
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_setting_value(\n    self,\n    vault_base_url: str,\n    setting_name: str,\n    **kwargs: Any\n) -\u003e _models.Setting:\n",
+                    "doc": "\"\"\"Get specified account setting value.\n\nRetrieves the value of a specified, value account setting.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.\n:type vault_base_url: str\n:param setting_name: The name of the account setting. Must be a valid settings option.\n Required.\n:type setting_name: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: Setting or the result of cls(response)\n:rtype: ~azure.keyvault.v7_4_preview_1.models.Setting\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "vault_base_url, setting_name, **kwargs"
+                }
+            },
+            "get_settings" : {
+                "sync": {
+                    "signature": "def get_settings(\n    self,\n    vault_base_url: str,\n    **kwargs: Any\n) -\u003e _models.SettingsListResult:\n",
+                    "doc": "\"\"\"List account settings.\n\nRetrieves a list of all the available account settings that can be configured.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.\n:type vault_base_url: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SettingsListResult or the result of cls(response)\n:rtype: ~azure.keyvault.v7_4_preview_1.models.SettingsListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "vault_base_url, **kwargs"
+                },
+                "async": {
+                    "coroutine": true,
+                    "signature": "async def get_settings(\n    self,\n    vault_base_url: str,\n    **kwargs: Any\n) -\u003e _models.SettingsListResult:\n",
+                    "doc": "\"\"\"List account settings.\n\nRetrieves a list of all the available account settings that can be configured.\n\n:param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.\n:type vault_base_url: str\n:keyword callable cls: A custom type or function that will be passed the direct response\n:return: SettingsListResult or the result of cls(response)\n:rtype: ~azure.keyvault.v7_4_preview_1.models.SettingsListResult\n:raises ~azure.core.exceptions.HttpResponseError:\n\"\"\"",
+                    "call": "vault_base_url, **kwargs"
+                }
             }
         }
     }

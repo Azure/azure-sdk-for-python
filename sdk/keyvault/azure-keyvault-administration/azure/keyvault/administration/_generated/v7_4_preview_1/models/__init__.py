@@ -27,11 +27,15 @@ from ._models_py3 import RoleDefinitionProperties
 from ._models_py3 import SASTokenParameter
 from ._models_py3 import SelectiveKeyRestoreOperation
 from ._models_py3 import SelectiveKeyRestoreOperationParameters
+from ._models_py3 import Setting
+from ._models_py3 import SettingsListResult
+from ._models_py3 import UpdateSettingsRequest
 
 from ._key_vault_client_enums import DataAction
 from ._key_vault_client_enums import RoleDefinitionType
 from ._key_vault_client_enums import RoleScope
 from ._key_vault_client_enums import RoleType
+from ._key_vault_client_enums import SettingTypeEnum
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
@@ -58,10 +62,14 @@ __all__ = [
     "SASTokenParameter",
     "SelectiveKeyRestoreOperation",
     "SelectiveKeyRestoreOperationParameters",
+    "Setting",
+    "SettingsListResult",
+    "UpdateSettingsRequest",
     "DataAction",
     "RoleDefinitionType",
     "RoleScope",
     "RoleType",
+    "SettingTypeEnum",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

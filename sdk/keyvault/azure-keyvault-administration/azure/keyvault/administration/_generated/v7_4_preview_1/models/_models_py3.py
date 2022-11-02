@@ -855,3 +855,94 @@ class SelectiveKeyRestoreOperationParameters(_serialization.Model):
         super().__init__(**kwargs)
         self.sas_token_parameters = sas_token_parameters
         self.folder = folder
+
+
+class Setting(_serialization.Model):
+    """Setting.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar name: The account setting to be updated. Required.
+    :vartype name: str
+    :ivar value: The value of the pool setting. Required.
+    :vartype value: str
+    :ivar type: The type specifier of the value. "boolean"
+    :vartype type: str or ~azure.keyvault.v7_4_preview_1.models.SettingTypeEnum
+    """
+
+    _validation = {
+        "name": {"required": True},
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+    }
+
+    def __init__(
+        self, *, name: str, value: str, type: Optional[Union[str, "_models.SettingTypeEnum"]] = None, **kwargs
+    ):
+        """
+        :keyword name: The account setting to be updated. Required.
+        :paramtype name: str
+        :keyword value: The value of the pool setting. Required.
+        :paramtype value: str
+        :keyword type: The type specifier of the value. "boolean"
+        :paramtype type: str or ~azure.keyvault.v7_4_preview_1.models.SettingTypeEnum
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.value = value
+        self.type = type
+
+
+class SettingsListResult(_serialization.Model):
+    """The settings list result.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar value: A response message containing a list of account settings with their associated
+     value.
+    :vartype value: list[~azure.keyvault.v7_4_preview_1.models.Setting]
+    """
+
+    _validation = {
+        "value": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[Setting]"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.value = None
+
+
+class UpdateSettingsRequest(_serialization.Model):
+    """The update settings request object.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar value: The value of the pool setting. Required.
+    :vartype value: str
+    """
+
+    _validation = {
+        "value": {"required": True},
+    }
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "str"},
+    }
+
+    def __init__(self, *, value: str, **kwargs):
+        """
+        :keyword value: The value of the pool setting. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
+        self.value = value

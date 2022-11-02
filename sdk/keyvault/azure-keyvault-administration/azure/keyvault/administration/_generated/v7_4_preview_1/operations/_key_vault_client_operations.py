@@ -169,6 +169,82 @@ def build_selective_key_restore_operation_request(key_name: str, **kwargs: Any) 
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
+def build_update_settings_request(setting_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "7.4-preview.1")
+    )  # type: Literal["7.4-preview.1"]
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/settings/{setting-name}")
+    path_format_arguments = {
+        "setting-name": _SERIALIZER.url("setting_name", setting_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PATCH", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_setting_value_request(setting_name: str, **kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "7.4-preview.1")
+    )  # type: Literal["7.4-preview.1"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/settings/{setting-name}")
+    path_format_arguments = {
+        "setting-name": _SERIALIZER.url("setting_name", setting_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_get_settings_request(**kwargs: Any) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "7.4-preview.1")
+    )  # type: Literal["7.4-preview.1"]
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = kwargs.pop("template_url", "/settings")
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
+
 class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
     def _full_backup_initial(
         self,
@@ -1036,3 +1112,281 @@ class KeyVaultClientOperationsMixin(KeyVaultClientMixinABC):
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
     begin_selective_key_restore_operation.metadata = {"url": "/keys/{keyName}/restore"}  # type: ignore
+
+    @overload
+    def update_settings(
+        self,
+        vault_base_url: str,
+        setting_name: str,
+        parameters: _models.UpdateSettingsRequest,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.Setting:
+        """Updates key vault account setting, stores it, then returns the setting name and value to the
+        client.
+
+        Description of the pool setting to be updated.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
+        :type vault_base_url: str
+        :param setting_name: The name of the account setting. Must be a valid settings option.
+         Required.
+        :type setting_name: str
+        :param parameters: The parameters to update an account setting. Required.
+        :type parameters: ~azure.keyvault.v7_4_preview_1.models.UpdateSettingsRequest
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Setting or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.Setting
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    def update_settings(
+        self,
+        vault_base_url: str,
+        setting_name: str,
+        parameters: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.Setting:
+        """Updates key vault account setting, stores it, then returns the setting name and value to the
+        client.
+
+        Description of the pool setting to be updated.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
+        :type vault_base_url: str
+        :param setting_name: The name of the account setting. Must be a valid settings option.
+         Required.
+        :type setting_name: str
+        :param parameters: The parameters to update an account setting. Required.
+        :type parameters: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Setting or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.Setting
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace
+    def update_settings(
+        self,
+        vault_base_url: str,
+        setting_name: str,
+        parameters: Union[_models.UpdateSettingsRequest, IO],
+        **kwargs: Any
+    ) -> _models.Setting:
+        """Updates key vault account setting, stores it, then returns the setting name and value to the
+        client.
+
+        Description of the pool setting to be updated.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
+        :type vault_base_url: str
+        :param setting_name: The name of the account setting. Must be a valid settings option.
+         Required.
+        :type setting_name: str
+        :param parameters: The parameters to update an account setting. Is either a model type or a IO
+         type. Required.
+        :type parameters: ~azure.keyvault.v7_4_preview_1.models.UpdateSettingsRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Setting or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.Setting
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "7.4-preview.1")
+        )  # type: Literal["7.4-preview.1"]
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Setting]
+
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IO, bytes)):
+            _content = parameters
+        else:
+            _json = self._serialize.body(parameters, "UpdateSettingsRequest")
+
+        request = build_update_settings_request(
+            setting_name=setting_name,
+            api_version=api_version,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.update_settings.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("Setting", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    update_settings.metadata = {"url": "/settings/{setting-name}"}  # type: ignore
+
+    @distributed_trace
+    def get_setting_value(self, vault_base_url: str, setting_name: str, **kwargs: Any) -> _models.Setting:
+        """Get specified account setting value.
+
+        Retrieves the value of a specified, value account setting.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
+        :type vault_base_url: str
+        :param setting_name: The name of the account setting. Must be a valid settings option.
+         Required.
+        :type setting_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Setting or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.Setting
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "7.4-preview.1")
+        )  # type: Literal["7.4-preview.1"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Setting]
+
+        request = build_get_setting_value_request(
+            setting_name=setting_name,
+            api_version=api_version,
+            template_url=self.get_setting_value.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("Setting", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_setting_value.metadata = {"url": "/settings/{setting-name}"}  # type: ignore
+
+    @distributed_trace
+    def get_settings(self, vault_base_url: str, **kwargs: Any) -> _models.SettingsListResult:
+        """List account settings.
+
+        Retrieves a list of all the available account settings that can be configured.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
+        :type vault_base_url: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SettingsListResult or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.SettingsListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", "7.4-preview.1")
+        )  # type: Literal["7.4-preview.1"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SettingsListResult]
+
+        request = build_get_settings_request(
+            api_version=api_version,
+            template_url=self.get_settings.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        path_format_arguments = {
+            "vaultBaseUrl": self._serialize.url("vault_base_url", vault_base_url, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.KeyVaultError, pipeline_response)
+            raise HttpResponseError(response=response, model=error)
+
+        deserialized = self._deserialize("SettingsListResult", pipeline_response)
+
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    get_settings.metadata = {"url": "/settings"}  # type: ignore
