@@ -16,8 +16,9 @@ from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistr
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
-    UserIdentityConfiguration
+    UserIdentityConfiguration,
 )
+from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
@@ -121,12 +122,9 @@ def command(
     shm_size: str = None,
     timeout: int = None,
     code: Union[str, os.PathLike] = None,
-    identity: Union[
-        ManagedIdentityConfiguration,
-        AmlTokenConfiguration,
-        UserIdentityConfiguration] = None,
+    identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
     is_deterministic: bool = True,
-    services: dict = None,
+    services: Dict[str, JobService] = None,
     **kwargs,
 ) -> Command:
     """Create a Command object which can be used inside dsl.pipeline as a
@@ -188,7 +186,7 @@ def command(
         Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
     :type is_deterministic: bool
     :param services: Interactive services for the node.
-    :type services: dict
+    :type services: Dict[str, JobService]
     """
     # pylint: disable=too-many-locals
     inputs = inputs or {}
@@ -199,7 +197,6 @@ def command(
     component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
 
     component = kwargs.pop("component", None)
-
     if component is None:
         component = CommandComponent(
             name=name,
