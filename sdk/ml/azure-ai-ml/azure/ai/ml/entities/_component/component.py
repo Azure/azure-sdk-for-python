@@ -42,8 +42,6 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 
 COMPONENT_PLACEHOLDER = "COMPONENT_PLACEHOLDER"
 COMPONENT_CODE_PLACEHOLDER = "command_component: code_placeholder"
-CODE_ASSET_TMP_DIR_PREFIX = "azureml_tmp_"
-CODE_ASSET_TMP_DIR_SUFFIX = "_component_code"
 
 
 class Component(
@@ -517,9 +515,7 @@ class Component(
         elif code is not None and os.path.isfile(code):
             yield Code(base_path=self._base_path, path=code)
         else:
-            with tempfile.TemporaryDirectory(
-                    prefix=CODE_ASSET_TMP_DIR_PREFIX, suffix=CODE_ASSET_TMP_DIR_SUFFIX
-            ) as tmp_dir:
+            with tempfile.TemporaryDirectory() as tmp_dir:
                 if code is None:
                     # Hack: when code not specified, we generated a file which contains
                     # COMPONENT_PLACEHOLDER as code

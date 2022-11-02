@@ -164,7 +164,7 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="component_name",
         )
 
-    @pytest.mark.usefixtures("bodiless_matching")
+    @pytest.mark.usefixtures("bodiless_matching", "upload_component_code_folder_sanitizer")
     def test_parallel_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_dict = {
             "$schema": "http://azureml/sdk-2-0/ParallelComponent.json",
