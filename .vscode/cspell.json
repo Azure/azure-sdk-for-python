@@ -684,7 +684,7 @@
       ]
     },
     {
-      "filename": "sdk/ml/tests.yml",
+      "filename": "sdk/ml/*tests.yml",
       "words": [
         "euap"
       ]
