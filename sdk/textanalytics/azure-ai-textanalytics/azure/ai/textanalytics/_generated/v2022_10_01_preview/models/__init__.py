@@ -10,11 +10,11 @@ from ._models_py3 import AbstractiveSummarizationLROResult
 from ._models_py3 import AbstractiveSummarizationLROTask
 from ._models_py3 import AbstractiveSummarizationResult
 from ._models_py3 import AbstractiveSummarizationResultBase
-from ._models_py3 import AbstractiveSummarizationResultBaseDocumentsItem
 from ._models_py3 import AbstractiveSummarizationTaskParameters
 from ._models_py3 import AbstractiveSummarizationTaskParametersBase
 from ._models_py3 import AbstractiveSummary
 from ._models_py3 import AbstractiveSummaryDocumentResult
+from ._models_py3 import AbstractiveSummaryDocumentResultWithDetectedLanguage
 from ._models_py3 import AgeResolution
 from ._models_py3 import AnalyzeTextDynamicClassificationInput
 from ._models_py3 import AnalyzeTextEntityLinkingInput
@@ -81,11 +81,11 @@ from ._models_py3 import EntityWithResolution
 from ._models_py3 import Error
 from ._models_py3 import ErrorResponse
 from ._models_py3 import ExtractedSummaryDocumentResult
+from ._models_py3 import ExtractedSummaryDocumentResultWithDetectedLanguage
 from ._models_py3 import ExtractedSummarySentence
 from ._models_py3 import ExtractiveSummarizationLROResult
 from ._models_py3 import ExtractiveSummarizationLROTask
 from ._models_py3 import ExtractiveSummarizationResult
-from ._models_py3 import ExtractiveSummarizationResultDocumentsItem
 from ._models_py3 import ExtractiveSummarizationTaskParameters
 from ._models_py3 import HealthcareAssertion
 from ._models_py3 import HealthcareEntitiesDocumentResult
@@ -125,7 +125,6 @@ from ._models_py3 import NumberResolution
 from ._models_py3 import NumericRangeResolution
 from ._models_py3 import OrdinalResolution
 from ._models_py3 import Pagination
-from ._models_py3 import PhraseControl
 from ._models_py3 import PiiEntitiesDocumentResult
 from ._models_py3 import PiiEntityRecognitionLROResult
 from ._models_py3 import PiiLROTask
@@ -184,7 +183,6 @@ from ._text_analytics_client_enums import InformationUnit
 from ._text_analytics_client_enums import InnerErrorCode
 from ._text_analytics_client_enums import LengthUnit
 from ._text_analytics_client_enums import NumberKind
-from ._text_analytics_client_enums import PhraseControlStrategy
 from ._text_analytics_client_enums import PiiCategory
 from ._text_analytics_client_enums import PiiDomain
 from ._text_analytics_client_enums import RangeKind
@@ -211,11 +209,11 @@ __all__ = [
     'AbstractiveSummarizationLROTask',
     'AbstractiveSummarizationResult',
     'AbstractiveSummarizationResultBase',
-    'AbstractiveSummarizationResultBaseDocumentsItem',
     'AbstractiveSummarizationTaskParameters',
     'AbstractiveSummarizationTaskParametersBase',
     'AbstractiveSummary',
     'AbstractiveSummaryDocumentResult',
+    'AbstractiveSummaryDocumentResultWithDetectedLanguage',
     'AgeResolution',
     'AnalyzeTextDynamicClassificationInput',
     'AnalyzeTextEntityLinkingInput',
@@ -282,11 +280,11 @@ __all__ = [
     'Error',
     'ErrorResponse',
     'ExtractedSummaryDocumentResult',
+    'ExtractedSummaryDocumentResultWithDetectedLanguage',
     'ExtractedSummarySentence',
     'ExtractiveSummarizationLROResult',
     'ExtractiveSummarizationLROTask',
     'ExtractiveSummarizationResult',
-    'ExtractiveSummarizationResultDocumentsItem',
     'ExtractiveSummarizationTaskParameters',
     'HealthcareAssertion',
     'HealthcareEntitiesDocumentResult',
@@ -326,7 +324,6 @@ __all__ = [
     'NumericRangeResolution',
     'OrdinalResolution',
     'Pagination',
-    'PhraseControl',
     'PiiEntitiesDocumentResult',
     'PiiEntityRecognitionLROResult',
     'PiiLROTask',
@@ -383,7 +380,6 @@ __all__ = [
     'InnerErrorCode',
     'LengthUnit',
     'NumberKind',
-    'PhraseControlStrategy',
     'PiiCategory',
     'PiiDomain',
     'RangeKind',

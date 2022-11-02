@@ -380,7 +380,7 @@ class AbstractiveSummarizationResultBase(_serialization.Model):
 
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.AbstractiveSummarizationResultBaseDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.AbstractiveSummaryDocumentResultWithDetectedLanguage]
     """
 
     _validation = {
@@ -388,19 +388,19 @@ class AbstractiveSummarizationResultBase(_serialization.Model):
     }
 
     _attribute_map = {
-        "documents": {"key": "documents", "type": "[AbstractiveSummarizationResultBaseDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[AbstractiveSummaryDocumentResultWithDetectedLanguage]"},
     }
 
     def __init__(
         self,
         *,
-        documents: List["_models.AbstractiveSummarizationResultBaseDocumentsItem"],
+        documents: List["_models.AbstractiveSummaryDocumentResultWithDetectedLanguage"],
         **kwargs
     ):
         """
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.AbstractiveSummarizationResultBaseDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.AbstractiveSummaryDocumentResultWithDetectedLanguage]
         """
         super().__init__(**kwargs)
         self.documents = documents
@@ -420,7 +420,7 @@ class AbstractiveSummarizationResult(AbstractiveSummarizationResultBase, PreBuil
     :vartype model_version: str
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.AbstractiveSummarizationResultBaseDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.AbstractiveSummaryDocumentResultWithDetectedLanguage]
     """
 
     _validation = {
@@ -433,7 +433,7 @@ class AbstractiveSummarizationResult(AbstractiveSummarizationResultBase, PreBuil
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[AbstractiveSummarizationResultBaseDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[AbstractiveSummaryDocumentResultWithDetectedLanguage]"},
     }
 
     def __init__(
@@ -441,7 +441,7 @@ class AbstractiveSummarizationResult(AbstractiveSummarizationResultBase, PreBuil
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.AbstractiveSummarizationResultBaseDocumentsItem"],
+        documents: List["_models.AbstractiveSummaryDocumentResultWithDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -455,7 +455,7 @@ class AbstractiveSummarizationResult(AbstractiveSummarizationResultBase, PreBuil
         :paramtype model_version: str
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.AbstractiveSummarizationResultBaseDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.AbstractiveSummaryDocumentResultWithDetectedLanguage]
         """
         super().__init__(documents=documents, errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.errors = errors
@@ -464,34 +464,194 @@ class AbstractiveSummarizationResult(AbstractiveSummarizationResultBase, PreBuil
         self.documents = documents
 
 
-class DocumentDetectedLanguage(_serialization.Model):
-    """DocumentDetectedLanguage.
+class TaskParameters(_serialization.Model):
+    """Base parameters object for a text analysis task.
 
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-     field will contain a 2 letter ISO 639-1 representation of the language detected for this
-     document.
-    :vartype detected_language: ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
+    :ivar logging_opt_out:
+    :vartype logging_opt_out: bool
     """
 
     _attribute_map = {
-        "detected_language": {"key": "detectedLanguage", "type": "DetectedLanguage"},
+        "logging_opt_out": {"key": "loggingOptOut", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        detected_language: Optional["_models.DetectedLanguage"] = None,
+        logging_opt_out: bool = False,
         **kwargs
     ):
         """
-        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
-         field will contain a 2 letter ISO 639-1 representation of the language detected for this
-         document.
-        :paramtype detected_language:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
+        :keyword logging_opt_out:
+        :paramtype logging_opt_out: bool
         """
         super().__init__(**kwargs)
-        self.detected_language = detected_language
+        self.logging_opt_out = logging_opt_out
+
+
+class PreBuiltTaskParameters(TaskParameters):
+    """Parameters object for a text analysis task using pre-built models.
+
+    :ivar logging_opt_out:
+    :vartype logging_opt_out: bool
+    :ivar model_version:
+    :vartype model_version: str
+    """
+
+    _attribute_map = {
+        "logging_opt_out": {"key": "loggingOptOut", "type": "bool"},
+        "model_version": {"key": "modelVersion", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        logging_opt_out: bool = False,
+        model_version: str = "latest",
+        **kwargs
+    ):
+        """
+        :keyword logging_opt_out:
+        :paramtype logging_opt_out: bool
+        :keyword model_version:
+        :paramtype model_version: str
+        """
+        super().__init__(logging_opt_out=logging_opt_out, **kwargs)
+        self.model_version = model_version
+
+
+class AbstractiveSummarizationTaskParametersBase(_serialization.Model):
+    """Supported parameters for an Abstractive Summarization task.
+
+    :ivar sentence_count: It controls the approximate number of sentences in the output summaries.
+    :vartype sentence_count: int
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
+     and "Utf16CodeUnit".
+    :vartype string_index_type: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.StringIndexType
+    """
+
+    _attribute_map = {
+        "sentence_count": {"key": "sentenceCount", "type": "int"},
+        "string_index_type": {"key": "stringIndexType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        sentence_count: Optional[int] = None,
+        string_index_type: Union[str, "_models.StringIndexType"] = "TextElements_v8",
+        **kwargs
+    ):
+        """
+        :keyword sentence_count: It controls the approximate number of sentences in the output
+         summaries.
+        :paramtype sentence_count: int
+        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+         https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
+         and "Utf16CodeUnit".
+        :paramtype string_index_type: str or
+         ~azure.ai.textanalytics.v2022_10_01_preview.models.StringIndexType
+        """
+        super().__init__(**kwargs)
+        self.sentence_count = sentence_count
+        self.string_index_type = string_index_type
+
+
+class AbstractiveSummarizationTaskParameters(AbstractiveSummarizationTaskParametersBase, PreBuiltTaskParameters):
+    """Supported parameters for the pre-build Abstractive Summarization task.
+
+    :ivar logging_opt_out:
+    :vartype logging_opt_out: bool
+    :ivar model_version:
+    :vartype model_version: str
+    :ivar sentence_count: It controls the approximate number of sentences in the output summaries.
+    :vartype sentence_count: int
+    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+     https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
+     and "Utf16CodeUnit".
+    :vartype string_index_type: str or
+     ~azure.ai.textanalytics.v2022_10_01_preview.models.StringIndexType
+    """
+
+    _attribute_map = {
+        "logging_opt_out": {"key": "loggingOptOut", "type": "bool"},
+        "model_version": {"key": "modelVersion", "type": "str"},
+        "sentence_count": {"key": "sentenceCount", "type": "int"},
+        "string_index_type": {"key": "stringIndexType", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        logging_opt_out: bool = False,
+        model_version: str = "latest",
+        sentence_count: Optional[int] = None,
+        string_index_type: Union[str, "_models.StringIndexType"] = "TextElements_v8",
+        **kwargs
+    ):
+        """
+        :keyword logging_opt_out:
+        :paramtype logging_opt_out: bool
+        :keyword model_version:
+        :paramtype model_version: str
+        :keyword sentence_count: It controls the approximate number of sentences in the output
+         summaries.
+        :paramtype sentence_count: int
+        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
+         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
+         https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
+         and "Utf16CodeUnit".
+        :paramtype string_index_type: str or
+         ~azure.ai.textanalytics.v2022_10_01_preview.models.StringIndexType
+        """
+        super().__init__(sentence_count=sentence_count, string_index_type=string_index_type, logging_opt_out=logging_opt_out, model_version=model_version, **kwargs)
+        self.logging_opt_out = logging_opt_out
+        self.model_version = model_version
+        self.sentence_count = sentence_count
+        self.string_index_type = string_index_type
+
+
+class AbstractiveSummary(_serialization.Model):
+    """An object representing a single summary with context for given document.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar text: The text of the summary. Required.
+    :vartype text: str
+    :ivar contexts: The context list of the summary.
+    :vartype contexts: list[~azure.ai.textanalytics.v2022_10_01_preview.models.SummaryContext]
+    """
+
+    _validation = {
+        'text': {'required': True},
+    }
+
+    _attribute_map = {
+        "text": {"key": "text", "type": "str"},
+        "contexts": {"key": "contexts", "type": "[SummaryContext]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        text: str,
+        contexts: Optional[List["_models.SummaryContext"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword text: The text of the summary. Required.
+        :paramtype text: str
+        :keyword contexts: The context list of the summary.
+        :paramtype contexts: list[~azure.ai.textanalytics.v2022_10_01_preview.models.SummaryContext]
+        """
+        super().__init__(**kwargs)
+        self.text = text
+        self.contexts = contexts
 
 
 class DocumentResult(_serialization.Model):
@@ -596,8 +756,38 @@ class AbstractiveSummaryDocumentResult(DocumentResult):
         self.summaries = summaries
 
 
-class AbstractiveSummarizationResultBaseDocumentsItem(AbstractiveSummaryDocumentResult, DocumentDetectedLanguage):
-    """AbstractiveSummarizationResultBaseDocumentsItem.
+class DocumentDetectedLanguage(_serialization.Model):
+    """DocumentDetectedLanguage.
+
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+     field will contain a 2 letter ISO 639-1 representation of the language detected for this
+     document.
+    :vartype detected_language: ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
+    """
+
+    _attribute_map = {
+        "detected_language": {"key": "detectedLanguage", "type": "DetectedLanguage"},
+    }
+
+    def __init__(
+        self,
+        *,
+        detected_language: Optional["_models.DetectedLanguage"] = None,
+        **kwargs
+    ):
+        """
+        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
+         field will contain a 2 letter ISO 639-1 representation of the language detected for this
+         document.
+        :paramtype detected_language:
+         ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
+        """
+        super().__init__(**kwargs)
+        self.detected_language = detected_language
+
+
+class AbstractiveSummaryDocumentResultWithDetectedLanguage(AbstractiveSummaryDocumentResult, DocumentDetectedLanguage):
+    """An object representing the summarization result of a single document with detected language.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -663,214 +853,6 @@ class AbstractiveSummarizationResultBaseDocumentsItem(AbstractiveSummaryDocument
         self.warnings = warnings
         self.statistics = statistics
         self.summaries = summaries
-
-
-class TaskParameters(_serialization.Model):
-    """Base parameters object for a text analysis task.
-
-    :ivar logging_opt_out:
-    :vartype logging_opt_out: bool
-    """
-
-    _attribute_map = {
-        "logging_opt_out": {"key": "loggingOptOut", "type": "bool"},
-    }
-
-    def __init__(
-        self,
-        *,
-        logging_opt_out: bool = False,
-        **kwargs
-    ):
-        """
-        :keyword logging_opt_out:
-        :paramtype logging_opt_out: bool
-        """
-        super().__init__(**kwargs)
-        self.logging_opt_out = logging_opt_out
-
-
-class PreBuiltTaskParameters(TaskParameters):
-    """Parameters object for a text analysis task using pre-built models.
-
-    :ivar logging_opt_out:
-    :vartype logging_opt_out: bool
-    :ivar model_version:
-    :vartype model_version: str
-    """
-
-    _attribute_map = {
-        "logging_opt_out": {"key": "loggingOptOut", "type": "bool"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        logging_opt_out: bool = False,
-        model_version: str = "latest",
-        **kwargs
-    ):
-        """
-        :keyword logging_opt_out:
-        :paramtype logging_opt_out: bool
-        :keyword model_version:
-        :paramtype model_version: str
-        """
-        super().__init__(logging_opt_out=logging_opt_out, **kwargs)
-        self.model_version = model_version
-
-
-class AbstractiveSummarizationTaskParametersBase(_serialization.Model):
-    """Supported parameters for an Abstractive Summarization task.
-
-    :ivar sentence_count: It controls the approximate number of sentences in the output summaries.
-    :vartype sentence_count: int
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
-     and "Utf16CodeUnit".
-    :vartype string_index_type: str or
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.StringIndexType
-    :ivar phrase_controls: Control the phrases to be used in the summary.
-    :vartype phrase_controls:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.PhraseControl]
-    """
-
-    _attribute_map = {
-        "sentence_count": {"key": "sentenceCount", "type": "int"},
-        "string_index_type": {"key": "stringIndexType", "type": "str"},
-        "phrase_controls": {"key": "phraseControls", "type": "[PhraseControl]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        sentence_count: Optional[int] = None,
-        string_index_type: Union[str, "_models.StringIndexType"] = "TextElements_v8",
-        phrase_controls: Optional[List["_models.PhraseControl"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword sentence_count: It controls the approximate number of sentences in the output
-         summaries.
-        :paramtype sentence_count: int
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-         https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
-         and "Utf16CodeUnit".
-        :paramtype string_index_type: str or
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.StringIndexType
-        :keyword phrase_controls: Control the phrases to be used in the summary.
-        :paramtype phrase_controls:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.PhraseControl]
-        """
-        super().__init__(**kwargs)
-        self.sentence_count = sentence_count
-        self.string_index_type = string_index_type
-        self.phrase_controls = phrase_controls
-
-
-class AbstractiveSummarizationTaskParameters(AbstractiveSummarizationTaskParametersBase, PreBuiltTaskParameters):
-    """Supported parameters for the pre-build Abstractive Summarization task.
-
-    :ivar logging_opt_out:
-    :vartype logging_opt_out: bool
-    :ivar model_version:
-    :vartype model_version: str
-    :ivar sentence_count: It controls the approximate number of sentences in the output summaries.
-    :vartype sentence_count: int
-    :ivar string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-     Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-     https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
-     and "Utf16CodeUnit".
-    :vartype string_index_type: str or
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.StringIndexType
-    :ivar phrase_controls: Control the phrases to be used in the summary.
-    :vartype phrase_controls:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.PhraseControl]
-    """
-
-    _attribute_map = {
-        "logging_opt_out": {"key": "loggingOptOut", "type": "bool"},
-        "model_version": {"key": "modelVersion", "type": "str"},
-        "sentence_count": {"key": "sentenceCount", "type": "int"},
-        "string_index_type": {"key": "stringIndexType", "type": "str"},
-        "phrase_controls": {"key": "phraseControls", "type": "[PhraseControl]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        logging_opt_out: bool = False,
-        model_version: str = "latest",
-        sentence_count: Optional[int] = None,
-        string_index_type: Union[str, "_models.StringIndexType"] = "TextElements_v8",
-        phrase_controls: Optional[List["_models.PhraseControl"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword logging_opt_out:
-        :paramtype logging_opt_out: bool
-        :keyword model_version:
-        :paramtype model_version: str
-        :keyword sentence_count: It controls the approximate number of sentences in the output
-         summaries.
-        :paramtype sentence_count: int
-        :keyword string_index_type: Specifies the method used to interpret string offsets.  Defaults to
-         Text Elements (Graphemes) according to Unicode v8.0.0. For additional information see
-         https://aka.ms/text-analytics-offsets. Known values are: "TextElements_v8", "UnicodeCodePoint",
-         and "Utf16CodeUnit".
-        :paramtype string_index_type: str or
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.StringIndexType
-        :keyword phrase_controls: Control the phrases to be used in the summary.
-        :paramtype phrase_controls:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.PhraseControl]
-        """
-        super().__init__(sentence_count=sentence_count, string_index_type=string_index_type, phrase_controls=phrase_controls, logging_opt_out=logging_opt_out, model_version=model_version, **kwargs)
-        self.logging_opt_out = logging_opt_out
-        self.model_version = model_version
-        self.sentence_count = sentence_count
-        self.string_index_type = string_index_type
-        self.phrase_controls = phrase_controls
-
-
-class AbstractiveSummary(_serialization.Model):
-    """An object representing a single summary with context for given document.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar text: The text of the summary. Required.
-    :vartype text: str
-    :ivar contexts: The context list of the summary.
-    :vartype contexts: list[~azure.ai.textanalytics.v2022_10_01_preview.models.SummaryContext]
-    """
-
-    _validation = {
-        'text': {'required': True},
-    }
-
-    _attribute_map = {
-        "text": {"key": "text", "type": "str"},
-        "contexts": {"key": "contexts", "type": "[SummaryContext]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        text: str,
-        contexts: Optional[List["_models.SummaryContext"]] = None,
-        **kwargs
-    ):
-        """
-        :keyword text: The text of the summary. Required.
-        :paramtype text: str
-        :keyword contexts: The context list of the summary.
-        :paramtype contexts: list[~azure.ai.textanalytics.v2022_10_01_preview.models.SummaryContext]
-        """
-        super().__init__(**kwargs)
-        self.text = text
-        self.contexts = contexts
 
 
 class QuantityResolution(_serialization.Model):
@@ -4484,6 +4466,76 @@ class ExtractedSummaryDocumentResult(DocumentResult):
         self.sentences = sentences
 
 
+class ExtractedSummaryDocumentResultWithDetectedLanguage(ExtractedSummaryDocumentResult, DocumentDetectedLanguage):
+    """ExtractedSummaryDocumentResultWithDetectedLanguage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+     field will contain a 2 letter ISO 639-1 representation of the language detected for this
+     document.
+    :vartype detected_language: ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar warnings: Warnings encountered while processing document. Required.
+    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
+    :ivar sentences: A ranked list of sentences representing the extracted summary. Required.
+    :vartype sentences:
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.ExtractedSummarySentence]
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'warnings': {'required': True},
+        'sentences': {'required': True},
+    }
+
+    _attribute_map = {
+        "detected_language": {"key": "detectedLanguage", "type": "DetectedLanguage"},
+        "id": {"key": "id", "type": "str"},
+        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
+        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
+        "sentences": {"key": "sentences", "type": "[ExtractedSummarySentence]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        warnings: List["_models.DocumentWarning"],
+        sentences: List["_models.ExtractedSummarySentence"],
+        detected_language: Optional["_models.DetectedLanguage"] = None,
+        statistics: Optional["_models.DocumentStatistics"] = None,
+        **kwargs
+    ):
+        """
+        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
+         field will contain a 2 letter ISO 639-1 representation of the language detected for this
+         document.
+        :paramtype detected_language:
+         ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
+        :keyword id: Unique, non-empty document identifier. Required.
+        :paramtype id: str
+        :keyword warnings: Warnings encountered while processing document. Required.
+        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
+        :keyword statistics: if showStats=true was specified in the request this field will contain
+         information about the document payload.
+        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
+        :keyword sentences: A ranked list of sentences representing the extracted summary. Required.
+        :paramtype sentences:
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.ExtractedSummarySentence]
+        """
+        super().__init__(id=id, warnings=warnings, statistics=statistics, sentences=sentences, detected_language=detected_language, **kwargs)
+        self.detected_language = detected_language
+        self.id = id
+        self.warnings = warnings
+        self.statistics = statistics
+        self.sentences = sentences
+
+
 class ExtractedSummarySentence(_serialization.Model):
     """ExtractedSummarySentence.
 
@@ -4672,7 +4724,7 @@ class ExtractiveSummarizationResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.ExtractiveSummarizationResultDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.ExtractedSummaryDocumentResultWithDetectedLanguage]
     """
 
     _validation = {
@@ -4685,7 +4737,7 @@ class ExtractiveSummarizationResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[ExtractiveSummarizationResultDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[ExtractedSummaryDocumentResultWithDetectedLanguage]"},
     }
 
     def __init__(
@@ -4693,7 +4745,7 @@ class ExtractiveSummarizationResult(PreBuiltResult):
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.ExtractiveSummarizationResultDocumentsItem"],
+        documents: List["_models.ExtractedSummaryDocumentResultWithDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -4707,80 +4759,10 @@ class ExtractiveSummarizationResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.ExtractiveSummarizationResultDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.ExtractedSummaryDocumentResultWithDetectedLanguage]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
-
-
-class ExtractiveSummarizationResultDocumentsItem(ExtractedSummaryDocumentResult, DocumentDetectedLanguage):
-    """ExtractiveSummarizationResultDocumentsItem.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-     field will contain a 2 letter ISO 639-1 representation of the language detected for this
-     document.
-    :vartype detected_language: ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-    :ivar sentences: A ranked list of sentences representing the extracted summary. Required.
-    :vartype sentences:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.ExtractedSummarySentence]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'warnings': {'required': True},
-        'sentences': {'required': True},
-    }
-
-    _attribute_map = {
-        "detected_language": {"key": "detectedLanguage", "type": "DetectedLanguage"},
-        "id": {"key": "id", "type": "str"},
-        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
-        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "sentences": {"key": "sentences", "type": "[ExtractedSummarySentence]"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        sentences: List["_models.ExtractedSummarySentence"],
-        detected_language: Optional["_models.DetectedLanguage"] = None,
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        **kwargs
-    ):
-        """
-        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
-         field will contain a 2 letter ISO 639-1 representation of the language detected for this
-         document.
-        :paramtype detected_language:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
-        :keyword id: Unique, non-empty document identifier. Required.
-        :paramtype id: str
-        :keyword warnings: Warnings encountered while processing document. Required.
-        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-        :keyword statistics: if showStats=true was specified in the request this field will contain
-         information about the document payload.
-        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-        :keyword sentences: A ranked list of sentences representing the extracted summary. Required.
-        :paramtype sentences:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.ExtractedSummarySentence]
-        """
-        super().__init__(id=id, warnings=warnings, statistics=statistics, sentences=sentences, detected_language=detected_language, **kwargs)
-        self.detected_language = detected_language
-        self.id = id
-        self.warnings = warnings
-        self.statistics = statistics
-        self.sentences = sentences
 
 
 class ExtractiveSummarizationTaskParameters(PreBuiltTaskParameters):
@@ -6779,49 +6761,6 @@ class Pagination(_serialization.Model):
         self.next_link = next_link
 
 
-class PhraseControl(_serialization.Model):
-    """Control the phrases to be used in the summary.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar target_phrase: The target phrase to control. Required.
-    :vartype target_phrase: str
-    :ivar strategy: The strategy to use in phrase control. Required. Known values are: "encourage",
-     "discourage", and "disallow".
-    :vartype strategy: str or
-     ~azure.ai.textanalytics.v2022_10_01_preview.models.PhraseControlStrategy
-    """
-
-    _validation = {
-        'target_phrase': {'required': True},
-        'strategy': {'required': True},
-    }
-
-    _attribute_map = {
-        "target_phrase": {"key": "targetPhrase", "type": "str"},
-        "strategy": {"key": "strategy", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        target_phrase: str,
-        strategy: Union[str, "_models.PhraseControlStrategy"],
-        **kwargs
-    ):
-        """
-        :keyword target_phrase: The target phrase to control. Required.
-        :paramtype target_phrase: str
-        :keyword strategy: The strategy to use in phrase control. Required. Known values are:
-         "encourage", "discourage", and "disallow".
-        :paramtype strategy: str or
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.PhraseControlStrategy
-        """
-        super().__init__(**kwargs)
-        self.target_phrase = target_phrase
-        self.strategy = strategy
-
-
 class PiiEntitiesDocumentResult(DocumentResult):
     """PiiEntitiesDocumentResult.
 
@@ -8274,6 +8213,9 @@ class TemporalSpanResolution(BaseResolution):
      "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox", "Mid", and
      "More".
     :vartype modifier: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.TemporalModifier
+    :ivar timex: An optional triplet containing the beginning, the end, and the duration all stated
+     as ISO 8601 formatted strings.
+    :vartype timex: str
     """
 
     _validation = {
@@ -8286,6 +8228,7 @@ class TemporalSpanResolution(BaseResolution):
         "end": {"key": "end", "type": "str"},
         "duration": {"key": "duration", "type": "str"},
         "modifier": {"key": "modifier", "type": "str"},
+        "timex": {"key": "timex", "type": "str"},
     }
 
     def __init__(
@@ -8295,6 +8238,7 @@ class TemporalSpanResolution(BaseResolution):
         end: Optional[str] = None,
         duration: Optional[str] = None,
         modifier: Optional[Union[str, "_models.TemporalModifier"]] = None,
+        timex: Optional[str] = None,
         **kwargs
     ):
         """
@@ -8312,6 +8256,9 @@ class TemporalSpanResolution(BaseResolution):
          "Start", "After", "BeforeEnd", "Until", "End", "Less", "Since", "AfterStart", "BeforeApprox",
          "Mid", and "More".
         :paramtype modifier: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.TemporalModifier
+        :keyword timex: An optional triplet containing the beginning, the end, and the duration all
+         stated as ISO 8601 formatted strings.
+        :paramtype timex: str
         """
         super().__init__(**kwargs)
         self.resolution_kind = 'TemporalSpanResolution'  # type: str
@@ -8319,6 +8266,7 @@ class TemporalSpanResolution(BaseResolution):
         self.end = end
         self.duration = duration
         self.modifier = modifier
+        self.timex = timex
 
 
 class VolumeResolution(BaseResolution, QuantityResolution):
