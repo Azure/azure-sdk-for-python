@@ -286,7 +286,7 @@ class DataOperations(_ScopeDependentOperations):
             return None
 
     @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None:
         """Archive a data asset.
 
         :param name: Name of data asset.
@@ -309,7 +309,7 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None:
         """Restore an archived data asset.
 
         :param name: Name of data asset.

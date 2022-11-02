@@ -358,7 +358,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None:
         """Archive a component.
 
         :param name: Name of the component.
@@ -379,7 +379,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None:
         """Restore an archived component.
 
         :param name: Name of the component.

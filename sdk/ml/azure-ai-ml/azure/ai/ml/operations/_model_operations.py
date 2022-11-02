@@ -351,7 +351,7 @@ class ModelOperations(_ScopeDependentOperations):
         storage_client.download(starts_with=path_prefix, destination=path_file)
 
     @monitor_with_activity(logger, "Model.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None:
         """Archive a model asset.
 
         :param name: Name of model asset.
@@ -372,7 +372,7 @@ class ModelOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Model.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None:
         """Restore an archived model asset.
 
         :param name: Name of model asset.
