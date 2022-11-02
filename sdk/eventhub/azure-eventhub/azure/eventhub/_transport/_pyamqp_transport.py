@@ -33,6 +33,7 @@ from ..exceptions import (
     AuthenticationError,
     ConnectionLostError,
     EventDataSendError,
+    OperationTimeoutError
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -268,22 +269,19 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param logger: Logger.
         """
         # pylint: disable=protected-access
-        producer._open()
-        timeout = timeout_time - time.time() if timeout_time else 0
-        producer._handler.send_message(producer._unsent_events[0], timeout=timeout)
-        # The unsent_events list will always be <= 1. Even for a batch, it gets the underlying singular BatchMessage.
-        # May want to refactor in the future so that this isn't a list.
-        producer._unsent_events = None
-        # TODO: figure out if we want to use below, and see if it affects error story
-        # try:
-        #    producer._open()
-        #    producer._handler.send_message(
-        #        producer._unsent_events[0], timeout=timeout_time
-        #    )
-        # except TimeoutError as exc:
-        #    raise OperationTimeoutError(message=str(exc), details=exc)
-        # except Exception as exc:
-        #    raise producer._handle_exception(exc)
+        try:
+            producer._open()
+            timeout = timeout_time - time.time() if timeout_time else 0
+            producer._handler.send_message(
+                producer._unsent_events[0], timeout=timeout
+            )
+            # TODO: The unsent_events list will always be <= 1. Even for a batch, it gets the underlying singular BatchMessage.
+            # May want to refactor in the future so that this isn't a list.
+            producer._unsent_events = None
+        except TimeoutError as exc:
+            raise OperationTimeoutError(message=str(exc), details=exc)
+        #except Exception as exc:
+        #   raise producer._handle_exception(exc)
 
     @staticmethod
     def set_message_partition_key(message, partition_key, **kwargs):

@@ -672,7 +672,7 @@ class EventHubProducerClient(
                 )
                 if self._on_success:
                     self._on_success(batch._internal_events, pid)
-            except (KeyError, AttributeError, EventHubError) as e:
+            except (KeyError, AttributeError, EventHubError) as e:  # TODO: do we want all EventHubErrors to be caught?
                 _LOGGER.debug(
                     "Producer for partition ID %s not available: %s. Rebuilding new producer.",
                     partition_id,

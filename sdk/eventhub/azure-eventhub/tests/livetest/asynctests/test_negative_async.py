@@ -17,6 +17,7 @@ from azure.eventhub.exceptions import (
     EventHubError,
     ConnectError,
     AuthenticationError,
+    OperationTimeoutError
 )
 from azure.eventhub.aio import EventHubConsumerClient, EventHubProducerClient, EventHubSharedKeyCredential
 from azure.eventhub.aio._client_base_async import EventHubSASTokenCredential
@@ -199,6 +200,43 @@ async def test_invalid_proxy_server(connection_str, uamqp_transport):
     async with client:
         with pytest.raises(EventHubError):
             batch = await client.create_batch()
+
+@pytest.mark.liveTest
+@pytest.mark.asyncio
+async def test_client_send_timeout(connstr_receivers, uamqp_transport):
+    connection_str, receivers = connstr_receivers
+
+    async def on_success(events, pid):
+        pass
+
+    async def on_error(events, pid, err):
+        pass
+
+    producer = EventHubProducerClient.from_connection_string(
+        connection_str, uamqp_transport=uamqp_transport
+    )
+
+    async with producer:
+        with pytest.raises(OperationTimeoutError):
+            await producer.send_batch([EventData(b"Data")], timeout=-1)
+
+        with pytest.raises(OperationTimeoutError):
+            await producer.send_event(EventData(b"Data"), timeout=-1)
+
+    producer = EventHubProducerClient.from_connection_string(
+        connection_str,
+        buffered_mode=True,
+        on_success=on_success,
+        on_error=on_error,
+        uamqp_transport=uamqp_transport
+    )
+
+    async with producer:
+        with pytest.raises(OperationTimeoutError):
+            await producer.send_batch([EventData(b"Data")], timeout=-1)
+
+        with pytest.raises(OperationTimeoutError):
+            await producer.send_event(EventData(b"Data"), timeout=-1)
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio
