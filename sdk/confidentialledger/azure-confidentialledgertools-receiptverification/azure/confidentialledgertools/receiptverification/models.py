@@ -5,14 +5,18 @@
 """Models for receipt verification."""
 
 from typing import List, Optional
-from azure.confidentialledgertools.receiptverification._serialization import Model
+from azure.confidentialledgertools.receiptverification._serialization import (
+    Model,
+)
 
 
 class ProofElement(Model):
-    """
-    ProofElement represents the object contained in the `proof` list field of an Azure Confidential Ledger write transaction receipt.
-    The `proof` list contains the hashes of the nodes in the Merkle Tree and their relative position with respect to the parent node (`left` or `right`);
-    the given information allow the re-computation of the root node from a given leaf node.
+    """ProofElement represents the object contained in the `proof` list field
+    of an Azure Confidential Ledger write transaction receipt. The `proof` list
+    contains the hashes of the nodes in the Merkle Tree and their relative
+    position with respect to the parent node (`left` or `right`); the given
+    information allow the re-computation of the root node from a given leaf
+    node.
 
     Each ProofElement should contain either the `left` or the `right` field, but not both or none of them.
 
@@ -42,9 +46,11 @@ class ProofElement(Model):
 
 
 class LeafComponents(Model):
-    """
-    LeafComponents represents the object contained in the `leaf_components` field of an Azure Confidential Ledger write transaction receipt.
-    The `leaf_components` field contains the elements that are hashed to compute the leaf node corresponding to the transaction associated to the given receipt.
+    """LeafComponents represents the object contained in the `leaf_components`
+    field of an Azure Confidential Ledger write transaction receipt. The
+    `leaf_components` field contains the elements that are hashed to compute
+    the leaf node corresponding to the transaction associated to the given
+    receipt.
 
     :ivar claims_digest: Hexadecimal string representing the digest of the application claim attached by the Azure Confidential Ledger application.
     :vartype claims_digest: str
@@ -89,11 +95,15 @@ class LeafComponents(Model):
 
 
 class Receipt(Model):
-    """
-    Receipt represents the object contained in the `receipt` field of an Azure Confidential Ledger write transaction receipt response paylaod.
-    A receipt is a cryptographic proof that a transaction has been committed to the ledger: it can be used to verify that the ledger entry associated
-    to a transaction has been appended to the ledger (thus, it can be used to validate properties such as non-repudiation, integrity, and tamper-proofing).
-    A receipt contains all the information needed to verify transaction inclusion and the verification can be done by applying an ad-hoc algorithm.
+    """Receipt represents the object contained in the `receipt` field of an
+    Azure Confidential Ledger write transaction receipt response paylaod. A
+    receipt is a cryptographic proof that a transaction has been committed to
+    the ledger: it can be used to verify that the ledger entry associated to a
+    transaction has been appended to the ledger (thus, it can be used to
+    validate properties such as non-repudiation, integrity, and tamper-
+    proofing). A receipt contains all the information needed to verify
+    transaction inclusion and the verification can be done by applying an ad-
+    hoc algorithm.
 
     :ivar cert: PEM-encoded certificate string of the CCF node that signed the transaction.
     :vartype cert: str
@@ -123,11 +133,17 @@ class Receipt(Model):
 
     _attribute_map = {
         "cert": {"key": "cert", "type": "str"},
-        "is_signature_transaction": {"key": "is_signature_transaction", "type": "bool"},
+        "is_signature_transaction": {
+            "key": "is_signature_transaction",
+            "type": "bool",
+        },
         "leaf_components": {"key": "leaf_components", "type": "LeafComponents"},
         "node_id": {"key": "node_id", "type": "str"},
         "proof": {"key": "proof", "type": "[ProofElement]"},
-        "service_endorsements": {"key": "service_endorsements", "type": "[str]"},
+        "service_endorsements": {
+            "key": "service_endorsements",
+            "type": "[str]",
+        },
         "signature": {"key": "signature", "type": "str"},
     }
 

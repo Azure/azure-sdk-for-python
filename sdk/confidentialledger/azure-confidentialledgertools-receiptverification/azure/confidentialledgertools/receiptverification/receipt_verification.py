@@ -2,15 +2,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-"""Algorithm implementation for verifying Azure Confidential Ledger write transaction receipts."""
+"""Algorithm implementation for verifying Azure Confidential Ledger write
+transaction receipts."""
+
+from base64 import b64decode
+from hashlib import sha256
+from typing import List
 
 from cryptography.x509 import load_pem_x509_certificate, Certificate
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.asymmetric import ec, utils
 from cryptography.hazmat.primitives.serialization import Encoding, PublicFormat
-from hashlib import sha256
-from typing import List
-from base64 import b64decode
 
 from azure.confidentialledgertools.receiptverification.exceptions import (
     ReceiptVerificationException,
@@ -27,15 +29,18 @@ from azure.confidentialledgertools.receiptverification.models import (
 
 
 def verify_receipt(receipt: Receipt, service_cert_str: str) -> None:
-    """
-    Verify that a given Azure Confidential Ledger write transaction receipt is valid from
-    its content and the Confidential Ledger service identity certificate.
+    """Verify that a given Azure Confidential Ledger write transaction receipt
+    is valid from its content and the Confidential Ledger service identity
+    certificate.
 
-    :param receipt: Receipt object containing the content of an Azure Confidential Ledger write transaction receipt.
-    :type receipt: ~azure.confidentialledgertools.receiptverification.models.Receipt
-    :param service_cert_str: String containing the PEM-encoded certificate of the Confidential Ledger service identity.
-    :type service_cert_str: str
-    :raises ~azure.confidentialledgertools.receiptverification.exceptions.ReceiptVerificationException: exception raised when the receipt verification fails
+    :param receipt: Receipt object containing the content of an Azure
+    Confidential Ledger write transaction receipt. :type receipt:
+    ~azure.confidentialledgertools.receiptverification.models.Receipt
+    :param service_cert_str: String containing the PEM-encoded
+    certificate of the Confidential Ledger service identity. :type
+    service_cert_str: str :raises ~azure.confidentialledgertools.receipt
+    verification.exceptions.ReceiptVerificationException: exception
+    raised when the receipt verification fails
     """
 
     try:
@@ -48,35 +53,38 @@ def verify_receipt(receipt: Receipt, service_cert_str: str) -> None:
         # Load node PEM certificate
         node_cert = _load_and_verify_pem_certificate(receipt.cert)
 
-        # Verify node certificate is endorsed by the service certificate through endorsements certificates
+        # Verify node certificate is endorsed by the service certificate
+        # through endorsements certificates
         _verify_node_cert_endorsed_by_service_cert(
             node_cert, service_cert_str, receipt.service_endorsements
         )
 
-        # Compute hash of the leaf node in the Merkle Tree corresponding to the transaction associated to the given receipt
+        # Compute hash of the leaf node in the Merkle Tree corresponding
+        # to the transaction associated to the given receipt
         leaf_node_hash = _compute_leaf_node_hash(receipt.leaf_components)
 
         # Compute root of the Merkle Tree at the time the transaction was committed
         root_node_hash = _compute_root_node_hash(leaf_node_hash, receipt.proof)
 
-        # Verify signature of the signing node over the root of the tree with node certificate public key
+        # Verify signature of the signing node over the root of the tree with
+        # node certificate public key
         _verify_signature_over_root_node_hash(
             receipt.signature, node_cert, receipt.node_id, root_node_hash
         )
 
-    except Exception as e:
-        # Raise ReceiptVerificationException if any exception is thrown during the verification process
+    except Exception as exception:
+        # Raise ReceiptVerificationException if any exception is thrown
+        # during the verification process
         raise ReceiptVerificationException(
             f"Encountered exception when verifying receipt {receipt} with service ceritifcate {service_cert_str}."
-        ) from e
+        ) from exception
 
 
 def _verify_signature_over_root_node_hash(
     signature: str, node_cert: Certificate, node_id: str, root_node_hash: bytes
 ) -> None:
-    """
-    Verify signature over root node hash of the Merkle Tree using node certificate public key.
-    """
+    """Verify signature over root node hash of the Merkle Tree using node
+    certificate public key."""
 
     try:
         # Verify public key contained in the node certificate is equal to the node_id
@@ -92,17 +100,15 @@ def _verify_signature_over_root_node_hash(
             ec.ECDSA(utils.Prehashed(hashes.SHA256())),
         )
 
-    except Exception as e:
+    except Exception as exception:
         raise RootSignatureVerificationException(
             f"Encountered exception when verifying signature {signature} over root node hash."
-        ) from e
+        ) from exception
 
 
 def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
-    """
-    Compute the hash of the leaf node associated to a transaction
-    given the leaf components from a write transaction receipt.
-    """
+    """Compute the hash of the leaf node associated to a transaction given the
+    leaf components from a write transaction receipt."""
 
     try:
         # Digest commit evidence string
@@ -125,17 +131,16 @@ def _compute_leaf_node_hash(leaf_components: LeafComponents) -> bytes:
             write_set_digest + commit_evidence_digest + claims_digest
         ).digest()
 
-    except Exception as e:
+    except Exception as exception:
         raise LeafNodeComputationException(
             f"Encountered exception when computing leaf node hash from leaf components {leaf_components}."
-        ) from e
+        ) from exception
 
 
 def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> bytes:
-    """
-    Re-compute the hash of the root of the Merkle tree from a leaf node hash and a receipt proof list containing
-    the required nodes hashes for the computation.
-    """
+    """Re-compute the hash of the root of the Merkle tree from a leaf node hash
+    and a receipt proof list containing the required nodes hashes for the
+    computation."""
 
     try:
         # Initialize current hash to leaf hash
@@ -167,21 +172,20 @@ def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> byte
 
         return current_node_hash
 
-    except Exception as e:
+    except Exception as exception:
         raise RootNodeComputationException(
             f"Encountered exception when computing root node hash from proof list {proof}."
-        ) from e
+        ) from exception
 
 
 def _verify_certificate_endorsement(
     endorsee: Certificate, endorser: Certificate
 ) -> None:
-    """
-    Verify that the endorser certificate has endorsed endorsee certificate using ECDSA.
-    """
+    """Verify that the endorser certificate has exceptionndorsed endorsee
+    certificate using ECDSA."""
 
     try:
-        # Extract TBS certificate hash from endorsee certificate
+        # Extract TBS certificate hash from exceptionndorsee certificate
         hash_algorithm = endorsee.signature_hash_algorithm
         digester = hashes.Hash(hash_algorithm)
         digester.update(endorsee.tbs_certificate_bytes)
@@ -189,21 +193,25 @@ def _verify_certificate_endorsement(
 
         # Verify endorser signature over endorsee certificate digest
         endorser.public_key().verify(
-            endorsee.signature, cert_digest, ec.ECDSA(utils.Prehashed(hash_algorithm))
+            endorsee.signature,
+            cert_digest,
+            ec.ECDSA(utils.Prehashed(hash_algorithm)),
         )
 
-    except Exception as e:
+    except Exception as exception:
         raise EndorsementVerificationException(
             f"Encountered exception when verifying endorsement of certificate {endorsee} by certificate {endorser}."
-        ) from e
+        ) from exception
 
 
 def _verify_node_cert_endorsed_by_service_cert(
     node_cert: Certificate, service_cert_str: str, endorsements_certs: List[str]
 ) -> None:
-    """
-    Check a node certificate is endorsed by a service certificate. If a list of endorsements certificates is not empty,
-    check that the node certificate is transitively endorsed by the service certificate through the endorsement certificates in the list.
+    """Check a node certificate is endorsed by a service certificate.
+
+    If a list of endorsements certificates is not empty, check that the
+    node certificate is transitively endorsed by the service certificate
+    through the endorsement certificates in the list.
     """
 
     current_cert = node_cert
@@ -221,7 +229,7 @@ def _verify_node_cert_endorsed_by_service_cert(
         # Load endorsement PEM certificate
         endorsement_cert = _load_and_verify_pem_certificate(endorsement)
 
-        # Verify endorsement certificate has endorsed current certificate
+        # Verify endorsement certificate has exceptionndorsed current certificate
         _verify_certificate_endorsement(current_cert, endorsement_cert)
 
         # Set current certificate to endorsement certificate to continue the chain verification
@@ -229,9 +237,8 @@ def _verify_node_cert_endorsed_by_service_cert(
 
 
 def _load_and_verify_pem_certificate(cert_str: str) -> Certificate:
-    """
-    Load PEM certificate from a string reprsentation and verify it is a valid certificate with expected Elliptic Curve public key.
-    """
+    """Load PEM certificate from a string reprsentation and verify it is a
+    valid certificate with expected Elliptic Curve public key."""
 
     try:
         # Load certificate from string
@@ -242,5 +249,5 @@ def _load_and_verify_pem_certificate(cert_str: str) -> Certificate:
 
         return cert
 
-    except Exception as e:
-        raise ValueError(f"PEM certificate {cert_str} is not valid.") from e
+    except Exception as exception:
+        raise ValueError(f"PEM certificate {cert_str} is not valid.") from exception

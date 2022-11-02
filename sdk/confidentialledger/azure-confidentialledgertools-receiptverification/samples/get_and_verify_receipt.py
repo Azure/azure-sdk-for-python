@@ -7,9 +7,10 @@
 """
 FILE: get_and_verify_receipt.py
 DESCRIPTION:
-    This sample demonstrates how to retrieve Confidential Ledger receipts and verify their content. In this sample, we write
-    a ledger entry, retrieve a receipt certifying that it was written correctly, and then verify its content by applying the receipt
-    verification algorithm. 
+    This sample demonstrates how to retrieve Confidential Ledger receipts
+    and verify their content. In this sample, we write a ledger entry, retrieve
+    a receipt certifying that it was written correctly, and then verify its
+    content by applying the receipt verification algorithm.
 USAGE:
     python get_and_verify_receipt.py
     Set the environment variables with your own values before running the sample:
@@ -39,6 +40,8 @@ LOG = logging.getLogger()
 
 
 def main():
+    """Main method."""
+
     # Set the values of the client ID, tenant ID, and client secret of the AAD application as
     # environment variables:
     #   AZURE_CLIENT_ID, AZURE_TENANT_ID, AZURE_CLIENT_SECRET, CONFIDENTIALLEDGER_ENDPOINT
@@ -123,7 +126,7 @@ def main():
             # Verify the contents of the receipt.
             verify_receipt(receipt_content, service_cert_content)
             print(f"Receipt for transaction id {transaction_id} successfully verified")
-        except ReceiptVerificationException as e:
+        except ReceiptVerificationException:
             print(f"Receipt verification for transaction id {transaction_id} failed")
             raise
 

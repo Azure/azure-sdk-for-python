@@ -319,7 +319,10 @@ class Model(object):
 
     @classmethod
     def enable_additional_properties_sending(cls):
-        cls._attribute_map["additional_properties"] = {"key": "", "type": "{object}"}
+        cls._attribute_map["additional_properties"] = {
+            "key": "",
+            "type": "{object}",
+        }
 
     @classmethod
     def is_xml_model(cls):
@@ -524,7 +527,15 @@ class Serializer(object):
     basic_types = {str: "str", int: "int", bool: "bool", float: "float"}
 
     _xml_basic_types_serializers = {"bool": lambda x: str(x).lower()}
-    days = {0: "Mon", 1: "Tue", 2: "Wed", 3: "Thu", 4: "Fri", 5: "Sat", 6: "Sun"}
+    days = {
+        0: "Mon",
+        1: "Tue",
+        2: "Wed",
+        3: "Thu",
+        4: "Fri",
+        5: "Sat",
+        6: "Sun",
+    }
     months = {
         1: "Jan",
         2: "Feb",
@@ -731,7 +742,9 @@ class Serializer(object):
                 data = deserializer._deserialize(data_type, data)
             except DeserializationError as err:
                 raise_with_traceback(
-                    SerializationError, "Unable to build a model: " + str(err), err
+                    SerializationError,
+                    "Unable to build a model: " + str(err),
+                    err,
                 )
 
         return self._serialize(data, data_type, **kwargs)
@@ -948,7 +961,9 @@ class Serializer(object):
             node_name = xml_desc.get("itemsName", xml_name)
             if is_wrapped:
                 final_result = _create_xml_node(
-                    xml_name, xml_desc.get("prefix", None), xml_desc.get("ns", None)
+                    xml_name,
+                    xml_desc.get("prefix", None),
+                    xml_desc.get("ns", None),
                 )
             else:
                 final_result = []
@@ -1700,11 +1715,16 @@ class Deserializer(object):
                 return self.deserialize_basic(data, data_type)
             if data_type in self.deserialize_type:
                 if isinstance(
-                    data, self.deserialize_expected_types.get(data_type, tuple())
+                    data,
+                    self.deserialize_expected_types.get(data_type, tuple()),
                 ):
                     return data
 
-                is_a_text_parsing_type = lambda x: x not in ["object", "[]", r"{}"]
+                is_a_text_parsing_type = lambda x: x not in [
+                    "object",
+                    "[]",
+                    r"{}",
+                ]
                 if (
                     isinstance(data, ET.Element)
                     and is_a_text_parsing_type(data_type)
