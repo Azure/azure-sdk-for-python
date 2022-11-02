@@ -9,6 +9,7 @@ from base64 import b64encode
 from datetime import datetime, timedelta
 from dateutil.tz import tzutc
 import uuid
+import os
 
 from azure.core.pipeline.policies import ContentDecodePolicy
 from azure.core.credentials import AccessToken, AzureNamedKeyCredential
@@ -76,7 +77,7 @@ class TableTestCase(object):
                 return "https://{}.table.cosmos.azure.com".format(account.name)
         except AttributeError:  # Didn't find "primary_endpoints"
             if endpoint_type == "table":
-                return "https://{}.{}.core.windows.net".format(account, endpoint_type)
+                return "https://{}.{}.{}".format(account, endpoint_type, os.environ["TABLES_STORAGE_ENDPOINT_SUFFIX"])
             if endpoint_type == "cosmos":
                 return "https://{}.table.cosmos.azure.com".format(account)
 
