@@ -60,10 +60,12 @@ def load_component_entity_from_yaml(
                     # for generated code, return content in it
                     with open(arg.path) as f:
                         return f.read()
-                elif os.path.isfile(arg.path):
-                    return f"{str(arg.path)}:1"
+                elif os.path.isdir(arg.path):
+                    # for folder, return the hash of filenames' concatenation
+                    filenames = "".join([filename for filename in os.listdir(arg.path)])
+                    return f"{hash(filenames)}:1"
                 else:
-                    return f"{Path(arg.path).name}:1"
+                    return f"{str(arg.path)}:1"
         return "xxx"
 
     # change internal assets into arm id
