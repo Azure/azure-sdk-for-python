@@ -6,42 +6,45 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Optional, TYPE_CHECKING
+from copy import deepcopy
+from typing import Any, Awaitable, Optional, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
+from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
+
+from .. import models
+from .._serialization import Deserializer, Serializer
+from ._configuration import StorageImportExportConfiguration
+from .operations import BitLockerKeysOperations, JobsOperations, LocationsOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-from ._configuration import StorageImportExportConfiguration
-from .operations import LocationsOperations
-from .operations import JobsOperations
-from .operations import BitLockerKeysOperations
-from .operations import Operations
-from .. import models
 
-
-class StorageImportExport(object):
+class StorageImportExport:  # pylint: disable=client-accepts-api-version-keyword
     """The Storage Import/Export Resource Provider API.
 
     :ivar locations: LocationsOperations operations
-    :vartype locations: storage_import_export.aio.operations.LocationsOperations
+    :vartype locations: azure.mgmt.storageimportexport.aio.operations.LocationsOperations
     :ivar jobs: JobsOperations operations
-    :vartype jobs: storage_import_export.aio.operations.JobsOperations
+    :vartype jobs: azure.mgmt.storageimportexport.aio.operations.JobsOperations
     :ivar bit_locker_keys: BitLockerKeysOperations operations
-    :vartype bit_locker_keys: storage_import_export.aio.operations.BitLockerKeysOperations
+    :vartype bit_locker_keys: azure.mgmt.storageimportexport.aio.operations.BitLockerKeysOperations
     :ivar operations: Operations operations
-    :vartype operations: storage_import_export.aio.operations.Operations
-    :param credential: Credential needed for the client to connect to Azure.
+    :vartype operations: azure.mgmt.storageimportexport.aio.operations.Operations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The subscription ID for the Azure user.
+    :param subscription_id: The subscription ID for the Azure user. Required.
     :type subscription_id: str
-    :param accept_language: Specifies the preferred language for the response.
+    :param accept_language: Specifies the preferred language for the response. Default value is
+     None.
     :type accept_language: str
-    :param str base_url: Service URL
+    :param base_url: Service URL. Default value is "https://management.azure.com".
+    :type base_url: str
+    :keyword api_version: Api Version. Default value is "2021-01-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(
@@ -49,44 +52,44 @@ class StorageImportExport(object):
         credential: "AsyncTokenCredential",
         subscription_id: str,
         accept_language: Optional[str] = None,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
-        self._config = StorageImportExportConfiguration(credential, subscription_id, accept_language, **kwargs)
+        self._config = StorageImportExportConfiguration(
+            credential=credential, subscription_id=subscription_id, accept_language=accept_language, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
-        self._serialize.client_side_validation = False
         self._deserialize = Deserializer(client_models)
+        self._serialize.client_side_validation = False
+        self.locations = LocationsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.jobs = JobsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.bit_locker_keys = BitLockerKeysOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
 
-        self.locations = LocationsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.jobs = JobsOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.bit_locker_keys = BitLockerKeysOperations(
-            self._client, self._config, self._serialize, self._deserialize)
-        self.operations = Operations(
-            self._client, self._config, self._serialize, self._deserialize)
-
-    async def _send_request(self, http_request: HttpRequest, **kwargs: Any) -> AsyncHttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
-        :param http_request: The network request you want to make. Required.
-        :type http_request: ~azure.core.pipeline.transport.HttpRequest
-        :keyword bool stream: Whether the response payload will be streamed. Defaults to True.
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client._send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.pipeline.transport.AsyncHttpResponse
+        :rtype: ~azure.core.rest.AsyncHttpResponse
         """
-        path_format_arguments = {
-            'subscriptionId': self._serialize.url("self._config.subscription_id", self._config.subscription_id, 'str'),
-        }
-        http_request.url = self._client.format_url(http_request.url, **path_format_arguments)
-        stream = kwargs.pop("stream", True)
-        pipeline_response = await self._client._pipeline.run(http_request, stream=stream, **kwargs)
-        return pipeline_response.http_response
+
+        request_copy = deepcopy(request)
+        request_copy.url = self._client.format_url(request_copy.url)
+        return self._client.send_request(request_copy, **kwargs)
 
     async def close(self) -> None:
         await self._client.close()

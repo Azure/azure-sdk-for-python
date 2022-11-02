@@ -244,6 +244,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-portal typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-communication-chat msrest>=0.7.1
 #override azure-mgmt-storagesync msrest>=0.7.1
+#override azure-mgmt-storageimportexport typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-communication-chat azure-core<2.0.0,>=1.24.0
 #override azure-communication-sms azure-core<2.0.0,>=1.24.0
 #override azure-communication-phonenumbers azure-core<2.0.0,>=1.15.0
@@ -319,6 +320,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-recoveryservicesbackup msrest>=0.7.1
 #override azure-mgmt-datafactory msrest>=0.7.1
 #override azure-mgmt-hdinsight msrest>=0.7.1
+#override azure-mgmt-storageimportexport azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-hdinsight azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-machinelearningservices msrest>=0.7.1
 #override azure-mgmt-machinelearningservices azure-mgmt-core>=1.3.2,<2.0.0
@@ -329,6 +331,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-mgmt-resourcegraph msrest>=0.7.1
 #override azure-mgmt-mgmt-resourcegraph azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-mgmt-testbase msrest>=0.7.1
+#override azure-mgmt-storageimportexport msrest>=0.7.1
 #override azure-mgmt-mgmt-testbase azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-apimanagement msrest>=0.7.1
 #override azure-mgmt-apimanagement azure-mgmt-core>=1.3.2,<2.0.0
