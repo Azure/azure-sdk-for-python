@@ -11,25 +11,11 @@
                 "description": "The principal to assign the role to. This is application object id."
             }
         },
-        "tablesStorageEndpointSuffix": {
+        "storageEndpointSuffix": {
           "type": "string",
           "defaultValue": "core.windows.net",
           "metadata": {
-              "description": "The url suffix to use when accessing the storage data plane in public cloud."
-          }
-        },
-        "tablesStorageUsGovEndpointSuffix": {
-          "type": "string",
-          "defaultValue": "core.usgovcloudapi.net",
-          "metadata": {
-              "description": "The url suffix to use when accessing the storage data plane in UsGov cloud."
-          }
-        },
-        "tablesStorageChinaEndpointSuffix": {
-          "type": "string",
-          "defaultValue": "core.chinacloudapi.cn",
-          "metadata": {
-              "description": "The url suffix to use when accessing the storage data plane in China cloud."
+              "description": "The url suffix to use when accessing the storage data plane."
           }
         }
     },
@@ -130,7 +116,7 @@
     "outputs": {
         "TABLES_STORAGE_ENDPOINT_SUFFIX": {
             "type": "string",
-            "value": "[if(contains(variables('location'),'usgov'), parameters('tablesStorageUsGovEndpointSuffix'), if(contains(variables('location'),'china'), parameters('tablesStorageChinaEndpointSuffix'), parameters('tablesStorageEndpointSuffix')))]"
+            "value": "[parameters('storageEndpointSuffix')]"
         },
         "TABLES_STORAGE_ACCOUNT_NAME": {
             "type": "string",
