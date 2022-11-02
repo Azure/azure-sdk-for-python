@@ -578,6 +578,7 @@ def pytest_configure(config):
 
 @pytest.fixture()
 def upload_component_code_folder_sanitizer(test_proxy, fake_datastore_key):
+    add_remove_header_sanitizer(headers="Content-MD5")
     add_general_regex_sanitizer(
         value="tmp_dir", regex="\\/LocalUpload\\/\\S{32}\\/(\\S+)\\/+", group_for_replace="1"
     )
