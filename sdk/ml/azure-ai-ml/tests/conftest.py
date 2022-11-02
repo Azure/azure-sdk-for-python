@@ -85,6 +85,8 @@ def add_sanitizers(test_proxy, fake_datastore_key):
         value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s]{36})\\/",
         group_for_replace="1"
     )
+    # for component code asset upload uri
+    add_general_regex_sanitizer(value="tmp_dir", regex="\\/(azureml_tmp_\\S+_component_code)", group_for_replace="1")
 
 
 def pytest_addoption(parser):
@@ -574,13 +576,3 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{marker}: {description}")
 
     config.addinivalue_line("markers", f"{marker}: {description}")
-
-
-@pytest.fixture()
-def code_asset_upload_folder_sanitizer(test_proxy, fake_datastore_key):
-    add_general_regex_sanitizer(
-        value="tmp_dir", regex="\\/LocalUpload\\/\\S{32}\\/(\\S+)\\/+", group_for_replace="1"
-    )
-    add_general_regex_sanitizer(
-        value="tmp_dir", regex="\\/LocalUpload\\/[^/\\s]{36}\\/(\\S+)\\/+", group_for_replace="1"
-    )  # for internal code
