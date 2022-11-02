@@ -3,83 +3,84 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from testcase_async import FarmBeatsTestAsync
-from testcase import FarmBeatsPowerShellPreparer
-from azure.agrifood.farming.models import Farmer
-from azure.core.exceptions import ResourceNotFoundError
-from datetime import datetime
 import pytest
+import os
+from datetime import datetime
+from dateutil.parser import parse
+from azure.core.exceptions import ResourceNotFoundError
+from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from testcase_async import TestFarmBeats
+from testcase import FarmBeatsPowerShellPreparer
 
 
-class FarmBeatsSmokeTestCaseAsync(FarmBeatsTestAsync):
-
+class TestFarmHeirarchyAsync(TestFarmBeats):    
     @FarmBeatsPowerShellPreparer()
-    async def test_farmer_operations(self, agrifood_endpoint):
-
+    @recorded_by_proxy
+    async def test_farmer_operations(self, **kwargs):
+        agrifood_endpoint = kwargs.pop("agrifood_endpoint")
+        
         # Setup data
-        farmer_id = self.generate_random_name("test-farmer-farmer-ops-async")
-        farmer_name = "Test Farmer"
-        farmer_description = "Farmer created during testing."
-        farmer_status = "Sample Status"
-        farmer_properties = {
-            "foo": "bar",
-            "numeric one": 1,
-            1: "numeric key"
+        farmer_id = "test-farmer-farmer-ops"
+        farmer_request = {
+            "name": "Test Farmer",
+            "description": "Farmer created during testing.",
+            "status": "Sample Status",
+            "properties": {
+                "foo": "bar",
+                "numeric one": 1,
+                1: "numeric key"
+            }
         }
 
         # Setup client
-        client = self.create_client(agrifood_endpoint=agrifood_endpoint)
+        client = self.create_async_client(agrifood_endpoint=agrifood_endpoint)
 
         # Create
-        farmer = await client.farmers.create_or_update(
+        farmer_response = await client.farmers.create_or_update(
             farmer_id=farmer_id,
-            farmer=Farmer(
-                name=farmer_name,
-                description=farmer_description,
-                status=farmer_status,
-                properties=farmer_properties
-            )
+            farmer=farmer_request
         )
 
         # Assert on immediate response
-        assert farmer.id == farmer_id
-        assert farmer.name == farmer_name
-        assert farmer.description == farmer_description
-        assert farmer.status == farmer_status
+        assert farmer_response["id"] == farmer_id
+        assert farmer_response["name"] == farmer_response["name"]
+        assert farmer_response["description"] == farmer_response["description"]
+        assert farmer_response["status"] == farmer_response["status"]
 
-        assert len(farmer.properties) == 3
-        assert farmer.properties["foo"] == "bar"
-        assert farmer.properties["numeric one"] == 1
-        assert farmer.properties["1"] == "numeric key"
+        assert len(farmer_response["properties"]) == 3
+        assert farmer_response["properties"]["foo"] == "bar"
+        assert farmer_response["properties"]["numeric one"] == 1
+        assert farmer_response["properties"]["1"] == "numeric key"
 
-        assert farmer.e_tag
-        assert type(farmer.created_date_time) is datetime
-        assert type(farmer.modified_date_time) is datetime
+        assert farmer_response["eTag"]
+        assert type(parse(farmer_response["createdDateTime"])) is datetime
+        assert type(parse(farmer_response["modifiedDateTime"])) is datetime
 
         # Retrieve created object
         retrieved_farmer = await client.farmers.get(farmer_id=farmer_id)
 
         # Assert on retrieved object
-        assert farmer == retrieved_farmer
+        assert retrieved_farmer["id"] == farmer_id
 
         # Setup data for update
-        farmer.name += " Updated"
+        farmer_request["name"] += " Updated"
 
         # Update
         updated_farmer = await client.farmers.create_or_update(
             farmer_id=farmer_id,
-            farmer=farmer
+            farmer=farmer_request
         )
 
         # Assert on immediate response
-        assert farmer.name == updated_farmer.name
-        assert farmer.created_date_time == updated_farmer.created_date_time
+        # Assert on immediate response
+        assert updated_farmer["name"] == farmer_request["name"]
+        assert updated_farmer["createdDateTime"] == farmer_response["createdDateTime"]
 
         # Retrieve updated object
-        updated_retrieved_farmer = await client.farmers.get(farmer_id=farmer_id)
+        retrieved_farmer = await client.farmers.get(farmer_id=farmer_id)
 
         # Assert updated object
-        assert updated_retrieved_farmer == updated_farmer
+        assert retrieved_farmer == updated_farmer
 
         # Delete
         await client.farmers.delete(farmer_id=farmer_id)

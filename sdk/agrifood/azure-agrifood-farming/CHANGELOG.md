@@ -1,6 +1,7 @@
 # Release History
 
 ## 1.0.0b2 (Unreleased)
+- Adding clients for Sensor Integration which includes crud operations on DeviceDataModels, Devices, SensorDataModels, Sensors, SensorMappings, SensorPartnerIntegration and get Sensor events.
 
 ### Bugs Fixed
 

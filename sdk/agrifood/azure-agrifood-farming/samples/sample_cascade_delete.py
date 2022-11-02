@@ -46,7 +46,7 @@ def sample_cascade_delete():
     farmers = client.farmers.list(
         min_last_modified_date_time=datetime.now(tz=UTC) - timedelta(days=7)
     )
-    farmer_ids = [farmer.id for farmer in farmers]
+    farmer_ids = [farmer["id"] for farmer in farmers]
     print("Done")
 
     # Ask for the id of the farmer which is to be deleted.

@@ -46,18 +46,25 @@ async def sample_hello_world_async():
     print("Creating farmer, or updating if farmer already exists...", end=" ", flush=True)
     farmer = await client.farmers.create_or_update(
         farmer_id=farmer_id,
-        farmer=Farmer(
-            name=farmer_name,
-            description=farmer_description
-        )
+        farmer={
+            "name": farmer_name,
+            "description": farmer_description,
+            "status": "Sample Status",
+            "properties": {
+                "foo": "bar",
+                "numeric one": 1,
+                1: "numeric key"
+            }
+        }
     )
     print("Done")
-    print("Details of the farmer:")
-    print(f"\tID: {farmer.id}")
-    print(f"\tName: {farmer.name}")
-    print(f"\tDescription: {farmer.description}")
-    print(f"\tCreated timestamp: {farmer.created_date_time}")
-    print(f"\tLast modified timestamp: {farmer.modified_date_time}")
+    
+    print("Here are the details of the farmer:")
+    print("\tID:", farmer["id"])
+    print("\tName:", farmer["name"])
+    print("\tDescription:", farmer["description"])
+    print("\tCreated timestamp:", farmer["createdDateTime"])
+    print("\tLast modified timestamp:", farmer["modifiedDateTime"])
 
     await client.close()
     await credential.close()

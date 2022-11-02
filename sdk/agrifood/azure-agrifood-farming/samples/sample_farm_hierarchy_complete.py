@@ -26,7 +26,6 @@ USAGE:
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
-from azure.agrifood.farming.models import Farmer, Farm, Field, Boundary, Crop, CropVariety, Season, SeasonalField, MultiPolygon
 import os
 from dotenv import load_dotenv
 
@@ -69,8 +68,9 @@ def sample_farm_hierarchy_complete():
     year = "2021"
     start_date_time = "2021-01-01T20:08:10.137Z"
     end_date_time = "2021-06-06T20:08:10.137Z"
-    multi_polygon = MultiPolygon(
-        coordinates=[
+    multi_polygon = {
+        "type": "MultiPolygon",
+        "coordinates": [
             [
                 [
                     [-94.05807495, 44.75916947],
@@ -105,24 +105,24 @@ def sample_farm_hierarchy_complete():
                 ]
             ]
         ]
-    )
+    }
 
     # Step 1: Create a farmer.
     print(
         f"Creating or updating farmer with Id {farmer_id}...", end=" ", flush=True)
     farmer = client.farmers.create_or_update(
         farmer_id=farmer_id,
-        farmer=Farmer(
-            name=farmer_name,
-            description=farmer_description
-        )
+        farmer={
+            "name": farmer_name,
+            "description": farmer_description
+        }
     )
     print("Done")
 
     print("Details of farmer:")
-    print("\tID:", farmer.id)
-    print("\tName:", farmer.name)
-    print("\tDescription:", farmer.description)
+    print("\tID:", farmer["id"])
+    print("\tName:", farmer["name"])
+    print("\tDescription:", farmer["description"])
 
     # Step 2: Create a farm.
     print(
@@ -130,18 +130,18 @@ def sample_farm_hierarchy_complete():
     farm = client.farms.create_or_update(
         farmer_id=farmer_id,
         farm_id=farm_id,
-        farm=Farm(
-            name=farm_name,
-            description=farm_description
-        )
+        farm={
+            "name": farm_name,
+            "description": farm_description
+        }
     )
     print("Done")
 
     print("Details of farm:")
-    print("\tID:", farm.id)
-    print("\tName:", farm.name)
-    print("\tFarmer Name:", farm.farmer_id)
-    print("\tDescription:", farm.description)
+    print("\tID:", farm["id"])
+    print("\tName:", farm["name"])
+    print("\tFarmer Id:", farm["farmerId"])
+    print("\tDescription:", farm["description"])
 
     # Step 3: Create a field.
     print(
@@ -149,80 +149,78 @@ def sample_farm_hierarchy_complete():
     field = client.fields.create_or_update(
         farmer_id=farmer_id,
         field_id=field_id,
-        field=Field(
-            name=field_name,
-            farm_id=farm_id,
-            description=field_description
-        )
+        field={
+            "name": field_name,
+            "farmId": farm_id,
+            "description": field_description
+        }
     )
     print("Done")
 
     print("Details of field:")
-    print("\tID:", field.id)
-    print("\tName:", field.name)
-    print("\tFarmer Name:", field.farmer_id)
-    print("\tFarm Name:", field.farm_id)
-    print("\tName:", field.name)
-    print("\tDescription:", field.description)
+    print("\tID:", field["id"])
+    print("\tName:", field["name"])
+    print("\tFarmer Id:", field["farmerId"])
+    print("\tFarm Id:", field["farmId"])
+    print("\tName:", field["name"])
+    print("\tDescription:", field["description"])
 
     # Step 4: Create a crop.
     print(
         f"Creating or updating crop with Id {crop_id}...", end=" ", flush=True)
     crop = client.crops.create_or_update(
         crop_id=crop_id,
-        crop=Crop(
-            name=crop_name,
-            description=crop_description
-        )
+        crop={
+            "name": crop_name,
+            "description": crop_description
+        }
     )
     print("Done")
 
     print("Details of crop:")
-    print("\tID:", crop.id)
-    print("\tName:", crop.name)
-    print("\tDescription:", crop.description)
+    print("\tID:", crop["id"])
+    print("\tName:", crop["name"])
+    print("\tDescription:", crop["description"])
 
     # Step 5: Create a crop variety.
     print(
         f"Creating or updating crop variety with Id {crop_variety_id}...", end=" ", flush=True)
     crop_variety = client.crop_varieties.create_or_update(
-        crop_id=crop_id,
         crop_variety_id=crop_variety_id,
-        crop_variety=CropVariety(
-            name=crop_variety_name,
-            description=crop_variety_description
-        )
+        crop_variety={
+            "name": crop_variety_name,
+            "description": crop_variety_description
+        }
     )
     print("Done")
 
     print("Details of crop variety:")
-    print("\tID:", crop_variety.id)
-    print("\tCrop ID:", crop_variety.crop_id)
-    print("\tName:", crop_variety.name)
-    print("\tDescription:", crop_variety.description)
+    print("\tID:", crop_variety["id"])
+    print("\tName:", crop_variety["name"])
+    print("\tDescription:", crop_variety["description"])
 
     # Step 6: Create a season.
     print(
         f"Creating or updating season with Id {season_id}...", end=" ", flush=True)
     season = client.seasons.create_or_update(
         season_id=season_id,
-        season=Season(
-            name=season_name,
-            year=year,
-            start_date_time=start_date_time,
-            end_date_time=end_date_time,
-            description=season_description
-        )
+        season={
+            "name": season_name,
+            "year": year,
+            "startDateTime": start_date_time,
+            "endDateTime": end_date_time,
+            "description": season_description
+        }
     )
     print("Done")
 
     print("Details of season:")
-    print("\tID:", season.id)
-    print("\tName:", season.name)
-    print("\tDescription:", season.description)
-    print("\tYear:", season.year)
-    print("\tStart Date Time:", season.start_date_time)
-    print("\tEnd Date Time:", season.end_date_time)
+    print("\tID:", season["id"])
+    print("\tName:", season["name"])
+    print("\tDescription:", season["description"])
+    print("\tYear:", season["year"])
+    print("\tStart Date Time:", season["startDateTime"])
+    print("\tEnd Date Time:", season["endDateTime"])
 
     # Step 7: Create a seasonal field.
     print(
@@ -230,29 +228,29 @@ def sample_farm_hierarchy_complete():
     seasonal_field = client.seasonal_fields.create_or_update(
         farmer_id=farmer_id,
         seasonal_field_id=seasonal_field_id,
-        seasonal_field=SeasonalField(
-            name=seasonal_field_name,
-            farm_id=farm_id,
-            field_id=field_id,
-            season_id=season_id,
-            crop_id=crop_id,
-            crop_variety_ids=[crop_variety_id],
-            description=seasonal_field_description
-        )
+        seasonal_field={
+            "name": seasonal_field_name,
+            "farmId": farm_id,
+            "fieldId": field_id,
+            "seasonId": season_id,
+            "cropId": crop_id,
+            "cropVarietyIds": [crop_variety_id],
+            "description": seasonal_field_description
+        }
     )
     print("Done")
 
     print("Details of seasonal field:")
-    print("\tID:", seasonal_field.id)
-    print("\tName:", seasonal_field.name)
-    print("\tFarmer Name:", seasonal_field.farmer_id)
-    print("\tFarm Name:", seasonal_field.farm_id)
-    print("\tCrop Name:", seasonal_field.crop_id)
-    print("\tSeason Name:", seasonal_field.season_id)
-    print("\tField Name:", seasonal_field.field_id)
-    print("\tCrop Variety Name:", seasonal_field.crop_variety_ids)
-    print("\tName:", seasonal_field.name)
-    print("\tDescription:", seasonal_field.description)
+    print("\tID:", seasonal_field["id"])
+    print("\tName:", seasonal_field["name"])
+    print("\tFarmer Name:", seasonal_field["farmerId"])
+    print("\tFarm Name:", seasonal_field["farmId"])
+    print("\tCrop Name:", seasonal_field["cropId"])
+    print("\tSeason Name:", seasonal_field["seasonId"])
+    print("\tField Name:", seasonal_field["fieldId"])
+    print("\tCrop Variety Name:", seasonal_field["cropVarietyIds"])
+    print("\tName:", seasonal_field["name"])
+    print("\tDescription:", seasonal_field["description"])
 
     # Step 8: Create a boundary.
     try:
@@ -269,20 +267,21 @@ def sample_farm_hierarchy_complete():
         boundary = client.boundaries.create_or_update(
             farmer_id=farmer_id,
             boundary_id=boundary_id,
-            boundary=Boundary(
-                name=boundary_name,
-                geometry=multi_polygon,
-                parent_id=seasonal_field_id,
-                description=boundary_description
-            )
+            boundary={
+                "name": boundary_name,
+                "geometry": multi_polygon,
+                "parentId": seasonal_field_id,
+                "parentType": "SeasonalField",
+                "description": boundary_description
+            }
         )
         print("Done")
 
     print("\tDetails of boundary:")
-    print("\tID:", boundary.id)
-    print("\tName:", boundary.name)
-    print("\tDescription:", boundary.description)
-    print("\tParentId:", boundary.parent_id)
+    print("\tID:", boundary["id"])
+    print("\tName:", boundary["name"])
+    print("\tDescription:", boundary["description"])
+    print("\tParentId:", boundary["parentId"])
 
 
 if __name__ == "__main__":

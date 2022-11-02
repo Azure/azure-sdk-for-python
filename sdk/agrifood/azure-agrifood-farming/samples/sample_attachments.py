@@ -24,14 +24,12 @@ USAGE:
 from azure.core.exceptions import ResourceNotFoundError
 from azure.identity import DefaultAzureCredential
 from azure.agrifood.farming import FarmBeatsClient
-from azure.agrifood.farming.models import Farmer
 from pathlib import Path
 import os
 from dotenv import load_dotenv
 
 
 def sample_attachments():
-
     farmbeats_endpoint = os.environ['FARMBEATS_ENDPOINT']
 
     credential = DefaultAzureCredential()
@@ -41,12 +39,12 @@ def sample_attachments():
         credential=credential
     )
 
-    farmer_id = "contoso-farmer"
+    farmer_id = "contoso-farmer2"
     farm_id = "contoso-farm"
     attachment_on_farmer_id = "contoso-farmer-attachment-1"
     attachment_on_farm_id = "contoso-farm-attachment-1"
-    attachment_on_farmer_file_path = "./test.txt"
-    attachment_on_farm_file_path = "./test.txt"
+    attachment_on_farmer_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
+    attachment_on_farm_file_path = "C:\\Users\\bhkansag\\bhargav-kansagara\\azure-sdk-for-python\sdk\\agrifood\\azure-agrifood-farming\\samples\\test.txt"
 
     if not (os.path.isfile(attachment_on_farmer_file_path) and 
             os.path.isfile(attachment_on_farm_file_path)):
@@ -58,7 +56,16 @@ def sample_attachments():
     print(f"Create/updating farmer with id {farmer_id}...", end=" ", flush=True)
     client.farmers.create_or_update(
         farmer_id=farmer_id,
-        farmer=Farmer()
+        farmer={
+            "name": "Comtoso Farmer",
+            "description": "Contoso Farmer.",
+            "status": "Contoso Status",
+            "properties": {
+                "foo": "bar",
+                "numeric one": 1,
+                1: "numeric key"
+            }
+        }
     )
     print("Done!")
 
@@ -67,7 +74,11 @@ def sample_attachments():
     client.farms.create_or_update(
         farmer_id=farmer_id,
         farm_id=farm_id,
-        farm=Farmer()
+        farm={
+            "name": "Comtoso Farm",
+            "description": "Contoso Farm.",
+            "status": "Contoso Status"
+        }
     )
     print("Done!")
 
@@ -88,14 +99,18 @@ def sample_attachments():
         # Open file with buffering set to 0, to get a IO object.
         file_to_attach_on_farmer = open(
             attachment_on_farmer_file_path,
-            "rb",
-            buffering=0)
+            "rb")
+
+        attachment = {
+            "resourceId": farmer_id,
+            "resourceType": "Farmer",
+            "name": "a"
+        }
 
         client.attachments.create_or_update(
             farmer_id=farmer_id,
             attachment_id=attachment_on_farmer_id,
-            resource_id= farmer_id,
-            resource_type="Farmer",
+            attachment=attachment,
             file=file_to_attach_on_farmer)
 
         print("Done!")
@@ -117,14 +132,18 @@ def sample_attachments():
         # Open file with buffering set to 0, to get a IO object.
         file_to_attach_on_farm = open(
             attachment_on_farm_file_path,
-            "rb",
-            buffering=0)
+            "rb")
+
+        attachment = {
+            "resourceId": farm_id,
+            "resourceType": "Farm",
+            "name": "a"
+        }
 
         client.attachments.create_or_update(
             farmer_id=farmer_id,
             attachment_id=attachment_on_farm_id,
-            resource_id= farm_id,
-            resource_type="Farm",
+            attachment=attachment,
             file=file_to_attach_on_farm)
 
         print("Done!")
@@ -153,14 +172,14 @@ def sample_attachments():
         )
         out_path = Path(
             "./data/attachments/" +
-            f"{attachment.resource_type}/{attachment.resource_id}" +
-            f"/{attachment.id}/{attachment.original_file_name}"
+            f"{attachment['resourceType']}/{attachment['resourceId']}" +
+            f"/{attachment['id']}/{attachment['originalFileName']}"
         )
 
         # Make sure the dirs to the output path exists
         Path(out_path).parent.mkdir(parents=True, exist_ok=True)
 
-        print(f"Saving attachment id {attachment.id} to {out_path.resolve()}")
+        print(f"Saving attachment id {attachment['id']} to {out_path.resolve()}")
         with open(
                 out_path,
                 'wb'
