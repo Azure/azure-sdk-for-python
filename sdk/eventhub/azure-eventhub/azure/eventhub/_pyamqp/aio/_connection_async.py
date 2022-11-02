@@ -751,12 +751,17 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 ):
                     # TODO: compare the perf difference between ensure_future and direct await
                     break
+                
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
                 description="Can not send frame out due to exception: " + str(exc),
                 error=exc,
             )
+        except asyncio.CancelledError:
+            raise
+        except Exception:
+            raise
 
     def create_session(self, **kwargs):
         # type: (Any) -> Session

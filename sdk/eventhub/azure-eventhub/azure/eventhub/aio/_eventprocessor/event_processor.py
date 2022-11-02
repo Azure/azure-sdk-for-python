@@ -171,7 +171,7 @@ class EventProcessor(
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 if self._running:
-                    self._tasks[partition_id] = get_running_loop().create_task(
+                    self._tasks[partition_id] = asyncio.create_task(
                         self._receive(partition_id, checkpoint)
                     )
                     _LOGGER.info(
@@ -252,6 +252,7 @@ class EventProcessor(
             await self._ownership_manager.release_ownership(partition_id)
         finally:
             if partition_id in self._tasks:
+                self._tasks[partition_id].cancel()
                 del self._tasks[partition_id]
 
     async def _receive(

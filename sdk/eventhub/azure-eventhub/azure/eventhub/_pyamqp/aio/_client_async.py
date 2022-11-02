@@ -768,6 +768,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                     self.do_work_async(batch=to_receive_size),
                     timeout=timeout_time - now_time if timeout else None
                 )
+            except asyncio.CancelledError:
+                raise
             except asyncio.TimeoutError:
                 break
 

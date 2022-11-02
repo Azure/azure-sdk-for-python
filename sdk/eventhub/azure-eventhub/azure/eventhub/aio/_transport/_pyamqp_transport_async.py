@@ -214,16 +214,20 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint:disable=protected-access
         consumer._callback_task_run = True
         consumer._last_callback_called_time = time.time()
-        callback_task = asyncio.ensure_future(
+        callback_task = asyncio.create_task(
             PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
         )
-        receive_task = asyncio.ensure_future(PyamqpTransportAsync._receive_task(consumer))
+        receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer))
 
-        try:
-            await receive_task
-        finally:
-            consumer._callback_task_run = False
-            await callback_task
+        tasks = [callback_task, receive_task]
+
+        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
+
+        for task in done:
+            if task.exception() is not None:
+                for pen in pending:
+                    pen.cancel()
+                raise task.exception()
 
     @staticmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):

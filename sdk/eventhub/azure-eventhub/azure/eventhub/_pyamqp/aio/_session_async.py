@@ -386,9 +386,9 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             )
         futures = []
         for link in self._input_handles.values():
-            asyncio.ensure_future(
+            futures.append(asyncio.ensure_future(
                 link._incoming_disposition(frame)  # pylint: disable=protected-access
-            )
+            ))
         await asyncio.gather(*futures)
 
     async def _outgoing_detach(self, frame):
