@@ -42,6 +42,7 @@ class TextAnalysisKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     LANGUAGE_DETECTION = "LanguageDetection"
     EXTRACTIVE_SUMMARIZATION = "ExtractiveSummarization"
     ABSTRACTIVE_SUMMARIZATION = "AbstractiveSummarization"
+    DYNAMIC_CLASSIFICATION = "DynamicClassification"
 
 
 class EntityAssociation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
