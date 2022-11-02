@@ -2,7 +2,7 @@
 
 ## 13.0.0 (2022-11-08)
 
-### Features
+### Features Added
 
 - Added new custom enum type `NodeCommunicationMode`.
   - This property determines how a pool communicates with the Batch service.
