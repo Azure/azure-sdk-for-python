@@ -157,6 +157,7 @@ yarl<2.0,>=1.0
 #override azure-ai-textanalytics azure-core<2.0.0,>=1.24.0
 #override azure-ai-textanalytics msrest>=0.7.0
 #override azure-ai-textanalytics typing-extensions>=4.0.1
+#override azure-ai-language-conversations typing-extensions>=4.0.1
 #override azure-ai-language-questionanswering azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-customproviders typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-powerbidedicated msrest>=0.7.1
