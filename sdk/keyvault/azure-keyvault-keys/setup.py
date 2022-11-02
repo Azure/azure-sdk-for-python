@@ -66,10 +66,11 @@ setup(
     ),
     python_requires=">=3.7",
     install_requires=[
+        "azure-common~=1.1",
         "azure-core<2.0.0,>=1.24.0",
         "cryptography>=2.1.4",
         "isodate>=0.6.1",
-        "azure-common~=1.1",
-        "six>=1.12.0"
+        "six>=1.12.0",
+        "typing-extensions>=4.0.1",
     ],
 )
