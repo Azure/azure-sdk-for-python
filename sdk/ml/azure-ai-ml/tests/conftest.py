@@ -10,7 +10,7 @@ from typing import Callable, Tuple, Union
 from unittest.mock import Mock
 
 import pytest
-from azure.core.pipeline.transport._requests_basic import RequestsTransport
+from azure.core.pipeline.transport import HttpTransport
 
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
@@ -568,9 +568,11 @@ def bodiless_matching(test_proxy):
 def skip_sleep_in_lro_polling():
     """Skip sleep in LRO polling for playback mode.
     In playback mode, we don't need to sleep in LRO polling as no actual remote operations are being performed.
+    Works on sync requests only for now. Need to mock AsyncioRequestsTransport.sleep and
+    TrioRequestsTransport.sleep if we want to apply this to async requests.
     """
     if not is_live():
-        RequestsTransport.sleep = lambda *_, **__: None
+        HttpTransport.sleep = lambda *_, **__: None
 
 
 def pytest_configure(config):
