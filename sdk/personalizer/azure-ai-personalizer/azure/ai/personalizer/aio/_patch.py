@@ -6,6 +6,8 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+# pylint: disable=too-many-lines
+from typing import Awaitable
 import sys
 import datetime
 from typing import List, Union, Any, IO, AsyncIterator, Optional, AsyncIterable
@@ -14,6 +16,8 @@ from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, AsyncBearerTokenCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
+from azure.core.rest import AsyncHttpResponse, HttpRequest
+
 from ._client import PersonalizerClient as PersonalizerClientGenerated
 
 if sys.version_info >= (3, 9):
@@ -47,7 +51,7 @@ def _authentication_policy(credential, **kwargs):
     return authentication_policy
 
 
-class PersonalizerAdministrationClient:
+class PersonalizerAdministrationClient:  # pylint: disable=too-many-public-methods
     """This client contains the operations that apply to Azure Personalizer. Operations allowed by the client are
     viewing and editing the properties, policy, model, running evaluations.
 
@@ -801,6 +805,35 @@ class PersonalizerAdministrationClient:
         """
         await self._client.delete_feature_importance(feature_importance_id, **kwargs)
 
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        return self._client.send_request(request, **kwargs)
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self) -> "PersonalizerAdministrationClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
+
 
 class PersonalizerClient:
     """Personalizer Service is an Azure Cognitive Service that makes it easy to target content and
@@ -1090,6 +1123,34 @@ class PersonalizerClient:
         """
         return await self._client.activate_multi_slot_event(event_id, **kwargs)
 
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = await client.send_request(request)
+        <AsyncHttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.AsyncHttpResponse
+        """
+        return self._client.send_request(request, **kwargs)
+
+    async def close(self) -> None:
+        await self._client.close()
+
+    async def __aenter__(self) -> "PersonalizerClient":
+        await self._client.__aenter__()
+        return self
+
+    async def __aexit__(self, *exc_details) -> None:
+        await self._client.__aexit__(*exc_details)
 
 def patch_sdk():
     """Do not remove from this file.

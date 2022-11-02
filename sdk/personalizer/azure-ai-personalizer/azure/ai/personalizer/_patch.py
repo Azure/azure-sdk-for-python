@@ -6,12 +6,15 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
+# pylint: disable=too-many-lines
 import datetime
 import sys
 from typing import List, Union, Any, IO, Iterator, Iterable, Optional
 from azure.core.credentials import AzureKeyCredential, TokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, BearerTokenCredentialPolicy
 from azure.core.tracing.decorator import distributed_trace
+from azure.core.rest import HttpRequest, HttpResponse
+
 from ._client import PersonalizerClient as PersonalizerClientGenerated
 
 if sys.version_info >= (3, 9):
@@ -44,8 +47,7 @@ def _authentication_policy(credential, **kwargs):
         )
     return authentication_policy
 
-
-class PersonalizerAdministrationClient:
+class PersonalizerAdministrationClient:  # pylint: disable=too-many-public-methods
     """This client contains the operations that apply to Azure Personalizer. Operations allowed by the client are
     viewing and editing the properties, policy, model, running evaluations.
 
@@ -795,6 +797,38 @@ class PersonalizerAdministrationClient:
         """
         return self._client.delete_feature_importance(feature_importance_id, **kwargs)
 
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        return self._client.send_request(request, **kwargs)
+
+    def close(self):
+        # type: () -> None
+        self._client.close()
+
+    def __enter__(self):
+        # type: () -> PersonalizerAdministrationClient
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)
+
 
 class PersonalizerClient:
     """Personalizer Service is an Azure Cognitive Service that makes it easy to target content and
@@ -1081,6 +1115,38 @@ class PersonalizerClient:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._client.activate_multi_slot_event(event_id, **kwargs)
+
+    def send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
+        """Runs the network request through the client's chained policies.
+
+        >>> from azure.core.rest import HttpRequest
+        >>> request = HttpRequest("GET", "https://www.example.org/")
+        <HttpRequest [GET], url: 'https://www.example.org/'>
+        >>> response = client.send_request(request)
+        <HttpResponse: 200 OK>
+
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
+
+        :param request: The network request you want to make. Required.
+        :type request: ~azure.core.rest.HttpRequest
+        :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
+        :return: The response of your network call. Does not do error handling on your response.
+        :rtype: ~azure.core.rest.HttpResponse
+        """
+        return self._client.send_request(request, **kwargs)
+
+    def close(self):
+        # type: () -> None
+        self._client.close()
+
+    def __enter__(self):
+        # type: () -> PersonalizerClient
+        self._client.__enter__()
+        return self
+
+    def __exit__(self, *exc_details):
+        # type: (Any) -> None
+        self._client.__exit__(*exc_details)
 
 
 def patch_sdk():
