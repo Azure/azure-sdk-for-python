@@ -312,9 +312,9 @@ def sleep_if_live(seconds):
     """Sleeps for the given number of seconds if the test is live.
     In playback mode, this function does nothing.
     Please use this function instead of time.sleep() in tests if you want to wait for some remote operations.
+
+    Not necessary actually when fixture skip_sleep_for_playback has not been disabled explicitly.
+    Unify the behavior in case the fixture is disabled, like switch to skip_sleep_in_lro_polling.
     """
-    # another solution is to automatically mock time.sleep when running in playback mode,
-    # but it will impact all tests silently, no matter what is the sleep for.
-    # so we choose to explicitly call this function in tests
     if is_live():
         time.sleep(seconds)

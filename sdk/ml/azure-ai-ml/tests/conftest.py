@@ -565,11 +565,23 @@ def bodiless_matching(test_proxy):
 
 
 @pytest.fixture(autouse=True)
+def skip_sleep_for_playback():
+    """Mock time.sleep() for playback mode.
+    time.sleep() is usually used to wait for long-running operations to complete.
+    While in playback mode, we don't need wait as no actual remote operations are being performed.
+
+    Works on sync requests only for now. Need to mock asyncio.sleep and
+    trio.sleep if we want to apply this to async requests.
+
+    Please disable this fixture if you want to use time.sleep() for other reason.
+    """
+    if not is_live():
+        time.sleep = lambda *_: None
+
+
 def skip_sleep_in_lro_polling():
-    """Skip sleep in LRO polling for playback mode.
-    In playback mode, we don't need to sleep in LRO polling as no actual remote operations are being performed.
-    Works on sync requests only for now. Need to mock AsyncioRequestsTransport.sleep and
-    TrioRequestsTransport.sleep if we want to apply this to async requests.
+    """A less aggressive version of skip_sleep_for_playback. Mock time.sleep() only for sync LRO polling.
+    You may use this fixture and utils.sleep_if_live() together when you disabled skip_sleep_for_playback.
     """
     if not is_live():
         HttpTransport.sleep = lambda *_, **__: None
