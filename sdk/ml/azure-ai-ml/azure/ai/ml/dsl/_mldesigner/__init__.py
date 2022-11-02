@@ -15,6 +15,7 @@ from azure.ai.ml import(
     Output,
     MLClient,
     load_component,
+    load_environment,
     MpiDistribution,
     PyTorchDistribution,
     TensorFlowDistribution,
@@ -116,5 +117,6 @@ __all__ = [
     "_sanitize_python_variable_name",
     "component_factory_load_from_dict",
     "load_component",
+    "load_environment",
     "load_yaml",
 ]
