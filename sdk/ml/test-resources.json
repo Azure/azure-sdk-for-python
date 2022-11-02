@@ -399,6 +399,10 @@
         "ManualApproval",
         "none"
       ]
+    },
+    "provisionGPUCluster": {
+      "type": "bool",
+      "defaultValue": "[bool('false')]"
     }
   },
   "variables": {
@@ -738,6 +742,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
       ],
+      "condition": "[parameters('provisionGPUCluster')]",
       "properties": {
         "computeType": "AmlCompute",
         "properties": {
