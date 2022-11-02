@@ -147,6 +147,7 @@ yarl<2.0,>=1.0
 #override azure-eventhub typing-extensions>=4.0.1
 #override azure-identity azure-core<2.0.0,>=1.11.0
 #override azure-mgmt-portal azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-confluent azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-keyvault-administration azure-core<2.0.0,>=1.24.0
 #override azure-keyvault-administration msrest>=0.7.1
 #override azure-mgmt-managementpartner typing-extensions>=4.3.0; python_version<'3.8.0'
@@ -301,6 +302,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-eventgrid msrest>=0.7.1
 #override azure-mgmt-maps azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-ai-language-conversations isodate<1.0.0,>=0.6.1
+#override azure-mgmt-confluent typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-ai-language-questionanswering isodate<1.0.0,>=0.6.1
 #override azure-mgmt-loadtestservice azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-mixedreality typing-extensions>=4.3.0; python_version<'3.8.0'
@@ -324,6 +326,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-machinelearningservices azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-policyinsights msrest>=0.7.1
 #override azure-mgmt-policyinsights azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-confluent msrest>=0.7.1
 #override azure-mgmt-resourcehealth msrest>=0.7.1
 #override azure-mgmt-resourcehealth azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-mgmt-resourcegraph msrest>=0.7.1
