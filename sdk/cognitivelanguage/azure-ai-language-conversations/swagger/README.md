@@ -49,7 +49,7 @@ batch:
 These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/99c224b2f7997634695a56c463c8672f24624843/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/10c39b3174718aba55e53cb7b0ae1cef45b18368/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 title: ConversationAnalysisClient
 ```
@@ -59,7 +59,7 @@ title: ConversationAnalysisClient
 These settings apply only when `--tag=release_authoring_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_authoring_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/99c224b2f7997634695a56c463c8672f24624843/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations-authoring.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/10c39b3174718aba55e53cb7b0ae1cef45b18368/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations-authoring.json
 output-folder: ../azure/ai/language/conversations/authoring
 title: ConversationAuthoringClient
 ```
