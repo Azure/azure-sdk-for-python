@@ -133,19 +133,6 @@ class TestBatchDeployment(AzureRecordedTestCase):
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
     def test_batch_job_download(self, client: MLClient, tmp_path: Path, variable_recorder: VariableRecorder) -> str:
-        def wait_until_done(job: Job, timeout: int = None) -> None:
-            poll_start_time = time.time()
-            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                job = client.jobs.get(job.name)
-                if timeout is not None and time.time() - poll_start_time > timeout:
-                    # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
-                    cancel_poller = client.jobs.begin_cancel(job.name)
-                    assert isinstance(cancel_poller, LROPoller)
-                    assert cancel_poller.result() is None
-                    return JobStatus.CANCELED
-            return job.status
-
         endpoint_name = variable_recorder.get_or_record("name", "batch-ept-" + uuid.uuid4().hex[:15])
         endpoint = load_batch_endpoint(
             "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml",
