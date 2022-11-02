@@ -11,9 +11,6 @@ from azure.core.paging import ItemPaged
 from azure.core.exceptions import ResourceNotFoundError
 from devtools_testutils import AzureRecordedTestCase, is_live
 
-from test_utilities.utils import skip_sleep_in_lro_polling
-
-
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experiences_test
@@ -36,10 +33,9 @@ class TestRegistry(AzureRecordedTestCase):
         reg = load_registry(
             source="./tests/test_configs/registry/registry_valid_min.yaml", params_override=params_override
         )
-        with skip_sleep_in_lro_polling():
-            registry = crud_registry_client.registries.begin_create(registry=reg).result(
-                timeout=LROConfigurations.POLLING_TIMEOUT
-            )
+        registry = crud_registry_client.registries.begin_create(registry=reg).result(
+            timeout=LROConfigurations.POLLING_TIMEOUT
+        )
         assert registry.name == reg_name
         assert registry.identity.type == "SystemAssigned"
 
@@ -59,8 +55,7 @@ class TestRegistry(AzureRecordedTestCase):
         assert rest_registry.properties.managed_resource_group_tags["one"] == "two"
         assert rest_registry.properties.managed_resource_group_tags["three"] == "five"
 
-        with skip_sleep_in_lro_polling():
-            del_result = crud_registry_client.registries.begin_delete(name=reg_name).result(
-                timeout=LROConfigurations.POLLING_TIMEOUT
-            )
+        del_result = crud_registry_client.registries.begin_delete(name=reg_name).result(
+            timeout=LROConfigurations.POLLING_TIMEOUT
+        )
         assert del_result is None

@@ -7,16 +7,13 @@ import os
 import signal
 import tempfile
 import time
-from contextlib import contextmanager
 from typing import Dict, Callable
-from unittest.mock import patch
 from zipfile import ZipFile
 from io import StringIO
 
 import pydash
 import urllib3
 from azure.core.exceptions import HttpResponseError
-from devtools_testutils import is_live
 
 from azure.ai.ml import MLClient, load_job
 from azure.ai.ml._scope_dependent_operations import OperationScope
@@ -275,23 +272,11 @@ def delete_file_if_exists(file_path: str):
         os.remove(file_path)
 
 
-@contextmanager
-def skip_sleep_in_lro_polling(work_only_if_not_live=True):
-    if work_only_if_not_live and is_live():
-        yield
-        return
-
-    from azure.core.polling.base_polling import LROBasePolling
-    with patch.object(LROBasePolling, "_sleep", return_value=None):
-        yield
-
-
 def cancel_job(client: MLClient, job: Job) -> None:
     try:
         cancel_poller = client.jobs.begin_cancel(job.name)
-        with skip_sleep_in_lro_polling():
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
+        assert isinstance(cancel_poller, LROPoller)
+        assert cancel_poller.result() is None
     except HttpResponseError:
         pass
 
