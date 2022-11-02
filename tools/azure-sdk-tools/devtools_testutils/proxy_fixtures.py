@@ -115,12 +115,6 @@ def environment_variables(test_proxy: None) -> EnvironmentVariableSanitizer:
     return EnvironmentVariableSanitizer()
 
 
-def skip_sleep_in_lro_polling():
-    """Skip sleep in LRO polling for playback mode.
-    """
-    RequestsTransport.sleep = lambda *_, **__: None
-
-
 @pytest.fixture
 async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[str, Any]":
     """Fixture that redirects network requests to target the azure-sdk-tools test proxy.
@@ -136,10 +130,6 @@ async def recorded_test(test_proxy: None, request: "FixtureRequest") -> "Dict[st
     :yields: A dictionary containing information relevant to the currently executing test.
         If the current test session is live but recording is disabled, yields None.
     """
-    # in playback mode, we don't need to sleep in LRO polling as no actual remote operations are being performed
-    if not is_live():
-        skip_sleep_in_lro_polling()
-
     if is_live_and_not_recording():
         yield {"variables": {}}  # yield an empty set of variables since recordings aren't used
     else:

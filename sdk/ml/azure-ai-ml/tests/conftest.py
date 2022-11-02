@@ -10,6 +10,8 @@ from typing import Callable, Tuple, Union
 from unittest.mock import Mock
 
 import pytest
+from azure.core.pipeline.transport._requests_basic import RequestsTransport
+
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
@@ -560,6 +562,15 @@ def enable_internal_components():
 @pytest.fixture()
 def bodiless_matching(test_proxy):
     set_bodiless_matcher()
+
+
+@pytest.fixture(autouse=True)
+def skip_sleep_in_lro_polling():
+    """Skip sleep in LRO polling for playback mode.
+    In playback mode, we don't need to sleep in LRO polling as no actual remote operations are being performed.
+    """
+    if not is_live():
+        RequestsTransport.sleep = lambda *_, **__: None
 
 
 def pytest_configure(config):
