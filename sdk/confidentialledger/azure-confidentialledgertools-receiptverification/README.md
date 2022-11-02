@@ -8,10 +8,10 @@ The Azure Confidential Ledger Receipt Verification client library provides utili
 
 ## Getting started
 ### Install packages
-Install the `azure-confidentialledgertools-receipt-verification` package with [pip][pip]:
+Install the `azure-confidentialledgertools-receiptverification` package with [pip][pip]:
 
 ```bash
-pip install azure-confidentialledgertools-receipt-verification
+pip install azure-confidentialledgertools-receiptverification
 ```
 
 ### Prerequisites
