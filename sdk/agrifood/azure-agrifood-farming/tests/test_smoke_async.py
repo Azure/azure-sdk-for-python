@@ -14,7 +14,6 @@ from devtools_testutils import recorded_by_proxy
 
 
 class TestFarmBeatsSmokeAsync(TestFarmBeats):
-
     @FarmBeatsPowerShellPreparer()
     @recorded_by_proxy
     async def test_farmer(self, **kwargs):
@@ -62,6 +61,7 @@ class TestFarmBeatsSmokeAsync(TestFarmBeats):
 
 
     @FarmBeatsPowerShellPreparer()
+    @recorded_by_proxy
     async def test_boundary(self, **kwargs):
         agrifood_endpoint = kwargs.pop("agrifood_endpoint")
         client = self.create_client(agrifood_endpoint=agrifood_endpoint)

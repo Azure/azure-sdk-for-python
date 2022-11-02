@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/agrifood/data-plane/Microsoft.AgFoodPlatform/preview/2021-07-31-preview/agfood.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/fa581bd5f31cbc6f6882b254ce5b0f5c20d84648/specification/agrifood/data-plane/Microsoft.AgFoodPlatform/preview/2021-07-31-preview/agfood.json
 output-folder: ../azure/agrifood/farming
 namespace: azure.agrifood.farming
 package-name: azure-agrifood-farming
@@ -29,7 +29,7 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 title: FarmBeatsClient
-package-version: 1.0.0b3
+package-version: 1.0.0b2
 security: AADToken
 security-scopes: https://farmbeats.azure.net/.default
 ```
