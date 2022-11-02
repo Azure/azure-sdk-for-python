@@ -30,7 +30,10 @@ class AsyncKeyVaultClientBase(object):
             raise ValueError("vault_url must be the URL of an Azure Key Vault")
 
         try:
-            api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+            api_version = kwargs.pop("api_version", DEFAULT_VERSION.value)
+            # If API version was provided as an enum value, need to make a plain string for 3.11 compatibility
+            if hasattr(api_version, "value"):
+                api_version = api_version.value
             self._vault_url = vault_url.strip(" /")
             client = kwargs.get("generated_client")
             if client:
