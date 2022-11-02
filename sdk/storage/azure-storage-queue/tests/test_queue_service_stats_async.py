@@ -37,18 +37,18 @@ class AiohttpTestTransport(AioHttpTransport):
 class QueueServiceStatsTestAsync(AsyncStorageTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'live')
-        self.assertIsNotNone(stats['geo_replication']['last_sync_time'])
+        assert stats['geo_replication']['status'] == 'live'
+        assert stats['geo_replication']['last_sync_time'] is not None
 
     def _assert_stats_unavailable(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'unavailable')
-        self.assertIsNone(stats['geo_replication']['last_sync_time'])
+        assert stats['geo_replication']['status'] == 'unavailable'
+        assert stats['geo_replication']['last_sync_time'] is None
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
@@ -60,8 +60,10 @@ class QueueServiceStatsTestAsync(AsyncStorageTestCase):
 
     # --Test cases per service ---------------------------------------
     @QueuePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_queue_service_stats_f(self, storage_account_name, storage_account_key):
+    async def test_queue_service_stats_f(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
         # Act
@@ -71,8 +73,10 @@ class QueueServiceStatsTestAsync(AsyncStorageTestCase):
         self._assert_stats_default(stats)
 
     @QueuePreparer()
-    @AsyncStorageTestCase.await_prepared_test
-    async def test_queue_service_stats_when_unavailable(self, storage_account_name, storage_account_key):
+    async def test_queue_service_stats_when_unavailable(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key, transport=AiohttpTestTransport())
 

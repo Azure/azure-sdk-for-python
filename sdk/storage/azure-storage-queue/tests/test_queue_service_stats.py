@@ -6,8 +6,10 @@
 import unittest
 
 from azure.storage.queue import QueueServiceClient
+
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import QueuePreparer
-from devtools_testutils.storage import StorageTestCase
 
 SERVICE_UNAVAILABLE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceStats><GeoReplication><Status' \
                                 '>unavailable</Status><LastSyncTime></LastSyncTime></GeoReplication' \
@@ -18,21 +20,21 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
                                 '></StorageServiceStats> '
 
 # --Test Class -----------------------------------------------------------------
-class QueueServiceStatsTest(StorageTestCase):
+class TestQueueServiceStats(StorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     def _assert_stats_default(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'live')
-        self.assertIsNotNone(stats['geo_replication']['last_sync_time'])
+        assert stats['geo_replication']['status'] == 'live'
+        assert stats['geo_replication']['last_sync_time'] is not None
 
     def _assert_stats_unavailable(self, stats):
-        self.assertIsNotNone(stats)
-        self.assertIsNotNone(stats['geo_replication'])
+        assert stats is not None
+        assert stats['geo_replication'] is not None
 
-        self.assertEqual(stats['geo_replication']['status'], 'unavailable')
-        self.assertIsNone(stats['geo_replication']['last_sync_time'])
+        assert stats['geo_replication']['status'] == 'unavailable'
+        assert stats['geo_replication']['last_sync_time'] is None
 
     @staticmethod
     def override_response_body_with_unavailable_status(response):
@@ -45,7 +47,11 @@ class QueueServiceStatsTest(StorageTestCase):
     # --Test cases per service ---------------------------------------
 
     @QueuePreparer()
-    def test_queue_service_stats_f(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_queue_service_stats_f(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         qsc = self.create_storage_client(QueueServiceClient, self.account_url(storage_account_name, "queue"), storage_account_key)
 
@@ -55,7 +61,11 @@ class QueueServiceStatsTest(StorageTestCase):
         self._assert_stats_default(stats)
 
     @QueuePreparer()
-    def test_queue_service_stats_when_unavailable(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_queue_service_stats_when_unavailable(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # Arrange
         qsc = self.create_storage_client(QueueServiceClient, self.account_url(storage_account_name, "queue"), storage_account_key)
 
