@@ -4,7 +4,8 @@
 
 ### Features Added
 
-- `JSON` has been added as a supported format in `SchemaFormat`.
+- `V2022_10` has been added to `ApiVersion` and set as the default api version.
+  - `Json` and `Custom` have been added supported formats in `SchemaFormat`.
 
 ## 1.2.0 (2022-10-10)
 
