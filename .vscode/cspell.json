@@ -95,6 +95,7 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "automl",
     "pyyaml",
     "CONLL",
     "pyjwt",
@@ -456,7 +457,9 @@
         "verfasst",
         "engelska",
         "fhir",
-        "FHIR"
+        "FHIR",
+        "naam",
+        "aenter"
       ]
     },
     {
@@ -680,7 +683,7 @@
       ]
     },
     {
-      "filename": "sdk/ml/tests.yml",
+      "filename": "sdk/ml/*tests.yml",
       "words": [
         "euap"
       ]
@@ -807,7 +810,8 @@
         "fnmatch",
         "posixpath",
         "SEPS",
-        "wargs"
+        "wargs",
+        "pycache"
       ]
     },
     {
@@ -999,7 +1003,8 @@
         "mybytes",
         "myid",
         "jsonify",
-        "ints"
+        "ints",
+        "inirudebwoy"
       ]
     },
     {
@@ -1124,8 +1129,14 @@
         "Nify",
         "ctxt",
         "unflattened",
-	  "deseralize",
-	  "wday"
+	      "deseralize",
+	      "wday"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/test-resources.json",
+      "words": [
+        "azconfig"
       ]
     }
   ],

@@ -15,6 +15,7 @@ from azure.ai.formrecognizer import FormRecognizerClient, FormContentType, FormR
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
@@ -37,6 +38,7 @@ class TestContentFromStream(FormRecognizerTest):
         with pytest.raises(ClientAuthenticationError):
             poller = client.begin_recognize_content(b"xx", content_type="application/pdf")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -84,6 +86,7 @@ class TestContentFromStream(FormRecognizerTest):
                 my_file
             )
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -109,6 +112,7 @@ class TestContentFromStream(FormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -122,6 +126,7 @@ class TestContentFromStream(FormRecognizerTest):
         result = poller.result()
         assert result
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -147,6 +152,7 @@ class TestContentFromStream(FormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -165,6 +171,7 @@ class TestContentFromStream(FormRecognizerTest):
         assert layout.tables[0].page_number == 1
         assert layout.tables[1].page_number== 1
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -177,6 +184,7 @@ class TestContentFromStream(FormRecognizerTest):
         assert len(result) == 3
         self.assertFormPagesHasValues(result)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -203,6 +211,7 @@ class TestContentFromStream(FormRecognizerTest):
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     def test_content_continuation_token(self, **kwargs):
@@ -218,6 +227,7 @@ class TestContentFromStream(FormRecognizerTest):
         initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -243,6 +253,7 @@ class TestContentFromStream(FormRecognizerTest):
         # Check form pages
         self.assertFormPagesTransformCorrect(layout, read_results, page_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -257,6 +268,7 @@ class TestContentFromStream(FormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer(client_kwargs={"api_version": FormRecognizerApiVersion.V2_0})
     @recorded_by_proxy
@@ -271,6 +283,7 @@ class TestContentFromStream(FormRecognizerTest):
         assert layout.page_number == 1
         self.assertFormPagesHasValues(result)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -295,6 +308,7 @@ class TestContentFromStream(FormRecognizerTest):
         result = poller.result()
         assert len(result) == 3
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy

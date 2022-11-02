@@ -129,6 +129,7 @@ class DataTransferComponent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """DataTransferComponent."""
 
     COSMOS_DB_CASSANDRA = "CosmosDBCassandra"
+    COSMOS_DB_MONGO = "CosmosDBMongo"
     COSMOS_DB_SQL = "CosmosDBSql"
     AZURE_BLOB_STORAGE = "AzureBlobStorage"
 

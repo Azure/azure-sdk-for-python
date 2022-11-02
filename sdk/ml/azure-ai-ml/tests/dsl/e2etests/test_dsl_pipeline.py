@@ -1,7 +1,6 @@
 import logging
 from io import StringIO
 from pathlib import Path
-from time import sleep
 from typing import Callable
 from unittest.mock import patch
 
@@ -16,7 +15,7 @@ from azure.ai.ml import (
     TensorFlowDistribution,
     command,
     dsl,
-    load_component,
+    load_component, AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
@@ -29,11 +28,9 @@ from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
-from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel, sleep_if_live
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -55,17 +52,6 @@ common_omit_fields = [
     "settings._source",
     "source_job_id",
 ]
-
-
-def assert_job_cancel(pipeline, client: MLClient):
-    job = client.jobs.create_or_update(pipeline)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
-    return job
 
 
 @pytest.mark.usefixtures(
@@ -1062,6 +1048,21 @@ class TestDSLPipeline(AzureRecordedTestCase):
             in e.value.message
         )
 
+        @dsl.pipeline(non_pipeline_inputs=['param'])
+        def pipeline_with_non_pipeline_inputs(
+            required_input: Input,
+            required_param: str,
+            param: str,
+        ):
+            default_optional_func(
+                required_input=required_input,
+                required_param=required_param,
+            )
+
+        with pytest.raises(ValidationException) as e:
+            client.components.create_or_update(pipeline_with_non_pipeline_inputs)
+        assert "Cannot register pipeline component 'pipeline_with_non_pipeline_inputs' with non_pipeline_inputs." in e.value.message
+
     def test_create_pipeline_component_by_dsl(self, caplog, client: MLClient):
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
@@ -1081,7 +1082,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             )
             node2.compute = node_compute
 
-        component = valid_pipeline_func._pipeline_builder.build()
+        component = valid_pipeline_func._pipeline_builder.build(user_provided_kwargs={})
         assert component._auto_increment_version is True
         # Set original module_logger with pkg name to 'Operation' to enable caplog capture logs
         from azure.ai.ml.operations import _component_operations
@@ -1385,7 +1386,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline(input_number, input_number, job_input)
         job = client.jobs.create_or_update(pipeline)
         while True:
-            sleep(30)
+            sleep_if_live(30)
             children = client.jobs.list(parent_job_name=job.name)
             children = list(children)
             if len(children) == 2:
@@ -1580,10 +1581,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
             ),
         )
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="parallel_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
+
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
         expected_keys = ["status", "properties", "tags", "creation_context"]
@@ -1613,10 +1612,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             ),
         )
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="parallel_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
         expected_keys = ["status", "properties", "tags", "creation_context"]
@@ -1711,6 +1707,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "name": "node1",
                     "mini_batch_size": 5,
+                    "partition_keys": None,
                     "retry_settings": None,
                     "logging_level": "DEBUG",
                     "max_concurrency_per_instance": 1,
@@ -1812,13 +1809,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             ),
         )
         # submit job to workspace
-        pipeline_job = client.jobs.create_or_update(
-            pipeline,
-            experiment_name="parallel_in_pipeline",
-        )
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
         omit_fields = [
             "jobs.parallel_node.task.code",
             "jobs.parallel_node.task.environment",
@@ -1903,10 +1894,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.job_out_data.mode = "upload"
 
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="parallel_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
 
         omit_fields = [
             "jobs.*.task.code",
@@ -1930,6 +1918,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "outputs": {},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "type": "run_function",
                         "entry_script": "score.py",
@@ -1977,6 +1966,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "outputs": {"job_output_path": {"value": "${{parent.outputs.job_out_data}}", "type": "literal"}},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "type": "run_function",
                         "entry_script": "score.py",
@@ -2343,10 +2333,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.output.type = "uri_file"
 
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="spark_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="spark_in_pipeline")
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
         expected_keys = ["status", "properties", "tags", "creation_context"]
@@ -2433,3 +2420,82 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = client.jobs.create_or_update(pipeline_with_default_component())
         created_pipeline_job: PipelineJob = client.jobs.get(pipeline_job.name)
         assert created_pipeline_job.jobs["node1"].component == f"{component_name}@default"
+
+    def test_pipeline_node_identity_with_component(self, client: MLClient):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(path)
+
+        @dsl.pipeline
+        def pipeline_func(component_in_path):
+            node1 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node1.identity = AmlTokenConfiguration()
+
+            node2 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node2.identity = UserIdentityConfiguration()
+
+            node3 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node3.identity = ManagedIdentityConfiguration()
+
+        pipeline = pipeline_func(component_in_path=job_input)
+        pipeline_job = client.jobs.create_or_update(pipeline, compute="cpu-cluster")
+        omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source"
+        ]
+        actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
+        assert actual_dict["jobs"] == {
+            'node1': {'computeId': None,
+                      'display_name': None,
+                      'distribution': None,
+                      'environment_variables': {},
+                      'identity': {'type': 'aml_token'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'limits': None,
+                      'name': 'node1',
+                      'outputs': {},
+                      'properties': {},
+                      'resources': None,
+                      'tags': {},
+                      'type': 'command'},
+            'node2': {'computeId': None,
+                      'display_name': None,
+                      'distribution': None,
+                      'environment_variables': {},
+                      'identity': {'type': 'user_identity'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'limits': None,
+                      'name': 'node2',
+                      'outputs': {},
+                      'properties': {},
+                      'resources': None,
+                      'tags': {},
+                      'type': 'command'},
+            'node3': {'computeId': None,
+                      'display_name': None,
+                      'distribution': None,
+                      'environment_variables': {},
+                      'identity': {'type': 'managed_identity'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'limits': None,
+                      'name': 'node3',
+                      'outputs': {},
+                      'properties': {},
+                      'resources': None,
+                      'tags': {},
+                      'type': 'command'}
+        }

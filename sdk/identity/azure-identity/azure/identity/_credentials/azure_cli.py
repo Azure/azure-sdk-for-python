@@ -10,7 +10,7 @@ import re
 import subprocess
 import sys
 import time
-from typing import TYPE_CHECKING, List
+from typing import Any, List
 
 import six
 
@@ -20,10 +20,6 @@ from azure.core.exceptions import ClientAuthenticationError
 from .. import CredentialUnavailableError
 from .._internal import _scopes_to_resource, resolve_tenant
 from .._internal.decorators import log_get_token
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any
 
 
 CLI_NOT_FOUND = "Azure CLI not found on path"
@@ -52,13 +48,11 @@ class AzureCliCredential(object):
     def __exit__(self, *args):
         pass
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Calling this method is unnecessary."""
 
     @log_get_token("AzureCliCredential")
-    def get_token(self, *scopes, **kwargs): # pylint: disable=no-self-use
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -143,7 +137,7 @@ def _run_command(command):
         working_directory = get_safe_working_dir()
 
         kwargs = {
-            "stderr": subprocess.STDOUT,
+            "stderr": subprocess.PIPE,
             "cwd": working_directory,
             "universal_newlines": True,
             "env": dict(os.environ, AZURE_CORE_NO_COLOR="true"),
@@ -154,14 +148,14 @@ def _run_command(command):
         return subprocess.check_output(args, **kwargs)
     except subprocess.CalledProcessError as ex:
         # non-zero return from shell
-        if ex.returncode == 127 or ex.output.startswith("'az' is not recognized"):
+        if ex.returncode == 127 or ex.stderr.startswith("'az' is not recognized"):
             raise CredentialUnavailableError(message=CLI_NOT_FOUND)
-        if "az login" in ex.output or "az account set" in ex.output:
+        if "az login" in ex.stderr or "az account set" in ex.stderr:
             raise CredentialUnavailableError(message=NOT_LOGGED_IN)
 
         # return code is from the CLI -> propagate its output
-        if ex.output:
-            message = sanitize_output(ex.output)
+        if ex.stderr:
+            message = sanitize_output(ex.stderr)
         else:
             message = "Failed to invoke Azure CLI"
         raise ClientAuthenticationError(message=message)

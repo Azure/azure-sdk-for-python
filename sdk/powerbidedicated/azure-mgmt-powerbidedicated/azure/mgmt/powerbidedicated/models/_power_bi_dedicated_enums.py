@@ -6,27 +6,11 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CapacityProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CapacityProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current deployment state of PowerBI Dedicated resource. The provisioningState is to
     indicate states for resource provisioning.
     """
@@ -44,31 +28,35 @@ class CapacityProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, En
     PREPARING = "Preparing"
     SCALING = "Scaling"
 
-class CapacitySkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of the Azure pricing tier to which the SKU applies.
-    """
+
+class CapacitySkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the Azure pricing tier to which the SKU applies."""
 
     PBIE_AZURE = "PBIE_Azure"
     PREMIUM = "Premium"
     AUTO_PREMIUM_HOST = "AutoPremiumHost"
 
-class IdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created/modified the resource.
-    """
+
+class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created/modified the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class Mode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The capacity mode.
+
+class Mode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies the generation of the Power BI Embedded capacity. If no value is specified, the
+    default value 'Gen2' is used. `Learn More
+    <https://docs.microsoft.com/power-bi/developer/embedded/power-bi-embedded-generation-2>`_.
     """
 
     GEN1 = "Gen1"
     GEN2 = "Gen2"
 
-class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current state of PowerBI Dedicated resource. The state is to indicate more states outside
     of resource provisioning.
     """
@@ -86,15 +74,16 @@ class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     PREPARING = "Preparing"
     SCALING = "Scaling"
 
-class VCoreProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class VCoreProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The current deployment state of an auto scale v-core resource. The provisioningState is to
     indicate states for resource provisioning.
     """
 
     SUCCEEDED = "Succeeded"
 
-class VCoreSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The name of the Azure pricing tier to which the SKU applies.
-    """
+
+class VCoreSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The name of the Azure pricing tier to which the SKU applies."""
 
     AUTO_SCALE = "AutoScale"
