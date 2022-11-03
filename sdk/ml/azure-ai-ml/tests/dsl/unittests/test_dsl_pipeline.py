@@ -2106,6 +2106,18 @@ class TestDSLPipeline:
 
         @dsl.pipeline
         def root_pipeline(component_in_number: int, component_in_path: Input, *args, **kwargs):
+            """A pipeline with detailed docstring, including descriptions for inputs and outputs.
+
+            In this pipeline docstring, there are descriptions for inputs and outputs, via pipeline decorator,
+            Input/Output descriptions can infer from these descriptions.
+
+            Args:
+                component_in_number: component_in_number description
+                component_in_path: component_in_path description
+                component_in_number1: component_in_number1 description
+                component_in_path1: component_in_path1 description
+                args_0: args_0 description
+            """
             node = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
             node_args = component_func1(component_in_number=args[0], component_in_path=args[1])
             node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
@@ -2114,6 +2126,13 @@ class TestDSLPipeline:
             node_with_custom_arg_kwarg = pipeline_with_custom_variable_args(*args, **kwargs)
 
         pipeline = root_pipeline(10, data, 11, data, component_in_number1=12, component_in_path1=data)
+
+        assert pipeline.component.inputs['component_in_number'] == "component_in_number description"
+        assert pipeline.component.inputs['component_in_path'] == "component_in_path description"
+        assert pipeline.component.inputs['component_in_number1'] == "component_in_number1 description"
+        assert pipeline.component.inputs['component_in_path1'] == "component_in_path1 description"
+        assert pipeline.component.inputs['args_0'] == "args_0 description"
+        assert pipeline.component.inputs['args_1'] == "a number parameter"
 
         omit_fields = [
             "jobs.*.componentId",
@@ -2254,6 +2273,17 @@ class TestDSLPipeline:
                 "outputs": {},
                 "properties": {},
             },
+        }
+
+        pipeline_with_custom_variable_args(10, data, 11, data, component_in_number1=12, component_in_path1=data)
+        actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
+        assert actual_dict["inputs"] == {
+            "component_in_number1": {"job_input_type": "literal", "value": "12"},
+            "component_in_path1": {"uri": "test:1", "job_input_type": "mltable"},
+            "custom_args_0": {"job_input_type": "literal", "value": "10"},
+            "custom_args_1": {"uri": "test:1", "job_input_type": "mltable"},
+            "custom_args_2": {"job_input_type": "literal", "value": "10"},
+            "custom_args_3": {"uri": "test:1", "job_input_type": "mltable"},
         }
 
         with mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: 'false'}):

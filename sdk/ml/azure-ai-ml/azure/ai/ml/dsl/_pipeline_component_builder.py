@@ -414,6 +414,7 @@ class PipelineComponentBuilder:
                 else:
                     anno = _get_annotation_by_value(value)
                 anno.name = input_name
+                anno.description = self._args_description.get(input_name)
                 self.inputs[input_name] = anno
 
 
