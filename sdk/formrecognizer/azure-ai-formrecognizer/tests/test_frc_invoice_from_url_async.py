@@ -16,6 +16,7 @@ from azure.ai.formrecognizer.aio import FormRecognizerClient
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
@@ -23,6 +24,7 @@ FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormReco
 
 class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -45,6 +47,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
             async with client:
                 poller = await client.begin_recognize_invoices_from_url("https://badurl.jpg")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -88,6 +91,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
         self.assertFormPagesTransformCorrect(returned_model.pages, read_results, page_results)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_invoice_continuation_token(self, **kwargs):
@@ -109,6 +113,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
                 await client.begin_recognize_invoices_from_url(self.invoice_url_tiff)
         assert "Method 'begin_recognize_invoices_from_url' is only available for API version V2_1 and up" in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -128,6 +133,7 @@ class TestInvoiceFromUrlAsync(AsyncFormRecognizerTest):
                 await client.begin_recognize_invoices_from_url(self.invoice_url_pdf, locale="not a locale")
         assert "locale" in e.value.error.message
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async

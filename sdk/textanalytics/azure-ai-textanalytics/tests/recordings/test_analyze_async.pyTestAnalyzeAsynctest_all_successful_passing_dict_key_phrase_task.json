@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "298",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -35,40 +35,40 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "12a08d0f-9998-4c95-889d-5d72e02260c4",
+        "apim-request-id": "b3b6ded9-03f5-44e7-b472-4698cbd2fe78",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:40:52 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e67f21d2-8ba8-4f25-a88c-81926eb46ff1?api-version=2022-05-01",
+        "Date": "Mon, 17 Oct 2022 18:52:03 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3e750afa-cbf5-44f2-9de9-b02510d4b259?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "243"
+        "x-envoy-upstream-service-time": "138"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/e67f21d2-8ba8-4f25-a88c-81926eb46ff1?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3e750afa-cbf5-44f2-9de9-b02510d4b259?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "1addf6d3-a127-4ac0-91c7-6f14e01ca28c",
-        "Content-Length": "856",
+        "apim-request-id": "311b43d4-f759-4215-857c-525deb5af757",
+        "Content-Length": "855",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:40:57 GMT",
+        "Date": "Mon, 17 Oct 2022 18:52:08 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "43"
+        "x-envoy-upstream-service-time": "98"
       },
       "ResponseBody": {
-        "jobId": "e67f21d2-8ba8-4f25-a88c-81926eb46ff1",
-        "lastUpdatedDateTime": "2022-06-09T17:40:54Z",
-        "createdDateTime": "2022-06-09T17:40:52Z",
-        "expirationDateTime": "2022-06-10T17:40:52Z",
+        "jobId": "3e750afa-cbf5-44f2-9de9-b02510d4b259",
+        "lastUpdateDateTime": "2022-10-17T18:52:05Z",
+        "createdDateTime": "2022-10-17T18:52:03Z",
+        "expirationDateTime": "2022-10-18T18:52:03Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -80,7 +80,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:40:54.8558854Z",
+              "lastUpdateDateTime": "2022-10-17T18:52:05.2413029Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -118,7 +118,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
