@@ -19,7 +19,7 @@ from azure.core.exceptions import (
 from azure.core.rest import HttpRequest
 from azure.core.utils import case_insensitive_dict
 
-from ._operations import LoadTestRunOperations as LoadTestRunOperationsGenerated, JSON, ClsType
+from ._operations import LoadTestAdministrationOperations as LoadTestAdministrationOperationsGenerated, JSON, ClsType
 from .._serialization import Serializer
 from .._vendor import _format_url_section
 
@@ -63,13 +63,13 @@ def build_upload_test_file_request(
     return HttpRequest(method="PUT", url=_url, files=files_json, params=_params, headers=_headers, **kwargs)
 
 
-class LoadTestRunOperations(LoadTestRunOperationsGenerated):
+class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated):
     """
     for performing the operations on test
     """
 
     def __init__(self, *args, **kwargs):
-        super(LoadTestRunOperations, self).__init__(*args, **kwargs)
+        super(LoadTestAdministrationOperations, self).__init__(*args, **kwargs)
 
     def upload_test_file(self, test_id: str, file_id: str, file: BinaryIO, **kwargs) -> JSON:
         """Upload test file and link it to a test.
@@ -130,7 +130,7 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
         return cast(JSON, deserialized)
 
 
-__all__: List[str] = ["LoadTestRunOperations"]
+__all__: List[str] = ["LoadTestAdministrationOperations"]
 
 
 # Add all objects you want publicly available to users at this package level
