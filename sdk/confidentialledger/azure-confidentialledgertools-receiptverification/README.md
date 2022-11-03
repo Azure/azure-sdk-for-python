@@ -49,7 +49,7 @@ Please refer to the following CCF documentation links for more information about
 
 ### Receipt Verification
 
-Azure Confidential Ledger write transaction receipts can be verfied by following three sequential steps:
+Azure Confidential Ledger write transaction receipts can be verified by following three sequential steps:
 
 1. Compute the SHA-256 hash of the leaf node in the Merkle Tree corresponding to the committed transaction. A leaf node is composed of the ordered concatenation of the following fields that can be found in an Azure Confidential Ledger receipt:
    * `write_set_digest`
@@ -58,7 +58,7 @@ Azure Confidential Ledger write transaction receipts can be verfied by following
 
 2. Re-compute the SHA-256 hash of the root of the Merkle Tree at the time the transaction was committed. This can be accomplished by iteratively hashing and concatenating the leaf node hash (computed in the previous step) with the ordered nodes’ hashes provided in the `proof` field of a receipt. The concatenation needs to be done with respect to the relative order indicated in the objects provided in the `proof` field (either `left` or `right`), and the result of the previous iteration shall be used as input for the next one. This process follows the standard steps to compute the root of a [Merkle Tree][merkle_tree_wiki] data structure given the required nodes for the computation.
 
-3. Verify that the cryptograhic signature produced over the root node hash is valid using the signing node certificate in the receipt. The verification process follows the standard steps for digital signature verification for messages signed using the [Elliptic Curve Digital Signature Algorithm (ECDSA)](https://wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm).
+3. Verify that the cryptographic signature produced over the root node hash is valid using the signing node certificate in the receipt. The verification process follows the standard steps for digital signature verification for messages signed using the [Elliptic Curve Digital Signature Algorithm (ECDSA)](https://wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm).
 
 In addition to the above, it is also required to verify that the signing node certificate is endorsed by the ledger certificate. As the ledger certificate may have been renewed since the transaction was committed, it is possible that the current service identity is different from the one that endorsed the signing node. If this applies, it is required to build a chain of certificates from the signing node certificate (the `cert` field in the receipt) up to a trusted root Certificate Authority (the current service identity certificate) through other previous service identities (the `service_endorsements` list field in the receipt). Certificate endorsement need to be verified for the entire chain and follows a similar signature verification process outlined in the previous point.
 
