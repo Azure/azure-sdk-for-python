@@ -68,6 +68,7 @@ setup(
             "tests",
             # Exclude packages that will be covered by PEP420 or nspkg
             "azure",
+            "azure.confidentialledgertools",
         ]
     ),
     package_data={

@@ -16,6 +16,8 @@ Install the `azure-confidentialledgertools-receiptverification` package with [pi
 pip install azure-confidentialledgertools-receiptverification
 ```
 
+### Authenticate the client
+
 You may also want to install the [Azure Confidential Ledger client library][confidential_ledger_client_src] to get write transaction receipts from a running Confidential Ledger instance. Please refer to the [Getting Started section](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/confidentialledger/azure-confidentialledger#getting-started) of the client library for more details on installing the required packages and authenticating the client.
 
 ### Prerequisites
@@ -42,7 +44,7 @@ State changes to the Confidential Ledger are saved in a data structure called a 
 
 A receipt is a cryptographic proof that a transaction has been committed to the ledger: it can be used to verify that the ledger entry associated to a transaction has been appended to the ledger (thus, it can be used to validate properties such as non-repudiation, integrity, and tamper-proofing). A receipt contains all the information needed to verify transaction inclusion and the verification can be done by applying an ad-hoc algorithm.
 
-Please refer to the following CCF documentation links for more information about receipts:
+Please refer to the following [CCF documentation][ccf_docs] links for more information about transaction receipts:
 
 * [Write Receipts](https://microsoft.github.io/CCF/main/use_apps/verify_tx.html#write-receipts)
 * [Receipts](https://microsoft.github.io/CCF/main/audit/receipts.html)
@@ -64,17 +66,12 @@ In addition to the above, it is also required to verify that the signing node ce
 
 Please refer to the [CCF documentation about receipt verification](https://microsoft.github.io/CCF/main/use_apps/verify_tx.html#receipt-verification) for more details about how the algorithm works. Please also see the docstrings under [models.py]<!--(TODO: add link once PR is merged)--> for detailed description of each field in an Azure Confidential Ledger receipt.
 
-The following CCF documentation links could also be useful to better understand some topics related to receipt verification:
+The following [CCF documentation][ccf_docs] links could also be useful to better understand some topics related to receipt verification:
 
 * [CCF Glossary](https://microsoft.github.io/CCF/main/overview/glossary.html)
 * [Merkle Tree](https://microsoft.github.io/CCF/main/architecture/merkle_tree.html)
 * [Cryptography](https://microsoft.github.io/CCF/main/architecture/cryptography.html)
 * [Certificates](https://microsoft.github.io/CCF/main/operations/certificates.html)
-
-### Additional Documentation
-
-For more extensive documentation on Azure Confidential Ledger, see the
-[API reference documentation][reference_docs]. You may also read more about Microsoft Research's open-source [Confidential Consortium Framework][ccf].
 
 ## Examples
 
@@ -175,15 +172,48 @@ except ReceiptVerificationException:
 
 A full sample Python program that shows how to append a new entry to a running Confidential Ledger instance, get a receipt for the committed transaction, and verify the receipt contents can be found under the [samples]<!--(TODO: add link once PR is merged)--> folder: [get_and_verify_receipt.py]<!--(TODO: add link once PR is merged)-->.
 
+## Troubleshooting
+
+The Receipt Verification library always returns a general `ReceiptVerificationException` exception to indicate that the receipt verification failed. Such exception may indicate either that the receipt is not valid or that the algorithm failed to verify the content of the given receipt. A valid, well-formatted receipt is supposed to not encounter any exception during the entire verification process. Therefore, clients are recommended to catch exceptions raised when calling the receipt verification algorithm and handle failures accordingly.
+
+In order to understand how and where the verification failed, it is necessary to look at the stack trace for the raised inner exceptions and find the root cause of the problem. There are more specific exceptions and messages that can provide more details about where the algorithm failed (e.g., `RootSignatureVerificationException` indicates that the algorithm failed when trying to verify the signature over the root of the Merkle Tree).
+
+A list of inner exceptions raised by the library, along with their descriptions, can be found at [exceptions.py]<!--(TODO: add link once PR is merged)-->.
+
+## Next steps
+
+### Additional client libraries
+
+Please find below other Confidential Ledger client libraries for Python that are more suitable for general usage:
+
+ that can be used to administer and perform operations on Azure Confidential Ledgers:
+
+* [Azure Confidential Ledger Management Client Library][confidential_ledger_mgmt_src]: to adminster and manager Azure Confidential Ledger resources
+* [Azure Confidential Ledger Client Library][confidential_ledger_client_src]: to perform operations on Azure Confidential Ledger applications
+
+### Additional Documentation
+
+For more extensive documentation on Azure Confidential Ledger, see the
+[API reference documentation][reference_docs]. You may also read more about Microsoft Research's open-source [Confidential Consortium Framework][ccf].
+
 ## Contributing
 
 If you'd like to contribute to this library, please read the [contributing guide](https://github.com/Azure/azure-sdk/blob/main/CONTRIBUTING.md) to learn more about how to build and test the code.
 
+This project has adopted the [Microsoft Open Source Code of Conduct][code_of_conduct].
+For more information, see the
+[Code of Conduct FAQ][code_of_conduct_faq] or
+contact opencode@microsoft.com with any additional questions or comments.
+
 [azure_confidential_computing]: https://azure.microsoft.com/solutions/confidential-compute
 [ccf]: https://github.com/Microsoft/CCF
+[ccf_docs]: https://microsoft.github.io/CCF/main/
+[code_of_conduct]: https://opensource.microsoft.com/codeofconduct
+[code_of_conduct_faq]: https://opensource.microsoft.com/codeofconduct/faq
 [confidential_ledger_client_src]: https://aka.ms/azsdk/python/confidentialledger/src
 [confidential_ledger_docs]: https://aka.ms/confidentialledger-servicedocs
-[pip]: https://pypi.org/project/pip/
-[reference_docs]: https://aka.ms/azsdk/python/confidentialledger/ref-docs
+[confidential_ledger_mgmt_src]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/confidentialledger/azure-mgmt-confidentialledger
 [confidential_ledger_versioned_api_reference]: https://azure.github.io/azure-sdk-for-python/confidentialledger.html
 [merkle_tree_wiki]: https://wikipedia.org/wiki/Merkle_tree
+[pip]: https://pypi.org/project/pip/
+[reference_docs]: https://aka.ms/azsdk/python/confidentialledger/ref-docs
