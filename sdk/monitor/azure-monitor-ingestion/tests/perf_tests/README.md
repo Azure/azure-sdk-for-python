@@ -9,6 +9,7 @@ These tests will run against a pre-configured Log Analytics workspace. The `test
 ```
 AZURE_MONITOR_DCR_ID=<The ID of the data collection rule>
 AZURE_MONITOR_DCE=<The data collection endpoint to upload logs to>
+AZURE_MONITOR_STREAM_NAME=<The data collection stream name>
 ```
 
 ### Setup for perf test runs

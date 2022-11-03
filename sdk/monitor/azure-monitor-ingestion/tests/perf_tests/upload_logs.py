@@ -19,6 +19,7 @@ class UploadLogsPerfTest(PerfStressTest):
 
         self.data_collection_rule_id = self.get_from_env("AZURE_MONITOR_DCR_ID")
         self.data_collection_endpoint = self.get_from_env("AZURE_MONITOR_DCE")
+        self.stream_name = self.get_from_env("AZURE_MONITOR_STREAM_NAME")
 
         # Create clients
         self.client = LogsIngestionClient(
@@ -52,13 +53,13 @@ class UploadLogsPerfTest(PerfStressTest):
     def run_sync(self):
         self.client.upload(
             rule_id=self.data_collection_rule_id,
-            stream_name="Custom-MyTableRawData",
+            stream_name=self.stream_name,
             logs=self.logs
         )
 
     async def run_async(self):
         await self.async_client.upload(
             rule_id=self.data_collection_rule_id,
-            stream_name="Custom-MyTableRawData",
+            stream_name=self.stream_name,
             logs=self.logs
         )
