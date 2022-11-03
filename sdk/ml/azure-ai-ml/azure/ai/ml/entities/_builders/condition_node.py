@@ -10,6 +10,7 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._validation import MutableValidationResult
 
 
@@ -21,7 +22,11 @@ class ConditionNode(ControlFlowNode):
     def __init__(self, condition, true_block, false_block, **kwargs):  # pylint: disable=unused-argument
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
-        self.condition = condition
+        # resolve expression to command component
+        if isinstance(condition, PipelineExpression):
+            self.condition = condition.resolve().outputs.output
+        else:
+            self.condition = condition
         self.true_block = true_block
         self.false_block = false_block
 
