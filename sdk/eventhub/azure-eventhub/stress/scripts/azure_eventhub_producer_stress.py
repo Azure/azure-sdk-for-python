@@ -203,7 +203,7 @@ class StressTestRunner(object):
                     auth_timeout=self.args.auth_timeout,
                     http_proxy=http_proxy,
                     transport_type=transport_type,
-                    # logging_enable=self.args.pyamqp_logging_enable,
+                    logging_enable=self.args.pyamqp_logging_enable,
                     buffered_mode=self.args.buffered_mode,
                     on_success=on_success_async,
                     on_error=on_error_async,
@@ -217,7 +217,7 @@ class StressTestRunner(object):
                     auth_timeout=self.args.auth_timeout,
                     http_proxy=http_proxy,
                     transport_type=transport_type,
-                    # logging_enable=self.args.pyamqp_logging_enable,
+                    logging_enable=self.args.pyamqp_logging_enable,
                     buffered_mode=self.args.buffered_mode,
                     on_success=on_success,
                     on_error=on_error,
@@ -233,7 +233,7 @@ class StressTestRunner(object):
                 auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                # logging_enable=self.args.pyamqp_logging_enable,
+                logging_enable=self.args.pyamqp_logging_enable,
                 uamqp_transport=self.args.uamqp_mode,
                 **retry_options 
             )
@@ -244,7 +244,7 @@ class StressTestRunner(object):
                 auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                # logging_enable=self.args.pyamqp_logging_enable,
+                logging_enable=self.args.pyamqp_logging_enable,
                 uamqp_transport=self.args.uamqp_mode,
                 **retry_options
             )
@@ -256,7 +256,7 @@ class StressTestRunner(object):
                     auth_timeout=self.args.auth_timeout,
                     http_proxy=http_proxy,
                     transport_type=transport_type,
-                    # logging_enable=self.args.pyamqp_logging_enable,
+                    logging_enable=self.args.pyamqp_logging_enable,
                     uamqp_transport=self.args.uamqp_mode,
                     **retry_options
                 )

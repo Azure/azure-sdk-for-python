@@ -5,4 +5,4 @@ Dockerfile
 *.py
 __pycache__
 scripts
-.txt
+*.txt
