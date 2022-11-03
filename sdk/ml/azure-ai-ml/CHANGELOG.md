@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0 (2022-11-07)
+## 1.1.0 (Unreleased)
 
 ### Features Added
 - Registry list operation now accepts scope value to allow subscription-only based requests.
