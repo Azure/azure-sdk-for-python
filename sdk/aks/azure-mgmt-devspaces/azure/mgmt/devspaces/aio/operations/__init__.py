@@ -10,8 +10,14 @@ from ._container_host_mappings_operations import ContainerHostMappingsOperations
 from ._operations import Operations
 from ._controllers_operations import ControllersOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ContainerHostMappingsOperations',
-    'Operations',
-    'ControllersOperations',
+    "ContainerHostMappingsOperations",
+    "Operations",
+    "ControllersOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

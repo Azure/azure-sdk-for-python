@@ -9,6 +9,9 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Dropped `msrest` requirement
+- Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
+- Added requirement for `typing-extensions>=4.0.1`
 
 ## 4.8.0b1 (2022-09-22)
 

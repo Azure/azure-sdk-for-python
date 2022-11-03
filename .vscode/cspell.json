@@ -26,6 +26,7 @@
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
+    "**/assets.json",
 
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
@@ -468,7 +469,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": ["conv"],
+      "words": ["conv", "summ"],
       "caseSensitive": false
     },
     {

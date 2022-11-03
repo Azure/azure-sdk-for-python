@@ -185,7 +185,8 @@ def command(
         In this case, this step will not use any compute resource.
         Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
     :type is_deterministic: bool
-    :param services: Interactive services for the node.
+    :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
+        Please see https://aka.ms/azuremlexperimental for more information.
     :type services: Dict[str, JobService]
     """
     # pylint: disable=too-many-locals

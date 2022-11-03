@@ -8,6 +8,7 @@ from typing_extensions import Literal
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AllNodes
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._job.job import JobServiceTypeNames
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
@@ -15,6 +16,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorTy
 module_logger = logging.getLogger(__name__)
 
 
+@experimental
 class JobService(RestTranslatableMixin):
     """JobService configuration.
 

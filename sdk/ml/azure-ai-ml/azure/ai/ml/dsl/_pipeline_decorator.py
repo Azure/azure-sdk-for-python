@@ -24,7 +24,7 @@ from azure.ai.ml.exceptions import (
     UnexpectedKeywordError,
     UnsupportedParameterKindError,
     UserErrorException,
-    NonExistParamValueError,
+    ParamValueNotExistsError,
     UnExpectedNonPipelineParameterTypeError,
 )
 
@@ -238,7 +238,7 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
     non_pipeline_inputs = non_pipeline_inputs or []
     unexpected_non_pipeline_inputs = [param for param in non_pipeline_inputs if param not in all_parameter_keys]
     if unexpected_non_pipeline_inputs:
-        raise NonExistParamValueError(func.__name__, unexpected_non_pipeline_inputs)
+        raise ParamValueNotExistsError(func.__name__, unexpected_non_pipeline_inputs)
 
     empty_parameters = {param.name: param for param in all_parameters if param.default is Parameter.empty}
     min_num = len(empty_parameters)
