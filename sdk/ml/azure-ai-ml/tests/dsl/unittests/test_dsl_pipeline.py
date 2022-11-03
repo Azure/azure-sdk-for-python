@@ -29,7 +29,7 @@ from azure.ai.ml.entities import (
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException, NonExistParamValueError, UnExpectedNonPipelineParameterTypeError, UnsupportedParameterKindError, MultipleValueError
+from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError, UnExpectedNonPipelineParameterTypeError, UnsupportedParameterKindError, MultipleValueError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -2066,7 +2066,7 @@ class TestDSLPipeline:
         def pipeline_func():
             pass
 
-        with pytest.raises(NonExistParamValueError) as error_info:
+        with pytest.raises(ParamValueNotExistsError) as error_info:
             pipeline_func()
         assert "pipeline_func() got unexpected params in non_pipeline_inputs ['non_exist_param1', 'non_exist_param2']" in str(error_info)
 

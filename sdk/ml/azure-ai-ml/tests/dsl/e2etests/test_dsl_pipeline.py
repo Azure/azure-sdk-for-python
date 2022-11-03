@@ -1,7 +1,6 @@
 import logging
 from io import StringIO
 from pathlib import Path
-from time import sleep
 from typing import Callable
 from unittest.mock import patch
 
@@ -31,7 +30,7 @@ from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
 from devtools_testutils import AzureRecordedTestCase
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel, sleep_if_live
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -1402,7 +1401,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline(input_number, input_number, job_input)
         job = client.jobs.create_or_update(pipeline)
         while True:
-            sleep(30)
+            sleep_if_live(30)
             children = client.jobs.list(parent_job_name=job.name)
             children = list(children)
             if len(children) == 2:
