@@ -88,6 +88,24 @@ steps:
      scriptPath: 'scripts/devops_tasks/setup_execute_tests.py'
      arguments: '"$(TargetingString)" --service=${{parameters.ServiceDirectory}} --toxenv=verifywhl'
 
+  - task: PowerShell@2
+    displayName: 'Run Nightly SmokeTests'
+    inputs:
+      targetType: 'filePath'
+      filePath: scripts/devops_tasks/Smoke-Tests-Nightly.ps1
+      pwsh: true
+      arguments: '${{ parameters.ServiceDirectory }}'
+      condition: and(eq(variables['Build.Reason'],'Schedule'))
+
+  - task: PowerShell@2
+    displayName: 'Run Release SmokeTests'
+    inputs:
+      targetType: 'filePath'
+      filePath: scripts/devops_tasks/Smoke-Tests-Release.ps1
+      pwsh: true
+      arguments: '${{ parameters.ServiceDirectory }}'
+      condition: and(eq(variables['Build.Reason'],'Manual'))
+
   - template: run_mypy.yml
     parameters:
       ServiceDirectory: ${{ parameters.ServiceDirectory }}

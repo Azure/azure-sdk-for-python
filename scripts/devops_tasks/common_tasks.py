@@ -294,3 +294,80 @@ def get_installed_packages(paths=None):
     ws = WorkingSet(paths) if paths else working_set
     return ["{0}=={1}".format(p.project_name, p.version) for p in ws]
 
+
+def get_package_properties(setup_py_path):
+    """Parse setup.py and return package details like package name, version, whether it's new SDK"""
+    pkgName, version, _, requires = parse_setup(setup_py_path)
+    is_new_sdk = pkgName in NEW_REQ_PACKAGES or any(map(lambda x: (parse_require(x)[0] in NEW_REQ_PACKAGES), requires))
+    return pkgName, version, is_new_sdk, setup_py_path
+
+def is_track2_package(reqs):
+    for req in reqs:
+        # the package must be dependant on azure core or azure mgmt core
+        if req.startswith('azure-core') or req.startswith('azure-mgmt-core'):
+            return True
+    return False
+
+def get_track2_package_properties(setup_py_path):
+    """Parse setup.py and return package details like package name, version, whether it's new SDK
+    """
+    pkg_name, version, _, requires = parse_setup(setup_py_path)
+    is_track2 = is_track2_package(requires)
+    return pkg_name, version, is_track2, setup_py_path
+
+def get_all_track2_packages(path):
+    eligible_libraries = []
+    for root, dirs, files in os.walk(os.path.abspath(path)):
+        if re.search(r"sdk[\\/][^\\/]+[\\/][^\\/]+$", root):
+            if "setup.py" in files:
+                try:
+                    pkg_name, version, is_track2, setup_py_path = get_track2_package_properties(root)
+                    if is_track2:
+                        eligible_libraries.append((pkg_name, version, setup_py_path))
+                except:
+                    # Skip setup.py if the package cannot be parsed
+                    pass
+    return eligible_libraries
+
+def get_package_details(setup_filename):
+    mock_setup = textwrap.dedent(
+        """\
+    def setup(*args, **kwargs):
+        __setup_calls__.append((args, kwargs))
+    """
+    )
+    parsed_mock_setup = ast.parse(mock_setup, filename=setup_filename)
+    with io.open(setup_filename, "r", encoding="utf-8-sig") as setup_file:
+        parsed = ast.parse(setup_file.read())
+        for index, node in enumerate(parsed.body[:]):
+            if (
+                not isinstance(node, ast.Expr)
+                or not isinstance(node.value, ast.Call)
+                or not hasattr(node.value.func, "id")
+                or node.value.func.id != "setup"
+            ):
+                continue
+            parsed.body[index:index] = parsed_mock_setup.body
+            break
+
+    fixed = ast.fix_missing_locations(parsed)
+    codeobj = compile(fixed, setup_filename, "exec")
+    local_vars = {}
+    global_vars = {"__setup_calls__": []}
+    current_dir = os.getcwd()
+    working_dir = os.path.dirname(setup_filename)
+    os.chdir(working_dir)
+    exec(codeobj, global_vars, local_vars)
+    os.chdir(current_dir)
+    _, kwargs = global_vars["__setup_calls__"][0]
+
+    package_name = kwargs["name"]
+    # default namespace for the package
+    name_space = package_name.replace("-", ".")
+    if "packages" in kwargs.keys():
+        packages = kwargs["packages"]
+        if packages:
+            name_space = packages[0]
+            logging.info("Namespaces found for package {0}: {1}".format(package_name, packages))
+
+    return package_name, name_space, kwargs["version"]
