@@ -35,7 +35,7 @@ def test_receipt_verification_with_valid_receipt_returns_successfully(
     input_receipt, input_service_cert
 ):
 
-    # Chech that verify_receipt does not throw any exception
+    # Check that verify_receipt does not throw any exception
     # with a valid receipt and service certificate
     try:
         verify_receipt(input_receipt, input_service_cert)
@@ -54,7 +54,7 @@ def test_receipt_verification_with_signature_transaction_throws_exception(
     receipt = get_test_valid_receipt_1()
     receipt.is_signature_transaction = input_is_signature_transaction
 
-    # Chech that verify_receipt throws SignatureTransactionError
+    # Check that verify_receipt throws SignatureTransactionError
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -97,7 +97,7 @@ def test_receipt_verification_with_invalid_leaf_components_throws_exception(
     receipt = get_test_valid_receipt_1()
     receipt.leaf_components = input_leaf_components
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -118,7 +118,7 @@ def test_receipt_verification_with_invalid_node_cert_throws_exception(input_node
     receipt = get_test_valid_receipt_1()
     receipt.cert = input_node_cert
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -141,7 +141,7 @@ def test_receipt_verification_with_invalid_node_id_throws_exception(input_node_i
     receipt = get_test_valid_receipt_1()
     receipt.node_id = input_node_id
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -173,7 +173,7 @@ def test_receipt_verification_with_invalid_proof_list_throws_exception(
     receipt = get_test_valid_receipt_1()
     receipt.proof = input_proof_list
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -196,7 +196,7 @@ def test_receipt_verification_with_invalid_service_endorsements_throws_exception
     receipt = get_test_valid_receipt_1()
     receipt.service_endorsements = input_endorsements_list
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -219,7 +219,7 @@ def test_receipt_verification_with_invalid_signature_throws_exception(input_sign
     receipt = get_test_valid_receipt_1()
     receipt.signature = input_signature
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -238,7 +238,7 @@ def test_receipt_verification_with_invalid_service_cert_throws_exception(
     input_service_cert,
 ):
 
-    # Chech that verify_receipt throws ReceiptVerificationException with invalid service certificate
+    # Check that verify_receipt throws ReceiptVerificationException with invalid service certificate
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -257,7 +257,7 @@ def test_receipt_verification_with_unknown_service_cert_throws_exception(
     input_service_cert,
 ):
 
-    # Chech that verify_receipt throws ReceiptVerificationException with unknown service certificate
+    # Check that verify_receipt throws ReceiptVerificationException with unknown service certificate
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -278,7 +278,7 @@ def test_receipt_verification_with_unknown_node_cert_throws_exception(input_node
     receipt = get_test_valid_receipt_1()
     receipt.cert = input_node_cert
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -303,7 +303,7 @@ def test_receipt_verification_with_unknown_service_endorsements_throws_exception
     receipt = get_test_valid_receipt_1()
     receipt.service_endorsements = input_endorsements_list
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -328,7 +328,7 @@ def test_receipt_verification_with_unknown_leaf_components_throws_exception(
     receipt = get_test_valid_receipt_1()
     receipt.leaf_components = input_leaf_components
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
@@ -351,7 +351,7 @@ def test_receipt_verification_with_unknown_proof_list_throws_exception(
     receipt = get_test_valid_receipt_1()
     receipt.proof = input_proof_list
 
-    # Chech that verify_receipt throws ReceiptVerificationException
+    # Check that verify_receipt throws ReceiptVerificationException
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",

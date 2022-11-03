@@ -76,7 +76,7 @@ def verify_receipt(receipt: Receipt, service_cert_str: str) -> None:
         # Raise ReceiptVerificationException if any exception is thrown
         # during the verification process
         raise ReceiptVerificationException(
-            f"Encountered exception when verifying receipt {receipt} with service ceritifcate {service_cert_str}."
+            f"Encountered exception when verifying receipt {receipt} with service certificate {service_cert_str}."
         ) from exception
 
 
@@ -181,11 +181,11 @@ def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> byte
 def _verify_certificate_endorsement(
     endorsee: Certificate, endorser: Certificate
 ) -> None:
-    """Verify that the endorser certificate has exceptionndorsed endorsee
+    """Verify that the endorser certificate has endorsed endorsee
     certificate using ECDSA."""
 
     try:
-        # Extract TBS certificate hash from exceptionndorsee certificate
+        # Extract TBS certificate hash from endorsee certificate
         hash_algorithm = endorsee.signature_hash_algorithm
         digester = hashes.Hash(hash_algorithm)
         digester.update(endorsee.tbs_certificate_bytes)
@@ -229,7 +229,7 @@ def _verify_node_cert_endorsed_by_service_cert(
         # Load endorsement PEM certificate
         endorsement_cert = _load_and_verify_pem_certificate(endorsement)
 
-        # Verify endorsement certificate has exceptionndorsed current certificate
+        # Verify endorsement certificate has endorsed current certificate
         _verify_certificate_endorsement(current_cert, endorsement_cert)
 
         # Set current certificate to endorsement certificate to continue the chain verification
@@ -237,7 +237,7 @@ def _verify_node_cert_endorsed_by_service_cert(
 
 
 def _load_and_verify_pem_certificate(cert_str: str) -> Certificate:
-    """Load PEM certificate from a string reprsentation and verify it is a
+    """Load PEM certificate from a string representation and verify it is a
     valid certificate with expected Elliptic Curve public key."""
 
     try:

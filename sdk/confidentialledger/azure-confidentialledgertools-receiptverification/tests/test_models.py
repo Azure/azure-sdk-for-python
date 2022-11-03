@@ -17,7 +17,7 @@ from tests.constants import (
 
 def test_receipt_init_with_valid_receipt_arguments():
 
-    # Chech that Receipt constructor does not throw any exception
+    # Check that Receipt constructor does not throw any exception
     # with valid receipt arguments
     try:
         Receipt(
