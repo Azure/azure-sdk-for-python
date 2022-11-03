@@ -51,7 +51,7 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
                         starttime = time.time()
                         while (time.time() - starttime) < delay_in_seconds:
                             pass
-                
+
                 # Consume properties and body.
                 _ = [(e.properties, e.body) for e in events]
 
@@ -70,6 +70,7 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
         self.error_raised_sync(error)
 
     async def process_error_async(self, _, error):
+        print(error)
         await self.error_raised_async(error)
 
     def start_events_sync(self) -> None:

@@ -5,6 +5,7 @@
 
 import asyncio
 from uuid import uuid4
+from datetime import datetime
 
 from azure_devtools.perfstress_tests import BatchPerfTest, EventPerfTest, get_random_bytes
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, EventData, TransportType
@@ -55,10 +56,24 @@ class _EventHubProcessorTest(EventPerfTest):
             uamqp_transport=arguments.uamqp_transport
         )
         if arguments.preload:
+            self.data = get_random_bytes(self.args.event_size)
             self.async_producer = AsyncEventHubProducerClient.from_connection_string(connection_string, eventhub_name=eventhub_name, transport_type=transport_type, uamqp_transport=arguments.uamqp_transport)
 
+    def _build_event(self):
+        event = EventData(self.data)
+        if self.args.event_extra:
+            event.raw_amqp_message.header.first_acquirer = True
+            event.raw_amqp_message.properties.subject = 'perf'
+            event.properties = {
+                "key1": b"data",
+                "key2": 42,
+                "key3": datetime.now(),
+                "key4": "foobar",
+                "key5": uuid4()
+            }
+        return event
+
     async def _preload_eventhub(self):
-        data = get_random_bytes(self.args.event_size)
         async with self.async_producer as producer:
             partitions = await producer.get_partition_ids()
             total_events = 0
@@ -71,13 +86,13 @@ class _EventHubProcessorTest(EventPerfTest):
                 batch = await producer.create_batch()
                 for i in range(events_to_add):
                     try:
-                        batch.add(EventData(data))
+                        batch.add(self._build_event())
                     except ValueError:
                         # Batch full
                         await producer.send_batch(batch)
                         print(f"Loaded {i} of {events_to_add} events.")
                         batch = await producer.create_batch()
-                        batch.add(EventData(data))
+                        batch.add(self._build_event())
                 await producer.send_batch(batch)
                 print(f"Finished loading {events_to_add} events.")
 
@@ -128,6 +143,7 @@ class _EventHubProcessorTest(EventPerfTest):
         parser.add_argument('--use-storage-checkpoint', action="store_true", help="Use Blob storage for checkpointing. Default is False (in-memory checkpointing).", default=False)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)        
+        parser.add_argument('--event-extra', action="store_true", help="Add properties to the events to increase payload and serialization. Default is False.", default=False)
 
 
 
@@ -174,3 +190,4 @@ class _SendTest(BatchPerfTest):
         parser.add_argument('--batch-size', nargs='?', type=int, help='The number of events that should be included in each batch. Defaults to 100', default=100)
         parser.add_argument('--uamqp-transport', action="store_true", help="Switch to use uamqp transport. Default is False (pyamqp).", default=False)
         parser.add_argument('--transport-type', nargs='?', type=int, help="Use Amqp (0) or Websocket (1) transport type. Default is Amqp.", default=0)    
+        parser.add_argument('--event-extra', action="store_true", help="Add properties to the events to increase payload and serialization. Default is False.", default=False)

@@ -29,7 +29,6 @@ from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .checkpoint_store import CheckpointStore
 from ._ownership_manager import OwnershipManager
-from .utils import get_running_loop
 from .._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:
@@ -171,7 +170,7 @@ class EventProcessor(
             if partition_id not in self._tasks or self._tasks[partition_id].done():
                 checkpoint = checkpoints.get(partition_id) if checkpoints else None
                 if self._running:
-                    self._tasks[partition_id] = get_running_loop().create_task(
+                    self._tasks[partition_id] = asyncio.create_task(
                         self._receive(partition_id, checkpoint)
                     )
                     _LOGGER.info(
@@ -412,9 +411,9 @@ class EventProcessor(
 
         """
         self._running = False
-        pids = list(self._tasks.keys())
-        await self._cancel_tasks_for_partitions(pids)
-        _LOGGER.info("EventProcessor %r tasks have been cancelled.", self._id)
+        _LOGGER.info("EventProcessor %r tasks are being cancelled.", self._id)
         while self._tasks:
+            pids = list(self._tasks.keys())
+            await self._cancel_tasks_for_partitions(pids)
             await asyncio.sleep(1, **self._internal_kwargs)
         _LOGGER.info("EventProcessor %r has been stopped.", self._id)
