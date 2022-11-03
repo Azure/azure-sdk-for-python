@@ -13,6 +13,7 @@ import six
 from azure.core.exceptions import ResourceModifiedError, HttpResponseError
 
 from .._shared.response_handlers import process_storage_error, return_response_headers
+from .._shared.uploads import get_content_checksum
 from .._shared.uploads_async import (
     upload_data_chunks,
     upload_substream_blocks,
@@ -68,6 +69,8 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
         legal_hold = kwargs.pop('legal_hold', None)
         progress_hook = kwargs.pop('progress_hook', None)
 
+        checksum = kwargs.pop('checksum', None)
+
         # Do single put if the size is smaller than config.max_single_put_size
         if adjusted_count is not None and (adjusted_count <= blob_settings.max_single_put_size):
             try:
@@ -82,6 +85,9 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
             if encryption_options.get('key'):
                 encryption_data, data = encrypt_blob(data, encryption_options['key'], encryption_options['version'])
                 headers['x-ms-meta-encryptiondata'] = encryption_data
+
+            content_md5, content_crc64 = get_content_checksum(checksum, data)
+
             response = await client.upload(
                 body=data,
                 content_length=adjusted_count,
@@ -96,6 +102,8 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                 immutability_policy_expiry=immutability_policy_expiry,
                 immutability_policy_mode=immutability_policy_mode,
                 legal_hold=legal_hold,
+                transactional_content_md5=content_md5,
+                transactional_content_crc64=content_crc64,
                 **kwargs)
 
             if progress_hook:
@@ -136,6 +144,7 @@ async def upload_block_blob(  # pylint: disable=too-many-locals, too-many-statem
                 max_concurrency=max_concurrency,
                 stream=stream,
                 validate_content=validate_content,
+                checksum=checksum,
                 progress_hook=progress_hook,
                 encryptor=encryptor,
                 padder=padder,

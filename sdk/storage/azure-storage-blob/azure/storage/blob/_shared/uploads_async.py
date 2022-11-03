@@ -16,7 +16,7 @@ import six
 from . import encode_base64, url_quote
 from .request_handlers import get_length
 from .response_handlers import return_response_headers
-from .uploads import SubStream, IterStreamer  # pylint: disable=unused-import
+from .uploads import ChunkInfo, SubStream, IterStreamer, get_content_checksum  # pylint: disable=unused-import
 
 
 async def _async_parallel_uploads(uploader, pending, running):
@@ -153,12 +153,14 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
             encryptor=None,
             padder=None,
             progress_hook=None,
+            checksum=None,
             **kwargs):
         self.service = service
         self.total_size = total_size
         self.chunk_size = chunk_size
         self.stream = stream
         self.parallel = parallel
+        self.checksum = checksum
 
         # Stream management
         self.stream_lock = threading.Lock() if parallel else None
@@ -199,26 +201,28 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
                 if temp == b'' or len(data) == self.chunk_size:
                     break
 
+            content_md5, content_crc64 = get_content_checksum(self.checksum, data)
+            chunk_info = ChunkInfo(index, data, content_md5, content_crc64)
+
+            # TODO: Handle encryption V1
             if len(data) == self.chunk_size:
                 if self.padder:
                     data = self.padder.update(data)
                 if self.encryptor:
                     data = self.encryptor.update(data)
-                yield index, data
+                yield chunk_info
             else:
                 if self.padder:
                     data = self.padder.update(data) + self.padder.finalize()
                 if self.encryptor:
                     data = self.encryptor.update(data) + self.encryptor.finalize()
                 if data:
-                    yield index, data
+                    yield chunk_info
                 break
             index += len(data)
 
-    async def process_chunk(self, chunk_data):
-        chunk_bytes = chunk_data[1]
-        chunk_offset = chunk_data[0]
-        return await self._upload_chunk_with_progress(chunk_offset, chunk_bytes)
+    async def process_chunk(self, chunk_info: "ChunkInfo"):
+        return await self._upload_chunk_with_progress(chunk_info)
 
     async def _update_progress(self, length):
         if self.progress_lock is not None:
@@ -230,12 +234,12 @@ class _ChunkUploader(object):  # pylint: disable=too-many-instance-attributes
         if self.progress_hook:
             await self.progress_hook(self.progress_total, self.total_size)
 
-    async def _upload_chunk(self, chunk_offset, chunk_data):
+    async def _upload_chunk(self, chunk_info: "ChunkInfo"):
         raise NotImplementedError("Must be implemented by child class.")
 
-    async def _upload_chunk_with_progress(self, chunk_offset, chunk_data):
-        range_id = await self._upload_chunk(chunk_offset, chunk_data)
-        await self._update_progress(len(chunk_data))
+    async def _upload_chunk_with_progress(self, chunk_info: "ChunkInfo"):
+        range_id = await self._upload_chunk(chunk_info)
+        await self._update_progress(chunk_info.length)
         return range_id
 
     def get_substream_blocks(self):
@@ -279,16 +283,18 @@ class BlockBlobChunkUploader(_ChunkUploader):
         super(BlockBlobChunkUploader, self).__init__(*args, **kwargs)
         self.current_length = None
 
-    async def _upload_chunk(self, chunk_offset, chunk_data):
+    async def _upload_chunk(self, chunk_info: "ChunkInfo"):
         # TODO: This is incorrect, but works with recording.
-        index = '{0:032d}'.format(chunk_offset)
+        index = '{0:032d}'.format(chunk_info.offset)
         block_id = encode_base64(url_quote(encode_base64(index)))
         await self.service.stage_block(
             block_id,
-            len(chunk_data),
-            body=chunk_data,
+            chunk_info.length,
+            body=chunk_info.data,
             data_stream_total=self.total_size,
             upload_stream_current=self.progress_total,
+            transactional_content_md5=chunk_info.md5,
+            transactional_content_crc64=chunk_info.crc64,
             **self.request_options)
         return index, block_id
 
