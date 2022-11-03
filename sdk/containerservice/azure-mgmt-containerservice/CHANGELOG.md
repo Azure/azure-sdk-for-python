@@ -2,10 +2,9 @@
 
 ## 20.7.0 (2022-11-02)
 
+### Features Added
 
-**Features**
-
-  - Add a new api-version `2022-09-01`
+  - Add new api-version `2022-09-02-preview` for operation group `fleets`
 
 ## 20.6.0 (2022-10-25)
 
