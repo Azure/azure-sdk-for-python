@@ -4,7 +4,6 @@
 
 # pylint: disable=no-self-use,unused-argument
 
-from email.policy import default
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
 

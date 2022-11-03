@@ -190,7 +190,9 @@ class RegistryRegionDetails:
         storage = self.storage_config
         # storage_config can either be a single system-created storage account,
         # or list of user-inputted id's.
-        if storage is not None and hasattr(storage, "storage_account_type") and storage.storage_account_type is not None:
+        if (storage is not None
+            and hasattr(storage, "storage_account_type")
+            and storage.storage_account_type is not None):
 
             # We DO NOT want to set the arm_resource_id. The backend provides very
             # unhelpful errors if you provide an empty/null/invalid resource ID,
@@ -207,7 +209,7 @@ class RegistryRegionDetails:
             return [deepcopy(account) for _ in range(0, count)]
         elif storage is not None and len(storage) > 0:
             return [make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]
-        else: 
+        else:
             return []
 
     @classmethod
