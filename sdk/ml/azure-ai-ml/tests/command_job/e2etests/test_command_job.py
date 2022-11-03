@@ -1,5 +1,4 @@
 from pathlib import Path
-from time import sleep
 from typing import Callable
 
 from azure.ai.ml.entities import AmlTokenConfiguration
@@ -20,7 +19,7 @@ from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
 from azure.core.polling import LROPoller
 
-from test_utilities.utils import wait_until_done
+from test_utilities.utils import wait_until_done, sleep_if_live
 
 # These params are logged in ..\test_configs\python\simple_train.py. test_command_job_with_params asserts these parameters are
 # logged in the training script, so any changes to parameter logging in simple_train.py must preserve this logging or change it both
@@ -327,7 +326,7 @@ class TestCommandJob(AzureRecordedTestCase):
 
         def get_job_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            sleep_if_live(30)
             job_list = client.jobs.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [j.name for j in job_list if j is not None]
 

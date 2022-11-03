@@ -2,7 +2,6 @@ import re
 import uuid
 from itertools import tee
 from pathlib import Path
-from time import sleep
 from typing import Callable
 
 import pydash
@@ -23,7 +22,7 @@ from azure.ai.ml.entities._load_functions import load_code, load_job
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
 
-from test_utilities.utils import assert_job_cancel
+from test_utilities.utils import assert_job_cancel, sleep_if_live
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
 
@@ -322,7 +321,7 @@ class TestComponent(AzureRecordedTestCase):
         assert isinstance(component_containers.next(), Component)
 
         # there might be delay so getting latest version immediately after creation might get wrong result
-        sleep(5)
+        sleep_if_live(5)
 
         # list component versions
         components = client.components.list(name=component_name)
@@ -600,7 +599,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
                     params_override=[{"name": environment_name}, {"version": version}],
                 )
             )
-        sleep(10)
+        sleep_if_live(10)
 
         created_component = create_component(
             client,
@@ -624,7 +623,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
         for version in versions:
             create_component(client, name, params_override=[{"version": version}])
-            sleep(1)
+            sleep_if_live(1)
             assert client.components.get(name, label="latest").version == version
 
     @pytest.mark.skip(reason="Test fails because MFE index service consistency bug")
@@ -635,14 +634,14 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             created_component = create_component(client, name, params_override=[{"version": version}])
             assert created_component.version == version
             assert created_component.name == name
-            sleep(3)
+            sleep_if_live(3)
 
         for version in reversed(versions):
             assert client.components.get(name, label=version).version == version
             client.components.delete(name, label="latest")
             with pytest.raises(ResourceNotFoundError):
                 client.components.get(name=name, version=version)
-            sleep(10)
+            sleep_if_live(10)
 
     def test_anonymous_registration_from_load_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -669,7 +668,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         def get_component_list():
             # Wait for list index to update before calling list
             if is_live():
-                sleep(30)
+                sleep_if_live(30)
             component_list = client.components.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [c.version for c in component_list]
 
@@ -686,7 +685,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
         def get_component_list():
             # Wait for list index to update before calling list
-            sleep(30)
+            sleep_if_live(30)
             component_list = client.components.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [c.name for c in component_list]
 

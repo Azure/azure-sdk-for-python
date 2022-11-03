@@ -237,7 +237,7 @@ class DataOperations(_ScopeDependentOperations):
             if is_url(asset_path):
                 try:
                     metadata_contents = read_remote_mltable_metadata_contents(
-                        path=asset_path,
+                        base_uri=asset_path,
                         datastore_operations=self._datastore_operation,
                         requests_pipeline=self._requests_pipeline,
                     )
@@ -246,8 +246,7 @@ class DataOperations(_ScopeDependentOperations):
                     # skip validation for remote MLTable when the contents cannot be read
                     logger.info(
                         "Unable to access MLTable metadata at path %s",
-                        asset_path,
-                        exc_info=1,
+                        asset_path
                     )
                     return
             else:
@@ -273,20 +272,21 @@ class DataOperations(_ScopeDependentOperations):
             _assert_local_path_matches_asset_type(abs_path, asset_type)
 
     def _try_get_mltable_metadata_jsonschema(
-        self, mltable_schema_url: str = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
+        self, mltable_schema_url: str
     ) -> Union[Dict, None]:
+        if mltable_schema_url is None:
+            mltable_schema_url = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
         try:
             return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
         except Exception:  # pylint: disable=broad-except
             logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
-                mltable_schema_url,
-                exc_info=1,
+                mltable_schema_url
             )
             return None
 
     @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Archive a data asset.
 
         :param name: Name of data asset.
@@ -309,7 +309,7 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Restore an archived data asset.
 
         :param name: Name of data asset.

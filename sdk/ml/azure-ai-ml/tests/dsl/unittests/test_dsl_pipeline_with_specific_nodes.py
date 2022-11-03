@@ -1841,14 +1841,14 @@ class TestDSLPipelineWithSpecificNodes:
 
     def test_pipeline_with_command_services(self):
         services = {
-            "my_ssh": {"job_service_type": "ssh"},
-            "my_tensorboard": {
-                "job_service_type": "tensor_board",
-                "properties": {
+            "my_ssh": JobService(job_service_type="ssh"),
+            "my_tensorboard": JobService(
+                job_service_type="tensor_board",
+                properties={
                     "logDir": "~/tblog",
                 },
-            },
-            "my_jupyterlab": {"job_service_type": "jupyter_lab"},
+            ),
+            "my_jupyterlab": JobService(job_service_type="jupyter_lab"),
         }
         rest_services = {
             "my_ssh": {"job_service_type": "SSH"},
@@ -1900,7 +1900,7 @@ class TestDSLPipelineWithSpecificNodes:
             assert isinstance(service, JobService)
 
         # test set services in pipeline
-        new_services = {"my_jupyter": {"job_service_type": "jupyter_lab"}}
+        new_services = {"my_jupyter": JobService(job_service_type="jupyter_lab")}
         rest_new_services = {"my_jupyter": {"job_service_type": "JupyterLab"}}
 
         @dsl.pipeline()
