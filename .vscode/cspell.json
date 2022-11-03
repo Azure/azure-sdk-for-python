@@ -1122,6 +1122,16 @@
       ]
     },
     {
+      "filename": "sdk/confidentialledger/azure-confidentialledgertools-receiptverification/azure/confidentialledgertools/receiptverification/*.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+	      "deseralize",
+	      "wday"
+      ]
+    },
+    {
       "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/*.py",
       "words": [
         "Nify",

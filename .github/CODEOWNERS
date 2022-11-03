@@ -90,6 +90,9 @@
 # PRLabel: %Confidential Ledger
 sdk/confidentialledger/azure-confidentialledger                      @lynshi
 
+# PRLabel: %Confidential Ledger - ReceiptVerification
+sdk/confidentialledger/azure-confidentialledgertools-receiptverification    @andpiccione
+
 # PRLabel: %KeyVault
 /sdk/keyvault/                                                       @schaabs @mccoyp @YalinLi0312
 

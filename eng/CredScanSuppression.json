@@ -42,6 +42,7 @@
             "file":[
                 "eng/common/testproxy/dotnet-devcert.pfx",
                 "sdk/confidentialledger/azure-confidentialledger/tests/_shared/constants.py",
+                "sdk/confidentialledger/azure-confidentialledgertools-receiptverification/tests/constants.py",
                 "sdk/keyvault/azure-keyvault-certificates/tests/ca.key",
                 "sdk/identity/azure-identity/tests/certificate.pfx",
                 "sdk/identity/azure-identity/tests/certificate-with-password.pfx",
