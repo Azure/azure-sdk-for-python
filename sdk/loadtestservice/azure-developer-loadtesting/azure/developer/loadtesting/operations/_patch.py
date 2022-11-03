@@ -8,7 +8,7 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import cast, List, BinaryIO
-
+import time
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -22,6 +22,7 @@ from azure.core.utils import case_insensitive_dict
 from ._operations import LoadTestAdministrationOperations as LoadTestAdministrationOperationsGenerated, JSON, ClsType
 from .._serialization import Serializer
 from .._vendor import _format_url_section
+from .._patch import TestFileValidationStatus
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -128,6 +129,44 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
         if cls:
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
+
+    def check_test_file_validation_status(self, test_id: str, *, refresh_time: int = 10, timeout: int = 60) \
+            -> TestFileValidationStatus:
+        """Check if JMX file is validated or not
+
+        :param test_id: Unique id for the test
+        :type test_id: str
+        :param refresh_time: time to wait before checking the status of the JMX file (in seconds) (default is 10)
+        :type refresh_time: int
+        :param timeout: time to wait before timing out (in seconds) (default is 60)
+        :type timeout: int
+        :return: TestFileValidationStatus
+        :rtype: TestFileValidationStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        start_time = time.time()
+
+        while True:
+            result = self.get_load_test(test_id=test_id)
+
+            try:
+                status = result["inputArtifacts"]["testScriptUrl"]["validationStatus"]
+
+            except TypeError:
+                raise ResourceNotFoundError(f"JMX file not found with TestId: {test_id}")
+
+            if status == "VALIDATION_SUCCESS":
+                return TestFileValidationStatus.ValidationSuccess
+
+            if status == "VALIDATION_FAILED":
+                return TestFileValidationStatus.ValidationFailed
+
+            if time.time() - start_time + refresh_time > timeout:
+                return TestFileValidationStatus.ValidationCheckTimeout
+
+            time.sleep(refresh_time)
 
 
 __all__: List[str] = ["LoadTestAdministrationOperations"]

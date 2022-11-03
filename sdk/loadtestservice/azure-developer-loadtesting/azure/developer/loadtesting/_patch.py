@@ -7,8 +7,18 @@
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
 from typing import List
+from enum import Enum
 
-__all__: List[str] = []  # Add all objects you want publicly available to users at this package level
+
+class TestFileValidationStatus(Enum):
+    ValidationInitiated = 0
+    ValidationSuccess = 1
+    ValidationFailed = 2
+    ValidationCheckTimeout = 3
+
+
+__all__: List[str] = ["TestFileValidationStatus"]  # Add all objects you want publicly available to users at this
+# package level
 
 
 def patch_sdk():
