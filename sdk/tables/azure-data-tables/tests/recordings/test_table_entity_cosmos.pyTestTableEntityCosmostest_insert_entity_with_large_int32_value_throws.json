@@ -10,9 +10,9 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 06 May 2022 00:47:59 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Fri, 06 May 2022 00:47:59 GMT",
+        "Date": "Thu, 03 Nov 2022 18:07:33 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 18:07:33 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -21,8 +21,8 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Fri, 06 May 2022 00:47:58 GMT",
-        "ETag": "W/\u0022datetime\u00272022-05-06T00%3A47%3A58.8810760Z\u0027\u0022",
+        "Date": "Thu, 03 Nov 2022 18:07:32 GMT",
+        "ETag": "W/\u0022datetime\u00272022-11-03T18%3A07%3A32.4699655Z\u0027\u0022",
         "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027uttable8dc037a4\u0027)",
         "Transfer-Encoding": "chunked"
       },
@@ -39,16 +39,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Fri, 06 May 2022 00:47:59 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Fri, 06 May 2022 00:47:59 GMT",
+        "Date": "Thu, 03 Nov 2022 18:07:34 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 18:07:34 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Fri, 06 May 2022 00:47:58 GMT",
+        "Date": "Thu, 03 Nov 2022 18:07:32 GMT",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
@@ -68,16 +68,16 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Fri, 06 May 2022 00:47:59 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.3.0 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Fri, 06 May 2022 00:47:59 GMT",
+        "Date": "Thu, 03 Nov 2022 18:07:34 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 18:07:34 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Fri, 06 May 2022 00:47:58 GMT"
+        "Date": "Thu, 03 Nov 2022 18:07:32 GMT"
       },
       "ResponseBody": null
     }

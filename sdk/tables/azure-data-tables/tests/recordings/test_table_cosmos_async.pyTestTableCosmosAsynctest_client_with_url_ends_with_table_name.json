@@ -9,9 +9,9 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Tue, 27 Sep 2022 07:30:27 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.5.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 27 Sep 2022 07:30:27 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:57 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 20:51:57 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -20,7 +20,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Tue, 27 Sep 2022 07:30:24 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:54 GMT",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
@@ -28,7 +28,7 @@
           "code": "InvalidInput",
           "message": {
             "lang": "en-us",
-            "value": "Request url is invalid.\r\nActivityId: 4580b19e-8949-4e27-b69b-51eae56deb7c, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:4580b19e-8949-4e27-b69b-51eae56deb7c\n"
+            "value": "Request url is invalid.\r\nActivityId: 314e15fb-eda2-4dc5-a816-2b27bbdc7673, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:314e15fb-eda2-4dc5-a816-2b27bbdc7673\n"
           }
         }
       }
@@ -42,9 +42,9 @@
         "Content-Length": "33",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Tue, 27 Sep 2022 07:30:27 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.5.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 27 Sep 2022 07:30:27 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:57 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 20:51:57 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -53,7 +53,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Tue, 27 Sep 2022 07:30:24 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:54 GMT",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
@@ -61,7 +61,7 @@
           "code": "InvalidInput",
           "message": {
             "lang": "en-us",
-            "value": "Request url is invalid.\r\nActivityId: 12e66836-81e8-48c9-8353-d546cbbf4399, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:12e66836-81e8-48c9-8353-d546cbbf4399\n"
+            "value": "Request url is invalid.\r\nActivityId: c4dd595b-5736-45e3-b993-6654aec6b041, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:c4dd595b-5736-45e3-b993-6654aec6b041\n"
           }
         }
       }
@@ -75,9 +75,9 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Tue, 27 Sep 2022 07:30:27 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.5.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 27 Sep 2022 07:30:27 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:57 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 20:51:57 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -86,8 +86,8 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Tue, 27 Sep 2022 07:30:24 GMT",
-        "ETag": "W/\u0022datetime\u00272022-09-27T07%3A30%3A25.1276295Z\u0027\u0022",
+        "Date": "Thu, 03 Nov 2022 20:51:56 GMT",
+        "ETag": "W/\u0022datetime\u00272022-11-03T20%3A51%3A56.8613383Z\u0027\u0022",
         "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027mytable947633d6\u0027)",
         "Transfer-Encoding": "chunked"
       },
@@ -105,9 +105,9 @@
         "Content-Length": "32",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Tue, 27 Sep 2022 07:30:28 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.5.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 27 Sep 2022 07:30:28 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:59 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 20:51:59 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": {
@@ -116,7 +116,7 @@
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Tue, 27 Sep 2022 07:30:24 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:56 GMT",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
@@ -124,7 +124,7 @@
           "code": "InvalidInput",
           "message": {
             "lang": "en-us",
-            "value": "Request url is invalid.\r\nActivityId: 7480484b-ea0c-4274-97d7-7f330da9cd24, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:7480484b-ea0c-4274-97d7-7f330da9cd24\n"
+            "value": "Request url is invalid.\r\nActivityId: ac164344-108a-4b6e-9bd6-4b332ea77dec, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:ac164344-108a-4b6e-9bd6-4b332ea77dec\n"
           }
         }
       }
@@ -136,16 +136,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "Date": "Tue, 27 Sep 2022 07:30:28 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.5.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 27 Sep 2022 07:30:28 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:59 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 20:51:59 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=fullmetadata",
-        "Date": "Tue, 27 Sep 2022 07:30:24 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:56 GMT",
         "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
@@ -153,7 +153,7 @@
           "code": "InvalidInput",
           "message": {
             "lang": "en-us",
-            "value": "Request url is invalid.\r\nActivityId: 8480346c-e56a-4580-a84f-e58d0f9111e5, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:8480346c-e56a-4580-a84f-e58d0f9111e5\n"
+            "value": "Request url is invalid.\r\nActivityId: 54844d8a-6e46-4e00-a3f7-90241d5655c4, documentdb-dotnet-sdk/2.14.0 Host/64-bit MicrosoftWindowsNT/10.0.19041.0\nRequestID:54844d8a-6e46-4e00-a3f7-90241d5655c4\n"
           }
         }
       }
@@ -165,16 +165,16 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "Date": "Tue, 27 Sep 2022 07:30:28 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.5.0 Python/3.9.2 (Windows-10-10.0.22000-SP0)",
-        "x-ms-date": "Tue, 27 Sep 2022 07:30:28 GMT",
+        "Date": "Thu, 03 Nov 2022 20:51:59 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 20:51:59 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Tue, 27 Sep 2022 07:30:25 GMT"
+        "Date": "Thu, 03 Nov 2022 20:51:57 GMT"
       },
       "ResponseBody": null
     }

@@ -6,26 +6,25 @@
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json;odata=nometadata",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 09 Dec 2021 00:55:30 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b4b0aea3-588a-11ec-8ce6-c8348e51ab51",
-        "x-ms-date": "Thu, 09 Dec 2021 00:55:30 GMT",
+        "Date": "Thu, 03 Nov 2022 18:01:35 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 18:01:35 GMT",
         "x-ms-version": "2019-02-02"
       },
-      "RequestBody": "{\u0022TableName\u0022: \u0022pytablesync4c27255f\u0022}",
+      "RequestBody": {
+        "TableName": "pytablesync4c27255f"
+      },
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Thu, 09 Dec 2021 00:55:35 GMT",
-        "ETag": "W/\u0022datetime\u00272021-12-09T00%3A55%3A35.8284807Z\u0027\u0022",
+        "Date": "Thu, 03 Nov 2022 18:01:34 GMT",
+        "ETag": "W/\u0022datetime\u00272022-11-03T18%3A01%3A34.7549191Z\u0027\u0022",
         "Location": "https://fakeendpoint.table.cosmos.azure.com/Tables(\u0027pytablesync4c27255f\u0027)",
-        "Transfer-Encoding": "chunked",
-        "x-ms-request-id": "5109a3cb-3392-4b41-ab46-45315d047596"
+        "Transfer-Encoding": "chunked"
       },
       "ResponseBody": {
         "TableName": "pytablesync4c27255f",
@@ -38,20 +37,18 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "Date": "Thu, 09 Dec 2021 00:55:36 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "b8bc14eb-588a-11ec-9bde-c8348e51ab51",
-        "x-ms-date": "Thu, 09 Dec 2021 00:55:36 GMT",
+        "Date": "Thu, 03 Nov 2022 18:01:37 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
+        "x-ms-date": "Thu, 03 Nov 2022 18:01:37 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "Date": "Thu, 09 Dec 2021 00:55:36 GMT",
-        "x-ms-request-id": "4badf8c3-b643-486d-9d83-47f67569f8ad"
+        "Content-Type": "application/json",
+        "Date": "Thu, 03 Nov 2022 18:01:34 GMT"
       },
       "ResponseBody": null
     }
