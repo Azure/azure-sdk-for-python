@@ -177,8 +177,8 @@ def pipeline(
 
                 # TODO: cache built pipeline component
                 pipeline_component = pipeline_builder.build(
-                    provided_positional_args,
-                    provided_positional_kwargs,
+                    user_provided_args=provided_positional_args,
+                    user_provided_kwargs=provided_positional_kwargs,
                     non_pipeline_params_dict=non_pipeline_params_dict
                 )
             finally:
@@ -259,14 +259,19 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
 
     func_args, provided_args = list(args), OrderedDict({})
     provided_kwargs = OrderedDict({param.name: func_args.pop(0) for param in named_parameters if len(func_args) > 0})
-    for index, arg in enumerate(func_args):
-        provided_args[f"args_{index}"] = func_args[index]
     for _k in kwargs.keys():
         if not is_support_variable_params and _k not in all_parameter_keys:
             raise UnexpectedKeywordError(func.__name__, _k, all_parameter_keys)
         if _k in provided_kwargs.keys():
             raise MultipleValueError(func.__name__, _k)
         provided_kwargs[_k] = kwargs[_k]
+    variable_args = next(iter(param for param in all_parameters if param.kind == param.VAR_POSITIONAL), None)
+    variable_args_prefix =  variable_args.name if variable_args and len(func_args) else None
+    for index, arg in enumerate(func_args):
+        variable_args_name = f"{variable_args_prefix}_{index}"
+        if variable_args_name in provided_kwargs.keys():
+            raise MultipleValueError(func.__name__, variable_args_name)
+        provided_args[variable_args_name] = func_args[index]
 
     missing_keys = empty_parameters.keys() - provided_kwargs.keys()
     if len(missing_keys) > 0:

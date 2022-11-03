@@ -1077,7 +1077,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         with pytest.raises(ValidationException) as e:
             client.components.create_or_update(pipeline_with_variable_inputs)
-        assert " Cannot register the component pipeline_with_variable_inputs with variable inputs ['args', 'kwargs']" in e.value.message
+        assert "Cannot register the component pipeline_with_variable_inputs with variable inputs ['args', 'kwargs']" in e.value.message
 
     def test_create_pipeline_component_by_dsl(self, caplog, client: MLClient):
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))

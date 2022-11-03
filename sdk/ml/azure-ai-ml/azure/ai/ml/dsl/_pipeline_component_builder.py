@@ -182,16 +182,16 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, *, args=None, kwargs=None, non_pipeline_params_dict=None) -> PipelineComponent:
+    def build(self, *, user_provided_args=None, user_provided_kwargs=None, non_pipeline_params_dict=None) -> PipelineComponent:
         """
         Build a pipeline component from current pipeline builder.
 
-        :param args: The args user provided to dsl pipeline function. None if not provided.
-        :param kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
+        :param user_provided_args: The args user provided to dsl pipeline function. None if not provided.
+        :param user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
         :param non_pipeline_params_dict: Non-pipeline parameters to provided value. None if not exist.
         """
-        args = args or []
-        kwargs = kwargs or {}
+        args = user_provided_args or []
+        kwargs = user_provided_kwargs or {}
         # Clear nodes as we may call build multiple times.
         self.nodes = []
         pipeline_kwargs = {**kwargs, **self._get_group_parameter_defaults()}
@@ -429,13 +429,13 @@ def _build_pipeline_parameter(
     # transform kwargs
     transformed_args, transformed_kwargs = [], non_pipeline_parameter_dict or {}
     if args:
-        transformed_args = [_wrap_pipeline_parameter(key, val) for key, val in args.items()]
+        transformed_args = [_wrap_pipeline_parameter(key, default_value=val, actual_value=val) for key, val in args.items()]
     if kwargs:
         transformed_kwargs.update(
             {
                 key: _wrap_pipeline_parameter(
                     key, default_value=value, actual_value=value
-                ) for key, value in group_default_kwargs.items()
+                ) for key, value in kwargs.items()
                 if key not in non_pipeline_parameter_dict
             }
         )
