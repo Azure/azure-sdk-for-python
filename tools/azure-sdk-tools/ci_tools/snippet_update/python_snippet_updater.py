@@ -30,6 +30,23 @@ def get_snippet(file: str) -> None:
         name = s[0].strip()
         snippet = s[1]
         # Remove extra spaces
+        # A sample code snippet could be like:
+        # \n
+        #         # [START trio]
+        #         from azure.core.pipeline.transport import TrioRequestsTransport
+
+        #         async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline:
+        #             return await pipeline.run(request)
+        #         # [END trio]
+        # \n
+        # On one hand, the spaces in the beginning of the line may vary. e.g. If the snippet 
+        # is in a class, it may have more spaces than if it is not in a class.
+        # On the other hand, we cannot remove all spaces because indents are part of Python syntax.
+        # Here is our algorithm:
+        # We firstly count the spaces of the # [START snippet] line.
+        # And for every line, we remove this amount of spaces in the beginning of the line.
+        # To only remove the spaces in the beginning and to make sure we only remove it once per line,
+        # We use replace('\n' + spaces, '\n').
         spaces = ""
         for char in snippet[1:]:
             if char == " ":
