@@ -5,6 +5,8 @@
 # --------------------------------------------------------------------------
 import unittest
 
+import pytest
+
 from azure.storage.queue import QueueServiceClient
 
 from devtools_testutils import recorded_by_proxy
@@ -46,9 +48,10 @@ class TestQueueServiceStats(StorageRecordedTestCase):
 
     # --Test cases per service ---------------------------------------
 
+    @pytest.mark.live_test_only
     @QueuePreparer()
     @recorded_by_proxy
-    def test_queue_service_stats_f(self, **kwargs):
+    def test_queue_service_stats(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
@@ -56,10 +59,11 @@ class TestQueueServiceStats(StorageRecordedTestCase):
         qsc = self.create_storage_client(QueueServiceClient, self.account_url(storage_account_name, "queue"), storage_account_key)
 
         # Act
-        stats = qsc.get_service_stats(raw_response_hook=self.override_response_body_with_live_status)
+        stats = qsc.get_service_stats()
         # Assert
         self._assert_stats_default(stats)
 
+    @pytest.mark.live_test_only
     @QueuePreparer()
     @recorded_by_proxy
     def test_queue_service_stats_when_unavailable(self, **kwargs):
@@ -70,7 +74,7 @@ class TestQueueServiceStats(StorageRecordedTestCase):
         qsc = self.create_storage_client(QueueServiceClient, self.account_url(storage_account_name, "queue"), storage_account_key)
 
         # Act
-        stats = qsc.get_service_stats(raw_response_hook=self.override_response_body_with_unavailable_status)
+        stats = qsc.get_service_stats()
 
         # Assert
         self._assert_stats_unavailable(stats)

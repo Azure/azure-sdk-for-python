@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Thu, 03 Nov 2022 21:18:07 GMT",
+        "x-ms-date": "Thu, 03 Nov 2022 21:17:50 GMT",
         "x-ms-version": "2020-08-04"
       },
       "RequestBody": null,
@@ -16,7 +16,7 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Type": "application/xml",
-        "Date": "Thu, 03 Nov 2022 21:18:07 GMT",
+        "Date": "Thu, 03 Nov 2022 21:17:51 GMT",
         "Server": [
           "Windows-Azure-Queue/1.0",
           "Microsoft-HTTPAPI/2.0"
