@@ -102,10 +102,9 @@ class AsyncTransportMixin:
                 offset = frame_header[4]
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
-                    raise ValueError(
-                        f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                    _LOGGER.debug(
+                        "Received invalid frame type: %r, expected: %r", frame_type, verify_frame_type
                     )
-
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
                 payload_size = size - len(frame_header)
@@ -505,6 +504,9 @@ class WebSocketTransportAsync(
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
+        except OSError:
+            await self.session.close()
+            raise ConnectionError('Client Session Closed')
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
