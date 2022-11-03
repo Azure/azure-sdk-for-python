@@ -51,6 +51,7 @@ class _ServiceTest(PerfStressTest):
         parser.add_argument('--max-concurrency', nargs='?', type=int, help='Maximum number of concurrent threads used for data transfer. Defaults to 1', default=1)
         parser.add_argument('-s', '--size', nargs='?', type=int, help='Size of data to transfer.  Default is 10240.', default=10240)
         parser.add_argument('--no-client-share', action='store_true', help='Create one ServiceClient per test instance.  Default is to share a single ServiceClient.', default=False)
+        parser.add_argument('--checksum', type=str, help='Enable checksum validation with using "md5" or "crc64". Default is None or no checksum validation.', default=None)
 
 
 class _ContainerTest(_ServiceTest):

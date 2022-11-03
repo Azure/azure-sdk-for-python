@@ -21,7 +21,8 @@ class UploadTest(_BlobTest):
             self.upload_stream,
             length=self.args.size,
             overwrite=True,
-            max_concurrency=self.args.max_concurrency)
+            max_concurrency=self.args.max_concurrency,
+            checksum=self.args.checksum)
 
     async def run_async(self):
         self.upload_stream_async.reset()
@@ -29,4 +30,5 @@ class UploadTest(_BlobTest):
             self.upload_stream_async,
             length=self.args.size,
             overwrite=True,
-            max_concurrency=self.args.max_concurrency)
+            max_concurrency=self.args.max_concurrency,
+            checksum=self.args.checksum)

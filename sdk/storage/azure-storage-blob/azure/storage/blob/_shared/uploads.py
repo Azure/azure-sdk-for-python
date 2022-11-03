@@ -27,13 +27,13 @@ _LARGE_BLOB_UPLOAD_MAX_READ_BUFFER_SIZE = 4 * 1024 * 1024
 _ERROR_VALUE_SHOULD_BE_SEEKABLE_STREAM = "{0} should be a seekable file-like/io.IOBase type stream object."
 
 
-def calculate_content_md5(data: bytes) -> Optional[bytes]:
+def calculate_content_md5(data: bytes) -> bytes:
     md5 = hashlib.md5()
     md5.update(data)
     return md5.digest()
 
 
-def calculate_content_crc64(data: bytes) -> Optional[bytes]:
+def calculate_content_crc64(data: bytes) -> bytes:
     crc64 = compute_crc64(data, 0)
     return crc64.to_bytes(8, 'little')
 
