@@ -10,6 +10,8 @@ from typing import Callable, Tuple, Union
 from unittest.mock import Mock
 
 import pytest
+from azure.core.pipeline.transport import HttpTransport
+
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
@@ -30,11 +32,11 @@ from devtools_testutils import (
     add_remove_header_sanitizer,
     is_live,
     set_custom_default_matcher,
-    test_proxy,
+    set_bodiless_matcher,
 )
 from devtools_testutils.fake_credentials import FakeTokenCredential
 from devtools_testutils.helpers import is_live_and_not_recording
-from devtools_testutils.proxy_fixtures import VariableRecorder, variable_recorder
+from devtools_testutils.proxy_fixtures import VariableRecorder
 from pytest_mock import MockFixture
 
 from test_utilities.constants import Test_Registry_Name, Test_Resource_Group, Test_Subscription, Test_Workspace_Name
@@ -555,3 +557,50 @@ def enable_internal_components():
     with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
         # need to call _try_init_internal_components manually as environment variable is set after _internal is imported
         try_enable_internal_components()
+
+
+@pytest.fixture()
+def bodiless_matching(test_proxy):
+    set_bodiless_matcher()
+
+
+@pytest.fixture(autouse=True)
+def skip_sleep_for_playback():
+    """Mock time.sleep() for playback mode.
+    time.sleep() is usually used to wait for long-running operations to complete.
+    While in playback mode, we don't need wait as no actual remote operations are being performed.
+
+    Works on sync requests only for now. Need to mock asyncio.sleep and
+    trio.sleep if we want to apply this to async requests.
+
+    Please disable this fixture if you want to use time.sleep() for other reason.
+    """
+    if not is_live():
+        time.sleep = lambda *_: None
+
+
+def skip_sleep_in_lro_polling():
+    """A less aggressive version of skip_sleep_for_playback. Mock time.sleep() only for sync LRO polling.
+    You may use this fixture and utils.sleep_if_live() together when you disabled skip_sleep_for_playback.
+    """
+    if not is_live():
+        HttpTransport.sleep = lambda *_, **__: None
+
+
+def pytest_configure(config):
+    # register customized pytest markers
+    for marker, description in [
+        ("e2etest", "marks tests as end to end tests, which involve requests to the server"),
+        ("unittest", "marks tests as unit tests, which do not involve requests to the server"),
+        ("pipeline_test", "marks tests as pipeline tests, which will create pipeline jobs during testing"),
+        ("automl_test", "marks tests as automl tests, which will create automl jobs during testing"),
+        ("core_sdk_test", "marks tests as core sdk tests"),
+        ("production_experience_test", "marks tests as production experience tests"),
+        ("training_experiences_test", "marks tests as training experience tests"),
+        ("data_experiences_test", "marks tests as data experience tests"),
+        ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
+        ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
+    ]:
+        config.addinivalue_line("markers", f"{marker}: {description}")
+
+    config.addinivalue_line("markers", f"{marker}: {description}")

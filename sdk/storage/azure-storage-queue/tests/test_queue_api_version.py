@@ -5,30 +5,28 @@
 # --------------------------------------------------------------------------
 
 import pytest
-
-from azure.storage.queue import (
-    QueueServiceClient,
-    QueueClient
-)
+from azure.storage.queue import QueueClient, QueueServiceClient
 from azure.storage.queue._shared.constants import X_MS_VERSION
-from devtools_testutils.storage import StorageTestCase
+
+from devtools_testutils.storage import StorageRecordedTestCase
+
 
 # ------------------------------------------------------------------------------
 
-class StorageClientTest(StorageTestCase):
+class TestStorageClient(StorageRecordedTestCase):
     def setUp(self):
-        super(StorageClientTest, self).setUp()
         self.api_version_1 = "2019-02-02"
         self.api_version_2 = X_MS_VERSION
 
     # --Test Cases--------------------------------------------------------------
 
     def test_service_client_api_version_property(self):
+        self.setUp()
         service_client = QueueServiceClient(
             "https://foo.queue.core.windows.net/account",
             credential="fake_key")
-        self.assertEqual(service_client.api_version, self.api_version_2)
-        self.assertEqual(service_client._client._config.version, self.api_version_2)
+        assert service_client.api_version == self.api_version_2
+        assert service_client._client._config.version == self.api_version_2
 
         with pytest.raises(AttributeError):
             service_client.api_version = "foo"
@@ -37,27 +35,28 @@ class StorageClientTest(StorageTestCase):
             "https://foo.queue.core.windows.net/account",
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(service_client.api_version, self.api_version_1)
-        self.assertEqual(service_client._client._config.version, self.api_version_1)
+        assert service_client.api_version == self.api_version_1
+        assert service_client._client._config.version == self.api_version_1
 
         queue_client = service_client.get_queue_client("foo")
-        self.assertEqual(queue_client.api_version, self.api_version_1)
-        self.assertEqual(queue_client._client._config.version, self.api_version_1)
+        assert queue_client.api_version == self.api_version_1
+        assert queue_client._client._config.version == self.api_version_1
 
     def test_queue_client_api_version_property(self):
+        self.setUp()
         queue_client = QueueClient(
             "https://foo.queue.core.windows.net/account",
             "queue_name",
             credential="fake_key",
             api_version=self.api_version_1)
-        self.assertEqual(queue_client.api_version, self.api_version_1)
-        self.assertEqual(queue_client._client._config.version, self.api_version_1)
+        assert queue_client.api_version == self.api_version_1
+        assert queue_client._client._config.version == self.api_version_1
 
         queue_client = QueueClient(
             "https://foo.queue.core.windows.net/account",
             "queue_name",
             credential="fake_key")
-        self.assertEqual(queue_client.api_version, self.api_version_2)
-        self.assertEqual(queue_client._client._config.version, self.api_version_2)
+        assert queue_client.api_version == self.api_version_2
+        assert queue_client._client._config.version == self.api_version_2
 
 # ------------------------------------------------------------------------------
