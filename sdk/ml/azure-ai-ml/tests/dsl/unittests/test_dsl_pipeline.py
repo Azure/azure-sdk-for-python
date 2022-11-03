@@ -2092,19 +2092,19 @@ class TestDSLPipeline:
         component_func1 = load_component(path)
         data = Data(name="test", version="1", type=AssetTypes.MLTABLE)
 
-        @dsl.pipeline()
+        @dsl.pipeline
         def pipeline_with_variable_args(*args, **kwargs):
             node_args = component_func1(component_in_number=args[0], component_in_path=args[1])
             node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
                                           component_in_path=kwargs["component_in_path1"])
 
-        @dsl.pipeline()
+        @dsl.pipeline
         def pipeline_with_custom_variable_args(*custom_args, **kwargs):
             node_args = component_func1(component_in_number=custom_args[0], component_in_path=custom_args[1])
             node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
                                           component_in_path=kwargs["component_in_path1"])
 
-        @dsl.pipeline()
+        @dsl.pipeline
         def root_pipeline(component_in_number: int, component_in_path: Input, *args, **kwargs):
             node = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
             node_args = component_func1(component_in_number=args[0], component_in_path=args[1])
@@ -2121,6 +2121,141 @@ class TestDSLPipeline:
         ]
         actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
 
+        assert actual_dict["inputs"] == {
+            "component_in_number": {"job_input_type": "literal", "value": "10"},
+            "component_in_path": {"uri": "test:1", "job_input_type": "mltable"},
+            "component_in_number1": {"job_input_type": "literal", "value": "12"},
+            "component_in_path1": {"uri": "test:1", "job_input_type": "mltable"},
+            "args_0": {"job_input_type": "literal", "value": "11"},
+            "args_1": {"uri": "test:1", "job_input_type": "mltable"},
+        }
+
+        assert actual_dict["jobs"] == {
+            "node": {
+                "resources": None,
+                "distribution": None,
+                "limits": None,
+                "environment_variables": {},
+                "name": "node",
+                "type": "command",
+                "display_name": None,
+                "tags": {},
+                "computeId": None,
+                "inputs": {
+                    "component_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_number}}",
+                    },
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_path}}",
+                    },
+                },
+                "outputs": {},
+                "properties": {},
+            },
+            "node_args": {
+                "resources": None,
+                "distribution": None,
+                "limits": None,
+                "environment_variables": {},
+                "name": "node_args",
+                "type": "command",
+                "display_name": None,
+                "tags": {},
+                "computeId": None,
+                "inputs": {
+                    "component_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.args_0}}",
+                    },
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.args_1}}",
+                    },
+                },
+                "outputs": {},
+                "properties": {},
+            },
+            "node_kwargs": {
+                "resources": None,
+                "distribution": None,
+                "limits": None,
+                "environment_variables": {},
+                "name": "node_kwargs",
+                "type": "command",
+                "display_name": None,
+                "tags": {},
+                "computeId": None,
+                "inputs": {
+                    "component_in_number": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_number1}}",
+                    },
+                    "component_in_path": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_path1}}",
+                    },
+                },
+                "outputs": {},
+                "properties": {},
+            },
+            "node_with_arg_kwarg": {
+                "name": "node_with_arg_kwarg",
+                "type": "pipeline",
+                "display_name": None,
+                "tags": {},
+                "computeId": None,
+                "inputs": {
+                    "component_in_number1": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_number1}}",
+                    },
+                    "component_in_path1": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_path1}}",
+                    },
+                    "args_0": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.args_0}}",
+                    },
+                    "args_1": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.args_1}}",
+                    },
+                },
+                "outputs": {},
+                "properties": {},
+            },
+            "node_with_custom_arg_kwarg": {
+                "name": "node_with_custom_arg_kwarg",
+                "type": "pipeline",
+                "display_name": None,
+                "tags": {},
+                "computeId": None,
+                "inputs": {
+                    "component_in_number1": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_number1}}",
+                    },
+                    "component_in_path1": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.component_in_path1}}",
+                    },
+                    "custom_args_0": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.args_0}}",
+                    },
+                    "custom_args_1": {
+                        "job_input_type": "literal",
+                        "value": "${{parent.inputs.args_1}}",
+                    },
+                },
+                "outputs": {},
+                "properties": {},
+            },
+        }
+
         with mock.patch(
             "azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled",
             return_value=True
@@ -2131,7 +2266,7 @@ class TestDSLPipeline:
 
     def test_pipeline_with_dumplicate_variable_inputs(self):
 
-        @dsl.pipeline()
+        @dsl.pipeline
         def pipeline_with_variable_args(*args, **kwargs):
             pass
 
@@ -2139,7 +2274,7 @@ class TestDSLPipeline:
                            match="pipeline_with_variable_args() got multiple values for argument 'args_0'."):
             pipeline_with_variable_args(10, data, 11, data, args_0=11, args_1=data)
 
-        @dsl.pipeline()
+        @dsl.pipeline
         def pipeline_with_variable_args(args_0: int, *args):
             pass
 
