@@ -13,6 +13,9 @@ from devtools_testutils import AzureRecordedTestCase
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experience_test
 class TestOnlineDeployment(AzureRecordedTestCase):
+    @pytest.mark.skip(
+        reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
+    )
     def test_online_deployment(self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str]) -> None:
         endpoint_yaml = "tests/test_configs/deployments/online/simple_online_endpoint_mir.yaml"
         deployment_yaml = "tests/test_configs/deployments/online/online_deployment_1.yaml"
