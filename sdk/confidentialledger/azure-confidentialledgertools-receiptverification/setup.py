@@ -75,7 +75,7 @@ setup(
         'pytyped': ['py.typed'],
     },
     install_requires=[
-        "azure-core<2.0.0,>=1.2.2",
+        "azure-core<2.0.0,>=1.24.0",
         "isodate>=0.6.0",
         "cryptography>=2.1.4",
     ],
