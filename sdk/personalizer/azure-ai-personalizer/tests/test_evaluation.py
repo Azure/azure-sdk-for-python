@@ -1,4 +1,7 @@
-import pytest
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 import personalizer_helpers
 import time
@@ -12,7 +15,7 @@ class TestEvaluations(AzureRecordedTestCase):
     @recorded_by_proxy
     def test_run_evaluation(self, **kwargs):
         variables = kwargs.pop("variables", {})
-        evaluation_id = variables.setdefault("evaluation_id", str(uuid.uuid4()))
+        evaluation_id = variables.setdefault("test_run_evaluation_id", str(uuid.uuid4()))
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers.create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
@@ -35,6 +38,7 @@ class TestEvaluations(AzureRecordedTestCase):
         assert evaluation["name"] == evaluation_name
         assert evaluation["status"] == "Succeeded"
         client.delete_evaluation(evaluation_id)
+        return variables
 
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy

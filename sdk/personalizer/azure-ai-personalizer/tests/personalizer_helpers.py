@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.personalizer import PersonalizerClient, PersonalizerAdministrationClient
 from devtools_testutils import EnvironmentVariableLoader

@@ -478,7 +478,7 @@ class PersonalizerAdministrationClient:  # pylint: disable=too-many-public-metho
         :param evaluation_id: Id of the Offline Evaluation to create. Required.
         :type evaluation_id: str
         :param evaluation: The Offline Evaluation job definition. Required.
-        :type evaluation: JSON
+        :type evaluation: JSON or IO
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str

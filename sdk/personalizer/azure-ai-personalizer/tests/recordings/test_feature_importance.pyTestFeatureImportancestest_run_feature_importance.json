@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/072c1fd0-e5a4-43c5-93ca-337a2ed7769b?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/95aeed5c-dc94-4545-b0f0-4cae170a8aea?api-version=2022-09-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -18,22 +18,22 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "4e7b4b72-0dc0-4353-994c-6ac4fb97bdda",
+        "apim-request-id": "b9657817-a762-45c0-be7b-d236768f0f4d",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 03 Nov 2022 00:01:37 GMT",
+        "Date": "Thu, 03 Nov 2022 15:54:56 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "908",
+        "x-envoy-upstream-service-time": "770",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/072c1fd0-e5a4-43c5-93ca-337a2ed7769b?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/95aeed5c-dc94-4545-b0f0-4cae170a8aea?api-version=2022-09-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -44,31 +44,31 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "dfbb49be-54e0-4905-a70e-f3055683795f",
+        "apim-request-id": "97ac6863-8b65-4510-a888-b10caa2133e7",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "263",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 00:01:37 GMT",
+        "Date": "Thu, 03 Nov 2022 15:54:56 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "217",
+        "x-envoy-upstream-service-time": "143",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "id": "072c1fd0-e5a4-43c5-93ca-337a2ed7769b",
+        "id": "95aeed5c-dc94-4545-b0f0-4cae170a8aea",
         "name": "python_sdk_test_feature_imp",
         "startTime": "2022-09-20T00:00:00Z",
         "endTime": "2022-09-30T00:00:00Z",
-        "creationTime": "2022-11-03T00:01:37.0899986Z",
+        "creationTime": "2022-11-03T15:54:56.1029986Z",
         "status": "Running",
         "featureScores": []
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/072c1fd0-e5a4-43c5-93ca-337a2ed7769b?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/95aeed5c-dc94-4545-b0f0-4cae170a8aea?api-version=2022-09-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -79,25 +79,25 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "f1732554-b4f4-4cdf-8ab6-58ea84099679",
+        "apim-request-id": "02f7555f-77b3-428f-95e4-915b3c99c757",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "4029",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 00:02:38 GMT",
+        "Date": "Thu, 03 Nov 2022 15:55:57 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "72",
+        "x-envoy-upstream-service-time": "92",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "id": "072c1fd0-e5a4-43c5-93ca-337a2ed7769b",
+        "id": "95aeed5c-dc94-4545-b0f0-4cae170a8aea",
         "name": "python_sdk_test_feature_imp",
         "startTime": "2022-09-20T00:00:00Z",
         "endTime": "2022-09-30T00:00:00Z",
-        "creationTime": "2022-11-03T00:01:37.0899986Z",
+        "creationTime": "2022-11-03T15:54:56.1029986Z",
         "status": "Succeeded",
         "featureScores": [
           {
@@ -299,7 +299,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/072c1fd0-e5a4-43c5-93ca-337a2ed7769b?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/95aeed5c-dc94-4545-b0f0-4cae170a8aea?api-version=2022-09-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -310,11 +310,11 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "083ea24d-28ef-4f35-af6a-bde40bd02f47",
+        "apim-request-id": "9334ac8e-291d-46c0-80bb-6ff8ad46c266",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "4029",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 00:02:38 GMT",
+        "Date": "Thu, 03 Nov 2022 15:55:57 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
@@ -324,11 +324,11 @@
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "id": "072c1fd0-e5a4-43c5-93ca-337a2ed7769b",
+        "id": "95aeed5c-dc94-4545-b0f0-4cae170a8aea",
         "name": "python_sdk_test_feature_imp",
         "startTime": "2022-09-20T00:00:00Z",
         "endTime": "2022-09-30T00:00:00Z",
-        "creationTime": "2022-11-03T00:01:37.0899986Z",
+        "creationTime": "2022-11-03T15:54:56.1029986Z",
         "status": "Succeeded",
         "featureScores": [
           {
@@ -530,7 +530,7 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/072c1fd0-e5a4-43c5-93ca-337a2ed7769b?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/95aeed5c-dc94-4545-b0f0-4cae170a8aea?api-version=2022-09-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -542,20 +542,22 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "40842087-6a89-4589-9c1d-b1e406d7969f",
+        "apim-request-id": "31915a3b-085c-4781-88aa-2032923bae9c",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 03 Nov 2022 00:02:38 GMT",
+        "Date": "Thu, 03 Nov 2022 15:55:59 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "401",
+        "x-envoy-upstream-service-time": "2372",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": null
     }
   ],
-  "Variables": {}
+  "Variables": {
+    "test_run_feature_importance_id": "95aeed5c-dc94-4545-b0f0-4cae170a8aea"
+  }
 }

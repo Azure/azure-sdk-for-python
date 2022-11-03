@@ -12,17 +12,17 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "8258a2bd-5c41-40c3-a643-2606926dffd5",
+        "apim-request-id": "556ec8a1-5286-4df8-8b82-ade5c4ff144b",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "155",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 00:03:47 GMT",
+        "Date": "Thu, 03 Nov 2022 15:57:07 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "10",
+        "x-envoy-upstream-service-time": "11",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
@@ -127,18 +127,18 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "df40315b-b192-4031-8131-591ae2ca4672",
+        "apim-request-id": "1f838062-5bdd-4db2-9763-f9bafd9c9889",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "201",
         "Content-Type": "application/json; charset=utf-8",
         "csp-billing-usage": "CognitiveServices.Personalizer.Transaction=1",
-        "Date": "Thu, 03 Nov 2022 00:03:47 GMT",
+        "Date": "Thu, 03 Nov 2022 15:57:07 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "4",
+        "x-envoy-upstream-service-time": "5",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {

@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils.aio import recorded_by_proxy_async
 import personalizer_helpers_async
@@ -13,7 +17,7 @@ class TestFeatureImportancesAsync(AzureRecordedTestCase):
     @recorded_by_proxy_async
     async def test_run_feature_importance(self, **kwargs):
         variables = kwargs.pop("variables", {})
-        feature_importance_id = variables.setdefault("feature_importance_id", str(uuid.uuid4()))
+        feature_importance_id = variables.setdefault("test_run_feature_importance_async_id", str(uuid.uuid4()))
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers_async.create_async_personalizer_admin_client(
@@ -33,6 +37,7 @@ class TestFeatureImportancesAsync(AzureRecordedTestCase):
         assert feature_importance["name"] == feature_importance_name
         assert feature_importance["status"] == "Succeeded"
         await client.delete_feature_importance(feature_importance_id)
+        return variables
 
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy_async

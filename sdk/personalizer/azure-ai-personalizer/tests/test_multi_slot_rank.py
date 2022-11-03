@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 import personalizer_helpers
 

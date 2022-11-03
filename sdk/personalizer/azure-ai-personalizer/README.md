@@ -42,8 +42,8 @@ The [synchronous PersonalizerClient][personalizer_sync_client] and
 ## Examples
 The following examples outline the main scenarios when using personalizer in single-slot and multi-slot configurations.
 
-* [Send rank and reward when using a single slot](#rank-and-reward "Send rank and reward")
-* [Send rank and reward when using multiple slots](#multi-slot-rank-and-reward "Send multi-slot rank and reward")
+* [Send rank and reward when using a single slot](#send-rank-and-reward "Send rank and reward")
+* [Send rank and reward when using multiple slots](#send-multi-slot-rank-and-reward "Send multi-slot rank and reward")
 
 ### Send rank and reward
 

@@ -113,7 +113,7 @@ class PersonalizerAdministrationClient:  # pylint: disable=too-many-public-metho
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        self._client.reset_model(**kwargs)
+        await self._client.reset_model(**kwargs)
 
     @distributed_trace_async
     async def get_model_properties(self, **kwargs: Any) -> JSON:
@@ -857,7 +857,7 @@ class PersonalizerClient:
         self._client = PersonalizerClientGenerated(
             endpoint=endpoint.rstrip("/"),
             credential=credential,  # type: ignore
-            authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential)),
+            authentication_policy=kwargs.pop("authentication_policy", _authentication_policy(credential, **kwargs)),
             **kwargs
         )
 

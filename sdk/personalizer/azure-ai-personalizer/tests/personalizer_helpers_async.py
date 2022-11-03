@@ -1,3 +1,7 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.personalizer.aio import PersonalizerClient, PersonalizerAdministrationClient
 import asyncio
@@ -26,13 +30,13 @@ async def enable_multi_slot(personalizer_endpoint, personalizer_api_key, is_live
         configuration["isAutoOptimizationEnabled"] = False
         await client.update_service_configuration(configuration)
         if is_live:
-            asyncio.sleep(30)
+            await asyncio.sleep(30)
 
     multi_slot_policy = {
         "name": "enable multi slot",
         "arguments": policy["arguments"].replace("--cb_explore_adf", "--ccb_explore_adf")
     }
 
-    await client.policy.update(multi_slot_policy)
+    await client.update_policy(multi_slot_policy)
     if is_live:
-        asyncio.sleep(30)
+        await asyncio.sleep(30)

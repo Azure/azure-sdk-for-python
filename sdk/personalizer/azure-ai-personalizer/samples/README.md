@@ -36,12 +36,16 @@ pip install azure-ai-personalizer
 Check out the [API reference documentation][python-personalizer-ref-docs] to learn more about
 what you can do with the Azure Personalizer client library.
 
-| File                                                                                              | Description                                                                |
-|---------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
-| rank_actions_and_reward_events.py / rank_actions_and_reward_events_async.py                       | demos sending rank and reward to personalizer in single-slot configuration |
-| multi_slot_rank_actions_and_reward_events.py / multi_slot_rank_actions_and_reward_events_async.py | demos sending rank and reward to personalizer in multi-slot configuration  |
+| File                                                                                                                                                    | Description                                                                |
+|---------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------|
+| [rank_actions_and_reward_events.py][rank_actions_and_reward_events] and [rank_actions_and_reward_events_async.py][rank_actions_and_reward_events_async] | demos sending rank and reward to personalizer in single-slot configuration |
+| [multi_slot_rank_actions_and_reward_events.py][multi_slot_rank_actions_and_reward_events] and [multi_slot_rank_actions_and_reward_events_async.py][multi_slot_rank_actions_and_reward_events_async]                                             | demos sending rank and reward to personalizer in multi-slot configuration  |
 
 <!-- LINKS -->
 [azure_subscription]: https://azure.microsoft.com/free/
 [personalizer]: https://azure.microsoft.com/products/cognitive-services/personalizer/
 [python-personalizer-ref-docs]: https://aka.ms/azsdk/python/personalizer/docs
+[rank_actions_and_reward_events]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/personalizer/azure-ai-personalizer/samples/rank_actions_and_reward_events.py
+[rank_actions_and_reward_events_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/personalizer/azure-ai-personalizer/samples/async_samples/rank_actions_and_reward_events_async.py
+[multi_slot_rank_actions_and_reward_events]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/personalizer/azure-ai-personalizer/samples/multi_slot_rank_actions_and_reward_events.py
+[multi_slot_rank_actions_and_reward_events_async]: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/personalizer/azure-ai-personalizer/samples/async_samples/multi_slot_rank_actions_and_reward_events_async.py
