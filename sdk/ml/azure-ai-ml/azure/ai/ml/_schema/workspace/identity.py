@@ -68,5 +68,10 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
             for uai in uai_list:
                 if not isinstance(uai, ManagedIdentityConfiguration):
                     continue
-                res[uai.resource_id] = uai._to_dict()
+                meta = {}
+                if uai.client_id:
+                    meta["client_id"] = uai.client_id
+                if uai.principal_id:
+                    meta["principal_id"] = uai.principal_id
+                res[uai.resource_id] = meta
         return res if res else None
