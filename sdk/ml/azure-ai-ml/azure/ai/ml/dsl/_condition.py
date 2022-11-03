@@ -6,12 +6,13 @@ from typing import Union
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.condition_node import ConditionNode
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
+from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 
 # pylint: disable=redefined-outer-name
 
 
 def condition(
-    condition: Union[str, bool, InputOutputBase],
+    condition: Union[str, bool, InputOutputBase, PipelineExpression],
     *,
     true_block: BaseNode = None,
     false_block: BaseNode = None,
@@ -37,7 +38,7 @@ def condition(
 
     :param condition: The condition of the execution flow.
         The value could be a boolean type control output or a pipeline expression.
-    :type condition: Union[str, bool, InputOutputBase]
+    :type condition: Union[str, bool, InputOutputBase, PipelineExpression]
     :param true_block: Block to be executed if condition resolved result is true.
     :type true_block: BaseNode
     :param false_block: Block to be executed if condition resolved result is false.
@@ -45,4 +46,7 @@ def condition(
     :return: The condition node.
     :rtype: ConditionNode
     """
+    # resolve expression as command component
+    if isinstance(condition, PipelineExpression):
+        condition = condition.resolve().outputs.output
     return ConditionNode(condition=condition, true_block=true_block, false_block=false_block, _from_component_func=True)
