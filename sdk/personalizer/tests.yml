@@ -5,6 +5,7 @@ stages:
     parameters:
       BuildTargetingString: azure-ai-personalizer
       ServiceDirectory: personalizer
+      Clouds: Canary
       MatrixReplace:
         - TestSamples=.*/true
       EnvVars:
