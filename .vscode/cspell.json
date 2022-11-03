@@ -26,6 +26,7 @@
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
+    "**/assets.json",
 
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
@@ -458,7 +459,9 @@
         "verfasst",
         "engelska",
         "fhir",
-        "FHIR"
+        "FHIR",
+        "naam",
+        "aenter"
       ]
     },
     {
@@ -682,7 +685,7 @@
       ]
     },
     {
-      "filename": "sdk/ml/tests.yml",
+      "filename": "sdk/ml/*tests.yml",
       "words": [
         "euap"
       ]
@@ -809,7 +812,8 @@
         "fnmatch",
         "posixpath",
         "SEPS",
-        "wargs"
+        "wargs",
+        "pycache"
       ]
     },
     {
@@ -1001,7 +1005,8 @@
         "mybytes",
         "myid",
         "jsonify",
-        "ints"
+        "ints",
+        "inirudebwoy"
       ]
     },
     {
@@ -1126,8 +1131,14 @@
         "Nify",
         "ctxt",
         "unflattened",
-	  "deseralize",
-	  "wday"
+	      "deseralize",
+	      "wday"
+      ]
+    },
+    {
+      "filename": "sdk/appconfiguration/test-resources.json",
+      "words": [
+        "azconfig"
       ]
     },
     {

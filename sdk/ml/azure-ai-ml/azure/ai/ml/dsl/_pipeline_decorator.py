@@ -24,7 +24,7 @@ from azure.ai.ml.exceptions import (
     UnexpectedKeywordError,
     UnsupportedParameterKindError,
     UserErrorException,
-    NonExistParamValueError,
+    ParamValueNotExistsError,
     UnExpectedNonPipelineParameterTypeError,
 )
 
@@ -149,7 +149,6 @@ def pipeline(
             version=version,
             display_name=display_name,
             description=description,
-            compute=compute,
             default_datastore=default_datastore,
             tags=tags,
             source_path=str(func_entry_path),
@@ -170,7 +169,10 @@ def pipeline(
                 non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
 
                 # TODO: cache built pipeline component
-                pipeline_component = pipeline_builder.build(non_pipeline_params_dict=non_pipeline_params_dict)
+                pipeline_component = pipeline_builder.build(
+                    user_provided_kwargs=kwargs,
+                    non_pipeline_params_dict=non_pipeline_params_dict
+                )
             finally:
                 # use `finally` to ensure pop operation from the stack
                 dsl_settings = _dsl_settings_stack.pop()
@@ -236,7 +238,7 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
     non_pipeline_inputs = non_pipeline_inputs or []
     unexpected_non_pipeline_inputs = [param for param in non_pipeline_inputs if param not in all_parameter_keys]
     if unexpected_non_pipeline_inputs:
-        raise NonExistParamValueError(func.__name__, unexpected_non_pipeline_inputs)
+        raise ParamValueNotExistsError(func.__name__, unexpected_non_pipeline_inputs)
 
     empty_parameters = {param.name: param for param in all_parameters if param.default is Parameter.empty}
     min_num = len(empty_parameters)

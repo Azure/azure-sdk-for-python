@@ -8,7 +8,7 @@ import tempfile
 from pathlib import Path
 from typing import Union
 
-from azure.ai.ml.entities._util import _general_copy
+from azure.ai.ml.entities._util import _copy_folder_ignore_pycache, _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 ADDITIONAL_INCLUDES_SUFFIX = "additional_includes"
@@ -68,7 +68,29 @@ class _AdditionalIncludes:
         if src.is_file():
             _general_copy(src, dst)
         else:
-            shutil.copytree(src, dst)
+            shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__"))
+
+    @staticmethod
+    def _is_folder_to_compress(path: Path) -> bool:
+        """Check if the additional include needs to compress corresponding folder as a zip.
+
+        For example, given additional include /mnt/c/hello.zip
+          1) if a file named /mnt/c/hello.zip already exists, return False (simply copy)
+          2) if a folder named /mnt/c/hello exists, return True (compress as a zip and copy)
+
+        :param path: Given path in additional include.
+        :type path: Path
+        :return: If the path need to be compressed as a zip file.
+        :rtype: bool
+        """
+        if path.suffix != ".zip":
+            return False
+        # if zip file exists, simply copy as other additional includes
+        if path.exists():
+            return False
+        # remove .zip suffix and check whether the folder exists
+        stem_path = path.parent / path.stem
+        return stem_path.is_dir()
 
     def _validate(self) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
@@ -84,7 +106,7 @@ class _AdditionalIncludes:
                 validation_result.append_error(message=error_msg)
                 continue
 
-            if not src_path.exists():
+            if not src_path.exists() and not self._is_folder_to_compress(src_path):
                 error_msg = f"Unable to find additional include {additional_include} for {self._yaml_name}."
                 validation_result.append_error(message=error_msg)
                 continue
@@ -133,6 +155,19 @@ class _AdditionalIncludes:
         base_path = self._additional_includes_file_path.parent
         for additional_include in self._includes:
             src_path = (base_path / additional_include).resolve()
+            if self._is_folder_to_compress(src_path):
+                # note: additional include is a zip file, we need to compress corresponding folder,
+                # create a temp folder and copy files to this, filter __pycache__ in the folder
+                # during the copy.
+                # this operation can be replaced by using zipfile.ZipFile, which
+                # allows us pick files to compress rather than copy -- may improve performance.
+                zip_additional_include = (base_path / additional_include).resolve()
+                folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
+                with tempfile.TemporaryDirectory() as tmp_dir:
+                    tmp_folder_to_zip = (Path(tmp_dir) / "zip").resolve()
+                    _copy_folder_ignore_pycache(folder_to_zip, tmp_folder_to_zip)
+                    src_path = (Path(tempfile.mkdtemp()) / zip_additional_include.name).resolve()
+                    shutil.make_archive(str(src_path.parent / src_path.stem), "zip", tmp_folder_to_zip)
             dst_path = (tmp_folder_path / src_path.name).resolve()
             self._copy(src_path, dst_path)
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder

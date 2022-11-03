@@ -99,6 +99,7 @@ class TestParallelComponentEntity:
             "error_threshold": None,
             "logging_level": None,
             "max_concurrency_per_instance": None,
+            "partition_keys": None,
             "mini_batch_error_threshold": None,
             "mini_batch_size": 10485760,
             "retry_settings": None,

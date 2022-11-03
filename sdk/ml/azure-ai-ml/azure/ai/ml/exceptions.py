@@ -571,7 +571,7 @@ class MultipleValueError(KeywordError):
         super().__init__(message=message, no_personal_data_message=message)
 
 
-class NonExistParamValueError(KeywordError):
+class ParamValueNotExistsError(KeywordError):
     """Exception raised when items in non_pipeline_inputs not in keyword parameters in
     dynamic functions."""
 
