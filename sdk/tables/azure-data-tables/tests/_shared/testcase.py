@@ -74,12 +74,12 @@ class TableTestCase(object):
             if endpoint_type == "table":
                 return account.primary_endpoints.table.rstrip("/")
             if endpoint_type == "cosmos":
-                return "https://{}.table.cosmos.azure.com".format(account.name)
+                return "https://{}.table.{}".format(account.name, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX"))
         except AttributeError:  # Didn't find "primary_endpoints"
             if endpoint_type == "table":
-                return "https://{}.{}.{}".format(account, endpoint_type, os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX"))
+                return "https://{}.table.{}".format(account, os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX"))
             if endpoint_type == "cosmos":
-                return "https://{}.table.cosmos.azure.com".format(account)
+                return "https://{}.table.{}".format(account, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX"))
 
     def generate_sas_token(self):
         fake_key = "a" * 30 + "b" * 30
