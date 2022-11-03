@@ -78,7 +78,13 @@ def update_snippet(file: str) -> None:
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("path", help="The path to your service folder")
+    parser.add_argument(
+        "path",
+        nargs="?",
+        help=(
+            "The targeted path for update."
+        ),
+    )
     args = parser.parse_args()
     path = sys.argv[1]
     _LOGGER.info(f"Path: {path}")

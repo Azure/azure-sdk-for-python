@@ -1,8 +1,7 @@
 import os
-import logging
 import sys
 import pytest
-from ci_tools.snippet_update.python_snippet_updater import get_snippet, update_snippet, check_snippets, check_not_up_to_date
+from python_snippet_updater import get_snippet, update_snippet, check_snippets, check_not_up_to_date
 
 
 def test_get_snippet():
@@ -15,9 +14,6 @@ def test_get_snippet():
     assert 'example_async.async_retry_policy' in snippets
 
 def test_update_snippet():
-    logger = logging.getLogger("azure")
-    handler = logging.StreamHandler(stream=sys.stdout)
-    logger.addHandler(handler)
     folder = os.path.dirname(os.path.abspath(__file__))
     file = os.path.join(folder, "example_async.py")
     get_snippet(file)
@@ -25,9 +21,6 @@ def test_update_snippet():
     update_snippet(file_1)
 
 def test_missing_snippet():
-    logger = logging.getLogger("azure")
-    handler = logging.StreamHandler(stream=sys.stdout)
-    logger.addHandler(handler)
     folder = os.path.dirname(os.path.abspath(__file__))
     file = os.path.join(folder, "example_async.py")
     get_snippet(file)
@@ -36,9 +29,6 @@ def test_missing_snippet():
         update_snippet(file_1)
 
 def test_out_of_sync():
-    logger = logging.getLogger("azure")
-    handler = logging.StreamHandler(stream=sys.stdout)
-    logger.addHandler(handler)
     folder = os.path.dirname(os.path.abspath(__file__))
     file = os.path.join(folder, "example_async.py")
     get_snippet(file)
