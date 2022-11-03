@@ -2256,10 +2256,7 @@ class TestDSLPipeline:
             },
         }
 
-        with mock.patch(
-            "azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled",
-            return_value=True
-        ):
+        with mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: 'false'}):
             with pytest.raises(UnsupportedParameterKindError,
                                match="dsl pipeline does not accept *args or **kwargs as parameters."):
                 root_pipeline(10, data, 11, data, component_in_number1=11, component_in_path1=data)
@@ -2271,7 +2268,7 @@ class TestDSLPipeline:
             pass
 
         with pytest.raises(MultipleValueError,
-                           match="pipeline_with_variable_args() got multiple values for argument 'args_0'."):
+                           match="pipeline_with_variable_args\(\) got multiple values for argument 'args_0'\."):
             pipeline_with_variable_args(10, 10, args_0=10, args_1=10)
 
         @dsl.pipeline
@@ -2279,5 +2276,5 @@ class TestDSLPipeline:
             pass
 
         with pytest.raises(MultipleValueError,
-                           match="pipeline_with_variable_args() got multiple values for argument 'args_0'."):
+                           match="pipeline_with_variable_args\(\) got multiple values for argument 'args_0'\."):
             pipeline_with_variable_args(10, 10, args_0=10, args_1=10)
