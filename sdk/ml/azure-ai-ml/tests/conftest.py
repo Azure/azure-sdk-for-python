@@ -10,6 +10,8 @@ from typing import Callable, Tuple, Union
 from unittest.mock import Mock
 
 import pytest
+from azure.core.pipeline.transport import HttpTransport
+
 from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
@@ -562,6 +564,29 @@ def bodiless_matching(test_proxy):
     set_bodiless_matcher()
 
 
+@pytest.fixture(autouse=True)
+def skip_sleep_for_playback():
+    """Mock time.sleep() for playback mode.
+    time.sleep() is usually used to wait for long-running operations to complete.
+    While in playback mode, we don't need wait as no actual remote operations are being performed.
+
+    Works on sync requests only for now. Need to mock asyncio.sleep and
+    trio.sleep if we want to apply this to async requests.
+
+    Please disable this fixture if you want to use time.sleep() for other reason.
+    """
+    if not is_live():
+        time.sleep = lambda *_: None
+
+
+def skip_sleep_in_lro_polling():
+    """A less aggressive version of skip_sleep_for_playback. Mock time.sleep() only for sync LRO polling.
+    You may use this fixture and utils.sleep_if_live() together when you disabled skip_sleep_for_playback.
+    """
+    if not is_live():
+        HttpTransport.sleep = lambda *_, **__: None
+
+
 def pytest_configure(config):
     # register customized pytest markers
     for marker, description in [
@@ -569,7 +594,12 @@ def pytest_configure(config):
         ("unittest", "marks tests as unit tests, which do not involve requests to the server"),
         ("pipeline_test", "marks tests as pipeline tests, which will create pipeline jobs during testing"),
         ("automl_test", "marks tests as automl tests, which will create automl jobs during testing"),
+        ("core_sdk_test", "marks tests as core sdk tests"),
         ("production_experience_test", "marks tests as production experience tests"),
+        ("training_experiences_test", "marks tests as training experience tests"),
+        ("data_experiences_test", "marks tests as data experience tests"),
+        ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
+        ("local_endpoint_byoc", "marks tests as local_endpoint_byoc"),
     ]:
         config.addinivalue_line("markers", f"{marker}: {description}")
 
