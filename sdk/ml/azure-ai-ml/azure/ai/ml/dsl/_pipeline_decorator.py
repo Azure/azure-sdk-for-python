@@ -171,7 +171,8 @@ def pipeline(
 
                 # When pipeline supports variable parameters, update pipeline component to support
                 # the inputs in *args and **kwargs.
-                pipeline_builder._update_inputs(kwargs)
+                pipeline_parameters = {k: v for k, v in kwargs.items() if k not in non_pipeline_inputs}
+                pipeline_builder._update_inputs(pipeline_parameters)
 
                 non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
 
@@ -245,7 +246,8 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
     if unexpected_non_pipeline_inputs:
         raise ParamValueNotExistsError(func.__name__, unexpected_non_pipeline_inputs)
 
-    named_parameters = [param for param in all_parameters if param.kind not in [param.VAR_KEYWORD, param.VAR_POSITIONAL]]
+    named_parameters = [
+        param for param in all_parameters if param.kind not in [param.VAR_KEYWORD, param.VAR_POSITIONAL]]
     empty_parameters = {param.name: param for param in named_parameters if param.default is Parameter.empty}
     # Implicit parameter are *args and **kwargs
     if not is_support_variable_params:
@@ -266,12 +268,12 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
             raise MultipleValueError(func.__name__, _k)
         provided_kwargs[_k] = kwargs[_k]
     variable_args = next(iter(param for param in all_parameters if param.kind == param.VAR_POSITIONAL), None)
-    variable_args_prefix =  variable_args.name if variable_args and len(func_args) else None
+    variable_args_prefix =  variable_args.name if variable_args and func_args else None
     for index, arg in enumerate(func_args):
         variable_args_name = f"{variable_args_prefix}_{index}"
         if variable_args_name in provided_kwargs.keys():
             raise MultipleValueError(func.__name__, variable_args_name)
-        provided_args[variable_args_name] = func_args[index]
+        provided_args[variable_args_name] = arg
 
     missing_keys = empty_parameters.keys() - provided_kwargs.keys()
     if len(missing_keys) > 0:

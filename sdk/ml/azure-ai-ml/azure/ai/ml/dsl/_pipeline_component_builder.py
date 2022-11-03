@@ -182,7 +182,10 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, *, user_provided_args=None, user_provided_kwargs=None, non_pipeline_params_dict=None) -> PipelineComponent:
+    def build(self, *,
+              user_provided_args=None,
+              user_provided_kwargs=None,
+              non_pipeline_params_dict=None) -> PipelineComponent:
         """
         Build a pipeline component from current pipeline builder.
 
@@ -429,7 +432,8 @@ def _build_pipeline_parameter(
     # transform kwargs
     transformed_args, transformed_kwargs = [], non_pipeline_parameter_dict or {}
     if args:
-        transformed_args = [_wrap_pipeline_parameter(key, default_value=val, actual_value=val) for key, val in args.items()]
+        transformed_args = [
+            _wrap_pipeline_parameter(key, default_value=val, actual_value=val) for key, val in args.items()]
     if kwargs:
         transformed_kwargs.update(
             {

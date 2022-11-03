@@ -2113,7 +2113,7 @@ class TestDSLPipeline:
             node_with_arg_kwarg = pipeline_with_variable_args(*args, **kwargs)
             node_with_custom_arg_kwarg = pipeline_with_custom_variable_args(*args, **kwargs)
 
-        pipeline = root_pipeline(10, data, 11, data, component_in_number1=11, component_in_path1=data)
+        pipeline = root_pipeline(10, data, 11, data, component_in_number1=12, component_in_path1=data)
 
         omit_fields = [
             "jobs.*.componentId",
@@ -2272,7 +2272,7 @@ class TestDSLPipeline:
 
         with pytest.raises(MultipleValueError,
                            match="pipeline_with_variable_args() got multiple values for argument 'args_0'."):
-            pipeline_with_variable_args(10, data, 11, data, args_0=11, args_1=data)
+            pipeline_with_variable_args(10, 10, args_0=10, args_1=10)
 
         @dsl.pipeline
         def pipeline_with_variable_args(args_0: int, *args):
@@ -2280,4 +2280,4 @@ class TestDSLPipeline:
 
         with pytest.raises(MultipleValueError,
                            match="pipeline_with_variable_args() got multiple values for argument 'args_0'."):
-            pipeline_with_variable_args(10, data, 11, data, args_0=11, args_1=data)
+            pipeline_with_variable_args(10, 10, args_0=10, args_1=10)
