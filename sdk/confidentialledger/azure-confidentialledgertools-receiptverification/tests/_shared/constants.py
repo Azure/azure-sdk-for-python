@@ -1,3 +1,8 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 from azure.confidentialledgertools.receiptverification.models import (
     LeafComponents,
     ProofElement,

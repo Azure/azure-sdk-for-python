@@ -1,3 +1,8 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 """Tests for models used for receipt verification."""
 
 import pytest
@@ -7,7 +12,7 @@ from azure.confidentialledgertools.receiptverification.models import (
     ProofElement,
     Receipt,
 )
-from tests.constants import (
+from _shared.constants import (
     get_test_valid_receipt_1,
     get_test_valid_receipt_1_dict,
     get_test_valid_receipt_2,

@@ -62,7 +62,9 @@ Azure Confidential Ledger write transaction receipts can be verfied by following
 
 In addition to the above, it is also required to verify that the signing node certificate is endorsed by the ledger certificate. As the ledger certificate may have been renewed since the transaction was committed, it is possible that the current service identity is different from the one that endorsed the signing node. If this applies, it is required to build a chain of certificates from the signing node certificate (the `cert` field in the receipt) up to a trusted root Certificate Authority (the current service identity certificate) through other previous service identities (the `service_endorsements` list field in the receipt). Certificate endorsement need to be verified for the entire chain and follows a similar signature verification process outlined in the previous point.
 
-Please refer to the [CCF documentation about receipt verification](https://microsoft.github.io/CCF/main/use_apps/verify_tx.html#receipt-verification) for more details about how the algorithm works. The following links could also be useful to better understand some topics related to receipt verification:
+Please refer to the [CCF documentation about receipt verification](https://microsoft.github.io/CCF/main/use_apps/verify_tx.html#receipt-verification) for more details about how the algorithm works. Please also see the docstrings under [models.py]<!--(TODO: add link once PR is merged)--> for detailed description of each field in an Azure Confidential Ledger receipt.
+
+The following CCF documentation links could also be useful to better understand some topics related to receipt verification:
 
 * [CCF Glossary](https://microsoft.github.io/CCF/main/overview/glossary.html)
 * [Merkle Tree](https://microsoft.github.io/CCF/main/architecture/merkle_tree.html)

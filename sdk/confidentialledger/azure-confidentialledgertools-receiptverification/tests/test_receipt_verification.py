@@ -1,3 +1,8 @@
+# ------------------------------------
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+# ------------------------------------
+
 """Tests for receipt verification."""
 
 from azure.confidentialledgertools.receiptverification.models import (
@@ -16,7 +21,7 @@ from azure.confidentialledgertools.receiptverification.exceptions import (
     RootNodeComputationException,
     RootSignatureVerificationException,
 )
-from tests.constants import (
+from _shared.constants import (
     get_test_valid_receipt_2,
     get_test_valid_service_certificate_2,
     get_test_valid_service_certificate_1,
