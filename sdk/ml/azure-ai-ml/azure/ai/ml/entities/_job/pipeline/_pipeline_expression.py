@@ -527,6 +527,8 @@ class PipelineExpression(PipelineExpressionMixin):
         return "\n".join(code) + "\n"
 
     def _create_component(self):
+        from azure.ai.ml.entities._job.pipeline._io import NodeOutput
+
         def _generate_python_file(_folder: Path) -> None:
             _folder.mkdir()
             with open(_folder / "expression_component.py", "w") as _f:
@@ -542,9 +544,13 @@ class PipelineExpression(PipelineExpressionMixin):
             _data["outputs"]["output"]["type"] = self._result_type
             _command_inputs_items = []
             for _name in sorted(self._inputs):
-                _type = self._inputs[_name].type
-                _data["inputs"][_name] = {"type": _type}
-                _command_inputs_items.append(f"{_name}=\"$AZUREML_PARAMETER_{_name}\"")
+                _input = self._inputs[_name]
+                _data["inputs"][_name] = {"type": _input.type}
+                if isinstance(_input.value, NodeOutput):
+                    _param_name = f"{_input.value._owner.component.name}_{_input.value._name}"
+                else:
+                    _param_name = _name
+                _command_inputs_items.append(f"{_name}=\"$AZUREML_PARAMETER_{_param_name}\"")
             _command_inputs_string = " ".join(_command_inputs_items)
             _data["command"] = _data["command"].format(inputs_placeholder=_command_inputs_string)
             dump_yaml_to_file(_path, _data)
