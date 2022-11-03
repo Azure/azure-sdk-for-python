@@ -10,6 +10,7 @@ from ._accounts_operations import AccountsOperations
 from ._consumer_invitations_operations import ConsumerInvitationsOperations
 from ._data_sets_operations import DataSetsOperations
 from ._data_set_mappings_operations import DataSetMappingsOperations
+from ._email_registrations_operations import EmailRegistrationsOperations
 from ._invitations_operations import InvitationsOperations
 from ._operations import Operations
 from ._shares_operations import SharesOperations
@@ -19,17 +20,24 @@ from ._consumer_source_data_sets_operations import ConsumerSourceDataSetsOperati
 from ._synchronization_settings_operations import SynchronizationSettingsOperations
 from ._triggers_operations import TriggersOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccountsOperations',
-    'ConsumerInvitationsOperations',
-    'DataSetsOperations',
-    'DataSetMappingsOperations',
-    'InvitationsOperations',
-    'Operations',
-    'SharesOperations',
-    'ProviderShareSubscriptionsOperations',
-    'ShareSubscriptionsOperations',
-    'ConsumerSourceDataSetsOperations',
-    'SynchronizationSettingsOperations',
-    'TriggersOperations',
+    "AccountsOperations",
+    "ConsumerInvitationsOperations",
+    "DataSetsOperations",
+    "DataSetMappingsOperations",
+    "EmailRegistrationsOperations",
+    "InvitationsOperations",
+    "Operations",
+    "SharesOperations",
+    "ProviderShareSubscriptionsOperations",
+    "ShareSubscriptionsOperations",
+    "ConsumerSourceDataSetsOperations",
+    "SynchronizationSettingsOperations",
+    "TriggersOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

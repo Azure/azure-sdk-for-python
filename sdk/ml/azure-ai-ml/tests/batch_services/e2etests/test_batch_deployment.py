@@ -1,4 +1,3 @@
-import time
 import uuid
 from contextlib import contextmanager
 from pathlib import Path
@@ -10,11 +9,11 @@ import pytest
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml.constants._common import AssetTypes
-from azure.ai.ml.entities import BatchDeployment, BatchEndpoint, Job
+from azure.ai.ml.entities import BatchDeployment, BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
-from azure.core.polling import LROPoller
+from azure.ai.ml.operations._run_history_constants import JobStatus
+
+from test_utilities.utils import wait_until_done
 
 
 @contextmanager
@@ -137,19 +136,6 @@ class TestBatchDeployment(AzureRecordedTestCase):
 
     @pytest.mark.e2etest
     def test_batch_job_download(self, client: MLClient, tmp_path: Path) -> str:
-        def wait_until_done(job: Job, timeout: int = None) -> None:
-            poll_start_time = time.time()
-            while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-                time.sleep(_wait_before_polling(time.time() - poll_start_time))
-                job = client.jobs.get(job.name)
-                if timeout is not None and time.time() - poll_start_time > timeout:
-                    # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
-                    cancel_poller = client.jobs.begin_cancel(job.name)
-                    assert isinstance(cancel_poller, LROPoller)
-                    assert cancel_poller.result() is None
-                    return JobStatus.CANCELED
-            return job.status
-
         endpoint = load_batch_endpoint(
             "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml",
             params_override=[{"name": "batch-ept-" + uuid.uuid4().hex[:15]}],
@@ -174,7 +160,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
             # Adding a timeout value of 5 minutes to avoid future scenarios where wait
             # long periods for the test to finish. Instead if the job takes longer
             # than 5 minutes to finish we will make the test fail
-            job_status = wait_until_done(batchjob, 300)
+            job_status = wait_until_done(job=batchjob, client=client, timeout=300)
 
             # Check if the job was canceled due to a timeout.
             # If the job's status is CANCELED, we will make the test fail
