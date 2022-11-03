@@ -1,3 +1,4 @@
+import sys
 from typing import Callable
 from unittest.mock import Mock
 
@@ -36,6 +37,10 @@ class TestComputeOperation:
         mock_compute_operation.list()
         mock_compute_operation._operation.list.assert_called_once()
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_create_compute_instance(
         self, mock_compute_operation: ComputeOperations, mocker: MockFixture
     ) -> None:
@@ -52,6 +57,10 @@ class TestComputeOperation:
         mock_compute_operation.begin_create_or_update(compute=compute)
         mock_compute_operation._operation.begin_create_or_update.assert_called_once()
 
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_create_aml_compute(
         self, mock_compute_operation: ComputeOperations, mocker: MockFixture
     ) -> None:

@@ -60,7 +60,7 @@ def _data_to_input(data):
 
 
 class InputOutputBase(ABC):
-    def __init__(self, meta: Union[Input, Output], data, **kwargs):
+    def __init__(self, meta: Union[Input, Output], data, default_data=None, **kwargs):
         """Base class of input & output.
 
         :param meta: Metadata of this input/output, eg: type, min, max, etc.
@@ -69,14 +69,20 @@ class InputOutputBase(ABC):
         :type data: Union[None, int, bool, float, str
                           azure.ai.ml.Input,
                           azure.ai.ml.Output]
+        :param default_data: default value of input/output, None means un-configured data.
+        :type default_data: Union[None, int, bool, float, str
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output]
         """
         self._meta = meta
+        self._original_data = data
         self._data = self._build_data(data)
-        self._type = meta.type if meta else kwargs.pop("type", None)
-        self._mode = self._data.mode if self._data and hasattr(self._data, "mode") else kwargs.pop("mode", None)
+        self._default_data = default_data
+        self._type = meta.type if meta is not None else kwargs.pop("type", None)
+        self._mode = self._get_mode(original_data=data, data=self._data, kwargs=kwargs)
         self._description = (
             self._data.description
-            if self._data and hasattr(self._data, "description") and self._data.description
+            if self._data is not None and hasattr(self._data, "description") and self._data.description
             else kwargs.pop("description", None)
         )
         # TODO: remove this
@@ -169,6 +175,29 @@ class InputOutputBase(ABC):
             return self._data_binding()
         except AttributeError:
             return super(InputOutputBase, self).__str__()
+
+    def __hash__(self):
+        return id(self)
+
+    @classmethod
+    def _get_mode(cls, original_data, data, kwargs):
+        """Get mode of this input/output builder.
+
+        :param original_data: Original value of input/output.
+        :type original_data: Union[None, int, bool, float, str
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output,
+                          azure.ai.ml.entities._job.pipeline._io.PipelineInput]
+        :param data: Built input/output data.
+        :type data: Union[None, int, bool, float, str
+                          azure.ai.ml.Input,
+                          azure.ai.ml.Output]
+
+        """
+        # pipeline level inputs won't pass mode to bound node level inputs
+        if isinstance(original_data, PipelineInput):
+            return None
+        return data.mode if data is not None and hasattr(data, "mode") else kwargs.pop("mode", None)
 
 
 class NodeInput(InputOutputBase):
@@ -342,7 +371,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         super().__init__(meta=meta, data=data, **kwargs)
         self._name = name
         self._owner = owner
-        self._is_control = meta.is_control if meta else None
+        self._is_control = meta.is_control if meta is not None else None
 
     @property
     def is_control(self) -> str:
@@ -380,7 +409,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
         elif isinstance(self._data, Output):
             result = self._data
         elif isinstance(self._data, PipelineOutput):
-            is_control = self._meta.is_control if self._meta else None
+            is_control = self._meta.is_control if self._meta is not None else None
             result = Output(path=self._data._data_binding(), mode=self.mode, is_control=is_control)
         else:
             msg = "Got unexpected type for output: {}."
@@ -410,9 +439,6 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             meta=self._meta,
         )
 
-    def __hash__(self):
-        return id(self)
-
 
 class PipelineInput(NodeInput, PipelineExpressionMixin):
     """Define one input of a Pipeline."""
@@ -430,6 +456,22 @@ class PipelineInput(NodeInput, PipelineExpressionMixin):
         """
         super(PipelineInput, self).__init__(name=name, meta=meta, **kwargs)
         self._group_names = group_names if group_names else []
+
+    def result(self):
+        """Return original value of pipeline input."""
+        # example:
+        #
+        # @pipeline
+        # def pipeline_func(param1):
+        #   node1 = component_func(param1=param1.result())
+        #   # node1's param1 will get actual value of param1 instead of a input binding.
+        # use this to break self loop
+        original_data_cache = set()
+        original_data = self._original_data
+        while isinstance(original_data, PipelineInput) and original_data not in original_data_cache:
+            original_data_cache.add(original_data)
+            original_data = original_data._original_data
+        return original_data
 
     def __str__(self) -> str:
         return self._data_binding()

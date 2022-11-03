@@ -4,7 +4,8 @@
 
 import os
 import re
-from typing import Any, Dict, Union
+import json
+from typing import Any, Dict, Union, List
 
 from marshmallow import Schema
 
@@ -16,9 +17,10 @@ from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.parameterized_parallel import ParameterizedParallel
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 
 from ..._schema import PathAwareSchema
-from .._util import convert_ordered_dict_to_dict, validate_attribute_type
+from .._util import validate_attribute_type
 from .component import Component
 
 
@@ -53,6 +55,12 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.) This value could be set
         through PipelineParameter.
     :type mini_batch_size: str
+    :param partition_keys:  The keys used to partition dataset into mini-batches.
+        If specified, the data with the same key will be partitioned into the same mini-batch.
+        If both partition_keys and mini_batch_size are specified, partition_keys will take effect.
+        The input(s) must be partitioned dataset(s),
+        and the partition_keys must be a subset of the keys of every input dataset for this to work.
+    :type partition_keys: list
     :param input_data: The input data.
     :type input_data: str
     :param resources: Compute Resource configuration for the component.
@@ -86,6 +94,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         mini_batch_error_threshold: int = None,
         task: ParallelTask = None,
         mini_batch_size: str = None,
+        partition_keys: List = None,
         input_data: str = None,
         resources: JobResourceConfiguration = None,
         inputs: Dict = None,
@@ -116,6 +125,7 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
         # and fill in later with job defaults.
         self.task = task
         self.mini_batch_size = mini_batch_size
+        self.partition_keys = partition_keys
         self.input_data = input_data
         self.retry_settings = retry_settings
         self.logging_level = logging_level
@@ -225,9 +235,22 @@ class ParallelComponent(Component, ParameterizedParallel):  # pylint: disable=to
             "resources": (dict, JobResourceConfiguration),
         }
 
-    def _to_dict(self) -> Dict:
-        """Dump the parallel component content into a dictionary."""
-        return convert_ordered_dict_to_dict({**self._other_parameter, **super(ParallelComponent, self)._to_dict()})
+    def _to_rest_object(self) -> ComponentVersionData:
+        rest_object = super()._to_rest_object()
+        # schema required list while backend accept json string
+        if self.partition_keys:
+            rest_object.properties.component_spec["partition_keys"] = \
+                json.dumps(self.partition_keys)
+        return rest_object
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+        # schema required list while backend accept json string
+        # update rest obj as it will be
+        partition_keys = obj.properties.component_spec.get("partition_keys", None)
+        if partition_keys:
+            obj.properties.component_spec["partition_keys"] = json.loads(partition_keys)
+        return super()._from_rest_object_to_init_params(obj)
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:

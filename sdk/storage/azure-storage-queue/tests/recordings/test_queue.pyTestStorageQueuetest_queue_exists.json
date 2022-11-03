@@ -1,0 +1,57 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncf75b24cf",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:43 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Thu, 27 Oct 2022 22:04:43 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.queue.core.windows.net/pyqueuesyncf75b24cf?comp=metadata",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-storage-queue/12.5.1 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
+        "x-ms-date": "Thu, 27 Oct 2022 22:04:43 GMT",
+        "x-ms-version": "2021-02-12"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-cache",
+        "Content-Length": "0",
+        "Date": "Thu, 27 Oct 2022 22:04:43 GMT",
+        "Server": [
+          "Windows-Azure-Queue/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Vary": "Origin",
+        "x-ms-approximate-messages-count": "0",
+        "x-ms-version": "2021-02-12"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

@@ -1133,6 +1133,7 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": None,
                         "retry_settings": None,
                         "logging_level": None,
                         "max_concurrency_per_instance": 1,
@@ -1240,6 +1241,7 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": None,
                         "task": {
                             "type": "run_function",
                             "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
@@ -1274,6 +1276,7 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": None,
                         "task": {
                             "type": "run_function",
                             "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
@@ -1405,6 +1408,7 @@ class TestDSLPipelineWithSpecificNodes:
                 "tags": {},
             }
         }
+
     def test_multi_parallel_components_with_file_input_pipeline_output(self) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
@@ -1466,6 +1470,7 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                     "outputs": {},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "code": "./src",
@@ -1517,6 +1522,7 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                     "outputs": {"job_output_path": {"value": "${{parent.outputs.job_out_data}}", "type": "literal"}},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "code": "./src",
@@ -1835,7 +1841,17 @@ class TestDSLPipelineWithSpecificNodes:
 
     def test_pipeline_with_command_services(self):
         services = {
-            "my_jupyter": {"job_service_type": "Jupyter"},
+            "my_ssh": {"job_service_type": "ssh"},
+            "my_tensorboard": {
+                "job_service_type": "tensor_board",
+                "properties": {
+                    "logDir": "~/tblog",
+                },
+            },
+            "my_jupyterlab": {"job_service_type": "jupyter_lab"},
+        }
+        rest_services = {
+            "my_ssh": {"job_service_type": "SSH"},
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
                 "properties": {
@@ -1874,7 +1890,7 @@ class TestDSLPipelineWithSpecificNodes:
             assert isinstance(service, JobService)
 
         job_rest_obj = pipeline._to_rest_object()
-        assert job_rest_obj.properties.jobs["node"]["services"] == services
+        assert job_rest_obj.properties.jobs["node"]["services"] == rest_services
 
         recovered_obj = PipelineJob._from_rest_object(job_rest_obj)
         node_services = recovered_obj.jobs["node"].services
@@ -1884,7 +1900,8 @@ class TestDSLPipelineWithSpecificNodes:
             assert isinstance(service, JobService)
 
         # test set services in pipeline
-        new_services = {"my_jupyter": {"job_service_type": "Jupyter"}}
+        new_services = {"my_jupyter": {"job_service_type": "jupyter_lab"}}
+        rest_new_services = {"my_jupyter": {"job_service_type": "JupyterLab"}}
 
         @dsl.pipeline()
         def sample_pipeline_with_new_services():
@@ -1899,7 +1916,7 @@ class TestDSLPipelineWithSpecificNodes:
             assert isinstance(service, JobService)
 
         job_rest_obj = pipeline._to_rest_object()
-        assert job_rest_obj.properties.jobs["node"]["services"] == new_services
+        assert job_rest_obj.properties.jobs["node"]["services"] == rest_new_services
 
     def test_pipeline_with_pipeline_component_entity(self):
         path = "./tests/test_configs/components/helloworld_component.yml"

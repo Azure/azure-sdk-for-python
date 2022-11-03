@@ -219,7 +219,7 @@ class TestPipelineJobSchema:
         # Check that all inputs are present and are of type Input
         for input_name in yaml_obj["inputs"].keys():
             job_obj_input = job.inputs.get(input_name, None)
-            assert job_obj_input
+            assert job_obj_input is not None
             assert isinstance(job_obj_input, PipelineInput)
             assert isinstance(job_obj_input._data, Input)
 
@@ -253,7 +253,7 @@ class TestPipelineJobSchema:
         from_rest_job = PipelineJob._from_rest_object(rest_job)
         for input_name, input_value in rest_job.properties.inputs.items():
             from_rest_input = from_rest_job.inputs[input_name]
-            assert from_rest_input
+            assert from_rest_input is not None
             assert isinstance(from_rest_input, PipelineInput)
             assert isinstance(from_rest_input._data, Input)
 
@@ -273,7 +273,7 @@ class TestPipelineJobSchema:
         # Check that all inputs are present and are of type InputOutputEntry
         for input_name in yaml_obj["inputs"].keys():
             job_obj_input = job.inputs.get(input_name, None)
-            assert job_obj_input
+            assert job_obj_input is not None
             assert isinstance(job_obj_input, PipelineInput)
             assert isinstance(job_obj_input._data, Input) or isinstance(job_obj_input._data, Input)
 
@@ -287,7 +287,7 @@ class TestPipelineJobSchema:
         rest_job = job._to_rest_object()
         for input_name, input_value in yaml_obj["inputs"].items():
             rest_input = rest_job.properties.inputs.get(input_name, None)
-            assert rest_input
+            assert rest_input is not None
             # Test that the dataset fields get populated
             assert rest_input.uri == job.inputs[input_name]._data.path
             # Test that mode was properly serialized
@@ -302,7 +302,7 @@ class TestPipelineJobSchema:
         from_rest_job = PipelineJob._from_rest_object(rest_job)
         for input_name, input_value in rest_job.properties.inputs.items():
             from_rest_input = from_rest_job.inputs[input_name]
-            assert from_rest_input
+            assert from_rest_input is not None
             assert isinstance(from_rest_input, PipelineInput)
             from_rest_input = from_rest_input._to_job_input()
 
@@ -854,7 +854,7 @@ class TestPipelineJobSchema:
         # Check that all inputs are present and are of type Input or are literals
         for index, input_name in enumerate(yaml_obj["inputs"].keys()):
             job_obj_input = job.inputs.get(input_name, None)
-            assert job_obj_input
+            assert job_obj_input is not None
             assert isinstance(job_obj_input, PipelineInput)
             job_obj_input = job_obj_input._to_job_input()
             if index == 0:
@@ -1048,7 +1048,7 @@ class TestPipelineJobSchema:
         # Check that all inputs are present and are of type Input or are literals
         for name in yaml_obj["inputs"].keys():
             job_obj_input_output = job.inputs.get(name, None)
-            assert job_obj_input_output
+            assert job_obj_input_output is not None
             assert isinstance(job_obj_input_output, PipelineInput)
             job_input_output = job_obj_input_output._to_job_input()
             if name.endswith("literal_input"):
@@ -1059,7 +1059,7 @@ class TestPipelineJobSchema:
         # Check that all outputs are present and are of type Input or are literals
         for name in yaml_obj["outputs"].keys():
             job_obj_input_output = job.outputs.get(name, None)
-            assert job_obj_input_output
+            assert job_obj_input_output is not None
             assert isinstance(job_obj_input_output, PipelineOutput)
             job_input_output = job_obj_input_output._to_job_output()
             if name.endswith("literal_input"):
@@ -1686,8 +1686,8 @@ class TestPipelineJobSchema:
         rest_services = job_rest_obj.properties.jobs["hello_world_component_inline"]["services"]
         # rest object of node in pipeline should be pure dict
         assert rest_services == {
-            "my_jupyter": {
-                "job_service_type": "Jupyter",
+            "my_ssh": {
+                "job_service_type": "SSH",
             },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",
@@ -1710,8 +1710,8 @@ class TestPipelineJobSchema:
 
         # rest object of node in pipeline should be pure dict
         assert job_rest_obj.properties.jobs["hello_world_component_inline"]["services"] == {
-            "my_jupyter": {
-                "job_service_type": "Jupyter",
+            "my_ssh": {
+                "job_service_type": "SSH",
             },
             "my_tensorboard": {
                 "job_service_type": "TensorBoard",

@@ -1,3 +1,4 @@
+import sys
 from pathlib import Path
 from typing import Callable, Union
 
@@ -22,6 +23,10 @@ components_dir = tests_root_dir / "test_configs/components/"
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestComponentFunc:
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_generate_component_function(self) -> None:
         component_func = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component = component_func()

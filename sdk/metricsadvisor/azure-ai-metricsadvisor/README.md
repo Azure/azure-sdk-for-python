@@ -524,7 +524,7 @@ additional questions or comments.
 <!-- LINKS -->
 [src_code]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/metricsadvisor/azure-ai-metricsadvisor
 [reference_documentation]: https://aka.ms/azsdk/python/metricsadvisor/docs
-[ma_docs]: https://docs.microsoft.com/azure/cognitive-services/metrics-advisor/overview
+[ma_docs]: https://learn.microsoft.com/azure/applied-ai-services/metrics-advisor/overview
 [azure_cli]: https://docs.microsoft.com/cli/azure
 [azure_sub]: https://azure.microsoft.com/free/
 [package]: https://aka.ms/azsdk/python/metricsadvisor/pypi

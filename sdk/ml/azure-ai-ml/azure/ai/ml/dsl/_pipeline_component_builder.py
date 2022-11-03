@@ -142,7 +142,6 @@ class PipelineComponentBuilder:
         version=None,
         display_name=None,
         description=None,
-        compute=None,
         default_datastore=None,
         tags=None,
         source_path=None,
@@ -165,7 +164,6 @@ class PipelineComponentBuilder:
         self.version = version
         self.display_name = display_name
         self.description = description
-        self.compute = compute
         self.default_datastore = default_datastore
         self.tags = tags
         self.source_path = source_path
@@ -184,13 +182,25 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, args=None, kwargs=None, non_pipeline_params_dict=None) -> PipelineComponent:
+    def build(self, *, args=None, kwargs=None, non_pipeline_params_dict=None) -> PipelineComponent:
+        """
+        Build a pipeline component from current pipeline builder.
+
+        :param args: The args user provided to dsl pipeline function. None if not provided.
+        :param kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
+        :param non_pipeline_params_dict: Non-pipeline parameters to provided value. None if not exist.
+        """
+        args = args or []
+        kwargs = kwargs or {}
         # Clear nodes as we may call build multiple times.
         self.nodes = []
-        kwargs = kwargs or {}
         pipeline_kwargs = {**kwargs, **self._get_group_parameter_defaults()}
-        pipeline_args, pipeline_kwargs = _build_pipeline_parameter(self.func, args, pipeline_kwargs,
-                                                                   non_pipeline_params_dict)
+        pipeline_args, pipeline_kwargs = _build_pipeline_parameter(
+            func=self.func,
+            args=args,
+            # TODO: support result() for pipeline input inside parameter group
+            kwargs=pipeline_kwargs,
+            non_pipeline_parameter_dict=non_pipeline_params_dict)
         # We use this stack to store the dsl pipeline definition hierarchy
         _definition_builder_stack.push(self)
 
@@ -250,7 +260,13 @@ class PipelineComponentBuilder:
         for key, value in outputs.items():
             if not isinstance(key, str) or not isinstance(value, NodeOutput) or value._owner is None:
                 raise UserErrorException(message=error_msg, no_personal_data_message=error_msg)
-            meta = value._meta or value
+            if value._meta is not None:
+                meta = value._meta
+            else:
+                meta = Output(
+                    type=value.type, path=value.path, mode=value.mode,
+                    description=value.description, is_control=value.is_control
+                )
 
             # hack: map component output type to valid pipeline output type
             def _map_type(_meta):
@@ -398,7 +414,8 @@ class PipelineComponentBuilder:
                 self.inputs[input_name] = anno
 
 
-def _build_pipeline_parameter(func, args=None, kwargs=None, non_pipeline_parameter_dict=None):
+def _build_pipeline_parameter(
+        func, *, args=None, kwargs=None, non_pipeline_parameter_dict=None):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
     # @parameter_group
@@ -416,7 +433,9 @@ def _build_pipeline_parameter(func, args=None, kwargs=None, non_pipeline_paramet
     if kwargs:
         transformed_kwargs.update(
             {
-                key: _wrap_pipeline_parameter(key, value) for key, value in kwargs.items()
+                key: _wrap_pipeline_parameter(
+                    key, default_value=value, actual_value=value
+                ) for key, value in group_default_kwargs.items()
                 if key not in non_pipeline_parameter_dict
             }
         )
@@ -436,19 +455,25 @@ def _build_pipeline_parameter(func, args=None, kwargs=None, non_pipeline_paramet
             if arg.name in transformed_kwargs:
                 position_args.append(transformed_kwargs.pop(arg.name))
             else:
-                default = arg.default if arg.default is not Parameter.empty else None
-                position_args.append(_wrap_pipeline_parameter(arg.name, default))
+                default_value = arg.default if arg.default is not Parameter.empty else None
+                actual_value = kwargs.get(arg.name)
+                transformed_kwargs[arg.name] = _wrap_pipeline_parameter(
+                    key=arg.name, default_value=default_value, actual_value=actual_value
+                )
     position_args.extend(transformed_args)
     return position_args, transformed_kwargs
 
 
-def _wrap_pipeline_parameter(key, value, group_names=None):
+def _wrap_pipeline_parameter(key, default_value, actual_value, group_names=None):
     # Append parameter path in group
     group_names = [*group_names] if group_names else []
-    if isinstance(value, _GroupAttrDict):
+    if isinstance(default_value, _GroupAttrDict):
         group_names.append(key)
-        return _GroupAttrDict({k: _wrap_pipeline_parameter(k, v, group_names=group_names) for k, v in value.items()})
-    # Note: here we build PipelineInput to mark this input as a data binding.
-    if isinstance(value, PipelineInput):
-        value = value._data
-    return PipelineInput(name=key, meta=None, data=value, group_names=group_names)
+        return _GroupAttrDict({
+            k: _wrap_pipeline_parameter(
+                k, default_value=v, actual_value=v, group_names=group_names
+            ) for k, v in default_value.items()
+        })
+    # Note: this PipelineInput object is built to mark input as a data binding.
+    # It only exists in dsl.pipeline function execution time and won't store in pipeline job or pipeline component.
+    return PipelineInput(name=key, meta=None, default_data=default_value, data=actual_value, group_names=group_names)
