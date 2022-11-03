@@ -205,6 +205,25 @@ def randstr(variable_recorder: VariableRecorder) -> Callable[[str], str]:
 
     return generate_random_string
 
+@pytest.fixture
+def rand_batch_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random batch endpoint name string  e.g. batch-ept-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"batch-ept-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
+
+@pytest.fixture
+def rand_batch_deployment_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random batch deployment name string  e.g. batch-dpm-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"batch-dpm-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
 
 @pytest.fixture
 def rand_compute_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:

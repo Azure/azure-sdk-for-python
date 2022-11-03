@@ -1,11 +1,10 @@
-import uuid
+from typing import Callable
 
 import pytest
 
 from azure.ai.ml import MLClient, load_batch_endpoint, load_batch_deployment
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.core.exceptions import ResourceNotFoundError
-from devtools_testutils.proxy_fixtures import VariableRecorder
 
 from devtools_testutils import AzureRecordedTestCase
 
@@ -15,10 +14,10 @@ from devtools_testutils import AzureRecordedTestCase
 @pytest.mark.production_experience_test
 class TestBatchEndpoint(AzureRecordedTestCase):
     def test_batch_endpoint_create(
-        self, client: MLClient, variable_recorder: VariableRecorder
+        self, client: MLClient, rand_batch_name: Callable[[], str]
     ) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint.yaml"
-        name = variable_recorder.get_or_record("name", "be-e2e-" + uuid.uuid4().hex[:25])
+        name = rand_batch_name("name")
         # Bug in MFE that batch endpoint properties are not preserved, uncomment below after it's fixed in MFE
         # properties = {"property1": "value1", "property2": "value2"}
         endpoint = load_batch_endpoint(endpoint_yaml)
@@ -45,11 +44,11 @@ class TestBatchEndpoint(AzureRecordedTestCase):
 
 
     @pytest.mark.usefixtures("light_gbm_model")
-    def test_mlflow_batch_endpoint_create_and_update(self, client: MLClient, variable_recorder: VariableRecorder) -> None:
+    def test_mlflow_batch_endpoint_create_and_update(self, client: MLClient, rand_batch_name: Callable[[], str]) -> None:
         # light_gbm_model fixture is not used directly, but it makes sure the model being used by the batch endpoint exists
 
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow.yaml"
-        name = variable_recorder.get_or_record("name", "be-e2e-" + uuid.uuid4().hex[:25])
+        name = rand_batch_name("name")
         endpoint = load_batch_endpoint(endpoint_yaml)
         endpoint.name = name
         obj = client.batch_endpoints.begin_create_or_update(endpoint=endpoint)
@@ -71,14 +70,14 @@ class TestBatchEndpoint(AzureRecordedTestCase):
         raise Exception(f"Batch endpoint {name} is supposed to be deleted.")
 
 
-    def test_batch_invoke(self, client: MLClient, variable_recorder) -> None:
+    def test_batch_invoke(self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"
-        endpoint_name = variable_recorder.get_or_record("endpoint_name", "be-e2e-" + uuid.uuid4().hex[:15])
+        endpoint_name = rand_batch_name("endpoint_name")
         endpoint = load_batch_endpoint(endpoint_yaml)
         endpoint.name = endpoint_name
 
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_3.yaml"
-        deployment_name = variable_recorder.get_or_record("deployment_name", "batch-dpm-" + uuid.uuid4().hex[:15])
+        deployment_name = rand_batch_deployment_name("deployment_name")
 
         deployment = load_batch_deployment(deployment_yaml)
         deployment.endpoint_name = endpoint_name

@@ -4,7 +4,6 @@ from pathlib import Path
 from typing import Callable
 
 from devtools_testutils import AzureRecordedTestCase
-from devtools_testutils.proxy_fixtures import VariableRecorder
 import pytest
 
 from azure.ai.ml import MLClient, load_batch_deployment, load_batch_endpoint, load_environment, load_model
@@ -75,11 +74,11 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
-    def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str], variable_recorder: VariableRecorder) -> None:
+    def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str], rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
-        name = variable_recorder.get_or_record("name", "batch-ept-" + uuid.uuid4().hex[:15])
+        name = rand_batch_name("name")
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_mlflow_new.yaml"
-        deployment_name = variable_recorder.get_or_record("deployment_name", "batch-dpm-" + uuid.uuid4().hex[:15])
+        deployment_name = rand_batch_deployment_name("deployment_name")
 
         environment_name = randstr("environment_name")
         environment_versions = ["foo", "bar"]
@@ -132,13 +131,13 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
-    def test_batch_job_download(self, client: MLClient, tmp_path: Path, variable_recorder: VariableRecorder) -> str:
-        endpoint_name = variable_recorder.get_or_record("name", "batch-ept-" + uuid.uuid4().hex[:15])
+    def test_batch_job_download(self, client: MLClient, tmp_path: Path, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> str:
+        endpoint_name = rand_batch_name("name")
         endpoint = load_batch_endpoint(
             "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml",
             params_override=[{"name": endpoint_name}],
         )
-        deployment_name = variable_recorder.get_or_record("deployment_name", "batch-dpm-" + uuid.uuid4().hex[:15])
+        deployment_name = rand_batch_deployment_name("deployment_name")
         deployment = load_batch_deployment(
             "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml",
             params_override=[{"endpoint_name": endpoint.name}, {"name": deployment_name}],
