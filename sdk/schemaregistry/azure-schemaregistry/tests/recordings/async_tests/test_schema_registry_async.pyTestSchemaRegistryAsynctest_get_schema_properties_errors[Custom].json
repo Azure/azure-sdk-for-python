@@ -1,0 +1,32 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_resource_custom.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema:get-id?api-version=2022-10",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "Content-Type": "text/plain; charset=utf-8",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 415,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Thu, 03 Nov 2022 19:58:25 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidSchemaType"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidSchemaType",
+          "message": "Invalid schema type for POST request. \u0027\u0027 is not supported. TrackingId:4c28806d-329e-4931-88e7-8e18d426ef84_G16, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema:get-id, Timestamp:2022-11-03T19:58:26"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

@@ -1,0 +1,32 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_resource_custom.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-twice-async-custom68d43e32?api-version=2022-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "28",
+        "Content-Type": "text/plain; charset=utf-8",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "My favorite color is yellow.",
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Thu, 03 Nov 2022 19:58:14 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Missing required header for PUT request. Schema/serialization type must be provided. TrackingId:d0428892-7d3a-4eb8-86a4-fd4b670bd3ae_G16, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-twice-async-custom68d43e32, Timestamp:2022-11-03T19:58:15"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}

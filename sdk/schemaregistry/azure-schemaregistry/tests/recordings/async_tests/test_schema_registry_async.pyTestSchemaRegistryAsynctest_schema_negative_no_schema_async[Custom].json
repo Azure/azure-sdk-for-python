@@ -1,0 +1,55 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_resource_custom.servicebus.windows.net/$schemaGroups/$schemas/a?api-version=2022-10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Thu, 03 Nov 2022 19:58:21 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:3d61f4a0-c53b-49f2-b613-8b363fd3dcb3_G16, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-11-03T19:58:22"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource_custom.servicebus.windows.net/$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?api-version=2022-10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Thu, 03 Nov 2022 19:58:22 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "ItemNotFound"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "ItemNotFound",
+          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:800a5eca-faa6-4610-8890-6514c987f2ca_G16, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-11-03T19:58:23"
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
