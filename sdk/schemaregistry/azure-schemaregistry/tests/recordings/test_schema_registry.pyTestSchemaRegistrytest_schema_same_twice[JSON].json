@@ -17,15 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 31 Oct 2022 20:17:35 GMT",
+        "Date": "Thu, 03 Nov 2022 19:38:02 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Aqqv3jvDPNNMlgaVc4-yN1EawS9yAgAAAFck8toOAAAA; expires=Wed, 30-Nov-2022 20:17:35 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AsOyVkFRhLJJguLcRC14PI87zqiUBQAAAIoP9toOAAAA; expires=Sat, 03-Dec-2022 19:38:03 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
+        "x-ms-ests-server": "2.1.14059.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -103,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Aqqv3jvDPNNMlgaVc4-yN1EawS9yAgAAAFck8toOAAAA; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=AsOyVkFRhLJJguLcRC14PI87zqiUBQAAAIoP9toOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -114,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 31 Oct 2022 20:17:35 GMT",
+        "Date": "Thu, 03 Nov 2022 19:38:02 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Aqqv3jvDPNNMlgaVc4-yN1EawS9yAgAAAFck8toOAAAA; expires=Wed, 30-Nov-2022 20:17:35 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AsOyVkFRhLJJguLcRC14PI87zqiUBQAAAIoP9toOAAAA; expires=Sat, 03-Dec-2022 19:38:03 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -173,7 +173,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema-twice-json7629317a?api-version=2022-10",
+      "RequestUri": "https://fake_resource_json.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-twice-json7629317a?api-version=2022-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -207,21 +207,21 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 31 Oct 2022 20:17:36 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupjson/schemas/test-schema-twice-json7629317a/versions/1?api-version=2022-10",
-        "Schema-Group-Name": "fakegroupjson",
-        "Schema-Id": "69d8fbb678a54fb09cdb570b989c3471",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/69d8fbb678a54fb09cdb570b989c3471?api-version=2022-10",
+        "Date": "Thu, 03 Nov 2022 19:38:04 GMT",
+        "Location": "https://fake_resource_json.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice-json7629317a/versions/1?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "024bef8a90f4462c9c62c3142b8d5396",
+        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/024bef8a90f4462c9c62c3142b8d5396?api-version=2022-10",
         "Schema-Name": "test-schema-twice-json7629317a",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-json7629317a/versions?api-version=2022-10",
+        "Schema-Versions-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice-json7629317a/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupjson/schemas/test-schema-twice-json7629317a?api-version=2022-10",
+      "RequestUri": "https://fake_resource_json.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-twice-json7629317a?api-version=2022-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -255,14 +255,14 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 31 Oct 2022 20:17:36 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupjson/schemas/test-schema-twice-json7629317a/versions/1?api-version=2022-10",
-        "Schema-Group-Name": "fakegroupjson",
-        "Schema-Id": "69d8fbb678a54fb09cdb570b989c3471",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/69d8fbb678a54fb09cdb570b989c3471?api-version=2022-10",
+        "Date": "Thu, 03 Nov 2022 19:38:04 GMT",
+        "Location": "https://fake_resource_json.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice-json7629317a/versions/1?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "024bef8a90f4462c9c62c3142b8d5396",
+        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/024bef8a90f4462c9c62c3142b8d5396?api-version=2022-10",
         "Schema-Name": "test-schema-twice-json7629317a",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupjson/schemas/test-schema-twice-json7629317a/versions?api-version=2022-10",
+        "Schema-Versions-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice-json7629317a/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },

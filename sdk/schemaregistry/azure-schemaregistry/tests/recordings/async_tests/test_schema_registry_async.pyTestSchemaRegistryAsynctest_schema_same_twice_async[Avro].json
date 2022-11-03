@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupavro/schemas/test-schema-twice-async-avroea7e3d4f?api-version=2022-10",
+      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-twice-async-avroea7e3d4f?api-version=2022-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -38,21 +38,21 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 31 Oct 2022 20:15:29 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-twice-async-avroea7e3d4f/versions/1?api-version=2022-10",
-        "Schema-Group-Name": "fakegroupavro",
-        "Schema-Id": "83fcbf11cb8a4f9393e7c6554e44cbf9",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/83fcbf11cb8a4f9393e7c6554e44cbf9?api-version=2022-10",
+        "Date": "Thu, 03 Nov 2022 19:38:47 GMT",
+        "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice-async-avroea7e3d4f/versions/1?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "d73d7fbd859a429e8422ba29bf628c33",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/d73d7fbd859a429e8422ba29bf628c33?api-version=2022-10",
         "Schema-Name": "test-schema-twice-async-avroea7e3d4f",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupavro/schemas/test-schema-twice-async-avroea7e3d4f/versions?api-version=2022-10",
+        "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice-async-avroea7e3d4f/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupavro/schemas/test-schema-twice-async-avroea7e3d4f?api-version=2022-10",
+      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-twice-async-avroea7e3d4f?api-version=2022-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -89,14 +89,14 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 31 Oct 2022 20:15:30 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-twice-async-avroea7e3d4f/versions/1?api-version=2022-10",
-        "Schema-Group-Name": "fakegroupavro",
-        "Schema-Id": "83fcbf11cb8a4f9393e7c6554e44cbf9",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/83fcbf11cb8a4f9393e7c6554e44cbf9?api-version=2022-10",
+        "Date": "Thu, 03 Nov 2022 19:38:47 GMT",
+        "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice-async-avroea7e3d4f/versions/1?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "d73d7fbd859a429e8422ba29bf628c33",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/d73d7fbd859a429e8422ba29bf628c33?api-version=2022-10",
         "Schema-Name": "test-schema-twice-async-avroea7e3d4f",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupavro/schemas/test-schema-twice-async-avroea7e3d4f/versions?api-version=2022-10",
+        "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice-async-avroea7e3d4f/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },

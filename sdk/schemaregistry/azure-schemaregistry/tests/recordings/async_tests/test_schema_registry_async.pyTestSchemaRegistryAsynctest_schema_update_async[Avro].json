@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1?api-version=2022-10",
+      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1?api-version=2022-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -38,21 +38,21 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 31 Oct 2022 20:15:27 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1/versions/5?api-version=2022-10",
-        "Schema-Group-Name": "fakegroupavro",
-        "Schema-Id": "892f43c63f614086973a861a6b393a09",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/892f43c63f614086973a861a6b393a09?api-version=2022-10",
+        "Date": "Thu, 03 Nov 2022 19:38:40 GMT",
+        "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1/versions/5?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "e76f6ba72f0c4ca28caa5a545ef83536",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/e76f6ba72f0c4ca28caa5a545ef83536?api-version=2022-10",
         "Schema-Name": "test-schema-update-async-avrof4813bb1",
         "Schema-Version": "5",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1/versions?api-version=2022-10",
+        "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1?api-version=2022-10",
+      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1?api-version=2022-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -89,21 +89,21 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 31 Oct 2022 20:15:27 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1/versions/6?api-version=2022-10",
-        "Schema-Group-Name": "fakegroupavro",
-        "Schema-Id": "e4f6387e026842ea84cabe6b06d2d0e9",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/e4f6387e026842ea84cabe6b06d2d0e9?api-version=2022-10",
+        "Date": "Thu, 03 Nov 2022 19:38:40 GMT",
+        "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1/versions/6?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "05ddc16f89f34c47947d49bea23d9196",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/05ddc16f89f34c47947d49bea23d9196?api-version=2022-10",
         "Schema-Name": "test-schema-update-async-avrof4813bb1",
         "Schema-Version": "6",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1/versions?api-version=2022-10",
+        "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/$schemas/e4f6387e026842ea84cabe6b06d2d0e9?api-version=2022-10",
+      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/$schemas/05ddc16f89f34c47947d49bea23d9196?api-version=2022-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
@@ -114,14 +114,14 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; serialization=Avro",
-        "Date": "Mon, 31 Oct 2022 20:15:28 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1/versions/6?api-version=2022-10",
-        "Schema-Group-Name": "fakegroupavro",
-        "Schema-Id": "e4f6387e026842ea84cabe6b06d2d0e9",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/e4f6387e026842ea84cabe6b06d2d0e9?api-version=2022-10",
+        "Date": "Thu, 03 Nov 2022 19:38:41 GMT",
+        "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1/versions/6?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "05ddc16f89f34c47947d49bea23d9196",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/05ddc16f89f34c47947d49bea23d9196?api-version=2022-10",
         "Schema-Name": "test-schema-update-async-avrof4813bb1",
         "Schema-Version": "6",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1/versions?api-version=2022-10",
+        "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"
@@ -153,7 +153,7 @@
       }
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1/versions/5?api-version=2022-10",
+      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1/versions/5?api-version=2022-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
@@ -164,14 +164,14 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; serialization=Avro",
-        "Date": "Mon, 31 Oct 2022 20:15:28 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1/versions/5?api-version=2022-10",
-        "Schema-Group-Name": "fakegroupavro",
-        "Schema-Id": "892f43c63f614086973a861a6b393a09",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/892f43c63f614086973a861a6b393a09?api-version=2022-10",
+        "Date": "Thu, 03 Nov 2022 19:38:42 GMT",
+        "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1/versions/5?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "e76f6ba72f0c4ca28caa5a545ef83536",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/e76f6ba72f0c4ca28caa5a545ef83536?api-version=2022-10",
         "Schema-Name": "test-schema-update-async-avrof4813bb1",
         "Schema-Version": "5",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupavro/schemas/test-schema-update-async-avrof4813bb1/versions?api-version=2022-10",
+        "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-avrof4813bb1/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked"

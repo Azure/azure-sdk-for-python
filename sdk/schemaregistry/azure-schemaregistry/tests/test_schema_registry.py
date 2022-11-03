@@ -30,10 +30,10 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader,
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
-    schemaregistry_fully_qualified_namespace="fake_resource.servicebus.windows.net",
-#    schemaregistry_group_avro="fakegroupavro",
-    schemaregistry_group_json="fakegroupjson",
-#    schemaregistry_group_custom="fakegroupcustom",
+    schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
+    schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
+    #schemaregistry_custom_fully_qualified_namespace="fake_resource_custom.servicebus.windows.net",
+    schemaregistry_group="fakegroup"
 )
 AVRO_SCHEMA_STR = """{"namespace":"example.avro","type":"record","name":"User","fields":[{"name":"name","type":"string"},{"name":"favorite_number","type":["int","null"]},{"name":"favorite_color","type":["string","null"]}]}"""
 JSON_SCHEMA = {
@@ -68,10 +68,8 @@ avro_args = (AVRO_FORMAT, AVRO_SCHEMA_STR)
 json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
 custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
 
-format_params = [avro_args]
-format_ids = [AVRO_FORMAT]
-format_params = [json_args]
-format_ids = [JSON_FORMAT]
+format_params = [avro_args, json_args]#, custom_args]
+format_ids = [AVRO_FORMAT, JSON_FORMAT]#, CUSTOM_FORMAT]
 
 class ArgPasser:
     def __call__(self, fn):
@@ -91,8 +89,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_basic(self, format, schema_str, **kwargs):
-        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
-        schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = self.get_resource_name(f"test-schema-basic-{format.lower()}")
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
@@ -133,8 +131,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_update(self, format, schema_str, **kwargs):
-        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
-        schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = self.get_resource_name(f"test-schema-update-{format.lower()}")
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
@@ -174,8 +172,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_same_twice(self, format, schema_str, **kwargs):
-        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
-        schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = self.get_resource_name(f"test-schema-twice-{format.lower()}")
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
@@ -187,8 +185,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_negative_wrong_credential(self, format, schema_str, **kwargs):
-        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
-        schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
         credential = ClientSecretCredential(tenant_id="fake", client_id="fake", client_secret="fake")
         client = SchemaRegistryClient(fully_qualified_namespace=schemaregistry_fully_qualified_namespace, credential=credential)
         name = self.get_resource_name(f"test-schema-negative-{format.lower()}")
@@ -201,7 +199,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_negative_wrong_endpoint(self, format, schema_str, **kwargs):
-        schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
         client = self.create_client(fully_qualified_namespace="fake.servicebus.windows.net")
         name = self.get_resource_name(f"test-schema-nonexist-{format.lower()}")
         # accepting both errors for now due to: https://github.com/Azure/azure-sdk-tools/issues/2907
@@ -212,9 +210,11 @@ class TestSchemaRegistry(AzureRecordedTestCase):
             assert any([(m in response_content["Message"]) for m in ["Name does not resolve", "Unable to find a record"]])
 
     @SchemaRegistryEnvironmentVariableLoader()
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
+    @ArgPasser()
     @recorded_by_proxy
-    def test_schema_negative_no_schema(self, **kwargs):
-        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+    def test_schema_negative_no_schema(self, format, schema_str, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         with pytest.raises(HttpResponseError):
             client.get_schema('a')
@@ -227,8 +227,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
     @ArgPasser()
     @recorded_by_proxy
     def test_schema_negative_no_schema_version(self, format, schema_str, **kwargs):
-        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
-        schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = self.get_resource_name(f"test-schema-negative-version-{format.lower()}")
         schema_properties = client.register_schema(schemaregistry_group, name, schema_str, format)
@@ -242,8 +242,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
     @ArgPasser()
     @recorded_by_proxy
     def test_register_schema_errors(self, format, schema_str, **kwargs):
-        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
-        schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = 'test-schema'
 
@@ -274,8 +274,8 @@ class TestSchemaRegistry(AzureRecordedTestCase):
     @ArgPasser()
     @recorded_by_proxy
     def test_get_schema_properties_errors(self, format, schema_str, **kwargs):
-        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
-        schemaregistry_group = kwargs.pop(f"schemaregistry_group_{format.lower()}")
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
+        schemaregistry_group = kwargs.pop("schemaregistry_group")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         name = 'test-schema'
 
@@ -307,9 +307,11 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert e.value.reason == 'Not Found'
 
     @SchemaRegistryEnvironmentVariableLoader()
+    @pytest.mark.parametrize("format, schema_str", format_params, ids=format_ids)
+    @ArgPasser()
     @recorded_by_proxy
-    def test_get_schema_errors(self, **kwargs):
-        schemaregistry_fully_qualified_namespace = kwargs.pop("schemaregistry_fully_qualified_namespace")
+    def test_get_schema_errors(self, format, schema_str, **kwargs):
+        schemaregistry_fully_qualified_namespace = kwargs.pop(f"schemaregistry_{format.lower()}_fully_qualified_namespace")
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         with pytest.raises(ValueError) as e:
             client.get_schema(None)

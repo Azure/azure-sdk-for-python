@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupavro/schemas/test-schema-negative-version-avro7d143f2?api-version=2022-10",
+      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-negative-version-avro7d143f2?api-version=2022-10",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -38,21 +38,21 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Mon, 31 Oct 2022 20:15:38 GMT",
-        "Location": "https://fake_resource.servicebus.windows.net/$schemagroups/fakegroupavro/schemas/test-schema-negative-version-avro7d143f2/versions/1?api-version=2022-10",
-        "Schema-Group-Name": "fakegroupavro",
-        "Schema-Id": "ac1f804648da44da98700b741871acde",
-        "Schema-Id-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/$schemas/ac1f804648da44da98700b741871acde?api-version=2022-10",
+        "Date": "Thu, 03 Nov 2022 19:39:04 GMT",
+        "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-negative-version-avro7d143f2/versions/1?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "a8132972309542a09c0400ff1afeb787",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/a8132972309542a09c0400ff1afeb787?api-version=2022-10",
         "Schema-Name": "test-schema-negative-version-avro7d143f2",
         "Schema-Version": "1",
-        "Schema-Versions-Location": "https://fake_resource.servicebus.windows.net:443/$schemagroups/fakegroupavro/schemas/test-schema-negative-version-avro7d143f2/versions?api-version=2022-10",
+        "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-negative-version-avro7d143f2/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_resource.servicebus.windows.net/$schemaGroups/fakegroupavro/schemas/test-schema-negative-version-avro7d143f2/versions/2?api-version=2022-10",
+      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-negative-version-avro7d143f2/versions/2?api-version=2022-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
@@ -63,7 +63,7 @@
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Mon, 31 Oct 2022 20:15:38 GMT",
+        "Date": "Thu, 03 Nov 2022 19:39:04 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -72,7 +72,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema fakegroupavro/test-schema-negative-version-avro7d143f2/ver.2 does not exist. TrackingId:0fb02205-c40e-4a72-8bf5-f2da585e4bf1_G9S3, SystemTracker:fake_resource.servicebus.windows.net:$schemaGroups/fakegroupavro/schemas/test-schema-negative-version-avro7d143f2/versions/2, Timestamp:2022-10-31T20:15:39"
+          "message": "Schema fakegroup/test-schema-negative-version-avro7d143f2/ver.2 does not exist. TrackingId:dc9f3011-85e7-4eba-8871-d145eb0aef5d_G9, SystemTracker:fake_resource_avro.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-negative-version-avro7d143f2/versions/2, Timestamp:2022-11-03T19:39:04"
         }
       }
     }
