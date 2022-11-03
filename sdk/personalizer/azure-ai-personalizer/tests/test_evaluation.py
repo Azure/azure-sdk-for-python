@@ -11,10 +11,11 @@ class TestEvaluations(AzureRecordedTestCase):
     @personalizer_helpers.PersonalizerPreparer()
     @recorded_by_proxy
     def test_run_evaluation(self, **kwargs):
+        variables = kwargs.pop("variables", {})
+        evaluation_id = variables.setdefault("evaluation_id", str(uuid.uuid4()))
         personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
         personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
         client = personalizer_helpers.create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
-        evaluation_id = str(uuid.uuid4())
         evaluation_name = "python_sdk_test_evaluation"
         start_time = date.fromisoformat("2022-09-20")
         end_time = date.fromisoformat("2022-09-30")
