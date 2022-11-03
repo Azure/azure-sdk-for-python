@@ -69,6 +69,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             and created_kv.read_only is False
         )
         await client.delete_configuration_setting(key=created_kv.key, label=created_kv.label)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -84,6 +85,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 )
             )
         await client.delete_configuration_setting(key=test_config_setting.key, label=test_config_setting.label)
+        await client.close()
 
     # method: set_configuration_setting
     @app_config_decorator_async
@@ -103,6 +105,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             and to_set_kv.etag != set_kv.etag
         )
         await client.delete_configuration_setting(key=to_set_kv.key, label=to_set_kv.label)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -114,6 +117,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         to_set_kv.etag = "wrong etag"
         with pytest.raises(ResourceModifiedError):
             await client.set_configuration_setting(to_set_kv, match_condition=MatchConditions.IfNotModified)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -129,6 +133,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         kv.etag = "random etag"
         with pytest.raises(ResourceModifiedError):
             await client.set_configuration_setting(kv, match_condition=MatchConditions.IfNotModified)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -151,6 +156,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             and to_set_kv.etag != set_kv.etag
         )
         await client.delete_configuration_setting(key=to_set_kv.key, label=to_set_kv.label)
+        await client.close()
 
     # method: get_configuration_setting
     @app_config_decorator_async
@@ -168,6 +174,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         )
         assert fetched_kv.label is None
         await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -186,6 +193,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         )
         assert fetched_kv.label is not None
         await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -198,6 +206,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 compare_kv.key, compare_kv.label + "a"
             )
         await client.delete_configuration_setting(key=compare_kv.key, label=compare_kv.label)
+        await client.close()
 
     # method: delete_configuration_setting
     @app_config_decorator_async
@@ -210,6 +219,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert deleted_kv is not None
         with pytest.raises(ResourceNotFoundError):
             await client.get_configuration_setting(to_delete_kv.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -221,6 +231,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert deleted_kv is not None
         with pytest.raises(ResourceNotFoundError):
             await client.get_configuration_setting(to_delete_kv.key, label=to_delete_kv.label)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -228,6 +239,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         client = self.create_client(appconfiguration_connection_string)
         deleted_kv = await client.delete_configuration_setting("not_exist_" + KEY)
         assert deleted_kv is None
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -239,6 +251,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert deleted_kv is not None
         with pytest.raises(ResourceNotFoundError):
             await client.get_configuration_setting(to_delete_kv.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -251,6 +264,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
                 to_delete_kv.key, etag="wrong etag", match_condition=MatchConditions.IfNotModified
             )
         await client.delete_configuration_setting(key=to_delete_kv.key, label=to_delete_kv.label)
+        await client.close()
 
     # method: list_configuration_settings
     @app_config_decorator_async
@@ -302,6 +316,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(items) == 1
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
         await client.delete_configuration_setting(resered_char_kv.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -325,6 +340,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(items) == 1
         assert all(x.key == to_list_kv.key and x.label == to_list_kv.label for x in items)
         await client.delete_configuration_setting(to_list_kv.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -357,6 +373,8 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
             ]
         except AzureError:
             pass
+
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -446,6 +464,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         readable_kv = await client.set_read_only(read_only_kv, False)
         assert not readable_kv.read_only
         await client.delete_configuration_setting(kv.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -460,6 +479,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         await client.delete_configuration_setting(to_delete_kv.key)
         with pytest.raises(ResourceNotFoundError):
             await client.get_configuration_setting(to_delete_kv.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -488,6 +508,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         with pytest.raises(ResourceModifiedError):
             await client.set_read_only(set_kv, True, match_condition=MatchConditions.IfNotModified)
         await client.delete_configuration_setting(to_set_kv.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -526,6 +547,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert sync_token_header2 != sync_token_header3
 
         await client.delete_configuration_setting(new.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -595,6 +617,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert seq_num2 < seq_num3
 
         await self.client.delete_configuration_setting(new.key)
+        await self.client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -626,6 +649,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert set_flag.filters == None
 
         await client.delete_configuration_setting(changed_flag.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -654,6 +678,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert set_flag.secret_id == None
 
         await client.delete_configuration_setting(secret_reference.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -715,6 +740,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert len(sent_config.filters) == 3
 
         await client.delete_configuration_setting(updated_sent_config.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -742,6 +768,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         self._assert_same_keys(sent, new_sent)
 
         await client.delete_configuration_setting(new_sent.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -769,6 +796,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         self._assert_same_keys(sent, new_sent)
 
         await client.delete_configuration_setting(new_sent.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -819,6 +847,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         assert new_sent.filters[2]["parameters"]["Audience"]["DefaultRolloutPercentage"] == 100
 
         await client.delete_configuration_setting(new_sent.key)
+        await client.close()
     
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -942,6 +971,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         await client.get_configuration_setting(new.key)
 
         await client.delete_configuration_setting(new.key)
+        await client.close()
 
     @app_config_decorator_async
     @recorded_by_proxy_async
@@ -963,6 +993,7 @@ class TestAppConfigurationClientAsync(AsyncAppConfigTestCase):
         await client.get_configuration_setting(new.key)
 
         await client.delete_configuration_setting(new.key)
+        await client.close()
 
 
 class TestAppConfigurationClientUnitTest:
