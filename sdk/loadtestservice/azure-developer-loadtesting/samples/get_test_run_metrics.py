@@ -47,15 +47,15 @@ REFRESH_TIME = 10
 
 # pooling the test run status to get results
 while time.time() - start_time < TIMEOUT:
-    result = client.load_test_runs.get_test_run(TEST_RUN_ID)
+    result = client.load_test_run.get_test_run(TEST_RUN_ID)
     if result["status"] == "DONE" or result["status"] == "CANCELLED" or result["status"] == "FAILED":
         # getting the test run metrics filters
-        client_metrics_filters = client.load_test_runs.get_test_run_client_metrics_filters(
+        client_metrics_filters = client.load_test_run.get_test_run_client_metrics_filters(
             TEST_RUN_ID
         )
 
         # getting the test run metrics
-        result_metrics = client.load_test_runs.get_test_run_client_metrics(
+        result_metrics = client.load_test_run.get_test_run_client_metrics(
             TEST_RUN_ID,
             {
                 "requestSamplers": ["GET"],

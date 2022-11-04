@@ -37,7 +37,7 @@ TEST_ID = "my-new-sdk-test-id"
 # Build a client through AAD and resource endpoint
 client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-result = client.load_test_runs.create_or_update_test(
+result = client.load_test_run.create_or_update_test(
     TEST_RUN_ID,
     {
         "testId": TEST_ID,

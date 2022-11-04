@@ -40,7 +40,7 @@ client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTES
 TEST_ID = "my-new-sdk-test-id"
 APP_COMPONENT = "my-new-app-component"
 
-result = client.load_test_administration.create_or_update_app_components(
+result = client.load_test_administration.create_or_update_app_component(
     APP_COMPONENT,
     {
         "testId": TEST_ID,

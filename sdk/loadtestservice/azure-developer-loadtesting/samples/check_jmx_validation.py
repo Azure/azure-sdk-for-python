@@ -42,7 +42,7 @@ client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTES
 TEST_ID = "my-new-sdk-test-id"
 
 # checking if jmx file is validated
-result = client.load_test_administration.check_validation_status(TEST_ID, refresh_time=11, time_out=10)
+result = client.load_test_administration.check_test_file_validation_status(TEST_ID, refresh_time=11, time_out=10)
 
+# printing the result
 print(result)
-print(result.name)
