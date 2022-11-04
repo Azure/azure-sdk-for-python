@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access,too-many-instance-attributes
 
+import re
 from typing import Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import AssignedUser
@@ -295,6 +296,13 @@ class ComputeInstance(Compute):
                 if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.private_ip_address
                 else None,
             )
+        
+        idle_time_before_shutdown_minutes = None
+        idle_time_before_shutdown_pattern = "PT(\d+)M"
+        if prop.properties and prop.properties.idle_time_before_shutdown:
+            idle_time_before_shutdown = prop.properties.idle_time_before_shutdown
+            idle_time_match = re.match(idle_time_before_shutdown_pattern, idle_time_before_shutdown)
+            idle_time_before_shutdown_minutes = int(idle_time_match[0]) if idle_time_match else None
 
         response = ComputeInstance(
             name=rest_obj.name,
@@ -328,6 +336,7 @@ class ComputeInstance(Compute):
             setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
             if prop.properties and prop.properties.setup_scripts
             else None,
+            idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
         )
         return response
 
