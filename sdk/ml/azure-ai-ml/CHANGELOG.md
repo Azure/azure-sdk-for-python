@@ -7,6 +7,7 @@
 - Most configuration classes from the entity package now implement the standard mapping protocol.
 - Add registry delete operation.
 - The values of JobService.job_service_type are now using the snake case. e.g jupyter_lab, ssh, tensor_board, vs_code.
+- Command function now accepts services param of type Dict[str, JobService] instead of dict.
 
 ### Breaking Changes
 
