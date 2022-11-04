@@ -49,6 +49,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -64,6 +65,5 @@ setup(
         "azure-core<2.0.0,>=1.24.0",
         "msrest>=0.6.21",
         "azure-common~=1.1",
-        "typing-extensions>=3.7.4.3"
     ],
 )
