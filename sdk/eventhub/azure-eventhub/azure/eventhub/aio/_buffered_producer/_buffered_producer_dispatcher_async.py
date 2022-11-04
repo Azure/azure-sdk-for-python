@@ -90,23 +90,11 @@ class BufferedProducerDispatcher:
     async def flush(self, timeout_time=None):
         # flush all the buffered producer, the method will block until finishes or times out
         async with self._lock:
-            futures = []
+            exc_results = {}
             for pid, producer in self._buffered_producers.items():
                 # call each producer's flush method
-                futures.append(
-                    (
-                        pid,
-                        asyncio.ensure_future(
-                            producer.flush(timeout_time=timeout_time)
-                        ),
-                    )
-                )
-
-            # gather results
-            exc_results = {}
-            for pid, future in futures:
                 try:
-                    await future
+                    producer.flush(timeout_time=timeout_time)
                 except Exception as exc:  # pylint: disable=broad-except
                     exc_results[pid] = exc
 
@@ -126,27 +114,11 @@ class BufferedProducerDispatcher:
 
         async with self._lock:
 
-            futures = []
+            exc_results = {}
             # stop all buffered producers
             for pid, producer in self._buffered_producers.items():
-                futures.append(
-                    (
-                        pid,
-                        asyncio.ensure_future(
-                            producer.stop(
-                                flush=flush,
-                                timeout_time=timeout_time,
-                                raise_error=raise_error,
-                            )
-                        ),
-                    )
-                )
-
-            exc_results = {}
-            # gather results
-            for pid, future in futures:
                 try:
-                    await future
+                    await producer.stop(flush=flush, timeout_time=timeout_time, raise_error=raise_error,)
                 except Exception as exc:  # pylint: disable=broad-except
                     exc_results[pid] = exc
 
