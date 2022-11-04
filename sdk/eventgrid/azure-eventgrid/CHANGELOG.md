@@ -6,12 +6,6 @@
 
 - Added new enum values to `SystemEventNames` related to health care APIs.
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
-
 ## 4.9.0 (2022-07-05)
 
 ### Features Added
