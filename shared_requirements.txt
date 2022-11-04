@@ -312,6 +312,9 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-eventgrid msrest>=0.7.1
 #override azure-mgmt-maps azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-ai-language-conversations isodate<1.0.0,>=0.6.1
+#override azure-ai-personalizer azure-core<2.0.0,>=1.24.0
+#override azure-ai-personalizer isodate<1.0.0,>=0.6.1
+#override azure-ai-personalizer typing-extensions>=4.0.1
 #override azure-mgmt-confluent typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-ai-language-questionanswering isodate<1.0.0,>=0.6.1
 #override azure-ai-textanalytics isodate<1.0.0,>=0.6.1
