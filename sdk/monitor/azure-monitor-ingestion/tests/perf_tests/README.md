@@ -35,7 +35,7 @@ These options are available for all perf tests:
 - `--warm-up=5` Number of seconds to spend warming up the connection before measuring begins. Default is 5.
 - `--sync` Whether to run the tests in sync or async. Default is False (async).
 - `--no-cleanup` Whether to keep newly created resources after test run. Default is False (resources will be deleted).
-- `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of the **last completed single iteration** will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync/async>.pstats"`.
+- `--profile` Whether to run the perftest with cProfile. If enabled (default is False), the output file of a single iteration will be written to the current working directory in the format `"cProfile-<TestClassName>-<TestID>-<sync|async>.pstats"`.
 
 ### Ingestion test options
 
