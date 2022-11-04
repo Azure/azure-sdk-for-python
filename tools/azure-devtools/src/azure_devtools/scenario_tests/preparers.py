@@ -8,6 +8,7 @@ import functools
 import logging
 from collections import namedtuple
 from threading import Lock
+from time import sleep
 
 from .base import ReplayableTest
 from .utilities import create_random_name, is_text_payload, trim_kwargs_from_test_function
@@ -36,6 +37,8 @@ class AbstractPreparer(object):
         self._aggregate_cache_key = None
 
     def _prepare_create_resource(self, test_class_instance, **kwargs):
+
+        sleep(20)
         self.live_test = not isinstance(test_class_instance, ReplayableTest)
         self.test_class_instance = test_class_instance
 
