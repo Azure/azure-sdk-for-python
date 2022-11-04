@@ -83,7 +83,7 @@ class _EventHubProcessorTest(EventPerfTest):
             print(f"Detected {total_events} events across {len(partitions)} partitions.")
             if total_events < self.args.preload:
                 events_to_add = self.args.preload - total_events
-                batch = await producer.create_batch()
+                batch = await producer.create_batch(partition_id='0')
                 for i in range(events_to_add):
                     try:
                         batch.add(self._build_event())
