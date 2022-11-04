@@ -186,6 +186,12 @@ deployments:
 @pytest.mark.unittest
 @pytest.mark.core_sdk_test
 class TestOperationOrchestration:
+    def test_registry_environment(self, operation_orchestrator: OperationOrchestrator) -> None:
+        test_input = '//registries/mafong-registry/environments/conda_name_version_e2e/versions/1.0.2'
+        expected = 'azureml://registries/mafong-registry/environments/conda_name_version_e2e/versions/1.0.2'
+        actual = operation_orchestrator.get_asset_arm_id(test_input, azureml_type=AzureMLResourceType.Environment)
+        assert actual == expected
+
     def test_code_arm_id(self, operation_orchestrator: OperationOrchestrator) -> None:
         code = VERSIONED_RESOURCE_ID_FORMAT.format(
             Test_Subscription,
