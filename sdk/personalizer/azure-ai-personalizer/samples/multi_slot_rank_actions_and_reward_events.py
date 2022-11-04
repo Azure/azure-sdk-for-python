@@ -22,15 +22,15 @@ from azure.core.credentials import AzureKeyCredential
 
 def main():
     try:
-        endpoint = os.environ['PERSONALIZER_ENDPOINT']
+        endpoint = os.environ['PERSONALIZER_ENDPOINT_MULTI_SLOT']
     except KeyError:
-        print("PERSONALIZER_ENDPOINT must be set.")
+        print("PERSONALIZER_ENDPOINT_MULTI_SLOT must be set.")
         sys.exit(1)
 
     try:
-        api_key = os.environ['PERSONALIZER_API_KEY']
+        api_key = os.environ['PERSONALIZER_API_KEY_MULTI_SLOT']
     except KeyError:
-        print("PERSONALIZER_API_KEY must be set.")
+        print("PERSONALIZER_API_KEY_MULTI_SLOT must be set.")
         sys.exit(1)
 
     client = PersonalizerClient(endpoint, AzureKeyCredential(api_key))
