@@ -19,7 +19,7 @@ USAGE:
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
 """
-from azure.developer.loadtesting import LoadTestingClient
+from azure.developer.loadtesting import LoadTestingClient, TestRunStatus
 
 # for details refer: https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/loadtestservice/azure-developer
 # -loadtesting/README.md
@@ -42,13 +42,7 @@ client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTES
 # checking the test run stats and printing metrics
 start_time = time.time()
 
-TIMEOUT = 6000
-REFRESH_TIME = 10
-
-# pooling the test run status to get results
-while time.time() - start_time < TIMEOUT:
-    result = client.load_test_run.get_test_run(TEST_RUN_ID)
-    if result["status"] == "DONE" or result["status"] == "CANCELLED" or result["status"] == "FAILED":
+if client.load_test_run.check_test_run_completed(TEST_RUN_ID) != TestRunStatus.CheckTimeout :
         # getting the test run metrics filters
         client_metrics_filters = client.load_test_run.get_test_run_client_metrics_filters(
             TEST_RUN_ID
@@ -65,7 +59,3 @@ while time.time() - start_time < TIMEOUT:
         )
 
         print(result_metrics)
-        break
-
-    else:
-        time.sleep(REFRESH_TIME)
