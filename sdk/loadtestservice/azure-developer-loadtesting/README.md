@@ -63,7 +63,7 @@ The two clients have similar methods in them except the methods in the async cli
 
 The top-level clients have two sub-clients
 
-- `load_test_runs` (`azure.developer.loadtesting.LoadTestingClient.load_test_runs`)
+- `load_test_run` (`azure.developer.loadtesting.LoadTestingClient.load_test_run`)
 
 - `load_test_administration` (`azure.developer.loadtesting.LoadTestingClient.load_test_administration`)
 
@@ -91,7 +91,7 @@ During a load test, Azure Load Testing collects metrics about the test execution
 
 ### Test Run Client
 
-The `load_test_runs` sub-clients is used to start and stop test runs corresponding to a load test. A test run represents one execution of a load test. It collects the logs associated with running the Apache JMeter script, the load test YAML configuration, the list of app components to monitor, and the results of the test.
+The `load_test_run` sub-clients is used to start and stop test runs corresponding to a load test. A test run represents one execution of a load test. It collects the logs associated with running the Apache JMeter script, the load test YAML configuration, the list of app components to monitor, and the results of the test.
 
 ### Data-Plane Endpoint
 
@@ -114,15 +114,18 @@ In the above example, `eus` represents the Azure region `East US`.
 from azure.developer.loadtesting import LoadTestingClient
 from azure.identity import DefaultAzureCredential
 from azure.core.exceptions import HttpResponseError
+import os
 
 TEST_ID = "some-test-id"  
 DISPLAY_NAME = "my-load-test"  
+
+# set SUBSCRIPTION_ID as an environment variable
 SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]  
 
 client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
 try:
-    result = client.load_test_administration.create_or_update_test(
+    result = client.load_test_administration.create_or_update_load_test(
         TEST_ID,
         {
             "description": "",
@@ -174,7 +177,7 @@ DISPLAY_NAME = "my-load-test-run"
 client = LoadTestingClient(endpoint='<endpoint>', credential=DefaultAzureCredential())
 
 try:
-    result = client.load_test_runs.create_or_update_test(
+    result = client.load_test_run.create_or_update_test_run(
         TEST_RUN_ID,
         {
             "testId": TEST_ID,
