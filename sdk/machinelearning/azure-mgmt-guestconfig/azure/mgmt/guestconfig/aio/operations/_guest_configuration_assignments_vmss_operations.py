@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
 import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
@@ -29,8 +29,7 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._guest_configuration_hcrp_assignments_operations import (
-    build_create_or_update_request,
+from ...operations._guest_configuration_assignments_vmss_operations import (
     build_delete_request,
     build_get_request,
     build_list_request,
@@ -44,14 +43,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class GuestConfigurationHCRPAssignmentsOperations:
+class GuestConfigurationAssignmentsVMSSOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.guestconfig.aio.GuestConfigurationClient`'s
-        :attr:`guest_configuration_hcrp_assignments` attribute.
+        :attr:`guest_configuration_assignments_vmss` attribute.
     """
 
     models = _models
@@ -63,176 +62,18 @@ class GuestConfigurationHCRPAssignmentsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-    @overload
-    async def create_or_update(
-        self,
-        guest_configuration_assignment_name: str,
-        resource_group_name: str,
-        machine_name: str,
-        parameters: _models.GuestConfigurationAssignment,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.GuestConfigurationAssignment:
-        """Creates an association between a ARC machine and guest configuration.
-
-        :param guest_configuration_assignment_name: Name of the guest configuration assignment.
-         Required.
-        :type guest_configuration_assignment_name: str
-        :param resource_group_name: The resource group name. Required.
-        :type resource_group_name: str
-        :param machine_name: The name of the ARC machine. Required.
-        :type machine_name: str
-        :param parameters: Parameters supplied to the create or update guest configuration assignment.
-         Required.
-        :type parameters: ~azure.mgmt.guestconfig.models.GuestConfigurationAssignment
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GuestConfigurationAssignment or the result of cls(response)
-        :rtype: ~azure.mgmt.guestconfig.models.GuestConfigurationAssignment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def create_or_update(
-        self,
-        guest_configuration_assignment_name: str,
-        resource_group_name: str,
-        machine_name: str,
-        parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> _models.GuestConfigurationAssignment:
-        """Creates an association between a ARC machine and guest configuration.
-
-        :param guest_configuration_assignment_name: Name of the guest configuration assignment.
-         Required.
-        :type guest_configuration_assignment_name: str
-        :param resource_group_name: The resource group name. Required.
-        :type resource_group_name: str
-        :param machine_name: The name of the ARC machine. Required.
-        :type machine_name: str
-        :param parameters: Parameters supplied to the create or update guest configuration assignment.
-         Required.
-        :type parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GuestConfigurationAssignment or the result of cls(response)
-        :rtype: ~azure.mgmt.guestconfig.models.GuestConfigurationAssignment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def create_or_update(
-        self,
-        guest_configuration_assignment_name: str,
-        resource_group_name: str,
-        machine_name: str,
-        parameters: Union[_models.GuestConfigurationAssignment, IO],
-        **kwargs: Any
-    ) -> _models.GuestConfigurationAssignment:
-        """Creates an association between a ARC machine and guest configuration.
-
-        :param guest_configuration_assignment_name: Name of the guest configuration assignment.
-         Required.
-        :type guest_configuration_assignment_name: str
-        :param resource_group_name: The resource group name. Required.
-        :type resource_group_name: str
-        :param machine_name: The name of the ARC machine. Required.
-        :type machine_name: str
-        :param parameters: Parameters supplied to the create or update guest configuration assignment.
-         Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.guestconfig.models.GuestConfigurationAssignment or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: GuestConfigurationAssignment or the result of cls(response)
-        :rtype: ~azure.mgmt.guestconfig.models.GuestConfigurationAssignment
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-01-25"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.GuestConfigurationAssignment]
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(parameters, (IO, bytes)):
-            _content = parameters
-        else:
-            _json = self._serialize.body(parameters, "GuestConfigurationAssignment")
-
-        request = build_create_or_update_request(
-            guest_configuration_assignment_name=guest_configuration_assignment_name,
-            resource_group_name=resource_group_name,
-            machine_name=machine_name,
-            subscription_id=self._config.subscription_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            template_url=self.create_or_update.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize("GuestConfigurationAssignment", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("GuestConfigurationAssignment", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})
-
-        return deserialized
-
-    create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/{guestConfigurationAssignmentName}"}  # type: ignore
-
     @distributed_trace_async
     async def get(
-        self, resource_group_name: str, guest_configuration_assignment_name: str, machine_name: str, **kwargs: Any
+        self, resource_group_name: str, vmss_name: str, name: str, **kwargs: Any
     ) -> _models.GuestConfigurationAssignment:
-        """Get information about a guest configuration assignment.
+        """Get information about a guest configuration assignment for VMSS.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
-        :param guest_configuration_assignment_name: The guest configuration assignment name. Required.
-        :type guest_configuration_assignment_name: str
-        :param machine_name: The name of the ARC machine. Required.
-        :type machine_name: str
+        :param vmss_name: The name of the virtual machine scale set. Required.
+        :type vmss_name: str
+        :param name: The guest configuration assignment name. Required.
+        :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: GuestConfigurationAssignment or the result of cls(response)
         :rtype: ~azure.mgmt.guestconfig.models.GuestConfigurationAssignment
@@ -256,8 +97,8 @@ class GuestConfigurationHCRPAssignmentsOperations:
 
         request = build_get_request(
             resource_group_name=resource_group_name,
-            guest_configuration_assignment_name=guest_configuration_assignment_name,
-            machine_name=machine_name,
+            vmss_name=vmss_name,
+            name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.get.metadata["url"],
@@ -285,24 +126,23 @@ class GuestConfigurationHCRPAssignmentsOperations:
 
         return deserialized
 
-    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/{guestConfigurationAssignmentName}"}  # type: ignore
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmssName}/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/{name}"}  # type: ignore
 
     @distributed_trace_async
-    async def delete(  # pylint: disable=inconsistent-return-statements
-        self, resource_group_name: str, guest_configuration_assignment_name: str, machine_name: str, **kwargs: Any
-    ) -> None:
-        """Delete a guest configuration assignment.
+    async def delete(
+        self, resource_group_name: str, vmss_name: str, name: str, **kwargs: Any
+    ) -> Optional[_models.GuestConfigurationAssignment]:
+        """Delete a guest configuration assignment for VMSS.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
-        :param guest_configuration_assignment_name: Name of the guest configuration assignment.
-         Required.
-        :type guest_configuration_assignment_name: str
-        :param machine_name: The name of the ARC machine. Required.
-        :type machine_name: str
+        :param vmss_name: The name of the virtual machine scale set. Required.
+        :type vmss_name: str
+        :param name: The guest configuration assignment name. Required.
+        :type name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
+        :return: GuestConfigurationAssignment or None or the result of cls(response)
+        :rtype: ~azure.mgmt.guestconfig.models.GuestConfigurationAssignment or None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -319,12 +159,12 @@ class GuestConfigurationHCRPAssignmentsOperations:
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )  # type: Literal["2022-01-25"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.GuestConfigurationAssignment]]
 
         request = build_delete_request(
             resource_group_name=resource_group_name,
-            guest_configuration_assignment_name=guest_configuration_assignment_name,
-            machine_name=machine_name,
+            vmss_name=vmss_name,
+            name=name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
             template_url=self.delete.metadata["url"],
@@ -340,26 +180,32 @@ class GuestConfigurationHCRPAssignmentsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        if cls:
-            return cls(pipeline_response, None, {})
+        deserialized = None
+        if response.status_code == 200:
+            deserialized = self._deserialize("GuestConfigurationAssignment", pipeline_response)
 
-    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/{guestConfigurationAssignmentName}"}  # type: ignore
+        if cls:
+            return cls(pipeline_response, deserialized, {})
+
+        return deserialized
+
+    delete.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmssName}/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments/{name}"}  # type: ignore
 
     @distributed_trace
     def list(
-        self, resource_group_name: str, machine_name: str, **kwargs: Any
+        self, resource_group_name: str, vmss_name: str, **kwargs: Any
     ) -> AsyncIterable["_models.GuestConfigurationAssignment"]:
-        """List all guest configuration assignments for an ARC machine.
+        """List all guest configuration assignments for VMSS.
 
         :param resource_group_name: The resource group name. Required.
         :type resource_group_name: str
-        :param machine_name: The name of the ARC machine. Required.
-        :type machine_name: str
+        :param vmss_name: The name of the virtual machine scale set. Required.
+        :type vmss_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: An iterator like instance of either GuestConfigurationAssignment or the result of
          cls(response)
@@ -388,7 +234,7 @@ class GuestConfigurationHCRPAssignmentsOperations:
 
                 request = build_list_request(
                     resource_group_name=resource_group_name,
-                    machine_name=machine_name,
+                    vmss_name=vmss_name,
                     subscription_id=self._config.subscription_id,
                     api_version=api_version,
                     template_url=self.list.metadata["url"],
@@ -440,4 +286,4 @@ class GuestConfigurationHCRPAssignmentsOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.HybridCompute/machines/{machineName}/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Compute/virtualMachineScaleSets/{vmssName}/providers/Microsoft.GuestConfiguration/guestConfigurationAssignments"}  # type: ignore
