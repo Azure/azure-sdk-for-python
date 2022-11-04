@@ -135,7 +135,7 @@
         },
         "TABLES_COSMOS_ENDPOINT_SUFFIX": {
             "type": "string",
-            "value": "[parameters('storageEndpointSuffix')]"
+            "value": "[parameters('cosmosEndpointSuffix')]"
         },
         "TABLES_COSMOS_ACCOUNT_NAME": {
             "type": "string",
