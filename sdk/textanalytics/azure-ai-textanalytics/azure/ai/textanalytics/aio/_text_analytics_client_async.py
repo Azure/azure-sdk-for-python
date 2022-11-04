@@ -16,7 +16,6 @@ from .._request_handlers import (
     _determine_action_type,
 )
 from .._validate import validate_multiapi_args, check_for_unsupported_actions_types
-from .._version import DEFAULT_API_VERSION
 from .._response_handlers import (
     process_http_response_error,
     entities_result,
