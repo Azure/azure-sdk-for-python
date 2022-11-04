@@ -325,7 +325,7 @@ class PipelineExpression(PipelineExpressionMixin):
             _has_prefix = False
             # "output" is the default output name for command component, add component's name as prefix
             if _name == "output":
-                _name = f"{_component_output._owner.component.name}_output"
+                _name = f"{_component_output._owner.component.name}__output"
                 _has_prefix = True
             # following loop is expected to execute at most twice:
             #   1. add component's name to output(s)
@@ -334,17 +334,17 @@ class PipelineExpression(PipelineExpressionMixin):
                 _seen_input = _expression_inputs[_name]
                 if isinstance(_seen_input.value, PipelineInput):
                     if not _has_prefix:
-                        _name = f"{_component_output._owner.component.name}_{_component_output._name}"
+                        _name = f"{_component_output._owner.component.name}__{_component_output._name}"
                         _has_prefix = True
                         continue
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
                 else:
                     if not _has_prefix:
                         _expression_inputs.pop(_name)
-                        _new_name = f"{_seen_input.value._owner.component.name}_{_seen_input.value._name}"
+                        _new_name = f"{_seen_input.value._owner.component.name}__{_seen_input.value._name}"
                         _postfix = _update_postfix(_postfix, _name, _new_name)
                         _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
-                        _name = f"{_component_output._owner.component.name}_{_component_output._name}"
+                        _name = f"{_component_output._owner.component.name}__{_component_output._name}"
                         _has_prefix = True
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
             _postfix.append(_name)
@@ -544,9 +544,13 @@ class PipelineExpression(PipelineExpressionMixin):
             for _name in sorted(self._inputs):
                 _type = self._inputs[_name].type
                 _data["inputs"][_name] = {"type": _type}
-                _command_inputs_items.append(f"{_name}=\"$AZUREML_PARAMETER_{_name}\"")
+                _command_inputs_items.append(_name + "=\"${{inputs." + _name + "}}\"")
             _command_inputs_string = " ".join(_command_inputs_items)
-            _data["command"] = _data["command"].format(inputs_placeholder=_command_inputs_string)
+            _command = (
+                "mldesigner execute --source expression_component.py --name expression_func "
+                "--inputs " + _command_inputs_string + " --output ${{outputs.output}}"
+            )
+            _data["command"] = _data["command"].format(command_placeholder=_command)
             dump_yaml_to_file(_path, _data)
 
         if self._created_component is None:
