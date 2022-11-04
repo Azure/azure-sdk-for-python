@@ -19,7 +19,7 @@ from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.constants._registry import StorageAccountType
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml._exception_helper import log_and_raise_error
-from .util import make_rest_user_storage_from_id
+from .util import _make_rest_user_storage_from_id
 
 # This exists despite not being used by the schema validator because this entire
 # class is an output only value from the API.
@@ -208,7 +208,7 @@ class RegistryRegionDetails:
             count = storage.replication_count
             return [deepcopy(account) for _ in range(0, count)]
         elif storage is not None and len(storage) > 0:
-            return [make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]
+            return [_make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]
         else:
             return []
 
