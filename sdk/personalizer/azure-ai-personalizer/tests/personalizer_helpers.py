@@ -15,6 +15,8 @@ PersonalizerPreparer = functools.partial(
     personalizer_api_key_single_slot="REDACTED",
     personalizer_endpoint_multi_slot="https://REDACTED.cognitiveservices.azure.com",
     personalizer_api_key_multi_slot="REDACTED",
+    personalizer_preset_endpoint_single_slot="https://REDACTED.cognitiveservices.azure.com",
+    personalizer_preset_api_key_single_slot="REDACTED",
 )
 
 

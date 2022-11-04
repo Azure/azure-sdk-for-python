@@ -16,8 +16,8 @@ class TestEvaluations(AzureRecordedTestCase):
     def test_run_evaluation(self, **kwargs):
         variables = kwargs.pop("variables", {})
         evaluation_id = variables.setdefault("test_run_evaluation_id", str(uuid.uuid4()))
-        personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
-        personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
+        personalizer_endpoint = kwargs.pop('personalizer_preset_endpoint_single_slot')
+        personalizer_api_key = kwargs.pop('personalizer_preset_api_key_single_slot')
         client = personalizer_helpers.create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
         evaluation_name = "python_sdk_test_evaluation"
         start_time = date.fromisoformat("2022-09-20")

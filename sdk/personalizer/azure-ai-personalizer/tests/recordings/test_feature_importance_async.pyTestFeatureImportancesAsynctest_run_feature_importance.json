@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/919c93ff-2f84-4ade-8a87-dc59fa6757a5?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/319130ea-4f1b-4752-8b35-e37994023449?api-version=2022-09-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -17,22 +17,22 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "c2fef05b-e780-4fd9-8a62-355c89576980",
+        "apim-request-id": "e4c3ce95-c7b2-47c0-af05-8c697539407c",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 03 Nov 2022 15:56:01 GMT",
+        "Date": "Fri, 04 Nov 2022 00:33:51 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1174",
+        "x-envoy-upstream-service-time": "1051",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/919c93ff-2f84-4ade-8a87-dc59fa6757a5?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/319130ea-4f1b-4752-8b35-e37994023449?api-version=2022-09-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -42,31 +42,31 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "da4ec6d3-4e46-467a-bf48-dc7d9c695b7e",
+        "apim-request-id": "53d5ed14-c54e-4b29-a431-b90154f25b0e",
         "Cache-Control": "no-store, must-revalidate, no-cache",
-        "Content-Length": "263",
+        "Content-Length": "262",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 15:56:01 GMT",
+        "Date": "Fri, 04 Nov 2022 00:33:52 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "162",
+        "x-envoy-upstream-service-time": "195",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "id": "919c93ff-2f84-4ade-8a87-dc59fa6757a5",
+        "id": "319130ea-4f1b-4752-8b35-e37994023449",
         "name": "python_sdk_test_feature_imp",
         "startTime": "2022-09-20T00:00:00Z",
         "endTime": "2022-09-30T00:00:00Z",
-        "creationTime": "2022-11-03T15:56:00.2408923Z",
+        "creationTime": "2022-11-04T00:33:51.474188Z",
         "status": "Running",
         "featureScores": []
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/919c93ff-2f84-4ade-8a87-dc59fa6757a5?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/319130ea-4f1b-4752-8b35-e37994023449?api-version=2022-09-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -76,27 +76,32 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e54520db-0caf-4a59-b0fb-2126f01dfb25",
+        "apim-request-id": "37a595c9-8ca1-4f3e-9851-9f6999db7779",
         "Cache-Control": "no-store, must-revalidate, no-cache",
-        "Content-Length": "4029",
+        "Content-Length": "4028",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 15:57:01 GMT",
+        "Date": "Fri, 04 Nov 2022 00:34:53 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "69",
+        "x-envoy-upstream-service-time": "78",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "id": "919c93ff-2f84-4ade-8a87-dc59fa6757a5",
+        "id": "319130ea-4f1b-4752-8b35-e37994023449",
         "name": "python_sdk_test_feature_imp",
         "startTime": "2022-09-20T00:00:00Z",
         "endTime": "2022-09-30T00:00:00Z",
-        "creationTime": "2022-11-03T15:56:00.2408923Z",
+        "creationTime": "2022-11-04T00:33:51.474188Z",
         "status": "Succeeded",
         "featureScores": [
+          {
+            "namespace": "Features",
+            "featureName": "day",
+            "score": 1.0
+          },
           {
             "namespace": "content",
             "featureName": "videoType",
@@ -104,17 +109,57 @@
           },
           {
             "namespace": "FromUrl",
-            "featureName": "isPayingUser",
+            "featureName": "hoursOnSite",
             "score": 1.0
           },
           {
             "namespace": "FromUrl",
-            "featureName": "favoriteGenre",
+            "featureName": "lastWatchedType",
+            "score": 1.0
+          },
+          {
+            "namespace": "Features",
+            "featureName": "weather",
             "score": 1.0
           },
           {
             "namespace": "content",
+            "featureName": "payingUser",
+            "score": 1.0
+          },
+          {
+            "namespace": "features",
+            "featureName": "day",
+            "score": 1.0
+          },
+          {
+            "namespace": "content",
+            "featureName": "hoursOnSite",
+            "score": 1.0
+          },
+          {
+            "namespace": "Features",
+            "featureName": "lastWatchedType",
+            "score": 1.0
+          },
+          {
+            "namespace": "content",
+            "featureName": "mostWatchedByAge",
+            "score": 1.0
+          },
+          {
+            "namespace": "j",
             "featureName": "director",
+            "score": 1.0
+          },
+          {
+            "namespace": "content",
+            "featureName": "lastWatchedType",
+            "score": 1.0
+          },
+          {
+            "namespace": "Features",
+            "featureName": "payingUser",
             "score": 1.0
           },
           {
@@ -123,23 +168,13 @@
             "score": 1.0
           },
           {
-            "namespace": "content",
-            "featureName": "isPayingUser",
+            "namespace": "device",
+            "featureName": "mobile",
             "score": 1.0
           },
           {
-            "namespace": "features",
+            "namespace": "currentFeatures",
             "featureName": "day",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "time",
-            "score": 1.0
-          },
-          {
-            "namespace": "FromUrl",
-            "featureName": "hoursOnSite",
             "score": 1.0
           },
           {
@@ -148,8 +183,28 @@
             "score": 1.0
           },
           {
+            "namespace": "device",
+            "featureName": "windows",
+            "score": 1.0
+          },
+          {
+            "namespace": "j",
+            "featureName": "mostWatchedByAge",
+            "score": 1.0
+          },
+          {
+            "namespace": "FromUrl",
+            "featureName": "isPayingUser",
+            "score": 1.0
+          },
+          {
+            "namespace": "currentFeatures",
+            "featureName": "weather",
+            "score": 1.0
+          },
+          {
             "namespace": "content",
-            "featureName": "hoursOnSite",
+            "featureName": "favoriteGenre",
             "score": 1.0
           },
           {
@@ -159,107 +214,52 @@
           },
           {
             "namespace": "Features",
-            "featureName": "lastWatchedType",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "favoriteGenre",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "weather",
-            "score": 1.0
-          },
-          {
-            "namespace": "content",
-            "featureName": "mostWatchedByAge",
-            "score": 1.0
-          },
-          {
-            "namespace": "j",
-            "featureName": "director",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "day",
-            "score": 1.0
-          },
-          {
-            "namespace": "content",
-            "featureName": "lastWatchedType",
-            "score": 1.0
-          },
-          {
-            "namespace": "device",
-            "featureName": "windows",
-            "score": 1.0
-          },
-          {
-            "namespace": "currentFeatures",
-            "featureName": "day",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "payingUser",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
             "featureName": "hoursOnSite",
             "score": 1.0
           },
           {
-            "namespace": "j",
+            "namespace": "content",
             "featureName": "videoLength",
             "score": 1.0
           },
           {
-            "namespace": "currentFeatures",
-            "featureName": "weather",
+            "namespace": "Features",
+            "featureName": "time",
             "score": 1.0
           },
           {
-            "namespace": "FromUrl",
-            "featureName": "lastWatchedType",
-            "score": 1.0
-          },
-          {
-            "namespace": "content",
-            "featureName": "payingUser",
-            "score": 1.0
-          },
-          {
-            "namespace": "j",
-            "featureName": "mostWatchedByAge",
-            "score": 1.0
-          },
-          {
-            "namespace": "FromUrl",
-            "featureName": "payingUser",
-            "score": 1.0
-          },
-          {
-            "namespace": "device",
-            "featureName": "mobile",
-            "score": 1.0
-          },
-          {
-            "namespace": "content",
+            "namespace": "Features",
             "featureName": "favoriteGenre",
             "score": 1.0
           },
           {
             "namespace": "content",
+            "featureName": "director",
+            "score": 1.0
+          },
+          {
+            "namespace": "FromUrl",
+            "featureName": "payingUser",
+            "score": 1.0
+          },
+          {
+            "namespace": "content",
+            "featureName": "isPayingUser",
+            "score": 1.0
+          },
+          {
+            "namespace": "FromUrl",
+            "featureName": "favoriteGenre",
+            "score": 1.0
+          },
+          {
+            "namespace": "j",
             "featureName": "videoLength",
             "score": 1.0
           },
           {
-            "namespace": "user",
-            "featureName": "profileType",
+            "namespace": "environment",
+            "featureName": "dayOfMonth",
             "score": 0.0
           },
           {
@@ -269,12 +269,12 @@
           },
           {
             "namespace": "environment",
-            "featureName": "dayOfMonth",
+            "featureName": "weather",
             "score": 0.0
           },
           {
-            "namespace": "environment",
-            "featureName": "monthOfYear",
+            "namespace": "user",
+            "featureName": "profileType",
             "score": 0.0
           },
           {
@@ -283,20 +283,20 @@
             "score": 0.0
           },
           {
-            "namespace": "i",
-            "featureName": "id",
+            "namespace": "environment",
+            "featureName": "monthOfYear",
             "score": 0.0
           },
           {
-            "namespace": "environment",
-            "featureName": "weather",
+            "namespace": "i",
+            "featureName": "id",
             "score": 0.0
           }
         ]
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/919c93ff-2f84-4ade-8a87-dc59fa6757a5?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/319130ea-4f1b-4752-8b35-e37994023449?api-version=2022-09-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -306,27 +306,32 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "eaf8e97b-7587-4b8e-9056-9ef6c2eee979",
+        "apim-request-id": "3973ff4f-5d05-4675-b3c7-dfe20e8ee340",
         "Cache-Control": "no-store, must-revalidate, no-cache",
-        "Content-Length": "4029",
+        "Content-Length": "4028",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 15:57:01 GMT",
+        "Date": "Fri, 04 Nov 2022 00:34:53 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "30",
+        "x-envoy-upstream-service-time": "40",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": {
-        "id": "919c93ff-2f84-4ade-8a87-dc59fa6757a5",
+        "id": "319130ea-4f1b-4752-8b35-e37994023449",
         "name": "python_sdk_test_feature_imp",
         "startTime": "2022-09-20T00:00:00Z",
         "endTime": "2022-09-30T00:00:00Z",
-        "creationTime": "2022-11-03T15:56:00.2408923Z",
+        "creationTime": "2022-11-04T00:33:51.474188Z",
         "status": "Succeeded",
         "featureScores": [
+          {
+            "namespace": "Features",
+            "featureName": "day",
+            "score": 1.0
+          },
           {
             "namespace": "content",
             "featureName": "videoType",
@@ -334,17 +339,57 @@
           },
           {
             "namespace": "FromUrl",
-            "featureName": "isPayingUser",
+            "featureName": "hoursOnSite",
             "score": 1.0
           },
           {
             "namespace": "FromUrl",
-            "featureName": "favoriteGenre",
+            "featureName": "lastWatchedType",
+            "score": 1.0
+          },
+          {
+            "namespace": "Features",
+            "featureName": "weather",
             "score": 1.0
           },
           {
             "namespace": "content",
+            "featureName": "payingUser",
+            "score": 1.0
+          },
+          {
+            "namespace": "features",
+            "featureName": "day",
+            "score": 1.0
+          },
+          {
+            "namespace": "content",
+            "featureName": "hoursOnSite",
+            "score": 1.0
+          },
+          {
+            "namespace": "Features",
+            "featureName": "lastWatchedType",
+            "score": 1.0
+          },
+          {
+            "namespace": "content",
+            "featureName": "mostWatchedByAge",
+            "score": 1.0
+          },
+          {
+            "namespace": "j",
             "featureName": "director",
+            "score": 1.0
+          },
+          {
+            "namespace": "content",
+            "featureName": "lastWatchedType",
+            "score": 1.0
+          },
+          {
+            "namespace": "Features",
+            "featureName": "payingUser",
             "score": 1.0
           },
           {
@@ -353,23 +398,13 @@
             "score": 1.0
           },
           {
-            "namespace": "content",
-            "featureName": "isPayingUser",
+            "namespace": "device",
+            "featureName": "mobile",
             "score": 1.0
           },
           {
-            "namespace": "features",
+            "namespace": "currentFeatures",
             "featureName": "day",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "time",
-            "score": 1.0
-          },
-          {
-            "namespace": "FromUrl",
-            "featureName": "hoursOnSite",
             "score": 1.0
           },
           {
@@ -378,8 +413,28 @@
             "score": 1.0
           },
           {
+            "namespace": "device",
+            "featureName": "windows",
+            "score": 1.0
+          },
+          {
+            "namespace": "j",
+            "featureName": "mostWatchedByAge",
+            "score": 1.0
+          },
+          {
+            "namespace": "FromUrl",
+            "featureName": "isPayingUser",
+            "score": 1.0
+          },
+          {
+            "namespace": "currentFeatures",
+            "featureName": "weather",
+            "score": 1.0
+          },
+          {
             "namespace": "content",
-            "featureName": "hoursOnSite",
+            "featureName": "favoriteGenre",
             "score": 1.0
           },
           {
@@ -389,107 +444,52 @@
           },
           {
             "namespace": "Features",
-            "featureName": "lastWatchedType",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "favoriteGenre",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "weather",
-            "score": 1.0
-          },
-          {
-            "namespace": "content",
-            "featureName": "mostWatchedByAge",
-            "score": 1.0
-          },
-          {
-            "namespace": "j",
-            "featureName": "director",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "day",
-            "score": 1.0
-          },
-          {
-            "namespace": "content",
-            "featureName": "lastWatchedType",
-            "score": 1.0
-          },
-          {
-            "namespace": "device",
-            "featureName": "windows",
-            "score": 1.0
-          },
-          {
-            "namespace": "currentFeatures",
-            "featureName": "day",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
-            "featureName": "payingUser",
-            "score": 1.0
-          },
-          {
-            "namespace": "Features",
             "featureName": "hoursOnSite",
             "score": 1.0
           },
           {
-            "namespace": "j",
+            "namespace": "content",
             "featureName": "videoLength",
             "score": 1.0
           },
           {
-            "namespace": "currentFeatures",
-            "featureName": "weather",
+            "namespace": "Features",
+            "featureName": "time",
             "score": 1.0
           },
           {
-            "namespace": "FromUrl",
-            "featureName": "lastWatchedType",
-            "score": 1.0
-          },
-          {
-            "namespace": "content",
-            "featureName": "payingUser",
-            "score": 1.0
-          },
-          {
-            "namespace": "j",
-            "featureName": "mostWatchedByAge",
-            "score": 1.0
-          },
-          {
-            "namespace": "FromUrl",
-            "featureName": "payingUser",
-            "score": 1.0
-          },
-          {
-            "namespace": "device",
-            "featureName": "mobile",
-            "score": 1.0
-          },
-          {
-            "namespace": "content",
+            "namespace": "Features",
             "featureName": "favoriteGenre",
             "score": 1.0
           },
           {
             "namespace": "content",
+            "featureName": "director",
+            "score": 1.0
+          },
+          {
+            "namespace": "FromUrl",
+            "featureName": "payingUser",
+            "score": 1.0
+          },
+          {
+            "namespace": "content",
+            "featureName": "isPayingUser",
+            "score": 1.0
+          },
+          {
+            "namespace": "FromUrl",
+            "featureName": "favoriteGenre",
+            "score": 1.0
+          },
+          {
+            "namespace": "j",
             "featureName": "videoLength",
             "score": 1.0
           },
           {
-            "namespace": "user",
-            "featureName": "profileType",
+            "namespace": "environment",
+            "featureName": "dayOfMonth",
             "score": 0.0
           },
           {
@@ -499,12 +499,12 @@
           },
           {
             "namespace": "environment",
-            "featureName": "dayOfMonth",
+            "featureName": "weather",
             "score": 0.0
           },
           {
-            "namespace": "environment",
-            "featureName": "monthOfYear",
+            "namespace": "user",
+            "featureName": "profileType",
             "score": 0.0
           },
           {
@@ -513,20 +513,20 @@
             "score": 0.0
           },
           {
-            "namespace": "i",
-            "featureName": "id",
+            "namespace": "environment",
+            "featureName": "monthOfYear",
             "score": 0.0
           },
           {
-            "namespace": "environment",
-            "featureName": "weather",
+            "namespace": "i",
+            "featureName": "id",
             "score": 0.0
           }
         ]
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/919c93ff-2f84-4ade-8a87-dc59fa6757a5?api-version=2022-09-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/personalizer/featureImportances/319130ea-4f1b-4752-8b35-e37994023449?api-version=2022-09-01-preview",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -537,22 +537,22 @@
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "28cff91c-5157-40ed-a4c3-0bd7700e1062",
+        "apim-request-id": "838af0f6-031b-4704-8ec7-3ec3b6b57018",
         "Cache-Control": "no-store, must-revalidate, no-cache",
         "Content-Length": "0",
-        "Date": "Thu, 03 Nov 2022 15:57:01 GMT",
+        "Date": "Fri, 04 Nov 2022 00:34:53 GMT",
         "Expires": "0",
         "Pragma": "no-cache",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "timing-allow-origin": "*",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "280",
+        "x-envoy-upstream-service-time": "309",
         "x-ms-region": "East US 2 EUAP"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "test_run_feature_importance_async_id": "919c93ff-2f84-4ade-8a87-dc59fa6757a5"
+    "test_run_feature_importance_async_id": "319130ea-4f1b-4752-8b35-e37994023449"
   }
 }

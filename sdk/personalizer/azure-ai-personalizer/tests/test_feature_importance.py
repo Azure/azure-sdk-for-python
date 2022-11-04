@@ -16,8 +16,8 @@ class TestFeatureImportances(AzureRecordedTestCase):
     def test_run_feature_importance(self, **kwargs):
         variables = kwargs.pop("variables", {})
         feature_importance_id = variables.setdefault("test_run_feature_importance_id", str(uuid.uuid4()))
-        personalizer_endpoint = kwargs.pop('personalizer_endpoint_single_slot')
-        personalizer_api_key = kwargs.pop('personalizer_api_key_single_slot')
+        personalizer_endpoint = kwargs.pop('personalizer_preset_endpoint_single_slot')
+        personalizer_api_key = kwargs.pop('personalizer_preset_api_key_single_slot')
         client = personalizer_helpers.create_personalizer_admin_client(personalizer_endpoint, personalizer_api_key)
         feature_importance_name = "python_sdk_test_feature_imp"
         start_time = date.fromisoformat("2022-09-20")
