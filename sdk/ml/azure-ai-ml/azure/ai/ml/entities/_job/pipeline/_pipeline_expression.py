@@ -527,8 +527,6 @@ class PipelineExpression(PipelineExpressionMixin):
         return "\n".join(code) + "\n"
 
     def _create_component(self):
-        from azure.ai.ml.entities._job.pipeline._io import NodeOutput
-
         def _generate_python_file(_folder: Path) -> None:
             _folder.mkdir()
             with open(_folder / "expression_component.py", "w") as _f:
