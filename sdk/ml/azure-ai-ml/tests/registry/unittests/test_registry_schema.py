@@ -21,7 +21,6 @@ class TestRegistrySchema:
             context = {BASE_PATH_CONTEXT_KEY: path.parent}
             registry = load_from_dict(RegistrySchema, target, context)
             assert registry
-            assert registry["description"] == "This is a registry description"
             assert registry["name"] == "registry_name"
             assert registry["id"] == "registry_id"
             assert registry["tags"] == {"purpose": "testing", "other_tag": "value"}

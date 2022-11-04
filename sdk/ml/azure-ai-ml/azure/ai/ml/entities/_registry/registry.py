@@ -34,7 +34,6 @@ class Registry(Resource):
         name: str,
         location: str,
         identity: IdentityConfiguration = None,
-        description: str = None,
         tags: Dict[str, str] = None,
         public_network_access: str = None,
         discovery_url: str = None,
@@ -52,8 +51,6 @@ class Registry(Resource):
         :type location: str
         :param identity: registry's System Managed Identity
         :type identity: ManagedServiceIdentity
-        :param description: Description of the registry.
-        :type description: str
         :param tags: Tags of the registry.
         :type tags: dict
         :param public_network_access: Whether to allow public endpoint connectivity.
@@ -72,7 +69,7 @@ class Registry(Resource):
         :type kwargs: dict
         """
 
-        super().__init__(name=name, description=description, tags=tags, **kwargs)
+        super().__init__(name=name, description="", tags=tags, **kwargs)
 
         # self.display_name = name # Do we need a top-level visible name value?
         self.location = location
@@ -166,7 +163,6 @@ class Registry(Resource):
             identity = IdentityConfiguration._from_rest_object(rest_obj.identity)
         return Registry(
             name=rest_obj.name,
-            description=real_registry.description,
             identity=identity,
             id=rest_obj.id,
             tags=rest_obj.tags,
@@ -223,7 +219,6 @@ class Registry(Resource):
             location=self.location,
             identity=identity,
             tags=self.tags,
-            description=self.description,
             properties=RegistryProperties(
                 public_network_access=self.public_network_access,
                 discovery_url=self.discovery_url,

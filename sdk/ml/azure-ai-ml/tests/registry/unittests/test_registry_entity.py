@@ -17,7 +17,6 @@ loc_1 = "USEast"
 exterior_tags = {"test": "registry"}
 name = "registry name"
 # id = "registry id"
-description = "registry description"
 # There are two places in a registry where tags can live. We only care about
 # tags set at the top level, AKA the 'exterior_tags' defined above/
 # These interior tags only exists to show that the value technically
@@ -61,7 +60,6 @@ class TestRegistryEntity:
             name=name,
             id="registry id",
             properties=RegistryProperties(
-                description=description,
                 tags=interior_tags,
                 public_network_access=pna,
                 discovery_url=discovery_url,
@@ -95,7 +93,6 @@ class TestRegistryEntity:
         registry_entity = Registry._from_rest_object(rest_registry)
 
         assert registry_entity
-        assert registry_entity.description == description
         assert registry_entity.location == loc_1
         assert registry_entity.tags == exterior_tags
         # TODO https://dev.azure.com/msdata/Vienna/_workitems/edit/1971490/
@@ -132,7 +129,6 @@ class TestRegistryEntity:
         registry_as_dict = {
             "name": name,
             "location": loc_1,
-            "description": description,
             "tags": exterior_tags,
             "public_network_access": pna,
             "replication_locations": [{"location": loc_1, "storage_config": [storage_id_1]}],
@@ -142,7 +138,6 @@ class TestRegistryEntity:
         registry = Registry._load(registry_as_dict)
         assert registry
         assert registry.location == loc_1
-        assert registry.description == description
         assert registry.tags == exterior_tags
         assert registry.public_network_access == pna
         assert registry.replication_locations[0].acr_config[0] == acr_id_1
