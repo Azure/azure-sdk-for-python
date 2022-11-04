@@ -141,7 +141,7 @@ class SystemEventNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ContainerServiceNewKubernetesVersionAvailableEventName = 'Microsoft.ContainerService.NewKubernetesVersionAvailable'
 
     EventHubCaptureFileCreatedEventName = 'Microsoft.EventHub.CaptureFileCreated'
-    
+
     # spell-checker:ignore Dicom
     HealthcareDicomImageCreatedEventName = 'Microsoft.HealthcareApis.DicomImageCreated'
 
