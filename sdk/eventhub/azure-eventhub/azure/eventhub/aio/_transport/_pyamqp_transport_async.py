@@ -176,17 +176,14 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 await consumer._open() # pylint: disable=protected-access
                 await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch) # pylint: disable=protected-access
             except asyncio.CancelledError:
-                consumer._callback_task_run = False
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 if (
                     isinstance(exception, errors.AMQPLinkError)
                     and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
                 ):
-                    consumer._callback_task_run = False
                     raise await consumer._handle_exception(exception) # pylint: disable=protected-access
                 if not consumer.running:  # exit by close
-                    consumer._callback_task_run = False
                     return
                 if consumer._last_received_event: # pylint: disable=protected-access
                     consumer._offset = consumer._last_received_event.offset # pylint: disable=protected-access
@@ -198,7 +195,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                         consumer._name, # pylint: disable=protected-access
                         last_exception,
                     )
-                    consumer._callback_task_run = False
                     raise last_exception
 
     @staticmethod
