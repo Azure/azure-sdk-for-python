@@ -219,7 +219,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "type": "command",
         }
 
-    @pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
     def test_distribution_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         mpi_func = load_component(source=str(components_dir / "helloworld_component_mpi.yml"))
         pytorch_func = load_component(source=str(components_dir / "helloworld_component_pytorch.yml"))
@@ -1479,7 +1478,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             _ = client.jobs.create_or_update(dsl_pipeline)
             mock_logging.assert_called_with("Warnings: [jobs.node1.jeff_special_option: Unknown field.]")
 
-    @pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
     def test_anon_component_in_pipeline(
         self, client: MLClient, randstr: Callable[[str], str], hello_world_component: Component
     ) -> None:
