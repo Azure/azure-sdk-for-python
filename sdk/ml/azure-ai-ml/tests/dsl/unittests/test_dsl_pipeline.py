@@ -2127,12 +2127,12 @@ class TestDSLPipeline:
 
         pipeline = root_pipeline(10, data, 11, data, component_in_number1=12, component_in_path1=data)
 
-        assert pipeline.component.inputs['component_in_number'] == "component_in_number description"
-        assert pipeline.component.inputs['component_in_path'] == "component_in_path description"
-        assert pipeline.component.inputs['component_in_number1'] == "component_in_number1 description"
-        assert pipeline.component.inputs['component_in_path1'] == "component_in_path1 description"
-        assert pipeline.component.inputs['args_0'] == "args_0 description"
-        assert pipeline.component.inputs['args_1'] == "a number parameter"
+        assert pipeline.component.inputs['component_in_number'].description == "component_in_number description"
+        assert pipeline.component.inputs['component_in_path'].description == "component_in_path description"
+        assert pipeline.component.inputs['component_in_number1'].description == "component_in_number1 description"
+        assert pipeline.component.inputs['component_in_path1'].description == "component_in_path1 description"
+        assert pipeline.component.inputs['args_0'].description == "args_0 description"
+        assert pipeline.component.inputs['args_1'].description == None
 
         omit_fields = [
             "jobs.*.componentId",

@@ -232,7 +232,7 @@ def pipeline(
     return pipeline_decorator
 
 
-def _validate_args(func, args, kwargs, non_pipeline_inputs):
+def _validate_args(func, args, kwargs, non_pipeline_inputs):  # type: ignore  #pylint:disable=protected-access
     """Validate customer function args and convert them to kwargs."""
     if not isinstance(non_pipeline_inputs, List) or \
             any(not isinstance(param, str) for param in non_pipeline_inputs):
