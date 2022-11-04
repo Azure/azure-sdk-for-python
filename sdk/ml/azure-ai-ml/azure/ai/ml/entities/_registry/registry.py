@@ -69,7 +69,7 @@ class Registry(Resource):
         :type kwargs: dict
         """
 
-        super().__init__(name=name, description="", tags=tags, **kwargs)
+        super().__init__(name=name, tags=tags, **kwargs)
 
         # self.display_name = name # Do we need a top-level visible name value?
         self.location = location
@@ -115,15 +115,6 @@ class Registry(Resource):
             if self.replication_locations[0].acr_config and len(self.replication_locations[0].acr_config) > 0:
                 self.container_registry = self.replication_locations[0].acr_config[0]
 
-        # Change single-list managed storage accounts to not be lists.
-        # Although storage accounts are storage in a list to match the
-        # underlying API, users should only enter in one managed storage
-        # in YAML.
-        for region_detail in self.replication_locations:
-            if region_detail.storage_config and isinstance(
-                region_detail.storage_config[0], SystemCreatedStorageAccount
-            ):
-                region_detail.storage_config = region_detail.storage_config[0]
         return schema.dump(self)
 
     @classmethod
