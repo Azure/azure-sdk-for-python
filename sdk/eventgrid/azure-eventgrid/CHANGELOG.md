@@ -1,8 +1,10 @@
 # Release History
 
-## 4.9.1 (Unreleased)
+## 4.9.1 (2022-11-08)
 
 ### Features Added
+
+- Added new enum values to `SystemEventNames` related to health care APIs.
 
 ### Breaking Changes
 
