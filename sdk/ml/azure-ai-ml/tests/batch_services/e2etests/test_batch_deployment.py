@@ -35,9 +35,7 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
     client.batch_endpoints.begin_delete(name=endpoint.name)
 
 
-@pytest.mark.skip(
-    reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
-)
+@pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experience_test
 class TestBatchDeployment(AzureRecordedTestCase):
@@ -76,14 +74,13 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         client.batch_endpoints.begin_delete(name=endpoint.name)
 
-    @pytest.mark.e2etest
-    def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str]) -> None:
+    def test_batch_deployment_dependency_label_resolution(self, client: MLClient, randstr: Callable[[], str], rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"
-        name = "batch-ept-" + uuid.uuid4().hex[:15]
+        name = rand_batch_name("name")
         deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_mlflow_new.yaml"
-        deployment_name = "batch-dpm-" + uuid.uuid4().hex[:15]
+        deployment_name = rand_batch_deployment_name("deployment_name")
 
-        environment_name = randstr()
+        environment_name = randstr("environment_name")
         environment_versions = ["foo", "bar"]
 
         for version in environment_versions:
@@ -94,7 +91,7 @@ class TestBatchDeployment(AzureRecordedTestCase):
                 )
             )
 
-        model_name = randstr()
+        model_name = randstr("model_name")
         model_versions = ["1", "2"]
 
         for version in model_versions:
@@ -134,15 +131,16 @@ class TestBatchDeployment(AzureRecordedTestCase):
         )
         assert resolved_model.asset_name == model_name and resolved_model.asset_version == model_versions[-1]
 
-    @pytest.mark.e2etest
-    def test_batch_job_download(self, client: MLClient, tmp_path: Path) -> str:
+    def test_batch_job_download(self, client: MLClient, tmp_path: Path, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> str:
+        endpoint_name = rand_batch_name("name")
         endpoint = load_batch_endpoint(
             "./tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml",
-            params_override=[{"name": "batch-ept-" + uuid.uuid4().hex[:15]}],
+            params_override=[{"name": endpoint_name}],
         )
+        deployment_name = rand_batch_deployment_name("deployment_name")
         deployment = load_batch_deployment(
             "./tests/test_configs/deployments/batch/batch_deployment_quick.yaml",
-            params_override=[{"endpoint_name": endpoint.name}, {"name": "batch-dpm-" + uuid.uuid4().hex[:15]}],
+            params_override=[{"endpoint_name": endpoint.name}, {"name": deployment_name}],
         )
         endpoint.traffic = {deployment.name: 100}
 
