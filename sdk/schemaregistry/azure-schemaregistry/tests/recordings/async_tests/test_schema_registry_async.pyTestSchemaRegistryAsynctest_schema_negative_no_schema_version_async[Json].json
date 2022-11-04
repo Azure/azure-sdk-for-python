@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "392",
         "Content-Type": "application/json; serialization=Json",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "$id": "https://example.com/person.schema.json",
@@ -34,11 +34,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 03 Nov 2022 19:39:05 GMT",
+        "Date": "Fri, 04 Nov 2022 00:30:24 GMT",
         "Location": "https://fake_resource_json.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-negative-version-json7f543f4/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "b3b8ba63e1f5485292df6375ee9766bf",
-        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/b3b8ba63e1f5485292df6375ee9766bf?api-version=2022-10",
+        "Schema-Id": "1ed6ee2fac0f47f3a0bea3d3b8f79c54",
+        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/1ed6ee2fac0f47f3a0bea3d3b8f79c54?api-version=2022-10",
         "Schema-Name": "test-schema-negative-version-json7f543f4",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-negative-version-json7f543f4/versions?api-version=2022-10",
@@ -53,13 +53,13 @@
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 03 Nov 2022 19:39:06 GMT",
+        "Date": "Fri, 04 Nov 2022 00:30:25 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -68,7 +68,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema fakegroup/test-schema-negative-version-json7f543f4/ver.2 does not exist. TrackingId:6099a052-f651-4a37-825d-9fb399fbd99b_G8, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-negative-version-json7f543f4/versions/2, Timestamp:2022-11-03T19:39:06"
+          "message": "Schema fakegroup/test-schema-negative-version-json7f543f4/ver.2 does not exist. TrackingId:f342a093-7101-4c38-9e6d-cca1ddd9b1a6_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-negative-version-json7f543f4/versions/2, Timestamp:2022-11-04T00:30:26"
         }
       }
     }

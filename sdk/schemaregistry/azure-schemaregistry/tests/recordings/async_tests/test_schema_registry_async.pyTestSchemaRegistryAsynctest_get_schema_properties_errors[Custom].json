@@ -7,14 +7,41 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "Content-Type": "text/plain; charset=utf-8",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
+      "StatusCode": 400,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Fri, 04 Nov 2022 00:30:35 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "InvalidRequest"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InvalidRequest",
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:baa17272-97c2-4cde-9912-dc9631c804cc_G6, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema:get-id, Timestamp:2022-11-04T00:30:35"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource_custom.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema:get-id?api-version=2022-10",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "28",
+        "Content-Type": "application/json; serialization=Invalid-format",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "My favorite color is yellow.",
       "StatusCode": 415,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 03 Nov 2022 19:58:25 GMT",
+        "Date": "Fri, 04 Nov 2022 00:30:35 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -23,7 +50,34 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidSchemaType",
-          "message": "Invalid schema type for POST request. \u0027\u0027 is not supported. TrackingId:4c28806d-329e-4931-88e7-8e18d426ef84_G16, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema:get-id, Timestamp:2022-11-03T19:58:26"
+          "message": "Invalid schema type for POST request. \u0027invalid-format\u0027 is not supported. TrackingId:2700445d-52cb-4f93-8ad0-3da7a43cafbf_G6, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema:get-id, Timestamp:2022-11-04T00:30:36"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fake_resource_custom.servicebus.windows.net/$schemaGroups/fakegroup/schemas/never-registered:get-id?api-version=2022-10",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "28",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "TXkgZmF2b3JpdGUgY29sb3IgaXMgeWVsbG93Lg==",
+      "StatusCode": 404,
+      "ResponseHeaders": {
+        "Content-Type": "application/json",
+        "Date": "Fri, 04 Nov 2022 00:30:36 GMT",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000",
+        "Transfer-Encoding": "chunked",
+        "x-ms-error-code": "ItemNotFound"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "ItemNotFound",
+          "message": "Schema fakegroup/never-registered does not exist. TrackingId:afe7e466-f794-4c0d-b523-3a0584753754_G6, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/fakegroup/schemas/never-registered:get-id, Timestamp:2022-11-04T00:30:36"
         }
       }
     }

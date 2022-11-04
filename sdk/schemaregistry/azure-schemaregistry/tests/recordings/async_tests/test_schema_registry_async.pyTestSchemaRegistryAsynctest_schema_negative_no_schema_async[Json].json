@@ -6,13 +6,13 @@
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 03 Nov 2022 19:39:02 GMT",
+        "Date": "Fri, 04 Nov 2022 00:30:20 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -21,7 +21,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:5246f8d9-2075-481e-9b0b-a672d8840682_G8, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-11-03T19:39:03"
+          "message": "SubCode=40000, UnknownType:The request is invalid. [MGResponseHttpError=BadRequest]. TrackingId:b9edbf63-0bca-4942-9983-cd0d5ff8ceff_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/$schemas/a, Timestamp:2022-11-04T00:30:20"
         }
       }
     },
@@ -31,13 +31,13 @@
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 404,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 03 Nov 2022 19:39:03 GMT",
+        "Date": "Fri, 04 Nov 2022 00:30:20 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -46,7 +46,7 @@
       "ResponseBody": {
         "error": {
           "code": "ItemNotFound",
-          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:5270fd64-7c2d-41df-a48d-dc3e23fc7a1e_G8, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-11-03T19:39:03"
+          "message": "Schema id aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa does not exist. TrackingId:92bba479-25f6-41e1-82bb-6320ee12efeb_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/$schemas/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa, Timestamp:2022-11-04T00:30:21"
         }
       }
     }

@@ -7,25 +7,52 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "28",
-        "Content-Type": "text/plain; charset=utf-8",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "My favorite color is yellow.",
-      "StatusCode": 400,
+      "RequestBody": "TXkgZmF2b3JpdGUgY29sb3IgaXMgeWVsbG93Lg==",
+      "StatusCode": 204,
       "ResponseHeaders": {
-        "Content-Type": "application/json",
-        "Date": "Thu, 03 Nov 2022 19:58:13 GMT",
+        "Content-Length": "0",
+        "Date": "Fri, 04 Nov 2022 00:29:37 GMT",
+        "Location": "https://fake_resource_custom.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions/1?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "b93c657c9a944a2c884a73e7d13a9b3e",
+        "Schema-Id-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/$schemas/b93c657c9a944a2c884a73e7d13a9b3e?api-version=2022-10",
+        "Schema-Name": "test-schema-update-async-custom6f9b3c94",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000",
-        "Transfer-Encoding": "chunked",
-        "x-ms-error-code": "InvalidRequest"
+        "Strict-Transport-Security": "max-age=31536000"
       },
-      "ResponseBody": {
-        "error": {
-          "code": "InvalidRequest",
-          "message": "Missing required header for PUT request. Schema/serialization type must be provided. TrackingId:f45f9617-82e7-4f28-a446-fc05d47e57b1_G16, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94, Timestamp:2022-11-03T19:58:14"
-        }
-      }
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://fake_resource_custom.servicebus.windows.net/$schemaGroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94?api-version=2022-10",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "27",
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": "TXkgZmF2b3JpdGUgZm9vZCBpcyB5ZWxsb3cu",
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 04 Nov 2022 00:29:37 GMT",
+        "Location": "https://fake_resource_custom.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions/2?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "793e858f3e8d422f8ed39c07e576bf8c",
+        "Schema-Id-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/$schemas/793e858f3e8d422f8ed39c07e576bf8c?api-version=2022-10",
+        "Schema-Name": "test-schema-update-async-custom6f9b3c94",
+        "Schema-Version": "2",
+        "Schema-Versions-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-update-async-custom6f9b3c94/versions?api-version=2022-10",
+        "Server": "Microsoft-HTTPAPI/2.0",
+        "Strict-Transport-Security": "max-age=31536000"
+      },
+      "ResponseBody": null
     }
   ],
   "Variables": {}

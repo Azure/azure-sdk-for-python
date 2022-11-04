@@ -30,8 +30,8 @@ from devtools_testutils import AzureRecordedTestCase, EnvironmentVariableLoader,
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
-    #schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
-    #schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
+    schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
+    schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
     schemaregistry_custom_fully_qualified_namespace="fake_resource_custom.servicebus.windows.net",
     schemaregistry_group="fakegroup"
 )
@@ -68,8 +68,8 @@ avro_args = (AVRO_FORMAT, AVRO_SCHEMA_STR)
 json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
 custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
 
-format_params = [custom_args]
-format_ids = [CUSTOM_FORMAT]
+format_params = [avro_args, json_args, custom_args]
+format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
 
 class ArgPasser:
     def __call__(self, fn):
@@ -119,7 +119,7 @@ class TestSchemaRegistry(AzureRecordedTestCase):
         assert returned_version_schema.properties.version == schema_properties.version
         assert returned_version_schema.definition.replace("\/", "/") == schema_str
 
-        returned_schema_properties = client.get_schema_properties(schemaregistry_group, name, schema_str, format, logging_enable=True)
+        returned_schema_properties = client.get_schema_properties(schemaregistry_group, name, schema_str, format.upper(), logging_enable=True)
 
         assert returned_schema_properties.id == schema_properties.id
         assert returned_schema_properties.format == format

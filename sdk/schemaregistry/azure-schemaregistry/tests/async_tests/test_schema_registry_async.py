@@ -31,8 +31,8 @@ from devtools_testutils.aio import recorded_by_proxy_async
 SchemaRegistryEnvironmentVariableLoader = functools.partial(
     EnvironmentVariableLoader,
     "schemaregistry",
-    #schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
-    #schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
+    schemaregistry_avro_fully_qualified_namespace="fake_resource_avro.servicebus.windows.net",
+    schemaregistry_json_fully_qualified_namespace="fake_resource_json.servicebus.windows.net",
     schemaregistry_custom_fully_qualified_namespace="fake_resource_custom.servicebus.windows.net",
     schemaregistry_group="fakegroup"
 )
@@ -69,8 +69,8 @@ avro_args = (AVRO_FORMAT, AVRO_SCHEMA_STR)
 json_args = (JSON_FORMAT, JSON_SCHEMA_STR)
 custom_args = (CUSTOM_FORMAT, CUSTOM_SCHEMA_STR)
 
-format_params = [custom_args]
-format_ids = [CUSTOM_FORMAT]
+format_params = [avro_args, json_args, custom_args]
+format_ids = [AVRO_FORMAT, JSON_FORMAT, CUSTOM_FORMAT]
 
 class ArgPasser:
     def __call__(self, fn):
@@ -95,7 +95,7 @@ class TestSchemaRegistryAsync(AzureRecordedTestCase):
         client = self.create_client(fully_qualified_namespace=schemaregistry_fully_qualified_namespace)
         async with client:
             name = self.get_resource_name(f"test-schema-basic-async-{format.lower()}")
-            schema_properties = await client.register_schema(schemaregistry_group, name, schema_str, format, logging_enable=True)
+            schema_properties = await client.register_schema(schemaregistry_group, name, schema_str, format.upper(), logging_enable=True)
 
             assert schema_properties.id is not None
             assert schema_properties.format == format

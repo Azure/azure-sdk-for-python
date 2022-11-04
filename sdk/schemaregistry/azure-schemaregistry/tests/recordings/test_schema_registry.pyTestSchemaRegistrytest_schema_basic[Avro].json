@@ -17,17 +17,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 19:37:47 GMT",
+        "Date": "Fri, 04 Nov 2022 00:27:13 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AsOyVkFRhLJJguLcRC14PI8; expires=Sat, 03-Dec-2022 19:37:47 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrW8ITfdMw19PLYI2XJr34b80nDFSocukF0hply1OvS1fh8xahiZBOnQQkwyNl1FycE3HjtOVQIEQ83NZH_-TZQ_GxvWkjcHzh_fyDw8aLy_T7muVbP3HtKhY7WtDsEWOAJc5MUSXpv7e-foLKEbvTOo0oRCdga8Me1Mft-S2zAxFrsUj-IrVa8_nu3NEeTdZr_T0RSsCaLP5v44TBpxAdTriVssg1DB9CsM4axBZC348gAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=ArNmK3x5NOJKsrCtpUPJG_U; expires=Sun, 04-Dec-2022 00:27:14 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr8jYdweQV-Xi9koiYtlYgx5AQ1L0disfpupKRun1ujQORkkJRW6Y3eZ08ZgAJeBPIkOzz1zbc6_U6yW_fFrLwoo1K5eOHjpBoTalI_K7FtMStGdf29YkPMSZk3bWVKqN4gJ_wyxrK93MmcmR6jZeo7JPsprItIR98dPT-gBZP9kUi0OqKzHoEox43xi1bYMzA9ue-NtRsQ61c6042iFALVbDo0xE0M0JeV2ZFtJBk9msgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14059.10 - NCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -105,7 +105,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AsOyVkFRhLJJguLcRC14PI8; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=ArNmK3x5NOJKsrCtpUPJG_U; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -116,10 +116,10 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 19:37:47 GMT",
+        "Date": "Fri, 04 Nov 2022 00:27:15 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AsOyVkFRhLJJguLcRC14PI8; expires=Sat, 03-Dec-2022 19:37:47 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=ArNmK3x5NOJKsrCtpUPJG_U; expires=Sun, 04-Dec-2022 00:27:15 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -183,7 +183,7 @@
         "Connection": "keep-alive",
         "Content-Length": "201",
         "Content-Type": "application/json; serialization=Avro",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "namespace": "example.avro",
@@ -213,11 +213,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 03 Nov 2022 19:37:48 GMT",
+        "Date": "Fri, 04 Nov 2022 00:27:16 GMT",
         "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-avro7cab2f59/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "09014a895a4c4055bd3a3e713854c69c",
-        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/09014a895a4c4055bd3a3e713854c69c?api-version=2022-10",
+        "Schema-Id": "9953aae1618d418f93b2c61bc2321538",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/9953aae1618d418f93b2c61bc2321538?api-version=2022-10",
         "Schema-Name": "test-schema-basic-avro7cab2f59",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic-avro7cab2f59/versions?api-version=2022-10",
@@ -227,23 +227,23 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/$schemas/09014a895a4c4055bd3a3e713854c69c?api-version=2022-10",
+      "RequestUri": "https://fake_resource_avro.servicebus.windows.net/$schemaGroups/$schemas/9953aae1618d418f93b2c61bc2321538?api-version=2022-10",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; serialization=Avro",
-        "Date": "Thu, 03 Nov 2022 19:37:49 GMT",
+        "Date": "Fri, 04 Nov 2022 00:27:17 GMT",
         "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-avro7cab2f59/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "09014a895a4c4055bd3a3e713854c69c",
-        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/09014a895a4c4055bd3a3e713854c69c?api-version=2022-10",
+        "Schema-Id": "9953aae1618d418f93b2c61bc2321538",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/9953aae1618d418f93b2c61bc2321538?api-version=2022-10",
         "Schema-Name": "test-schema-basic-avro7cab2f59",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic-avro7cab2f59/versions?api-version=2022-10",
@@ -284,17 +284,17 @@
         "Accept": "application/json; serialization=Avro, application/json; serialization=json, text/plain; charset=utf-8",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; serialization=Avro",
-        "Date": "Thu, 03 Nov 2022 19:37:49 GMT",
+        "Date": "Fri, 04 Nov 2022 00:27:17 GMT",
         "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-avro7cab2f59/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "09014a895a4c4055bd3a3e713854c69c",
-        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/09014a895a4c4055bd3a3e713854c69c?api-version=2022-10",
+        "Schema-Id": "9953aae1618d418f93b2c61bc2321538",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/9953aae1618d418f93b2c61bc2321538?api-version=2022-10",
         "Schema-Name": "test-schema-basic-avro7cab2f59",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic-avro7cab2f59/versions?api-version=2022-10",
@@ -337,7 +337,7 @@
         "Connection": "keep-alive",
         "Content-Length": "201",
         "Content-Type": "application/json; serialization=Avro",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "namespace": "example.avro",
@@ -367,11 +367,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 03 Nov 2022 19:37:50 GMT",
+        "Date": "Fri, 04 Nov 2022 00:27:18 GMT",
         "Location": "https://fake_resource_avro.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-avro7cab2f59/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "09014a895a4c4055bd3a3e713854c69c",
-        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/09014a895a4c4055bd3a3e713854c69c?api-version=2022-10",
+        "Schema-Id": "9953aae1618d418f93b2c61bc2321538",
+        "Schema-Id-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/$schemas/9953aae1618d418f93b2c61bc2321538?api-version=2022-10",
         "Schema-Name": "test-schema-basic-avro7cab2f59",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_avro.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic-avro7cab2f59/versions?api-version=2022-10",

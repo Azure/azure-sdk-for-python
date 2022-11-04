@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "392",
         "Content-Type": "application/json; serialization=Json",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "$id": "https://example.com/person.schema.json",
@@ -34,11 +34,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 03 Nov 2022 19:38:48 GMT",
+        "Date": "Fri, 04 Nov 2022 00:29:59 GMT",
         "Location": "https://fake_resource_json.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice-async-jsoneaa23d51/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "7c87da9eaa9b41c58ed51e9cff460b92",
-        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/7c87da9eaa9b41c58ed51e9cff460b92?api-version=2022-10",
+        "Schema-Id": "13d2e7bf7aca418ba6bb58f53c36d870",
+        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/13d2e7bf7aca418ba6bb58f53c36d870?api-version=2022-10",
         "Schema-Name": "test-schema-twice-async-jsoneaa23d51",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice-async-jsoneaa23d51/versions?api-version=2022-10",
@@ -55,7 +55,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "392",
         "Content-Type": "application/json; serialization=Json",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "$id": "https://example.com/person.schema.json",
@@ -81,11 +81,11 @@
       "StatusCode": 204,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Thu, 03 Nov 2022 19:38:49 GMT",
+        "Date": "Fri, 04 Nov 2022 00:29:59 GMT",
         "Location": "https://fake_resource_json.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-twice-async-jsoneaa23d51/versions/1?api-version=2022-10",
         "Schema-Group-Name": "fakegroup",
-        "Schema-Id": "7c87da9eaa9b41c58ed51e9cff460b92",
-        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/7c87da9eaa9b41c58ed51e9cff460b92?api-version=2022-10",
+        "Schema-Id": "13d2e7bf7aca418ba6bb58f53c36d870",
+        "Schema-Id-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/$schemas/13d2e7bf7aca418ba6bb58f53c36d870?api-version=2022-10",
         "Schema-Name": "test-schema-twice-async-jsoneaa23d51",
         "Schema-Version": "1",
         "Schema-Versions-Location": "https://fake_resource_json.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-twice-async-jsoneaa23d51/versions?api-version=2022-10",

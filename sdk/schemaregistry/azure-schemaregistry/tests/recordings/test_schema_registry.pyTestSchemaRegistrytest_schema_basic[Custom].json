@@ -17,17 +17,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 20:02:37 GMT",
+        "Date": "Fri, 04 Nov 2022 00:27:22 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AvRf8vfFij1JuoNcHqfTeXA; expires=Sat, 03-Dec-2022 20:02:37 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7Wevr_fED5ARRFB08X2J73pCOBESWE1_8jveQ5C_BH3eFhtIyszUtGkkhPrf2VAE0CiBnpqMFVyWZVDLG2qUfFZIZYJC_hdhMM-lSot8Pj47yuE0TxuyZNjsu_QduIP7-RNNU06hajc2fSbMju8bovWEJcTDfX8qiutpV3bQiY858obVzlUGBcLSTYBvelNAk4NzBKKECq1iH0w8COXbM0JXn3WyGOLG9tGEIJYnMhSTwgUUgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
+          "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUAgAAAGJT9toOAAAA; expires=Sun, 04-Dec-2022 00:27:22 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14059.10 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -105,7 +103,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AvRf8vfFij1JuoNcHqfTeXA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "Cookie": "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUAgAAAGJT9toOAAAA; x-ms-gateway-slice=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -116,15 +114,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 03 Nov 2022 20:02:37 GMT",
+        "Date": "Fri, 04 Nov 2022 00:27:22 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AvRf8vfFij1JuoNcHqfTeXA; expires=Sat, 03-Dec-2022 20:02:38 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=ArNmK3x5NOJKsrCtpUPJG_U7zqiUAgAAAGJT9toOAAAA; expires=Sun, 04-Dec-2022 00:27:22 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14006.10 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -182,25 +180,25 @@
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "28",
-        "Content-Type": "text/plain; charset=utf-8",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "Content-Type": "application/octet-stream",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "My favorite color is yellow.",
-      "StatusCode": 400,
+      "RequestBody": "TXkgZmF2b3JpdGUgY29sb3IgaXMgeWVsbG93Lg==",
+      "StatusCode": 204,
       "ResponseHeaders": {
-        "Content-Type": "application/json",
-        "Date": "Thu, 03 Nov 2022 20:02:39 GMT",
+        "Content-Length": "0",
+        "Date": "Fri, 04 Nov 2022 00:27:24 GMT",
+        "Location": "https://fake_resource_custom.servicebus.windows.net/$schemagroups/fakegroup/schemas/test-schema-basic-customdf06303c/versions/1?api-version=2022-10",
+        "Schema-Group-Name": "fakegroup",
+        "Schema-Id": "d972a773f4284baba829582670ad68f2",
+        "Schema-Id-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/$schemas/d972a773f4284baba829582670ad68f2?api-version=2022-10",
+        "Schema-Name": "test-schema-basic-customdf06303c",
+        "Schema-Version": "1",
+        "Schema-Versions-Location": "https://fake_resource_custom.servicebus.windows.net:443/$schemagroups/fakegroup/schemas/test-schema-basic-customdf06303c/versions?api-version=2022-10",
         "Server": "Microsoft-HTTPAPI/2.0",
-        "Strict-Transport-Security": "max-age=31536000",
-        "Transfer-Encoding": "chunked",
-        "x-ms-error-code": "InvalidRequest"
+        "Strict-Transport-Security": "max-age=31536000"
       },
-      "ResponseBody": {
-        "error": {
-          "code": "InvalidRequest",
-          "message": "Missing required header for PUT request. Schema/serialization type must be provided. TrackingId:f0d0f96e-8bbb-456a-8400-b3794fc42497_G19, SystemTracker:fake_resource_custom.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema-basic-customdf06303c, Timestamp:2022-11-03T20:02:39"
-        }
-      }
+      "ResponseBody": null
     }
   ],
   "Variables": {}

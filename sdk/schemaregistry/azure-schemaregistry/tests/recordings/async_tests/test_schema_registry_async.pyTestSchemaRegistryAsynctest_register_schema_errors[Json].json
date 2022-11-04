@@ -8,13 +8,13 @@
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
         "Content-Type": "application/json; serialization=Json",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 400,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 03 Nov 2022 19:39:08 GMT",
+        "Date": "Fri, 04 Nov 2022 00:30:28 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -23,7 +23,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidRequest",
-          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:ec81495b-b308-4846-ae64-cf3e07e7e82e_G8, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-11-03T19:39:08"
+          "message": "Error when consuming request body: The body of the message cannot be read because it is empty. TrackingId:5260a82f-aa91-4354-b516-6b9729c72ba2_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-11-04T00:30:29"
         }
       }
     },
@@ -34,8 +34,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "392",
-        "Content-Type": "application/json; serialization=invalid-format",
-        "User-Agent": "azsdk-python-azureschemaregistry/1.0.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "Content-Type": "application/json; serialization=Invalid-format",
+        "User-Agent": "azsdk-python-azureschemaregistry/1.3.0b1 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "$id": "https://example.com/person.schema.json",
@@ -61,7 +61,7 @@
       "StatusCode": 415,
       "ResponseHeaders": {
         "Content-Type": "application/json",
-        "Date": "Thu, 03 Nov 2022 19:39:08 GMT",
+        "Date": "Fri, 04 Nov 2022 00:30:29 GMT",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000",
         "Transfer-Encoding": "chunked",
@@ -70,7 +70,7 @@
       "ResponseBody": {
         "error": {
           "code": "InvalidSchemaType",
-          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:90ab307f-0e34-4477-a940-8f09168ddcde_G8, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-11-03T19:39:08"
+          "message": "Invalid schema type for PUT request. \u0027invalid-format\u0027 is not supported. TrackingId:80c384da-b7c9-4971-90a6-6b7979851486_G12, SystemTracker:fake_resource_json.servicebus.windows.net:$schemaGroups/fakegroup/schemas/test-schema, Timestamp:2022-11-04T00:30:29"
         }
       }
     }
