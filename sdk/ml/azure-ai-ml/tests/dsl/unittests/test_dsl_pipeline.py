@@ -2275,15 +2275,15 @@ class TestDSLPipeline:
             },
         }
 
-        pipeline_with_custom_variable_args(10, data, 11, data, component_in_number1=12, component_in_path1=data)
+        pipeline = pipeline_with_custom_variable_args(10, data, 11, data, component_in_number1=12, component_in_path1=data)
         actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
         assert actual_dict["inputs"] == {
             "component_in_number1": {"job_input_type": "literal", "value": "12"},
             "component_in_path1": {"uri": "test:1", "job_input_type": "mltable"},
             "custom_args_0": {"job_input_type": "literal", "value": "10"},
             "custom_args_1": {"uri": "test:1", "job_input_type": "mltable"},
-            "custom_args_2": {"job_input_type": "literal", "value": "10"},
-            "custom_args_3": {"uri": "test:1", "job_input_type": "mltable"},
+            "custom_args_2": {"job_input_type": "literal", "value": "11"},
+            "custom_args_3": {"uri": "test:1", "job_input_type": "mltable"}
         }
 
         with mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: 'false'}):

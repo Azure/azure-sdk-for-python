@@ -232,26 +232,25 @@ def pipeline(
     return pipeline_decorator
 
 
-def _validate_args(func, args, kwargs, non_pipeline_inputs):  # type: ignore  #pylint:disable=protected-access
+def _validate_args(func, args, kwargs, non_pipeline_inputs):
     """Validate customer function args and convert them to kwargs."""
     if not isinstance(non_pipeline_inputs, List) or \
             any(not isinstance(param, str) for param in non_pipeline_inputs):
         raise UnExpectedNonPipelineParameterTypeError()
     # Positional arguments validate
     is_support_variable_params = is_private_preview_enabled()
-    all_parameters = [param for _, param in signature(func).parameters.items()]
-    all_parameter_keys = [param.name for param in all_parameters]
+    all_parameters = signature(func).parameters
     non_pipeline_inputs = non_pipeline_inputs or []
-    unexpected_non_pipeline_inputs = [param for param in non_pipeline_inputs if param not in all_parameter_keys]
+    unexpected_non_pipeline_inputs = [param for param in non_pipeline_inputs if param not in all_parameters]
     if unexpected_non_pipeline_inputs:
         raise ParamValueNotExistsError(func.__name__, unexpected_non_pipeline_inputs)
 
     named_parameters = [
-        param for param in all_parameters if param.kind not in [param.VAR_KEYWORD, param.VAR_POSITIONAL]]
+        param for param in all_parameters.values() if param.kind not in [param.VAR_KEYWORD, param.VAR_POSITIONAL]]
     empty_parameters = {param.name: param for param in named_parameters if param.default is Parameter.empty}
     # Implicit parameter are *args and **kwargs
     if not is_support_variable_params:
-        if len(all_parameters) != len(named_parameters):
+        if len(all_parameters.values()) != len(named_parameters):
             raise UnsupportedParameterKindError(func.__name__)
 
         min_num = len(empty_parameters)
@@ -262,12 +261,12 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):  # type: ignore  #p
     func_args, provided_args = list(args), OrderedDict({})
     provided_kwargs = OrderedDict({param.name: func_args.pop(0) for param in named_parameters if len(func_args) > 0})
     for _k in kwargs.keys():
-        if not is_support_variable_params and _k not in all_parameter_keys:
-            raise UnexpectedKeywordError(func.__name__, _k, all_parameter_keys)
+        if not is_support_variable_params and _k not in all_parameters:
+            raise UnexpectedKeywordError(func.__name__, _k, all_parameters.keys())
         if _k in provided_kwargs.keys():
             raise MultipleValueError(func.__name__, _k)
         provided_kwargs[_k] = kwargs[_k]
-    variable_args = next(iter(param for param in all_parameters if param.kind == param.VAR_POSITIONAL), None)
+    variable_args = next(iter(param for param in all_parameters.values() if param.kind == param.VAR_POSITIONAL), None)
     variable_args_prefix =  variable_args.name if variable_args and func_args else None
     for index, arg in enumerate(func_args):
         variable_args_name = f"{variable_args_prefix}_{index}"
