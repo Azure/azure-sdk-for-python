@@ -23,7 +23,6 @@ from ._request_handlers import (
     _determine_action_type,
 )
 from ._validate import validate_multiapi_args, check_for_unsupported_actions_types
-from ._version import DEFAULT_API_VERSION
 from ._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -145,7 +144,6 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         super().__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
-        self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_index_type_default = (
