@@ -162,11 +162,7 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
         while True:
             result = await self.get_test_run(test_run_id=test_run_id)
 
-            try:
-                status = result["status"]
-
-            except TypeError:
-                raise ResourceNotFoundError(f"Test Run not found with TestRunId: {test_run_id}")
+            status = result["status"]
 
             if status == "COMPLETED":
                 return TestRunStatus.Done
