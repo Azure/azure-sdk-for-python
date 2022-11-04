@@ -18,26 +18,29 @@ class TestFileValidationStatus(Enum):
 
 
 class TestRunStatus(Enum):
-    Accepted = 0,
-    NotStarted = 1,
-    Provisioning = 2,
-    Provisioned = 3,
-    Configuring = 4,
-    Configured = 5,
-    Executing = 6,
-    Executed = 7,
-    Deprovisioning = 8,
-    Deprovisioned = 9,
-    Done = 10,
-    Cancelling = 11,
-    Cancelled = 12,
-    Failed = 13,
-    ValidationSuccess = 14,
+    Accepted = 0
+    NotStarted = 1
+    Provisioning = 2
+    Provisioned = 3
+    Configuring = 4
+    Configured = 5
+    Executing = 6
+    Executed = 7
+    Deprovisioning = 8
+    Deprovisioned = 9
+    Done = 10
+    Cancelling = 11
+    Cancelled = 12
+    Failed = 13
+    ValidationSuccess = 14
     ValidationFailed = 15
     CheckTimeout = 16
 
 
-__all__: List[str] = ["TestFileValidationStatus", "TestRunStatus"]  # Add all objects you want publicly available to users at this
+__all__: List[str] = [
+    "TestFileValidationStatus",
+    "TestRunStatus",
+]  # Add all objects you want publicly available to users at this
 # package level
 
 

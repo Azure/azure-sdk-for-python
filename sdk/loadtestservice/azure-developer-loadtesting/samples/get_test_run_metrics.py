@@ -42,20 +42,18 @@ client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTES
 # checking the test run stats and printing metrics
 start_time = time.time()
 
-if client.load_test_run.check_test_run_completed(TEST_RUN_ID) != TestRunStatus.CheckTimeout :
-        # getting the test run metrics filters
-        client_metrics_filters = client.load_test_run.get_test_run_client_metrics_filters(
-            TEST_RUN_ID
-        )
+if client.load_test_run.check_test_run_completed(TEST_RUN_ID) != TestRunStatus.CheckTimeout:
+    # getting the test run metrics filters
+    client_metrics_filters = client.load_test_run.get_test_run_client_metrics_filters(TEST_RUN_ID)
 
-        # getting the test run metrics
-        result_metrics = client.load_test_run.get_test_run_client_metrics(
-            TEST_RUN_ID,
-            {
-                "requestSamplers": ["GET"],
-                "startTime": client_metrics_filters['timeRange']['startTime'],
-                "endTime": client_metrics_filters['timeRange']['endTime']
-            }
-        )
+    # getting the test run metrics
+    result_metrics = client.load_test_run.get_test_run_client_metrics(
+        TEST_RUN_ID,
+        {
+            "requestSamplers": ["GET"],
+            "startTime": client_metrics_filters["timeRange"]["startTime"],
+            "endTime": client_metrics_filters["timeRange"]["endTime"],
+        },
+    )
 
-        print(result_metrics)
+    print(result_metrics)

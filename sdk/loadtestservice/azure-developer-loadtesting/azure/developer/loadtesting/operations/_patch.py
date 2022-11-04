@@ -132,8 +132,9 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
 
-    def check_test_file_validation_status(self, test_id: str, *, refresh_time: int = 10, timeout: int = 60) \
-            -> TestFileValidationStatus:
+    def check_test_file_validation_status(
+        self, test_id: str, *, refresh_time: int = 10, timeout: int = 60
+    ) -> TestFileValidationStatus:
         """Check if JMX file is validated or not
 
         :param test_id: Unique id for the test

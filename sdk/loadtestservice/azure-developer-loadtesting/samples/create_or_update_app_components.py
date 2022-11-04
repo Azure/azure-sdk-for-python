@@ -48,10 +48,10 @@ result = client.load_test_administration.create_or_update_app_component(
             f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers/Microsoft.Web"
             f"/sites/App-Service-Sample-Demo": {
                 "resourceId": f"/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/App-Service-Sample-Demo-rg/providers"
-                              f"/Microsoft.Web/sites/App-Service-Sample-Demo",
+                f"/Microsoft.Web/sites/App-Service-Sample-Demo",
                 "resourceName": "App-Service-Sample-Demo",
                 "resourceType": "Microsoft.Web/sites",
-             }
+            }
         },
     },
 )
