@@ -548,8 +548,8 @@ class TestDSLPipelineJobValidate:
         dsl_pipeline: PipelineJob = pipeline(10, job_input)
 
         validation_result = dsl_pipeline._validate()
-        assert "jobs.node2.limits.max_total_trials" in validation_result.error_messages
-        assert validation_result.error_messages["jobs.node2.limits.max_total_trials"] == "Missing data for required field."
+        assert "jobs.node2.limits" in validation_result.error_messages
+        assert validation_result.error_messages["jobs.node2.limits"] == "Missing data for required field."
 
     def test_node_schema_validation(self) -> None:
         path = "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml"
