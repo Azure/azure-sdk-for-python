@@ -21,7 +21,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml._utils._experimental import experimental
 
-from .registry_support_classes import RegistryRegionDetails, SystemCreatedStorageAccount
+from .registry_support_classes import RegistryRegionDetails
 
 CONTAINER_REGISTRY = "container_registry"
 REPLICATION_LOCATIONS = "replication_locations"
