@@ -2,7 +2,6 @@ import os
 import re
 import uuid
 from pathlib import Path
-from time import sleep
 from typing import Callable
 from unittest.mock import patch
 
@@ -16,6 +15,8 @@ from azure.ai.ml.entities._assets import Model
 from azure.core.paging import ItemPaged
 
 from devtools_testutils import AzureRecordedTestCase, is_live
+
+from test_utilities.utils import sleep_if_live
 
 
 @pytest.fixture
@@ -114,8 +115,7 @@ class TestModel(AzureRecordedTestCase):
 
         def get_model_list():
             # Wait for list index to update before calling list command
-            if is_live():
-                sleep(30)
+            sleep_if_live(30)
             model_list = client.models.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [m.version for m in model_list if m is not None]
 
@@ -137,7 +137,7 @@ class TestModel(AzureRecordedTestCase):
 
         def get_model_list():
             # Wait for list index to update before calling list command
-            sleep(30)
+            sleep_if_live(30)
             model_list = client.models.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [m.name for m in model_list if m is not None]
 
