@@ -23,6 +23,8 @@ from ._operations import LoadTestAdministrationOperations as LoadTestAdministrat
 from .._serialization import Serializer
 from .._vendor import _format_url_section
 from .._patch import TestFileValidationStatus
+from .._patch import TestRunStatus
+from ._operations import LoadTestRunOperations as LoadTestRunOperationsGenerated
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
@@ -66,7 +68,7 @@ def build_upload_test_file_request(
 
 class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated):
     """
-    for performing the operations on test
+    for performing the operations on the LoadTestAdministration Subclient
     """
 
     def __init__(self, *args, **kwargs):
@@ -169,7 +171,56 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
             time.sleep(refresh_time)
 
 
-__all__: List[str] = ["LoadTestAdministrationOperations"]
+class LoadTestRunOperations(LoadTestRunOperationsGenerated):
+    """
+    class to perform operations on LoadTestRun
+    """
+
+    def __init__(self, *args, **kwargs):
+        super(LoadTestRunOperations, self).__init__(*args, **kwargs)
+
+    def check_test_run_completed(self, test_run_id: str, *, refresh_time: int = 10, timeout: int = 60) -> TestRunStatus:
+        """Check if test run is completed
+
+        :param test_run_id: Unique id for the test run
+        :type test_run_id: str
+        :param refresh_time: time to wait before checking the status of the test run (in seconds) (default is 10)
+        :type refresh_time: int
+        :param timeout: time to wait before timing out (in seconds) (default is 60)
+        :type timeout: int
+        :return: TestRunStatus
+        :rtype: TestRunStatus
+        :raises ~azure.core.exceptions.HttpResponseError:
+        :raises ~azure.core.exceptions.ResourceNotFoundError:
+        """
+
+        start_time = time.time()
+
+        while True:
+            result = self.get_test_run(test_run_id=test_run_id)
+
+            try:
+                status = result["status"]
+
+            except TypeError:
+                raise ResourceNotFoundError(f"Test Run not found with TestRunId: {test_run_id}")
+
+            if status == "COMPLETED":
+                return TestRunStatus.Done
+
+            if status == "FAILED":
+                return TestRunStatus.Failed
+
+            if status == "CANCELLED":
+                return TestRunStatus.Cancelled
+
+            if time.time() - start_time + refresh_time > timeout:
+                return TestRunStatus.CheckTimeout
+
+            time.sleep(refresh_time)
+
+
+__all__: List[str] = ["LoadTestAdministrationOperations", "LoadTestRunOperations"]
 
 
 # Add all objects you want publicly available to users at this package level
