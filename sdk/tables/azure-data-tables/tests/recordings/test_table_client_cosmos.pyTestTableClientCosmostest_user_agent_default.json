@@ -6,19 +6,22 @@
       "RequestHeaders": {
         "Accept": "application/json;odata=minimalmetadata",
         "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "DataServiceVersion": "3.0",
-        "Date": "Thu, 03 Nov 2022 18:01:13 GMT",
-        "User-Agent": "azsdk-python-data-tables/12.4.2 Python/3.10.7 (Windows-10-10.0.22621-SP0)",
-        "x-ms-date": "Thu, 03 Nov 2022 18:01:13 GMT",
+        "Date": "Thu, 09 Dec 2021 00:53:38 GMT",
+        "User-Agent": "azsdk-python-data-tables/12.2.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
+        "x-ms-client-request-id": "71d48702-588a-11ec-b8ac-c8348e51ab51",
+        "x-ms-date": "Thu, 09 Dec 2021 00:53:38 GMT",
         "x-ms-version": "2019-02-02"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
         "Content-Type": "application/json; odata=minimalmetadata",
-        "Date": "Thu, 03 Nov 2022 18:01:11 GMT",
-        "Transfer-Encoding": "chunked"
+        "Date": "Thu, 09 Dec 2021 00:53:37 GMT",
+        "Transfer-Encoding": "chunked",
+        "x-ms-request-id": "878e8348-9ca8-428f-bd15-eba37b6946f5"
       },
       "ResponseBody": {
         "value": [],
