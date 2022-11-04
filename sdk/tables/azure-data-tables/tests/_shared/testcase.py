@@ -41,6 +41,9 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
                          '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
                          '></StorageServiceStats> '
 
+DEFAULT_STORAGE_ENDPOINT_SUFFIX = "core.windows.net"
+DEFAULT_COSMOS_ENDPOINT_SUFFIX = "cosmos.azure.com"
+
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -74,12 +77,12 @@ class TableTestCase(object):
             if endpoint_type == "table":
                 return account.primary_endpoints.table.rstrip("/")
             if endpoint_type == "cosmos":
-                return "https://{}.table.{}".format(account.name, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX"))
+                return "https://{}.table.{}".format(account.name, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX))
         except AttributeError:  # Didn't find "primary_endpoints"
             if endpoint_type == "table":
-                return "https://{}.table.{}".format(account, os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX"))
+                return "https://{}.table.{}".format(account, os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX))
             if endpoint_type == "cosmos":
-                return "https://{}.table.{}".format(account, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX"))
+                return "https://{}.table.{}".format(account, os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX))
 
     def generate_sas_token(self):
         fake_key = "a" * 30 + "b" * 30
