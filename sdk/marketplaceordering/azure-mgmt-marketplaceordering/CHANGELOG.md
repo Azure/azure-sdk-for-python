@@ -1,5 +1,11 @@
 # Release History
 
+## 1.2.0b1 (2022-10-28)
+
+### Features Added
+
+  - Model OperationDisplay has a new parameter description
+
 ## 1.1.0 (2021-03-17)
 
 **Features**
