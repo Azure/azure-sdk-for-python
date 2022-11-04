@@ -341,10 +341,10 @@ class PipelineExpression(PipelineExpressionMixin):
                 else:
                     if not _has_prefix:
                         _expression_inputs.pop(_name)
-                        _new_name = f"{_seen_input.value._owner.component.name}__{_seen_input.value._name}"
+                        _new_name = f"{_seen_input.value._owner.component.name}_{_seen_input.value._name}"
                         _postfix = _update_postfix(_postfix, _name, _new_name)
                         _expression_inputs[_new_name] = ExpressionInput(_new_name, _seen_input.type, _seen_input)
-                        _name = f"{_component_output._owner.component.name}__{_component_output._name}"
+                        _name = f"{_component_output._owner.component.name}_{_component_output._name}"
                         _has_prefix = True
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
             _postfix.append(_name)
@@ -544,13 +544,9 @@ class PipelineExpression(PipelineExpressionMixin):
             _data["outputs"]["output"]["type"] = self._result_type
             _command_inputs_items = []
             for _name in sorted(self._inputs):
-                _input = self._inputs[_name]
-                _data["inputs"][_name] = {"type": _input.type}
-                if isinstance(_input.value, NodeOutput):
-                    _param_name = f"{_input.value._owner.component.name}_{_input.value._name}"
-                else:
-                    _param_name = _name
-                _command_inputs_items.append(f"{_name}=\"$AZUREML_PARAMETER_{_param_name}\"")
+                _type = self._inputs[_name].type
+                _data["inputs"][_name] = {"type": _type}
+                _command_inputs_items.append(f"{_name}=\"$AZUREML_PARAMETER_{_name}\"")
             _command_inputs_string = " ".join(_command_inputs_items)
             _data["command"] = _data["command"].format(inputs_placeholder=_command_inputs_string)
             dump_yaml_to_file(_path, _data)
