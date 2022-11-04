@@ -140,6 +140,7 @@ class TestComputeEntity:
         assert compute_instance2.schedules.compute_start_stop[1].trigger.frequency == "week"
         assert compute_instance2.schedules.compute_start_stop[1].trigger.interval == 1
         assert compute_instance2.schedules.compute_start_stop[1].trigger.schedule is not None
+        assert compute_instance2.idle_time_before_shutdown_minutes == 15
 
     def test_compute_instance_setup_scripts_from_yaml(self):
         loaded_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-setup-scripts.yaml")
