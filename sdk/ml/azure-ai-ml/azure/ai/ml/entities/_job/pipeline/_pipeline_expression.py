@@ -325,7 +325,7 @@ class PipelineExpression(PipelineExpressionMixin):
             _has_prefix = False
             # "output" is the default output name for command component, add component's name as prefix
             if _name == "output":
-                _name = f"{_component_output._owner.component.name}__output"
+                _name = f"{_component_output._owner.component.name}_output"
                 _has_prefix = True
             # following loop is expected to execute at most twice:
             #   1. add component's name to output(s)
@@ -334,7 +334,7 @@ class PipelineExpression(PipelineExpressionMixin):
                 _seen_input = _expression_inputs[_name]
                 if isinstance(_seen_input.value, PipelineInput):
                     if not _has_prefix:
-                        _name = f"{_component_output._owner.component.name}__{_component_output._name}"
+                        _name = f"{_component_output._owner.component.name}_{_component_output._name}"
                         _has_prefix = True
                         continue
                     _name = _get_or_create_input_name(_name, _component_output, _expression_inputs)
