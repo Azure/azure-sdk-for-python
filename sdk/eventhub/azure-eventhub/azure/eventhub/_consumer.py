@@ -198,11 +198,12 @@ class EventHubConsumer(
             )
             self._handler = cast("ReceiveClient", self._handler)
             self._handler.open(connection=conn)
-            while not self._handler.client_ready():
-                time.sleep(0.05)
-            self.handler_ready = True
+            self.handler_ready = False
             self.running = True
-
+        
+        if not self.handler_ready:
+            if self._handler.client_ready():    # type: ignore
+                self.handler_ready = True
         return self.handler_ready
 
     def receive(self, batch=False, max_batch_size=300, max_wait_time=None):
