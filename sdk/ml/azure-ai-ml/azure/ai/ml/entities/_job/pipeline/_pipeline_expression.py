@@ -546,9 +546,10 @@ class PipelineExpression(PipelineExpressionMixin):
                 _data["inputs"][_name] = {"type": _type}
                 _command_inputs_items.append(_name + "=\"${{inputs." + _name + "}}\"")
             _command_inputs_string = " ".join(_command_inputs_items)
+            _command_output_string = "output=\"${{outputs.output}}\""
             _command = (
-                "mldesigner execute --source expression_component.py --name expression_func "
-                "--inputs " + _command_inputs_string + " --output ${{outputs.output}}"
+                "mldesigner execute --source expression_component.py --name expression_func"
+                " --inputs " + _command_inputs_string + " --outputs " + _command_output_string
             )
             _data["command"] = _data["command"].format(command_placeholder=_command)
             dump_yaml_to_file(_path, _data)
