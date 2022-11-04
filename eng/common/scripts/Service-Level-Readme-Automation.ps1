@@ -42,10 +42,35 @@ param(
 
 Set-StrictMode -Version 3
 
-function create-metadata-table($readmeFolder, $readmeName, $moniker, $msService, $clientTableLink, $mgmtTableLink, $serviceName)
+# Parse out the rest content of service readme after excluding index table and metadata.
+function Get-RestContent($readmePath) {
+  $restContent = ''
+  if (Test-Path $readmePath) {
+    $readmeContent = Get-Content $readmePath -Raw
+    if ($readmeContent -match "\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]") {
+      # The existing service level readme contains both metadata and index table
+      if ($readmeContent -match "^---\n*(.*\n?)*?\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]\n*(?<content>(.*\n?)*)") {
+        $restContent = $Matches["content"].trim()
+      }
+    }
+    elseif ($readmeContent -match "^---") {
+      # The existing service level readme contains only metadata
+      if ($readmeContent -match "^---\n*(.*\n?)*?---\n*(?<content>(.*\n?)*)") {
+        $restContent = $Matches["content"].trim()
+      }
+    }
+    else {
+      # Readme contains neither metadata nor index table.
+      $restContent = $readmeContent
+    }
+  }
+  return $restContent
+}
+
+# Always update metadata and index table.
+function update-service-readme($readmeFolder, $readmeName, $moniker, $msService, $clientTableLink, $mgmtTableLink, $serviceName)
 {
-  $readmePath = Join-Path $readmeFolder -ChildPath $readmeName
-  $content = ""  
+  $restContent = Get-RestContent -readmePath (Join-Path $readmeFolder -ChildPath $readmeName)
   if (Test-Path (Join-Path $readmeFolder -ChildPath $clientTableLink)) {
     $content = "## Client packages - $moniker`r`n"
     $content += "[!INCLUDE [client-packages]($clientTableLink)]`r`n"
@@ -62,31 +87,15 @@ function create-metadata-table($readmeFolder, $readmeName, $moniker, $msService,
   $metadataString = GenerateDocsMsMetadata -language $Language -languageDisplayName $LanguageDisplayName -serviceName $serviceName `
     -tenantId $TenantId -clientId $ClientId -clientSecret $ClientSecret `
     -msService $msService
-  Add-Content -Path $readmePath -Value $metadataString -NoNewline
+  Set-Content -Path $readmePath -Value $metadataString -NoNewline
 
   # Add tables, seperate client and mgmt.
   $readmeHeader = "# Azure $serviceName SDK for $languageDisplayName - $moniker`r`n"
   Add-Content -Path $readmePath -Value $readmeHeader
   Add-Content -Path $readmePath -Value $content -NoNewline
-}
-
-# Update the metadata table.
-function update-metadata-table($readmeFolder, $readmeName, $serviceName, $msService)
-{
-  $readmePath = Join-Path $readmeFolder -ChildPath $readmeName
-  $readmeContent = Get-Content -Path $readmePath -Raw
-  $match = $readmeContent -match "^---\n*(?<metadata>(.*\n?)*?)---\n*(?<content>(.*\n?)*)"
-  $restContent = $readmeContent
-  $metadata = ""
-  if ($match) {
-    $restContent = $Matches["content"].trim()
-    $metadata = $Matches["metadata"].trim()
+  if ($restContent) {
+    Add-Content -Path $readmePath -Value $restContent -NoNewline
   }
-  # $Language, $LanguageDisplayName are the variables globally defined in Language-Settings.ps1
-  $metadataString = GenerateDocsMsMetadata -originalMetadata $metadata -language $Language -languageDisplayName $LanguageDisplayName -serviceName $serviceName `
-    -tenantId $TenantId -clientId $ClientId -clientSecret $ClientSecret `
-    -msService $msService
-  Set-Content -Path $readmePath -Value "$metadataString$restContent" -NoNewline
 }
 
 function generate-markdown-table($readmeFolder, $readmeName, $packageInfo, $moniker) {
@@ -135,19 +144,26 @@ function generate-service-level-readme($readmeBaseName, $pathPrefix, $packageInf
   if ($clientPackageInfo) {
     generate-markdown-table -readmeFolder $readmeFolder -readmeName $clientIndexReadme -packageInfo $clientPackageInfo -moniker $moniker
   }
+  else {
+    $clientReadme = (Join-Path $readmeFolder $clientIndexReadme)
+    if (Test-Path $clientReadme) {
+      Remove-Item $clientReadme
+    }
+  }
 
   $mgmtPackageInfo = $packageInfos.Where({ 'mgmt' -eq $_.Type }) | Sort-Object -Property Package
   if ($mgmtPackageInfo) {
     generate-markdown-table -readmeFolder $readmeFolder -readmeName $mgmtIndexReadme -packageInfo $mgmtPackageInfo -moniker $moniker
   }
-  if (!(Test-Path (Join-Path $readmeFolder -ChildPath $serviceReadme))) {
-    create-metadata-table -readmeFolder $readmeFolder -readmeName $serviceReadme -moniker $moniker -msService $msService `
-      -clientTableLink $clientIndexReadme -mgmtTableLink $mgmtIndexReadme `
-      -serviceName $serviceName
-  }
   else {
-    update-metadata-table -readmeFolder $readmeFolder -readmeName $serviceReadme -serviceName $serviceName -msService $msService
+    $mgmtReadme = (Join-Path $readmeFolder $mgmtIndexReadme)
+    if (Test-Path $mgmtReadme) {
+      Remove-Item $mgmtReadme
+    }
   }
+  update-service-readme -readmeFolder $readmeFolder -readmeName $serviceReadme -moniker $moniker -msService $msService `
+    -clientTableLink $clientIndexReadme -mgmtTableLink $mgmtIndexReadme `
+    -serviceName $serviceName
 }
 
 $fullMetadata = Get-CSVMetadata
@@ -213,7 +229,6 @@ foreach($moniker in $monikers) {
   }
   foreach ($service in $services.Keys) {
     Write-Host "Building service: $service"
-    
     $servicePackages = $packagesForService.Values.Where({ $_.ServiceName -eq $service })
     $serviceReadmeBaseName = ServiceLevelReadmeNameStyle -serviceName $service
     $hrefPrefix = "docs-ref-services"
