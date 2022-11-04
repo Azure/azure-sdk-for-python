@@ -2288,7 +2288,7 @@ class TestDSLPipeline:
 
         with mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: 'false'}):
             with pytest.raises(UnsupportedParameterKindError,
-                               match="dsl pipeline does not accept *args or **kwargs as parameters."):
+                               match="dsl pipeline does not accept \*args or \*\*kwargs as parameters\."):
                 root_pipeline(10, data, 11, data, component_in_number1=11, component_in_path1=data)
 
     def test_pipeline_with_dumplicate_variable_inputs(self):
