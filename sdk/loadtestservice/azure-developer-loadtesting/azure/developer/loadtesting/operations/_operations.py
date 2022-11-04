@@ -116,7 +116,7 @@ def build_load_test_administration_get_load_test_request(test_id: str, **kwargs:
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_list_load_test_request(
+def build_load_test_administration_list_load_tests_request(
     *,
     orderby: Optional[str] = None,
     search: Optional[str] = None,
@@ -1807,7 +1807,7 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_load_test(
+    def list_load_tests(
         self,
         *,
         orderby: Optional[str] = None,
@@ -2022,7 +2022,7 @@ class LoadTestAdministrationOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_administration_list_load_test_request(
+                request = build_load_test_administration_list_load_tests_request(
                     orderby=orderby,
                     search=search,
                     last_modified_start_time=last_modified_start_time,

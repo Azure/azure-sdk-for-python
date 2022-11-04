@@ -37,7 +37,7 @@ from ...operations._operations import (
     build_load_test_administration_get_load_test_request,
     build_load_test_administration_get_server_metrics_config_request,
     build_load_test_administration_get_test_file_request,
-    build_load_test_administration_list_load_test_request,
+    build_load_test_administration_list_load_tests_request,
     build_load_test_administration_list_test_files_request,
     build_load_test_run_create_or_update_app_component_request,
     build_load_test_run_create_or_update_server_metrics_config_request,
@@ -1137,7 +1137,7 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_load_test(
+    def list_load_tests(
         self,
         *,
         orderby: Optional[str] = None,
@@ -1352,7 +1352,7 @@ class LoadTestAdministrationOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_administration_list_load_test_request(
+                request = build_load_test_administration_list_load_tests_request(
                     orderby=orderby,
                     search=search,
                     last_modified_start_time=last_modified_start_time,
