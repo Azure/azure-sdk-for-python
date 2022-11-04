@@ -7,6 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
+import sys
 from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
@@ -16,6 +17,11 @@ from azure.core.rest import AsyncHttpResponse, HttpRequest
 from .._serialization import Deserializer, Serializer
 from ._configuration import AnomalyDetectorClientConfiguration
 from ._operations import AnomalyDetectorClientOperationsMixin
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 
 class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
@@ -39,14 +45,14 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
     :type endpoint: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
-    :keyword api_version: Api Version. Known values are "v1.1" and None. Default value is None.
-     Note that overriding this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "v1.1". Note that overriding this default
+     value may result in unsupported behavior.
     :paramtype api_version: str
-    :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-     Retry-After header is present.
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
+        api_version = kwargs.pop("api_version", "v1.1")  # type: Literal["v1.1"]
+
         _endpoint = "{Endpoint}/anomalydetector/{ApiVersion}"
         self._config = AnomalyDetectorClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
@@ -76,6 +82,7 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
         request_copy = deepcopy(request)
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)

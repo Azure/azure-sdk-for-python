@@ -49,10 +49,10 @@ class MultivariateSample:
         model_list = []
 
         while next_link != '':
-            r = self.ad_client.list_multivariate_models(skip=skip, top=10)
-            next_link = r['nextLink'] 
-            model_list.extend(r['models'])
-            skip = skip + len(r['models'])
+            next_link, models = self.ad_client.list_multivariate_models(skip=skip, top=10)
+            models = list(models)
+            model_list.extend(models)
+            skip = skip + len(models)
         return model_list
 
     def train(self, body):
@@ -107,7 +107,7 @@ class MultivariateSample:
 
         # Detect anomaly in the same data source (but a different interval)
         try:
-            response = self.ad_client.begin_detect_multivariate_batch_anomaly(model_id, body)
+            response = self.ad_client.detect_multivariate_batch_anomaly(model_id, body)
             result_id = response['resultId']
 
             # Get results (may need a few seconds)

@@ -21,8 +21,6 @@ from azure.core.exceptions import (
 )
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
-from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
-from azure.core.polling.async_base_polling import AsyncLROBasePolling
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
@@ -326,7 +324,6 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         request = build_anomaly_detector_detect_univariate_entire_series_request(
             content_type=content_type,
-            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -334,6 +331,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -568,7 +566,6 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         request = build_anomaly_detector_detect_univariate_last_point_request(
             content_type=content_type,
-            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -576,6 +573,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -755,7 +753,6 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         request = build_anomaly_detector_detect_univariate_change_point_request(
             content_type=content_type,
-            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -763,6 +760,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -903,12 +901,12 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         request = build_anomaly_detector_get_multivariate_batch_detection_result_request(
             result_id=result_id,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1356,7 +1354,6 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         request = build_anomaly_detector_create_and_train_multivariate_model_request(
             content_type=content_type,
-            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -1364,6 +1361,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1512,7 +1510,6 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
                 request = build_anomaly_detector_list_multivariate_models_request(
                     skip=skip,
                     top=top,
-                    api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
                 )
@@ -1520,6 +1517,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
+                    "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1529,6 +1527,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
                     "Endpoint": self._serialize.url(
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
+                    "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1586,12 +1585,12 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         request = build_anomaly_detector_delete_multivariate_model_request(
             model_id=model_id,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1723,12 +1722,12 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         request = build_anomaly_detector_get_multivariate_model_request(
             model_id=model_id,
-            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
@@ -1752,73 +1751,10 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         return cast(JSON, deserialized)
 
-    async def _detect_multivariate_batch_anomaly_initial(
-        self, model_id: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> JSON:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
-
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-
-        content_type = content_type or "application/json"
-        _json = None
-        _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
-        else:
-            _json = body
-
-        request = build_anomaly_detector_detect_multivariate_batch_anomaly_request(
-            model_id=model_id,
-            content_type=content_type,
-            api_version=self._config.api_version,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        response_headers = {}
-        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
-        response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
-
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
-
-        if cls:
-            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
-
-        return cast(JSON, deserialized)
-
     @overload
-    async def begin_detect_multivariate_batch_anomaly(
+    async def detect_multivariate_batch_anomaly(
         self, model_id: str, body: JSON, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    ) -> JSON:
         """Detect Multivariate Anomaly.
 
         Submit multivariate anomaly detection task with the modelId of trained model and inference
@@ -1834,15 +1770,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -1954,9 +1883,9 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         """
 
     @overload
-    async def begin_detect_multivariate_batch_anomaly(
+    async def detect_multivariate_batch_anomaly(
         self, model_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    ) -> JSON:
         """Detect Multivariate Anomaly.
 
         Submit multivariate anomaly detection task with the modelId of trained model and inference
@@ -1972,15 +1901,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2074,9 +1996,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         """
 
     @distributed_trace_async
-    async def begin_detect_multivariate_batch_anomaly(
-        self, model_id: str, body: Union[JSON, IO], **kwargs: Any
-    ) -> AsyncLROPoller[JSON]:
+    async def detect_multivariate_batch_anomaly(self, model_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Detect Multivariate Anomaly.
 
         Submit multivariate anomaly detection task with the modelId of trained model and inference
@@ -2092,15 +2012,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
-         for this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns JSON object
-        :rtype: ~azure.core.polling.AsyncLROPoller[JSON]
+        :return: JSON object
+        :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
@@ -2192,63 +2105,65 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
                     }
                 }
         """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
-        if cont_token is None:
-            raw_result = await self._detect_multivariate_batch_anomaly_initial(  # type: ignore
-                model_id=model_id,
-                body=body,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
-            response_headers = {}
-            response = pipeline_response.http_response
-            response_headers["Operation-Location"] = self._deserialize(
-                "str", response.headers.get("Operation-Location")
-            )
-            response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(body, (IO, bytes)):
+            _content = body
+        else:
+            _json = body
 
-            if response.content:
-                deserialized = response.json()
-            else:
-                deserialized = None
-            if cls:
-                return cls(pipeline_response, deserialized, response_headers)
-            return deserialized
-
+        request = build_anomaly_detector_detect_multivariate_batch_anomaly_request(
+            model_id=model_id,
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
-        if polling is True:
-            polling_method = cast(
-                AsyncPollingMethod,
-                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        response_headers = {}
+        response_headers["Operation-Location"] = self._deserialize("str", response.headers.get("Operation-Location"))
+        response_headers["Operation-Id"] = self._deserialize("str", response.headers.get("Operation-Id"))
+
+        if response.content:
+            deserialized = response.json()
         else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), response_headers)
+
+        return cast(JSON, deserialized)
 
     @overload
     async def detect_multivariate_last_anomaly(
@@ -2535,7 +2450,6 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         request = build_anomaly_detector_detect_multivariate_last_anomaly_request(
             model_id=model_id,
             content_type=content_type,
-            api_version=self._config.api_version,
             json=_json,
             content=_content,
             headers=_headers,
@@ -2543,6 +2457,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         )
         path_format_arguments = {
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
