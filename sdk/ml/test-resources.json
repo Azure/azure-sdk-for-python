@@ -750,7 +750,7 @@
             "minNodeCount": "[parameters('computeMinNodeCount')]",
             "maxNodeCount": "[parameters('computeMaxNodeCount')]"
           },
-          "vmSize": "STANDARD_ND6S",
+          "vmSize": "STANDARD_NC6",
           "remoteLoginPortPublicAccess": "[parameters('remoteLoginPortPublicAccess')]"
         }
       }
