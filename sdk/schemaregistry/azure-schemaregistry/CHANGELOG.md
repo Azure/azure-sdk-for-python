@@ -7,6 +7,10 @@
 - `V2022_10` has been added to `ApiVersion` and set as the default api version.
   - `Json` and `Custom` have been added supported formats in `SchemaFormat`.
 
+### Bugs Fixed
+
+- Fixed a bug in sync/async `register_schema` and `get_schema_properties` that did not accept case insensitive strings as an argument to the `format` parameter.
+
 ## 1.2.0 (2022-10-10)
 
 This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.

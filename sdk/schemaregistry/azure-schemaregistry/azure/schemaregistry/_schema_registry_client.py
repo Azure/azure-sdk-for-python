@@ -32,6 +32,7 @@ from ._utils import (
     build_get_schema_props_request,
     build_get_schema_request,
     build_register_schema_request,
+    get_case_insensitive_format
 )
 from ._common._constants import SchemaFormat, DEFAULT_VERSION
 from ._common._schema import Schema, SchemaProperties
@@ -125,6 +126,7 @@ class SchemaRegistryClient(object):
                 :caption: Register a new schema.
 
         """
+        format = get_case_insensitive_format(format)
         request = build_register_schema_request(
             group_name, name, definition, format, kwargs
         )
@@ -211,6 +213,7 @@ class SchemaRegistryClient(object):
                 :caption: Get schema id.
 
         """
+        format = get_case_insensitive_format(format)
         request = build_get_schema_props_request(
             group_name, name, definition, format, kwargs
         )

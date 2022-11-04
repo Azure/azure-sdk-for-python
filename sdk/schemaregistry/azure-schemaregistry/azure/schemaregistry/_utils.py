@@ -21,21 +21,26 @@ def get_http_request_kwargs(kwargs):
 
 def get_content_type(format: str):
     if format.lower() == SchemaFormat.CUSTOM.value.lower():
-        return "text/plain; charset=utf-8"
+        return "application/octet-stream"
     return "application/json; serialization={}".format(format)
 
-def build_register_schema_request(
-    group_name: str,
-    name: str,
-    definition: str,
-    format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
-    kwargs: Any,
-) -> HttpRequest:
+def get_case_insensitive_format(
+    format: Union[str, SchemaFormat]
+) -> str:   # pylint:disable=redefined-builtin
     try:
         format = cast(SchemaFormat, format)
         format = format.value
     except AttributeError:
         pass
+    return format.capitalize()
+
+def build_register_schema_request(
+    group_name: str,
+    name: str,
+    definition: str,
+    format: str,  # pylint:disable=redefined-builtin
+    kwargs: Any,
+) -> HttpRequest:
 
     http_request_kwargs = get_http_request_kwargs(kwargs)
     return schema_rest.build_register_request(
@@ -48,7 +53,6 @@ def build_register_schema_request(
         **http_request_kwargs,
     )
 
-
 def build_get_schema_props_request(
     group_name: str,
     name: str,
@@ -56,11 +60,6 @@ def build_get_schema_props_request(
     format: Union[str, SchemaFormat],  # pylint:disable=redefined-builtin
     kwargs: Any,
 ) -> HttpRequest:
-    try:
-        format = cast(SchemaFormat, format)
-        format = format.value
-    except AttributeError:
-        pass
 
     http_request_kwargs = get_http_request_kwargs(kwargs)
     return schema_rest.build_query_id_by_content_request(
@@ -72,7 +71,6 @@ def build_get_schema_props_request(
         ),
         **http_request_kwargs,
     )
-
 
 def build_get_schema_request(args: Iterable, kwargs: Any) -> HttpRequest:
     http_request_kwargs = get_http_request_kwargs(kwargs)
