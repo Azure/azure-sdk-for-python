@@ -1,3 +1,5 @@
+import copy
+import json
 import logging
 from pathlib import Path
 
@@ -5,7 +7,8 @@ import pytest
 import yaml
 
 from azure.ai.ml import Input, load_component, load_job
-from azure.ai.ml.entities import PipelineComponent, PipelineJob
+from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
+from azure.ai.ml.entities import PipelineComponent, PipelineJob, Component
 from azure.ai.ml.entities._inputs_outputs import GroupInput
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 
@@ -70,6 +73,7 @@ class TestPipelineComponentEntity:
     def test_helloworld_pipeline_component(self) -> None:
         component_path = "./tests/test_configs/components/helloworld_pipeline_component.yml"
         component: PipelineComponent = load_component(source=component_path)
+        assert component._base_path is not None
         exptected_dict = {
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
             "description": "This is the basic pipeline component",
@@ -422,8 +426,8 @@ class TestPipelineComponentEntity:
         test_path = "./tests/test_configs/components/pipeline_component_jobs_rest_data.json"
         with open(test_path, "r") as f:
             json_in_file = yaml.safe_load(f)
-        json_in_file = json_in_file['properties']['component_spec']['jobs']
-        jobs = PipelineComponent._resolve_sub_nodes(json_in_file)
+        job_dict = copy.deepcopy(json_in_file['properties']['component_spec']['jobs'])
+        jobs = PipelineComponent._resolve_sub_nodes(job_dict)
         node_dict = {key: node._to_rest_object() for key, node in jobs.items()}['component_a_job']
         assert node_dict['computeId'] == '${{parent.inputs.node_compute}}'
         assert node_dict['outputs'] == {
@@ -443,3 +447,9 @@ class TestPipelineComponentEntity:
             'literal_input2': {'job_input_type': 'literal', 'value': '12'}}
         assert node_dict['resources'] == {'instance_count': 1, 'properties': {
             'target_selector': {'my_resource_only': 'false', 'allow_spot_vm': 'true'}}, 'shm_size': '2g'}
+
+        rest_obj = ComponentVersionData.from_dict(json.loads(json.dumps(json_in_file)))
+        pipeline_component = Component._from_rest_object(rest_obj)
+        assert pipeline_component.jobs
+        obj_node_dict = {key: node._to_rest_object() for key, node in pipeline_component.jobs.items()}['component_a_job']
+        assert obj_node_dict == node_dict

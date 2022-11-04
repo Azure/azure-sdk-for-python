@@ -4,7 +4,8 @@
 # ------------------------------------
 import asyncio
 import sys
-from typing import cast, TYPE_CHECKING, List
+from typing import cast, List
+from azure.core.credentials import AccessToken
 
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
@@ -17,11 +18,6 @@ from ..._credentials.azure_powershell import (
     parse_token,
 )
 from ..._internal import resolve_tenant
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any
-    from azure.core.credentials import AccessToken
 
 
 class AzurePowerShellCredential(AsyncContextManager):
@@ -42,8 +38,8 @@ class AzurePowerShellCredential(AsyncContextManager):
 
     @log_get_token_async
     async def get_token(
-        self, *scopes: str, **kwargs: "Any"
-    ) -> "AccessToken":  # pylint:disable=no-self-use,unused-argument
+        self, *scopes: str, **kwargs
+    ) -> AccessToken:  # pylint:disable=no-self-use,unused-argument
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients. Applications calling this method directly must
@@ -77,7 +73,7 @@ class AzurePowerShellCredential(AsyncContextManager):
         """Calling this method is unnecessary"""
 
 
-async def run_command_line(command_line: "List[str]") -> str:
+async def run_command_line(command_line: List[str]) -> str:
     try:
         proc = await start_process(command_line)
         stdout, stderr = await asyncio.wait_for(proc.communicate(), 10)

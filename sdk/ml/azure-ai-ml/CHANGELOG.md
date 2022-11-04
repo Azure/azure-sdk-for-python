@@ -8,6 +8,7 @@
 - Add registry delete operation.
 - Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
 - The values of JobService.job_service_type are now using the snake case. e.g jupyter_lab, ssh, tensor_board, vs_code.
+- Command function now accepts services param of type Dict[str, JobService] instead of dict.
 
 ### Breaking Changes
 
