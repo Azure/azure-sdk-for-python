@@ -8,8 +8,7 @@ import logging
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import StringTransformedEnum, UnionField, PathAwareSchema
-from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml._schema.core.fields import StringTransformedEnum, PathAwareSchema
 from azure.ai.ml._restclient.v2021_10_01.models import CreatedByType
 
 module_logger = logging.getLogger(__name__)

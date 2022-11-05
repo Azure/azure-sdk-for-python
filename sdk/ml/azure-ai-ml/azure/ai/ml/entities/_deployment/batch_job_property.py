@@ -8,7 +8,6 @@ from azure.ai.ml._schema._deployment.batch.batch_job_property import BatchJobPro
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._deployment.compute_binding import ComputeBinding
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJob as BatchJobData
 
 

@@ -6,7 +6,6 @@
 
 from typing import Dict
 import re
-import json
 
 from azure.ai.ml.entities._deployment.batch_job import BatchJob
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
@@ -23,8 +22,8 @@ from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, create_requests_pipeline_with_retry, download_text_from_url
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX, API_URL_KEY
+from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
 from azure.ai.ml.entities import BatchDeployment, BatchJob
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
@@ -248,7 +247,3 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         information and only refresh when the operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
 
-    def _get_workspace_location(self) -> str:
-        """Get the workspace location TODO[TASK 1260265]: can we cache this
-        information and only refresh when the operation_scope is changed?"""
-        return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location

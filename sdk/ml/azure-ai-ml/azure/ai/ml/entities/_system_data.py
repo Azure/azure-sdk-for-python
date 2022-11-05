@@ -74,7 +74,7 @@ class SystemData(RestTranslatableMixin):
             last_modified_by_type=self.last_modified_by_type,
             last_modified_at=self.last_modified_at,
         )
-    
+
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         return SystemDataSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

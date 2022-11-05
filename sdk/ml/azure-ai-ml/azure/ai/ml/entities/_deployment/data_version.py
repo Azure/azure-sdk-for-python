@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict, Union
+from typing import Dict
 from azure.ai.ml._schema._deployment.batch.batch_job_property import OutputDataSchema
 from azure.ai.ml._schema.core.fields import ArmStr
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
@@ -12,7 +12,8 @@ class DataVersion:
     """Batch Job Resource entity
 
     :param id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}
+     /providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :type id: str
     :param name: The name of the resource.
     :type name: str

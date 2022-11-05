@@ -13,7 +13,8 @@ class ComputeBinding:
     """Batch Job Resource entity
 
     :param id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}
+     /providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
     :type id: str
     :param name: The name of the resource.
     :type name: str
@@ -40,7 +41,7 @@ class ComputeBinding:
         self.instance_type = instance_type
         self.location = location
         self.properties = properties
-    
+
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         return ComputeBindingSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
