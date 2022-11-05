@@ -70,7 +70,8 @@ function Get-RestContent($readmePath) {
 # Always update metadata and index table.
 function update-service-readme($readmeFolder, $readmeName, $moniker, $msService, $clientTableLink, $mgmtTableLink, $serviceName)
 {
-  $restContent = Get-RestContent -readmePath (Join-Path $readmeFolder -ChildPath $readmeName)
+  $readmePath = (Join-Path $readmeFolder -ChildPath $readmeName)
+  $restContent = Get-RestContent -readmePath $readmePath
   if (Test-Path (Join-Path $readmeFolder -ChildPath $clientTableLink)) {
     $content = "## Client packages - $moniker`r`n"
     $content += "[!INCLUDE [client-packages]($clientTableLink)]`r`n"
