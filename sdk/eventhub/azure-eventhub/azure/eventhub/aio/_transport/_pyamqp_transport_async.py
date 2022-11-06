@@ -175,7 +175,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
             try:
                 await consumer._open() # pylint: disable=protected-access
                 await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch) # pylint: disable=protected-access
-            except asyncio.CancelledError:
+            except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint: disable=broad-except
                 if (
@@ -222,7 +222,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         for task in asyncio.as_completed(tasks):
             try:
                 await task
-            except Exception as e:
+            except (Exception, asyncio.CancelledError):
                 consumer._callback_task_run = False
         for task in tasks:
             if task.done() and task.exception():
