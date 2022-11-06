@@ -205,19 +205,17 @@ class BaseExporter:
                 elif _is_redirect_code(response_error.status_code):
                     self._consecutive_redirects = self._consecutive_redirects + 1
                     if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # pylint: disable=W0212
-                        if response_error.response and response_error.response.headers:
-                            location = response_error.response.headers.get("location")
-                            if location:
-                                url = urlparse(location)
-                                if url.scheme and url.netloc:
-                                    # Change the host to the new redirected host
-                                    self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
-                                    # Attempt to export again
-                                    result =  self._transmit(envelopes)
-                        if not self._is_stats_exporter():
-                            logger.error(
-                                "Error parsing redirect information."
-                            )
+                        location = response_error.response.headers.get("location")
+                        url = urlparse(location)
+                        if url.scheme and url.netloc:
+                            self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
+                            result = self._transmit(envelopes)
+                        else:
+                            if not self._is_stats_exporter():
+                                logger.error(
+                                    "Error parsing redirect information: %s.", ex
+                                )
+                            result = ExportResult.FAILED_NOT_RETRYABLE
                     else:
                         if not self._is_stats_exporter():
                             logger.error(
