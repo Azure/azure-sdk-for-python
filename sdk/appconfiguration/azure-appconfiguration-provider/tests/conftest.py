@@ -15,8 +15,8 @@ def add_sanitizers(test_proxy):
         regex= os.environ.get('APPCONFIGURATION_ENDPOINT_STRING', "https://fake-endpoint.azconfig.io"))
     add_general_regex_sanitizer(value="https://fake-endpoint-geo.azconfig.io", 
         regex= os.environ.get('APPCONFIGURATION_ENDPOINT_GEO_STRING', "https://fake-endpoint-geo.azconfig.io"))
-    add_general_regex_sanitizer(value="endpoint=fake-connection-string;secret=adsf;id=adsf;",
-                                regex=os.environ.get('APPCONFIGURATION_CONNECTION_STRING', "endpoint=fake-connection-string;secret=adsf;id=adsf;"))
+    add_general_regex_sanitizer(value="endpoint=fake-connection-string;secret=asdf;id=asdf;",
+                                regex=os.environ.get('APPCONFIGURATION_CONNECTION_STRING', "endpoint=fake-connection-string;secret=asdf;id=asdf;"))
     add_general_regex_sanitizer(
         value="fake-client-id", regex=os.environ.get('APPCONFIGURATION_CLIENT_ID', "fake-client-id"))
     add_general_regex_sanitizer(

@@ -58,7 +58,7 @@ class AzureAppConfigurationProvider:
 
         if connection_string and endpoints:
             raise AttributeError("Both connection_string and endpoints are set. Only one of these should be set.")
-        elif endpoint and endpoints:
+        if endpoint and endpoints:
             raise AttributeError("Both endpoint and endpoints are set. Only one of these should be set.")
 
         # TODO: Currently Connection Strings are not supported for Geo Replication
@@ -100,7 +100,7 @@ class AzureAppConfigurationProvider:
                 if not ((e.status_code == 408 or e.status_code == 429 or e.status_code == 500) and
                     len(provider._clients) > 1) or len(provider._clients) == client_count:
                     raise e
-                
+
                 print("Trying next client.")
 
 
@@ -179,10 +179,8 @@ class AzureAppConfigurationProvider:
         if connection_string is None:
             raise ValueError("Connection string is None")
         if "endpoint=" not in connection_string.lower():
-            print("Endpiont: " + endpoint)
             raise ValueError("Connection string is invalid")
-        endpoint = connection_string.lower().split("endpoint=")[1].split(";")[0]
-        return endpoint
+        return connection_string.lower().split("endpoint=")[1].split(";")[0]
 
     @staticmethod
     def __resolve_keyvault_reference(config, key_vault_options, secret_clients):

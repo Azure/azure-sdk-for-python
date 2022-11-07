@@ -48,6 +48,7 @@ class TestAppConfigurationProvider(AzureRecordedTestCase):
     @recorded_by_proxy
     @app_config_decorator_aad
     def test_provider_creation_geo_invalid_endpoint(self, appconfiguration_endpoint_string):
+        # cSpell: disable-next-line
         # invl is an invalid store name, store names are a minimum of 5 characters
         client = self.build_provider_aad([invalid_endpoint, appconfiguration_endpoint_string])
         assert client["message"] == "hi"
