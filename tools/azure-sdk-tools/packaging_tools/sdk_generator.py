@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from subprocess import check_call
 import shutil
+import re
 
 from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
@@ -26,26 +27,25 @@ _LOGGER = logging.getLogger(__name__)
 def del_outdated_samples(readme: str):
     python_readme = Path(readme).parent / "readme.python.md"
     if not python_readme.exists():
+        _LOGGER.info(f"do not find python configuration: {python_readme}")
         return
 
     with open(python_readme, "r") as file_in:
         content = file_in.readlines()
-    sdk_folder = ""
     pattern = "$(python-sdks-folder)"
     for line in content:
         if pattern in line:
-            sdk_folder = line.split(pattern)[-1]
-            break
-    if not sdk_folder:
-        _LOGGER.info(f"do not find $(python-sdks-folder) in {python_readme}")
+            sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
+            sample_folder = Path(f"sdk/{sdk_folder}/generated_samples") 
+            if sample_folder.exists():
+                shutil.rmtree(sample_folder)
+                _LOGGER.info(f"remove sample folder: {sample_folder}")
+            else:
+                _LOGGER.info(f"sample folder does not exist: {sample_folder}")
+            return
 
-    sdk_folder = Path("sdk" + sdk_folder)
-    sample_folder = Path("/".join(sdk_folder.parts[0:3])) / "generated_samples"
-    if sample_folder.exists():
-        shutil.rmtree(sample_folder)
-        _LOGGER.info(f"remove sample folder: {sample_folder}")
-    else:
-        _LOGGER.info(f"sample folder does not exist: {sample_folder}")
+    _LOGGER.info(f"do not find {pattern} in {python_readme}")
+
 
 def main(generate_input, generate_output):
     with open(generate_input, "r") as reader:
