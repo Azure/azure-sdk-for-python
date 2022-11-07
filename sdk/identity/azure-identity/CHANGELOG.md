@@ -16,6 +16,10 @@
   Issue [#25713](https://github.com/Azure/azure-sdk-for-python/issues/25713) tracks this. In the meantime 
   Visual Studio Code users can authenticate their development environment using the [Azure CLI](https://learn.microsoft.com/cli/azure/).
 
+### Other Changes
+
+- Added Python 3.11 support and stopped supporting Python 3.6.
+
 ## 1.12.0b2 (2022-10-11)
 
 1.12.0 release candidate
