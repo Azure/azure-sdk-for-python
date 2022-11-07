@@ -94,10 +94,10 @@ function GetDocsMsService($packageInfo, $serviceName)
 }
 
 function compare-and-merge-metadata ($original, $updated) {
-  $updateMetdata = (($updated | ForEach-Object { "$($_[0]): $($_[1])" }) -join "`r`n") + "`r`n"
+  $updateMetadata = (($updated | ForEach-Object { "$($_[0]): $($_[1])" }) -join "`r`n") + "`r`n"
   $updatedKeys = $updated | ForEach-Object { $_[0]}
   if (!$original) {
-    return $updateMetdata 
+    return $updateMetadata 
   }
   $originalTable = ConvertFrom-StringData -StringData $original -Delimiter ":"
   foreach ($key in $originalTable.Keys) {
@@ -106,7 +106,7 @@ function compare-and-merge-metadata ($original, $updated) {
       $updateMetdata += "$key`: $($originalTable[$key])`r`n"
     }
   }
-  return $updateMetdata
+  return $updateMetadata
 }
 
 function GenerateDocsMsMetadata($originalMetadata, $language, $languageDisplayName, $serviceName, $tenantId, $clientId, $clientSecret, $msService) 
