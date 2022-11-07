@@ -188,7 +188,7 @@ deployments:
 class TestOperationOrchestration:
     def test_registry_environment(self, operation_orchestrator: OperationOrchestrator) -> None:
         test_input = '//registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2'
-        expected = 'azureml://my/mafong-registry/environments/conda_name_version_e2e/versions/1.0.2'
+        expected = 'azureml://registries/my-registry/environments/conda_name_version_e2e/versions/1.0.2'
         actual = operation_orchestrator.get_asset_arm_id(test_input, azureml_type=AzureMLResourceType.ENVIRONMENT)
         assert actual == expected
 
