@@ -7,17 +7,22 @@ import copy
 import yaml
 from marshmallow import INCLUDE, ValidationError, fields, post_load, pre_load
 
+from azure.ai.ml._schema import AnonymousEnvironmentSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
     ComputeField,
     FileRefField,
     NestedField,
     StringTransformedEnum,
-    UnionField,
+    UnionField, RegistryStr, ArmVersionedStr,
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
+from azure.ai.ml._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, \
+    MPIDistributionSchema
 from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
+from azure.ai.ml._schema.job.job_limits import CommandJobLimitsSchema
+from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml._utils.utils import load_file
 from azure.ai.ml.constants import JobType
@@ -124,3 +129,26 @@ class BaseCreateJobSchema(metaclass=PatchedSchemaMeta):
 class PipelineCreateJobSchema(BaseCreateJobSchema):
     type = StringTransformedEnum(allowed_values=[JobType.PIPELINE])
     settings = NestedField(PipelineJobSettingsSchema, unknown=INCLUDE)
+
+
+class CommandCreateJobSchema(BaseCreateJobSchema):
+    type = StringTransformedEnum(allowed_values=[JobType.COMMAND])
+    limits = NestedField(CommandJobLimitsSchema)
+    parameters = fields.Dict(dump_only=True)
+    environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
+    resources = NestedField(JobResourceConfigurationSchema)
+    distribution = UnionField(
+        [
+            NestedField(PyTorchDistributionSchema),
+            NestedField(TensorFlowDistributionSchema),
+            NestedField(MPIDistributionSchema),
+        ],
+        metadata={"description": "Provides the configuration for a distributed run."},
+    )
+    environment = UnionField(
+        [
+            NestedField(AnonymousEnvironmentSchema),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ],
+    )

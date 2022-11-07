@@ -1,0 +1,65 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineJob.schema.json
+type: pipeline
+display_name: brynn_test_pipeline_component_2
+#version: 3
+
+inputs:
+  hello_string_top_level_input:
+    type: custom_model
+#    path: azureml:brynn_test_data:1
+    mode: ro_mount
+jobs:
+  a:
+    command: echo hello
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    inputs:
+      hello_data: ${{parent.inputs.hello_string_top_level_input}}
+    outputs:
+      output:
+        type: uri_file
+        mode: rw_mount
+  b:
+    command: echo "world" >> ${{outputs.output1}}/world.txt
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    inputs:
+      hello_data:
+        type: custom_model
+        path: azureml:brynn_test_data:1
+        mode: ro_mount
+      hello_data1:
+        type: mltable
+        path: azureml:brynn_test_data:1
+        mode: eval_mount
+      hello_data2:
+        type: uri_file
+        path: azureml:brynn_test_data:1
+        mode: eval_download
+      hello_data3:
+        type: triton_model
+        path: azureml:brynn_test_data:1
+        mode: direct
+      hello_data4:
+        type: uri_folder
+        path: azureml:brynn_test_data:1
+        mode: download
+    outputs:
+      output1:
+        type: uri_file
+        mode: rw_mount
+      output2:
+        type: uri_folder
+        mode: Upload
+      output3:
+        type: custom_model
+        mode: upload
+      output4:
+        type: triton_model
+        mode: rw_mount
+      output5:
+        type: mltable
+        mode: direct
+  c:
+    command: echo ${{inputs.world_input}}/world.txt
+    environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu@latest
+    inputs:
+      world_input: ${{parent.jobs.b.outputs.output1}}

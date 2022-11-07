@@ -23,6 +23,8 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
+from .. import CommandJob, Command
+from .._builders import BaseNode
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
 from .trigger import CronTrigger, RecurrenceTrigger, TriggerBase
@@ -35,7 +37,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     :type name: str
     :param trigger: Trigger of the schedule.
     :type trigger: Union[CronTrigger, RecurrenceTrigger]
-    :param create_job: The schedule action job definition.
+    :param create_job: The schedule action job definition or an existing job arm id.
     :type create_job: Job
     :param display_name: Display name of the schedule.
     :type display_name: str
@@ -52,7 +54,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         *,
         name: str,
         trigger: Union[CronTrigger, RecurrenceTrigger],
-        create_job: Job,
+        create_job: Union[Job, str],
         display_name: str = None,
         description: str = None,
         tags: Dict = None,
@@ -218,7 +220,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
-        if camel_to_snake(action.job_definition.job_type) != JobType.PIPELINE:
+        if camel_to_snake(action.job_definition.job_type) not in [JobType.PIPELINE, JobType.COMMAND]:
             msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
             raise ScheduleException(
                 message=msg.format(obj.name),
@@ -250,11 +252,18 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
 
         :return: Rest schedule.
         """
+        if isinstance(self.create_job, BaseNode):
+            self.create_job = self.create_job._to_job()
         if isinstance(self.create_job, PipelineJob):
             job_definition = self.create_job._to_rest_object().properties
             # Set the source job id, as it is used only for schedule scenario.
             job_definition.source_job_id = self.create_job.id
+        elif isinstance(self.create_job, CommandJob):
+            job_definition = self.create_job._to_rest_object().properties
+            # TODO: Merge this branch with PipelineJob after source job id move to JobBaseProperties
+            job_definition.source_job_id = self.create_job.id
         elif isinstance(self.create_job, str):  # arm id reference
+            # TODO: Update this after source job id move to JobBaseProperties
             job_definition = RestPipelineJob(source_job_id=self.create_job)
         else:
             msg = "Unsupported job type '{}' in schedule {}."
