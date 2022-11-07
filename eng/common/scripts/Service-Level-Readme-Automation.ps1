@@ -81,7 +81,9 @@ function update-service-readme($readmeFolder, $readmeName, $moniker, $msService,
     $content += "[!INCLUDE [mgmt-packages]($mgmtTableLink)]`r`n"
   }
   if (!$content) {
-    return
+    if (Test-Path $readmePath) {
+      Remove-Item $readmePath -Force
+    }
   }
   # Generate the front-matter for docs needs
   # $Language, $LanguageDisplayName are the variables globally defined in Language-Settings.ps1
@@ -93,7 +95,6 @@ function update-service-readme($readmeFolder, $readmeName, $moniker, $msService,
   # Add tables, seperate client and mgmt.
   $readmeHeader = "# Azure $serviceName SDK for $languageDisplayName - $moniker`r`n"
   Add-Content -Path $readmePath -Value $readmeHeader
-  Add-Content -Path $readmePath -Value $content -NoNewline
   if ($restContent) {
     Add-Content -Path $readmePath -Value $restContent -NoNewline
   }
