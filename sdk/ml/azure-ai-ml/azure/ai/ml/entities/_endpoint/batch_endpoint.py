@@ -54,7 +54,7 @@ class BatchEndpoint(Endpoint):
         auth_mode: str = AAD_TOKEN_YAML,
         description: str = None,
         location: str = None,
-        defaults: Dict[str, str] = None,
+        defaults: Dict[str, str] = {},
         default_deployment_name: str = None,
         scoring_uri: str = None,
         openapi_uri: str = None,
