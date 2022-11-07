@@ -8,9 +8,15 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -758,7 +764,7 @@ class SourceCreationData(_serialization.Model):
         "source_uri": {"key": "sourceUri", "type": "str"},
     }
 
-    def __init__(self, *, create_source: Optional[str] = None, source_uri: Optional[str] = None, **kwargs):
+    def __init__(self, *, create_source: Optional[Literal["None"]] = None, source_uri: Optional[str] = None, **kwargs):
         """
         :keyword create_source: This enumerates the possible sources of a volume creation. Default
          value is "None".
@@ -865,7 +871,7 @@ class VirtualNetworkRule(_serialization.Model):
         "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(self, *, virtual_network_resource_id: str, action: str = "Allow", **kwargs):
+    def __init__(self, *, virtual_network_resource_id: str, action: Literal["Allow"] = "Allow", **kwargs):
         """
         :keyword virtual_network_resource_id: Resource ID of a subnet, for example:
          /subscriptions/{subscriptionId}/resourceGroups/{groupName}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}.
