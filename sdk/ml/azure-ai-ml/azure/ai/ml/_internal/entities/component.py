@@ -26,6 +26,7 @@ from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
 from .code import InternalCode
+from ...entities._component.code import ComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 
 
@@ -208,7 +209,7 @@ class InternalComponent(Component):
         :type code_path: str
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
         """
-        _ignore_file: IgnoreFile = get_ignore_file(code_path)
+        _ignore_file: ComponentIgnoreFile = ComponentIgnoreFile.from_ignore_file(get_ignore_file(code_path))
         curr_root = create_merkletree(code_path, lambda x: _ignore_file.is_file_excluded(code_path))
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id

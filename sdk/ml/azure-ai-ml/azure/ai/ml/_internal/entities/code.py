@@ -4,10 +4,10 @@
 
 from typing import Optional
 
-from ...entities._assets import Code
+from ...entities._component.code import ComponentCode
 
 
-class InternalCode(Code):
+class InternalCode(ComponentCode):
     @property
     def _upload_hash(self) -> Optional[str]:
         # This property will be used to identify the uploaded content when trying to
