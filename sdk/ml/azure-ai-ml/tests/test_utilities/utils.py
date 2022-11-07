@@ -134,7 +134,7 @@ def submit_and_wait(ml_client, pipeline_job: PipelineJob, expected_state: str = 
     assert expected_state in terminal_states
 
     while created_job.status not in terminal_states:
-        time.sleep(30)
+        sleep_if_live(30)
         created_job = ml_client.jobs.get(created_job.name)
         print("Latest status : {0}".format(created_job.status))
     if created_job.status != expected_state:
@@ -153,7 +153,7 @@ def assert_final_job_status(
 
     poll_start_time = time.time()
     while job.status not in RunHistoryConstants.TERMINAL_STATUSES and time.time() < (poll_start_time + deadline):
-        time.sleep(THREAD_WAIT_TIME_BEFORE_POLL)
+        sleep_if_live(THREAD_WAIT_TIME_BEFORE_POLL)
         job = client.jobs.get(job.name)
 
     if job.status not in RunHistoryConstants.TERMINAL_STATUSES:
@@ -277,9 +277,7 @@ def cancel_job(client: MLClient, job: Job) -> None:
     try:
         cancel_poller = client.jobs.begin_cancel(job.name)
         assert isinstance(cancel_poller, LROPoller)
-        # skip wait in recording mode to reduce test run duration.
-        if is_live():
-            assert cancel_poller.result() is None
+        assert cancel_poller.result() is None
     except HttpResponseError:
         pass
 
@@ -301,10 +299,22 @@ def assert_job_cancel(
 def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
     poll_start_time = time.time()
     while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-        time.sleep(_wait_before_polling(time.time() - poll_start_time))
+        sleep_if_live(_wait_before_polling(time.time() - poll_start_time))
         job = client.jobs.get(job.name)
         if timeout is not None and time.time() - poll_start_time > timeout:
             # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
             cancel_job(client, job)
             return JobStatus.CANCELED
     return job.status
+
+
+def sleep_if_live(seconds):
+    """Sleeps for the given number of seconds if the test is live.
+    In playback mode, this function does nothing.
+    Please use this function instead of time.sleep() in tests if you want to wait for some remote operations.
+
+    Not necessary actually when fixture skip_sleep_for_playback has not been disabled explicitly.
+    Unify the behavior in case the fixture is disabled, like switch to skip_sleep_in_lro_polling.
+    """
+    if is_live():
+        time.sleep(seconds)
