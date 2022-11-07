@@ -18,6 +18,8 @@
 - Make registry delete operation return an LROPoller, and change name to begin_delete.
 - Prevent registering an already existing environment that references conda file.
 - Fix ARM id logic for registry environments (ex: Creating a registry component that references a registry environment).
+- Update "defaults" dictionary to match our public documentation.
+
 
 ### Other Changes
 
