@@ -10,6 +10,7 @@ from requests import Response
 from azure.ai.ml import load_batch_endpoint
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointData
 from azure.ai.ml._restclient.v2022_05_01.models import BatchEndpointDetails as RestBatchEndpoint
+from azure.core.credentials import TokenCredential
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AssetTypes, AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
@@ -139,6 +140,7 @@ def mock_batch_endpoint_operations(
     mock_code_assets_operations: Mock,
     mock_data_operations: Mock,
     mock_workspace_operations: Mock,
+    mock_credential: TokenCredential,
 ) -> BatchEndpointOperations:
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.CODE, mock_code_assets_operations)
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.MODEL, mock_code_assets_operations)
@@ -154,6 +156,7 @@ def mock_batch_endpoint_operations(
         service_client_05_2022=mock_aml_services_2022_05_01,
         all_operations=mock_machinelearning_client._operation_container,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
+        credentials=mock_credential,
         **kwargs,
     )
 
@@ -279,20 +282,8 @@ class TestBatchEndpointOperations:
             "azure.ai.ml.operations._batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
             return_value="https://some-url.com",
         )
-        mockresponse = Mock()
-        mockresponse.text = '{"key": "value"}'
-        mockresponse.status_code = 200
-        mocker.patch("requests.request", return_value=mockresponse)
-
-        mock_batch_endpoint_operations.list_jobs(endpoint_name="ept")
-        mock_batch_endpoint_operations._batch_job_endpoint.list.assert_called_once()
-
-    def test_list_deployment_jobs(
-        self, mock_batch_endpoint_operations: BatchEndpointOperations, mocker: MockFixture
-    ) -> None:
-        mocker.patch(
-            "azure.ai.ml.operations._batch_endpoint_operations._get_mfe_base_url_from_discovery_service",
-            return_value="https://some-url.com",
+        mock_list_jobs_batch_endpoint = mocker.patch.object(
+            BatchEndpointOperations, "list_jobs", autospec=True
         )
         mockresponse = Mock()
         mockresponse.text = '{"key": "value"}'
@@ -300,7 +291,7 @@ class TestBatchEndpointOperations:
         mocker.patch("requests.request", return_value=mockresponse)
 
         mock_batch_endpoint_operations.list_jobs(endpoint_name="ept")
-        mock_batch_endpoint_operations._batch_job_endpoint.list.assert_called_once()
+        mock_list_jobs_batch_endpoint.assert_called_once()
 
     def test_batch_get(
         self,

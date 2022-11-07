@@ -9,7 +9,9 @@ import re
 
 from azure.ai.ml.entities._deployment.batch_job import BatchJob
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import AzureMachineLearningWorkspaces as ServiceClientDataPlanePreview
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
+    AzureMachineLearningWorkspaces as ServiceClientDataPlanePreview
+)
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
     OperationsContainer,
@@ -24,7 +26,7 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
-from azure.ai.ml.entities import BatchDeployment, BatchJob
+from azure.ai.ml.entities import BatchDeployment
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -69,7 +71,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
         mfe_base_uri = _get_mfe_base_url_from_discovery_service(
             workspace_operations, self._workspace_name, self._requests_pipeline
-        ) 
+        )
         return ServiceClientDataPlanePreview(
                 credential=self._credentials, base_url=mfe_base_uri, subscription_id=self._subscription_id
             )
@@ -96,7 +98,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchDeployment]
         """
-
 
         if (
             not skip_script_validation
@@ -246,4 +247,3 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         """Get the workspace location TODO[TASK 1260265]: can we cache this
         information and only refresh when the operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
-

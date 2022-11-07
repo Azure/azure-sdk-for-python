@@ -19,7 +19,7 @@ class BatchJobProperty:
     :param dataset: Input dataset.
     :type dataset: str
     :param error_threshold: Error threshold, if the error count for the entire input goes above
-         this value, the batch inference will be aborted. Range is [-1, int.MaxValue] -1 value 
+         this value, the batch inference will be aborted. Range is [-1, int.MaxValue] -1 value
          indicates, ignore all failures during batch inference.
     :type error_threshold: int
     :param input_data:Input data for the job.
@@ -32,7 +32,7 @@ class BatchJobProperty:
     :type output_file_name: str
     :param retry_settings: Retry Settings for the batch inference operation.
     :type retry_settings: BatchRetrySettings
-    :param status: Status of the job. 
+    :param status: Status of the job.
     :type status: str
 
     """
@@ -74,7 +74,6 @@ class BatchJobProperty:
             status = obj.status
         )
 
-    
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
         return BatchJobPropertySchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)

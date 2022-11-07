@@ -14,7 +14,9 @@ from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remo
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.ai.ml.entities._deployment.batch_job import BatchJob
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import AzureMachineLearningWorkspaces as ServiceClientDataPlanePreview
+from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
+    AzureMachineLearningWorkspaces as ServiceClientDataPlanePreview
+)
 from azure.ai.ml._schema._deployment.batch.batch_job_property import BatchJobPropertySchema
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -41,7 +43,7 @@ from azure.ai.ml.constants._common import (
     LROConfigurations,
 )
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
-from azure.ai.ml.entities import BatchEndpoint, BatchJob
+from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
 from azure.core.credentials import TokenCredential
@@ -97,7 +99,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
         mfe_base_uri = _get_mfe_base_url_from_discovery_service(
             workspace_operations, self._workspace_name, self._requests_pipeline
-        ) 
+        )
         return ServiceClientDataPlanePreview(
                 credential=self._credentials, base_url=mfe_base_uri, subscription_id=self._subscription_id
             )
@@ -297,19 +299,19 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(
             endpoint.properties.scoring_uri,
-            json=BatchJob(properties=batch_job).serialize(),
+            json=BatchJob(properties=batch_job).serialize(),  # pylint: disable=no-member
             headers=headers,
         )
         validate_response(response)
         batch_job = json.loads(response.text())
-        return BatchJob.deserialize(batch_job)
+        return BatchJob.deserialize(batch_job)  # pylint: disable=no-member
 
     @distributed_trace
     @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)
     def list_jobs(self, endpoint_name: str) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
-
+cl
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
         :return: List of jobs
