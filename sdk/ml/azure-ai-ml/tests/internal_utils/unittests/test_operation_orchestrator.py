@@ -199,7 +199,7 @@ class TestOperationOrchestration:
         assert actual == test_id
     
     def test_get_asset_arm_id_when_environment_already_created(self, operation_orchestrator: OperationOrchestrator) -> None:
-        test_id = "azureml://registries/my-registry/environment/env-base/versions/1"
+        test_id = "azureml://registries/my-registry/environments/env-base/versions/1"
         environment = Environment(id=test_id, name="some_name", version="1")
         actual = operation.get_asset_arm_id(environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
         assert actual == test_id
