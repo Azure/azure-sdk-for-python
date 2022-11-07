@@ -580,14 +580,6 @@ class ParamValueNotExistsError(KeywordError):
         super().__init__(message=message, no_personal_data_message=message)
 
 
-class UnExpectedNonPipelineParameterTypeError(UserErrorException):
-    """Exception raised when non_pipeline_parameter type is not List[str]."""
-
-    def __init__(self):
-        message = "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string"
-        super().__init__(message=message, no_personal_data_message=message)
-
-
 class UnsupportedOperationError(UserErrorException):
     """Exception raised when specified operation is not supported."""
 
