@@ -35,6 +35,7 @@ from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override, _copy_folder_ignore_pycache
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from .code import ComponentCode
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -529,17 +530,4 @@ class Component(
                         f.write(COMPONENT_CODE_PLACEHOLDER)
                     yield Code(base_path=self._base_path, path=code)
                 else:
-                    # copy to temp folder to filter potential __pycache__
-                    # note that the dst here is one level deeper than the temp folder,
-                    # when upload code asset, the URL contains one level higher than the file,
-                    # if we simply copy to temp folder, the URL will contain random temp folder name,
-                    # that might result in unexpected issues and also break related tests.
-                    # therefore we copy deeper to avoid this break.
-                    src_path = Path(self._base_path) / code
-                    # .name will return empty string for UNC drive names
-                    # so we need src_path.resolve() here to avoid empty string
-                    # that leads to FileExistsError during shutil.copytree
-                    # TODO(2056980): replace temp code folder name with constant value
-                    dst_path = Path(tmp_dir) / src_path.resolve().name
-                    _copy_folder_ignore_pycache(src_path, dst_path)
-                    yield Code(base_path=self._base_path, path=dst_path)
+                    yield ComponentCode(base_path=self._base_path, path=code)
