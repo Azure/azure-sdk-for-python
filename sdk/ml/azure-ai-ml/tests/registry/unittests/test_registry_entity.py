@@ -229,6 +229,14 @@ class TestRegistryEntity:
         
         for expected_id in expected_ids:
             assert expected_id in new_system_storage.replicated_ids
+        
+        system_details.storage_config.replication_count = -1
+        try:
+            system_details._storage_config_to_rest_object()
+            # should fail due to negative replication count
+            assert False
+        except ValueError:
+            pass
 
     def test_system_region_details_serialization(self):
         region_detail = RegistryRegionDetails(acr_config=[SystemCreatedAcrAccount(acr_account_sku="Premium")],

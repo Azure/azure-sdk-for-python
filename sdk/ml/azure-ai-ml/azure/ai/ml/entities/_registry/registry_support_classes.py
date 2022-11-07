@@ -206,6 +206,8 @@ class RegistryRegionDetails:
             ))
             # duplicate this value based on the replication_count
             count = storage.replication_count
+            if count < 1:
+                raise ValueError(f"Replication count cannot be less than 1. Value was: {count}.")
             return [deepcopy(account) for _ in range(0, count)]
         elif storage is not None and len(storage) > 0:
             return [_make_rest_user_storage_from_id(user_id=user_id) for user_id in storage]
