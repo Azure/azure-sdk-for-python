@@ -18,7 +18,7 @@ class ComponentIgnoreFile(IgnoreFile):
     """Inherit to add custom ignore items. Different from original ignore file,
     this ignores file will locate under temp folder so there is some different logic.
     """
-    _COMPONENT_CODE_IGNORE_ITEMS = ["__pycache__"]
+    _COMPONENT_CODE_IGNORE_ITEMS = ["__pycache__", "*.additional_includes"]
     _COMPONENT_IGNORE_FILENAME = ".componentignore"
 
     @staticmethod
