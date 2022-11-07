@@ -202,18 +202,20 @@ class BaseExporter:
                     if self._should_collect_stats():
                         _update_requests_map(_REQ_THROTTLE_NAME[1], value=response_error.status_code)
                     result = ExportResult.FAILED_NOT_RETRYABLE
-                elif _is_redirect_code(response_error.status_code):
+                elif _is_redirect_code(response_error.status_code) and response_error.response and response_error.response.headers:
                     self._consecutive_redirects = self._consecutive_redirects + 1
                     if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # pylint: disable=W0212
                         location = response_error.response.headers.get("location")
                         url = urlparse(location)
                         if url.scheme and url.netloc:
+                            # Change the host to the new redirected host
                             self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
+                            # Attempt to export again
                             result = self._transmit(envelopes)
                         else:
                             if not self._is_stats_exporter():
                                 logger.error(
-                                    "Error parsing redirect information: %s.", ex
+                                    "Error parsing redirect information.",
                                 )
                             result = ExportResult.FAILED_NOT_RETRYABLE
                     else:
