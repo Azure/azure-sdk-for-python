@@ -26,10 +26,6 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from azure.ai.ml._local_endpoints.docker_client import (
-    DockerClient,
-    get_status_from_container,
-)
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException, MlException, ErrorCategory
 from azure.core.polling import LROPoller, PollingMethod
 from azure.core.rest import HttpResponse
