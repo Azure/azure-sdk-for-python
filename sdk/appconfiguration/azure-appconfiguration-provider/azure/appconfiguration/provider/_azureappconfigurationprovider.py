@@ -167,7 +167,8 @@ class AzureAppConfigurationProvider:
                 headers=headers)
         return AzureAppConfigurationClient(endpoint, credential, user_agent=USER_AGENT, headers=headers)
 
-    def __parse_connection_string(self, connection_string):
+    @staticmethod
+    def __parse_connection_string(connection_string):
         # type: (str) -> str
         """Parses the connection string to get the endpoint.
 
