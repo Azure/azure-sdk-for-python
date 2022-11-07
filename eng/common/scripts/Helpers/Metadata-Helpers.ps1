@@ -95,13 +95,13 @@ function GetDocsMsService($packageInfo, $serviceName)
 
 function compare-and-merge-metadata ($original, $updated) {
   $updateMetdata = (($updated | ForEach-Object { "$($_[0]): $($_[1])" }) -join "`r`n") + "`r`n"
-  $updatedValues = $updated | ForEach-Object { $_[0]}
+  $updatedKeys = $updated | ForEach-Object { $_[0]}
   if (!$original) {
     return $updateMetdata 
   }
   $originalTable = ConvertFrom-StringData -StringData $original -Delimiter ":"
   foreach ($key in $originalTable.Keys) {
-    if (!($updated.Contains($key))) {
+    if (!($updatedKeys.Contains($key))) {
       Write-Warning "New metadata missed the entry: $key. Adding back."
       $updateMetdata += "$key`: $($originalTable[$key])`r`n"
     }
