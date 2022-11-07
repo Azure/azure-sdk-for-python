@@ -96,37 +96,37 @@ class TestCommandFunction:
         )
 
     def test_command_function(self, test_command):
-        # assert isinstance(test_command, Command)
-        # assert test_command._source == "BUILDER"
-        # expected_command = {
-        #     "_source": "BUILDER",
-        #     "computeId": "cpu-cluster",
-        #     "display_name": "my-fancy-job",
-        #     "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
-        #     "environment_variables": {"foo": "bar"},
-        #     "inputs": {
-        #         "boolean": {"job_input_type": "literal", "value": "False"},
-        #         "float": {"job_input_type": "literal", "value": "0.01"},
-        #         "integer": {"job_input_type": "literal", "value": "1"},
-        #         "string": {"job_input_type": "literal", "value": "str"},
-        #         "uri_file": {"job_input_type": "uri_file", "mode": "Download", "uri": "https://my-blob/path/to/data"},
-        #         "uri_folder": {
-        #             "job_input_type": "uri_folder",
-        #             "mode": "ReadOnlyMount",
-        #             "uri": "https://my-blob/path/to/data",
-        #         },
-        #     },
-        #     "name": "my_job",
-        #     "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
-        #     "type": "command",
-        # }
-        # actual_command = pydash.omit(
-        #     test_command._to_rest_object(),
-        #     "componentId",
-        #     "source_job_id",
-        #     "properties",
-        # )
-        # assert actual_command == expected_command
+        assert isinstance(test_command, Command)
+        assert test_command._source == "BUILDER"
+        expected_command = {
+            "_source": "BUILDER",
+            "computeId": "cpu-cluster",
+            "display_name": "my-fancy-job",
+            "distribution": {"distribution_type": "Mpi", "process_count_per_instance": 4},
+            "environment_variables": {"foo": "bar"},
+            "inputs": {
+                "boolean": {"job_input_type": "literal", "value": "False"},
+                "float": {"job_input_type": "literal", "value": "0.01"},
+                "integer": {"job_input_type": "literal", "value": "1"},
+                "string": {"job_input_type": "literal", "value": "str"},
+                "uri_file": {"job_input_type": "uri_file", "mode": "Download", "uri": "https://my-blob/path/to/data"},
+                "uri_folder": {
+                    "job_input_type": "uri_folder",
+                    "mode": "ReadOnlyMount",
+                    "uri": "https://my-blob/path/to/data",
+                },
+            },
+            "name": "my_job",
+            "outputs": {"my_model": {"job_output_type": "mlflow_model", "mode": "ReadWriteMount"}},
+            "type": "command",
+        }
+        actual_command = pydash.omit(
+            test_command._to_rest_object(),
+            "componentId",
+            "source_job_id",
+            "properties",
+        )
+        assert actual_command == expected_command
 
         # distribution goes here
         expected_component = {
