@@ -43,17 +43,8 @@ class MultivariateSample:
     def list_models(self):
 
         # List models
-        skip = 0
-
-        next_link = None
-        model_list = []
-
-        while next_link != '':
-            next_link, models = self.ad_client.list_multivariate_models(skip=skip, top=10)
-            models = list(models)
-            model_list.extend(models)
-            skip = skip + len(models)
-        return model_list
+        models = self.ad_client.list_multivariate_models(skip=0, top=10)
+        return list(models)
 
     def train(self, body):
 
