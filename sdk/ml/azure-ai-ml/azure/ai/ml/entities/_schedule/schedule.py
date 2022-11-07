@@ -232,8 +232,10 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         # Wrap job definition with JobBase for Job._from_rest_object call.
         create_job = RestJobBase(properties=action.job_definition)
         # id is a readonly field so set it after init.
-        create_job.id = action.job_definition.source_job_id
-        create_job = PipelineJob._load_from_rest(create_job)
+        # TODO: Add this support after source job id move to JobBaseProperties
+        if hasattr(action.job_definition, "source_job_id"):
+            create_job.id = action.job_definition.source_job_id
+        create_job = Job._from_rest_object(create_job)
         return cls(
             trigger=TriggerBase._from_rest_object(properties.trigger),
             create_job=create_job,

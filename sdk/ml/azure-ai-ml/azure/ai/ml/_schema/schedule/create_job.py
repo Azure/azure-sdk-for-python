@@ -14,7 +14,7 @@ from azure.ai.ml._schema.core.fields import (
     FileRefField,
     NestedField,
     StringTransformedEnum,
-    UnionField, RegistryStr, ArmVersionedStr,
+    UnionField, RegistryStr, ArmVersionedStr, CodeField,
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, \
