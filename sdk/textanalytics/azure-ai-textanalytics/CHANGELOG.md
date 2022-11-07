@@ -31,6 +31,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Removed dependency on `msrest`.
 
 ## 5.2.1 (2022-10-26)
 
