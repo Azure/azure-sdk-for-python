@@ -40,6 +40,7 @@ from azure.ai.ml.constants._common import (
     AzureMLResourceType,
     LABELLED_RESOURCE_ID_FORMAT,
     DEFAULT_LABEL_NAME,
+    REGISTRY_VERSION_PATTERN
 )
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
@@ -141,7 +142,7 @@ class OperationOrchestrator(object):
                 # CLI strips off azureml: in the schema, appending it back as required by backend
                 if (
                     azureml_type == "environments"
-                    and asset.startswith(CURATED_ENV_PREFIX)
+                    and (asset.startswith(CURATED_ENV_PREFIX) or re.match(REGISTRY_VERSION_PATTERN, f"azureml:{asset}"))
                 ):
                     return f"azureml:{asset}"
 
@@ -181,7 +182,7 @@ class OperationOrchestrator(object):
                             "Use fully qualified name to reference custom environments "
                             "when creating assets in registry. "
                             "The syntax for fully qualified names is "
-                            "azureml:registries/azureml/environments/{{env-name}}/versions/{{version}}"
+                            "azureml://registries/azureml/environments/{{env-name}}/versions/{{version}}"
                         )
                         raise ValidationException(
                             message=msg.format(asset, azureml_type),
