@@ -66,18 +66,20 @@ class ConditionalUpdateSamples(object):
             print("Entity:")
             print(self.entity1)
 
-            # Merge properties of an entity with one that already existed in a table
+            # Merge properties of an entity with one that already existed in a table.
+            # This operation will only succeed if the entity has not been modified since we last retrieved the Etag.
             try:
-                table_client.update_entity(entity=self.entity2, mode=UpdateMode.MERGE, match_condition=MatchConditions.IfNotModified, etag=metadata1["etag"])
+                metadata2 = table_client.update_entity(entity=self.entity2, mode=UpdateMode.MERGE, match_condition=MatchConditions.IfNotModified, etag=metadata1["etag"])
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
             entity2 = table_client.get_entity(partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"])
             print("Entity after merge:")
             print(entity2)
 
-            # Replace properties of an entity with one that already existed in a table
+            # Update an existing entity by replacing all of its properties with those specified.
+            # This operation will only succeed if the entity has not been modified since we last retrieved the Etag.
             try:
-                table_client.update_entity(entity=self.entity2, mode=UpdateMode.REPLACE, match_condition=MatchConditions.IfNotModified, etag=entity2.metadata["etag"])
+                table_client.update_entity(entity=self.entity2, mode=UpdateMode.REPLACE, match_condition=MatchConditions.IfNotModified, etag=metadata2["etag"])
             except ResourceModifiedError:
                 print("This entity has been altered and may no longer be in the expected state.")
             entity3 = table_client.get_entity(partition_key=self.entity1["PartitionKey"], row_key=self.entity1["RowKey"])
@@ -86,7 +88,7 @@ class ConditionalUpdateSamples(object):
 
             table_client.delete_table()
     
-    def conditional_update_with_a_target_filed(self):
+    def conditional_update_with_a_target_field(self):
         with TableClient.from_connection_string(self.connection_string, self.table_name_prefix + uuid4().hex) as table_client:
             table_client.create_table()
             table_client.create_entity(entity=self.entity1)
@@ -99,7 +101,12 @@ class ConditionalUpdateSamples(object):
             except ResourceExistsError:
                 entity = table_client.get_entity(partition_key=self.entity2["PartitionKey"], row_key=self.entity2["RowKey"])
                 if target_field not in entity:
-                    table_client.update_entity(entity=self.entity2, mode=UpdateMode.MERGE, match_condition=MatchConditions.IfNotModified, etag=entity.metadata["etag"])
+                    table_client.update_entity(
+                        entity={"PartitionKey": self.entity2["PartitionKey"], "RowKey": self.entity2["RowKey"], target_field: "foo"},
+                        mode=UpdateMode.MERGE,
+                        match_condition=MatchConditions.IfNotModified,
+                        etag=entity.metadata["etag"]
+                    )
 
             table_client.delete_table()
 
@@ -107,4 +114,4 @@ class ConditionalUpdateSamples(object):
 if __name__ == "__main__":
     sample = ConditionalUpdateSamples()
     sample.conditional_update_basic()
-    sample.conditional_update_with_a_target_filed()
+    sample.conditional_update_with_a_target_field()
