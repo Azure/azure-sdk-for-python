@@ -44,20 +44,20 @@ class FuturePolling(PollingMethod):
         self,
         future: Future,
         timeout: int = LROConfigurations.POLLING_TIMEOUT,
-        local: bool = False,
+        interval: int = LROConfigurations.POLL_INTERVAL,
         message: str = None
     ):
         self._future = future
         self._timeout = timeout
-        self._local = local
+        self._interval = interval
         self._message = message
 
     def run(self):
         module_logger.warning(str(self._message))
-        if self._local:
+        if not self._timeout:
             while not self.finished():
                 module_logger.warning(".")
-                time.sleep(self._timeout)
+                time.sleep(self._interval)
         else:
             self._future.result(timeout=self._timeout)
 
@@ -76,8 +76,7 @@ class FuturePolling(PollingMethod):
         return self._future.done()
 
     def resource(self):
-        timeout = None if self._local else self._timeout
-        return self._future.result(timeout)
+        return self._future.result(self._timeout)
 
 
 def get_duration(start_time: float) -> None:
@@ -145,8 +144,7 @@ def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> LR
         None,
         FuturePolling(
             event,
-            timeout=LROConfigurations.POLL_INTERVAL,
-            local=True,
+            timeout=None,
             message=message
         )
     )
