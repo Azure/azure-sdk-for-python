@@ -17,6 +17,7 @@ class CommandSchema(InternalBaseNodeSchema):
     environment = fields.Str()
     limits = NestedField(CommandJobLimitsSchema)
     resources = NestedField(JobResourceConfigurationSchema)
+    environment_variables = fields.Dict(keys=fields.Str())
 
 
 class DistributedSchema(CommandSchema):

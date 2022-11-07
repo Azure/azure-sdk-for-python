@@ -1,6 +1,8 @@
-from pathlib import Path
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
 
-import pydash
+from pathlib import Path
 
 from azure.ai.ml import Input
 from azure.ai.ml.constants._common import AssetTypes
@@ -17,6 +19,7 @@ PARAMETERS_TO_TEST = [
         {},
         {
             "compute": "cpu-cluster",  # runsettings.target
+            "environment_variables": {"verbose": "DEBUG"},  # runsettings.environment_variables
             "environment": None,  # runsettings.environment
             # TODO: "resources.priority": 5,  # runsettings.priority  # JobResourceConfiguration doesn't have priority
             "limits.timeout": 300,  # runsettings.timeout_seconds
@@ -40,6 +43,7 @@ PARAMETERS_TO_TEST = [
         {
             "compute": "cpu-cluster",  # runsettings.target
             "environment": None,  # runsettings.environment
+            "environment_variables": {"verbose": "DEBUG"},  # runsettings.environment_variables
             "limits.timeout": 300,  # runsettings.timeout_seconds
             "resources.instance_type": "1Gi",  # runsettings.resource_layout.instance_type
             "resources.instance_count": 2,  # runsettings.resource_layout.instance_count/node_count
@@ -208,7 +212,7 @@ def assert_strong_type_intellisense_enabled(node, runsettings_dict):
         for key in keys:
             current_obj = getattr(current_obj, key)
         if isinstance(current_obj, _AttrDict):
-            if current_obj._is_arbitrary_attr(last_key):
+            if current_obj._is_arbitrary_attr(last_key):  # pylint: disable=protected-access
                 failed_attrs.append(dot_key)
         elif not hasattr(current_obj, last_key):
             failed_attrs.append(dot_key)
@@ -224,14 +228,13 @@ def extract_non_primitive(obj):
             if val:
                 r[key] = val
         return r
-    elif isinstance(obj, list):
+    if isinstance(obj, list):
         r = []
         for val in obj:
             val = extract_non_primitive(val)
             if val:
                 r.append(val)
         return r
-    elif isinstance(obj, (float, int, str)):
+    if isinstance(obj, (float, int, str)):
         return None
-    else:
-        return obj
+    return obj
