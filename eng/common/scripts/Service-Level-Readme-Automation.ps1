@@ -49,7 +49,7 @@ function Get-RestContent($readmePath) {
     $readmeContent = Get-Content $readmePath -Raw
     if ($readmeContent -match "\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]") {
       # The existing service level readme contains both metadata and index table
-      if ($readmeContent -match "^---\n*(.*\n?)*?\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]\n*(?<content>(.*\n?)*)") {
+      if ($readmeContent -match "^---\n*[^(\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]\n)]*\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]\n(?<content>(.*\n?)*)") {
         $restContent = $Matches["content"].trim()
       }
     }
@@ -95,6 +95,7 @@ function update-service-readme($readmeFolder, $readmeName, $moniker, $msService,
   # Add tables, seperate client and mgmt.
   $readmeHeader = "# Azure $serviceName SDK for $languageDisplayName - $moniker`r`n"
   Add-Content -Path $readmePath -Value $readmeHeader
+  Add-Content -Path $readmePath -Value $content -NoNewline
   if ($restContent) {
     Add-Content -Path $readmePath -Value $restContent -NoNewline
   }
