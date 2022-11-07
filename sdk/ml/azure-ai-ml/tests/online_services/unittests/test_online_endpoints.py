@@ -463,21 +463,21 @@ class TestOnlineEndpointsOperations:
 
     @pytest.mark.parametrize("local", [True, False])
     def test_create_no_file_throw_exception(
-            self, mock_online_endpoint_operations: OnlineEndpointOperations, local: bool
+        self, mock_online_endpoint_operations: OnlineEndpointOperations, local: bool
     ) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None, local=local)
 
     @pytest.mark.parametrize("local", [True, False])
     def test_create_no_type_throw_exception(
-            self, mock_online_endpoint_operations: OnlineEndpointOperations, local: bool
+        self, mock_online_endpoint_operations: OnlineEndpointOperations, local: bool
     ) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None, local=local)
 
     @pytest.mark.parametrize("local", [True, False])
     def test_create_no_type_in_file_throw_exception(
-            self, mock_online_endpoint_operations: OnlineEndpointOperations,  create_yaml_no_type, local: bool
+        self, mock_online_endpoint_operations: OnlineEndpointOperations,  create_yaml_no_type, local: bool
     ) -> None:
         with pytest.raises(Exception):
             mock_online_endpoint_operations.begin_create(name="random_name", file=None, local=local)
