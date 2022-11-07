@@ -282,6 +282,9 @@ sdk/confidentialledger/azure-confidentialledger                      @lynshi
 # PRLabel: %Cognitive - Language
 /sdk/cognitivelanguage/                                              @kristapratico @mohamedshabanofficial
 
+# PRLabel: %Cognitive - Personalizer
+/sdk/personalizer/                                                   @sharathmalladi
+
 # PRLabel: %Graph
 sdk/graphrbac/                                                       @msyyc @Wzb123456789
 
@@ -424,7 +427,7 @@ sdk/graphrbac/                                                       @msyyc @Wzb
 #/<NotInRepo>/          @swiftarrow11
 
 # ServiceLabel: %Cognitive - Personalizer %Service Attention
-#/<NotInRepo>/          @dwaijam
+#/<NotInRepo>/          @dwaijam @sharathmalladi
 
 # ServiceLabel: %Cognitive - Immersive Reader %Service Attention
 #/<NotInRepo>/          @metanMSFT
