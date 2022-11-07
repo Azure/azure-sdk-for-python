@@ -119,7 +119,7 @@ class TestAutoMLImageSegmentation(AzureRecordedTestCase):
         submitted_job_automode = client.jobs.create_or_update(image_instance_segmentation_job_automode)
 
         # Assert completion of regular sweep job
-        assert_final_job_status(submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED)
+        assert_final_job_status(submitted_job_sweep, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=2700)
 
         # Assert completion of Automode job
-        assert_final_job_status(submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED)
+        assert_final_job_status(submitted_job_automode, client, ImageInstanceSegmentationJob, JobStatus.COMPLETED, deadline=2700)
