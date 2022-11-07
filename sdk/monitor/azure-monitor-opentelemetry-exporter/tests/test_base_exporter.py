@@ -192,6 +192,32 @@ class TestBaseExporter(unittest.TestCase):
         self._base.client._config.redirect_policy.max_redirects = prev_redirects
         self._base.client._config.host = prev_host
 
+    def test_transmit_http_error_redirect_missing_headers(self):
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = None
+        error = HttpResponseError(response=response)
+        prev_host = self._base.client._config.host
+        with mock.patch.object(AzureMonitorClient, 'track') as post:
+            post.side_effect = error
+            result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(post.call_count, 1)
+            self.assertEqual(self._base.client._config.host, prev_host)
+
+    def test_transmit_http_error_redirect_invalid_location_header(self):
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location":"123"}
+        error = HttpResponseError(response=response)
+        prev_host = self._base.client._config.host
+        with mock.patch.object(AzureMonitorClient, 'track') as post:
+            post.side_effect = error
+            result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(post.call_count, 1)
+            self.assertEqual(self._base.client._config.host, prev_host)
+
     def test_transmit_request_error(self):
         with mock.patch.object(AzureMonitorClient, 'track', throw(ServiceRequestError, message="error")):
             result = self._base._transmit(self._envelopes_to_export)
