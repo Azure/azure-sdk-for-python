@@ -1,7 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-
+import copy
 from pathlib import Path
 
 from azure.ai.ml import Input
@@ -189,6 +189,33 @@ TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
     lambda params: Path(params[0]).name,
     PARAMETERS_TO_TEST,
 )))
+
+TEST_CASE_NAME_ENUMERATE = [TEST_CASE_NAME_ENUMERATE[2]]
+
+
+def get_expected_runsettings_items(runsettings_dict, client=None):
+    expected_values = copy.deepcopy(runsettings_dict)
+    dot_key_map = {"compute": "computeId"}
+
+    for dot_key in dot_key_map:
+        if dot_key in expected_values:
+            expected_values[dot_key_map[dot_key]] = expected_values.pop(dot_key)
+
+    for dot_key in expected_values:
+        # hack: mini_batch_size will be transformed into str
+        if dot_key == "mini_batch_size":
+            expected_values[dot_key] = str(expected_values[dot_key])
+        # hack: timeout will be transformed into str
+        if dot_key == "limits.timeout":
+            expected_values[dot_key] = "PT5M"
+        # hack: compute_name for hdinsight will be transformed into arm str
+        if dot_key == "compute_name" and client is not None:
+            expected_values[dot_key] = f"/subscriptions/{client.subscription_id}/" \
+                             f"resourceGroups/{client.resource_group_name}/" \
+                             f"providers/Microsoft.MachineLearningServices/" \
+                             f"workspaces/{client.workspace_name}/" \
+                             f"computes/{expected_values[dot_key]}"
+    return expected_values.items()
 
 
 def set_run_settings(node, runsettings_dict):
