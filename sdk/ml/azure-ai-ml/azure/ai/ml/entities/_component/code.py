@@ -3,7 +3,8 @@
 # ---------------------------------------------------------
 
 import os
-from typing import Dict, List, Union
+from pathlib import Path
+from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._utils._asset_utils import get_content_hash, IgnoreFile
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern
@@ -15,11 +16,22 @@ class ComponentIgnoreFile(IgnoreFile):
     """Inherit to add custom ignores."""
     _COMPONENT_CODE_IGNORES = ["__pycache__", "*.additional_includes"]
 
+    def __init__(self, file_path: Optional[Union[str, Path]] = None):
+        super(ComponentIgnoreFile, self).__init__(file_path=file_path)
+        self._path_spec = self._create_pathspec()
+
     def _create_pathspec(self) -> List[GitWildMatchPattern]:
         """Override to add custom ignores."""
-        pathspec = super()._create_pathspec() or []
-        pathspec.extend([GitWildMatchPattern(ignore) for ignore in self._COMPONENT_CODE_IGNORES])
-        return pathspec
+        if super(ComponentIgnoreFile, self).exists():
+            path_spec = []
+        else:
+            path_spec = super(ComponentIgnoreFile, self)._create_pathspec()
+        path_spec.extend([GitWildMatchPattern(ignore) for ignore in self._COMPONENT_CODE_IGNORES])
+        return path_spec
+
+    def exists(self) -> bool:
+        """Always return True as custom ignores exist."""
+        return True
 
 
 class ComponentCode(Code):
