@@ -751,7 +751,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 ):
                     # TODO: compare the perf difference between ensure_future and direct await
                     break
-                
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
@@ -760,7 +759,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             )
         except asyncio.CancelledError:
             raise
-        except Exception:
+        except Exception: # pylint: disable=try-except-raise
             raise
 
     def create_session(self, **kwargs):

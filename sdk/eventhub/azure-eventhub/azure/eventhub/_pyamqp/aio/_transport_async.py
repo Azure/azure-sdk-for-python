@@ -123,7 +123,7 @@ class AsyncTransportMixin:
                     read_frame_buffer.write(
                         await self._read(payload_size, buffer=payload)
                     )
-            except asyncio.CancelledError:
+            except asyncio.CancelledError: # pylint: disable=try-except-raise
                 raise
             except (TimeoutError, socket.timeout, asyncio.IncompleteReadError):
                 read_frame_buffer.write(self._read_buffer.getvalue())

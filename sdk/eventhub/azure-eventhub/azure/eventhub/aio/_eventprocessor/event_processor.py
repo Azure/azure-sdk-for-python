@@ -29,7 +29,6 @@ from .partition_context import PartitionContext
 from .in_memory_checkpoint_store import InMemoryCheckpointStore
 from .checkpoint_store import CheckpointStore
 from ._ownership_manager import OwnershipManager
-from .utils import get_running_loop
 from .._async_utils import get_dict_with_loop_if_needed
 
 if TYPE_CHECKING:

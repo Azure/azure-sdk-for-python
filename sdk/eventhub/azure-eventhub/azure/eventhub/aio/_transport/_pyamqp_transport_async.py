@@ -171,7 +171,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def _receive_task(consumer):
         max_retries = consumer._client._config.max_retries  # pylint:disable=protected-access
         retried_times = 0
-        while retried_times <= max_retries and consumer._callback_task_run:
+        while retried_times <= max_retries and consumer._callback_task_run: # pylint: disable=protected-access
             try:
                 await consumer._open() # pylint: disable=protected-access
                 await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch) # pylint: disable=protected-access
@@ -225,7 +225,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 try:
                     await task
                     await asyncio.sleep(0)
-                except Exception as e:
+                except Exception: # pylint: disable=broad-except
                     consumer._callback_task_run = False
             for task in tasks:
                 if task.done() and task.exception():
