@@ -171,7 +171,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def _receive_task(consumer):
         max_retries = consumer._client._config.max_retries  # pylint:disable=protected-access
         retried_times = 0
-        while retried_times <= max_retries:
+        while retried_times <= max_retries and consumer._callback_task_run:
             try:
                 await consumer._open() # pylint: disable=protected-access
                 await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch) # pylint: disable=protected-access
@@ -220,14 +220,20 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer))
 
         tasks = [callback_task, receive_task]
-
-        done, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_EXCEPTION)
-
-        for task in done:
-            if task.exception() is not None:
-                for pen in pending:
-                    pen.cancel()
-                raise task.exception()
+        try:
+            for task in asyncio.as_completed(tasks):
+                try:
+                    await task
+                    await asyncio.sleep(0)
+                except Exception as e:
+                    consumer._callback_task_run = False
+            for task in tasks:
+                if task.done() and task.exception():
+                    raise task.exception()
+        except asyncio.CancelledError:
+            consumer._callback_task_run = False
+            await asyncio.sleep(0)
+            raise
 
     @staticmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
