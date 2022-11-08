@@ -298,62 +298,6 @@ class Metrics(_serialization.Model):
         self.retention_policy = retention_policy
 
 
-class QueryOptions(_serialization.Model):
-    """Parameter group.
-
-    :ivar format: Specifies the media type for the response. Known values are:
-     "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-     "application/json;odata=fullmetadata".
-    :vartype format: str or ~azure.table.models.OdataMetadataFormat
-    :ivar top: Maximum number of records to return.
-    :vartype top: int
-    :ivar select: Select expression using OData notation. Limits the columns on each record to just
-     those requested, e.g. "$select=PolicyAssignmentId, ResourceId".
-    :vartype select: str
-    :ivar filter: OData filter expression.
-    :vartype filter: str
-    """
-
-    _validation = {
-        "top": {"minimum": 0},
-    }
-
-    _attribute_map = {
-        "format": {"key": "Format", "type": "str"},
-        "top": {"key": "Top", "type": "int"},
-        "select": {"key": "Select", "type": "str"},
-        "filter": {"key": "Filter", "type": "str"},
-    }
-
-    def __init__(
-        self,
-        *,
-        format: Optional[Union[str, "_models.OdataMetadataFormat"]] = None,
-        top: Optional[int] = None,
-        select: Optional[str] = None,
-        filter: Optional[str] = None,  # pylint: disable=redefined-builtin
-        **kwargs
-    ):
-        """
-        :keyword format: Specifies the media type for the response. Known values are:
-         "application/json;odata=nometadata", "application/json;odata=minimalmetadata", and
-         "application/json;odata=fullmetadata".
-        :paramtype format: str or ~azure.table.models.OdataMetadataFormat
-        :keyword top: Maximum number of records to return.
-        :paramtype top: int
-        :keyword select: Select expression using OData notation. Limits the columns on each record to
-         just those requested, e.g. "$select=PolicyAssignmentId, ResourceId".
-        :paramtype select: str
-        :keyword filter: OData filter expression.
-        :paramtype filter: str
-        """
-        super().__init__(**kwargs)
-        self.format = format
-        self.top = top
-        self.select = select
-        self.filter = filter
-
-
 class RetentionPolicy(_serialization.Model):
     """The retention policy.
 

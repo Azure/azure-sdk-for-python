@@ -11,7 +11,6 @@ from ._models import CorsRule
 from ._models import GeoReplication
 from ._models import Logging
 from ._models import Metrics
-from ._models import QueryOptions
 from ._models import RetentionPolicy
 from ._models import SignedIdentifier
 from ._models import TableEntityQueryResponse
@@ -23,12 +22,6 @@ from ._models import TableServiceError
 from ._models import TableServiceProperties
 from ._models import TableServiceStats
 
-from ._enums import Enum0
-from ._enums import Enum1
-from ._enums import Enum4
-from ._enums import Enum5
-from ._enums import Enum6
-from ._enums import Enum7
 from ._enums import GeoReplicationStatusType
 from ._enums import OdataMetadataFormat
 from ._enums import ResponseFormat
@@ -42,7 +35,6 @@ __all__ = [
     "GeoReplication",
     "Logging",
     "Metrics",
-    "QueryOptions",
     "RetentionPolicy",
     "SignedIdentifier",
     "TableEntityQueryResponse",
@@ -53,12 +45,6 @@ __all__ = [
     "TableServiceError",
     "TableServiceProperties",
     "TableServiceStats",
-    "Enum0",
-    "Enum1",
-    "Enum4",
-    "Enum5",
-    "Enum6",
-    "Enum7",
     "GeoReplicationStatusType",
     "OdataMetadataFormat",
     "ResponseFormat",

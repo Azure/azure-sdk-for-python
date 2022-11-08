@@ -7,12 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Union
+from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
-from .. import models
+from .. import models as _models
 from .._serialization import Deserializer, Serializer
 from ._configuration import AzureTableConfiguration
 from .operations import ServiceOperations, TableOperations
@@ -28,19 +28,19 @@ class AzureTable:  # pylint: disable=client-accepts-api-version-keyword
     :param url: The URL of the service account or table that is the target of the desired
      operation. Required.
     :type url: str
-    :param version: Specifies the version of the operation to use for this request. "2019-02-02"
-     Required.
-    :type version: str or ~azure.table.models.Enum0
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
     def __init__(  # pylint: disable=missing-client-constructor-parameter-credential
-        self, url: str, version: Union[str, _models.Enum0], **kwargs: Any
+        self, url: str, **kwargs: Any
     ) -> None:
         _endpoint = "{url}"
-        self._config = AzureTableConfiguration(url=url, version=version, **kwargs)
+        self._config = AzureTableConfiguration(url=url, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False

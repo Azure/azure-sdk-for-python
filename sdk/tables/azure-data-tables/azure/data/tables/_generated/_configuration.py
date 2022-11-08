@@ -6,12 +6,18 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Union
+import sys
+from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
 from ._version import VERSION
+
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 
 class AzureTableConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
@@ -23,17 +29,17 @@ class AzureTableConfiguration(Configuration):  # pylint: disable=too-many-instan
     :param url: The URL of the service account or table that is the target of the desired
      operation. Required.
     :type url: str
-    :param version: Specifies the version of the operation to use for this request. "2019-02-02"
-     Required.
-    :type version: str or ~azure.table.models.Enum0
+    :keyword version: Specifies the version of the operation to use for this request. Default value
+     is "2019-02-02". Note that overriding this default value may result in unsupported behavior.
+    :paramtype version: str
     """
 
-    def __init__(self, url: str, version: Union[str, _models.Enum0], **kwargs: Any) -> None:
+    def __init__(self, url: str, **kwargs: Any) -> None:
         super(AzureTableConfiguration, self).__init__(**kwargs)
+        version = kwargs.pop("version", "2019-02-02")  # type: Literal["2019-02-02"]
+
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
-        if version is None:
-            raise ValueError("Parameter 'version' must not be None.")
 
         self.url = url
         self.version = version

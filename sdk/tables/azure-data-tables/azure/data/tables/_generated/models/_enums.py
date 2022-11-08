@@ -10,42 +10,6 @@ from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class Enum0(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum0."""
-
-    TWO_THOUSAND_NINETEEN02_02 = "2019-02-02"
-
-
-class Enum1(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum1."""
-
-    THREE0 = "3.0"
-
-
-class Enum4(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum4."""
-
-    ACL = "acl"
-
-
-class Enum5(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum5."""
-
-    SERVICE = "service"
-
-
-class Enum6(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum6."""
-
-    PROPERTIES = "properties"
-
-
-class Enum7(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enum7."""
-
-    STATS = "stats"
-
-
 class GeoReplicationStatusType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the secondary location."""
 
