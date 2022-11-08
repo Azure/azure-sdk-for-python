@@ -34,12 +34,12 @@ class InputSchema(metaclass=PatchedSchemaMeta):
 def generate_path_property(azureml_type):
     return UnionField(
         [
-            ArmVersionedStr(azureml_type=azureml_type, pattern="^azureml:\w+"),
-            fields.Str(metadata={"pattern": "^azureml:(?!\w).*"}),
+            ArmVersionedStr(azureml_type=azureml_type, pattern=r"^azureml:\w+"),
+            fields.Str(metadata={"pattern": r"^azureml:(?!\w).*"}),
             ArmStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
-            fields.Str(metadata={"pattern": "^(http(s)?):.*"}),
-            fields.Str(metadata={"pattern": "^(wasb(s)?):.*"}),
-            ArmStr(azureml_type=LOCAL_PATH, pattern="^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
+            fields.Str(metadata={"pattern": r"^(http(s)?):.*"}),
+            fields.Str(metadata={"pattern": r"^(wasb(s)?):.*"}),
+            ArmStr(azureml_type=LOCAL_PATH, pattern=r"^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
         ],
         is_strict=True,
     )
