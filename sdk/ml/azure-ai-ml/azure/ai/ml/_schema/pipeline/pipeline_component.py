@@ -154,7 +154,7 @@ class PipelineComponentSchema(ComponentSchema):
         return _resolve_pipeline_component_inputs(component, **kwargs)
 
     @post_load
-    def make(self, data, **kwargs):
+    def make(self, data, **kwargs):  # pylint: disable=unused-argument
         return _post_load_pipeline_jobs(self.context, data)
 
 

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,40 +8,48 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Any, List, Optional, Union
+import sys
+from typing import Any, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._storage_import_export_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class DeliveryPackageInformation(msrest.serialization.Model):
+class DeliveryPackageInformation(_serialization.Model):
     """Contains information about the delivery package being shipped by the customer to the Microsoft data center.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param carrier_name: Required. The name of the carrier that is used to ship the import or
-     export drives.
-    :type carrier_name: str
-    :param tracking_number: Required. The tracking number of the package.
-    :type tracking_number: str
-    :param drive_count: The number of drives included in the package.
-    :type drive_count: long
-    :param ship_date: The date when the package is shipped.
-    :type ship_date: str
+    :ivar carrier_name: The name of the carrier that is used to ship the import or export drives.
+     Required.
+    :vartype carrier_name: str
+    :ivar tracking_number: The tracking number of the package. Required.
+    :vartype tracking_number: str
+    :ivar drive_count: The number of drives included in the package.
+    :vartype drive_count: int
+    :ivar ship_date: The date when the package is shipped.
+    :vartype ship_date: str
     """
 
     _validation = {
-        'carrier_name': {'required': True},
-        'tracking_number': {'required': True},
+        "carrier_name": {"required": True},
+        "tracking_number": {"required": True},
     }
 
     _attribute_map = {
-        'carrier_name': {'key': 'carrierName', 'type': 'str'},
-        'tracking_number': {'key': 'trackingNumber', 'type': 'str'},
-        'drive_count': {'key': 'driveCount', 'type': 'long'},
-        'ship_date': {'key': 'shipDate', 'type': 'str'},
+        "carrier_name": {"key": "carrierName", "type": "str"},
+        "tracking_number": {"key": "trackingNumber", "type": "str"},
+        "drive_count": {"key": "driveCount", "type": "int"},
+        "ship_date": {"key": "shipDate", "type": "str"},
     }
 
     def __init__(
@@ -52,85 +61,96 @@ class DeliveryPackageInformation(msrest.serialization.Model):
         ship_date: Optional[str] = None,
         **kwargs
     ):
-        super(DeliveryPackageInformation, self).__init__(**kwargs)
+        """
+        :keyword carrier_name: The name of the carrier that is used to ship the import or export
+         drives. Required.
+        :paramtype carrier_name: str
+        :keyword tracking_number: The tracking number of the package. Required.
+        :paramtype tracking_number: str
+        :keyword drive_count: The number of drives included in the package.
+        :paramtype drive_count: int
+        :keyword ship_date: The date when the package is shipped.
+        :paramtype ship_date: str
+        """
+        super().__init__(**kwargs)
         self.carrier_name = carrier_name
         self.tracking_number = tracking_number
         self.drive_count = drive_count
         self.ship_date = ship_date
 
 
-class DriveBitLockerKey(msrest.serialization.Model):
+class DriveBitLockerKey(_serialization.Model):
     """BitLocker recovery key or password to the specified drive.
 
-    :param bit_locker_key: BitLocker recovery key or password.
-    :type bit_locker_key: str
-    :param drive_id: Drive ID.
-    :type drive_id: str
+    :ivar bit_locker_key: BitLocker recovery key or password.
+    :vartype bit_locker_key: str
+    :ivar drive_id: Drive ID.
+    :vartype drive_id: str
     """
 
     _attribute_map = {
-        'bit_locker_key': {'key': 'bitLockerKey', 'type': 'str'},
-        'drive_id': {'key': 'driveId', 'type': 'str'},
+        "bit_locker_key": {"key": "bitLockerKey", "type": "str"},
+        "drive_id": {"key": "driveId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        bit_locker_key: Optional[str] = None,
-        drive_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(DriveBitLockerKey, self).__init__(**kwargs)
+    def __init__(self, *, bit_locker_key: Optional[str] = None, drive_id: Optional[str] = None, **kwargs):
+        """
+        :keyword bit_locker_key: BitLocker recovery key or password.
+        :paramtype bit_locker_key: str
+        :keyword drive_id: Drive ID.
+        :paramtype drive_id: str
+        """
+        super().__init__(**kwargs)
         self.bit_locker_key = bit_locker_key
         self.drive_id = drive_id
 
 
-class DriveStatus(msrest.serialization.Model):
+class DriveStatus(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Provides information about the drive's status.
 
-    :param drive_id: The drive's hardware serial number, without spaces.
-    :type drive_id: str
-    :param bit_locker_key: The BitLocker key used to encrypt the drive.
-    :type bit_locker_key: str
-    :param manifest_file: The relative path of the manifest file on the drive.
-    :type manifest_file: str
-    :param manifest_hash: The Base16-encoded MD5 hash of the manifest file on the drive.
-    :type manifest_hash: str
-    :param drive_header_hash: The drive header hash value.
-    :type drive_header_hash: str
-    :param state: The drive's current state. Possible values include: "Specified", "Received",
-     "NeverReceived", "Transferring", "Completed", "CompletedMoreInfo", "ShippedBack".
-    :type state: str or ~storage_import_export.models.DriveState
-    :param copy_status: Detailed status about the data transfer process. This field is not returned
+    :ivar drive_id: The drive's hardware serial number, without spaces.
+    :vartype drive_id: str
+    :ivar bit_locker_key: The BitLocker key used to encrypt the drive.
+    :vartype bit_locker_key: str
+    :ivar manifest_file: The relative path of the manifest file on the drive.
+    :vartype manifest_file: str
+    :ivar manifest_hash: The Base16-encoded MD5 hash of the manifest file on the drive.
+    :vartype manifest_hash: str
+    :ivar drive_header_hash: The drive header hash value.
+    :vartype drive_header_hash: str
+    :ivar state: The drive's current state. Known values are: "Specified", "Received",
+     "NeverReceived", "Transferring", "Completed", "CompletedMoreInfo", and "ShippedBack".
+    :vartype state: str or ~azure.mgmt.storageimportexport.models.DriveState
+    :ivar copy_status: Detailed status about the data transfer process. This field is not returned
      in the response until the drive is in the Transferring state.
-    :type copy_status: str
-    :param percent_complete: Percentage completed for the drive.
-    :type percent_complete: long
-    :param verbose_log_uri: A URI that points to the blob containing the verbose log for the data
+    :vartype copy_status: str
+    :ivar percent_complete: Percentage completed for the drive.
+    :vartype percent_complete: int
+    :ivar verbose_log_uri: A URI that points to the blob containing the verbose log for the data
      transfer operation.
-    :type verbose_log_uri: str
-    :param error_log_uri: A URI that points to the blob containing the error log for the data
+    :vartype verbose_log_uri: str
+    :ivar error_log_uri: A URI that points to the blob containing the error log for the data
      transfer operation.
-    :type error_log_uri: str
-    :param manifest_uri: A URI that points to the blob containing the drive manifest file.
-    :type manifest_uri: str
-    :param bytes_succeeded: Bytes successfully transferred for the drive.
-    :type bytes_succeeded: long
+    :vartype error_log_uri: str
+    :ivar manifest_uri: A URI that points to the blob containing the drive manifest file.
+    :vartype manifest_uri: str
+    :ivar bytes_succeeded: Bytes successfully transferred for the drive.
+    :vartype bytes_succeeded: int
     """
 
     _attribute_map = {
-        'drive_id': {'key': 'driveId', 'type': 'str'},
-        'bit_locker_key': {'key': 'bitLockerKey', 'type': 'str'},
-        'manifest_file': {'key': 'manifestFile', 'type': 'str'},
-        'manifest_hash': {'key': 'manifestHash', 'type': 'str'},
-        'drive_header_hash': {'key': 'driveHeaderHash', 'type': 'str'},
-        'state': {'key': 'state', 'type': 'str'},
-        'copy_status': {'key': 'copyStatus', 'type': 'str'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'long'},
-        'verbose_log_uri': {'key': 'verboseLogUri', 'type': 'str'},
-        'error_log_uri': {'key': 'errorLogUri', 'type': 'str'},
-        'manifest_uri': {'key': 'manifestUri', 'type': 'str'},
-        'bytes_succeeded': {'key': 'bytesSucceeded', 'type': 'long'},
+        "drive_id": {"key": "driveId", "type": "str"},
+        "bit_locker_key": {"key": "bitLockerKey", "type": "str"},
+        "manifest_file": {"key": "manifestFile", "type": "str"},
+        "manifest_hash": {"key": "manifestHash", "type": "str"},
+        "drive_header_hash": {"key": "driveHeaderHash", "type": "str"},
+        "state": {"key": "state", "type": "str"},
+        "copy_status": {"key": "copyStatus", "type": "str"},
+        "percent_complete": {"key": "percentComplete", "type": "int"},
+        "verbose_log_uri": {"key": "verboseLogUri", "type": "str"},
+        "error_log_uri": {"key": "errorLogUri", "type": "str"},
+        "manifest_uri": {"key": "manifestUri", "type": "str"},
+        "bytes_succeeded": {"key": "bytesSucceeded", "type": "int"},
     }
 
     def __init__(
@@ -141,7 +161,7 @@ class DriveStatus(msrest.serialization.Model):
         manifest_file: Optional[str] = None,
         manifest_hash: Optional[str] = None,
         drive_header_hash: Optional[str] = None,
-        state: Optional[Union[str, "DriveState"]] = None,
+        state: Union[str, "_models.DriveState"] = "Specified",
         copy_status: Optional[str] = None,
         percent_complete: Optional[int] = None,
         verbose_log_uri: Optional[str] = None,
@@ -150,7 +170,37 @@ class DriveStatus(msrest.serialization.Model):
         bytes_succeeded: Optional[int] = None,
         **kwargs
     ):
-        super(DriveStatus, self).__init__(**kwargs)
+        """
+        :keyword drive_id: The drive's hardware serial number, without spaces.
+        :paramtype drive_id: str
+        :keyword bit_locker_key: The BitLocker key used to encrypt the drive.
+        :paramtype bit_locker_key: str
+        :keyword manifest_file: The relative path of the manifest file on the drive.
+        :paramtype manifest_file: str
+        :keyword manifest_hash: The Base16-encoded MD5 hash of the manifest file on the drive.
+        :paramtype manifest_hash: str
+        :keyword drive_header_hash: The drive header hash value.
+        :paramtype drive_header_hash: str
+        :keyword state: The drive's current state. Known values are: "Specified", "Received",
+         "NeverReceived", "Transferring", "Completed", "CompletedMoreInfo", and "ShippedBack".
+        :paramtype state: str or ~azure.mgmt.storageimportexport.models.DriveState
+        :keyword copy_status: Detailed status about the data transfer process. This field is not
+         returned in the response until the drive is in the Transferring state.
+        :paramtype copy_status: str
+        :keyword percent_complete: Percentage completed for the drive.
+        :paramtype percent_complete: int
+        :keyword verbose_log_uri: A URI that points to the blob containing the verbose log for the data
+         transfer operation.
+        :paramtype verbose_log_uri: str
+        :keyword error_log_uri: A URI that points to the blob containing the error log for the data
+         transfer operation.
+        :paramtype error_log_uri: str
+        :keyword manifest_uri: A URI that points to the blob containing the drive manifest file.
+        :paramtype manifest_uri: str
+        :keyword bytes_succeeded: Bytes successfully transferred for the drive.
+        :paramtype bytes_succeeded: int
+        """
+        super().__init__(**kwargs)
         self.drive_id = drive_id
         self.bit_locker_key = bit_locker_key
         self.manifest_file = manifest_file
@@ -165,59 +215,68 @@ class DriveStatus(msrest.serialization.Model):
         self.bytes_succeeded = bytes_succeeded
 
 
-class EncryptionKeyDetails(msrest.serialization.Model):
+class EncryptionKeyDetails(_serialization.Model):
     """Specifies the encryption key properties.
 
-    :param kek_type: The type of kek encryption key. Possible values include: "MicrosoftManaged",
-     "CustomerManaged". Default value: "MicrosoftManaged".
-    :type kek_type: str or ~storage_import_export.models.EncryptionKekType
-    :param kek_url: Specifies the url for kek encryption key.
-    :type kek_url: str
-    :param kek_vault_resource_id: Specifies the keyvault resource id for kek encryption key.
-    :type kek_vault_resource_id: str
+    :ivar kek_type: The type of kek encryption key. Known values are: "MicrosoftManaged" and
+     "CustomerManaged".
+    :vartype kek_type: str or ~azure.mgmt.storageimportexport.models.EncryptionKekType
+    :ivar kek_url: Specifies the url for kek encryption key.
+    :vartype kek_url: str
+    :ivar kek_vault_resource_id: Specifies the keyvault resource id for kek encryption key.
+    :vartype kek_vault_resource_id: str
     """
 
     _attribute_map = {
-        'kek_type': {'key': 'kekType', 'type': 'str'},
-        'kek_url': {'key': 'kekUrl', 'type': 'str'},
-        'kek_vault_resource_id': {'key': 'kekVaultResourceID', 'type': 'str'},
+        "kek_type": {"key": "kekType", "type": "str"},
+        "kek_url": {"key": "kekUrl", "type": "str"},
+        "kek_vault_resource_id": {"key": "kekVaultResourceID", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        kek_type: Optional[Union[str, "EncryptionKekType"]] = "MicrosoftManaged",
+        kek_type: Union[str, "_models.EncryptionKekType"] = "MicrosoftManaged",
         kek_url: Optional[str] = None,
         kek_vault_resource_id: Optional[str] = None,
         **kwargs
     ):
-        super(EncryptionKeyDetails, self).__init__(**kwargs)
+        """
+        :keyword kek_type: The type of kek encryption key. Known values are: "MicrosoftManaged" and
+         "CustomerManaged".
+        :paramtype kek_type: str or ~azure.mgmt.storageimportexport.models.EncryptionKekType
+        :keyword kek_url: Specifies the url for kek encryption key.
+        :paramtype kek_url: str
+        :keyword kek_vault_resource_id: Specifies the keyvault resource id for kek encryption key.
+        :paramtype kek_vault_resource_id: str
+        """
+        super().__init__(**kwargs)
         self.kek_type = kek_type
         self.kek_url = kek_url
         self.kek_vault_resource_id = kek_vault_resource_id
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Response when errors occurred.
 
-    :param code: Provides information about the error code.
-    :type code: str
-    :param message: Provides information about the error message.
-    :type message: str
-    :param target: Provides information about the error target.
-    :type target: str
-    :param details: Describes the error details if present.
-    :type details: list[~storage_import_export.models.ErrorResponseErrorDetailsItem]
-    :param innererror: Inner error object if present.
-    :type innererror: any
+    :ivar code: Provides information about the error code.
+    :vartype code: str
+    :ivar message: Provides information about the error message.
+    :vartype message: str
+    :ivar target: Provides information about the error target.
+    :vartype target: str
+    :ivar details: Describes the error details if present.
+    :vartype details: list[~azure.mgmt.storageimportexport.models.ErrorResponseErrorDetailsItem]
+    :ivar innererror: Inner error object if present.
+    :vartype innererror: JSON
     """
 
     _attribute_map = {
-        'code': {'key': 'error.code', 'type': 'str'},
-        'message': {'key': 'error.message', 'type': 'str'},
-        'target': {'key': 'error.target', 'type': 'str'},
-        'details': {'key': 'error.details', 'type': '[ErrorResponseErrorDetailsItem]'},
-        'innererror': {'key': 'error.innererror', 'type': 'object'},
+        "code": {"key": "error.code", "type": "str"},
+        "message": {"key": "error.message", "type": "str"},
+        "target": {"key": "error.target", "type": "str"},
+        "details": {"key": "error.details", "type": "[ErrorResponseErrorDetailsItem]"},
+        "innererror": {"key": "error.innererror", "type": "object"},
     }
 
     def __init__(
@@ -226,11 +285,23 @@ class ErrorResponse(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["ErrorResponseErrorDetailsItem"]] = None,
-        innererror: Optional[Any] = None,
+        details: Optional[List["_models.ErrorResponseErrorDetailsItem"]] = None,
+        innererror: Optional[JSON] = None,
         **kwargs
     ):
-        super(ErrorResponse, self).__init__(**kwargs)
+        """
+        :keyword code: Provides information about the error code.
+        :paramtype code: str
+        :keyword message: Provides information about the error message.
+        :paramtype message: str
+        :keyword target: Provides information about the error target.
+        :paramtype target: str
+        :keyword details: Describes the error details if present.
+        :paramtype details: list[~azure.mgmt.storageimportexport.models.ErrorResponseErrorDetailsItem]
+        :keyword innererror: Inner error object if present.
+        :paramtype innererror: JSON
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
@@ -238,54 +309,57 @@ class ErrorResponse(msrest.serialization.Model):
         self.innererror = innererror
 
 
-class ErrorResponseErrorDetailsItem(msrest.serialization.Model):
+class ErrorResponseErrorDetailsItem(_serialization.Model):
     """ErrorResponseErrorDetailsItem.
 
-    :param code: Provides information about the error code.
-    :type code: str
-    :param target: Provides information about the error target.
-    :type target: str
-    :param message: Provides information about the error message.
-    :type message: str
+    :ivar code: Provides information about the error code.
+    :vartype code: str
+    :ivar target: Provides information about the error target.
+    :vartype target: str
+    :ivar message: Provides information about the error message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        target: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, target: Optional[str] = None, message: Optional[str] = None, **kwargs
     ):
-        super(ErrorResponseErrorDetailsItem, self).__init__(**kwargs)
+        """
+        :keyword code: Provides information about the error code.
+        :paramtype code: str
+        :keyword target: Provides information about the error target.
+        :paramtype target: str
+        :keyword message: Provides information about the error message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.target = target
         self.message = message
 
 
-class Export(msrest.serialization.Model):
+class Export(_serialization.Model):
     """A property containing information about the blobs to be exported for an export job. This property is required for export jobs, but must not be specified for import jobs.
 
-    :param blob_list_blob_path: The relative URI to the block blob that contains the list of blob
+    :ivar blob_list_blob_path: The relative URI to the block blob that contains the list of blob
      paths or blob path prefixes as defined above, beginning with the container name. If the blob is
      in root container, the URI must begin with $root.
-    :type blob_list_blob_path: str
-    :param blob_path: A collection of blob-path strings.
-    :type blob_path: list[str]
-    :param blob_path_prefix: A collection of blob-prefix strings.
-    :type blob_path_prefix: list[str]
+    :vartype blob_list_blob_path: str
+    :ivar blob_path: A collection of blob-path strings.
+    :vartype blob_path: list[str]
+    :ivar blob_path_prefix: A collection of blob-prefix strings.
+    :vartype blob_path_prefix: list[str]
     """
 
     _attribute_map = {
-        'blob_list_blob_path': {'key': 'blobListBlobPath', 'type': 'str'},
-        'blob_path': {'key': 'blobList.blobPath', 'type': '[str]'},
-        'blob_path_prefix': {'key': 'blobList.blobPathPrefix', 'type': '[str]'},
+        "blob_list_blob_path": {"key": "blobListBlobPath", "type": "str"},
+        "blob_path": {"key": "blobList.blobPath", "type": "[str]"},
+        "blob_path_prefix": {"key": "blobList.blobPathPrefix", "type": "[str]"},
     }
 
     def __init__(
@@ -296,41 +370,50 @@ class Export(msrest.serialization.Model):
         blob_path_prefix: Optional[List[str]] = None,
         **kwargs
     ):
-        super(Export, self).__init__(**kwargs)
+        """
+        :keyword blob_list_blob_path: The relative URI to the block blob that contains the list of blob
+         paths or blob path prefixes as defined above, beginning with the container name. If the blob is
+         in root container, the URI must begin with $root.
+        :paramtype blob_list_blob_path: str
+        :keyword blob_path: A collection of blob-path strings.
+        :paramtype blob_path: list[str]
+        :keyword blob_path_prefix: A collection of blob-prefix strings.
+        :paramtype blob_path_prefix: list[str]
+        """
+        super().__init__(**kwargs)
         self.blob_list_blob_path = blob_list_blob_path
         self.blob_path = blob_path
         self.blob_path_prefix = blob_path_prefix
 
 
-class GetBitLockerKeysResponse(msrest.serialization.Model):
+class GetBitLockerKeysResponse(_serialization.Model):
     """GetBitLockerKeys response.
 
-    :param value: drive status.
-    :type value: list[~storage_import_export.models.DriveBitLockerKey]
+    :ivar value: drive status.
+    :vartype value: list[~azure.mgmt.storageimportexport.models.DriveBitLockerKey]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DriveBitLockerKey]'},
+        "value": {"key": "value", "type": "[DriveBitLockerKey]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["DriveBitLockerKey"]] = None,
-        **kwargs
-    ):
-        super(GetBitLockerKeysResponse, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.DriveBitLockerKey"]] = None, **kwargs):
+        """
+        :keyword value: drive status.
+        :paramtype value: list[~azure.mgmt.storageimportexport.models.DriveBitLockerKey]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class IdentityDetails(msrest.serialization.Model):
+class IdentityDetails(_serialization.Model):
     """Specifies the identity properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param type: The type of identity. Possible values include: "None", "SystemAssigned",
-     "UserAssigned". Default value: "None".
-    :type type: str or ~storage_import_export.models.IdentityType
+    :ivar type: The type of identity. Known values are: "None", "SystemAssigned", and
+     "UserAssigned".
+    :vartype type: str or ~azure.mgmt.storageimportexport.models.IdentityType
     :ivar principal_id: Specifies the principal id for the identity for the job.
     :vartype principal_id: str
     :ivar tenant_id: Specifies the tenant id for the identity for the job.
@@ -338,100 +421,100 @@ class IdentityDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: Optional[Union[str, "IdentityType"]] = "None",
-        **kwargs
-    ):
-        super(IdentityDetails, self).__init__(**kwargs)
+    def __init__(self, *, type: Union[str, "_models.IdentityType"] = "None", **kwargs):
+        """
+        :keyword type: The type of identity. Known values are: "None", "SystemAssigned", and
+         "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.storageimportexport.models.IdentityType
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.principal_id = None
         self.tenant_id = None
 
 
-class JobDetails(msrest.serialization.Model):
+class JobDetails(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Specifies the job properties.
 
-    :param storage_account_id: The resource identifier of the storage account where data will be
+    :ivar storage_account_id: The resource identifier of the storage account where data will be
      imported to or exported from.
-    :type storage_account_id: str
-    :param job_type: The type of job.
-    :type job_type: str
-    :param return_address: Specifies the return address information for the job.
-    :type return_address: ~storage_import_export.models.ReturnAddress
-    :param return_shipping: Specifies the return carrier and customer's account with the carrier.
-    :type return_shipping: ~storage_import_export.models.ReturnShipping
-    :param shipping_information: Contains information about the Microsoft datacenter to which the
+    :vartype storage_account_id: str
+    :ivar job_type: The type of job.
+    :vartype job_type: str
+    :ivar return_address: Specifies the return address information for the job.
+    :vartype return_address: ~azure.mgmt.storageimportexport.models.ReturnAddress
+    :ivar return_shipping: Specifies the return carrier and customer's account with the carrier.
+    :vartype return_shipping: ~azure.mgmt.storageimportexport.models.ReturnShipping
+    :ivar shipping_information: Contains information about the Microsoft datacenter to which the
      drives should be shipped.
-    :type shipping_information: ~storage_import_export.models.ShippingInformation
-    :param delivery_package: Contains information about the package being shipped by the customer
-     to the Microsoft data center.
-    :type delivery_package: ~storage_import_export.models.DeliveryPackageInformation
-    :param return_package: Contains information about the package being shipped from the Microsoft
+    :vartype shipping_information: ~azure.mgmt.storageimportexport.models.ShippingInformation
+    :ivar delivery_package: Contains information about the package being shipped by the customer to
+     the Microsoft data center.
+    :vartype delivery_package: ~azure.mgmt.storageimportexport.models.DeliveryPackageInformation
+    :ivar return_package: Contains information about the package being shipped from the Microsoft
      data center to the customer to return the drives. The format is the same as the deliveryPackage
      property above. This property is not included if the drives have not yet been returned.
-    :type return_package: ~storage_import_export.models.PackageInformation
-    :param diagnostics_path: The virtual blob directory to which the copy logs and backups of drive
+    :vartype return_package: ~azure.mgmt.storageimportexport.models.PackageInformation
+    :ivar diagnostics_path: The virtual blob directory to which the copy logs and backups of drive
      manifest files (if enabled) will be stored.
-    :type diagnostics_path: str
-    :param log_level: Default value is Error. Indicates whether error logging or verbose logging
+    :vartype diagnostics_path: str
+    :ivar log_level: Default value is Error. Indicates whether error logging or verbose logging
      will be enabled.
-    :type log_level: str
-    :param backup_drive_manifest: Default value is false. Indicates whether the manifest files on
+    :vartype log_level: str
+    :ivar backup_drive_manifest: Default value is false. Indicates whether the manifest files on
      the drives should be copied to block blobs.
-    :type backup_drive_manifest: bool
-    :param state: Current state of the job.
-    :type state: str
-    :param cancel_requested: Indicates whether a request has been submitted to cancel the job.
-    :type cancel_requested: bool
-    :param percent_complete: Overall percentage completed for the job.
-    :type percent_complete: long
-    :param incomplete_blob_list_uri: A blob path that points to a block blob containing a list of
+    :vartype backup_drive_manifest: bool
+    :ivar state: Current state of the job.
+    :vartype state: str
+    :ivar cancel_requested: Indicates whether a request has been submitted to cancel the job.
+    :vartype cancel_requested: bool
+    :ivar percent_complete: Overall percentage completed for the job.
+    :vartype percent_complete: int
+    :ivar incomplete_blob_list_uri: A blob path that points to a block blob containing a list of
      blob names that were not exported due to insufficient drive space. If all blobs were exported
      successfully, then this element is not included in the response.
-    :type incomplete_blob_list_uri: str
-    :param drive_list: List of up to ten drives that comprise the job. The drive list is a required
+    :vartype incomplete_blob_list_uri: str
+    :ivar drive_list: List of up to ten drives that comprise the job. The drive list is a required
      element for an import job; it is not specified for export jobs.
-    :type drive_list: list[~storage_import_export.models.DriveStatus]
-    :param export: A property containing information about the blobs to be exported for an export
+    :vartype drive_list: list[~azure.mgmt.storageimportexport.models.DriveStatus]
+    :ivar export: A property containing information about the blobs to be exported for an export
      job. This property is included for export jobs only.
-    :type export: ~storage_import_export.models.Export
-    :param provisioning_state: Specifies the provisioning state of the job.
-    :type provisioning_state: str
-    :param encryption_key: Contains information about the encryption key.
-    :type encryption_key: ~storage_import_export.models.EncryptionKeyDetails
+    :vartype export: ~azure.mgmt.storageimportexport.models.Export
+    :ivar provisioning_state: Specifies the provisioning state of the job.
+    :vartype provisioning_state: str
+    :ivar encryption_key: Contains information about the encryption key.
+    :vartype encryption_key: ~azure.mgmt.storageimportexport.models.EncryptionKeyDetails
     """
 
     _attribute_map = {
-        'storage_account_id': {'key': 'storageAccountId', 'type': 'str'},
-        'job_type': {'key': 'jobType', 'type': 'str'},
-        'return_address': {'key': 'returnAddress', 'type': 'ReturnAddress'},
-        'return_shipping': {'key': 'returnShipping', 'type': 'ReturnShipping'},
-        'shipping_information': {'key': 'shippingInformation', 'type': 'ShippingInformation'},
-        'delivery_package': {'key': 'deliveryPackage', 'type': 'DeliveryPackageInformation'},
-        'return_package': {'key': 'returnPackage', 'type': 'PackageInformation'},
-        'diagnostics_path': {'key': 'diagnosticsPath', 'type': 'str'},
-        'log_level': {'key': 'logLevel', 'type': 'str'},
-        'backup_drive_manifest': {'key': 'backupDriveManifest', 'type': 'bool'},
-        'state': {'key': 'state', 'type': 'str'},
-        'cancel_requested': {'key': 'cancelRequested', 'type': 'bool'},
-        'percent_complete': {'key': 'percentComplete', 'type': 'long'},
-        'incomplete_blob_list_uri': {'key': 'incompleteBlobListUri', 'type': 'str'},
-        'drive_list': {'key': 'driveList', 'type': '[DriveStatus]'},
-        'export': {'key': 'export', 'type': 'Export'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'encryption_key': {'key': 'encryptionKey', 'type': 'EncryptionKeyDetails'},
+        "storage_account_id": {"key": "storageAccountId", "type": "str"},
+        "job_type": {"key": "jobType", "type": "str"},
+        "return_address": {"key": "returnAddress", "type": "ReturnAddress"},
+        "return_shipping": {"key": "returnShipping", "type": "ReturnShipping"},
+        "shipping_information": {"key": "shippingInformation", "type": "ShippingInformation"},
+        "delivery_package": {"key": "deliveryPackage", "type": "DeliveryPackageInformation"},
+        "return_package": {"key": "returnPackage", "type": "PackageInformation"},
+        "diagnostics_path": {"key": "diagnosticsPath", "type": "str"},
+        "log_level": {"key": "logLevel", "type": "str"},
+        "backup_drive_manifest": {"key": "backupDriveManifest", "type": "bool"},
+        "state": {"key": "state", "type": "str"},
+        "cancel_requested": {"key": "cancelRequested", "type": "bool"},
+        "percent_complete": {"key": "percentComplete", "type": "int"},
+        "incomplete_blob_list_uri": {"key": "incompleteBlobListUri", "type": "str"},
+        "drive_list": {"key": "driveList", "type": "[DriveStatus]"},
+        "export": {"key": "export", "type": "Export"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "encryption_key": {"key": "encryptionKey", "type": "EncryptionKeyDetails"},
     }
 
     def __init__(
@@ -439,25 +522,76 @@ class JobDetails(msrest.serialization.Model):
         *,
         storage_account_id: Optional[str] = None,
         job_type: Optional[str] = None,
-        return_address: Optional["ReturnAddress"] = None,
-        return_shipping: Optional["ReturnShipping"] = None,
-        shipping_information: Optional["ShippingInformation"] = None,
-        delivery_package: Optional["DeliveryPackageInformation"] = None,
-        return_package: Optional["PackageInformation"] = None,
+        return_address: Optional["_models.ReturnAddress"] = None,
+        return_shipping: Optional["_models.ReturnShipping"] = None,
+        shipping_information: Optional["_models.ShippingInformation"] = None,
+        delivery_package: Optional["_models.DeliveryPackageInformation"] = None,
+        return_package: Optional["_models.PackageInformation"] = None,
         diagnostics_path: Optional[str] = None,
         log_level: Optional[str] = None,
-        backup_drive_manifest: Optional[bool] = None,
-        state: Optional[str] = None,
-        cancel_requested: Optional[bool] = None,
+        backup_drive_manifest: bool = False,
+        state: str = "Creating",
+        cancel_requested: bool = False,
         percent_complete: Optional[int] = None,
         incomplete_blob_list_uri: Optional[str] = None,
-        drive_list: Optional[List["DriveStatus"]] = None,
-        export: Optional["Export"] = None,
+        drive_list: Optional[List["_models.DriveStatus"]] = None,
+        export: Optional["_models.Export"] = None,
         provisioning_state: Optional[str] = None,
-        encryption_key: Optional["EncryptionKeyDetails"] = None,
+        encryption_key: Optional["_models.EncryptionKeyDetails"] = None,
         **kwargs
     ):
-        super(JobDetails, self).__init__(**kwargs)
+        """
+        :keyword storage_account_id: The resource identifier of the storage account where data will be
+         imported to or exported from.
+        :paramtype storage_account_id: str
+        :keyword job_type: The type of job.
+        :paramtype job_type: str
+        :keyword return_address: Specifies the return address information for the job.
+        :paramtype return_address: ~azure.mgmt.storageimportexport.models.ReturnAddress
+        :keyword return_shipping: Specifies the return carrier and customer's account with the carrier.
+        :paramtype return_shipping: ~azure.mgmt.storageimportexport.models.ReturnShipping
+        :keyword shipping_information: Contains information about the Microsoft datacenter to which the
+         drives should be shipped.
+        :paramtype shipping_information: ~azure.mgmt.storageimportexport.models.ShippingInformation
+        :keyword delivery_package: Contains information about the package being shipped by the customer
+         to the Microsoft data center.
+        :paramtype delivery_package: ~azure.mgmt.storageimportexport.models.DeliveryPackageInformation
+        :keyword return_package: Contains information about the package being shipped from the
+         Microsoft data center to the customer to return the drives. The format is the same as the
+         deliveryPackage property above. This property is not included if the drives have not yet been
+         returned.
+        :paramtype return_package: ~azure.mgmt.storageimportexport.models.PackageInformation
+        :keyword diagnostics_path: The virtual blob directory to which the copy logs and backups of
+         drive manifest files (if enabled) will be stored.
+        :paramtype diagnostics_path: str
+        :keyword log_level: Default value is Error. Indicates whether error logging or verbose logging
+         will be enabled.
+        :paramtype log_level: str
+        :keyword backup_drive_manifest: Default value is false. Indicates whether the manifest files on
+         the drives should be copied to block blobs.
+        :paramtype backup_drive_manifest: bool
+        :keyword state: Current state of the job.
+        :paramtype state: str
+        :keyword cancel_requested: Indicates whether a request has been submitted to cancel the job.
+        :paramtype cancel_requested: bool
+        :keyword percent_complete: Overall percentage completed for the job.
+        :paramtype percent_complete: int
+        :keyword incomplete_blob_list_uri: A blob path that points to a block blob containing a list of
+         blob names that were not exported due to insufficient drive space. If all blobs were exported
+         successfully, then this element is not included in the response.
+        :paramtype incomplete_blob_list_uri: str
+        :keyword drive_list: List of up to ten drives that comprise the job. The drive list is a
+         required element for an import job; it is not specified for export jobs.
+        :paramtype drive_list: list[~azure.mgmt.storageimportexport.models.DriveStatus]
+        :keyword export: A property containing information about the blobs to be exported for an export
+         job. This property is included for export jobs only.
+        :paramtype export: ~azure.mgmt.storageimportexport.models.Export
+        :keyword provisioning_state: Specifies the provisioning state of the job.
+        :paramtype provisioning_state: str
+        :keyword encryption_key: Contains information about the encryption key.
+        :paramtype encryption_key: ~azure.mgmt.storageimportexport.models.EncryptionKeyDetails
+        """
+        super().__init__(**kwargs)
         self.storage_account_id = storage_account_id
         self.job_type = job_type
         self.return_address = return_address
@@ -478,57 +612,67 @@ class JobDetails(msrest.serialization.Model):
         self.encryption_key = encryption_key
 
 
-class JobResponse(msrest.serialization.Model):
+class JobResponse(_serialization.Model):
     """Contains the job information.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar system_data: SystemData of ImportExport Jobs.
-    :vartype system_data: ~storage_import_export.models.SystemData
+    :vartype system_data: ~azure.mgmt.storageimportexport.models.SystemData
     :ivar id: Specifies the resource identifier of the job.
     :vartype id: str
     :ivar name: Specifies the name of the job.
     :vartype name: str
     :ivar type: Specifies the type of the job resource.
     :vartype type: str
-    :param location: Specifies the Azure location where the job is created.
-    :type location: str
-    :param tags: A set of tags. Specifies the tags that are assigned to the job.
-    :type tags: any
-    :param properties: Specifies the job properties.
-    :type properties: ~storage_import_export.models.JobDetails
-    :param identity: Specifies the job identity details.
-    :type identity: ~storage_import_export.models.IdentityDetails
+    :ivar location: Specifies the Azure location where the job is created.
+    :vartype location: str
+    :ivar tags: Specifies the tags that are assigned to the job.
+    :vartype tags: JSON
+    :ivar properties: Specifies the job properties.
+    :vartype properties: ~azure.mgmt.storageimportexport.models.JobDetails
+    :ivar identity: Specifies the job identity details.
+    :vartype identity: ~azure.mgmt.storageimportexport.models.IdentityDetails
     """
 
     _validation = {
-        'system_data': {'readonly': True},
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "system_data": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
-        'properties': {'key': 'properties', 'type': 'JobDetails'},
-        'identity': {'key': 'identity', 'type': 'IdentityDetails'},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "object"},
+        "properties": {"key": "properties", "type": "JobDetails"},
+        "identity": {"key": "identity", "type": "IdentityDetails"},
     }
 
     def __init__(
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Any] = None,
-        properties: Optional["JobDetails"] = None,
-        identity: Optional["IdentityDetails"] = None,
+        tags: Optional[JSON] = None,
+        properties: Optional["_models.JobDetails"] = None,
+        identity: Optional["_models.IdentityDetails"] = None,
         **kwargs
     ):
-        super(JobResponse, self).__init__(**kwargs)
+        """
+        :keyword location: Specifies the Azure location where the job is created.
+        :paramtype location: str
+        :keyword tags: Specifies the tags that are assigned to the job.
+        :paramtype tags: JSON
+        :keyword properties: Specifies the job properties.
+        :paramtype properties: ~azure.mgmt.storageimportexport.models.JobDetails
+        :keyword identity: Specifies the job identity details.
+        :paramtype identity: ~azure.mgmt.storageimportexport.models.IdentityDetails
+        """
+        super().__init__(**kwargs)
         self.system_data = None
         self.id = None
         self.name = None
@@ -539,117 +683,118 @@ class JobResponse(msrest.serialization.Model):
         self.identity = identity
 
 
-class ListJobsResponse(msrest.serialization.Model):
+class ListJobsResponse(_serialization.Model):
     """List jobs response.
 
-    :param next_link: link to next batch of jobs.
-    :type next_link: str
-    :param value: Job list.
-    :type value: list[~storage_import_export.models.JobResponse]
+    :ivar next_link: link to next batch of jobs.
+    :vartype next_link: str
+    :ivar value: Job list.
+    :vartype value: list[~azure.mgmt.storageimportexport.models.JobResponse]
     """
 
     _attribute_map = {
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[JobResponse]'},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[JobResponse]"},
     }
 
     def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        value: Optional[List["JobResponse"]] = None,
-        **kwargs
+        self, *, next_link: Optional[str] = None, value: Optional[List["_models.JobResponse"]] = None, **kwargs
     ):
-        super(ListJobsResponse, self).__init__(**kwargs)
+        """
+        :keyword next_link: link to next batch of jobs.
+        :paramtype next_link: str
+        :keyword value: Job list.
+        :paramtype value: list[~azure.mgmt.storageimportexport.models.JobResponse]
+        """
+        super().__init__(**kwargs)
         self.next_link = next_link
         self.value = value
 
 
-class ListOperationsResponse(msrest.serialization.Model):
+class ListOperationsResponse(_serialization.Model):
     """List operations response.
 
-    :param value: operations.
-    :type value: list[~storage_import_export.models.Operation]
+    :ivar value: operations.
+    :vartype value: list[~azure.mgmt.storageimportexport.models.Operation]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        **kwargs
-    ):
-        super(ListOperationsResponse, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+        """
+        :keyword value: operations.
+        :paramtype value: list[~azure.mgmt.storageimportexport.models.Operation]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class Location(msrest.serialization.Model):
+class Location(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Provides information about an Azure data center location.
 
-    :param id: Specifies the resource identifier of the location.
-    :type id: str
-    :param name: Specifies the name of the location. Use List Locations to get all supported
+    :ivar id: Specifies the resource identifier of the location.
+    :vartype id: str
+    :ivar name: Specifies the name of the location. Use List Locations to get all supported
      locations.
-    :type name: str
-    :param type: Specifies the type of the location.
-    :type type: str
-    :param recipient_name: The recipient name to use when shipping the drives to the Azure data
+    :vartype name: str
+    :ivar type: Specifies the type of the location.
+    :vartype type: str
+    :ivar recipient_name: The recipient name to use when shipping the drives to the Azure data
      center.
-    :type recipient_name: str
-    :param street_address1: The first line of the street address to use when shipping the drives to
+    :vartype recipient_name: str
+    :ivar street_address1: The first line of the street address to use when shipping the drives to
      the Azure data center.
-    :type street_address1: str
-    :param street_address2: The second line of the street address to use when shipping the drives
-     to the Azure data center.
-    :type street_address2: str
-    :param city: The city name to use when shipping the drives to the Azure data center.
-    :type city: str
-    :param state_or_province: The state or province to use when shipping the drives to the Azure
+    :vartype street_address1: str
+    :ivar street_address2: The second line of the street address to use when shipping the drives to
+     the Azure data center.
+    :vartype street_address2: str
+    :ivar city: The city name to use when shipping the drives to the Azure data center.
+    :vartype city: str
+    :ivar state_or_province: The state or province to use when shipping the drives to the Azure
      data center.
-    :type state_or_province: str
-    :param postal_code: The postal code to use when shipping the drives to the Azure data center.
-    :type postal_code: str
-    :param country_or_region: The country or region to use when shipping the drives to the Azure
+    :vartype state_or_province: str
+    :ivar postal_code: The postal code to use when shipping the drives to the Azure data center.
+    :vartype postal_code: str
+    :ivar country_or_region: The country or region to use when shipping the drives to the Azure
      data center.
-    :type country_or_region: str
-    :param phone: The phone number for the Azure data center.
-    :type phone: str
-    :param additional_shipping_information: Additional shipping information for customer, specific
+    :vartype country_or_region: str
+    :ivar phone: The phone number for the Azure data center.
+    :vartype phone: str
+    :ivar additional_shipping_information: Additional shipping information for customer, specific
      to datacenter to which customer should send their disks.
-    :type additional_shipping_information: str
-    :param supported_carriers: A list of carriers that are supported at this location.
-    :type supported_carriers: list[str]
-    :param alternate_locations: A list of location IDs that should be used to ship shipping drives
+    :vartype additional_shipping_information: str
+    :ivar supported_carriers: A list of carriers that are supported at this location.
+    :vartype supported_carriers: list[str]
+    :ivar alternate_locations: A list of location IDs that should be used to ship shipping drives
      to for jobs created against the current location. If the current location is active, it will be
      part of the list. If it is temporarily closed due to maintenance, this list may contain other
      locations.
-    :type alternate_locations: list[str]
+    :vartype alternate_locations: list[str]
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'recipient_name': {'key': 'properties.recipientName', 'type': 'str'},
-        'street_address1': {'key': 'properties.streetAddress1', 'type': 'str'},
-        'street_address2': {'key': 'properties.streetAddress2', 'type': 'str'},
-        'city': {'key': 'properties.city', 'type': 'str'},
-        'state_or_province': {'key': 'properties.stateOrProvince', 'type': 'str'},
-        'postal_code': {'key': 'properties.postalCode', 'type': 'str'},
-        'country_or_region': {'key': 'properties.countryOrRegion', 'type': 'str'},
-        'phone': {'key': 'properties.phone', 'type': 'str'},
-        'additional_shipping_information': {'key': 'properties.additionalShippingInformation', 'type': 'str'},
-        'supported_carriers': {'key': 'properties.supportedCarriers', 'type': '[str]'},
-        'alternate_locations': {'key': 'properties.alternateLocations', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "recipient_name": {"key": "properties.recipientName", "type": "str"},
+        "street_address1": {"key": "properties.streetAddress1", "type": "str"},
+        "street_address2": {"key": "properties.streetAddress2", "type": "str"},
+        "city": {"key": "properties.city", "type": "str"},
+        "state_or_province": {"key": "properties.stateOrProvince", "type": "str"},
+        "postal_code": {"key": "properties.postalCode", "type": "str"},
+        "country_or_region": {"key": "properties.countryOrRegion", "type": "str"},
+        "phone": {"key": "properties.phone", "type": "str"},
+        "additional_shipping_information": {"key": "properties.additionalShippingInformation", "type": "str"},
+        "supported_carriers": {"key": "properties.supportedCarriers", "type": "[str]"},
+        "alternate_locations": {"key": "properties.alternateLocations", "type": "[str]"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional[str] = None,
         type: Optional[str] = None,
         recipient_name: Optional[str] = None,
@@ -665,7 +810,47 @@ class Location(msrest.serialization.Model):
         alternate_locations: Optional[List[str]] = None,
         **kwargs
     ):
-        super(Location, self).__init__(**kwargs)
+        """
+        :keyword id: Specifies the resource identifier of the location.
+        :paramtype id: str
+        :keyword name: Specifies the name of the location. Use List Locations to get all supported
+         locations.
+        :paramtype name: str
+        :keyword type: Specifies the type of the location.
+        :paramtype type: str
+        :keyword recipient_name: The recipient name to use when shipping the drives to the Azure data
+         center.
+        :paramtype recipient_name: str
+        :keyword street_address1: The first line of the street address to use when shipping the drives
+         to the Azure data center.
+        :paramtype street_address1: str
+        :keyword street_address2: The second line of the street address to use when shipping the drives
+         to the Azure data center.
+        :paramtype street_address2: str
+        :keyword city: The city name to use when shipping the drives to the Azure data center.
+        :paramtype city: str
+        :keyword state_or_province: The state or province to use when shipping the drives to the Azure
+         data center.
+        :paramtype state_or_province: str
+        :keyword postal_code: The postal code to use when shipping the drives to the Azure data center.
+        :paramtype postal_code: str
+        :keyword country_or_region: The country or region to use when shipping the drives to the Azure
+         data center.
+        :paramtype country_or_region: str
+        :keyword phone: The phone number for the Azure data center.
+        :paramtype phone: str
+        :keyword additional_shipping_information: Additional shipping information for customer,
+         specific to datacenter to which customer should send their disks.
+        :paramtype additional_shipping_information: str
+        :keyword supported_carriers: A list of carriers that are supported at this location.
+        :paramtype supported_carriers: list[str]
+        :keyword alternate_locations: A list of location IDs that should be used to ship shipping
+         drives to for jobs created against the current location. If the current location is active, it
+         will be part of the list. If it is temporarily closed due to maintenance, this list may contain
+         other locations.
+        :paramtype alternate_locations: list[str]
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.type = type
@@ -682,54 +867,53 @@ class Location(msrest.serialization.Model):
         self.alternate_locations = alternate_locations
 
 
-class LocationsResponse(msrest.serialization.Model):
+class LocationsResponse(_serialization.Model):
     """Locations response.
 
-    :param value: locations.
-    :type value: list[~storage_import_export.models.Location]
+    :ivar value: locations.
+    :vartype value: list[~azure.mgmt.storageimportexport.models.Location]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Location]'},
+        "value": {"key": "value", "type": "[Location]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Location"]] = None,
-        **kwargs
-    ):
-        super(LocationsResponse, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Location"]] = None, **kwargs):
+        """
+        :keyword value: locations.
+        :paramtype value: list[~azure.mgmt.storageimportexport.models.Location]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Describes a supported operation by the Storage Import/Export job API.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the operation.
-    :type name: str
-    :param provider: The resource provider name to which the operation belongs.
-    :type provider: str
-    :param resource: The name of the resource to which the operation belongs.
-    :type resource: str
-    :param operation: The display name of the operation.
-    :type operation: str
-    :param description: Short description of the operation.
-    :type description: str
+    :ivar name: Name of the operation. Required.
+    :vartype name: str
+    :ivar provider: The resource provider name to which the operation belongs.
+    :vartype provider: str
+    :ivar resource: The name of the resource to which the operation belongs.
+    :vartype resource: str
+    :ivar operation: The display name of the operation.
+    :vartype operation: str
+    :ivar description: Short description of the operation.
+    :vartype description: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'provider': {'key': 'display.provider', 'type': 'str'},
-        'resource': {'key': 'display.resource', 'type': 'str'},
-        'operation': {'key': 'display.operation', 'type': 'str'},
-        'description': {'key': 'display.description', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "provider": {"key": "display.provider", "type": "str"},
+        "resource": {"key": "display.resource", "type": "str"},
+        "operation": {"key": "display.operation", "type": "str"},
+        "description": {"key": "display.description", "type": "str"},
     }
 
     def __init__(
@@ -742,7 +926,19 @@ class Operation(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(Operation, self).__init__(**kwargs)
+        """
+        :keyword name: Name of the operation. Required.
+        :paramtype name: str
+        :keyword provider: The resource provider name to which the operation belongs.
+        :paramtype provider: str
+        :keyword resource: The name of the resource to which the operation belongs.
+        :paramtype resource: str
+        :keyword operation: The display name of the operation.
+        :paramtype operation: str
+        :keyword description: Short description of the operation.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.provider = provider
         self.resource = resource
@@ -750,130 +946,141 @@ class Operation(msrest.serialization.Model):
         self.description = description
 
 
-class PackageInformation(msrest.serialization.Model):
+class PackageInformation(_serialization.Model):
     """Contains information about the package being shipped by the customer to the Microsoft data center.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param carrier_name: Required. The name of the carrier that is used to ship the import or
-     export drives.
-    :type carrier_name: str
-    :param tracking_number: Required. The tracking number of the package.
-    :type tracking_number: str
-    :param drive_count: Required. The number of drives included in the package.
-    :type drive_count: long
-    :param ship_date: Required. The date when the package is shipped.
-    :type ship_date: str
+    :ivar carrier_name: The name of the carrier that is used to ship the import or export drives.
+     Required.
+    :vartype carrier_name: str
+    :ivar tracking_number: The tracking number of the package. Required.
+    :vartype tracking_number: str
+    :ivar drive_count: The number of drives included in the package. Required.
+    :vartype drive_count: int
+    :ivar ship_date: The date when the package is shipped. Required.
+    :vartype ship_date: str
     """
 
     _validation = {
-        'carrier_name': {'required': True},
-        'tracking_number': {'required': True},
-        'drive_count': {'required': True},
-        'ship_date': {'required': True},
+        "carrier_name": {"required": True},
+        "tracking_number": {"required": True},
+        "drive_count": {"required": True},
+        "ship_date": {"required": True},
     }
 
     _attribute_map = {
-        'carrier_name': {'key': 'carrierName', 'type': 'str'},
-        'tracking_number': {'key': 'trackingNumber', 'type': 'str'},
-        'drive_count': {'key': 'driveCount', 'type': 'long'},
-        'ship_date': {'key': 'shipDate', 'type': 'str'},
+        "carrier_name": {"key": "carrierName", "type": "str"},
+        "tracking_number": {"key": "trackingNumber", "type": "str"},
+        "drive_count": {"key": "driveCount", "type": "int"},
+        "ship_date": {"key": "shipDate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        carrier_name: str,
-        tracking_number: str,
-        drive_count: int,
-        ship_date: str,
-        **kwargs
-    ):
-        super(PackageInformation, self).__init__(**kwargs)
+    def __init__(self, *, carrier_name: str, tracking_number: str, drive_count: int, ship_date: str, **kwargs):
+        """
+        :keyword carrier_name: The name of the carrier that is used to ship the import or export
+         drives. Required.
+        :paramtype carrier_name: str
+        :keyword tracking_number: The tracking number of the package. Required.
+        :paramtype tracking_number: str
+        :keyword drive_count: The number of drives included in the package. Required.
+        :paramtype drive_count: int
+        :keyword ship_date: The date when the package is shipped. Required.
+        :paramtype ship_date: str
+        """
+        super().__init__(**kwargs)
         self.carrier_name = carrier_name
         self.tracking_number = tracking_number
         self.drive_count = drive_count
         self.ship_date = ship_date
 
 
-class PutJobParameters(msrest.serialization.Model):
+class PutJobParameters(_serialization.Model):
     """Put Job parameters.
 
-    :param location: Specifies the supported Azure location where the job should be created.
-    :type location: str
-    :param tags: A set of tags. Specifies the tags that will be assigned to the job.
-    :type tags: any
-    :param properties: Specifies the job properties.
-    :type properties: ~storage_import_export.models.JobDetails
+    :ivar location: Specifies the supported Azure location where the job should be created.
+    :vartype location: str
+    :ivar tags: Specifies the tags that will be assigned to the job.
+    :vartype tags: JSON
+    :ivar properties: Specifies the job properties.
+    :vartype properties: ~azure.mgmt.storageimportexport.models.JobDetails
     """
 
     _attribute_map = {
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': 'object'},
-        'properties': {'key': 'properties', 'type': 'JobDetails'},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "object"},
+        "properties": {"key": "properties", "type": "JobDetails"},
     }
 
     def __init__(
         self,
         *,
         location: Optional[str] = None,
-        tags: Optional[Any] = None,
-        properties: Optional["JobDetails"] = None,
+        tags: Optional[JSON] = None,
+        properties: Optional["_models.JobDetails"] = None,
         **kwargs
     ):
-        super(PutJobParameters, self).__init__(**kwargs)
+        """
+        :keyword location: Specifies the supported Azure location where the job should be created.
+        :paramtype location: str
+        :keyword tags: Specifies the tags that will be assigned to the job.
+        :paramtype tags: JSON
+        :keyword properties: Specifies the job properties.
+        :paramtype properties: ~azure.mgmt.storageimportexport.models.JobDetails
+        """
+        super().__init__(**kwargs)
         self.location = location
         self.tags = tags
         self.properties = properties
 
 
-class ReturnAddress(msrest.serialization.Model):
+class ReturnAddress(_serialization.Model):
     """Specifies the return address information for the job.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param recipient_name: Required. The name of the recipient who will receive the hard drives
-     when they are returned.
-    :type recipient_name: str
-    :param street_address1: Required. The first line of the street address to use when returning
-     the drives.
-    :type street_address1: str
-    :param street_address2: The second line of the street address to use when returning the drives.
-    :type street_address2: str
-    :param city: Required. The city name to use when returning the drives.
-    :type city: str
-    :param state_or_province: The state or province to use when returning the drives.
-    :type state_or_province: str
-    :param postal_code: Required. The postal code to use when returning the drives.
-    :type postal_code: str
-    :param country_or_region: Required. The country or region to use when returning the drives.
-    :type country_or_region: str
-    :param phone: Required. Phone number of the recipient of the returned drives.
-    :type phone: str
-    :param email: Required. Email address of the recipient of the returned drives.
-    :type email: str
+    :ivar recipient_name: The name of the recipient who will receive the hard drives when they are
+     returned. Required.
+    :vartype recipient_name: str
+    :ivar street_address1: The first line of the street address to use when returning the drives.
+     Required.
+    :vartype street_address1: str
+    :ivar street_address2: The second line of the street address to use when returning the drives.
+    :vartype street_address2: str
+    :ivar city: The city name to use when returning the drives. Required.
+    :vartype city: str
+    :ivar state_or_province: The state or province to use when returning the drives.
+    :vartype state_or_province: str
+    :ivar postal_code: The postal code to use when returning the drives. Required.
+    :vartype postal_code: str
+    :ivar country_or_region: The country or region to use when returning the drives. Required.
+    :vartype country_or_region: str
+    :ivar phone: Phone number of the recipient of the returned drives. Required.
+    :vartype phone: str
+    :ivar email: Email address of the recipient of the returned drives. Required.
+    :vartype email: str
     """
 
     _validation = {
-        'recipient_name': {'required': True},
-        'street_address1': {'required': True},
-        'city': {'required': True},
-        'postal_code': {'required': True},
-        'country_or_region': {'required': True},
-        'phone': {'required': True},
-        'email': {'required': True},
+        "recipient_name": {"required": True},
+        "street_address1": {"required": True},
+        "city": {"required": True},
+        "postal_code": {"required": True},
+        "country_or_region": {"required": True},
+        "phone": {"required": True},
+        "email": {"required": True},
     }
 
     _attribute_map = {
-        'recipient_name': {'key': 'recipientName', 'type': 'str'},
-        'street_address1': {'key': 'streetAddress1', 'type': 'str'},
-        'street_address2': {'key': 'streetAddress2', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'state_or_province': {'key': 'stateOrProvince', 'type': 'str'},
-        'postal_code': {'key': 'postalCode', 'type': 'str'},
-        'country_or_region': {'key': 'countryOrRegion', 'type': 'str'},
-        'phone': {'key': 'phone', 'type': 'str'},
-        'email': {'key': 'email', 'type': 'str'},
+        "recipient_name": {"key": "recipientName", "type": "str"},
+        "street_address1": {"key": "streetAddress1", "type": "str"},
+        "street_address2": {"key": "streetAddress2", "type": "str"},
+        "city": {"key": "city", "type": "str"},
+        "state_or_province": {"key": "stateOrProvince", "type": "str"},
+        "postal_code": {"key": "postalCode", "type": "str"},
+        "country_or_region": {"key": "countryOrRegion", "type": "str"},
+        "phone": {"key": "phone", "type": "str"},
+        "email": {"key": "email", "type": "str"},
     }
 
     def __init__(
@@ -890,7 +1097,30 @@ class ReturnAddress(msrest.serialization.Model):
         state_or_province: Optional[str] = None,
         **kwargs
     ):
-        super(ReturnAddress, self).__init__(**kwargs)
+        """
+        :keyword recipient_name: The name of the recipient who will receive the hard drives when they
+         are returned. Required.
+        :paramtype recipient_name: str
+        :keyword street_address1: The first line of the street address to use when returning the
+         drives. Required.
+        :paramtype street_address1: str
+        :keyword street_address2: The second line of the street address to use when returning the
+         drives.
+        :paramtype street_address2: str
+        :keyword city: The city name to use when returning the drives. Required.
+        :paramtype city: str
+        :keyword state_or_province: The state or province to use when returning the drives.
+        :paramtype state_or_province: str
+        :keyword postal_code: The postal code to use when returning the drives. Required.
+        :paramtype postal_code: str
+        :keyword country_or_region: The country or region to use when returning the drives. Required.
+        :paramtype country_or_region: str
+        :keyword phone: Phone number of the recipient of the returned drives. Required.
+        :paramtype phone: str
+        :keyword email: Email address of the recipient of the returned drives. Required.
+        :paramtype email: str
+        """
+        super().__init__(**kwargs)
         self.recipient_name = recipient_name
         self.street_address1 = street_address1
         self.street_address2 = street_address2
@@ -902,80 +1132,80 @@ class ReturnAddress(msrest.serialization.Model):
         self.email = email
 
 
-class ReturnShipping(msrest.serialization.Model):
+class ReturnShipping(_serialization.Model):
     """Specifies the return carrier and customer's account with the carrier.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param carrier_name: Required. The carrier's name.
-    :type carrier_name: str
-    :param carrier_account_number: Required. The customer's account number with the carrier.
-    :type carrier_account_number: str
+    :ivar carrier_name: The carrier's name. Required.
+    :vartype carrier_name: str
+    :ivar carrier_account_number: The customer's account number with the carrier. Required.
+    :vartype carrier_account_number: str
     """
 
     _validation = {
-        'carrier_name': {'required': True},
-        'carrier_account_number': {'required': True},
+        "carrier_name": {"required": True},
+        "carrier_account_number": {"required": True},
     }
 
     _attribute_map = {
-        'carrier_name': {'key': 'carrierName', 'type': 'str'},
-        'carrier_account_number': {'key': 'carrierAccountNumber', 'type': 'str'},
+        "carrier_name": {"key": "carrierName", "type": "str"},
+        "carrier_account_number": {"key": "carrierAccountNumber", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        carrier_name: str,
-        carrier_account_number: str,
-        **kwargs
-    ):
-        super(ReturnShipping, self).__init__(**kwargs)
+    def __init__(self, *, carrier_name: str, carrier_account_number: str, **kwargs):
+        """
+        :keyword carrier_name: The carrier's name. Required.
+        :paramtype carrier_name: str
+        :keyword carrier_account_number: The customer's account number with the carrier. Required.
+        :paramtype carrier_account_number: str
+        """
+        super().__init__(**kwargs)
         self.carrier_name = carrier_name
         self.carrier_account_number = carrier_account_number
 
 
-class ShippingInformation(msrest.serialization.Model):
+class ShippingInformation(_serialization.Model):
     """Contains information about the Microsoft datacenter to which the drives should be shipped.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param recipient_name: The name of the recipient who will receive the hard drives when they are
+    :ivar recipient_name: The name of the recipient who will receive the hard drives when they are
      returned.
-    :type recipient_name: str
-    :param street_address1: The first line of the street address to use when returning the drives.
-    :type street_address1: str
-    :param street_address2: The second line of the street address to use when returning the drives.
-    :type street_address2: str
-    :param city: The city name to use when returning the drives.
-    :type city: str
-    :param state_or_province: The state or province to use when returning the drives.
-    :type state_or_province: str
-    :param postal_code: The postal code to use when returning the drives.
-    :type postal_code: str
-    :param country_or_region: The country or region to use when returning the drives.
-    :type country_or_region: str
-    :param phone: Phone number of the recipient of the returned drives.
-    :type phone: str
+    :vartype recipient_name: str
+    :ivar street_address1: The first line of the street address to use when returning the drives.
+    :vartype street_address1: str
+    :ivar street_address2: The second line of the street address to use when returning the drives.
+    :vartype street_address2: str
+    :ivar city: The city name to use when returning the drives.
+    :vartype city: str
+    :ivar state_or_province: The state or province to use when returning the drives.
+    :vartype state_or_province: str
+    :ivar postal_code: The postal code to use when returning the drives.
+    :vartype postal_code: str
+    :ivar country_or_region: The country or region to use when returning the drives.
+    :vartype country_or_region: str
+    :ivar phone: Phone number of the recipient of the returned drives.
+    :vartype phone: str
     :ivar additional_information: Additional shipping information for customer, specific to
      datacenter to which customer should send their disks.
     :vartype additional_information: str
     """
 
     _validation = {
-        'additional_information': {'readonly': True},
+        "additional_information": {"readonly": True},
     }
 
     _attribute_map = {
-        'recipient_name': {'key': 'recipientName', 'type': 'str'},
-        'street_address1': {'key': 'streetAddress1', 'type': 'str'},
-        'street_address2': {'key': 'streetAddress2', 'type': 'str'},
-        'city': {'key': 'city', 'type': 'str'},
-        'state_or_province': {'key': 'stateOrProvince', 'type': 'str'},
-        'postal_code': {'key': 'postalCode', 'type': 'str'},
-        'country_or_region': {'key': 'countryOrRegion', 'type': 'str'},
-        'phone': {'key': 'phone', 'type': 'str'},
-        'additional_information': {'key': 'additionalInformation', 'type': 'str'},
+        "recipient_name": {"key": "recipientName", "type": "str"},
+        "street_address1": {"key": "streetAddress1", "type": "str"},
+        "street_address2": {"key": "streetAddress2", "type": "str"},
+        "city": {"key": "city", "type": "str"},
+        "state_or_province": {"key": "stateOrProvince", "type": "str"},
+        "postal_code": {"key": "postalCode", "type": "str"},
+        "country_or_region": {"key": "countryOrRegion", "type": "str"},
+        "phone": {"key": "phone", "type": "str"},
+        "additional_information": {"key": "additionalInformation", "type": "str"},
     }
 
     def __init__(
@@ -991,7 +1221,28 @@ class ShippingInformation(msrest.serialization.Model):
         phone: Optional[str] = None,
         **kwargs
     ):
-        super(ShippingInformation, self).__init__(**kwargs)
+        """
+        :keyword recipient_name: The name of the recipient who will receive the hard drives when they
+         are returned.
+        :paramtype recipient_name: str
+        :keyword street_address1: The first line of the street address to use when returning the
+         drives.
+        :paramtype street_address1: str
+        :keyword street_address2: The second line of the street address to use when returning the
+         drives.
+        :paramtype street_address2: str
+        :keyword city: The city name to use when returning the drives.
+        :paramtype city: str
+        :keyword state_or_province: The state or province to use when returning the drives.
+        :paramtype state_or_province: str
+        :keyword postal_code: The postal code to use when returning the drives.
+        :paramtype postal_code: str
+        :keyword country_or_region: The country or region to use when returning the drives.
+        :paramtype country_or_region: str
+        :keyword phone: Phone number of the recipient of the returned drives.
+        :paramtype phone: str
+        """
+        super().__init__(**kwargs)
         self.recipient_name = recipient_name
         self.street_address1 = street_address1
         self.street_address2 = street_address2
@@ -1003,46 +1254,62 @@ class ShippingInformation(msrest.serialization.Model):
         self.additional_information = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~storage_import_export.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~storage_import_export.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.storageimportexport.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.storageimportexport.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SystemData, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.storageimportexport.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.storageimportexport.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -1051,62 +1318,88 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class UpdateJobParameters(msrest.serialization.Model):
+class UpdateJobParameters(_serialization.Model):
     """Update Job parameters.
 
-    :param tags: A set of tags. Specifies the tags that will be assigned to the job.
-    :type tags: any
-    :param cancel_requested: If specified, the value must be true. The service will attempt to
+    :ivar tags: Specifies the tags that will be assigned to the job.
+    :vartype tags: JSON
+    :ivar cancel_requested: If specified, the value must be true. The service will attempt to
      cancel the job.
-    :type cancel_requested: bool
-    :param state: If specified, the value must be Shipping, which tells the Import/Export service
+    :vartype cancel_requested: bool
+    :ivar state: If specified, the value must be Shipping, which tells the Import/Export service
      that the package for the job has been shipped. The ReturnAddress and DeliveryPackage properties
      must have been set either in this request or in a previous request, otherwise the request will
      fail.
-    :type state: str
-    :param return_address: Specifies the return address information for the job.
-    :type return_address: ~storage_import_export.models.ReturnAddress
-    :param return_shipping: Specifies the return carrier and customer's account with the carrier.
-    :type return_shipping: ~storage_import_export.models.ReturnShipping
-    :param delivery_package: Contains information about the package being shipped by the customer
-     to the Microsoft data center.
-    :type delivery_package: ~storage_import_export.models.DeliveryPackageInformation
-    :param log_level: Indicates whether error logging or verbose logging is enabled.
-    :type log_level: str
-    :param backup_drive_manifest: Indicates whether the manifest files on the drives should be
+    :vartype state: str
+    :ivar return_address: Specifies the return address information for the job.
+    :vartype return_address: ~azure.mgmt.storageimportexport.models.ReturnAddress
+    :ivar return_shipping: Specifies the return carrier and customer's account with the carrier.
+    :vartype return_shipping: ~azure.mgmt.storageimportexport.models.ReturnShipping
+    :ivar delivery_package: Contains information about the package being shipped by the customer to
+     the Microsoft data center.
+    :vartype delivery_package: ~azure.mgmt.storageimportexport.models.DeliveryPackageInformation
+    :ivar log_level: Indicates whether error logging or verbose logging is enabled.
+    :vartype log_level: str
+    :ivar backup_drive_manifest: Indicates whether the manifest files on the drives should be
      copied to block blobs.
-    :type backup_drive_manifest: bool
-    :param drive_list: List of drives that comprise the job.
-    :type drive_list: list[~storage_import_export.models.DriveStatus]
+    :vartype backup_drive_manifest: bool
+    :ivar drive_list: List of drives that comprise the job.
+    :vartype drive_list: list[~azure.mgmt.storageimportexport.models.DriveStatus]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': 'object'},
-        'cancel_requested': {'key': 'properties.cancelRequested', 'type': 'bool'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'return_address': {'key': 'properties.returnAddress', 'type': 'ReturnAddress'},
-        'return_shipping': {'key': 'properties.returnShipping', 'type': 'ReturnShipping'},
-        'delivery_package': {'key': 'properties.deliveryPackage', 'type': 'DeliveryPackageInformation'},
-        'log_level': {'key': 'properties.logLevel', 'type': 'str'},
-        'backup_drive_manifest': {'key': 'properties.backupDriveManifest', 'type': 'bool'},
-        'drive_list': {'key': 'properties.driveList', 'type': '[DriveStatus]'},
+        "tags": {"key": "tags", "type": "object"},
+        "cancel_requested": {"key": "properties.cancelRequested", "type": "bool"},
+        "state": {"key": "properties.state", "type": "str"},
+        "return_address": {"key": "properties.returnAddress", "type": "ReturnAddress"},
+        "return_shipping": {"key": "properties.returnShipping", "type": "ReturnShipping"},
+        "delivery_package": {"key": "properties.deliveryPackage", "type": "DeliveryPackageInformation"},
+        "log_level": {"key": "properties.logLevel", "type": "str"},
+        "backup_drive_manifest": {"key": "properties.backupDriveManifest", "type": "bool"},
+        "drive_list": {"key": "properties.driveList", "type": "[DriveStatus]"},
     }
 
     def __init__(
         self,
         *,
-        tags: Optional[Any] = None,
-        cancel_requested: Optional[bool] = None,
+        tags: Optional[JSON] = None,
+        cancel_requested: bool = False,
         state: Optional[str] = None,
-        return_address: Optional["ReturnAddress"] = None,
-        return_shipping: Optional["ReturnShipping"] = None,
-        delivery_package: Optional["DeliveryPackageInformation"] = None,
+        return_address: Optional["_models.ReturnAddress"] = None,
+        return_shipping: Optional["_models.ReturnShipping"] = None,
+        delivery_package: Optional["_models.DeliveryPackageInformation"] = None,
         log_level: Optional[str] = None,
-        backup_drive_manifest: Optional[bool] = None,
-        drive_list: Optional[List["DriveStatus"]] = None,
+        backup_drive_manifest: bool = False,
+        drive_list: Optional[List["_models.DriveStatus"]] = None,
         **kwargs
     ):
-        super(UpdateJobParameters, self).__init__(**kwargs)
+        """
+        :keyword tags: Specifies the tags that will be assigned to the job.
+        :paramtype tags: JSON
+        :keyword cancel_requested: If specified, the value must be true. The service will attempt to
+         cancel the job.
+        :paramtype cancel_requested: bool
+        :keyword state: If specified, the value must be Shipping, which tells the Import/Export service
+         that the package for the job has been shipped. The ReturnAddress and DeliveryPackage properties
+         must have been set either in this request or in a previous request, otherwise the request will
+         fail.
+        :paramtype state: str
+        :keyword return_address: Specifies the return address information for the job.
+        :paramtype return_address: ~azure.mgmt.storageimportexport.models.ReturnAddress
+        :keyword return_shipping: Specifies the return carrier and customer's account with the carrier.
+        :paramtype return_shipping: ~azure.mgmt.storageimportexport.models.ReturnShipping
+        :keyword delivery_package: Contains information about the package being shipped by the customer
+         to the Microsoft data center.
+        :paramtype delivery_package: ~azure.mgmt.storageimportexport.models.DeliveryPackageInformation
+        :keyword log_level: Indicates whether error logging or verbose logging is enabled.
+        :paramtype log_level: str
+        :keyword backup_drive_manifest: Indicates whether the manifest files on the drives should be
+         copied to block blobs.
+        :paramtype backup_drive_manifest: bool
+        :keyword drive_list: List of drives that comprise the job.
+        :paramtype drive_list: list[~azure.mgmt.storageimportexport.models.DriveStatus]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.cancel_requested = cancel_requested
         self.state = state

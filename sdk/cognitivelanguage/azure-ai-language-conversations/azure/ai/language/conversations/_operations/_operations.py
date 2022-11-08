@@ -26,12 +26,16 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import MixinABC
+from .._vendor import ConversationAnalysisClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
@@ -40,12 +44,14 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
+def build_conversation_analysis_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )  # type: Literal["2022-10-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -62,12 +68,14 @@ def build_analyze_conversation_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
+def build_conversation_analysis_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01-preview"))  # type: str
+    api_version = kwargs.pop(
+        "api_version", _params.pop("api-version", "2022-10-01-preview")
+    )  # type: Literal["2022-10-01-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -84,13 +92,13 @@ def build_conversation_analysis_request(**kwargs: Any) -> HttpRequest:
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class ConversationAnalysisClientOperationsMixin(MixinABC):
+class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):
     @overload
     def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Required.
@@ -209,7 +217,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Required.
@@ -286,7 +294,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Is either a model type or a IO type.
@@ -380,7 +388,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_analyze_conversation_request(
+        request = build_conversation_analysis_analyze_conversation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -436,7 +444,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_conversation_analysis_request(
+        request = build_conversation_analysis_conversation_analysis_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -486,8 +494,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more
-        information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -609,8 +618,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more
-        information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute.
          Required.
@@ -717,8 +727,9 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         Submit a collection of conversations for analysis. Specify one or more unique tasks to be
         executed.
 
-        See https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more
-        information.
+        See
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/submit-job
+        for more information.
 
         :param task: The collection of conversations to analyze and one or more tasks to execute. Is
          either a model type or a IO type. Required.
