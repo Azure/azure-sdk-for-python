@@ -72,7 +72,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         """Returns created or updated environment asset.
 
         :param environment: Environment object
-        :type environment: Environment
+        :type environment: ~azure.ai.ml.entities._assets.Environment
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
