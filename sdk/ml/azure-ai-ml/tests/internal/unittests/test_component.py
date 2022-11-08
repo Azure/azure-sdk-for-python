@@ -337,11 +337,6 @@ class TestComponent:
         with component._resolve_local_code() as code:
             code_path = code.path
             assert code_path.is_dir()
-            assert (code_path / "LICENSE").exists()
-            assert (code_path / "library.zip").exists()
-            assert ZipFile(code_path / "library.zip").namelist() == ["hello.py", "world.py"]
-            assert (code_path / "library1" / "hello.py").exists()
-            assert (code_path / "library1" / "world.py").exists()
 
         assert not code_path.is_dir()
 

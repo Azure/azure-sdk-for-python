@@ -5,11 +5,14 @@
 import os
 import shutil
 import tempfile
+import zipfile
 from pathlib import Path
 from typing import Union
 
-from azure.ai.ml.entities._util import _copy_folder_ignore_pycache, _general_copy
+from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
+from azure.ai.ml._utils._asset_utils import traverse_directory
+from .code import InternalComponentIgnoreFile
 
 ADDITIONAL_INCLUDES_SUFFIX = "additional_includes"
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
@@ -68,7 +71,15 @@ class _AdditionalIncludes:
         if src.is_file():
             _general_copy(src, dst)
         else:
-            shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__"))
+            # use os.walk to replace shutil.copytree, which may raise FileExistsError
+            # for same folder, the expected behavior is merging
+            # ignore will be applied during upload
+            for root, _, files in os.walk(src):
+                dst_root = Path(dst) / Path(root).relative_to(src)
+                if not dst_root.is_dir():
+                    dst_root.mkdir()
+                for name in files:
+                    _general_copy(Path(root) / name, dst_root / name)
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -156,21 +167,22 @@ class _AdditionalIncludes:
         for additional_include in self._includes:
             src_path = (base_path / additional_include).resolve()
             if self._is_folder_to_compress(src_path):
-                # note: additional include is a zip file, we need to compress corresponding folder,
-                # create a temp folder and copy files to this, filter __pycache__ in the folder
-                # during the copy.
-                # this operation can be replaced by using zipfile.ZipFile, which
-                # allows us pick files to compress rather than copy -- may improve performance.
-                zip_additional_include = (base_path / additional_include).resolve()
-                folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
-                with tempfile.TemporaryDirectory() as tmp_dir:
-                    tmp_folder_to_zip = (Path(tmp_dir) / "zip").resolve()
-                    _copy_folder_ignore_pycache(folder_to_zip, tmp_folder_to_zip)
-                    src_path = (Path(tempfile.mkdtemp()) / zip_additional_include.name).resolve()
-                    shutil.make_archive(str(src_path.parent / src_path.stem), "zip", tmp_folder_to_zip)
-            dst_path = (tmp_folder_path / src_path.name).resolve()
-            self._copy(src_path, dst_path)
+                self._resolve_folder_to_compress(additional_include, Path(tmp_folder_path))
+            else:
+                dst_path = (tmp_folder_path / src_path.name).resolve()
+                self._copy(src_path, dst_path)
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
+        return
+
+    def _resolve_folder_to_compress(self, include: str, path: Path) -> None:
+        zip_additional_include = (self._additional_includes_file_path.parent / include).resolve()
+        folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
+        zip_file = path / zip_additional_include.name
+        ignore_file = InternalComponentIgnoreFile()
+        with zipfile.ZipFile(zip_file, "w") as zf:
+            for root, _, files in os.walk(folder_to_zip, followlinks=True):
+                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=ignore_file):
+                    zf.write(path, os.path.relpath(path, folder_to_zip.parent))
         return
 
     def cleanup(self) -> None:
