@@ -13,7 +13,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models
-from ._configuration import DevCenterClientConfiguration
+from ._configuration import DevCenterMgmtClientConfiguration
 from ._serialization import Deserializer, Serializer
 from .operations import (
     AttachedNetworksOperations,
@@ -41,7 +41,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
+class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """DevCenter Management API.
 
     :ivar dev_centers: DevCentersOperations operations
@@ -84,12 +84,11 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword,too
     :vartype network_connections: azure.mgmt.devcenter.operations.NetworkConnectionsOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: Unique identifier of the Azure subscription. This is a GUID-formatted
-     string (e.g. 00000000-0000-0000-0000-000000000000). Required.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-09-01-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-10-12-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -103,7 +102,9 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword,too
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = DevCenterClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = DevCenterMgmtClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -170,7 +171,7 @@ class DevCenterClient:  # pylint: disable=client-accepts-api-version-keyword,too
         self._client.close()
 
     def __enter__(self):
-        # type: () -> DevCenterClient
+        # type: () -> DevCenterMgmtClient
         self._client.__enter__()
         return self
 
