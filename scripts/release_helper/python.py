@@ -117,8 +117,8 @@ class IssueProcessPython(IssueProcess):
                         self.log(f'{issue_number} run pipeline fail')
                 except Exception as e:
                     self.comment(f'hi @{self.assignee}, please check release-helper: `{e}`')
-
-                self.add_label(_AUTO_ASK_FOR_CHECK)
+                if _AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name:
+                    self.add_label(_AUTO_ASK_FOR_CHECK)
             else:
                 self.log(f'issue {issue_number} need config readme')
 
