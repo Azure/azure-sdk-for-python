@@ -345,7 +345,7 @@ class TestComponent:
 
             # this is to assert that v2 internal component snapshot id is consistent with
             # previous version so reuse across versions is possible
-            assert code.name == '7b780dcb-a650-8892-15fe-148b34cb88c3'
+            assert code.name == "08eb24c1-e318-6f23-e455-e21f35ad9888"
 
         assert not code_path.is_dir()
 
