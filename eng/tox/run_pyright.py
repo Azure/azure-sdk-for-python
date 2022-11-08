@@ -7,13 +7,17 @@
 
 # This script is used to execute pyright within a tox environment.
 
-from subprocess import check_call, CalledProcessError
+from subprocess import check_call
 import argparse
 import os
 import logging
 import sys
 
-from allowed_type_checking_failures import PYRIGHT_OPT_OUT, TYPE_CHECK_SAMPLES_OPT_OUT
+from allowed_type_checking_failures import (
+    is_ignored_package,
+    PYRIGHT_OPT_OUT,
+    TYPE_CHECK_SAMPLES_OPT_OUT,
+)
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -32,13 +36,20 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
-    if package_name in PYRIGHT_OPT_OUT:
-        logging.info(f"Package {package_name} opts-out of pyright check.")
+    if package_name in PYRIGHT_OPT_OUT or is_ignored_package(package_name):
+        logging.info(
+            f"Package {package_name} opts-out of pyright check. See https://aka.ms/python/typing-guide for information."
+        )
         exit(0)
 
-    paths = [os.path.join(args.target_package, "azure"), os.path.join(args.target_package, "samples")]
+    paths = [
+        os.path.join(args.target_package, "azure"),
+        os.path.join(args.target_package, "samples"),
+    ]
     if package_name in TYPE_CHECK_SAMPLES_OPT_OUT:
-        logging.info(f"Package {package_name} opts-out of pyright check on samples.")
+        logging.info(
+            f"Package {package_name} opts-out of pyright check on samples. See https://aka.ms/python/typing-guide for information."
+        )
         paths = paths[:-1]
 
     commands = [
