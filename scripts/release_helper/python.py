@@ -116,7 +116,7 @@ class IssueProcessPython(IssueProcess):
                     else:
                         self.log(f'{issue_number} run pipeline fail')
                 except Exception as e:
-                    self.comment(f'hi @{self.assignee}, please check release-helper: {e}')
+                    self.comment(f'hi @{self.assignee}, please check release-helper: `{e}`')
 
                 self.add_label(_AUTO_ASK_FOR_CHECK)
             else:
