@@ -84,9 +84,8 @@ class AvroReaderTestsAsync(unittest.TestCase):
             correct,
             len(CODECS_TO_VALIDATE) * len(SCHEMAS_TO_VALIDATE))
 
-    def test_reader(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_reader())
+    async def test_reader(self):
+        await self._test_reader()
 
     @pytest.mark.asyncio
     async def _test_change_feed(self):
@@ -102,12 +101,11 @@ class AvroReaderTestsAsync(unittest.TestCase):
                 expected_record = CHANGE_FEED_RECORD
                 self.assertEqual(expected_record, data[0])
 
-    def test_change_feed(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_change_feed())
+    async def test_change_feed(self):
+        await self._test_change_feed()
 
     @pytest.mark.asyncio
-    async def _test_with_hearder_reader(self):
+    async def _test_with_header_reader(self):
         # Note: only when the data stream doesn't have header, we need header stream to help
         file_path = os.path.join(AvroReaderTestsAsync._samples_dir_root, 'changeFeed.avro')
         # this data stream has header
@@ -138,9 +136,8 @@ class AvroReaderTestsAsync(unittest.TestCase):
         self.assertEqual(CHANGE_FEED_RECORD, records[0])
         self.assertIsNot(partial_data_stream.object_position, 0)
 
-    def test_with_hearder_reader(self):
-        loop = asyncio.get_event_loop()
-        loop.run_until_complete(self._test_with_hearder_reader())
+    async def test_with_header_reader(self):
+        await self._test_with_header_reader()
 
 class _HeaderStream(object):
     def __init__(self):
