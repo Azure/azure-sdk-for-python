@@ -298,11 +298,11 @@ class ComputeInstance(Compute):
             )
         
         idle_time_before_shutdown_minutes = None
-        idle_time_before_shutdown_pattern = "PT(\d+)M"
+        idle_time_before_shutdown_pattern = "PT([0-9]+)M"
         if prop.properties and prop.properties.idle_time_before_shutdown:
             idle_time_before_shutdown = prop.properties.idle_time_before_shutdown
-            idle_time_match = re.match(idle_time_before_shutdown_pattern, idle_time_before_shutdown)
-            idle_time_before_shutdown_minutes = int(idle_time_match[0]) if idle_time_match else None
+            idle_time_match = re.match(pattern=idle_time_before_shutdown_pattern, string=idle_time_before_shutdown)
+            idle_time_before_shutdown_minutes = int(idle_time_match[1]) if idle_time_match else None
 
         response = ComputeInstance(
             name=rest_obj.name,
