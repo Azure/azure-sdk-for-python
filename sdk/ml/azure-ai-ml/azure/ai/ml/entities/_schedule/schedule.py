@@ -236,6 +236,8 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         if hasattr(action.job_definition, "source_job_id"):
             create_job.id = action.job_definition.source_job_id
         create_job = Job._from_rest_object(create_job)
+        if isinstance(create_job, BaseNode):
+            create_job = create_job._to_job()
         return cls(
             trigger=TriggerBase._from_rest_object(properties.trigger),
             create_job=create_job,
