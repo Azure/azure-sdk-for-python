@@ -20,6 +20,8 @@
 - Prevent registering an already existing environment that references conda file.
 
 ### Other Changes
+- Switched compute operations to go through 2022-10-01-preview API version.
+
 
 ## 1.0.0 (2022-10-10)
 - GA release
