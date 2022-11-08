@@ -48,3 +48,4 @@ if __name__ == "__main__":
     ]
     commands.extend(paths)
     check_call(commands)
+    print("See https://aka.ms/python/typing-guide for information.")

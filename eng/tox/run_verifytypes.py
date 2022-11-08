@@ -137,5 +137,5 @@ if __name__ == "__main__":
         print(f"Previous release ({latest_version}): {score_from_released_rounded}%")
         if score_from_current_rounded < score_from_released_rounded:
             print(f"\nERROR: The type completeness score of {package_name} has decreased since the last release. "
-                  f"See the above output for areas to improve. See aka.ms/python/typing-guide for information.")
+                  f"See the above output for areas to improve. See https://aka.ms/python/typing-guide for information.")
             exit(1)
