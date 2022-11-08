@@ -190,6 +190,7 @@ yarl<2.0,>=1.0
 #override azure-storage-queue azure-core<2.0.0,>=1.26.0
 #override azure-storage-queue azure-core[aio]<2.0.0,>=1.26.0
 #override azure-storage-queue typing-extensions>=4.0.1
+#override azure-mgmt-devcenter typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-storage-queue isodate>=0.6.1
 #override azure-storage-file-share azure-core<2.0.0,>=1.26.0
 #override azure-storage-file-share azure-core[aio]<2.0.0,>=1.26.0
