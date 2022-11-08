@@ -553,27 +553,11 @@ class TestComponent:
             validate_result = loop_node._validate_body(raise_error=False)
             assert validate_result.passed
 
-    @pytest.mark.parametrize(
-        "relative_yaml_path,expected_snapshot_id",
-        [
-            (
-                "simple-command/powershell_copy.yaml",
-                "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
-            ),
-            (
-                "additional-includes/component_spec.yaml",
-                "e291dcdb-642b-c1a4-5ff8-c368dc4b6eb8"
-            ),
-            (
-                "additional-includes-in-zip/component_spec.yaml",
-                "e6ae00e7-eb49-9055-fe6c-d79db9215251"
-            ),
-        ],
-    )
-    def test_anonymous_component_reuse(self, relative_yaml_path: str, expected_snapshot_id: str):
-        component: InternalComponent = load_component(
-            source=Path("./tests/test_configs/internal/command-component-reuse/") / relative_yaml_path
-        )
+    def test_anonymous_component_reuse(self):
+        yaml_path = Path("./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml")
+        expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+
+        component: InternalComponent = load_component(source=yaml_path)
         with component._resolve_local_code() as code:
             assert code.name == expected_snapshot_id
 
