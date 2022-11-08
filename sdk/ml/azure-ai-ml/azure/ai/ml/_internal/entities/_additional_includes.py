@@ -14,7 +14,7 @@ from azure.ai.ml.entities._validation import MutableValidationResult, _Validatio
 from azure.ai.ml._utils._asset_utils import traverse_directory
 from .code import InternalComponentIgnoreFile
 
-ADDITIONAL_INCLUDES_SUFFIX = "additional_includes"
+ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 
 
@@ -60,7 +60,7 @@ class _AdditionalIncludes:
 
     @property
     def _additional_includes_file_path(self) -> Path:
-        return self._yaml_path.with_suffix(f".{ADDITIONAL_INCLUDES_SUFFIX}")
+        return self._yaml_path.with_suffix(ADDITIONAL_INCLUDES_SUFFIX)
 
     @property
     def code(self) -> Path:
