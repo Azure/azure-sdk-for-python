@@ -1,5 +1,12 @@
 # Release History
 
+## 1.1.0b1 (2022-11-07)
+
+### Features Added
+
+  - Model AccountUpdateParameters has a new parameter identity
+  - Model Identity has a new parameter user_assigned_identities
+
 ## 1.0.0 (2021-08-13)
 
 **Features**
