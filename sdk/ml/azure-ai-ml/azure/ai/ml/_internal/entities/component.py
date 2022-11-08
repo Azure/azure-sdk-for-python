@@ -121,6 +121,9 @@ class InternalComponent(Component):
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
         self.__additional_includes = None
+        self.__origin_name = None
+        self.__origin_version = None
+
         # TODO: remove these to keep it a general component class
         self.command = command
         self.scope = scope
@@ -151,6 +154,12 @@ class InternalComponent(Component):
                 yaml_path=self._source_path,
             )
         return self.__additional_includes
+
+    def _set_is_anonymous(self, is_anonymous: bool):
+        if not self._is_anonymous and is_anonymous:
+            self.__origin_name = self.name
+            self.__origin_version = self.version
+        super(InternalComponent, self)._set_is_anonymous(is_anonymous)
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -187,6 +196,11 @@ class InternalComponent(Component):
 
     def _to_rest_object(self) -> ComponentVersionData:
         component = convert_ordered_dict_to_dict(self._to_dict())
+
+        if self._is_anonymous:
+            # this is to enable anonymous component to be reused from ml-components runs
+            component["name"] = self.__origin_name
+            component["version"] = self.__origin_version
 
         properties = ComponentVersionDetails(
             component_spec=component,

@@ -5,6 +5,7 @@
 import os
 import shutil
 import tempfile
+import zipfile
 from pathlib import Path
 from typing import Union
 
@@ -131,6 +132,22 @@ class _AdditionalIncludes:
                 validation_result.append_error(message=error_msg)
         return validation_result
 
+    @classmethod
+    def _make_zipfile(cls, zip_additional_include: Path, dst_path: Path) -> None:
+        # note: additional include is a zip file, we need to compress corresponding folder,
+        # create a temp folder and copy files to this, filter __pycache__ in the folder
+        # during the copy.
+        # this operation can be replaced by using zipfile.ZipFile, which
+        # allows us pick files to compress rather than copy -- may improve performance.
+        folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            tmp_folder_to_zip = (Path(tmp_dir) / zip_additional_include.stem).resolve()
+            _copy_folder_ignore_pycache(folder_to_zip, tmp_folder_to_zip)
+
+            with zipfile.ZipFile(dst_path, 'w') as zf:
+                for snapshot_item in Path(tmp_dir).rglob('*'):
+                    zf.write(snapshot_item.absolute(), snapshot_item.relative_to(Path(tmp_dir)))
+
     def resolve(self) -> None:
         """Resolve code and potential additional includes.
 
@@ -155,22 +172,20 @@ class _AdditionalIncludes:
         base_path = self._additional_includes_file_path.parent
         for additional_include in self._includes:
             src_path = (base_path / additional_include).resolve()
-            if self._is_folder_to_compress(src_path):
-                # note: additional include is a zip file, we need to compress corresponding folder,
-                # create a temp folder and copy files to this, filter __pycache__ in the folder
-                # during the copy.
-                # this operation can be replaced by using zipfile.ZipFile, which
-                # allows us pick files to compress rather than copy -- may improve performance.
-                zip_additional_include = (base_path / additional_include).resolve()
-                folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
-                with tempfile.TemporaryDirectory() as tmp_dir:
-                    tmp_folder_to_zip = (Path(tmp_dir) / "zip").resolve()
-                    _copy_folder_ignore_pycache(folder_to_zip, tmp_folder_to_zip)
-                    src_path = (Path(tempfile.mkdtemp()) / zip_additional_include.name).resolve()
-                    shutil.make_archive(str(src_path.parent / src_path.stem), "zip", tmp_folder_to_zip)
             dst_path = (tmp_folder_path / src_path.name).resolve()
-            self._copy(src_path, dst_path)
+            if self._is_folder_to_compress(src_path):
+                self._make_zipfile(
+                    zip_additional_include=(base_path / additional_include).resolve(),
+                    dst_path=dst_path,
+                )
+            else:
+                self._copy(src_path, dst_path)
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
+        # TODO 2068332: remove this hotfix after we finish the better solution
+        # hotfix: remove additional includes file from tmp folder
+        additional_include_file_in_tmp = tmp_folder_path / self._additional_includes_file_path.name
+        if os.path.exists(additional_include_file_in_tmp):
+            os.unlink(additional_include_file_in_tmp)
         return
 
     def cleanup(self) -> None:

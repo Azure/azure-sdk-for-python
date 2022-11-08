@@ -190,7 +190,24 @@ TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
     PARAMETERS_TO_TEST,
 )))
 
-TEST_CASE_NAME_ENUMERATE = [TEST_CASE_NAME_ENUMERATE[2]]
+ANONYMOUS_COMPONENT_TEST_PARAMS = [
+    (
+        "simple-command/powershell_copy.yaml",
+        "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+    ),
+    (
+        "additional-includes-mock/component_spec.yaml",
+        "e291dcdb-642b-c1a4-5ff8-c368dc4b6eb8"
+    ),
+    (
+        "additional-includes/component_spec.yaml",
+        "e291dcdb-642b-c1a4-5ff8-c368dc4b6eb8"
+    ),
+    (
+        "additional-includes-in-zip/component_spec.yaml",
+        "e6ae00e7-eb49-9055-fe6c-d79db9215251"
+    ),
+]
 
 
 def get_expected_runsettings_items(runsettings_dict, client=None):
