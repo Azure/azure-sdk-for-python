@@ -10,6 +10,7 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestScheduleSchema:
     def test_load_cron_schedule_with_file_reference(self):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"

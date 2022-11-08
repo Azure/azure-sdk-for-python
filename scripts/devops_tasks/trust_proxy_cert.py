@@ -37,3 +37,4 @@ if __name__ == "__main__":
     if os.getenv('TF_BUILD', False):
         print("##vso[task.setvariable variable=SSL_CERT_DIR]{}".format(os.path.dirname(COMBINED_LOCATION)))
         print("##vso[task.setvariable variable=REQUESTS_CA_BUNDLE]{}".format(COMBINED_LOCATION))
+

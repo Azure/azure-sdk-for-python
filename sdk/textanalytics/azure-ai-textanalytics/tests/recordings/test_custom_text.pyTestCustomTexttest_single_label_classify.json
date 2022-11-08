@@ -1,15 +1,15 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "941",
+        "Content-Length": "935",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -36,49 +36,49 @@
             "taskName": "0",
             "kind": "CustomSingleLabelClassification",
             "parameters": {
-              "projectName": "single_category_classify_project_name",
-              "deploymentName": "single_category_classify_project_name"
+              "projectName": "single_label_classify_project_name",
+              "deploymentName": "single_label_classify_project_name"
             }
           }
         ]
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "ff53d95a-1eb5-491e-8449-5649f77e0400",
+        "apim-request-id": "8e2a05b9-0d30-474b-9369-d2a46a7f1225",
         "Content-Length": "0",
-        "Date": "Tue, 28 Jun 2022 01:21:15 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8bb0c1bc-7890-4443-98b5-89a52b83d91e?api-version=2022-05-01",
+        "Date": "Mon, 17 Oct 2022 19:01:20 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/59fc6d0a-12e0-45ad-9ea7-1995e34356da?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "612"
+        "x-envoy-upstream-service-time": "208"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/8bb0c1bc-7890-4443-98b5-89a52b83d91e?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/59fc6d0a-12e0-45ad-9ea7-1995e34356da?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "43ea4b81-f618-414c-85dc-f5599404d7bc",
-        "Content-Length": "1106",
+        "apim-request-id": "9ef83e21-7f82-41f4-9536-87e78d2b7a65",
+        "Content-Length": "1100",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 28 Jun 2022 01:21:20 GMT",
+        "Date": "Mon, 17 Oct 2022 19:01:24 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
         "x-envoy-upstream-service-time": "72"
       },
       "ResponseBody": {
-        "jobId": "8bb0c1bc-7890-4443-98b5-89a52b83d91e",
-        "lastUpdatedDateTime": "2022-06-28T01:21:17Z",
-        "createdDateTime": "2022-06-28T01:21:15Z",
-        "expirationDateTime": "2022-06-29T01:21:15Z",
+        "jobId": "59fc6d0a-12e0-45ad-9ea7-1995e34356da",
+        "lastUpdateDateTime": "2022-10-17T19:01:20Z",
+        "createdDateTime": "2022-10-17T19:01:20Z",
+        "expirationDateTime": "2022-10-18T19:01:20Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -90,7 +90,7 @@
             {
               "kind": "CustomSingleLabelClassificationLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-28T01:21:17.224914Z",
+              "lastUpdateDateTime": "2022-10-17T19:01:20.7737224Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -144,8 +144,8 @@
                   }
                 ],
                 "errors": [],
-                "projectName": "single_category_classify_project_name",
-                "deploymentName": "single_category_classify_project_name"
+                "projectName": "single_label_classify_project_name",
+                "deploymentName": "single_label_classify_project_name"
               }
             }
           ]

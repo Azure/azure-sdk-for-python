@@ -647,7 +647,7 @@
           "experimentName": "my_first_experiment",
           "services": {
             "Tracking": {
-              "jobServiceType": "Tracking",
+              "jobServiceType": "tracking",
               "port": null,
               "endpoint": "azureml://eastus2euap.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
               "status": null,
@@ -655,7 +655,7 @@
               "properties": null
             },
             "Studio": {
-              "jobServiceType": "Studio",
+              "jobServiceType": "studio",
               "port": null,
               "endpoint": "https://ml.azure.com/runs/test_917642482668?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,
@@ -1174,7 +1174,7 @@
           "experimentName": "my_first_experiment",
           "services": {
             "Tracking": {
-              "jobServiceType": "Tracking",
+              "jobServiceType": "tracking",
               "port": null,
               "endpoint": "azureml://eastus2euap.api.azureml.ms/mlflow/v1.0/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?",
               "status": null,
@@ -1182,7 +1182,7 @@
               "properties": null
             },
             "Studio": {
-              "jobServiceType": "Studio",
+              "jobServiceType": "studio",
               "port": null,
               "endpoint": "https://ml.azure.com/runs/test_917642482668?wsid=/subscriptions/00000000-0000-0000-0000-000000000/resourcegroups/00000/workspaces/00000",
               "status": null,

@@ -40,6 +40,7 @@ from azure.storage.blob import (
     ResourceTypes,
     RetentionPolicy,
     StandardBlobTier,
+    StorageErrorCode,
     download_blob_from_url,
     generate_account_sas,
     generate_blob_sas,
@@ -1676,14 +1677,20 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         copy = copied_blob.start_copy_from_url(source_blob)
         assert copy['copy_status'] == 'pending'
 
-        copied_blob.abort_copy(copy)
-        props = self._wait_for_async_copy(copied_blob)
-        assert props.copy.status == 'aborted'
+        try:
+            copied_blob.abort_copy(copy)
+            props = self._wait_for_async_copy(copied_blob)
+            assert props.copy.status == 'aborted'
 
-        # Assert
-        actual_data = copied_blob.download_blob()
-        assert actual_data.readall() == b""
-        assert actual_data.properties.copy.status == 'aborted'
+            # Assert
+            actual_data = copied_blob.download_blob()
+            assert actual_data.readall() == b""
+            assert actual_data.properties.copy.status == 'aborted'
+
+        # In the Live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @BlobPreparer()
     @recorded_by_proxy

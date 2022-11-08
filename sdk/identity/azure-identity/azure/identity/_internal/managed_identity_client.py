@@ -4,7 +4,7 @@
 # ------------------------------------
 import abc
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Callable, Dict, Optional, Union
 
 from msal import TokenCache
 import six
@@ -15,20 +15,14 @@ from azure.core.pipeline.policies import ContentDecodePolicy
 from .._internal import _scopes_to_resource
 from .._internal.pipeline import build_pipeline
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
 if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Callable, Dict, Optional, Union
     from azure.core.pipeline import PipelineResponse
     from azure.core.pipeline.policies import HTTPPolicy, SansIOHTTPPolicy
     from azure.core.pipeline.transport import HttpRequest
 
     PolicyType = Union[HTTPPolicy, SansIOHTTPPolicy]
 
+ABC = abc.ABC
 
 class ManagedIdentityClientBase(ABC):
     # pylint:disable=missing-client-constructor-parameter-credential

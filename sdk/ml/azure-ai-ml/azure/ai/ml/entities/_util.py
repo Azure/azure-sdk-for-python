@@ -223,6 +223,11 @@ def _general_copy(src, dst):
         shutil.copy2(src, dst)
 
 
+def _copy_folder_ignore_pycache(src, dst):
+    """Wrapped `shutil.copytree` function to ignore `__pycache__` during copy folder."""
+    shutil.copytree(src, dst, ignore=shutil.ignore_patterns("__pycache__"))
+
+
 def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.

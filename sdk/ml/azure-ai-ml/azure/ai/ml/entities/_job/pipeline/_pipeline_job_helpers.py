@@ -117,7 +117,7 @@ def from_dict_to_rest_io(
                 rest_obj = rest_object_class.from_dict(val)
                 rest_io_objects[key] = rest_obj
         else:
-            msg = "Got unsupported type of output: {}:" + f"{type(val)}"
+            msg = "Got unsupported type of input/output: {}:" + f"{type(val)}"
             raise ValidationException(
                 message=msg.format(val),
                 no_personal_data_message=msg.format("[val]"),
