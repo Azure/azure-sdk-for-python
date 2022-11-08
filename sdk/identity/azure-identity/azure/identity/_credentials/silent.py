@@ -5,7 +5,7 @@
 import os
 import platform
 import time
-from typing import TYPE_CHECKING
+from typing import Dict
 
 from msal import PublicClientApplication
 
@@ -18,18 +18,17 @@ from .._internal.decorators import wrap_exceptions
 from .._internal.msal_client import MsalClient
 from .._internal.shared_token_cache import NO_TOKEN
 from .._persistent_cache import _load_persistent_cache, TokenCachePersistenceOptions
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Dict
-    from .. import AuthenticationRecord
+from .. import AuthenticationRecord
 
 
 class SilentAuthenticationCredential(object):
     """Internal class for authenticating from the default shared cache given an AuthenticationRecord"""
 
-    def __init__(self, authentication_record, **kwargs):
-        # type: (AuthenticationRecord, **Any) -> None
+    def __init__(
+            self,
+            authentication_record: AuthenticationRecord,
+            **kwargs
+    ) -> None:
         self._auth_record = authentication_record
 
         # authenticate in the tenant that produced the record unless "tenant_id" specifies another
@@ -49,8 +48,7 @@ class SilentAuthenticationCredential(object):
     def __exit__(self, *args):
         self._client.__exit__(*args)
 
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         if not scopes:
             raise ValueError('"get_token" requires at least one scope')
 
@@ -96,8 +94,7 @@ class SilentAuthenticationCredential(object):
         return self._client_applications[tenant_id]
 
     @wrap_exceptions
-    def _acquire_token_silent(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> AccessToken
+    def _acquire_token_silent(self, *scopes: str, **kwargs) -> AccessToken:
         """Silently acquire a token from MSAL."""
 
         result = None

@@ -9,7 +9,7 @@ import six
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
-from . import DecryptResult, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
+from . import DecryptResult, EncryptionAlgorithm, EncryptResult, SignResult, VerifyResult, UnwrapResult, WrapResult
 from ._key_validity import raise_if_time_invalid
 from ._providers import get_local_cryptography_provider, NoLocalCryptography
 from .. import KeyOperation
@@ -21,7 +21,7 @@ if TYPE_CHECKING:
     from datetime import datetime
     from typing import Any, Optional, Union
     from azure.core.credentials import TokenCredential
-    from . import EncryptionAlgorithm, KeyWrapAlgorithm, SignatureAlgorithm
+    from . import KeyWrapAlgorithm, SignatureAlgorithm
     from .._shared import KeyVaultResourceId
 
 _LOGGER = logging.getLogger(__name__)
@@ -256,7 +256,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "encrypt" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.encrypt}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.encrypt(
@@ -327,7 +327,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "decrypt" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.decrypt}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.decrypt(
@@ -372,7 +372,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "wrapKey" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.wrap_key}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.wrap_key(
@@ -414,7 +414,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "unwrapKey" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.unwrap_key}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.unwrap_key(
@@ -456,7 +456,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "sign" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.sign}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.sign(
@@ -500,7 +500,7 @@ class CryptographyClient(KeyVaultClientBase):
                     raise
         elif self._jwk:
             raise NotImplementedError(
-                'This key does not support the "verify" operation with algorithm "{}"'.format(algorithm)
+                f'This key does not support the "{KeyOperation.verify}" operation with algorithm "{algorithm}"'
             )
 
         operation_result = self._client.verify(

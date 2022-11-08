@@ -1,7 +1,6 @@
 import logging
 from io import StringIO
 from pathlib import Path
-from time import sleep
 from typing import Callable
 from unittest.mock import patch
 
@@ -29,11 +28,9 @@ from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
-from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel, sleep_if_live
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -55,17 +52,6 @@ common_omit_fields = [
     "settings._source",
     "source_job_id",
 ]
-
-
-def assert_job_cancel(pipeline, client: MLClient):
-    job = client.jobs.create_or_update(pipeline)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
-    return job
 
 
 @pytest.mark.usefixtures(
@@ -1400,7 +1386,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline(input_number, input_number, job_input)
         job = client.jobs.create_or_update(pipeline)
         while True:
-            sleep(30)
+            sleep_if_live(30)
             children = client.jobs.list(parent_job_name=job.name)
             children = list(children)
             if len(children) == 2:
@@ -1595,10 +1581,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
             ),
         )
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="parallel_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
+
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
         expected_keys = ["status", "properties", "tags", "creation_context"]
@@ -1628,10 +1612,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             ),
         )
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="parallel_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
         expected_keys = ["status", "properties", "tags", "creation_context"]
@@ -1828,13 +1809,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             ),
         )
         # submit job to workspace
-        pipeline_job = client.jobs.create_or_update(
-            pipeline,
-            experiment_name="parallel_in_pipeline",
-        )
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
         omit_fields = [
             "jobs.parallel_node.task.code",
             "jobs.parallel_node.task.environment",
@@ -1919,10 +1894,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.job_out_data.mode = "upload"
 
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="parallel_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
 
         omit_fields = [
             "jobs.*.task.code",
@@ -2361,10 +2333,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.output.type = "uri_file"
 
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="spark_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="spark_in_pipeline")
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
         expected_keys = ["status", "properties", "tags", "creation_context"]

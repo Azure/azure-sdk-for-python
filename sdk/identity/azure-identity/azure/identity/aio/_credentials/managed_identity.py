@@ -4,16 +4,15 @@
 # ------------------------------------
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
+from azure.core.credentials import AccessToken
 from .._internal import AsyncContextManager
 from .._internal.decorators import log_get_token_async
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
-    from azure.core.credentials import AccessToken
     from azure.core.credentials_async import AsyncTokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -35,7 +34,7 @@ class ManagedIdentityCredential(AsyncContextManager):
     :paramtype identity_config: Mapping[str, str]
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self._credential = None  # type: Optional[AsyncTokenCredential]
 
         if os.environ.get(EnvironmentVariables.IDENTITY_ENDPOINT):
@@ -102,7 +101,7 @@ class ManagedIdentityCredential(AsyncContextManager):
             await self._credential.__aexit__()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

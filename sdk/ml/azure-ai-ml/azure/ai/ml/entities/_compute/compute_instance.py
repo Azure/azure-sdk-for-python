@@ -6,10 +6,10 @@
 
 from typing import Dict, List, Optional
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import AssignedUser
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
     ResourceId,

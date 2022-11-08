@@ -326,6 +326,9 @@ class Component(
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
             **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
         )
+        # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
+        # could be object or dict.
+        new_instance._base_path = context[BASE_PATH_CONTEXT_KEY]
         if yaml_path:
             new_instance._source_path = yaml_path
         return new_instance
@@ -506,7 +509,10 @@ class Component(
         if not hasattr(self, "code"):
             raise ValueError(f"{self.__class__} does not have attribute code.")
         code = getattr(self, "code")
-        if code is not None and os.path.isfile(code):
+        # special check for git path code value
+        if code is not None and isinstance(code, str) and code.startswith("git+"):
+            yield Code(base_path=self._base_path, path=code)
+        elif code is not None and os.path.isfile(code):
             yield Code(base_path=self._base_path, path=code)
         else:
             with tempfile.TemporaryDirectory() as tmp_dir:
@@ -530,6 +536,10 @@ class Component(
                     # that might result in unexpected issues and also break related tests.
                     # therefore we copy deeper to avoid this break.
                     src_path = Path(self._base_path) / code
-                    dst_path = Path(tmp_dir) / src_path.name
+                    # .name will return empty string for UNC drive names
+                    # so we need src_path.resolve() here to avoid empty string
+                    # that leads to FileExistsError during shutil.copytree
+                    # TODO(2056980): replace temp code folder name with constant value
+                    dst_path = Path(tmp_dir) / src_path.resolve().name
                     _copy_folder_ignore_pycache(src_path, dst_path)
                     yield Code(base_path=self._base_path, path=dst_path)
