@@ -5,7 +5,7 @@
 # ------------------------------------
 
 """
-FILE: sample_conv_sentiment.py
+FILE: sample_conv_sentiment_async.py
 
 DESCRIPTION:
     This sample demonstrates how to analyze a conversation for sentiment analysis.
@@ -13,19 +13,21 @@ DESCRIPTION:
     For more info about how to setup a CLU conversation project, see the README.
 
 USAGE:
-    python sample_conv_sentiment.py
+    python sample_conv_sentiment_async.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_CONVERSATIONS_ENDPOINT                       - endpoint for your CLU resource.
     2) AZURE_CONVERSATIONS_KEY                            - API key for your CLU resource.
 """
 
+import asyncio
 
-def sample_conv_sentiment():
+
+async def sample_conv_sentiment_async():
     # import libraries
     import os
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.language.conversations import ConversationAnalysisClient
+    from azure.ai.language.conversations.aio import ConversationAnalysisClient
 
     # get secrets
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
@@ -33,9 +35,9 @@ def sample_conv_sentiment():
 
     # analyze query
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
-    with client:
+    async with client:
 
-        poller = client.begin_conversation_analysis(
+        poller = await client.begin_conversation_analysis(
             task={
                 "displayName": "Analyze sentiment in conversation",
                 "analysisInput": {
@@ -83,7 +85,7 @@ def sample_conv_sentiment():
         )
 
         # view result
-        result = poller.result()
+        result = await poller.result()
         task_result = result["tasks"]["items"][0]
         print("... view task status ...")
         print(f"status: {task_result['status']}")
@@ -111,5 +113,8 @@ def sample_conv_sentiment():
                     )
 
 
-if __name__ == "__main__":
-    sample_conv_sentiment()
+async def main():
+    await sample_conv_sentiment_async()
+
+if __name__ == '__main__':
+    asyncio.run(main())
