@@ -42,48 +42,48 @@ jobs:
             - Name: $(DocRepoOwner)/$(DocRepoName)
               WorkingDirectory: $(DocRepoLocation)
 
-      # Call update docs ci script to onboard packages
-      - task: Powershell@2
-        inputs:
-          pwsh: true
-          filePath: eng/common/scripts/Update-DocsMsPackages.ps1
-          arguments: -DocRepoLocation $(DocRepoLocation) -ImageId '$(DocValidationImageId)'
-        displayName: Update Docs Onboarding
-        condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
+      # # Call update docs ci script to onboard packages
+      # - task: Powershell@2
+      #   inputs:
+      #     pwsh: true
+      #     filePath: eng/common/scripts/Update-DocsMsPackages.ps1
+      #     arguments: -DocRepoLocation $(DocRepoLocation) -ImageId '$(DocValidationImageId)'
+      #   displayName: Update Docs Onboarding
+      #   condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
 
-      - task: Powershell@2
-        inputs:
-          pwsh: true
-          filePath: eng/common/scripts/Service-Level-Readme-Automation.ps1
-          arguments: >-
-            -DocRepoLocation $(DocRepoLocation)
-            -TenantId '$(opensource-aad-tenant-id)'
-            -ClientId '$(opensource-aad-app-id)'
-            -ClientSecret '$(opensource-aad-secret)'
-        displayName: Generate Service Level Readme
+      # - task: Powershell@2
+      #   inputs:
+      #     pwsh: true
+      #     filePath: eng/common/scripts/Service-Level-Readme-Automation.ps1
+      #     arguments: >-
+      #       -DocRepoLocation $(DocRepoLocation)
+      #       -TenantId '$(opensource-aad-tenant-id)'
+      #       -ClientId '$(opensource-aad-app-id)'
+      #       -ClientSecret '$(opensource-aad-secret)'
+      #   displayName: Generate Service Level Readme
 
-      - task: Powershell@2
-        inputs:
-          pwsh: true
-          filePath: eng/common/scripts/Update-DocsMsToc.ps1
-          arguments: >-
-            -DocRepoLocation $(DocRepoLocation)
-            -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
-        displayName: Generate ToC
+      # - task: Powershell@2
+      #   inputs:
+      #     pwsh: true
+      #     filePath: eng/common/scripts/Update-DocsMsToc.ps1
+      #     arguments: >-
+      #       -DocRepoLocation $(DocRepoLocation)
+      #       -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
+      #   displayName: Generate ToC
 
-      # Push changes to docs repo
-      - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
-        parameters:
-          WorkingDirectory: $(DocRepoLocation)
+      # # Push changes to docs repo
+      # - template: /eng/common/pipelines/templates/steps/set-default-branch.yml
+      #   parameters:
+      #     WorkingDirectory: $(DocRepoLocation)
 
-      - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
-        parameters:
-          BaseRepoBranch: $(DefaultBranch)
-          BaseRepoOwner: $(DocRepoOwner)
-          CommitMsg: "Update docs CI configuration"
-          TargetRepoName: $(DocRepoName)
-          TargetRepoOwner: $(DocRepoOwner)
-          WorkingDirectory: $(DocRepoLocation)
+      # - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+      #   parameters:
+      #     BaseRepoBranch: $(DefaultBranch)
+      #     BaseRepoOwner: $(DocRepoOwner)
+      #     CommitMsg: "Update docs CI configuration"
+      #     TargetRepoName: $(DocRepoName)
+      #     TargetRepoOwner: $(DocRepoOwner)
+      #     WorkingDirectory: $(DocRepoLocation)
 
       # Prepare daily docs CI
       - template: /eng/common/pipelines/templates/steps/set-daily-docs-branch-name.yml
