@@ -337,8 +337,33 @@ class TestComponent:
         with component._resolve_local_code() as code:
             code_path = code.path
             assert code_path.is_dir()
+            assert (code_path / "LICENSE").exists()
+            assert (code_path / "library.zip").exists()
+            assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
+            assert (code_path / "library1" / "hello.py").exists()
+            assert (code_path / "library1" / "world.py").exists()
+
+            # this is to assert that v2 internal component snapshot id is consistent with
+            # previous version so reuse across versions is possible
+            assert code.name == '7b780dcb-a650-8892-15fe-148b34cb88c3'
 
         assert not code_path.is_dir()
+
+    def test_additional_includes_merge_folder(self) -> None:
+        yaml_path = (
+            "./tests/test_configs/internal/component_with_additional_includes/additional_includes_merge_folder.yml"
+        )
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code() as code:
+            code_path = code.path
+            # first folder
+            assert (code_path / "library1" / "__init__.py").exists()
+            assert (code_path / "library1" / "hello.py").exists()
+            # second folder content
+            assert (code_path / "library1" / "utils").is_dir()
+            assert (code_path / "library1" / "utils" / "__init__.py").exists()
+            assert (code_path / "library1" / "utils" / "salute.py").exists()
 
     @pytest.mark.parametrize(
         "yaml_path,has_additional_includes",
