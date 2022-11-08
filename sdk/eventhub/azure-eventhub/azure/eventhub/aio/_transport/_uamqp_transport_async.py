@@ -347,7 +347,10 @@ if uamqp_installed:
 
         @staticmethod
         async def _handle_exception_async(  # pylint:disable=too-many-branches, too-many-statements
-            exception: Exception, closable: Union["ClientBaseAsync", "ConsumerProducerMixin"]
+            exception: Exception,
+            closable: Union["ClientBaseAsync", "ConsumerProducerMixin"],
+            *,
+            is_consumer=False   # pylint:disable=unused-argument 
         ) -> Exception:
             # pylint: disable=protected-access
             if isinstance(exception, asyncio.CancelledError):

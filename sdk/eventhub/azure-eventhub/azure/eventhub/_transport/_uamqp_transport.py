@@ -609,7 +609,7 @@ if uamqp_installed:
 
         @staticmethod
         def _handle_exception(
-            exception, closable
+            exception, closable, *, is_consumer=False   # pylint:disable=unused-argument
         ):  # pylint:disable=too-many-branches, too-many-statements
             try:  # closable is a producer/consumer object
                 name = closable._name  # pylint: disable=protected-access

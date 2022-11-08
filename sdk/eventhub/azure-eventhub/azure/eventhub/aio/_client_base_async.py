@@ -329,7 +329,7 @@ class ClientBaseAsync(ClientBase):
                 conn = await self._conn_manager_async.get_connection(
                     host=self._address.hostname, auth=mgmt_auth
                 )
-                await self._amqp_transport.open_mgmt_client_async(mgmt_client, conn)
+                await mgmt_client.open_async(connection=conn)
                 while not await mgmt_client.client_ready_async():
                     await asyncio.sleep(0.05)
                 mgmt_msg.application_properties[
@@ -352,7 +352,15 @@ class ClientBaseAsync(ClientBase):
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint:disable=broad-except
-                last_exception = await self._amqp_transport._handle_exception_async(exception, self)  # pylint: disable=protected-access
+                # is_consumer=True passed in here, ALTHOUGH this method is shared by the producer and consumer.
+                # is_consumer will only be checked if FileNotFoundError is raised by self.mgmt_client.open() due to
+                # invalid/non-existent connection_verify filepath. The producer will encounter the FileNotFoundError
+                # when opening the SendClient, so is_consumer=True will not be passed to amqp_transport.handle_exception
+                # there. This is for uamqp exception parity, which raises FileNotFoundError in the consumer and
+                # EventHubError in the producer. TODO: Remove `is_consumer` kwarg when resolving issue #27128.
+                last_exception = await self._amqp_transport._handle_exception_async(  # pylint: disable=protected-access
+                    exception, self, is_consumer=True
+                )
                 await self._backoff_async(
                     retried_times=retried_times, last_exception=last_exception
                 )

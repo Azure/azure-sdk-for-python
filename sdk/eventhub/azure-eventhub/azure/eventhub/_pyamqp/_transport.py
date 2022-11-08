@@ -555,6 +555,10 @@ class SSLTransport(_AbstractTransport):
         try:
             sock = ssl.wrap_socket(**opts)  # pylint: disable=deprecated-method
         except FileNotFoundError as exc:
+            # FileNotFoundError does not have missing filename info, so adding it below.
+            # Assuming that this must be ca_certs, since this is the only file path that
+            # users can pass in (`connection_verify` in the EH/SB clients) through opts above.
+            # For uamqp exception parity. Remove later when resolving issue #27128.
             exc.filename = {"ca_certs": ca_certs}
             raise exc
         # Set SNI headers if supported
@@ -708,18 +712,19 @@ class WebSocketTransport(_AbstractTransport):
             )
         except WebSocketAddressException as exc:
             raise AuthenticationException(
-                ErrorCondition.SocketError, # TODO: ClientError?
+                ErrorCondition.ClientError,
                 description="Failed to authenticate the connection due to exception: " + str(exc),
                 error=exc,
             )
+        # TODO: resolve pylance error when type: ignore is removed below, issue #22051
         except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:    # type: ignore
             self.close()
             if isinstance(exc, WebSocketTimeoutException):
-                message = f'send timed out ({str(exc)})' 
+                message = f'Send timed out ({str(exc)})'
             elif isinstance(exc, SSLError):
-                message = f'send disconnected by SSL ({str(exc)})' 
+                message = f'Send disconnected by SSL ({str(exc)})'
             else:
-                message = f'send disconnected ({str(exc)})' 
+                message = f'Send disconnected ({str(exc)})'
             raise ConnectionError(message)
         except (OSError, IOError, SSLError):
             self.close()
@@ -750,7 +755,7 @@ class WebSocketTransport(_AbstractTransport):
                     n = 0
             return view
         except WebSocketTimeoutException as wte:
-            raise ConnectionError('recv timed out (%s)' % wte)
+            raise ConnectionError('Receive timed out (%s)' % wte)
 
     def close(self):
         if self.ws:
@@ -772,9 +777,9 @@ class WebSocketTransport(_AbstractTransport):
         try:
             self.ws.send_binary(s)
         except WebSocketTimeoutException as e:
-            raise ConnectionError('send timed out (%s)' % e)
+            raise ConnectionError('Send timed out (%s)' % e)
         except SSLError as e:
-            raise ConnectionError('send disconnected by SSL (%s)' % e)
+            raise ConnectionError('Send disconnected by SSL (%s)' % e)
         except WebSocketConnectionClosedException as e:
-            raise ConnectionError('send disconnected (%s)' % e)
+            raise ConnectionError('Send disconnected (%s)' % e)
             

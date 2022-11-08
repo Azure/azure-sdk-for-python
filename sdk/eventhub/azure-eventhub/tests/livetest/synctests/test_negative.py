@@ -275,7 +275,7 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
                                              eventhub_name=live_eventhub['event_hub'],
                                              credential=EventHubSASTokenCredential(token, time.time() + 5),
                                              uamqp_transport=uamqp_transport)
-    time.sleep(6)
+    time.sleep(10)
     # expired credential
     with producer_client:
         with pytest.raises(AuthenticationError):
@@ -319,7 +319,7 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
                                   kwargs={"starting_position": "-1", "on_error": on_error})
         thread.daemon = True
         thread.start()
-        time.sleep(5)
+        time.sleep(15)
     thread.join()
     assert isinstance(on_error.err, AuthenticationError)
 
@@ -345,7 +345,7 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
                                   kwargs={"starting_position": "-1", "on_error": on_error})
         thread.daemon = True
         thread.start()
-        time.sleep(5)
+        time.sleep(15)
     thread.join()
     assert isinstance(on_error.err, AuthenticationError)
 
@@ -372,7 +372,7 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
                                   kwargs={"starting_position": "-1", "on_error": on_error})
         thread.daemon = True
         thread.start()
-        time.sleep(5)
+        time.sleep(15)
     thread.join()
 
     # TODO: this seems like a bug from uamqp, should be ConnectError?

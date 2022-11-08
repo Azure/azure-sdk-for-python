@@ -281,25 +281,6 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         )
 
     @staticmethod
-    async def open_mgmt_client_async(mgmt_client, conn):
-        """
-        Opens the mgmt AMQP client.
-        :param AMQPClient mgmt_client: pyamqp AMQPClient.
-        :param conn: Connection.
-        """
-        try:
-            await mgmt_client.open_async(connection=conn)
-        except FileNotFoundError as exc:
-            # TODO: added for uamqp error parity with invalid connection_verify path
-            # consumer raises FileNotFoundError, producer raises EventHubError
-            # consumer opens connection through mgmt client first, producer through SendClient
-            # need to remove in the future
-            if exc.filename:
-                exc.filename2 = "consumer"
-            raise exc
-            
-
-    @staticmethod
     async def get_updated_token_async(mgmt_auth):
         """
         Return updated auth token.
@@ -326,7 +307,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def _handle_exception_async(  # pylint:disable=too-many-branches, too-many-statements
-        exception: Exception, closable: Union["ClientBaseAsync", "ConsumerProducerMixin"]
+        exception: Exception, closable: Union["ClientBaseAsync", "ConsumerProducerMixin"], *, is_consumer=False
     ) -> Exception:
         # pylint: disable=protected-access
         if isinstance(exception, asyncio.CancelledError):
@@ -376,7 +357,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 #         closable._close_handler()  # pylint:disable=protected-access
                 else:  # errors.AMQPConnectionError, compat.TimeoutException
                     await closable._close_connection_async()  # pylint:disable=protected-access
-                return PyamqpTransportAsync._create_eventhub_exception(exception)
+                return PyamqpTransportAsync._create_eventhub_exception(exception, is_consumer=is_consumer)
             except AttributeError:
                 pass
-            return PyamqpTransportAsync._create_eventhub_exception(exception)
+            return PyamqpTransportAsync._create_eventhub_exception(exception, is_consumer=is_consumer)

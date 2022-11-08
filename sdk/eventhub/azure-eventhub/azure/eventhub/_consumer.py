@@ -229,7 +229,7 @@ class EventHubConsumer(
                         return
                     if self._last_received_event:
                         self._offset = self._last_received_event.offset
-                    last_exception = self._handle_exception(exception)
+                    last_exception = self._handle_exception(exception, is_consumer=True)
                     retried_times += 1
                     if retried_times > max_retries:
                         _LOGGER.info(

@@ -7,12 +7,9 @@
 import threading
 import pytest
 import time
-import datetime
-
-from azure.identity import EnvironmentCredential
 
 from azure.eventhub import EventData, TransportType, EventHubConsumerClient
-from azure.eventhub.exceptions import ConnectError, EventHubError
+from azure.eventhub.exceptions import EventHubError
 
 
 @pytest.mark.liveTest

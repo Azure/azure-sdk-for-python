@@ -310,7 +310,7 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
                                              eventhub_name=live_eventhub['event_hub'],
                                              credential=EventHubSASTokenCredential(token[:-1], time.time() + 5),
                                              uamqp_transport=uamqp_transport)
-    await asyncio.sleep(6)
+    await asyncio.sleep(10)
     # expired credential
     async with producer_client:
         with pytest.raises(AuthenticationError):
@@ -352,7 +352,7 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
     async with consumer_client:
         task = asyncio.ensure_future(consumer_client.receive(on_event,
                                                                 starting_position= "-1", on_error=on_error))
-        await asyncio.sleep(5)
+        await asyncio.sleep(15)
     await task
 
     assert isinstance(on_error.err, AuthenticationError)
@@ -377,7 +377,7 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
     async with consumer_client:
         task = asyncio.ensure_future(consumer_client.receive(on_event,
                                                                 starting_position= "-1", on_error=on_error))
-        await asyncio.sleep(5)
+        await asyncio.sleep(15)
     await task
 
     assert isinstance(on_error.err, AuthenticationError)
@@ -403,7 +403,7 @@ async def test_client_invalid_credential_async(live_eventhub, uamqp_transport):
     async with consumer_client:
         task = asyncio.ensure_future(consumer_client.receive(on_event,
                                                                 starting_position= "-1", on_error=on_error))
-        await asyncio.sleep(5)
+        await asyncio.sleep(15)
     await task
 
     # TODO: this seems like a bug from uamqp, should be ConnectError?

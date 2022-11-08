@@ -275,13 +275,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             producer._handler.send_message(
                 producer._unsent_events[0], timeout=timeout
             )
-            # TODO: The unsent_events list will always be <= 1. Even for a batch, it gets the underlying singular BatchMessage.
+            # TODO: The unsent_events list will always be <= 1. Even for a batch,
+            # it gets the underlying singular BatchMessage.
             # May want to refactor in the future so that this isn't a list.
             producer._unsent_events = None
         except TimeoutError as exc:
             raise OperationTimeoutError(message=str(exc), details=exc)
-        #except Exception as exc:
-        #   raise producer._handle_exception(exc)
 
     @staticmethod
     def set_message_partition_key(message, partition_key, **kwargs):
@@ -462,24 +461,6 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         )
 
     @staticmethod
-    def open_mgmt_client(mgmt_client, conn):
-        """
-        Opens the mgmt AMQP client.
-        :param AMQPClient mgmt_client: pyamqp AMQPClient.
-        :param conn: Connection.
-        """
-        try:
-            mgmt_client.open(connection=conn)
-        except FileNotFoundError as exc:
-            # TODO: added for uamqp error parity with invalid connection_verify path
-            # consumer raises FileNotFoundError, producer raises EventHubError
-            # consumer opens connection through mgmt client first, producer through SendClient
-            # need to remove in the future
-            if exc.filename:
-                exc.filename2 = "consumer"
-            raise exc
-
-    @staticmethod
     def get_updated_token(mgmt_auth):
         """
         Return updated auth token.
@@ -546,10 +527,12 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return exception
 
     @staticmethod
-    def _create_eventhub_exception(exception):
+    def _create_eventhub_exception(exception, *, is_consumer=False):
         if isinstance(exception, errors.AuthenticationException):
             error = AuthenticationError(str(exception), exception)
         elif isinstance(exception, errors.AMQPLinkError):
+            # For uamqp exception parity, raising ConnectionLostError for LinkDetaches.
+            # Else, vendor error condition that starts with "com.", so raise ConnectError.
             if exception.condition in PyamqpTransport.ERROR_CONDITIONS:
                 error = ConnectionLostError(str(exception), exception)
             else:
@@ -563,8 +546,13 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         elif isinstance(exception, TimeoutError):
             error = ConnectionLostError(str(exception), exception)
         else:
-            if isinstance(exception, FileNotFoundError) and exception.filename2 == "consumer":
-                del exception.filename2
+            if (
+                isinstance(exception, FileNotFoundError)
+                and is_consumer
+                and exception.filename
+                and "ca_certs" in exception.filename
+            ):
+
                 error = exception
             else:
                 error = EventHubError(str(exception), exception)
@@ -572,7 +560,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
 
     @staticmethod
     def _handle_exception(
-        exception, closable
+        exception, closable, *, is_consumer=False
     ):  # pylint:disable=too-many-branches, too-many-statements
         try:  # closable is a producer/consumer object
             name = closable._name  # pylint: disable=protected-access
@@ -621,4 +609,4 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             else:  # errors.AMQPConnectionError, compat.TimeoutException
                 if hasattr(closable, "_close_connection"):
                     closable._close_connection()  # pylint:disable=protected-access
-            return PyamqpTransport._create_eventhub_exception(exception)
+            return PyamqpTransport._create_eventhub_exception(exception, is_consumer=is_consumer)

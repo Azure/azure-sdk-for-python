@@ -411,7 +411,7 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                 conn = self._conn_manager.get_connection(  # pylint:disable=assignment-from-none
                     host=self._address.hostname, auth=mgmt_auth
                 )
-                self._amqp_transport.open_mgmt_client(mgmt_client, conn)
+                mgmt_client.open(connection=conn)
                 while not mgmt_client.client_ready():
                     time.sleep(0.05)
                 mgmt_msg.application_properties[
@@ -432,8 +432,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     return response
                 raise self._amqp_transport.get_error(status_code, description)
             except Exception as exception:  # pylint: disable=broad-except
+                # is_consumer=True passed in here, ALTHOUGH this method is shared by the producer and consumer.
+                # is_consumer will only be checked if FileNotFoundError is raised by self.mgmt_client.open() due to
+                # invalid/non-existent connection_verify filepath. The producer will encounter the FileNotFoundError
+                # when opening the SendClient, so is_consumer=True will not be passed to amqp_transport.handle_exception
+                # there. This is for uamqp exception parity, which raises FileNotFoundError in the consumer and
+                # EventHubError in the producer. TODO: Remove `is_consumer` kwarg when resolving issue #27128.
                 last_exception = self._amqp_transport._handle_exception(  # pylint: disable=protected-access
-                    exception, self
+                    exception, self, is_consumer=True
                 )
                 self._backoff(
                     retried_times=retried_times, last_exception=last_exception

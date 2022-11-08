@@ -307,8 +307,14 @@ class AsyncTransport(
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)
         self._set_socket_options(socket_settings)
         try:
+            # Building ssl opts here instead of constructor, so that invalid cert error is raised
+            # when client is connecting, rather then during creation. For uamqp exception parity.
             self.sslopts = self._build_ssl_opts(self.sslopts)
         except FileNotFoundError as exc:
+            # FileNotFoundError does not have missing filename info, so adding it below.
+            # Assuming that this must be ca_certs, since this is the only file path that
+            # users can pass in (`connection_verify` in the EH/SB clients) through sslopts above.
+            # For uamqp exception parity. Remove later when resolving issue #27128.
             exc.filename = self.sslopts
             raise exc
         self.sock.settimeout(1)  # set socket back to non-blocking mode
@@ -398,21 +404,11 @@ class AsyncTransport(
             if self.sslopts:
                 # see issue: https://github.com/encode/httpx/issues/914
                 self.writer.transport.abort()
+            # Closing the writer closes the underlying socket.
             self.writer.close()
             await self.writer.wait_closed()
             self.writer, self.reader = None, None
-        if self.sock is not None:
-            # Call shutdown first to make sure that pending messages
-            # reach the AMQP broker if the program exits after
-            # calling this method.
-            try:
-                self.sock.shutdown(socket.SHUT_RDWR)
-            except Exception as exc:  # pylint: disable=broad-except
-                # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
-                #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
-                _LOGGER.info("Transport endpoint is already disconnected: %r", exc)
-            self.sock.close()
-            self.sock = None
+        self.sock = None
         self.connected = False
 
     async def write(self, s):
@@ -525,12 +521,10 @@ class WebSocketTransportAsync(
             except ClientConnectorError as exc:
                 if self._custom_endpoint:
                     raise AuthenticationException(
-                        ErrorCondition.SocketError, # TODO: ClientError?
+                        ErrorCondition.ClientError,
                         description="Failed to authenticate the connection due to exception: " + str(exc),
                         error=exc,
                     )
-                else:
-                    raise
             self.connected = True
         except ImportError:
             raise ValueError(
@@ -558,7 +552,7 @@ class WebSocketTransportAsync(
                     n = 0
             return view
         except asyncio.TimeoutError as te:
-            raise ConnectionError('recv timed out (%s)' % te)
+            raise ConnectionError('Receive timed out (%s)' % te)
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -575,4 +569,4 @@ class WebSocketTransportAsync(
         try:
             await self.ws.send_bytes(s)
         except asyncio.TimeoutError as te:
-            raise ConnectionError('send timed out (%s)' % te)
+            raise ConnectionError('Send timed out (%s)' % te)
