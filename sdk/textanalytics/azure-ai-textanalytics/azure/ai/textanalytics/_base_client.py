@@ -58,6 +58,9 @@ class TextAnalyticsClientBase:
                 "x-envoy-upstream-service-time",
                 "Strict-Transport-Security",
                 "x-content-type-options",
+                "warn-code",
+                "warn-agent",
+                "warn-text",
             }
         )
         http_logging_policy.allowed_query_params.update(

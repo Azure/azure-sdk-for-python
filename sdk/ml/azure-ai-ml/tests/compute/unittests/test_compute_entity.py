@@ -6,7 +6,7 @@ from msrest import Serializer
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_compute
-from azure.ai.ml._restclient.v2021_10_01.models import ComputeResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
 from azure.ai.ml.entities import (
     AmlCompute,
     Compute,

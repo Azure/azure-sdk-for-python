@@ -494,7 +494,7 @@ class CodegenTestPR:
 
     def create_pr_proc(self):
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
-        pr_title = "[AutoRelease] {}(Do not merge)".format(self.new_branch)
+        pr_title = "[AutoRelease] {}(can only be merged by SDK owner)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
         pr_base = 'main'
         pr_body = "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
