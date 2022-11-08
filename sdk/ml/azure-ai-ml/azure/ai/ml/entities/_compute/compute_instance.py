@@ -296,9 +296,9 @@ class ComputeInstance(Compute):
                 if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.private_ip_address
                 else None,
             )
-        
+       
         idle_time_before_shutdown_minutes = None
-        idle_time_before_shutdown_pattern = "PT([0-9]+)M"
+        idle_time_before_shutdown_pattern = r"PT([0-9]+)M"
         if prop.properties and prop.properties.idle_time_before_shutdown:
             idle_time_before_shutdown = prop.properties.idle_time_before_shutdown
             idle_time_match = re.match(pattern=idle_time_before_shutdown_pattern, string=idle_time_before_shutdown)
