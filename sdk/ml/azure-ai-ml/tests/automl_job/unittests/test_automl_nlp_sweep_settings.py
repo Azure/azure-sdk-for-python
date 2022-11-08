@@ -67,7 +67,7 @@ class TestNlpSweepSettings:
                                            sampling_algorithm_name: SamplingAlgorithmType) -> None:
         expected_nlp_sweep_settings_obj = self._get_entity_obj(early_termination_name, sampling_algorithm_name)
         rest_sweep_settings_obj = expected_nlp_sweep_settings_obj._to_rest_object()
-        round_trip_nlp_sweep_settings_obj = NlpSweepSettings._from_rest_object(expected_nlp_sweep_settings_obj)
+        round_trip_nlp_sweep_settings_obj = NlpSweepSettings._from_rest_object(rest_sweep_settings_obj)
         assert round_trip_nlp_sweep_settings_obj == expected_nlp_sweep_settings_obj, \
             f"expected: {expected_nlp_sweep_settings_obj}, actual: {round_trip_nlp_sweep_settings_obj}"
 
@@ -80,10 +80,10 @@ class TestNlpSweepSettings:
         if early_termination_name == EarlyTerminationPolicyType.BANDIT:
             early_termination_policy = BanditPolicy(evaluation_interval=10, slack_factor=0.2)
         elif early_termination_name == EarlyTerminationPolicyType.MEDIAN_STOPPING:
-            early_termination_policy = MedianStoppingPolicy(delay_evaluation=5, evluation_interval=1)
+            early_termination_policy = MedianStoppingPolicy(delay_evaluation=5, evaluation_interval=1)
         elif early_termination_name == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
             early_termination_policy = TruncationSelectionPolicy(evaluation_interval=1,
-                                                                 truncation_selection=20,
+                                                                 truncation_percentage=20,
                                                                  delay_evaluation=5)
         return NlpSweepSettings(early_termination=early_termination_policy,
                                 sampling_algorithm=sampling_algorithm_name)
@@ -99,7 +99,7 @@ class TestNlpSweepSettings:
             early_termination_policy = RestMedianStoppingPolicy(delay_evaluation=5, evaluation_interval=1)
         elif early_termination_name == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
             early_termination_policy = RestTruncationSelectionPolicy(evaluation_interval=1,
-                                                                     truncation_selection=20,
+                                                                     truncation_percentage=20,
                                                                      delay_evaluation=5)
         return RestNlpSweepSettings(sampling_algorithm=sampling_algorithm_name,
                                     early_termination=early_termination_policy)
