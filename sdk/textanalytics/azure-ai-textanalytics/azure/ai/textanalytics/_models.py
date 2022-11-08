@@ -375,8 +375,8 @@ class RecognizeEntitiesResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics:
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' was set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this document.
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
     :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeEntitiesResult.
@@ -429,8 +429,8 @@ class RecognizePiiEntitiesResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics:
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' was set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this document.
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
     :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizePiiEntitiesResult.
@@ -493,8 +493,8 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         FHIR compatible object for consumption in other Healthcare tools. For additional
         information see https://www.hl7.org/fhir/overview.html.
     :vartype fhir_bundle: Optional[dict[str, any]]
-    :ivar detected_language: If 'language' was set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this document.
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
     :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeHealthcareEntitiesResult.
@@ -1052,8 +1052,8 @@ class ExtractKeyPhrasesResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics:
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' was set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this document.
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
     :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a ExtractKeyPhrasesResult.
@@ -1104,8 +1104,8 @@ class RecognizeLinkedEntitiesResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics:
         Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' was set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this document.
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
     :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeLinkedEntitiesResult.
@@ -1165,8 +1165,8 @@ class AnalyzeSentimentResult(DictMixin):
     :ivar sentences: Sentence level sentiment analysis.
     :vartype sentences:
         list[~azure.ai.textanalytics.SentenceSentiment]
-    :ivar detected_language: If 'language' was set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this document.
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
     :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeSentimentResult.
@@ -1473,6 +1473,9 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
      operation APIs with API version 2022-10-01-preview or newer). If
      not set, uses "en" for English as default.
     :vartype language: Optional[str]
+
+    .. versionadded:: 2022-10-01-preview
+        The 'auto' option for language.
     """
 
     def __init__(self, **kwargs):
@@ -2306,8 +2309,8 @@ class RecognizeCustomEntitiesResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' was set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this document.
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
     :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a RecognizeCustomEntitiesResult.
@@ -2433,8 +2436,8 @@ class ClassifyDocumentResult(DictMixin):
     :ivar statistics: If `show_stats=True` was specified in the request this
         field will contain information about the document payload.
     :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
-    :ivar detected_language: If 'language' was set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this document.
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+        field will contain the DetectedLanguage for the document.
     :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a ClassifyDocumentResult.
@@ -2630,10 +2633,11 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
     :ivar Optional[str] fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
         on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
         The only acceptable values to pass in are None and "4.0.1". The default value is None.
-    :ivar Optional[str] document_type: Document type that can be provided as input for Fhir Documents. Expect to
+    :ivar document_type: Document type that can be provided as input for Fhir Documents. Expect to
         have fhir_version provided when used. Behavior of using None enum is the same as not using the
         document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
         "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
+    :vartype document_type: Optional[str or ~azure.ai.textanalytics.HealthcareDocumentType]
 
     .. versionadded:: 2022-05-01
         The *AnalyzeHealthcareEntitiesAction* model.
@@ -2676,7 +2680,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
 class ExtractSummaryAction(DictMixin):
     """ExtractSummaryAction encapsulates the parameters for starting a long-running Extractive Text
     Summarization operation. For a conceptual discussion of extractive summarization, see the service documentation:
-    https://docs.microsoft.com/azure/cognitive-services/text-analytics/how-tos/extractive-summarization
+    https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
 
     :keyword Optional[str] model_version: The model version to use for the analysis.
     :keyword Optional[str] string_index_type: Specifies the method used to interpret string offsets.
@@ -2758,8 +2762,7 @@ class ExtractSummaryResult(DictMixin):
         field will contain information about the document payload.
     :vartype statistics: Optional[~azure.ai.textanalytics.TextDocumentStatistics]
     :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this
-        document.
+        field will contain the DetectedLanguage for the document.
     :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of an ExtractSummaryResult.
@@ -2860,13 +2863,12 @@ class SummarySentence(DictMixin):
 class AbstractSummaryResult(DictMixin):
     """AbstractSummaryResult is a result object which contains
     the summary generated for a particular document.
-.
+
     :ivar id: Unique, non-empty document identifier. Required.
     :vartype id: str
     :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain a 2 letter ISO 639-1 representation of the language detected for this
-        document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage}
+        field will contain the DetectedLanguage for the document.
+    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
     :ivar warnings: Warnings encountered while processing document. Results will still be returned
         if there are warnings, but they may not be fully accurate.
     :vartype warnings: list[~azure.ai.textanalytics.TextAnalyticsWarning]
@@ -3000,12 +3002,17 @@ class SummaryContext(DictMixin):
 
 class AbstractSummaryAction(DictMixin):
     """AbstractSummaryAction encapsulates the parameters for starting a long-running
-    abstractive summarization operation.
+    abstractive summarization operation. For a conceptual discussion of extractive summarization,
+    see the service documentation:
+    https://learn.microsoft.com/azure/cognitive-services/language-service/summarization/overview
 
     Abstractive summarization generates a summary for the input documents. Abstractive summarization
     is different from extractive summarization in that extractive summarization is the strategy of
     concatenating extracted sentences from the input document into a summary, while abstractive
     summarization involves paraphrasing the document using novel sentences.
+
+    .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
+        https://aka.ms/applyforgatedsummarizationfeatures
 
     :keyword Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
     :keyword Optional[str] model_version: The model version to use for the analysis.
@@ -3021,6 +3028,7 @@ class AbstractSummaryAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
+    :ivar Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
     :ivar Optional[str] model_version: The model version to use for the analysis.
     :ivar Optional[str] string_index_type: Specifies the method used to interpret string offsets.
         `UnicodeCodePoint`, the Python encoding, is the default. To override the Python default,
@@ -3034,7 +3042,6 @@ class AbstractSummaryAction(DictMixin):
         Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
         additional details, and Microsoft Responsible AI principles at
         https://www.microsoft.com/ai/responsible-ai.
-    :ivar Optional[int] sentence_count: It controls the approximate number of sentences in the output summaries.
 
     .. versionadded:: 2022-10-01-preview
         The *AbstractSummaryAction* model.
