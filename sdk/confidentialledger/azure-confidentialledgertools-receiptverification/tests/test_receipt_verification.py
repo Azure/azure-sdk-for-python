@@ -59,7 +59,7 @@ def test_receipt_verification_with_signature_transaction_throws_exception(
     receipt = get_test_valid_receipt_1()
     receipt.is_signature_transaction = input_is_signature_transaction
 
-    # Check that verify_receipt throws SignatureTransactionError
+    # Check that verify_receipt throws ValueError
     with pytest.raises(
         ReceiptVerificationException,
         match="Encountered exception when verifying receipt",
