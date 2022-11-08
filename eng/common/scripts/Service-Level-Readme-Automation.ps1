@@ -70,9 +70,6 @@ function Get-RestContent($readmePath) {
 # Always update metadata and index table.
 function update-service-readme($readmeFolder, $readmeName, $moniker, $msService, $clientTableLink, $mgmtTableLink, $serviceName)
 {
-  if ($serviceName -eq "Active Directory") {
-    Write-Host "I am here"
-  }
   $readmePath = (Join-Path $readmeFolder -ChildPath $readmeName)
   $restContent = Get-RestContent -readmePath $readmePath
   $content = ""

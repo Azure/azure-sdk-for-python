@@ -20,6 +20,8 @@
 - Fix ARM id logic for registry environments (ex: Creating a registry component that references a registry environment).
 
 ### Other Changes
+- Switched compute operations to go through 2022-10-01-preview API version.
+
 
 ## 1.0.0 (2022-10-10)
 - GA release
