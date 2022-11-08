@@ -32,7 +32,7 @@ from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import find_type_in_override, _copy_folder_ignore_pycache
+from azure.ai.ml.entities._util import find_type_in_override
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from .code import ComponentCode

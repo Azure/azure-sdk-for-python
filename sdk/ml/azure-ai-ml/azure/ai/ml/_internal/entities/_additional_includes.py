@@ -174,17 +174,16 @@ class _AdditionalIncludes:
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
         return
 
-    def _resolve_folder_to_compress(self, include: str, path: Path) -> None:
+    def _resolve_folder_to_compress(self, include: str, dst_path: Path) -> None:
         zip_additional_include = (self._additional_includes_file_path.parent / include).resolve()
         folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
-        zip_file = path / zip_additional_include.name
+        zip_file = dst_path / zip_additional_include.name
         ignore_file = InternalComponentIgnoreFile()
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
             for root, _, files in os.walk(folder_to_zip, followlinks=True):
                 for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=ignore_file):
                     zf.write(path, os.path.relpath(path, folder_to_zip.parent))
-        return
 
     def cleanup(self) -> None:
         """Clean up potential tmp folder generated during resolve as it can be

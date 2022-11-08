@@ -57,7 +57,7 @@ class ComponentCode(Code):
         **kwargs,
     ):
         # call grandparent Artifact __init__ function
-        super(Code, self).__init__(
+        super(Code, self).__init__(  # pylint: disable=bad-super-call
             name=name,
             version=version,
             description=description,
