@@ -343,10 +343,6 @@ class TestComponent:
             assert (code_path / "library1" / "hello.py").exists()
             assert (code_path / "library1" / "world.py").exists()
 
-            # this is to assert that v2 internal component snapshot id is consistent with
-            # previous version so reuse across versions is possible
-            assert code.name == "08eb24c1-e318-6f23-e455-e21f35ad9888"
-
         assert not code_path.is_dir()
 
     def test_additional_includes_merge_folder(self) -> None:
