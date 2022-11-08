@@ -49,7 +49,7 @@ batch:
 These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_runtime_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/40f5247a48ff1eec044c8441c422af0628a8a288/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/10c39b3174718aba55e53cb7b0ae1cef45b18368/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations.json
 output-folder: ../azure/ai/language/conversations
 title: ConversationAnalysisClient
 ```
@@ -59,7 +59,7 @@ title: ConversationAnalysisClient
 These settings apply only when `--tag=release_authoring_1_1_preview` is specified on the command line.
 
 ```yaml $(tag) == 'release_authoring_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/40f5247a48ff1eec044c8441c422af0628a8a288/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations-authoring.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/10c39b3174718aba55e53cb7b0ae1cef45b18368/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzeconversations-authoring.json
 output-folder: ../azure/ai/language/conversations/authoring
 title: ConversationAuthoringClient
 ```
@@ -78,17 +78,40 @@ directive:
   where: $.paths.*.*
   transform: |
     var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
-    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + operationId + " for more information.";
+    var apiVersion = $doc.info.version + "/";
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + operationId + " for more information.";
 
 - where-operation: AnalyzeConversation_SubmitJob
-  transform: >
-    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/analyze-conversation/submit-job for more information.";
+  transform: |
+    var apiVersion = $doc.info.version + "/";
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis-runtime/submit-job for more information.";
 - where-operation: ConversationAnalysis_AnalyzeConversation
+  transform: |
+    var apiVersion = $doc.info.version + "/";
+    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/" + apiVersion + "conversation-analysis/analyze-conversation for more information.";
+
+# Work around https://github.com/Azure/azure-sdk-for-net/issues/29141
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationResultsKind
   transform: >
-    $.description = $.description + "\n\nSee https://learn.microsoft.com/rest/api/language/conversation-analysis-runtime/analyze-conversation for more information.";
+    $["enum"] = [
+      "conversationalPIIResults",
+      "conversationalSummarizationResults",
+      "conversationalSentimentResults"
+    ];
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationConversationPIIResult
+  transform: >
+    $["x-ms-discriminator-value"] = "conversationalPIIResults";
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationSummarizationResult
+  transform: >
+    $["x-ms-discriminator-value"] = "conversationalSummarizationResults";
+- from: swagger-document
+  where: $.definitions.AnalyzeConversationSentimentResult
+  transform: >
+    $["x-ms-discriminator-value"] = "conversationalSentimentResults";
 ```
-
-
 
 ```yaml
 directive:
@@ -156,7 +179,7 @@ directive:
   - where-operation: AnalyzeConversation_SubmitJob
     transform: >
       $["responses"]["200"] = {
-          "description": "dummy schema to get poller response when calling .result()",
+          "description": "mock schema to get poller response when calling .result()",
           "schema": {
               "$ref": "#/definitions/AnalyzeConversationJobState"
           }
@@ -223,7 +246,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_CancelTrainingJob
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringTrainingJobState"
         }
@@ -231,7 +254,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_DeleteDeployment
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentJobState"
         }
@@ -239,7 +262,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_DeleteProject
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringProjectDeletionJobState"
         }
@@ -247,7 +270,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_DeployProject
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringProjectDeployment"
         }
@@ -255,7 +278,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_Export
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringExportProjectJobState"
         }
@@ -263,7 +286,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_Import
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringImportProjectJobState"
         }
@@ -271,7 +294,7 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_SwapDeployments
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentJobState"
         }
@@ -279,9 +302,33 @@ directive:
   - where-operation: ConversationalAnalysisAuthoring_Train
     transform: >
       $["responses"]["200"] = {
-        "description": "dummy schema to get poller response when calling .result()",
+        "description": "mock schema to get poller response when calling .result()",
         "schema": {
           "$ref": "#/definitions/ConversationalAnalysisAuthoringTrainingJobState"
+        }
+      };
+  - where-operation: ConversationalAnalysisAuthoring_AssignDeploymentResources
+    transform: >
+      $["responses"]["200"] = {
+        "description": "mock schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
+        }
+      };
+  - where-operation: ConversationalAnalysisAuthoring_LoadSnapshot
+    transform: >
+      $["responses"]["200"] = {
+        "description": "mock schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/ConversationalAnalysisAuthoringLoadSnapshotJobState"
+        }
+      };
+  - where-operation: ConversationalAnalysisAuthoring_UnassignDeploymentResources
+    transform: >
+      $["responses"]["200"] = {
+        "description": "mock schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/ConversationalAnalysisAuthoringDeploymentResourcesJobState"
         }
       };
 ```
