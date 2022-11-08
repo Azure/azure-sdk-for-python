@@ -27,7 +27,7 @@ _INTEGER_MIN = Int32.minval
 # Inherits from the Sampler interface as defined by OpenTelemetry
 # https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/trace/sdk.md#sampler
 class ApplicationInsightsSampler(Sampler):
-    """Sampler that implements the same probability sampling algorithm as the ApplicationInsights SDKs."""
+    """Sampler that implements the same probability sampling algorithm as the ApplicationInsights SDK."""
 
     # sampling_ratio must take a value in the range [0,1]
     def __init__(self, sampling_ratio: float = 1.0):
