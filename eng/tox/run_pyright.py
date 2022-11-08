@@ -48,7 +48,7 @@ if __name__ == "__main__":
     ]
     if package_name in TYPE_CHECK_SAMPLES_OPT_OUT:
         logging.info(
-            f"Package {package_name} opts-out of pyright check on samples. See https://aka.ms/python/typing-guide for information."
+            f"Package {package_name} opts-out of pyright check on samples."
         )
         paths = paths[:-1]
 

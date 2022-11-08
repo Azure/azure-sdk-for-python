@@ -143,7 +143,7 @@ PYRIGHT_OPT_OUT = [
   "azure-messaging-webpubsubservice",
 ]
 
-# omit package from running verifytype checks
+# omit package from running verifytypes checks
 VERIFYTYPES_OPT_OUT = [
   "azure-agrifood-farming",
   "azure-ai-anomalydetector",
@@ -290,6 +290,7 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
   "azure-synapse-managedprivateendpoints",
   "azure-synapse-monitoring",
   "azure-synapse-spark",
+  "azure-ai-translation-document",
   "azure-messaging-webpubsubservice",
 ]
 
