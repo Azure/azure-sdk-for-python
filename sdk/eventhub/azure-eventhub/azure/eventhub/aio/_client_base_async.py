@@ -482,11 +482,11 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         await self._close_handler_async()
         await self._client._conn_manager_async.reset_connection_if_broken()  # pylint:disable=protected-access
 
-    async def _handle_exception(self, exception: Exception) -> Exception:
+    async def _handle_exception(self, exception: Exception, *, is_consumer: bool = False) -> Exception:
         # pylint: disable=protected-access
         exception = self._client._amqp_transport.check_timeout_exception(self, exception)
         return await self._client._amqp_transport._handle_exception_async(
-            exception, self
+            exception, self, is_consumer=is_consumer
         )
 
     async def _do_retryable_operation(

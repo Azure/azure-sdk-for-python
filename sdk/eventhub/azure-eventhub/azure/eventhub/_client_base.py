@@ -559,10 +559,10 @@ class ConsumerProducerMixin(object):
         self._close_handler()
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
-    def _handle_exception(self, exception):
+    def _handle_exception(self, exception, *, is_consumer=False):
         exception = self._amqp_transport.check_timeout_exception(self, exception)
         return self._amqp_transport._handle_exception(  # pylint: disable=protected-access
-            exception, self
+            exception, self, is_consumer=is_consumer
         )
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):

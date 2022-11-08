@@ -350,7 +350,7 @@ if uamqp_installed:
             exception: Exception,
             closable: Union["ClientBaseAsync", "ConsumerProducerMixin"],
             *,
-            is_consumer=False   # pylint:disable=unused-argument 
+            is_consumer=False   # pylint:disable=unused-argument
         ) -> Exception:
             # pylint: disable=protected-access
             if isinstance(exception, asyncio.CancelledError):
