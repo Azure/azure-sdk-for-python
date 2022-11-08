@@ -114,7 +114,7 @@ class TestExperimentalUtils(unittest.TestCase):
             for x in range(5):
                 experimental_function()
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_METHOD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])
 
@@ -124,7 +124,7 @@ class TestExperimentalUtils(unittest.TestCase):
             for x in range(5):
                 obj.experimental_method()
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_METHOD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])
 
@@ -134,7 +134,7 @@ class TestExperimentalUtils(unittest.TestCase):
             for x in range(5):
                 obj.value = 5
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_METHOD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])
 
@@ -145,7 +145,7 @@ class TestExperimentalUtils(unittest.TestCase):
             logging.getLogger(experimental.__module__).warning("Dummy warning")
             ExperimentalClass._from_rest_object(dict())
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
 
     def test_experimental_decorator_should_show_no_warning_when_load_from_schema(self):
         with self.assertLogs(experimental.__module__, "WARNING") as cm:
@@ -156,7 +156,7 @@ class TestExperimentalUtils(unittest.TestCase):
             input_data = {"mock_field": {}}
             schema.load(input_data)
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
 
     def test_experimental_field(self):
         with self.assertLogs(ExperimentalField.__module__, "WARNING") as cm:
@@ -164,7 +164,7 @@ class TestExperimentalUtils(unittest.TestCase):
             input_data = {"mock_field": {}}
             schema.load(input_data)
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_FIELD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])
 
@@ -177,6 +177,6 @@ class TestExperimentalUtils(unittest.TestCase):
             for x in range(5):
                 schema.load(input_data)
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_FIELD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])
