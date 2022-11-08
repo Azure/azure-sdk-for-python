@@ -8,7 +8,7 @@
 FILE: sample_assign_deployment_resources.py
 
 DESCRIPTION:
-    This sample demonstrates how to assign deployment resources to a project and deploy a project to specific deployment resources.
+    This sample demonstrates how to assign deployment resources to a project and deploy a project to specific deployment resources. Assigning resources allow you to train your model in one resource and deploy them to other assigned resources.
 
 USAGE:
     python sample_assign_deployment_resources.py
