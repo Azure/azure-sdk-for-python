@@ -1,6 +1,6 @@
 {
-  "reportUnnecessaryCast": true,
-  "reportUnnecessaryTypeIgnoreComment": true,
+  "reportUnnecessaryCast": "warning",
+  "reportUnnecessaryTypeIgnoreComment": "warning",
   "reportTypeCommentUsage": true,
   "reportMissingImports": false,
   "pythonVersion": "3.10"

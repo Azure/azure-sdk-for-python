@@ -13,6 +13,14 @@ PYRIGHT_OPT_OUT = [
 
 ]
 
+VERIFYTYPES_OPT_OUT = [
+  
+]
+
+TYPE_CHECK_SAMPLES_OPT_OUT = [
+
+]
+
 MYPY_HARD_FAILURE_OPTED = [
   "azure-core",
   "azure-eventhub",
