@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
+## 1.1.0b3 (2022-11-10)
 
 ### Features Added
 - Added support for the "ConversationalSentimentTask" kind with `begin_conversation_analysis`.
@@ -17,10 +17,6 @@
   - `list_assigned_resource_deployments`
   - `list_deployment_resources`
 - Added optional `trained_model_label` keyword argument to `begin_export_project`.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 * This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
