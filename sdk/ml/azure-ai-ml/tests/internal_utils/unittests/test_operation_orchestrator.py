@@ -195,13 +195,13 @@ class TestOperationOrchestration:
     def test_get_asset_arm_id_when_model_already_created(self, operation_orchestrator: OperationOrchestrator) -> None:
         test_id = "azureml://registries/my-registry/models/model-base/versions/1"
         model = Model(id=test_id, name="some_name", version="1")
-        actual = operation.get_asset_arm_id(model, azureml_type=AzureMLResourceType.MODEL)
+        actual = operation_orchestrator.get_asset_arm_id(model, azureml_type=AzureMLResourceType.MODEL)
         assert actual == test_id
     
     def test_get_asset_arm_id_when_environment_already_created(self, operation_orchestrator: OperationOrchestrator) -> None:
         test_id = "azureml://registries/my-registry/environments/env-base/versions/1"
         environment = Environment(id=test_id, name="some_name", version="1")
-        actual = operation.get_asset_arm_id(environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
+        actual = operation_orchestrator.get_asset_arm_id(environment, azureml_type=AzureMLResourceType.ENVIRONMENT)
         assert actual == test_id
 
     def test_code_arm_id(self, operation_orchestrator: OperationOrchestrator) -> None:
