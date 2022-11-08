@@ -5,7 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# This script is used to execute verifytypes within a tox environment.
+# This script is used to execute verifytypes within a tox environment. It additionally installs
+# the latest release of a package (if it exists) and compares its type completeness score with
+# that of the current code. If type completeness worsens from the last release, the check fails.
 
 import subprocess
 import json
