@@ -195,8 +195,7 @@ def is_empty_target(obj):
     """Determines if it's empty target"""
     return (obj is None
             # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
-            or (isinstance(obj, dict) and obj == {})
-            or (isinstance(obj, list) and obj == [])
+            or (isinstance(obj, dict) and len(obj) == 0)
         )
 
 def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
