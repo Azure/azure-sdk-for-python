@@ -115,19 +115,19 @@ function GenerateDocsMsMetadata($originalMetadata, $language, $languageDisplayNa
   $langDescription = "Reference for Azure $serviceName SDK for $languageDisplayName"
   # Github url for source code: e.g. https://github.com/Azure/azure-sdk-for-js
   $serviceBaseName = $serviceName.ToLower().Replace(' ', '').Replace('/', '-')
-  $author = GetPrimaryCodeOwner -TargetDirectory "/sdk/$serviceBaseName/"
-  $msauthor = ""
-  if (!$author) {
-    LogError "Cannot fetch the author from CODEOWNER file."
-  }
-  elseif ($TenantId -and $ClientId -and $ClientSecret) {
-    $msauthor = GetMsAliasFromGithub -TenantId $tenantId -ClientId $clientId -ClientSecret $clientSecret -GithubUser $author
-  }
-  # Default value
-  if (!$msauthor) {
-    LogError "No ms.author found for $author. "
-    $msauthor = $author
-  }
+  $author = "a"#GetPrimaryCodeOwner -TargetDirectory "/sdk/$serviceBaseName/"
+  $msauthor = "b"
+  # if (!$author) {
+  #   LogError "Cannot fetch the author from CODEOWNER file."
+  # }
+  # elseif ($TenantId -and $ClientId -and $ClientSecret) {
+  #   $msauthor = GetMsAliasFromGithub -TenantId $tenantId -ClientId $clientId -ClientSecret $clientSecret -GithubUser $author
+  # }
+  # # Default value
+  # if (!$msauthor) {
+  #   LogError "No ms.author found for $author. "
+  #   $msauthor = $author
+  # }
   $date = Get-Date -Format "MM/dd/yyyy"
   $customOrderedMetadata = @(("title", $langTitle), ("description", $langDescription), ("author", $author), ("ms.author", $msauthor), ("ms.data", $date), ("ms.topic", "reference"), ("ms.devlang", $language), ("ms.service", $msService))
   $updatedMetadata = compare-and-merge-metadata -original $originalMetadata -updated $customOrderedMetadata
