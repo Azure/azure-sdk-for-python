@@ -10,6 +10,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+  - Removed `msrest` dependency.
+  - Added requirement for `isodate>=0.6.0` (`isodate` was required by `msrest`)
 
 ## 1.0.0b1 (2022-07-15)
 

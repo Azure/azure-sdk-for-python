@@ -208,6 +208,7 @@ class BatchDeployment(Deployment):
             mini_batch_size=self.mini_batch_size,
             max_concurrency_per_instance=self.max_concurrency_per_instance,
             environment_variables=self.environment_variables,
+            properties=self.properties,
         )
 
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
@@ -243,6 +244,7 @@ class BatchDeployment(Deployment):
             environment_variables=deployment.properties.environment_variables,
             max_concurrency_per_instance=deployment.properties.max_concurrency_per_instance,
             endpoint_name=_parse_endpoint_name_from_deployment_id(deployment.id),
+            properties=deployment.properties.properties,
         )
 
     @classmethod
