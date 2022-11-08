@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.0b3 (Unreleased)
+## 1.1.0b3 (2022-11-10)
 
 ### Features Added
 - Added support for the "ConversationalSentimentTask" kind with `begin_conversation_analysis`.
