@@ -13,7 +13,6 @@ from .._assets import Code
 
 
 class ComponentIgnoreFile(IgnoreFile):
-    """Inherit to add custom ignores for component code."""
     _COMPONENT_CODE_IGNORES = ["__pycache__"]
 
     def __init__(self, file_path: Optional[Union[str, Path]] = None):

@@ -14,7 +14,6 @@ from ...entities._component.code import ComponentCode, ComponentIgnoreFile
 
 
 class InternalComponentIgnoreFile(ComponentIgnoreFile):
-    """Inherit to add custom ignores for internal component code."""
     _INTERNAL_COMPONENT_CODE_IGNORES = ["*.additional_includes"]
 
     def __init__(self, file_path: Optional[Union[str, Path]] = None):
