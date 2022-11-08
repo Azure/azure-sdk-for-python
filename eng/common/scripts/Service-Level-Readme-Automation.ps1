@@ -49,7 +49,7 @@ function Get-RestContent($readmePath) {
     $readmeContent = Get-Content $readmePath -Raw
     if ($readmeContent -match "\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]") {
       # The existing service level readme contains both metadata and index table
-      if ($readmeContent -match "^---(\r?\n.*)*\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\](?<content>(\r?\n.*)*)$") {
+      if ($readmeContent -match "^---(\r?\n.*){1,30}\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\](?<content>(\r?\n.*)*)$") {
         $restContent = $Matches["content"].trim()
       }
     }
