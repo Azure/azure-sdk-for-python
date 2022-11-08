@@ -127,7 +127,10 @@ class TestScheduleSchema:
         expected_trigger_dict = yaml_obj["trigger"]
         # Append empty pattern
         assert schedule not in expected_trigger_dict
-        assert schedule._to_dict()["trigger"] == expected_trigger_dict
+        actual_trigger_dict = schedule._to_dict()["trigger"]
+        # Remove emtpy key 'schedule': {'hours': [], 'minutes': []}
+        actual_trigger_dict = pydash.omit(actual_trigger_dict, ["schedule"])
+        assert  actual_trigger_dict == expected_trigger_dict
 
     def test_load_recurrence_schedule_with_pattern(self):
         test_path = "./tests/test_configs/schedule/hello_recurrence_schedule_with_pattern.yml"

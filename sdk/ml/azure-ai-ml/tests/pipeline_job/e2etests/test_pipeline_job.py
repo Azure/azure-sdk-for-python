@@ -414,13 +414,8 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "jobs": {
                         "hello_world_inline_commandjob_1": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
                             "environment_variables": {"FOO": "bar"},
                             "name": "hello_world_inline_commandjob_1",
-                            "display_name": None,
-                            "tags": {},
                             "computeId": "cpu-cluster",
                             "inputs": {
                                 "test1": {
@@ -430,21 +425,11 @@ class TestPipelineJob(AzureRecordedTestCase):
                                 },
                                 "literal_input": {"job_input_type": "literal", "value": "2"},
                             },
-                            "outputs": {},
                             "_source": "REMOTE.WORKSPACE.COMPONENT",
                         },
                         "hello_world_inline_commandjob_2": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
-                            "environment_variables": {},
                             "name": "hello_world_inline_commandjob_2",
-                            "display_name": None,
-                            "tags": {},
-                            "computeId": None,
-                            "inputs": {},
-                            "outputs": {},
                             "_source": "REMOTE.WORKSPACE.COMPONENT",
                         },
                     },
@@ -452,7 +437,6 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "settings": {
                         "default_compute": "cpu-cluster",
                         "default_datastore": "workspacefilestore",
-                        "continue_on_step_failure": True,
                         "_source": "YAML.JOB",
                     },
                 },
@@ -487,14 +471,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "jobs": {
                         "train_job": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
-                            "environment_variables": {},
                             "name": "train_job",
-                            "display_name": None,
-                            "tags": {},
-                            "computeId": None,
                             "inputs": {
                                 "training_data": {
                                     "job_input_type": "literal",
@@ -524,14 +501,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                         },
                         "score_job": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
-                            "environment_variables": {},
                             "name": "score_job",
-                            "display_name": None,
-                            "tags": {},
-                            "computeId": None,
                             "inputs": {
                                 "model_input": {
                                     "job_input_type": "literal",
@@ -542,7 +512,6 @@ class TestPipelineJob(AzureRecordedTestCase):
                                     "value": "${{parent.inputs.pipeline_job_test_input}}",
                                 },
                             },
-                            "outputs": {},
                             "_source": "REMOTE.WORKSPACE.COMPONENT",
                         },
                     },
