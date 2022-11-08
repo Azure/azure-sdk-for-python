@@ -437,6 +437,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "settings": {
                         "default_compute": "cpu-cluster",
                         "default_datastore": "workspacefilestore",
+                        "continue_on_step_failure": True,
                         "_source": "YAML.JOB",
                     },
                 },
