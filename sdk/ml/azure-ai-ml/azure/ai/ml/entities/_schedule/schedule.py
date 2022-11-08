@@ -23,7 +23,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
-from .. import CommandJob, Command
+from .. import CommandJob
 from .._builders import BaseNode
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
@@ -236,8 +236,6 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         if hasattr(action.job_definition, "source_job_id"):
             create_job.id = action.job_definition.source_job_id
         create_job = Job._from_rest_object(create_job)
-        if isinstance(create_job, BaseNode):
-            create_job = create_job._to_job()
         return cls(
             trigger=TriggerBase._from_rest_object(properties.trigger),
             create_job=create_job,

@@ -14,7 +14,7 @@ from azure.ai.ml._schema.core.fields import (
     FileRefField,
     NestedField,
     StringTransformedEnum,
-    UnionField, RegistryStr, ArmVersionedStr, CodeField,
+    UnionField, RegistryStr, ArmVersionedStr,
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, \
@@ -37,6 +37,10 @@ class CreateJobFileRefField(FileRefField):
 
         This function is overwrite because we need job can be dumped inside schedule.
         """
+        from azure.ai.ml.entities._builders import BaseNode
+        if isinstance(value, BaseNode):
+            # Dump as Job to avoid missing field.
+            value = value._to_job()
         return value._to_dict()
 
     def _deserialize(self, value, attr, data, **kwargs) -> "Job":

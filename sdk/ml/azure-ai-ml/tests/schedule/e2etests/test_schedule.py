@@ -167,5 +167,15 @@ class TestSchedule(AzureRecordedTestCase):
         )
         assert rest_schedule.name == schedule.name
         client.schedules.begin_disable(schedule.name)
-        # TODO: add assertion, add update test
-        assert rest_schedule
+        rest_schedule_job_dict = rest_schedule._to_dict()["create_job"]
+        # pop added status, default resources, empty services from rest dict
+        rest_schedule_job_dict.pop("status", None)
+        rest_schedule_job_dict.pop("services", None)
+        rest_schedule_job_dict.pop("resources", None)
+        schedule_job_dict = schedule._to_dict()["create_job"]
+        # pop job name, empty parameters from local dict
+        schedule_job_dict.pop("parameters", None)
+        schedule_job_dict.pop("name", None)
+        # add default mode for local
+        schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
+        assert schedule_job_dict == rest_schedule_job_dict
