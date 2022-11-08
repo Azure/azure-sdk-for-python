@@ -544,9 +544,14 @@ class PipelineExpression(PipelineExpressionMixin):
             for _name in sorted(self._inputs):
                 _type = self._inputs[_name].type
                 _data["inputs"][_name] = {"type": _type}
-                _command_inputs_items.append(f"{_name}=\"$AZUREML_PARAMETER_{_name}\"")
+                _command_inputs_items.append(_name + "=\"${{inputs." + _name + "}}\"")
             _command_inputs_string = " ".join(_command_inputs_items)
-            _data["command"] = _data["command"].format(inputs_placeholder=_command_inputs_string)
+            _command_output_string = "output=\"${{outputs.output}}\""
+            _command = (
+                "mldesigner execute --source expression_component.py --name expression_func"
+                " --inputs " + _command_inputs_string + " --outputs " + _command_output_string
+            )
+            _data["command"] = _data["command"].format(command_placeholder=_command)
             dump_yaml_to_file(_path, _data)
 
         if self._created_component is None:
