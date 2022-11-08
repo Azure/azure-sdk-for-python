@@ -407,7 +407,7 @@ def _check_and_upload_path(
             sas_uri=sas_uri,
             artifact_type=artifact_type,
             show_progress=show_progress,
-            ignore_file=getattr(artifact, "ignore_file", None),
+            ignore_file=getattr(artifact, "_ignore_file", None),
         )
         indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
         if artifact._is_anonymous:

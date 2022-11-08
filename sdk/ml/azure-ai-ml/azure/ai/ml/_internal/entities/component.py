@@ -19,14 +19,13 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 from ._merkle_tree import create_merkletree
 
 from ... import Input, Output
-from ..._utils._asset_utils import IgnoreFile, get_ignore_file
+from ..._utils._asset_utils import get_ignore_file
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
-from .code import InternalCode
-from ...entities._component.code import ComponentIgnoreFile
+from .code import InternalCode, InternalComponentIgnoreFile
 from ...entities._job.distribution import DistributionConfiguration
 
 
@@ -209,7 +208,7 @@ class InternalComponent(Component):
         :type code_path: str
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
         """
-        _ignore_file: ComponentIgnoreFile = ComponentIgnoreFile.from_ignore_file(get_ignore_file(code_path))
+        _ignore_file = InternalComponentIgnoreFile.from_ignore_file(get_ignore_file(code_path))
         curr_root = create_merkletree(code_path, lambda x: _ignore_file.is_file_excluded(code_path))
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id

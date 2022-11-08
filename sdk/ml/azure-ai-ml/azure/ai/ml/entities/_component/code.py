@@ -13,11 +13,12 @@ from .._assets import Code
 
 
 class ComponentIgnoreFile(IgnoreFile):
-    """Inherit to add custom ignores."""
-    _COMPONENT_CODE_IGNORES = ["__pycache__", "*.additional_includes"]
+    """Inherit to add custom ignores for component code."""
+    _COMPONENT_CODE_IGNORES = ["__pycache__"]
 
     def __init__(self, file_path: Optional[Union[str, Path]] = None):
         super(ComponentIgnoreFile, self).__init__(file_path=file_path)
+        self._path_spec = self._create_pathspec()
 
     @staticmethod
     def from_ignore_file(ignore_file: IgnoreFile) -> "ComponentIgnoreFile":
@@ -38,7 +39,6 @@ class ComponentIgnoreFile(IgnoreFile):
 
 
 class ComponentCode(Code):
-    """Inherit to add custom ignore file to Code object, which will be applied during upload operation."""
     def __init__(
         self,
         *,
@@ -67,8 +67,3 @@ class ComponentCode(Code):
             self._ignore_file = ComponentIgnoreFile()
         # only calculate hash for local files
         self._hash_sha256 = get_content_hash(self.path, self._ignore_file)
-
-    @property
-    def ignore_file(self) -> ComponentIgnoreFile:
-        """Take effect in _artifact_utilities._check_and_upload_path."""
-        return self._ignore_file
