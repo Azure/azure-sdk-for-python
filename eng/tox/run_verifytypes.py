@@ -72,7 +72,7 @@ def get_type_complete_score(commands, check_pytyped=False):
         if check_pytyped:
             pytyped_present = report["typeCompleteness"].get("pyTypedPath", None)
             if not pytyped_present:
-                print(f"No py.typed file found.")
+                print(f"No py.typed file was found. See aka.ms/python/typing-guide for information.")
                 exit(1)
         return report["typeCompleteness"]["completenessScore"]
 
@@ -133,8 +133,9 @@ if __name__ == "__main__":
     if score_from_released:
         score_from_released_rounded = round(score_from_released*100, 1)
         score_from_current_rounded = round(score_from_current*100, 1)
-        print("\n\n-----Type completeness score comparison-----\n")
+        print("\n-----Type completeness score comparison-----\n")
         print(f"Previous release ({latest_version}): {score_from_released_rounded}%")
         if score_from_current_rounded < score_from_released_rounded:
-            print(f"\nType completeness of {package_name} decreased in this PR. See the above output.")
+            print(f"\nERROR: The type completeness score of {package_name} has decreased since the last release. "
+                  f"See the above output for areas to improve. See aka.ms/python/typing-guide for information.")
             exit(1)

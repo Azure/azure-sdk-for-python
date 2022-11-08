@@ -13,7 +13,7 @@ import os
 import logging
 import sys
 
-from allowed_type_checking_failures import MYPY_OPT_OUT
+from allowed_type_checking_failures import MYPY_OPT_OUT, TYPE_CHECK_SAMPLES_OPT_OUT
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -33,18 +33,23 @@ if __name__ == "__main__":
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
 
-    if package_name not in MYPY_OPT_OUT:
-        logging.info("Package {} has opted to run mypy".format(package_name))
-        check_call(
-            [
-                sys.executable,
-                "-m",
-                "mypy",
-                "--python-version",
-                "3.10",
-                "--show-error-codes",
-                "--ignore-missing-imports",
-                os.path.join(args.target_package, "azure"),
-                os.path.join(args.target_package, "samples")
-            ]
-        )
+    if package_name in MYPY_OPT_OUT:
+        logging.info(f"Package {package_name} opts-out of mypy check.")
+        exit(0)
+
+    paths = [os.path.join(args.target_package, "azure"), os.path.join(args.target_package, "samples")]
+    if package_name in TYPE_CHECK_SAMPLES_OPT_OUT:
+        logging.info(f"Package {package_name} opts-out of mypy check on samples.")
+        paths = paths[:-1]
+
+    commands = [
+        sys.executable,
+        "-m",
+        "mypy",
+        "--python-version",
+        "3.10",
+        "--show-error-codes",
+        "--ignore-missing-imports",
+    ]
+    commands.extend(paths)
+    check_call(commands)

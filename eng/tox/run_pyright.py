@@ -13,7 +13,7 @@ import os
 import logging
 import sys
 
-from allowed_type_checking_failures import PYRIGHT_OPT_OUT
+from allowed_type_checking_failures import PYRIGHT_OPT_OUT, TYPE_CHECK_SAMPLES_OPT_OUT
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -32,14 +32,19 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
+    if package_name in PYRIGHT_OPT_OUT:
+        logging.info(f"Package {package_name} opts-out of pyright check.")
+        exit(0)
 
-    if package_name not in PYRIGHT_OPT_OUT:
-        check_call(
-            [
-                sys.executable,
-                "-m",
-                "pyright",
-                os.path.join(args.target_package, "azure"),
-                os.path.join(args.target_package, "samples"),
-            ]
-        )
+    paths = [os.path.join(args.target_package, "azure"), os.path.join(args.target_package, "samples")]
+    if package_name in TYPE_CHECK_SAMPLES_OPT_OUT:
+        logging.info(f"Package {package_name} opts-out of pyright check on samples.")
+        paths = paths[:-1]
+
+    commands = [
+        sys.executable,
+        "-m",
+        "pyright",
+    ]
+    commands.extend(paths)
+    check_call(commands)
