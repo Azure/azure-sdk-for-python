@@ -296,9 +296,9 @@ official [mypy docs](https://mypy.readthedocs.io/en/stable/type_inference_and_an
 
 All client libraries in the Python SDK repo are automatically opted in to running type checking. If there is a
 reason why a particular library should not run type checking, it is possible to add that library to a block list to prevent mypy/pyright
-from running checks. The opt-out lists are 
+from running checks.
 
-1) Place the package name on the appropriate block list: [eng/tox/allowed_type_checking_failures.py][https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tox/allowed_type_checking_failures.py].
+1) Place the package name on the appropriate block list: [eng/tox/allowed_type_checking_failures.py](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tox/allowed_type_checking_failures.py).
 2) Open an issue tracking that "library-name" should be opted in to running type checking
 
 > Note: Blocking your library from type checking is a *temporary* state. It is expected that checks are re-enabled as soon as possible.
