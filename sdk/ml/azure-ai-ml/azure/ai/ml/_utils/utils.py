@@ -168,7 +168,7 @@ def download_text_from_url(
         timeout_params = {}
     else:
         connect_timeout, read_timeout = timeout if isinstance(timeout, tuple) else (timeout, timeout)
-        timeout_params = dict(timeout=read_timeout, connection_timeout=connect_timeout)
+        timeout_params = dict(read_timeout=read_timeout, connection_timeout=connect_timeout)
 
     response = requests_pipeline.get(source_uri, **timeout_params)
     # Match old behavior from execution service's status API.

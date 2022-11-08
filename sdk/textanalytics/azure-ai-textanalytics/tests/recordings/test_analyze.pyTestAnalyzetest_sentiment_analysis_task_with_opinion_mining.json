@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "363",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -39,41 +39,77 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "c2bd702c-08f2-429d-bac8-a1f4b60c4f67",
+        "apim-request-id": "2dc74d1d-c034-4de1-b458-14ccf73c59f5",
         "Content-Length": "0",
-        "Date": "Fri, 17 Jun 2022 17:35:22 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1aa27aa6-4933-47e4-8e6e-848dde499244?api-version=2022-05-01",
+        "Date": "Mon, 17 Oct 2022 18:49:00 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea195a71-941e-4512-bebb-259d9cc92911?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "117"
+        "x-envoy-upstream-service-time": "202"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/1aa27aa6-4933-47e4-8e6e-848dde499244?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea195a71-941e-4512-bebb-259d9cc92911?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "54835c6b-b5dd-4f72-b2c4-789ddbbb13d8",
-        "Content-Length": "2461",
+        "apim-request-id": "c2822bc1-fba8-4dcb-9adb-7053e1369caa",
+        "Content-Length": "279",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 17 Jun 2022 17:35:27 GMT",
+        "Date": "Mon, 17 Oct 2022 18:49:05 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "34"
+        "x-envoy-upstream-service-time": "24"
       },
       "ResponseBody": {
-        "jobId": "1aa27aa6-4933-47e4-8e6e-848dde499244",
-        "lastUpdatedDateTime": "2022-06-17T17:35:25Z",
-        "createdDateTime": "2022-06-17T17:35:22Z",
-        "expirationDateTime": "2022-06-18T17:35:22Z",
+        "jobId": "ea195a71-941e-4512-bebb-259d9cc92911",
+        "lastUpdateDateTime": "2022-10-17T18:49:02Z",
+        "createdDateTime": "2022-10-17T18:49:01Z",
+        "expirationDateTime": "2022-10-18T18:49:01Z",
+        "status": "running",
+        "errors": [],
+        "tasks": {
+          "completed": 0,
+          "failed": 0,
+          "inProgress": 1,
+          "total": 1,
+          "items": []
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea195a71-941e-4512-bebb-259d9cc92911?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "22ee343f-5325-49bc-9fbd-6bbf7f6d3762",
+        "Content-Length": "2457",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 17 Oct 2022 18:49:11 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "92"
+      },
+      "ResponseBody": {
+        "jobId": "ea195a71-941e-4512-bebb-259d9cc92911",
+        "lastUpdateDateTime": "2022-10-17T18:49:09Z",
+        "createdDateTime": "2022-10-17T18:49:01Z",
+        "expirationDateTime": "2022-10-18T18:49:01Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -85,7 +121,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-17T17:35:25.933235Z",
+              "lastUpdateDateTime": "2022-10-17T18:49:09.5177117Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -176,17 +212,17 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.01,
+                      "positive": 0.0,
                       "neutral": 0.0,
-                      "negative": 0.99
+                      "negative": 1.0
                     },
                     "sentences": [
                       {
                         "sentiment": "negative",
                         "confidenceScores": {
-                          "positive": 0.01,
+                          "positive": 0.0,
                           "neutral": 0.0,
-                          "negative": 0.99
+                          "negative": 1.0
                         },
                         "offset": 0,
                         "length": 32,
@@ -244,7 +280,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-10-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]

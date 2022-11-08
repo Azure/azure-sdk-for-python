@@ -1538,7 +1538,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             list_of_elem = deserialized["models"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), AsyncList(list_of_elem)
+            return deserialized.get("nextLink", None) or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)

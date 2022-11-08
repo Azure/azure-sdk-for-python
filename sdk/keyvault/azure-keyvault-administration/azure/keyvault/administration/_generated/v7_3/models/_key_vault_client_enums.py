@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class DataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Supported permissions for data actions.
-    """
+class DataAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Supported permissions for data actions."""
 
     #: Read HSM key metadata.
     READ_HSM_KEY = "Microsoft.KeyVault/managedHsm/keys/read/action"
@@ -84,24 +82,24 @@ class DataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     #: Generate random numbers.
     RANDOM_NUMBERS_GENERATE = "Microsoft.KeyVault/managedHsm/rng/action"
 
-class RoleDefinitionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The role definition type.
-    """
+
+class RoleDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role definition type."""
 
     MICROSOFT_AUTHORIZATION_ROLE_DEFINITIONS = "Microsoft.Authorization/roleDefinitions"
 
-class RoleScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The role scope.
-    """
 
-    #: Global scope.
-    GLOBAL_ENUM = "/"
-    #: Keys scope.
+class RoleScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role scope."""
+
+    #: Global scope
+    GLOBAL = "/"
+    #: Keys scope
     KEYS = "/keys"
 
-class RoleType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The role type.
-    """
+
+class RoleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The role type."""
 
     #: Built in role.
     BUILT_IN_ROLE = "AKVBuiltInRole"

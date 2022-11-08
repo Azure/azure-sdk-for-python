@@ -1729,7 +1729,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             list_of_elem = deserialized["models"]
             if cls:
                 list_of_elem = cls(list_of_elem)
-            return deserialized.get("nextLink", None), iter(list_of_elem)
+            return deserialized.get("nextLink", None) or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
@@ -1745,7 +1745,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
             return pipeline_response
 
-        return extract_data(get_next())
+        return ItemPaged(get_next, extract_data)
 
     @distributed_trace
     def delete_multivariate_model(  # pylint: disable=inconsistent-return-statements
