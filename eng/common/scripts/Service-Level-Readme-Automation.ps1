@@ -49,7 +49,7 @@ function Get-RestContent($readmePath) {
     $readmeContent = Get-Content $readmePath -Raw
     if ($readmeContent -match "\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]") {
       # The existing service level readme contains both metadata and index table
-      if ($readmeContent -match "^---\n*[^(\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]\n)]*\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\]\n(?<content>(.*\n?)*)") {
+      if ($readmeContent -match "^---(\r?\n.*){1,30}\[\!INCLUDE\s\[.*-packages\]\(.*-index.md\)\](?<content>(\r?\n.*)*)$") {
         $restContent = $Matches["content"].trim()
       }
     }
@@ -72,13 +72,14 @@ function update-service-readme($readmeFolder, $readmeName, $moniker, $msService,
 {
   $readmePath = (Join-Path $readmeFolder -ChildPath $readmeName)
   $restContent = Get-RestContent -readmePath $readmePath
+  $content = ""
   if (Test-Path (Join-Path $readmeFolder -ChildPath $clientTableLink)) {
-    $content = "## Client packages - $moniker`r`n"
-    $content += "[!INCLUDE [client-packages]($clientTableLink)]`r`n"
+    $content += "## Client packages - $moniker`n"
+    $content += "[!INCLUDE [client-packages]($clientTableLink)]`n"
   }
   if (Test-Path (Join-Path $readmeFolder -ChildPath $mgmtTableLink)) {
-    $content += "## Management packages - $moniker`r`n"
-    $content += "[!INCLUDE [mgmt-packages]($mgmtTableLink)]`r`n"
+    $content += "## Management packages - $moniker`n"
+    $content += "[!INCLUDE [mgmt-packages]($mgmtTableLink)]"
   }
   if (!$content) {
     if (Test-Path $readmePath) {
@@ -93,9 +94,9 @@ function update-service-readme($readmeFolder, $readmeName, $moniker, $msService,
   Set-Content -Path $readmePath -Value $metadataString -NoNewline
 
   # Add tables, seperate client and mgmt.
-  $readmeHeader = "# Azure $serviceName SDK for $languageDisplayName - $moniker`r`n"
-  Add-Content -Path $readmePath -Value $readmeHeader
-  Add-Content -Path $readmePath -Value $content -NoNewline
+  $readmeHeader = "# Azure $serviceName SDK for $languageDisplayName - $moniker`n"
+  Add-Content -Path $readmePath -Value $readmeHeader -NoNewline
+  Add-Content -Path $readmePath -Value $content
   if ($restContent) {
     Add-Content -Path $readmePath -Value $restContent -NoNewline
   }
