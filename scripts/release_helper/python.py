@@ -102,23 +102,28 @@ class IssueProcessPython(IssueProcess):
         if self.issue_package.issue.comments == 0 or _CONFIGURED in self.issue_package.labels_name:
             issue_number = self.issue_package.issue.number
             if not self.readme_comparison:
-                issue_link = self.issue_package.issue.html_url
-                release_pipeline_url = get_python_release_pipeline(self.output_folder)
-                res_run = run_pipeline(issue_link=issue_link,
-                                       pipeline_url=release_pipeline_url,
-                                       spec_readme=self.readme_link + '/readme.md',
-                                       python_tag=self.python_tag,
-                                       rest_repo_hash=self.rest_repo_hash
-                                       )
-                if res_run:
-                    self.log(f'{issue_number} run pipeline successfully')
-                    if _CONFIGURED in self.issue_package.labels_name:
-                        self.issue_package.issue.remove_from_labels(_CONFIGURED)
-                else:
-                    self.log(f'{issue_number} run pipeline fail')
+                try:
+                    issue_link = self.issue_package.issue.html_url
+                    release_pipeline_url = get_python_release_pipeline(self.output_folder)
+                    res_run = run_pipeline(issue_link=issue_link,
+                                           pipeline_url=release_pipeline_url,
+                                           spec_readme=self.readme_link + '/readme.md',
+                                           python_tag=self.python_tag,
+                                           rest_repo_hash=self.rest_repo_hash
+                                           )
+                    if res_run:
+                        self.log(f'{issue_number} run pipeline successfully')
+                    else:
+                        self.log(f'{issue_number} run pipeline fail')
+                except Exception as e:
+                    self.comment(f'hi @{self.assignee}, please check release-helper: {e}')
+
                 self.add_label(_AUTO_ASK_FOR_CHECK)
             else:
                 self.log(f'issue {issue_number} need config readme')
+
+            if _CONFIGURED in self.issue_package.labels_name:
+                self.issue_package.issue.remove_from_labels(_CONFIGURED)
 
     def attention_policy(self):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:
