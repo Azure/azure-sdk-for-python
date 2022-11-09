@@ -1,8 +1,11 @@
 # Release History
 
-## 0.0.0 (it should be perview) (2022-11-09)
+## 1.1.0b3 (2022-11-09)
 
+### Other Changes
 
+  - Added generated samples in github repo
+  - Drop support for python<3.7.0
 
 ## 1.0.0b2 (2021-11-01)
 
