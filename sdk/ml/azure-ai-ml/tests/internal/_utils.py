@@ -190,8 +190,6 @@ TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
     PARAMETERS_TO_TEST,
 )))
 
-TEST_CASE_NAME_ENUMERATE = [TEST_CASE_NAME_ENUMERATE[2]]
-
 
 def get_expected_runsettings_items(runsettings_dict, client=None):
     expected_values = copy.deepcopy(runsettings_dict)
