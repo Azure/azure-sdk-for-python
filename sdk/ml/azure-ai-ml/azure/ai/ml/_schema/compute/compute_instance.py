@@ -38,10 +38,10 @@ class CreateOnBehalfOfSchema(PathAwareSchema):
         return AssignedUserConfiguration(**data)
 
 class OsImageMetadataSchema(PathAwareSchema):
-    is_latest_os_version = fields.Bool(dump_only=True)
-    current_os_version = fields.Str(dump_only=True)
-    latest_os_version = fields.Str(dump_only=True)
-    
+    is_latest_os_image_version = fields.Bool(dump_only=True)
+    current_image_version = fields.Str(dump_only=True)
+    latest_image_version = fields.Str(dump_only=True)
+ 
     @post_load
     def make(self, data, **kwargs):
         from azure.ai.ml.entities import OsImageMetadata

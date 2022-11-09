@@ -24,10 +24,11 @@ from azure.ai.ml.entities._mixins import DictMixin
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml.entities._credentials import IdentityConfiguration
+from azure.ai.ml._utils._experimental import experimental
 
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
-from ._image_metdata import ImageMetadata
+from ._image_metadata import ImageMetadata
 
 
 
@@ -195,7 +196,8 @@ class ComputeInstance(Compute):
         rtype: str
         """
         return self._state
-    
+   
+    @experimental
     @property
     def os_image_metadata(self) -> ImageMetadata:
         """
@@ -310,13 +312,14 @@ class ComputeInstance(Compute):
         os_image_metadata = None
         if prop.properties and prop.properties.os_image_metadata:
             metadata = prop.properties.os_image_metadata
+            print(metadata)
             os_image_metadata = ImageMetadata(
-                is_latest_os_version=metadata.is_latest_os_version
-                if metadata.is_latest_os_version else None, 
-                current_os_version=metadata.current_os_version 
-                if metadata.current_os_version else None,
-                latest_os_version=metadata.latest_os_version
-                if metadata.latest_os_version else None,)
+                is_latest_os_image_version=metadata.is_latest_os_image_version
+                if metadata.is_latest_os_image_version is not None else None,
+                current_image_version=metadata.current_image_version
+                if metadata.current_image_version else None,
+                latest_image_version=metadata.latest_image_version
+                if metadata.latest_image_version else None,)
 
         response = ComputeInstance(
             name=rest_obj.name,
