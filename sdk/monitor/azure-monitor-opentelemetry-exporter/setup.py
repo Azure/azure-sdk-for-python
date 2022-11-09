@@ -96,6 +96,9 @@ setup(
         ],
         "opentelemetry_metrics_exporter": [
             "azure_monitor_opentelemetry_exporter = azure.monitor.opentelemetry.exporter:AzureMonitorMetricExporter"
+        ],
+        "opentelemetry_traces_sampler": [
+            "azure_monitor_opentelemetry_sampler = azure.monitor.opentelemetry.exporter.export.trace._sampling:azure_monitor_opentelemetry_sampler_factory"
         ]
     }
 )
