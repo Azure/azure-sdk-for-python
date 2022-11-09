@@ -27,7 +27,7 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._util import is_compute_in_override, load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.ai.ml.entities._credentials import IdentityConfiguration
 from azure.ai.ml._restclient.v2022_02_01_preview.models import (
     EndpointAuthKeys as RestEndpointAuthKeys,
@@ -348,6 +348,7 @@ class KubernetesOnlineEndpoint(OnlineEndpoint):
                     target=ErrorTarget.ONLINE_ENDPOINT,
                     no_personal_data_message=msg.format("[name1]", "[name2]"),
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             super()._merge_with(other)
             self.compute = other.compute or self.compute
