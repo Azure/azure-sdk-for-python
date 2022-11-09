@@ -142,7 +142,7 @@ class ComputeInstance(Compute):
         ssh_settings: Optional[ComputeInstanceSshSettings] = None,
         schedules: Optional[ComputeSchedules] = None,
         identity: IdentityConfiguration = None,
-        idle_time_before_shutdown_minutes: Optional[str] = None,
+        idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,
         **kwargs,
     ):
