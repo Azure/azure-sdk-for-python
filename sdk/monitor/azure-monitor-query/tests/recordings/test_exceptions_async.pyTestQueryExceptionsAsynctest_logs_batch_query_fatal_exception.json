@@ -1,0 +1,43 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "152",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=bad_secret\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fapi.loganalytics.io%2F.default",
+      "StatusCode": 401,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "632",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 09 Nov 2022 21:22:08 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "error": "invalid_client",
+        "error_description": "AADSTS7000215: Invalid client secret provided. Ensure the secret being sent in the request is the client secret value, not the client secret ID, for a secret added to app \u002700000000-0000-0000-0000-000000000000\u0027.\r\nTrace ID: 5e4d0f55-caca-4d17-86bc-8a386ba07400\r\nCorrelation ID: efae3bbe-299e-486f-891b-5838024ecc94\r\nTimestamp: 2022-11-09 21:22:08Z",
+        "error_codes": [
+          7000215
+        ],
+        "timestamp": "2022-11-09 21:22:08Z",
+        "trace_id": "5e4d0f55-caca-4d17-86bc-8a386ba07400",
+        "correlation_id": "efae3bbe-299e-486f-891b-5838024ecc94",
+        "error_uri": "https://login.microsoftonline.com/error?code=7000215"
+      }
+    }
+  ],
+  "Variables": {}
+}

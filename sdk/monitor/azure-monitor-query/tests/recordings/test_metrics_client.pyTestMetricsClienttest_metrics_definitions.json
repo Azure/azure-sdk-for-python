@@ -1,0 +1,5111 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0/.well-known/openid-configuration",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.12.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "1753",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 09 Nov 2022 21:24:04 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+        "token_endpoint_auth_methods_supported": [
+          "client_secret_post",
+          "private_key_jwt",
+          "client_secret_basic"
+        ],
+        "jwks_uri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/discovery/v2.0/keys",
+        "response_modes_supported": [
+          "query",
+          "fragment",
+          "form_post"
+        ],
+        "subject_types_supported": [
+          "pairwise"
+        ],
+        "id_token_signing_alg_values_supported": [
+          "RS256"
+        ],
+        "response_types_supported": [
+          "code",
+          "id_token",
+          "code id_token",
+          "id_token token"
+        ],
+        "scopes_supported": [
+          "openid",
+          "profile",
+          "email",
+          "offline_access"
+        ],
+        "issuer": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/v2.0",
+        "request_uri_parameter_supported": false,
+        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
+        "authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/authorize",
+        "device_authorization_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/devicecode",
+        "http_logout_supported": true,
+        "frontchannel_logout_supported": true,
+        "end_session_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/logout",
+        "claims_supported": [
+          "sub",
+          "iss",
+          "cloud_instance_name",
+          "cloud_instance_host_name",
+          "cloud_graph_host_name",
+          "msgraph_host",
+          "aud",
+          "exp",
+          "iat",
+          "auth_time",
+          "acr",
+          "nonce",
+          "preferred_username",
+          "name",
+          "tid",
+          "ver",
+          "at_hash",
+          "c_hash",
+          "email"
+        ],
+        "kerberos_endpoint": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/kerberos",
+        "tenant_region_scope": "WW",
+        "cloud_instance_name": "microsoftonline.com",
+        "cloud_graph_host_name": "graph.windows.net",
+        "msgraph_host": "graph.microsoft.com",
+        "rbac_url": "https://pas.windows.net"
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-identity/1.12.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Methods": "GET, OPTIONS",
+        "Access-Control-Allow-Origin": "*",
+        "Cache-Control": "max-age=86400, private",
+        "Content-Length": "945",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 09 Nov 2022 21:24:04 GMT",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14006.10 - EUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
+        "api-version": "1.1",
+        "metadata": [
+          {
+            "preferred_network": "login.microsoftonline.com",
+            "preferred_cache": "login.windows.net",
+            "aliases": [
+              "login.microsoftonline.com",
+              "login.windows.net",
+              "login.microsoft.com",
+              "sts.windows.net"
+            ]
+          },
+          {
+            "preferred_network": "login.partner.microsoftonline.cn",
+            "preferred_cache": "login.partner.microsoftonline.cn",
+            "aliases": [
+              "login.partner.microsoftonline.cn",
+              "login.chinacloudapi.cn"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.de",
+            "preferred_cache": "login.microsoftonline.de",
+            "aliases": [
+              "login.microsoftonline.de"
+            ]
+          },
+          {
+            "preferred_network": "login.microsoftonline.us",
+            "preferred_cache": "login.microsoftonline.us",
+            "aliases": [
+              "login.microsoftonline.us",
+              "login.usgovcloudapi.net"
+            ]
+          },
+          {
+            "preferred_network": "login-us.microsoftonline.com",
+            "preferred_cache": "login-us.microsoftonline.com",
+            "aliases": [
+              "login-us.microsoftonline.com"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "client-request-id": "f364e9a1-7ed6-40f7-a18e-31e292431bbb",
+        "Connection": "keep-alive",
+        "Content-Length": "288",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)",
+        "x-client-cpu": "x64",
+        "x-client-current-telemetry": "4|730,0|",
+        "x-client-last-telemetry": "4|0|||",
+        "x-client-os": "linux",
+        "x-client-sku": "MSAL.Python",
+        "x-client-ver": "1.20.0",
+        "x-ms-lib-capability": "retry-after, h429"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "client-request-id": "f364e9a1-7ed6-40f7-a18e-31e292431bbb",
+        "Content-Length": "111",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 09 Nov 2022 21:24:05 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-clitelem": "1,0,0,,",
+        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "refresh_in": 43199,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://management.azure.com/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/Microsoft.Insights/metricDefinitions?api-version=2018-01-01\u0026metricnamespace=Microsoft.OperationalInsights%2Fworkspaces",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-monitorqueryclient/unknown Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "Request-Context",
+        "Cache-Control": "no-cache",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json",
+        "Date": "Wed, 09 Nov 2022 21:24:05 GMT",
+        "Request-Context": "appId=cid-v1:b021da79-5252-4375-9df5-2e17c1dcd822",
+        "Server": "Microsoft-IIS/10.0",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": [
+          "Accept-Encoding",
+          "Accept-Encoding"
+        ],
+        "X-AspNet-Version": "4.0.30319",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-correlation-request-id": "b9335037-b4eb-4038-b860-36b36473ebc2",
+        "x-ms-ratelimit-remaining-subscription-resource-requests": "399",
+        "x-ms-routing-request-id": "WESTUS:20221109T212405Z:b9335037-b4eb-4038-b860-36b36473ebc2",
+        "X-Powered-By": "ASP.NET"
+      },
+      "ResponseBody": {
+        "value": [
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Free Inodes",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Free Inodes",
+              "localizedValue": "% Free Inodes"
+            },
+            "displayDescription": "Average_% Free Inodes. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Free Space",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Free Space",
+              "localizedValue": "% Free Space"
+            },
+            "displayDescription": "Average_% Free Space. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Used Inodes",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Used Inodes",
+              "localizedValue": "% Used Inodes"
+            },
+            "displayDescription": "Average_% Used Inodes. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Used Space",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Used Space",
+              "localizedValue": "% Used Space"
+            },
+            "displayDescription": "Average_% Used Space. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Disk Read Bytes/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Disk Read Bytes/sec",
+              "localizedValue": "Disk Read Bytes/sec"
+            },
+            "displayDescription": "Average_Disk Read Bytes/sec. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Disk Reads/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Disk Reads/sec",
+              "localizedValue": "Disk Reads/sec"
+            },
+            "displayDescription": "Average_Disk Reads/sec. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Disk Transfers/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Disk Transfers/sec",
+              "localizedValue": "Disk Transfers/sec"
+            },
+            "displayDescription": "Average_Disk Transfers/sec. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Disk Write Bytes/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Disk Write Bytes/sec",
+              "localizedValue": "Disk Write Bytes/sec"
+            },
+            "displayDescription": "Average_Disk Write Bytes/sec. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Disk Writes/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Disk Writes/sec",
+              "localizedValue": "Disk Writes/sec"
+            },
+            "displayDescription": "Average_Disk Writes/sec. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Free Megabytes",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Free Megabytes",
+              "localizedValue": "Free Megabytes"
+            },
+            "displayDescription": "Average_Free Megabytes. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Logical Disk Bytes/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Logical Disk Bytes/sec",
+              "localizedValue": "Logical Disk Bytes/sec"
+            },
+            "displayDescription": "Average_Logical Disk Bytes/sec. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Available Memory",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Available Memory",
+              "localizedValue": "% Available Memory"
+            },
+            "displayDescription": "Average_% Available Memory. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Available Swap Space",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Available Swap Space",
+              "localizedValue": "% Available Swap Space"
+            },
+            "displayDescription": "Average_% Available Swap Space. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Used Memory",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Used Memory",
+              "localizedValue": "% Used Memory"
+            },
+            "displayDescription": "Average_% Used Memory. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Used Swap Space",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Used Swap Space",
+              "localizedValue": "% Used Swap Space"
+            },
+            "displayDescription": "Average_% Used Swap Space. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Available MBytes Memory",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Available MBytes Memory",
+              "localizedValue": "Available MBytes Memory"
+            },
+            "displayDescription": "Average_Available MBytes Memory. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Available MBytes Swap",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Available MBytes Swap",
+              "localizedValue": "Available MBytes Swap"
+            },
+            "displayDescription": "Average_Available MBytes Swap. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Page Reads/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Page Reads/sec",
+              "localizedValue": "Page Reads/sec"
+            },
+            "displayDescription": "Average_Page Reads/sec. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Page Writes/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Page Writes/sec",
+              "localizedValue": "Page Writes/sec"
+            },
+            "displayDescription": "Average_Page Writes/sec. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Pages/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Pages/sec",
+              "localizedValue": "Pages/sec"
+            },
+            "displayDescription": "Average_Pages/sec. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Used MBytes Swap Space",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Used MBytes Swap Space",
+              "localizedValue": "Used MBytes Swap Space"
+            },
+            "displayDescription": ". Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Used Memory MBytes",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Used Memory MBytes",
+              "localizedValue": "Used Memory MBytes"
+            },
+            "displayDescription": "Average_Used Memory MBytes. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Total Bytes Transmitted",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Total Bytes Transmitted",
+              "localizedValue": "Total Bytes Transmitted"
+            },
+            "displayDescription": "Average_Total Bytes Transmitted. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Total Bytes Received",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Total Bytes Received",
+              "localizedValue": "Total Bytes Received"
+            },
+            "displayDescription": "Average_Total Bytes Received. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Total Bytes",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Total Bytes",
+              "localizedValue": "Total Bytes"
+            },
+            "displayDescription": "Average_Total Bytes. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Total Packets Transmitted",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Total Packets Transmitted",
+              "localizedValue": "Total Packets Transmitted"
+            },
+            "displayDescription": "Average_Total Packets Transmitted. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Total Packets Received",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Total Packets Received",
+              "localizedValue": "Total Packets Received"
+            },
+            "displayDescription": "Average_Total Packets Received. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Total Rx Errors",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Total Rx Errors",
+              "localizedValue": "Total Rx Errors"
+            },
+            "displayDescription": "Average_Total Rx Errors. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Total Tx Errors",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Total Tx Errors",
+              "localizedValue": "Total Tx Errors"
+            },
+            "displayDescription": "Average_Total Tx Errors. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Total Collisions",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Total Collisions",
+              "localizedValue": "Total Collisions"
+            },
+            "displayDescription": "Average_Total Collisions. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Avg. Disk sec/Read",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Avg. Disk sec/Read",
+              "localizedValue": "Avg. Disk sec/Read"
+            },
+            "displayDescription": "Average_Avg. Disk sec/Read. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Avg. Disk sec/Transfer",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Avg. Disk sec/Transfer",
+              "localizedValue": "Avg. Disk sec/Transfer"
+            },
+            "displayDescription": "Average_Avg. Disk sec/Transfer. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Avg. Disk sec/Write",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Avg. Disk sec/Write",
+              "localizedValue": "Avg. Disk sec/Write"
+            },
+            "displayDescription": "Average_Avg. Disk sec/Write. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric). ",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Physical Disk Bytes/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Physical Disk Bytes/sec",
+              "localizedValue": "Physical Disk Bytes/sec"
+            },
+            "displayDescription": "Average_Physical Disk Bytes/sec. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Pct Privileged Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Pct Privileged Time",
+              "localizedValue": "Pct Privileged Time"
+            },
+            "displayDescription": "Average_Pct Privileged Time. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Pct User Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Pct User Time",
+              "localizedValue": "Pct User Time"
+            },
+            "displayDescription": "Average_Pct User Time. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Used Memory kBytes",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Used Memory kBytes",
+              "localizedValue": "Used Memory kBytes"
+            },
+            "displayDescription": "Average_Used Memory kBytes. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Virtual Shared Memory",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Virtual Shared Memory",
+              "localizedValue": "Virtual Shared Memory"
+            },
+            "displayDescription": "Average_Virtual Shared Memory. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% DPC Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% DPC Time",
+              "localizedValue": "% DPC Time"
+            },
+            "displayDescription": "Average_% DPC Time. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Idle Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Idle Time",
+              "localizedValue": "% Idle Time"
+            },
+            "displayDescription": "Average_% Idle Time. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Interrupt Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Interrupt Time",
+              "localizedValue": "% Interrupt Time"
+            },
+            "displayDescription": "Average_% Interrupt Time. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% IO Wait Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% IO Wait Time",
+              "localizedValue": "% IO Wait Time"
+            },
+            "displayDescription": "Average_% IO Wait Time. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Nice Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Nice Time",
+              "localizedValue": "% Nice Time"
+            },
+            "displayDescription": "Average_% Nice Time. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Privileged Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Privileged Time",
+              "localizedValue": "% Privileged Time"
+            },
+            "displayDescription": "Average_% Privileged Time. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Processor Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Processor Time",
+              "localizedValue": "% Processor Time"
+            },
+            "displayDescription": "Average_% Processor Time. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% User Time",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% User Time",
+              "localizedValue": "% User Time"
+            },
+            "displayDescription": "Average_% User Time. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Free Physical Memory",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Free Physical Memory",
+              "localizedValue": "Free Physical Memory"
+            },
+            "displayDescription": "Average_Free Physical Memory. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric). ",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Free Space in Paging Files",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Free Space in Paging Files",
+              "localizedValue": "Free Space in Paging Files"
+            },
+            "displayDescription": "Average_Free Space in Paging Files. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Free Virtual Memory",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Free Virtual Memory",
+              "localizedValue": "Free Virtual Memory"
+            },
+            "displayDescription": "Average_Free Virtual Memory. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Processes",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Processes",
+              "localizedValue": "Processes"
+            },
+            "displayDescription": "Average_Processes. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Size Stored In Paging Files",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Size Stored In Paging Files",
+              "localizedValue": "Size Stored In Paging Files"
+            },
+            "displayDescription": "Average_Size Stored In Paging Files. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Uptime",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Uptime",
+              "localizedValue": "Uptime"
+            },
+            "displayDescription": "Average_Uptime. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Users",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Users",
+              "localizedValue": "Users"
+            },
+            "displayDescription": "Average_Users. Supported for: Linux. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Current Disk Queue Length",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Current Disk Queue Length",
+              "localizedValue": "Current Disk Queue Length"
+            },
+            "displayDescription": "Average_Current Disk Queue Length. Supported for: Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Available MBytes",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Available MBytes",
+              "localizedValue": "Available MBytes"
+            },
+            "displayDescription": "Average_Available MBytes. Supported for: Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_% Committed Bytes In Use",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_% Committed Bytes In Use",
+              "localizedValue": "% Committed Bytes In Use"
+            },
+            "displayDescription": "Average_% Committed Bytes In Use. Supported for: Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Bytes Received/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Bytes Received/sec",
+              "localizedValue": "Bytes Received/sec"
+            },
+            "displayDescription": "Average_Bytes Received/sec. Supported for: Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Bytes Sent/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Bytes Sent/sec",
+              "localizedValue": "Bytes Sent/sec"
+            },
+            "displayDescription": "Average_Bytes Sent/sec. Supported for: Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Bytes Total/sec",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Bytes Total/sec",
+              "localizedValue": "Bytes Total/sec"
+            },
+            "displayDescription": "Average_Bytes Total/sec. Supported for: Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Average_Processor Queue Length",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Average_Processor Queue Length",
+              "localizedValue": "Processor Queue Length"
+            },
+            "displayDescription": "Average_Processor Queue Length. Supported for: Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric). ",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "ObjectName",
+                "localizedValue": "ObjectName"
+              },
+              {
+                "value": "InstanceName",
+                "localizedValue": "InstanceName"
+              },
+              {
+                "value": "CounterPath",
+                "localizedValue": "CounterPath"
+              },
+              {
+                "value": "SourceSystem",
+                "localizedValue": "SourceSystem"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Heartbeat",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Heartbeat",
+              "localizedValue": "Heartbeat"
+            },
+            "displayDescription": "Heartbeat. Supported for: Linux, Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Total",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "OSType",
+                "localizedValue": "OSType"
+              },
+              {
+                "value": "Version",
+                "localizedValue": "Version"
+              },
+              {
+                "value": "SourceComputerId",
+                "localizedValue": "SourceComputerId"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Update",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Update",
+              "localizedValue": "Update"
+            },
+            "displayDescription": "Update. Supported for: Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "Product",
+                "localizedValue": "Product"
+              },
+              {
+                "value": "Classification",
+                "localizedValue": "Classification"
+              },
+              {
+                "value": "UpdateState",
+                "localizedValue": "UpdateState"
+              },
+              {
+                "value": "Optional",
+                "localizedValue": "Optional"
+              },
+              {
+                "value": "Approved",
+                "localizedValue": "Approved"
+              }
+            ]
+          },
+          {
+            "id": "/subscriptions/fake-subscription/resourceGroups/fake-resource/providers/microsoft.insights/metricdefinitions/Event",
+            "resourceId": "/subscriptions/fake-subscription/resourceGroups/fake-resource",
+            "namespace": "Microsoft.OperationalInsights/workspaces",
+            "name": {
+              "value": "Event",
+              "localizedValue": "Event"
+            },
+            "displayDescription": "Event. Supported for: Windows. Part of [metric alerts for logs feature](https://aka.ms/am-log-to-metric).",
+            "isDimensionRequired": false,
+            "unit": "Count",
+            "primaryAggregationType": "Average",
+            "supportedAggregationTypes": [
+              "None",
+              "Average",
+              "Minimum",
+              "Maximum",
+              "Total",
+              "Count"
+            ],
+            "metricAvailabilities": [
+              {
+                "timeGrain": "PT1M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT5M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT15M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT30M",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT1H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT6H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "PT12H",
+                "retention": "P93D"
+              },
+              {
+                "timeGrain": "P1D",
+                "retention": "P93D"
+              }
+            ],
+            "dimensions": [
+              {
+                "value": "Source",
+                "localizedValue": "Source"
+              },
+              {
+                "value": "EventLog",
+                "localizedValue": "EventLog"
+              },
+              {
+                "value": "Computer",
+                "localizedValue": "Computer"
+              },
+              {
+                "value": "EventCategory",
+                "localizedValue": "EventCategory"
+              },
+              {
+                "value": "EventLevel",
+                "localizedValue": "EventLevel"
+              },
+              {
+                "value": "EventLevelName",
+                "localizedValue": "EventLevelName"
+              },
+              {
+                "value": "EventID",
+                "localizedValue": "EventID"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ],
+  "Variables": {}
+}

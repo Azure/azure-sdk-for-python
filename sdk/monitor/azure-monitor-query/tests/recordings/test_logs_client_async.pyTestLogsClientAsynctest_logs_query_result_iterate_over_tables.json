@@ -1,0 +1,506 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://login.microsoftonline.com/00000000-0000-0000-0000-000000000000/oauth2/v2.0/token",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "178",
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "azsdk-python-identity/1.12.1 Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+      },
+      "RequestBody": "client_id=00000000-0000-0000-0000-000000000000\u0026client_secret=00000000-0000-0000-0000-000000000000\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fapi.loganalytics.io%2F.default",
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Cache-Control": "no-store, no-cache",
+        "Content-Length": "92",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 09 Nov 2022 21:23:51 GMT",
+        "Expires": "-1",
+        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
+        "Pragma": "no-cache",
+        "Set-Cookie": "[set-cookie;]",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
+        "X-Content-Type-Options": "nosniff",
+        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
+        "X-XSS-Protection": "0"
+      },
+      "ResponseBody": {
+        "token_type": "Bearer",
+        "expires_in": 86399,
+        "ext_expires_in": 86399,
+        "access_token": "Sanitized"
+      }
+    },
+    {
+      "RequestUri": "https://api.loganalytics.io/v1/workspaces/00000000-0000-0000-0000-000000000000/query",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "56",
+        "Content-Type": "application/json",
+        "Prefer": "include-statistics=true,include-render=true",
+        "User-Agent": "azsdk-python-monitorqueryclient/unknown Python/3.10.6 (Linux-5.10.102.1-microsoft-standard-WSL2-x86_64-with-glibc2.31)"
+      },
+      "RequestBody": {
+        "query": "AppRequests | take 10; AppRequests | take 5"
+      },
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Expose-Headers": "Retry-After,Age,WWW-Authenticate,x-resource-identities,x-ms-status-location",
+        "Age": "47",
+        "Connection": "keep-alive",
+        "Content-Encoding": "gzip",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Wed, 09 Nov 2022 21:23:52 GMT",
+        "Strict-Transport-Security": "max-age=15724800; includeSubDomains",
+        "Transfer-Encoding": "chunked",
+        "Vary": "Accept-Encoding",
+        "Via": "1.1 draft-oms-7f9bc6678d-9dbsz",
+        "X-Content-Type-Options": "nosniff"
+      },
+      "ResponseBody": {
+        "tables": [
+          {
+            "name": "PrimaryResult",
+            "columns": [
+              {
+                "name": "TenantId",
+                "type": "string"
+              },
+              {
+                "name": "TimeGenerated",
+                "type": "datetime"
+              },
+              {
+                "name": "Id",
+                "type": "string"
+              },
+              {
+                "name": "Source",
+                "type": "string"
+              },
+              {
+                "name": "Name",
+                "type": "string"
+              },
+              {
+                "name": "Url",
+                "type": "string"
+              },
+              {
+                "name": "Success",
+                "type": "bool"
+              },
+              {
+                "name": "ResultCode",
+                "type": "string"
+              },
+              {
+                "name": "DurationMs",
+                "type": "real"
+              },
+              {
+                "name": "PerformanceBucket",
+                "type": "string"
+              },
+              {
+                "name": "Properties",
+                "type": "dynamic"
+              },
+              {
+                "name": "Measurements",
+                "type": "dynamic"
+              },
+              {
+                "name": "OperationName",
+                "type": "string"
+              },
+              {
+                "name": "OperationId",
+                "type": "string"
+              },
+              {
+                "name": "OperationLinks",
+                "type": "dynamic"
+              },
+              {
+                "name": "ParentId",
+                "type": "string"
+              },
+              {
+                "name": "SyntheticSource",
+                "type": "string"
+              },
+              {
+                "name": "SessionId",
+                "type": "string"
+              },
+              {
+                "name": "UserId",
+                "type": "string"
+              },
+              {
+                "name": "UserAuthenticatedId",
+                "type": "string"
+              },
+              {
+                "name": "UserAccountId",
+                "type": "string"
+              },
+              {
+                "name": "AppVersion",
+                "type": "string"
+              },
+              {
+                "name": "AppRoleName",
+                "type": "string"
+              },
+              {
+                "name": "AppRoleInstance",
+                "type": "string"
+              },
+              {
+                "name": "ClientType",
+                "type": "string"
+              },
+              {
+                "name": "ClientModel",
+                "type": "string"
+              },
+              {
+                "name": "ClientOS",
+                "type": "string"
+              },
+              {
+                "name": "ClientIP",
+                "type": "string"
+              },
+              {
+                "name": "ClientCity",
+                "type": "string"
+              },
+              {
+                "name": "ClientStateOrProvince",
+                "type": "string"
+              },
+              {
+                "name": "ClientCountryOrRegion",
+                "type": "string"
+              },
+              {
+                "name": "ClientBrowser",
+                "type": "string"
+              },
+              {
+                "name": "ResourceGUID",
+                "type": "string"
+              },
+              {
+                "name": "IKey",
+                "type": "string"
+              },
+              {
+                "name": "SDKVersion",
+                "type": "string"
+              },
+              {
+                "name": "ItemCount",
+                "type": "int"
+              },
+              {
+                "name": "ReferencedItemId",
+                "type": "string"
+              },
+              {
+                "name": "ReferencedType",
+                "type": "string"
+              },
+              {
+                "name": "SourceSystem",
+                "type": "string"
+              },
+              {
+                "name": "Type",
+                "type": "string"
+              },
+              {
+                "name": "_ResourceId",
+                "type": "string"
+              }
+            ],
+            "rows": []
+          },
+          {
+            "name": "PrimaryResult",
+            "columns": [
+              {
+                "name": "TenantId",
+                "type": "string"
+              },
+              {
+                "name": "TimeGenerated",
+                "type": "datetime"
+              },
+              {
+                "name": "Id",
+                "type": "string"
+              },
+              {
+                "name": "Source",
+                "type": "string"
+              },
+              {
+                "name": "Name",
+                "type": "string"
+              },
+              {
+                "name": "Url",
+                "type": "string"
+              },
+              {
+                "name": "Success",
+                "type": "bool"
+              },
+              {
+                "name": "ResultCode",
+                "type": "string"
+              },
+              {
+                "name": "DurationMs",
+                "type": "real"
+              },
+              {
+                "name": "PerformanceBucket",
+                "type": "string"
+              },
+              {
+                "name": "Properties",
+                "type": "dynamic"
+              },
+              {
+                "name": "Measurements",
+                "type": "dynamic"
+              },
+              {
+                "name": "OperationName",
+                "type": "string"
+              },
+              {
+                "name": "OperationId",
+                "type": "string"
+              },
+              {
+                "name": "OperationLinks",
+                "type": "dynamic"
+              },
+              {
+                "name": "ParentId",
+                "type": "string"
+              },
+              {
+                "name": "SyntheticSource",
+                "type": "string"
+              },
+              {
+                "name": "SessionId",
+                "type": "string"
+              },
+              {
+                "name": "UserId",
+                "type": "string"
+              },
+              {
+                "name": "UserAuthenticatedId",
+                "type": "string"
+              },
+              {
+                "name": "UserAccountId",
+                "type": "string"
+              },
+              {
+                "name": "AppVersion",
+                "type": "string"
+              },
+              {
+                "name": "AppRoleName",
+                "type": "string"
+              },
+              {
+                "name": "AppRoleInstance",
+                "type": "string"
+              },
+              {
+                "name": "ClientType",
+                "type": "string"
+              },
+              {
+                "name": "ClientModel",
+                "type": "string"
+              },
+              {
+                "name": "ClientOS",
+                "type": "string"
+              },
+              {
+                "name": "ClientIP",
+                "type": "string"
+              },
+              {
+                "name": "ClientCity",
+                "type": "string"
+              },
+              {
+                "name": "ClientStateOrProvince",
+                "type": "string"
+              },
+              {
+                "name": "ClientCountryOrRegion",
+                "type": "string"
+              },
+              {
+                "name": "ClientBrowser",
+                "type": "string"
+              },
+              {
+                "name": "ResourceGUID",
+                "type": "string"
+              },
+              {
+                "name": "IKey",
+                "type": "string"
+              },
+              {
+                "name": "SDKVersion",
+                "type": "string"
+              },
+              {
+                "name": "ItemCount",
+                "type": "int"
+              },
+              {
+                "name": "ReferencedItemId",
+                "type": "string"
+              },
+              {
+                "name": "ReferencedType",
+                "type": "string"
+              },
+              {
+                "name": "SourceSystem",
+                "type": "string"
+              },
+              {
+                "name": "Type",
+                "type": "string"
+              },
+              {
+                "name": "_ResourceId",
+                "type": "string"
+              }
+            ],
+            "rows": []
+          }
+        ],
+        "render": {
+          "visualization": null,
+          "title": null,
+          "accumulate": false,
+          "isQuerySorted": false,
+          "kind": null,
+          "legend": null,
+          "series": null,
+          "yMin": "NaN",
+          "yMax": "NaN",
+          "xAxis": null,
+          "xColumn": null,
+          "xTitle": null,
+          "yAxis": null,
+          "yColumns": null,
+          "ySplit": null,
+          "yTitle": null,
+          "anomalyColumns": null
+        },
+        "statistics": {
+          "query": {
+            "executionTime": 0.0156525,
+            "resourceUsage": {
+              "cache": {
+                "memory": {
+                  "hits": 0,
+                  "misses": 0,
+                  "total": 0
+                },
+                "disk": {
+                  "hits": 0,
+                  "misses": 0,
+                  "total": 0
+                },
+                "shards": {
+                  "hot": {
+                    "hitbytes": 0,
+                    "missbytes": 0,
+                    "retrievebytes": 0
+                  },
+                  "cold": {
+                    "hitbytes": 0,
+                    "missbytes": 0,
+                    "retrievebytes": 0
+                  },
+                  "bypassbytes": 0
+                }
+              },
+              "cpu": {
+                "user": "00:00:00",
+                "kernel": "00:00:00",
+                "totalCpu": "00:00:00"
+              },
+              "memory": {
+                "peakPerNode": 524384
+              },
+              "network": {
+                "interClusterTotalBytes": 1824,
+                "crossClusterTotalBytes": 0
+              }
+            },
+            "inputDatasetStatistics": {
+              "extents": {
+                "total": 0,
+                "scanned": 0,
+                "scannedMinDatetime": "0001-01-01T00:00:00.0000000Z",
+                "scannedMaxDatetime": "0001-01-01T00:00:00.0000000Z"
+              },
+              "rows": {
+                "total": 0,
+                "scanned": 0
+              },
+              "rowstores": {
+                "scannedRows": 0,
+                "scannedValuesSize": 0
+              },
+              "shards": {
+                "queriesGeneric": 0,
+                "queriesSpecialized": 0
+              }
+            },
+            "datasetStatistics": [
+              {
+                "tableRowCount": 0,
+                "tableSize": 0
+              },
+              {
+                "tableRowCount": 0,
+                "tableSize": 0
+              }
+            ],
+            "crossClusterResourceUsage": {}
+          }
+        }
+      }
+    }
+  ],
+  "Variables": {}
+}
