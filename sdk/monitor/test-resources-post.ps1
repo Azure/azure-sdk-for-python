@@ -21,7 +21,7 @@ $streamName = $DeploymentOutputs['AZURE_MONITOR_STREAM_NAME']
 $scope= [System.Web.HttpUtility]::UrlEncode("https://monitor.azure.com//.default")
 $body = "client_id=$clientId&scope=$scope&client_secret=$clientSecret&grant_type=client_credentials";
 $headers = @{"Content-Type"="application/x-www-form-urlencoded"};
-$uri = "https://login.microsoftonline.com/$TenantId/oauth2/v2.0/token"
+$uri = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
 $bearerToken = (Invoke-RestMethod -Uri $uri -Method "Post" -Body $body -Headers $headers).access_token
 
 ##################
@@ -65,6 +65,7 @@ $headers = @{"Authorization"="Bearer $bearerToken";"Content-Type"="application/j
 $uri = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}?api-version=2021-11-01-preview"
 $uri2 = "$dceEndpoint/dataCollectionRules/$dcrImmutableId/streams/${streamName}2?api-version=2021-11-01-preview"
 
+Write-Host "Sending sample data..."
 Invoke-RestMethod -Uri $uri -Method "Post" -Body $body -Headers $headers -TimeoutSec 20 -MaximumRetryCount 3
 Invoke-RestMethod -Uri $uri2 -Method "Post" -Body $body -Headers $headers -TimeoutSec 20 -MaximumRetryCount 3
 
