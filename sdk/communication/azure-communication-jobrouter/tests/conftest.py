@@ -79,8 +79,16 @@ def start_proxy(test_proxy):
 
 @pytest.fixture(scope = "function", autouse = True)
 def initialize_test(request):
-    print("Inside initialize test")
-    request.cls._testMethodName = request.node.originalname
+    if request.node.originalname is None:
+        # tox throws error otherwise
+        test_name = os.environ.get('PYTEST_CURRENT_TEST').split(':')[-1].split(' ')[0]
+        request.cls._testMethodName = test_name
+    else:
+        request.cls._testMethodName = request.node.originalname
+
+
+@pytest.fixture(scope = "class", autouse = True)
+def initialize_class(request):
     request.cls.queue_ids = {}  # type: Dict[str, List[str]]
     request.cls.distribution_policy_ids = {}  # type: Dict[str, List[str]]
     request.cls.exception_policy_ids = {}  # type: Dict[str, List[str]]
