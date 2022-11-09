@@ -5,5 +5,5 @@
 -e ../../resources/azure-mgmt-resource
 -e ../azure-mgmt-eventgrid
 azure-storage-queue
-cloudevents<=2.0.0; python_version >= "3.6"
+cloudevents<=2.0.0; python_version >= "3.7"
 aiohttp>=3.0

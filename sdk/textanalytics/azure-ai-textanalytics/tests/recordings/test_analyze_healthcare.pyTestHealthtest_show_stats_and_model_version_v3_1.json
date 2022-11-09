@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs?model-version=2021-01-11\u0026stringIndexType=UnicodeCodePoint",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs?stringIndexType=UnicodeCodePoint",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json, text/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "241",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "documents": [
@@ -42,106 +42,133 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "a546f3a9-c671-41b6-b9ca-1c2f9c28f7ef",
-        "Date": "Thu, 09 Jun 2022 23:09:33 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/86da95aa-bf8f-4dbf-a2c4-0ebbd61e9fd5",
+        "apim-request-id": "1b63d895-5cb4-4b5b-9baf-d13e5235afcf",
+        "Date": "Mon, 10 Oct 2022 20:55:28 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/f20d1ff9-11b0-46fa-bb24-1eee79dba97a",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "294"
+        "x-envoy-upstream-service-time": "298"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/86da95aa-bf8f-4dbf-a2c4-0ebbd61e9fd5?showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/f20d1ff9-11b0-46fa-bb24-1eee79dba97a?showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
-      "StatusCode": 200,
+      "StatusCode": 500,
       "ResponseHeaders": {
-        "apim-request-id": "a72b95cd-2d45-49e0-9e74-d5d8996f5303",
+        "apim-request-id": "faea4b30-6fcc-448f-b836-f83323baf30f",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 23:09:38 GMT",
+        "Date": "Mon, 10 Oct 2022 20:55:34 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "Transfer-Encoding": "chunked",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "78"
+        "x-envoy-upstream-service-time": "110"
       },
       "ResponseBody": {
-        "jobId": "86da95aa-bf8f-4dbf-a2c4-0ebbd61e9fd5",
-        "lastUpdateDateTime": "2022-06-09T23:09:34Z",
-        "createdDateTime": "2022-06-09T23:09:33Z",
-        "expirationDateTime": "2022-06-10T23:09:33Z",
-        "status": "succeeded",
-        "errors": [],
-        "results": {
-          "statistics": {
-            "documentsCount": 5,
-            "validDocumentsCount": 4,
-            "erroneousDocumentsCount": 1,
-            "transactionsCount": 4
+        "error": {
+          "code": "InternalServerError",
+          "innerError": {
+            "requestId": "faea4b30-6fcc-448f-b836-f83323baf30f"
           },
-          "documents": [
-            {
-              "id": "56",
-              "statistics": {
-                "charactersCount": 2,
-                "transactionsCount": 1
-              },
-              "entities": [],
-              "relations": [],
-              "warnings": []
-            },
-            {
-              "id": "0",
-              "statistics": {
-                "charactersCount": 2,
-                "transactionsCount": 1
-              },
-              "entities": [],
-              "relations": [],
-              "warnings": []
-            },
-            {
-              "id": "19",
-              "statistics": {
-                "charactersCount": 2,
-                "transactionsCount": 1
-              },
-              "entities": [],
-              "relations": [],
-              "warnings": []
-            },
-            {
-              "id": "1",
-              "statistics": {
-                "charactersCount": 2,
-                "transactionsCount": 1
-              },
-              "entities": [],
-              "relations": [],
-              "warnings": []
-            }
-          ],
-          "errors": [
-            {
-              "id": "22",
-              "error": {
-                "code": "InvalidArgument",
-                "message": "Invalid Document in request.",
-                "innererror": {
-                  "code": "InvalidDocument",
-                  "message": "Document text is empty."
-                }
-              }
-            }
-          ],
-          "modelVersion": "2022-03-01"
+          "message": "Internal server error"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/f20d1ff9-11b0-46fa-bb24-1eee79dba97a?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "apim-request-id": "b1779128-e923-4cfe-8c62-bec30769917b",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 10 Oct 2022 20:55:34 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "119"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "innerError": {
+            "requestId": "b1779128-e923-4cfe-8c62-bec30769917b"
+          },
+          "message": "Internal server error"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/f20d1ff9-11b0-46fa-bb24-1eee79dba97a?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "apim-request-id": "391bca30-62d3-4e3b-bd71-693289f72323",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 10 Oct 2022 20:55:36 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "102"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "innerError": {
+            "requestId": "391bca30-62d3-4e3b-bd71-693289f72323"
+          },
+          "message": "Internal server error"
+        }
+      }
+    },
+    {
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/text/analytics/v3.1/entities/health/jobs/f20d1ff9-11b0-46fa-bb24-1eee79dba97a?showStats=True",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "*/*",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 500,
+      "ResponseHeaders": {
+        "apim-request-id": "627a94fa-fa2f-4af2-947d-a74fe95a8f42",
+        "Content-Type": "application/json; charset=utf-8",
+        "Date": "Mon, 10 Oct 2022 20:55:39 GMT",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "Transfer-Encoding": "chunked",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "105"
+      },
+      "ResponseBody": {
+        "error": {
+          "code": "InternalServerError",
+          "innerError": {
+            "requestId": "627a94fa-fa2f-4af2-947d-a74fe95a8f42"
+          },
+          "message": "Internal server error"
         }
       }
     }
