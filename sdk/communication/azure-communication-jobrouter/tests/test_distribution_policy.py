@@ -7,7 +7,9 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from _router_test_case import RouterTestCase
+from devtools_testutils import recorded_by_proxy
+from _router_test_case import RouterRecordedTestCase
+from _decorators import RouterPreparers
 from _validators import DistributionPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str  # pylint:disable=protected-access
 from azure.core.exceptions import ResourceNotFoundError
@@ -33,12 +35,8 @@ distribution_modes = [
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestDistributionPolicy(RouterTestCase):
-    def __init__(self, method_name):
-        super(TestDistributionPolicy, self).__init__(method_name)
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-
-    def clean_up(self):
+class TestDistributionPolicy(RouterRecordedTestCase):
+    def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
             router_client: RouterAdministrationClient = self.create_admin_client()
@@ -47,16 +45,9 @@ class TestDistributionPolicy(RouterTestCase):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                     router_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
-    def setUp(self):
-        super(TestDistributionPolicy, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestDistributionPolicy, self).tearDown()
-
-    def test_create_distribution_policy(self):
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
+    def test_create_distribution_policy(self, **kwargs):
         dp_identifier = "tst_create_dp"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -84,10 +75,9 @@ class TestDistributionPolicy(RouterTestCase):
                 mode = mode
             )
 
-        # cleanup
-        self.clean_up()
-
-    def test_update_distribution_policy(self):
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
+    def test_update_distribution_policy(self, **kwargs):
         dp_identifier = "tst_update_dp"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -135,10 +125,9 @@ class TestDistributionPolicy(RouterTestCase):
                 mode = mode
             )
 
-        # cleanup
-        self.clean_up()
-
-    def test_update_distribution_policy_w_kwargs(self):
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
+    def test_update_distribution_policy_w_kwargs(self, **kwargs):
         dp_identifier = "tst_update_dp_w_kwargs"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -186,10 +175,9 @@ class TestDistributionPolicy(RouterTestCase):
                 mode = mode
             )
 
-        # cleanup
-        self.clean_up()
-
-    def test_get_distribution_policy(self):
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
+    def test_get_distribution_policy(self, **kwargs):
         dp_identifier = "tst_get_dp"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -226,10 +214,9 @@ class TestDistributionPolicy(RouterTestCase):
                 mode = mode
             )
 
-        # cleanup
-        self.clean_up()
-
-    def test_delete_distribution_policy(self):
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
+    def test_delete_distribution_policy(self, **kwargs):
         dp_identifier = "tst_delete_dp"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -260,7 +247,9 @@ class TestDistributionPolicy(RouterTestCase):
             assert nfe.value.reason == "Not Found"
             assert nfe.value.status_code == 404
 
-    def test_list_distribution_policy(self):
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
+    def test_list_distribution_policy(self, **kwargs):
         dp_identifiers = ["tst_list_dp_1", "tst_list_dp_2", "tst_list_dp_3"]
         created_dp_response = {}
         policy_count = len(dp_identifiers)
@@ -315,5 +304,3 @@ class TestDistributionPolicy(RouterTestCase):
         # all policies created were listed
         assert policy_count == 0
 
-        # cleanup
-        self.clean_up()
