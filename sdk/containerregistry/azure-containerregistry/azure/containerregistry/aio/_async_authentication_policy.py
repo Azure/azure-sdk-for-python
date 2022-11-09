@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from typing import TYPE_CHECKING, Any
+from io import SEEK_SET, UnsupportedOperation
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 
@@ -42,16 +43,34 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         """
         _enforce_https(request)
 
-        await self.on_request(request)
+        try:
+            # Avoid aiohttp closes the file after sending the request
+            if request.http_request.body and hasattr(request.http_request.body, 'close'):
+                original = request.http_request.body.close
+                request.http_request.body.close = lambda: None
 
-        response = await self.next.send(request)
+            await self.on_request(request)
 
-        if response.http_response.status_code == 401:
-            challenge = response.http_response.headers.get("WWW-Authenticate")
-            if challenge and await self.on_challenge(request, response, challenge):
-                response = await self.next.send(request)
+            response = await self.next.send(request)
+   
+            if response.http_response.status_code == 401:
+                challenge = response.http_response.headers.get("WWW-Authenticate")
+                if challenge and await self.on_challenge(request, response, challenge):
+                    if request.http_request.body and hasattr(request.http_request.body, 'read'):
+                        try:
+                            # Attempt to rewind the body to the initial position
+                            request.http_request.body.seek(0, SEEK_SET)
+                        except (UnsupportedOperation, ValueError, AttributeError):
+                            # If body is not seekable, then retry would not work
+                            return response
 
-        return response
+                    response = await self.next.send(request)
+
+            return response
+        finally:
+            if request.http_request.body and hasattr(request.http_request.body, 'close'):
+                request.http_request.body.close = original
+                request.http_request.body.close()           
 
     async def on_challenge(self, request, response, challenge):
         # type: (PipelineRequest, PipelineResponse, str) -> bool

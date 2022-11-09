@@ -55,10 +55,10 @@ class ContainerRegistryChallengePolicy(HTTPPolicy):
             if challenge and self.on_challenge(request, response, challenge):
                 if request.http_request.body and hasattr(request.http_request.body, 'read'):
                     try:
-                        # attempt to rewind the body to the initial position
+                        # Attempt to rewind the body to the initial position
                         request.http_request.body.seek(0, SEEK_SET)
                     except (UnsupportedOperation, ValueError, AttributeError):
-                        # if body is not seekable, then retry would not work
+                        # If body is not seekable, then retry would not work
                         return response
 
                 response = self.next.send(request)
