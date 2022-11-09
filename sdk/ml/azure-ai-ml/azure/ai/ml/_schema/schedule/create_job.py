@@ -14,6 +14,7 @@ from azure.ai.ml._schema.core.fields import (
     NestedField,
     StringTransformedEnum,
     UnionField,
+    ComputeField,
 )
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
@@ -52,6 +53,7 @@ class CreateJobFileRefField(FileRefField):
 
 
 class BaseCreateJobSchema(BaseJobSchema):
+    compute = ComputeField()
     job = UnionField(
         [
             ArmStr(azureml_type=AzureMLResourceType.JOB),
