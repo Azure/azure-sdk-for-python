@@ -43,16 +43,8 @@ channel_id = 'fakeChannel1'
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
-    @pytest.fixture(scope = "function", autouse = True)
-    def initialize_test(self, request):
-        self._testMethodName = request.node.originalname
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.classification_policy_ids = {}  # type: Dict[str, List[str]]
-        self.worker_ids = {}  # type: Dict[str, List[str]]
-        self.job_ids = {}  # type: Dict[str, List[str]]
 
-    async def clean_up(self):
+    async def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
             router_admin_client: RouterAdministrationClient = self.create_admin_client()
@@ -93,10 +85,10 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
                         for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                             await router_admin_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
-    def get_distribution_policy_id(self):
+    def get_distribution_policy_id(self, **kwargs):
         return self._testMethodName + "_tst_dp_async"
 
-    async def setup_distribution_policy(self):
+    async def setup_distribution_policy(self, **kwargs):
         client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
@@ -122,10 +114,10 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             else:
                 self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
 
-    def get_job_queue_id(self):
+    def get_job_queue_id(self, **kwargs):
         return self._testMethodName + "_tst_q_async"
 
-    async def setup_job_queue(self):
+    async def setup_job_queue(self, **kwargs):
         client: RouterAdministrationClient = self.create_admin_client()
 
         async with client:
@@ -148,10 +140,10 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
             else:
                 self.queue_ids[self._testMethodName] = [job_queue_id]
 
-    def get_router_worker_id(self):
+    def get_router_worker_id(self, **kwargs):
         return self._testMethodName + "_tst_w"
 
-    async def setup_router_worker(self):
+    async def setup_router_worker(self, **kwargs):
         w_identifier = self.get_router_worker_id()
         router_client: RouterClient = self.create_client()
 
@@ -218,7 +210,7 @@ class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.before_test_execute_async('setup_router_worker')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
-    async def test_assignment_scenario(self):
+    async def test_assignment_scenario(self, **kwargs):
         router_client: RouterClient = self.create_client()
 
         async with router_client:

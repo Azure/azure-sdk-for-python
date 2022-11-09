@@ -116,15 +116,6 @@ job_notes = {
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestRouterJob(RouterRecordedTestCase):
-
-    @pytest.fixture(scope = "function", autouse = True)
-    def initialize_test(self, request):
-        self._testMethodName = request.node.originalname
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.classification_policy_ids = {}  # type: Dict[str, List[str]]
-        self.job_ids = {}  # type: Dict[str, List[str]]
-
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():

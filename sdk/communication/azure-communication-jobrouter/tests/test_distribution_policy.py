@@ -36,12 +36,7 @@ distribution_modes = [
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestDistributionPolicy(RouterRecordedTestCase):
-    @pytest.fixture(scope = "function", autouse = True)
-    def initialize_test(self, request):
-        self._testMethodName = request.node.originalname
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-
-    def clean_up(self):
+    def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
             router_client: RouterAdministrationClient = self.create_admin_client()
@@ -52,7 +47,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
-    def test_create_distribution_policy(self):
+    def test_create_distribution_policy(self, **kwargs):
         dp_identifier = "tst_create_dp"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -82,7 +77,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
-    def test_update_distribution_policy(self):
+    def test_update_distribution_policy(self, **kwargs):
         dp_identifier = "tst_update_dp"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -132,7 +127,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
-    def test_update_distribution_policy_w_kwargs(self):
+    def test_update_distribution_policy_w_kwargs(self, **kwargs):
         dp_identifier = "tst_update_dp_w_kwargs"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -182,7 +177,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
-    def test_get_distribution_policy(self):
+    def test_get_distribution_policy(self, **kwargs):
         dp_identifier = "tst_get_dp"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -221,7 +216,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
-    def test_delete_distribution_policy(self):
+    def test_delete_distribution_policy(self, **kwargs):
         dp_identifier = "tst_delete_dp"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -254,7 +249,7 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
     @RouterPreparers.router_test_decorator
     @recorded_by_proxy
-    def test_list_distribution_policy(self):
+    def test_list_distribution_policy(self, **kwargs):
         dp_identifiers = ["tst_list_dp_1", "tst_list_dp_2", "tst_list_dp_3"]
         created_dp_response = {}
         policy_count = len(dp_identifiers)

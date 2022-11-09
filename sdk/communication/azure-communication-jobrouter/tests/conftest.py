@@ -77,6 +77,18 @@ def start_proxy(test_proxy):
     return
 
 
+@pytest.fixture(scope = "function", autouse = True)
+def initialize_test(request):
+    print("Inside initialize test")
+    request.cls._testMethodName = request.node.originalname
+    request.cls.queue_ids = {}  # type: Dict[str, List[str]]
+    request.cls.distribution_policy_ids = {}  # type: Dict[str, List[str]]
+    request.cls.exception_policy_ids = {}  # type: Dict[str, List[str]]
+    request.cls.classification_policy_ids = {}  # type: Dict[str, List[str]]
+    request.cls.worker_ids = {}  # type: Dict[str, List[str]]
+    request.cls.job_ids = {}  # type: Dict[str, List[str]]
+
+
 # Ignore async tests for Python < 3.5
 collect_ignore_glob = []
 if sys.version_info < (3, 5):

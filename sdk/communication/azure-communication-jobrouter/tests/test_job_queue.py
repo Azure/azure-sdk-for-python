@@ -32,14 +32,7 @@ queue_labels = {
 
 # The test class name needs to start with "Test" to get collected by pytest
 class TestJobQueue(RouterRecordedTestCase):
-    @pytest.fixture(scope = "function", autouse = True)
-    def initialize_test(self, request):
-        self._testMethodName = request.node.originalname
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.exception_policy_ids = {}  # type: Dict[str, List[str]]
-
-    def clean_up(self):
+    def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
             router_client: RouterAdministrationClient = self.create_admin_client()
@@ -53,10 +46,10 @@ class TestJobQueue(RouterRecordedTestCase):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                     router_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
-    def get_distribution_policy_id(self):
+    def get_distribution_policy_id(self, **kwargs):
         return self._testMethodName + "_tst_dp"
 
-    def setup_distribution_policy(self):
+    def setup_distribution_policy(self, **kwargs):
         client: RouterAdministrationClient = self.create_admin_client()
 
         distribution_policy_id = self.get_distribution_policy_id()
@@ -84,7 +77,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.after_test_execute('clean_up')
-    def test_create_queue(self):
+    def test_create_queue(self, **kwargs):
         dp_identifier = "tst_create_q"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -116,7 +109,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.after_test_execute('clean_up')
-    def test_update_queue(self):
+    def test_update_queue(self, **kwargs):
         dp_identifier = "tst_update_q"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -169,7 +162,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.after_test_execute('clean_up')
-    def test_update_queue_w_kwargs(self):
+    def test_update_queue_w_kwargs(self, **kwargs):
         dp_identifier = "tst_update_q_w_kwargs"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -221,7 +214,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.after_test_execute('clean_up')
-    def test_get_queue(self):
+    def test_get_queue(self, **kwargs):
         dp_identifier = "tst_get_q"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -264,7 +257,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.after_test_execute('clean_up')
-    def test_delete_queue(self):
+    def test_delete_queue(self, **kwargs):
         dp_identifier = "tst_delete_q"
         router_client: RouterAdministrationClient = self.create_admin_client()
 
@@ -298,7 +291,7 @@ class TestJobQueue(RouterRecordedTestCase):
     @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.after_test_execute('clean_up')
-    def test_list_queues(self):
+    def test_list_queues(self, **kwargs):
         router_client: RouterAdministrationClient = self.create_admin_client()
         dp_identifiers = ["tst_list_q_1", "tst_list_q_2", "tst_list_q_3"]
         created_q_response = {}
