@@ -1,6 +1,6 @@
 import os
+import shutil
 import sys
-import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -11,7 +11,7 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.entities import CommandComponent, CommandJobLimits, Component, JobResourceConfiguration
+from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
@@ -451,11 +451,23 @@ class TestCommandComponentEntity:
         assert actual_component_dict2 == expected_rest_component
 
     def test_component_code_asset_ignoring_pycache(self) -> None:
-        from azure.ai.ml.entities._component.code import ComponentIgnoreFile
-
         component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
         component = load_component(component_yaml)
-        # as we leverage ignore file, so only check the attribute and type here
-        with component._resolve_local_code() as code:
-            assert hasattr(code, "_ignore_file")
-            assert isinstance(getattr(code, "_ignore_file"), ComponentIgnoreFile)
+        # create some files/folders expected to ignore
+        pycache = Path("./tests/test_configs/components/helloworld_components_with_env/__pycache__")
+        try:
+            pycache.mkdir()
+            expected_exclude = pycache / "a.pyc"
+            expected_exclude.touch()
+            # resolve and test for ignore_file's is_file_excluded
+            with component._resolve_local_code() as code:
+                excluded = []
+                for root, _, files in os.walk(code.path):
+                    for name in files:
+                        path = os.path.join(root, name)
+                        if code._ignore_file.is_file_excluded(path):
+                            excluded.append(path)
+                assert excluded == [str(expected_exclude.absolute())]
+        finally:
+            if pycache.is_dir():
+                shutil.rmtree(pycache)
