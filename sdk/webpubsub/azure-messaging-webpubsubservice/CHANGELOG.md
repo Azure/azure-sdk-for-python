@@ -1,5 +1,13 @@
 # Release History
 
+## 1.1.0b1 (2022-11-01)
+
+### Features Added
+
+- Support sending with "filter" syntax
+- Support generating access url with initial groups
+- Add new API "removeConnectionFromAllGroups"
+
 ## 1.0.1 (2022-02-15)
 
 ### Bugs Fixed

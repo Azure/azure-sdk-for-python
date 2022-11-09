@@ -20,7 +20,7 @@ autorest
 ### Settings
 
 ```yaml
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/73a0fa453a93bdbe8885f87b9e4e9fef4f0452d0/specification/webpubsub/data-plane/WebPubSub/stable/2021-10-01/webpubsub.json
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/1735a92bdc79b446385a36ba063ea5235680709f/specification/webpubsub/data-plane/WebPubSub/stable/2022-11-01/webpubsub.json
 output-folder: ../azure/messaging/webpubsubservice
 namespace: azure.messaging.webpubsubservice
 package-name: azure-messaging-webpubsubservice
@@ -31,7 +31,7 @@ python: true
 title: WebPubSubServiceClient
 version-tolerant: true
 head-as-boolean: true
-package-version: 1.0.1
+package-version: 1.0.1b
 add-credential: true
 credential-scopes: https://webpubsub.azure.com/.default
 black: true
@@ -68,7 +68,16 @@ directive:
   - from: swagger-document
     where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
     transform: >
-        $[2]["x-ms-client-name"] = "roles"
+        if($) {
+          for(let i = 0; i < $.length; i++) {
+            if ($[i] && $[i]["name"] == "role") {
+              $[i]["x-ms-client-name"] = "roles";
+            }
+            if ($[i] && $[i]["name"] == "group") {
+              $[i]["x-ms-client-name"] = "groups";
+            }
+          }
+        }
 ```
 
 ```yaml
@@ -156,6 +165,14 @@ directive:
 directive:
 - from: swagger-document
   where: $.paths["/api/hubs/{hub}/groups/{group}/connections/{connectionId}"].delete.parameters["0"]
+  transform: $["x-ms-parameter-location"] = "client"
+```
+
+### RemoveConnectionFromAllGroup
+``` yaml
+directive:
+- from: swagger-document
+  where: $.paths["/api/hubs/{hub}/connections/{connectionId}/groups"].delete.parameters["0"]
   transform: $["x-ms-parameter-location"] = "client"
 ```
 
