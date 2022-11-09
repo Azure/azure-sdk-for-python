@@ -1,12 +1,16 @@
 # Release History
 
-## 4.9.1 (2022-11-08)
+## 4.10.0 (2022-11-09)
 
 - This version and all future versions will require Python 3.7+.
 
 ### Features Added
 
 - Added new enum values to `SystemEventNames` related to health care APIs.
+
+## 4.9.1 (2022-11-08)
+
+- This version has been yanked.
 
 ## 4.9.0 (2022-07-05)
 
