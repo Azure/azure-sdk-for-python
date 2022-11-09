@@ -68,16 +68,14 @@ class _BearerTokenCredentialPolicyBase(object):
         return not self._token or self._token.expires_on - time.time() < 300
 
 
-    def _need_adding_header(self, url):
-        if self._always_adding_header:
-            return True
-        domain = urlparse(url).netloc
+    def _domain_changed(self, url):
+        domain = str(urlparse(url).netloc).lower()
         if not self._original_domain:
             self._original_domain = domain
-            return True
+            return False
         if self._original_domain == domain:
-            return True
-        return False
+            return False
+        return True
 
 
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
@@ -99,7 +97,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         """
         self._enforce_https(request)
 
-        if self._need_adding_header(request.http_request.url):
+        if self._always_adding_header or not(self._domain_changed(request.http_request.url)):
             if self._token is None or self._need_new_token:
                 self._token = self._credential.get_token(*self._scopes)
             self._update_headers(request.http_request.headers, self._token.token)

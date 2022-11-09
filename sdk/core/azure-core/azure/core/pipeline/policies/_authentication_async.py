@@ -47,7 +47,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 
-        if self._need_adding_header(request.http_request.url):
+        if self._always_adding_header or not(self._domain_changed(request.http_request.url)):
             if self._token is None or self._need_new_token():
                 async with self._lock:
                     # double check because another coroutine may have acquired a token
@@ -134,13 +134,11 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
     def _need_new_token(self) -> bool:
         return not self._token or self._token.expires_on - time.time() < 300
 
-    def _need_adding_header(self, url):
-        if self._always_adding_header:
-            return True
-        domain = urlparse(url).netloc
+    def _domain_changed(self, url):
+        domain = str(urlparse(url).netloc).lower()
         if not self._original_domain:
             self._original_domain = domain
-            return True
+            return False
         if self._original_domain == domain:
-            return True
-        return False
+            return False
+        return True
