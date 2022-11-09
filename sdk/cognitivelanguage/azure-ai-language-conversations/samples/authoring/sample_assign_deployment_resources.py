@@ -21,7 +21,7 @@ USAGE:
 """
 
 """
-Assigning deployment resources requires you to authenticate with AAD, you cannot assign deployment resources with key based authentication. 
+Assigning deployment resources requires you to authenticate with AAD, you cannot assign deployment resources with key based authentication. You must have the role Cognitive Services Language Owner assigned to the authoring resource and the target resources.
 """
 def sample_assign_resources():
     import os
