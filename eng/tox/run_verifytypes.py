@@ -31,7 +31,7 @@ def install_latest_release(package_name):
     client = PyPIClient()
 
     try:
-        latest_version = str(client.get_relevant_versions(package_name)[0])
+        latest_version = str(client.get_ordered_versions(package_name)[-1])
     except IndexError:
         logging.info(f"No released packages for {package_name} on PyPi yet.")
         latest_version = None
