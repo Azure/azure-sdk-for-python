@@ -144,17 +144,33 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
     def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        token_credential = self.generate_oauth_token()
-        for service_type in SERVICES:
-            # Act
-            service = service_type(
-                self.account_url(storage_account_name, "blob"), credential=token_credential, container_name='foo', blob_name='bar')
+        token_credential = self.generate_fake_token()
+        # for service_type in SERVICES:
+        #     # Act
+        #     service = service_type(
+        #         self.account_url(storage_account_name, "blob"), credential=token_credential, container_name='foo', blob_name='bar')
 
-            # Assert
-            assert service is not None
-            assert service.url.startswith('https://' + storage_account_name + '.blob.core.windows.net')
-            assert service.credential == token_credential
-            assert service.account_name == storage_account_name
+        service1 = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=token_credential, container_name='foo', blob_name='bar')
+        service2 = ContainerClient(self.account_url(storage_account_name, "blob"), credential=token_credential, container_name='foo', blob_name='bar')
+        service3 = BlobClient(self.account_url(storage_account_name, "blob"), credential=token_credential, container_name='foo', blob_name='bar')
+
+        # Assert
+        assert service1 is not None
+        assert service1.url.startswith('https://' + storage_account_name + '.blob.core.windows.net')
+        assert service1.credential == token_credential
+        assert service1.account_name == storage_account_name
+
+        # Assert
+        assert service2 is not None
+        assert service2.url.startswith('https://' + storage_account_name + '.blob.core.windows.net')
+        assert service2.credential == token_credential
+        assert service2.account_name == storage_account_name
+
+        # Assert
+        assert service3 is not None
+        assert service3.url.startswith('https://' + storage_account_name + '.blob.core.windows.net')
+        assert service3.credential == token_credential
+        assert service3.account_name == storage_account_name
 
     @BlobPreparer()
     def test_create_service_with_token_and_http(self, **kwargs):
