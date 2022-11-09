@@ -144,7 +144,7 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
     def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        token_credential = self.generate_oauth_token()
+        token_credential = self.generate_fake_token()
         for service_type in SERVICES:
             # Act
             service = service_type(
