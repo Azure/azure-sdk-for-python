@@ -4,24 +4,37 @@
 from marshmallow import fields
 
 from azure.ai.ml._internal._schema.node import InternalBaseNodeSchema, NodeType
-from azure.ai.ml._schema import NestedField, StringTransformedEnum
+from azure.ai.ml._schema import (
+    NestedField,
+    StringTransformedEnum,
+    UnionField,
+    RegistryStr,
+    AnonymousEnvironmentSchema,
+    ArmVersionedStr
+)
 from azure.ai.ml._schema.job import ParameterizedParallelSchema, ParameterizedCommandSchema
 from azure.ai.ml._schema.job.job_limits import CommandJobLimitsSchema
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 
 class CommandSchema(InternalBaseNodeSchema, ParameterizedCommandSchema):
     class Meta:
         exclude = ["code", "distribution"]  # internal command doesn't have code & distribution
 
+    environment = UnionField(
+        [
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            NestedField(AnonymousEnvironmentSchema),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ],
+    )
     type = StringTransformedEnum(allowed_values=[NodeType.COMMAND], casing_transform=lambda x: x)
-    # do we need to overwrite this?
-    environment = fields.Str()
     limits = NestedField(CommandJobLimitsSchema)
 
 
 class DistributedSchema(CommandSchema):
     class Meta:
-        exclude = ["code"]  # need to enable distribution
+        exclude = ["code"]  # need to enable distribution comparing to CommandSchema
     type = StringTransformedEnum(allowed_values=[NodeType.DISTRIBUTED], casing_transform=lambda x: x)
 
 
