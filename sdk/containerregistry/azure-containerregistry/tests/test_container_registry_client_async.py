@@ -4,6 +4,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from datetime import datetime
+import os
 import pytest
 import six
 
@@ -15,6 +16,7 @@ from azure.containerregistry import (
     ArtifactTagOrder,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
+from azure.containerregistry._helpers import _deserialize_manifest
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.async_paging import AsyncItemPaged
 
@@ -612,6 +614,130 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
             last_udpated_on = properties.last_udpated_on
         last_updated_on = properties.last_updated_on
         assert last_udpated_on == last_updated_on
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_oci_manifest(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        await self.upload_manifest_prerequisites(repo, client)
+
+        # Act
+        digest = await client.upload_manifest(repo, manifest)
+
+        # Assert
+        response = await client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+        
+        await client.delete_manifest(repo, digest)
+
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_oci_manifest_stream(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
+        manifest = _deserialize_manifest(manifest_stream)     
+        client = self.create_registry_client(containerregistry_endpoint)
+
+        await self.upload_manifest_prerequisites(repo, client)
+
+        # Act
+        digest = await client.upload_manifest(repo, manifest_stream)
+
+        # Assert
+        response = await client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+        
+        await client.delete_manifest(repo, digest)
+
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_oci_manifest_with_tag(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        manifest = self.create_oci_manifest()
+        client = self.create_registry_client(containerregistry_endpoint)
+        tag = "v1"
+        
+        await self.upload_manifest_prerequisites(repo, client)
+        
+        # Act
+        digest = await client.upload_manifest(repo, manifest, tag=tag)
+        
+        # Assert
+        response = await client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        response = await client.download_manifest(repo, tag)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        resp = await client.get_manifest_properties(repo, digest)
+        tags = resp.tags
+        assert len(tags) == 1
+        assert tags[0] == tag
+        
+        await client.delete_manifest(repo, digest)
+        
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_oci_manifest_stream_with_tag(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        base_path = os.path.join(self.get_test_directory(), "data", "oci_artifact")
+        manifest_stream = open(os.path.join(base_path, "manifest.json"), "rb")
+        manifest = _deserialize_manifest(manifest_stream)
+        client = self.create_registry_client(containerregistry_endpoint)
+        tag = "v1"
+
+        await self.upload_manifest_prerequisites(repo, client)
+
+        # Act
+        digest = await client.upload_manifest(repo, manifest_stream, tag=tag)
+        # Assert
+        response = await client.download_manifest(repo, digest)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        response = await client.download_manifest(repo, tag)
+        assert response.digest == digest
+        assert response.data.tell() == 0
+        self.assert_manifest(response.manifest, manifest)
+
+        resp = await client.get_manifest_properties(repo, digest)
+        tags = resp.tags
+        assert len(tags) == 1
+        assert tags[0] == tag
+        
+        await client.delete_manifest(repo, digest)
+    
+    @acr_preparer()
+    @recorded_by_proxy_async
+    async def test_upload_blob(self, containerregistry_endpoint):
+        repo = self.get_resource_name("repo")
+        client = self.create_registry_client(containerregistry_endpoint)
+        blob = "654b93f61054e4ce90ed203bb8d556a6200d5f906cf3eca0620738d6dc18cbed"
+        path = os.path.join(self.get_test_directory(), "data", "oci_artifact", blob)
+        
+        # Act
+        data = open(path, "rb")
+        digest = await client.upload_blob(repo, data)
+        
+        # Assert
+        res = await client.download_blob(repo, digest)
+        assert len(res.data.read()) == len(data.read())
+        assert res.digest == digest
+        
+        await client.delete_blob(repo, digest)
 
 
 def test_set_api_version():
