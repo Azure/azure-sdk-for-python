@@ -93,6 +93,7 @@ The logs that were uploaded using this library can be queried using the [Azure M
 ## Examples
 
 - [Upload custom logs](#upload-custom-logs)
+- [Upload with custom error handling](#upload-with-custom-error-handling)
 
 ### Upload custom logs
 
@@ -100,7 +101,7 @@ This example shows uploading logs to Azure Monitor.
 
 ```python
 import os
-from azure.monitor.ingestion import LogsIngestionClient, UploadLogsStatus
+from azure.monitor.ingestion import LogsIngestionClient
 from azure.identity import DefaultAzureCredential
 
 endpoint = os.environ['DATA_COLLECTION_ENDPOINT']
@@ -122,10 +123,23 @@ body = [
       }
     ]
 
-response = client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
-if response.status != UploadLogsStatus.SUCCESS:
-    failed_logs = response.failed_logs_index
-    print(failed_logs)
+client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+```
+
+### Upload with custom error handling
+
+To upload logs with custom error handling, you can pass a callback function to the `on_error` parameter of the `upload` method.
+The callback function will be called for each error that occurs during the upload and should expect two keyword arguments: `error` and `logs`.
+These arguments correspond to the error encountered and the list of logs that failed to upload.
+
+```python
+failed_logs = []
+def on_error(**kwargs):
+    print("Log chunk failed to upload with error: ", kwargs.get("error"))
+    # Collect all logs that failed to upload.
+    failed_logs.extend(kwargs.get("logs", []))
+
+client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body, on_error=on_error)
 ```
 
 ## Troubleshooting

@@ -1,5 +1,5 @@
 """
-Usage: python sample_send_small_logs.py
+Usage: python sample_custom_error_callback.py
 """
 
 import os
@@ -25,4 +25,17 @@ body = [
       }
     ]
 
-client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body)
+failed_logs = []
+def on_error(**kwargs):
+    print("Log chunk failed to upload with error: ", kwargs.get("error"))
+    failed_logs.extend(kwargs.get("logs", []))
+
+def on_error_pass(**kwargs):
+    pass
+
+client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=body, on_error=on_error)
+
+# Retry once with any failed logs, and this time ignore any errors.
+print("Retrying logs that failed to upload...")
+if failed_logs:
+    client.upload(rule_id=rule_id, stream_name=os.environ['LOGS_DCR_STREAM_NAME'], logs=failed_logs, on_error=on_error_pass)
