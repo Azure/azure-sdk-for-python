@@ -174,7 +174,7 @@ To create a `test-resources` file:
 done in the [Portal][azure_portal] by creating a resource, and at the very last step (Review + Create), clicking
 "Download a template for automation".
 2. Save this template to a `test-resources.json` file under the directory that contains your package
-(`sdk/<my-service>/test-resources.json`) or create a `test-resouces.bicep` file. You can refer to
+(`sdk/<my-service>/test-resources.json`) or create a `test-resources.bicep` file. You can refer to
 [Key Vault's][kv_test_resources] as an example.
 3. Add templates for any additional resources in a grouped `"resources"` section of `test-resources`
 ([example][kv_test_resources_resources]).
