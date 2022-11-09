@@ -114,7 +114,7 @@ function GenerateDocsMsMetadata($originalMetadata, $language, $languageDisplayNa
   $langTitle = "Azure $serviceName SDK for $languageDisplayName"
   $langDescription = "Reference for Azure $serviceName SDK for $languageDisplayName"
   # Github url for source code: e.g. https://github.com/Azure/azure-sdk-for-js
-  $serviceBaseName = $serviceName.ToLower().Replace(' ', '').Replace('/', '-')
+  $serviceBaseName = ServiceLevelReadmeNameStyle $serviceName
   $author = GetPrimaryCodeOwner -TargetDirectory "/sdk/$serviceBaseName/"
   $msauthor = ""
   if (!$author) {
