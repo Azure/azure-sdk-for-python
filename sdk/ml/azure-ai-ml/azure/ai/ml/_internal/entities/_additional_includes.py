@@ -19,9 +19,15 @@ PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 
 
 class _AdditionalIncludes:
-    def __init__(self, code_path: Union[None, str], yaml_path: str):
+    def __init__(
+        self,
+        code_path: Union[None, str],
+        yaml_path: str,
+        ignore_file: InternalComponentIgnoreFile = None,
+    ):
         self.__yaml_path = yaml_path
         self.__code_path = code_path
+        self._ignore_file = ignore_file
 
         self._tmp_code_path = None
         self.__includes = None
@@ -66,19 +72,17 @@ class _AdditionalIncludes:
     def code(self) -> Path:
         return self._tmp_code_path if self._tmp_code_path else self._code_path
 
-    @staticmethod
-    def _copy(src: Path, dst: Path) -> None:
+    def _copy(self, src: Path, dst: Path) -> None:
         if src.is_file():
             _general_copy(src, dst)
         else:
             # use os.walk to replace shutil.copytree, which may raise FileExistsError
             # for same folder, the expected behavior is merging
             # ignore will be also applied during this process
-            ignore_file = InternalComponentIgnoreFile()
             for root, _, files in os.walk(src):
                 dst_root = Path(dst) / Path(root).relative_to(src)
-                dst_root_mkdir_flag = False
-                for path, _ in traverse_directory(root, files, str(src), "", ignore_file=ignore_file):
+                dst_root_mkdir_flag = dst_root.is_dir()
+                for path, _ in traverse_directory(root, files, str(src), "", ignore_file=self._ignore_file):
                     # if there is nothing to copy under current dst_root, no need to create this folder
                     if dst_root_mkdir_flag is False:
                         dst_root.mkdir()

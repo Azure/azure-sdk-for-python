@@ -35,7 +35,7 @@ from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
-from .code import ComponentCode
+from .code import ComponentIgnoreFile
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -510,24 +510,18 @@ class Component(
         if not hasattr(self, "code"):
             raise ValueError(f"{self.__class__} does not have attribute code.")
         code = getattr(self, "code")
-        # special check for git path code value
-        if code is not None and isinstance(code, str) and code.startswith("git+"):
-            yield Code(base_path=self._base_path, path=code)
-        elif code is not None and os.path.isfile(code):
-            yield Code(base_path=self._base_path, path=code)
-        else:
+        if code is None:
+            # Hack: when code not specified, we generated a file which contains
+            # COMPONENT_PLACEHOLDER as code
+            # This hack was introduced because job does not allow running component without a
+            # code, and we need to make sure when component updated some field(eg: description),
+            # the code remains the same. Benefit of using a constant code for all components
+            # without code is this will generate same code for anonymous components which
+            # enables component reuse
             with tempfile.TemporaryDirectory() as tmp_dir:
-                if code is None:
-                    # Hack: when code not specified, we generated a file which contains
-                    # COMPONENT_PLACEHOLDER as code
-                    # This hack was introduced because job does not allow running component without a
-                    # code, and we need to make sure when component updated some field(eg: description),
-                    # the code remains the same. Benefit of using a constant code for all components
-                    # without code is this will generate same code for anonymous components which
-                    # enables component reuse
-                    code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
-                    with open(code, "w") as f:
-                        f.write(COMPONENT_CODE_PLACEHOLDER)
-                    yield Code(base_path=self._base_path, path=code)
-                else:
-                    yield ComponentCode(base_path=self._base_path, path=code)
+                code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
+                with open(code, "w") as f:
+                    f.write(COMPONENT_CODE_PLACEHOLDER)
+                yield Code(base_path=self._base_path, path=code)
+        else:
+            yield Code(base_path=self._base_path, path=code, ignore_file=ComponentIgnoreFile())

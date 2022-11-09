@@ -5,7 +5,7 @@
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
 from os import PathLike
-from typing import Dict, Union
+from typing import Dict, Optional, Union
 from uuid import UUID
 
 from marshmallow import Schema
@@ -19,7 +19,6 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 from ._merkle_tree import create_merkletree
 
 from ... import Input, Output
-from ..._utils._asset_utils import get_ignore_file
 from .._schema.component import InternalBaseComponentSchema
 from ._additional_includes import _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
@@ -120,6 +119,7 @@ class InternalComponent(Component):
         self.code = code
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
+        self._ignores = None  # can be set from kwargs
         self.__additional_includes = None
         # TODO: remove these to keep it a general component class
         self.command = command
@@ -149,6 +149,7 @@ class InternalComponent(Component):
             self.__additional_includes = _AdditionalIncludes(
                 code_path=self.code,
                 yaml_path=self._source_path,
+                ignore_file=InternalComponentIgnoreFile(self.code, extra_ignores=self._ignores),
             )
         return self.__additional_includes
 
@@ -200,16 +201,21 @@ class InternalComponent(Component):
         return result
 
     @classmethod
-    def _get_snapshot_id(cls, code_path: Union[str, PathLike]) -> str:
+    def _get_snapshot_id(
+        cls,
+        code_path: Union[str, PathLike],
+        ignore_file: Optional[InternalComponentIgnoreFile],
+    ) -> str:
         """Get the snapshot id of a component with specific working directory in ml-components.
         Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
 
         :param code_path: The path of the working directory.
         :type code_path: str
+        :param ignore_file: The ignore file of the snapshot.
+        :type ignore_file: InternalComponentIgnoreFile
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
         """
-        _ignore_file = InternalComponentIgnoreFile.from_ignore_file(get_ignore_file(code_path))
-        curr_root = create_merkletree(code_path, lambda x: _ignore_file.is_file_excluded(code_path))
+        curr_root = create_merkletree(code_path, lambda x: ignore_file.is_file_excluded(code_path))
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id
 
@@ -230,16 +236,18 @@ class InternalComponent(Component):
             self.environment.resolve(self._additional_includes.code)
         # use absolute path in case temp folder & work dir are in different drive
         tmp_code_dir = self._additional_includes.code.absolute()
+        ignore_file = InternalComponentIgnoreFile(tmp_code_dir, extra_ignores=self._ignores)
         # Use the snapshot id in ml-components as code name to enable anonymous
         # component reuse from ml-component runs.
         # calculate snapshot id here instead of inside InternalCode to ensure that
         # snapshot id is calculated based on the resolved code path
         yield InternalCode(
-            name=self._get_snapshot_id(tmp_code_dir),
+            name=self._get_snapshot_id(tmp_code_dir, ignore_file),
             version="1",
             base_path=self._base_path,
             path=tmp_code_dir,
             is_anonymous=True,
+            ignore_file=ignore_file,
         )
 
         self._additional_includes.cleanup()

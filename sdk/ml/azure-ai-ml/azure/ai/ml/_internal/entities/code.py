@@ -2,59 +2,32 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import os
-from typing import Dict, Optional, Union
+from typing import List, Optional, Union
 from pathlib import Path
 
-from azure.ai.ml._utils._asset_utils import get_content_hash, get_ignore_file, IgnoreFile
 from azure.ai.ml._utils._pathspec import GitWildMatchPattern
-from azure.ai.ml.constants._common import ArmConstants
 from ...entities._assets import Code
-from ...entities._component.code import ComponentCode, ComponentIgnoreFile
+from ...entities._component.code import ComponentIgnoreFile
 
 
 class InternalComponentIgnoreFile(ComponentIgnoreFile):
     _INTERNAL_COMPONENT_CODE_IGNORES = ["*.additional_includes"]
 
-    def __init__(self, file_path: Optional[Union[str, Path]] = None):
-        super(InternalComponentIgnoreFile, self).__init__(file_path=file_path)
-        self._path_spec.extend([GitWildMatchPattern(ignore) for ignore in self._INTERNAL_COMPONENT_CODE_IGNORES])
-
-    @staticmethod
-    def from_ignore_file(ignore_file: IgnoreFile) -> "InternalComponentIgnoreFile":
-        return InternalComponentIgnoreFile(ignore_file.path)
-
-
-class InternalCode(ComponentCode):
     def __init__(
         self,
-        *,
-        name: str = None,
-        version: str = None,
-        description: str = None,
-        tags: Dict = None,
-        properties: Dict = None,
-        path: Union[str, os.PathLike] = None,
-        **kwargs,
+        directory_path: Optional[Union[str, Path]] = None,
+        extra_ignores: Optional[List[str]] = None,
     ):
-        # call grandparent Artifact __init__ function
-        super(Code, self).__init__(  # pylint: disable=bad-super-call
-            name=name,
-            version=version,
-            description=description,
-            tags=tags,
-            properties=properties,
-            path=path,
-            **kwargs,
-        )
-        self._arm_type = ArmConstants.CODE_VERSION_TYPE
-        if self.path and os.path.isabs(self.path):
-            self._ignore_file = InternalComponentIgnoreFile.from_ignore_file(get_ignore_file(self.path))
-        else:
-            self._ignore_file = InternalComponentIgnoreFile()
-        # only calculate hash for local files
-        self._hash_sha256 = get_content_hash(self.path, self._ignore_file)
+        super(InternalComponentIgnoreFile, self).__init__(directory_path=directory_path)
+        _extra_ignores = extra_ignores.copy() if extra_ignores is not None else []  # .copy to avoid unexpected error
+        _extra_ignores.extend(self._INTERNAL_COMPONENT_CODE_IGNORES)
+        component_code_ignores = super(InternalComponentIgnoreFile, self)._COMPONENT_CODE_IGNORES
+        # add custom ignores (avoid duplication to component code ignores)
+        for ignore in set(_extra_ignores) - set(component_code_ignores):
+            self._path_spec.append(GitWildMatchPattern(ignore))
 
+
+class InternalCode(Code):
     @property
     def _upload_hash(self) -> Optional[str]:
         # This property will be used to identify the uploaded content when trying to
