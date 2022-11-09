@@ -40,7 +40,13 @@ from azure.ai.ml.entities._deployment.scale_settings import (
 )
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    DeploymentException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment

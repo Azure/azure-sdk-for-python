@@ -15,7 +15,13 @@ from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    DeploymentException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .code_configuration import CodeConfiguration
 
