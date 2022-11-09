@@ -22,7 +22,7 @@ from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.exceptions import ValidationException
 
-from .._utils import PARAMETERS_TO_TEST
+from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
 
 
 @pytest.mark.usefixtures("enable_internal_components")
@@ -585,11 +585,14 @@ class TestComponent:
             validate_result = loop_node._validate_body(raise_error=False)
             assert validate_result.passed
 
-    def test_anonymous_component_reuse(self):
-        yaml_path = Path("./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml")
-        expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
-
-        component: InternalComponent = load_component(source=yaml_path)
+    @pytest.mark.parametrize(
+        "relative_yaml_path,expected_snapshot_id",
+        ANONYMOUS_COMPONENT_TEST_PARAMS,
+    )
+    def test_anonymous_component_reuse(self, relative_yaml_path: str, expected_snapshot_id: str):
+        component: InternalComponent = load_component(
+            source=Path("./tests/test_configs/internal/component-reuse/") / relative_yaml_path
+        )
         with component._resolve_local_code() as code:
             assert code.name == expected_snapshot_id
 
