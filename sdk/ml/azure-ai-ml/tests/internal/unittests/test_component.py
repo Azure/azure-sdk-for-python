@@ -20,7 +20,7 @@ from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.exceptions import ValidationException
 
-from .._utils import PARAMETERS_TO_TEST, ANONYMOUS_COMPONENT_TEST_PARAMS
+from .._utils import PARAMETERS_TO_TEST
 
 
 @pytest.mark.usefixtures("enable_internal_components")
@@ -339,7 +339,7 @@ class TestComponent:
             assert code_path.is_dir()
             assert (code_path / "LICENSE").exists()
             assert (code_path / "library.zip").exists()
-            assert ZipFile(code_path / "library.zip").namelist() == ["library/", "library/hello.py", "library/world.py"]
+            assert ZipFile(code_path / "library.zip").namelist() == ["hello.py", "world.py"]
             assert (code_path / "library1" / "hello.py").exists()
             assert (code_path / "library1" / "world.py").exists()
 
@@ -537,25 +537,11 @@ class TestComponent:
             validate_result = loop_node._validate_body(raise_error=False)
             assert validate_result.passed
 
-    @pytest.mark.parametrize(
-        "relative_yaml_path,expected_snapshot_id",
-        ANONYMOUS_COMPONENT_TEST_PARAMS,
-    )
-    def test_anonymous_component_reuse(self, relative_yaml_path: str, expected_snapshot_id: str):
-        # to enable anonymous reuse, we need to guarantee:
-        # 1. code name equals to snapshot id in ml-components
-        # 2. name & version in component_spec align with component_spec in ml-components
-        # so please do not change expected_snapshot_id in this test
+    def test_anonymous_component_reuse(self):
+        yaml_path = Path("./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml")
+        expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
 
-        yaml_path = Path("./tests/test_configs/internal/command-component-reuse/") / relative_yaml_path
         component: InternalComponent = load_component(source=yaml_path)
-
-        # these functions will be called in component operation create_or_update before sending request to service
-        component._set_is_anonymous(True)
-        component._update_anonymous_hash()
-        component._set_is_anonymous(True)
-        component._update_anonymous_hash()
-
         with component._resolve_local_code() as code:
             assert code.name == expected_snapshot_id
 
@@ -565,8 +551,3 @@ class TestComponent:
                 match="InternalCode name are calculated based on its content and cannot be changed.*"
             ):
                 code.name = expected_snapshot_id + "1"
-        component_rest_object = component._to_rest_object()
-        with open(yaml_path, "r") as f:
-            data = yaml.safe_load(f)
-            assert component_rest_object.properties.component_spec["name"] == data["name"]
-            assert component_rest_object.properties.component_spec["version"] == data["version"]

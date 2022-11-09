@@ -3,10 +3,8 @@
 # ---------------------------------------------------------
 import json
 import os.path
-from pathlib import Path
 from typing import Callable, Dict, List
 
-import yaml
 from devtools_testutils import AzureRecordedTestCase, set_bodiless_matcher
 import pydash
 import pytest
@@ -14,7 +12,7 @@ import pytest
 from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._internal.entities import InternalComponent
 
-from .._utils import PARAMETERS_TO_TEST, ANONYMOUS_COMPONENT_TEST_PARAMS
+from .._utils import PARAMETERS_TO_TEST
 
 
 def create_component(
@@ -105,38 +103,11 @@ class TestComponent(AzureRecordedTestCase):
             # TODO: check if loaded environment is expected to be an ordered dict
             assert pydash.omit(loaded_dict, *omit_fields) == pydash.omit(expected_dict, *omit_fields)
 
-    @pytest.mark.parametrize(
-        "test_i",
-        range(0, len(ANONYMOUS_COMPONENT_TEST_PARAMS)),
-    )
-    def test_anonymous_component_reuse(
-        self,
-        client: MLClient,
-        randstr: Callable[[str], str],
-        test_i: int,
-    ):
-        # to enable anonymous reuse, we need to guarantee:
-        # 1. code name equals to snapshot id in ml-components
-        # 2. name & version in component_spec align with component_spec in ml-components
-        # so please do not change expected_snapshot_id in this test
-
-        relative_yaml_path, expected_snapshot_id = ANONYMOUS_COMPONENT_TEST_PARAMS[test_i]
-        yaml_path = Path("./tests/test_configs/internal/command-component-reuse/") / relative_yaml_path
-
-        # with open(yaml_path, "r") as f:
-        #     data = yaml.safe_load(f)
+    def test_component_code_hash(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        yaml_path = "./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml"
+        expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
 
         for component_name_key in ["component_name", "component_name2"]:
             component_name = randstr(component_name_key)
-            component_resource: InternalComponent = create_component(
-                client,
-                component_name,
-                path=yaml_path,
-                is_anonymous=True
-            )
+            component_resource: InternalComponent = create_component(client, component_name, path=yaml_path)
             assert component_resource.code.endswith(f"codes/{expected_snapshot_id}/versions/1")
-
-            # TODO: confirm with service team if this is expected
-            # component_rest_object = component_resource._to_rest_object()
-            # assert component_rest_object.properties.component_spec["name"] == data["name"]
-            # assert component_rest_object.properties.component_spec["version"] == data["version"]
