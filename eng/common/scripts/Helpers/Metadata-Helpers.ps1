@@ -94,19 +94,19 @@ function GetDocsMsService($packageInfo, $serviceName)
 }
 
 function compare-and-merge-metadata ($original, $updated) {
-  $updateMetadata = (($updated | ForEach-Object { "$($_[0]): $($_[1])" }) -join "`r`n") + "`r`n"
-  $updatedKeys = $updated | ForEach-Object { $_[0]}
+  $updateMetdata = ($updated.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }) -join "`r`n"
+  $updateMetdata += "`r`n"
   if (!$original) {
-    return $updateMetadata 
+    return $updateMetdata 
   }
   $originalTable = ConvertFrom-StringData -StringData $original -Delimiter ":"
   foreach ($key in $originalTable.Keys) {
-    if (!($updatedKeys.Contains($key))) {
+    if (!($updated.ContainsKey($key))) {
       Write-Warning "New metadata missed the entry: $key. Adding back."
       $updateMetdata += "$key`: $($originalTable[$key])`r`n"
     }
   }
-  return $updateMetadata
+  return $updateMetdata
 }
 
 function GenerateDocsMsMetadata($originalMetadata, $language, $languageDisplayName, $serviceName, $tenantId, $clientId, $clientSecret, $msService) 
@@ -129,8 +129,18 @@ function GenerateDocsMsMetadata($originalMetadata, $language, $languageDisplayNa
     $msauthor = $author
   }
   $date = Get-Date -Format "MM/dd/yyyy"
-  $customOrderedMetadata = @(("title", $langTitle), ("description", $langDescription), ("author", $author), ("ms.author", $msauthor), ("ms.data", $date), ("ms.topic", "reference"), ("ms.devlang", $language), ("ms.service", $msService))
-  $updatedMetadata = compare-and-merge-metadata -original $originalMetadata -updated $customOrderedMetadata
+
+  $metadataTable = [ordered] @{
+    "title"= $langTitle
+    "description"= $langDescription
+    "author"= $author
+    "ms.author"= $msauthor
+    "ms.data"= $date
+    "ms.topic"= "reference"
+    "ms.devlang"= $language
+    "ms.service"= $msService
+  }
+  $updatedMetadata = compare-and-merge-metadata -original $originalMetadata -updated $metadataTable
   return "---`r`n$updatedMetadata---`r`n"
 }
 
