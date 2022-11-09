@@ -5,24 +5,18 @@
 import copy
 
 import yaml
-from marshmallow import INCLUDE, ValidationError, fields, post_load, pre_load
+from marshmallow import INCLUDE, ValidationError, post_load, pre_load
 
-from azure.ai.ml._schema import AnonymousEnvironmentSchema
+from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
-    ComputeField,
     FileRefField,
     NestedField,
     StringTransformedEnum,
-    UnionField, RegistryStr, ArmVersionedStr,
+    UnionField,
 )
-from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema, \
-    MPIDistributionSchema
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
-from azure.ai.ml._schema.job.job_limits import CommandJobLimitsSchema
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml._utils.utils import load_file
 from azure.ai.ml.constants import JobType
@@ -57,21 +51,7 @@ class CreateJobFileRefField(FileRefField):
         )
 
 
-class BaseCreateJobSchema(metaclass=PatchedSchemaMeta):
-    compute = ComputeField()
-    inputs = InputsField()
-    outputs = OutputsField()
-    identity = UnionField(
-        [
-            NestedField(ManagedIdentitySchema),
-            NestedField(AMLTokenIdentitySchema),
-            NestedField(UserIdentitySchema),
-        ]
-    )
-    description = fields.Str(attribute="description")
-    tags = fields.Dict(keys=fields.Str, attribute="tags")
-    experiment_name = fields.Str()
-    properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
+class BaseCreateJobSchema(BaseJobSchema):
     job = UnionField(
         [
             ArmStr(azureml_type=AzureMLResourceType.JOB),
@@ -131,28 +111,16 @@ class BaseCreateJobSchema(metaclass=PatchedSchemaMeta):
 
 
 class PipelineCreateJobSchema(BaseCreateJobSchema):
+    # Note: Here we do not inherit PipelineJobSchema, as we don't need the post_load, pre_load inside.
     type = StringTransformedEnum(allowed_values=[JobType.PIPELINE])
+    inputs = InputsField()
+    outputs = OutputsField()
     settings = NestedField(PipelineJobSettingsSchema, unknown=INCLUDE)
 
 
-class CommandCreateJobSchema(BaseCreateJobSchema):
-    type = StringTransformedEnum(allowed_values=[JobType.COMMAND])
-    limits = NestedField(CommandJobLimitsSchema)
-    parameters = fields.Dict(dump_only=True)
-    environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
-    resources = NestedField(JobResourceConfigurationSchema)
-    distribution = UnionField(
-        [
-            NestedField(PyTorchDistributionSchema),
-            NestedField(TensorFlowDistributionSchema),
-            NestedField(MPIDistributionSchema),
-        ],
-        metadata={"description": "Provides the configuration for a distributed run."},
-    )
-    environment = UnionField(
-        [
-            NestedField(AnonymousEnvironmentSchema),
-            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
-        ],
-    )
+class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
+    class Meta:
+        # Refer to https://github.com/Azure/azureml_run_specification/blob/master
+        #   /specs/job-endpoint.md#properties-in-difference-job-types
+        # code and command can not be set during runtime
+        exclude = ["code", "command"]

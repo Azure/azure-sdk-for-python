@@ -37,7 +37,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     :type name: str
     :param trigger: Trigger of the schedule.
     :type trigger: Union[CronTrigger, RecurrenceTrigger]
-    :param create_job: The schedule action job definition or an existing job arm id.
+    :param create_job: The schedule action job definition.
     :type create_job: Job
     :param display_name: Display name of the schedule.
     :type display_name: str
@@ -54,7 +54,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         *,
         name: str,
         trigger: Union[CronTrigger, RecurrenceTrigger],
-        create_job: Union[Job, str],
+        create_job: Job,
         display_name: str = None,
         description: str = None,
         tags: Dict = None,
@@ -263,7 +263,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         elif isinstance(self.create_job, CommandJob):
             job_definition = self.create_job._to_rest_object().properties
             # TODO: Merge this branch with PipelineJob after source job id move to JobBaseProperties
-            job_definition.source_job_id = self.create_job.id
+            # job_definition.source_job_id = self.create_job.id
         elif isinstance(self.create_job, str):  # arm id reference
             # TODO: Update this after source job id move to JobBaseProperties
             job_definition = RestPipelineJob(source_job_id=self.create_job)
