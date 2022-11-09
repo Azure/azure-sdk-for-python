@@ -7,8 +7,9 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import ResourceNotFoundError
-from _router_test_case_async import AsyncRouterTestCase
+from _router_test_case_async import AsyncRouterRecordedTestCase
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _decorators_async import RouterPreparersAsync
 from _validators import ClassificationPolicyValidator
@@ -154,9 +155,11 @@ worker_selectors = [
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestClassificationPolicyAsync(AsyncRouterTestCase):
-    def __init__(self, method_name):
-        super(TestClassificationPolicyAsync, self).__init__(method_name)
+class TestClassificationPolicyAsync(AsyncRouterRecordedTestCase):
+
+    @pytest.fixture(scope = "function", autouse = True)
+    def initialize_test(self, request):
+        self._testMethodName = request.node.originalname
         self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
         self.queue_ids = {}  # type: Dict[str, List[str]]
         self.classification_policy_ids = {}  # type: Dict[str, List[str]]
@@ -180,15 +183,6 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                         and any(self.distribution_policy_ids[self._testMethodName]):
                     for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                         await router_client.delete_distribution_policy(distribution_policy_id = policy_id)
-
-    def setUp(self):
-        super(TestClassificationPolicyAsync, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestClassificationPolicyAsync, self).tearDown()
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp_async"
@@ -245,7 +239,8 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
             else:
                 self.queue_ids[self._testMethodName] = [job_queue_id]
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
@@ -284,7 +279,8 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                             worker_selectors = [ws]
                         )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
@@ -340,7 +336,8 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                             worker_selectors = [ws]
                         )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
@@ -396,7 +393,8 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                             worker_selectors = [ws]
                         )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
@@ -448,7 +446,8 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                             worker_selectors = [ws]
                         )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
@@ -521,7 +520,8 @@ class TestClassificationPolicyAsync(AsyncRouterTestCase):
                                 )
                                 policy_count -= 1
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.after_test_execute_async('clean_up')

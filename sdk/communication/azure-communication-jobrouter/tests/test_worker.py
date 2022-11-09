@@ -7,8 +7,9 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils import recorded_by_proxy
 from _router_test_case import (
-    RouterTestCase
+    RouterRecordedTestCase
 )
 from _validators import RouterWorkerValidator
 from _decorators import RouterPreparers
@@ -43,10 +44,10 @@ worker_total_capacity = 100
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestRouterWorker(RouterTestCase):
-    def __init__(self, method_name):
-        super(TestRouterWorker, self).__init__(method_name)
-
+class TestRouterWorker(RouterRecordedTestCase):
+    @pytest.fixture(scope = "function", autouse = True)
+    def initialize_test(self, request):
+        self._testMethodName = request.node.originalname
         self.queue_ids = {}  # type: Dict[str, List[str]]
         self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
         self.worker_ids = {}  # type: Dict[str, List[str]]
@@ -70,15 +71,6 @@ class TestRouterWorker(RouterTestCase):
                     and any(self.distribution_policy_ids[self._testMethodName]):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                     router_admin_client.delete_distribution_policy(distribution_policy_id = policy_id)
-
-    def setUp(self):
-        super(TestRouterWorker, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestRouterWorker, self).tearDown()
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp"
@@ -132,8 +124,11 @@ class TestRouterWorker(RouterTestCase):
         else:
             self.queue_ids[self._testMethodName] = [job_queue_id]
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_create_worker(self):
         w_identifier = "tst_create_w"
         router_client: RouterClient = self.create_client()
@@ -169,8 +164,11 @@ class TestRouterWorker(RouterTestCase):
         )
 
     @pytest.mark.skip(reason = "Upsert worker not working correctly")
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_worker(self):
         w_identifier = "tst_update_w"
         router_client: RouterClient = self.create_client()
@@ -227,8 +225,11 @@ class TestRouterWorker(RouterTestCase):
         )
 
     @pytest.mark.skip(reason = "Upsert worker not working correctly")
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_worker_w_kwargs(self):
         w_identifier = "tst_update_w_kwargs"
         router_client: RouterClient = self.create_client()
@@ -284,8 +285,11 @@ class TestRouterWorker(RouterTestCase):
             available_for_offers = False
         )
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_get_worker(self):
         w_identifier = "tst_get_w"
         router_client: RouterClient = self.create_client()
@@ -335,8 +339,11 @@ class TestRouterWorker(RouterTestCase):
             available_for_offers = router_worker.available_for_offers
         )
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_delete_worker(self):
         w_identifier = "tst_delete_w"
         router_client: RouterClient = self.create_client()
@@ -374,8 +381,11 @@ class TestRouterWorker(RouterTestCase):
         assert nfe.value.reason == "Not Found"
         assert nfe.value.status_code == 404
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_list_workers(self):
         router_client: RouterClient = self.create_client()
         w_identifiers = ["tst_list_w_1", "tst_list_w_2", "tst_list_w_3"]

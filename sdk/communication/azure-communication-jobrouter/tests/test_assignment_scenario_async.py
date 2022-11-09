@@ -7,10 +7,11 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
 from azure.core.exceptions import (
     HttpResponseError,
 )
-from _router_test_case_async import AsyncRouterTestCase
+from _router_test_case_async import AsyncRouterRecordedTestCase
 from _shared.asynctestcase import AsyncCommunicationTestCase
 
 from _decorators_async import RouterPreparersAsync
@@ -41,9 +42,10 @@ channel_id = 'fakeChannel1'
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestAssignmentScenarioAsync(AsyncRouterTestCase):
-    def __init__(self, method_name):
-        super(TestAssignmentScenarioAsync, self).__init__(method_name)
+class TestAssignmentScenarioAsync(AsyncRouterRecordedTestCase):
+    @pytest.fixture(scope = "function", autouse = True)
+    def initialize_test(self, request):
+        self._testMethodName = request.node.originalname
         self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
         self.queue_ids = {}  # type: Dict[str, List[str]]
         self.classification_policy_ids = {}  # type: Dict[str, List[str]]
@@ -90,15 +92,6 @@ class TestAssignmentScenarioAsync(AsyncRouterTestCase):
                             and any(self.distribution_policy_ids[self._testMethodName]):
                         for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                             await router_admin_client.delete_distribution_policy(distribution_policy_id = policy_id)
-
-    def setUp(self):
-        super(TestAssignmentScenarioAsync, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestAssignmentScenarioAsync, self).tearDown()
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp_async"
@@ -219,7 +212,8 @@ class TestAssignmentScenarioAsync(AsyncRouterTestCase):
             router_worker: RouterWorker = await router_client.get_worker(worker_id = worker_id)
             assert router_worker.state == RouterWorkerState.INACTIVE
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.before_test_execute_async('setup_job_queue')
     @RouterPreparersAsync.before_test_execute_async('setup_router_worker')
