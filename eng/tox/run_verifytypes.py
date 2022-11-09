@@ -32,7 +32,7 @@ def install_latest_release(package_name):
 
     try:
         latest_version = str(client.get_ordered_versions(package_name)[-1])
-    except IndexError:
+    except (IndexError, KeyError):
         logging.info(f"No released packages for {package_name} on PyPi yet.")
         latest_version = None
 
