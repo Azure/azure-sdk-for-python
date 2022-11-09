@@ -15,6 +15,7 @@ import yaml
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
+from azure.ai.ml._internal.entities._additional_includes import ADDITIONAL_INCLUDES_SUFFIX
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
@@ -394,9 +395,9 @@ class TestComponent:
     @pytest.mark.parametrize(
         "yaml_path,has_additional_includes",
         [
-            ("helloworld_without_code_and_additional_includes.yml", False),
-            ("helloworld_with_code.yml", False),
-            ("helloworld_with_code_and_additional_includes.yml", True),
+            ("no_code_and_additional_includes/component_spec.yml", False),
+            ("code_only/component_spec.yml", False),
+            ("code_and_additional_includes/component_spec.yml", True),
         ],
     )
     def test_additional_includes_with_code_specified(self, yaml_path: str, has_additional_includes: bool) -> None:
@@ -409,8 +410,9 @@ class TestComponent:
             assert code_path.is_dir()
             if has_additional_includes:
                 # additional includes is specified, code will be tmp folder and need to check each item
-                for path in os.listdir("./tests/test_configs/internal/"):
-                    assert (code_path / path).exists(), component.code
+                for path in os.listdir(Path(yaml_path).parent.parent):
+                    if not path.endswith(ADDITIONAL_INCLUDES_SUFFIX):
+                        assert (code_path / path).exists(), component.code
                 assert (code_path / "LICENSE").exists(), component.code
             else:
                 # additional includes not specified, code should be specified path (default yaml folder)

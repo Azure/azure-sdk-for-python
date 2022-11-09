@@ -14,7 +14,11 @@ class ComponentIgnoreFile(IgnoreFile):
 
     def __init__(self, directory_path: Optional[Union[str, Path]] = None):
         # note: the parameter changes to directory path in this class, rather than file path
-        file_path = get_ignore_file(directory_path).path if directory_path is not None else None
+        # try except here to avoid unexpected directory path input
+        try:
+            file_path = get_ignore_file(directory_path).path
+        except (OSError, TypeError):
+            file_path = None
         super(ComponentIgnoreFile, self).__init__(file_path=file_path)
         self._path_spec = self._create_pathspec()  # add custom ignores here
 

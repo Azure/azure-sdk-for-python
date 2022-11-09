@@ -10,6 +10,6 @@ outputs: {}
 environment:
   docker:
     image: zzn2/azureml_sdk
-code: ./
+code: ../
 command: >-
   echo Hello World
