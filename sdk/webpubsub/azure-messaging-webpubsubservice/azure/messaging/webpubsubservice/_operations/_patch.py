@@ -49,6 +49,7 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
     user = kwargs.pop("user_id", None)
     ttl = timedelta(minutes=kwargs.pop("minutes_to_expire", 60))
     roles = kwargs.pop("roles", [])
+    groups = kwargs.pop("groups", [])
 
     payload = {
         "aud": audience,
@@ -59,7 +60,9 @@ def get_token_by_key(endpoint: str, hub: str, key: str, **kwargs: Any) -> str:
         payload["sub"] = user
     if roles:
         payload["role"] = roles
-
+    if groups:
+        payload["webpubsub.group"] = groups
+    
     return six.ensure_str(jwt.encode(payload, key, algorithm="HS256", headers=kwargs.pop("jwt_headers", {})))
 
 
@@ -89,7 +92,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             raise ValueError(
                 "Invalid endpoint: '{}' has unknown scheme - expected 'http://' or 'https://'".format(endpoint)
             )
-
+            
         # Ensure endpoint has no trailing slash
         endpoint = endpoint.rstrip("/")
 

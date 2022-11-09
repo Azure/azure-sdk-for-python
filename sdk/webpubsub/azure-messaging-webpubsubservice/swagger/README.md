@@ -68,16 +68,7 @@ directive:
   - from: swagger-document
     where: $["paths"]["/api/hubs/{hub}/:generateToken"].post.parameters
     transform: >
-        if($) {
-          for(let i = 0; i < $.length; i++) {
-            if ($[i] && $[i]["name"] == "role") {
-              $[i]["x-ms-client-name"] = "roles";
-            }
-            if ($[i] && $[i]["name"] == "group") {
-              $[i]["x-ms-client-name"] = "groups";
-            }
-          }
-        }
+        $[2]["x-ms-client-name"] = "roles"
 ```
 
 ```yaml
