@@ -2280,7 +2280,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                             assert raw_amqp_message.annotations[b'ann_key'] == b'ann_value'
                             assert raw_amqp_message.application_properties[b'body_type'] == b'value'
                             recv_value_msg += 1
-                        receiver.complete_message(message)
+                        await receiver.complete_message(message)
 
                     assert recv_data_msg == 3
                     assert recv_sequence_msg == 3
