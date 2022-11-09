@@ -7,7 +7,7 @@ import copy
 import yaml
 from marshmallow import INCLUDE, ValidationError, post_load, pre_load
 
-from azure.ai.ml._schema import CommandJobSchema
+from azure.ai.ml._schema import CommandJobSchema, AnonymousEnvironmentSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
     FileRefField,
@@ -15,6 +15,8 @@ from azure.ai.ml._schema.core.fields import (
     StringTransformedEnum,
     UnionField,
     ComputeField,
+    RegistryStr,
+    ArmVersionedStr,
 )
 from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
@@ -126,3 +128,10 @@ class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
         #   /specs/job-endpoint.md#properties-in-difference-job-types
         # code and command can not be set during runtime
         exclude = ["code", "command"]
+    environment = UnionField(
+        [
+            NestedField(AnonymousEnvironmentSchema),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ],
+    )
