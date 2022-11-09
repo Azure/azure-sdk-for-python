@@ -73,13 +73,17 @@ class _AdditionalIncludes:
         else:
             # use os.walk to replace shutil.copytree, which may raise FileExistsError
             # for same folder, the expected behavior is merging
-            # ignore will be applied during upload
+            # ignore will be also applied during this process
+            ignore_file = InternalComponentIgnoreFile()
             for root, _, files in os.walk(src):
                 dst_root = Path(dst) / Path(root).relative_to(src)
-                if not dst_root.is_dir():
-                    dst_root.mkdir()
-                for name in files:
-                    _general_copy(Path(root) / name, dst_root / name)
+                dst_root_mkdir_flag = False
+                for path, _ in traverse_directory(root, files, str(src), "", ignore_file=ignore_file):
+                    # if there is nothing to copy under current dst_root, no need to create this folder
+                    if dst_root_mkdir_flag is False:
+                        dst_root.mkdir()
+                        dst_root_mkdir_flag = True
+                    _general_copy(path, dst_root / Path(path).name)
 
     @staticmethod
     def _is_folder_to_compress(path: Path) -> bool:
@@ -175,6 +179,7 @@ class _AdditionalIncludes:
         return
 
     def _resolve_folder_to_compress(self, include: str, dst_path: Path) -> None:
+        """resolve the zip additional include, need to compress corresponding folder."""
         zip_additional_include = (self._additional_includes_file_path.parent / include).resolve()
         folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
         zip_file = dst_path / zip_additional_include.name
