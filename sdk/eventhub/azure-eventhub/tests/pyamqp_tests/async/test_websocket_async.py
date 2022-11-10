@@ -53,6 +53,3 @@ async def test_event_hubs_client_web_socket_async(live_eventhub):
     async with ReceiveClientAsync(live_eventhub['hostname'] + '/$servicebus/websocket/', source, auth=sas_auth, debug=False, timeout=500, prefetch=1, transport_type=TransportType.AmqpOverWebsocket) as receive_client:
         messages = await receive_client.receive_message_batch_async(max_batch_size=1)
         assert len(messages) > 0
-
-
-
