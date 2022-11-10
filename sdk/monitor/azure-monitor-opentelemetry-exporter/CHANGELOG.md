@@ -11,7 +11,7 @@
 - Fix missing local storage attribute
     ([#27405](https://github.com/Azure/azure-sdk-for-python/pull/27405))
 - Fix offline storage rename
-    ([#27405](https://github.com/Azure/azure-sdk-for-python/pull/27405))
+    ([#27414](https://github.com/Azure/azure-sdk-for-python/pull/27414))
 
 ### Other Changes
 
