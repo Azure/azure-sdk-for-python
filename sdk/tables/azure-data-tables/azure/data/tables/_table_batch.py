@@ -145,7 +145,7 @@ class TableBatchOperations(object):
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
         response_preference="return-no-content",  # type: Optional[Union[str, "models.ResponseFormat"]]
-        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]]
+        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]] # pylint: disable=redefined-builtin
         **kwargs  # type: Any
     ):
         # (...) -> None
@@ -315,7 +315,7 @@ class TableBatchOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         if_match=None,  # type: Optional[str]
         table_entity_properties=None,  # type: Optional[EntityType]
-        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]]
+        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]] # pylint: disable=redefined-builtin
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -420,7 +420,7 @@ class TableBatchOperations(object):
         request_id_parameter=None,  # type: Optional[str]
         if_match=None,  # type: Optional[str]
         table_entity_properties=None,  # type: Optional[EntityType]
-        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]]
+        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]] # pylint: disable=redefined-builtin
         **kwargs  # type: Any
     ):
         # type: (...) -> None
@@ -576,7 +576,7 @@ class TableBatchOperations(object):
         if_match,  # type: str
         timeout=None,  # type: Optional[int]
         request_id_parameter=None,  # type: Optional[str]
-        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]]
+        format=None,  # type: Optional[Union[str, "models.OdataMetadataFormat"]] # pylint: disable=redefined-builtin
     ):
         # type: (...) -> None
         """Deletes the specified entity in a table.
