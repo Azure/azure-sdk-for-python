@@ -251,6 +251,7 @@ class EventProcessor(
             await self._ownership_manager.release_ownership(partition_id)
         finally:
             if partition_id in self._tasks:
+                self._tasks[partition_id].cancel()
                 del self._tasks[partition_id]
 
     async def _receive(
@@ -411,9 +412,9 @@ class EventProcessor(
 
         """
         self._running = False
-        _LOGGER.info("EventProcessor %r tasks are being cancelled.", self._id)
+        pids = list(self._tasks.keys())
+        await self._cancel_tasks_for_partitions(pids)
+        _LOGGER.info("EventProcessor %r tasks have been cancelled.", self._id)
         while self._tasks:
-            pids = list(self._tasks.keys())
-            await self._cancel_tasks_for_partitions(pids)
             await asyncio.sleep(1, **self._internal_kwargs)
         _LOGGER.info("EventProcessor %r has been stopped.", self._id)

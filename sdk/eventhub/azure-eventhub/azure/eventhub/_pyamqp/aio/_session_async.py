@@ -94,14 +94,8 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             new_state,
             extra=self.network_trace_params,
         )
-        await asyncio.gather(
-            *[
-                asyncio.ensure_future(
-                    link._on_session_state_change()  # pylint: disable=protected-access
-                )
-                for link in self.links.values()
-            ]
-        )
+        for link in self.links.values():
+            await link._on_session_state_change()  # pylint: disable=protected-access
 
     async def _on_connection_state_change(self):
         if self._connection.state in [ConnectionState.CLOSE_RCVD, ConnectionState.END]:
@@ -117,38 +111,24 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         :rtype: int
         """
         if len(self._output_handles) >= self.handle_max:
-            raise ValueError(
-                "Maximum number of handles ({}) has been reached.".format(
-                    self.handle_max
-                )
-            )
-        next_handle = next(
-            i for i in range(1, self.handle_max) if i not in self._output_handles
-        )
+            raise ValueError("Maximum number of handles ({}) has been reached.".format(self.handle_max))
+        next_handle = next(i for i in range(1, self.handle_max) if i not in self._output_handles)
         return next_handle
 
     async def _outgoing_begin(self):
         begin_frame = BeginFrame(
-            remote_channel=self.remote_channel
-            if self.state == SessionState.BEGIN_RCVD
-            else None,
+            remote_channel=self.remote_channel if self.state == SessionState.BEGIN_RCVD else None,
             next_outgoing_id=self.next_outgoing_id,
             outgoing_window=self.outgoing_window,
             incoming_window=self.incoming_window,
             handle_max=self.handle_max,
-            offered_capabilities=self.offered_capabilities
-            if self.state == SessionState.BEGIN_RCVD
-            else None,
-            desired_capabilities=self.desired_capabilities
-            if self.state == SessionState.UNMAPPED
-            else None,
+            offered_capabilities=self.offered_capabilities if self.state == SessionState.BEGIN_RCVD else None,
+            desired_capabilities=self.desired_capabilities if self.state == SessionState.UNMAPPED else None,
             properties=self.properties,
         )
         if self.network_trace:
             _LOGGER.info("-> %r", begin_frame, extra=self.network_trace_params)
-        await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-            self.channel, begin_frame
-        )
+        await self._connection._process_outgoing_frame(self.channel, begin_frame)  # pylint: disable=protected-access
 
     async def _incoming_begin(self, frame):
         if self.network_trace:
@@ -169,9 +149,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         end_frame = EndFrame(error=error)
         if self.network_trace:
             _LOGGER.info("-> %r", end_frame, extra=self.network_trace_params)
-        await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-            self.channel, end_frame
-        )
+        await self._connection._process_outgoing_frame(self.channel, end_frame)  # pylint: disable=protected-access
 
     async def _incoming_end(self, frame):
         if self.network_trace:
@@ -189,20 +167,12 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         await self._set_state(SessionState.UNMAPPED)
 
     async def _outgoing_attach(self, frame):
-        await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-            self.channel, frame
-        )
+        await self._connection._process_outgoing_frame(self.channel, frame)  # pylint: disable=protected-access
 
     async def _incoming_attach(self, frame):
         try:
-            self._input_handles[frame[1]] = self.links[
-                frame[0].decode("utf-8")
-            ]  # name and handle
-            await self._input_handles[  # pylint: disable=protected-access
-                frame[1]
-            ]._incoming_attach(
-                frame
-            )
+            self._input_handles[frame[1]] = self.links[frame[0].decode("utf-8")]  # name and handle
+            await self._input_handles[frame[1]]._incoming_attach(frame)  # pylint: disable=protected-access
         except KeyError:
             try:
                 outgoing_handle = self._get_next_output_handle()
@@ -211,18 +181,13 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 await self.links[frame[0].decode("utf-8")].detach(
                     error=AMQPError(
                         condition=ErrorCondition.LinkDetachForced,
-                        description="""Cannot allocate more handles, """
-                        """the max number of handles is {}. Detaching link""".format(
-                            self.handle_max
-                        ),
+                        description=f"Cannot allocate more handles, the max number of handles is {self.handle_max}. Detaching link", # pylint: disable=line-too-long
                         info=None,
                     )
                 )
                 return
             if frame[2] == Role.Sender:
-                new_link = ReceiverLink.from_incoming_frame(
-                    self, outgoing_handle, frame
-                )
+                new_link = ReceiverLink.from_incoming_frame(self, outgoing_handle, frame)
             else:
                 new_link = SenderLink.from_incoming_frame(self, outgoing_handle, frame)
             await new_link._incoming_attach(frame)  # pylint: disable=protected-access
@@ -246,38 +211,21 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         flow_frame = FlowFrame(**link_flow)
         if self.network_trace:
             _LOGGER.info("-> %r", flow_frame, extra=self.network_trace_params)
-        await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-            self.channel, flow_frame
-        )
+        await self._connection._process_outgoing_frame(self.channel, flow_frame)  # pylint: disable=protected-access
 
     async def _incoming_flow(self, frame):
         if self.network_trace:
             _LOGGER.info("<- %r", FlowFrame(*frame), extra=self.network_trace_params)
         self.next_incoming_id = frame[2]  # next_outgoing_id
-        remote_incoming_id = (
-            frame[0] or self.next_outgoing_id
-        )  #  next_incoming_id  TODO "initial-outgoing-id"
-        self.remote_incoming_window = (
-            remote_incoming_id + frame[1] - self.next_outgoing_id
-        )  # incoming_window
+        remote_incoming_id = frame[0] or self.next_outgoing_id  #  next_incoming_id  TODO "initial-outgoing-id"
+        self.remote_incoming_window = remote_incoming_id + frame[1] - self.next_outgoing_id  # incoming_window
         self.remote_outgoing_window = frame[3]  # outgoing_window
         if frame[4] is not None:  # handle
-            await self._input_handles[  # pylint: disable=protected-access
-                frame[4]
-            ]._incoming_flow(
-                frame
-            )
+            await self._input_handles[frame[4]]._incoming_flow(frame)  # pylint: disable=protected-access
         else:
-            futures = []
             for link in self._output_handles.values():
-                if (
-                    self.remote_incoming_window > 0
-                    and not link._is_closed  # pylint: disable=protected-access
-                ):
-                    futures.append(
-                        link._incoming_flow(frame)  # pylint: disable=protected-access
-                    )
-            await asyncio.gather(*futures)
+                if self.remote_incoming_window > 0 and not link._is_closed:  # pylint: disable=protected-access
+                    await link._incoming_flow(frame)  # pylint: disable=protected-access
 
     async def _outgoing_transfer(self, delivery):
         if self.state != SessionState.MAPPED:
@@ -298,9 +246,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             # available size for payload per frame is calculated as following:
             # remote max frame size - transfer overhead (calculated) - header (8 bytes)
             available_frame_size = (
-                self._connection._remote_max_frame_size  # pylint: disable=protected-access
-                - transfer_overhead_size
-                - 8
+                self._connection._remote_max_frame_size - transfer_overhead_size - 8  # pylint: disable=protected-access
             )
 
             start_idx = 0
@@ -356,11 +302,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         self.remote_outgoing_window -= 1
         self.incoming_window -= 1
         try:
-            await self._input_handles[  # pylint: disable=protected-access
-                frame[0]
-            ]._incoming_transfer(
-                frame
-            )
+            await self._input_handles[frame[0]]._incoming_transfer(frame)  # pylint: disable=protected-access
         except KeyError:
             await self._set_state(SessionState.DISCARDING)
             await self.end(
@@ -375,26 +317,16 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             await self._outgoing_flow()
 
     async def _outgoing_disposition(self, frame):
-        await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-            self.channel, frame
-        )
+        await self._connection._process_outgoing_frame(self.channel, frame)  # pylint: disable=protected-access
 
     async def _incoming_disposition(self, frame):
         if self.network_trace:
-            _LOGGER.info(
-                "<- %r", DispositionFrame(*frame), extra=self.network_trace_params
-            )
-        futures = []
+            _LOGGER.info("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
         for link in self._input_handles.values():
-            asyncio.ensure_future(
-                link._incoming_disposition(frame)  # pylint: disable=protected-access
-            )
-        await asyncio.gather(*futures)
+            await link._incoming_disposition(frame)  # pylint: disable=protected-access
 
     async def _outgoing_detach(self, frame):
-        await self._connection._process_outgoing_frame(  # pylint: disable=protected-access
-            self.channel, frame
-        )
+        await self._connection._process_outgoing_frame(self.channel, frame)  # pylint: disable=protected-access
 
     async def _incoming_detach(self, frame):
         try:
@@ -436,9 +368,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         if wait:
             await self._wait_for_response(wait, SessionState.BEGIN_SENT)
         elif not self.allow_pipelined_open:
-            raise ValueError(
-                "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
-            )
+            raise ValueError("Connection has been configured to not allow piplined-open. Please set 'wait' parameter.")
 
     async def end(self, error=None, wait=False):
         # type: (Optional[AMQPError], bool) -> None
