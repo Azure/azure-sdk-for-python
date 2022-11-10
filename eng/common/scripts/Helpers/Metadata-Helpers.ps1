@@ -114,6 +114,7 @@ function GenerateDocsMsMetadata($originalMetadata, $language, $languageDisplayNa
   $langTitle = "Azure $serviceName SDK for $languageDisplayName"
   $langDescription = "Reference for Azure $serviceName SDK for $languageDisplayName"
   # Github url for source code: e.g. https://github.com/Azure/azure-sdk-for-js
+<<<<<<< HEAD
   $serviceBaseName = $serviceName.ToLower().Replace(' ', '').Replace('/', '-')
   $author = "a"#GetPrimaryCodeOwner -TargetDirectory "/sdk/$serviceBaseName/"
   $msauthor = "b"
@@ -131,6 +132,35 @@ function GenerateDocsMsMetadata($originalMetadata, $language, $languageDisplayNa
   $date = Get-Date -Format "MM/dd/yyyy"
   $customOrderedMetadata = @(("title", $langTitle), ("description", $langDescription), ("author", $author), ("ms.author", $msauthor), ("ms.data", $date), ("ms.topic", "reference"), ("ms.devlang", $language), ("ms.service", $msService))
   $updatedMetadata = compare-and-merge-metadata -original $originalMetadata -updated $customOrderedMetadata
+=======
+  $serviceBaseName = ServiceLevelReadmeNameStyle $serviceName
+  $author = GetPrimaryCodeOwner -TargetDirectory "/sdk/$serviceBaseName/"
+  $msauthor = ""
+  if (!$author) {
+    LogError "Cannot fetch the author from CODEOWNER file."
+  }
+  elseif ($TenantId -and $ClientId -and $ClientSecret) {
+    $msauthor = GetMsAliasFromGithub -TenantId $tenantId -ClientId $clientId -ClientSecret $clientSecret -GithubUser $author
+  }
+  # Default value
+  if (!$msauthor) {
+    LogError "No ms.author found for $author. "
+    $msauthor = $author
+  }
+  $date = Get-Date -Format "MM/dd/yyyy"
+
+  $metadataTable = [ordered] @{
+    "title"= $langTitle
+    "description"= $langDescription
+    "author"= $author
+    "ms.author"= $msauthor
+    "ms.data"= $date
+    "ms.topic"= "reference"
+    "ms.devlang"= $language
+    "ms.service"= $msService
+  }
+  $updatedMetadata = compare-and-merge-metadata -original $originalMetadata -updated $metadataTable
+>>>>>>> 437c9ea558b2a1afa8986bc31d140ff0fde2b51a
   return "---`r`n$updatedMetadata---`r`n"
 }
 
