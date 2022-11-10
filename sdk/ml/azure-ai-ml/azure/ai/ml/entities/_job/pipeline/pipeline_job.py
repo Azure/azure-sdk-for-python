@@ -477,6 +477,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             inputs=to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
             outputs=to_rest_data_outputs(built_outputs),
             settings=settings_dict,
+            services={k: v._to_rest_object() for k, v in self.services.items()} if self.services else None,
             identity=self.identity._to_job_rest_object() if self.identity else None,
         )
         rest_job = JobBase(properties=pipeline_job)
