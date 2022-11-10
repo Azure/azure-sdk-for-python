@@ -11,7 +11,7 @@ from azure.eventhub._pyamqp.aio._transport_async import WebSocketTransportAsync
 
 class WebsocketException(unittest.TestCase):
 
-    @mock.patch('azure.eventhub._pyamqp.aio.transport_async.WebSocketTransportAsync.ws._receive_bytes')
+    @mock.patch('azure.eventhub._pyamqp.aio._transport_async.WebSocketTransportAsync.ws._receive_bytes')
     async def test_websocket_exception_async(self, receive_bytes):
         receive_bytes.raises(aiohttp.ClientOSError)
         web_transport = WebSocketTransportAsync("my_host")
