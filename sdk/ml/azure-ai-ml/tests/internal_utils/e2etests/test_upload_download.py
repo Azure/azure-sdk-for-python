@@ -13,7 +13,7 @@ from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._fileshare_storage_helper import FileStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._restclient.v2021_10_01.models import DatastoreType
-from azure.ai.ml._utils._asset_utils import _parse_name_version, get_object_hash
+from azure.ai.ml._utils._asset_utils import _parse_name_version, get_content_hash
 from azure.ai.ml._utils._storage_utils import get_storage_client
 from azure.ai.ml.entities import Model
 from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
@@ -174,7 +174,7 @@ class TestUpload(AzureRecordedTestCase):
         variable_recorder,
     ) -> None:
         name, version = _parse_name_version(uuid_name)
-        file_hash = variable_recorder.get_or_record("file_hash", get_object_hash(artifact_path))
+        file_hash = variable_recorder.get_or_record("file_hash", get_content_hash(artifact_path))
 
         blob_storage_client = get_storage_client(
             credential=storage_account_secret,
@@ -205,7 +205,7 @@ class TestUpload(AzureRecordedTestCase):
         variable_recorder,
     ) -> None:
         name, version = _parse_name_version(uuid_name)
-        dir_hash = variable_recorder.get_or_record("dir_hash", get_object_hash(artifact_path_dir))
+        dir_hash = variable_recorder.get_or_record("dir_hash", get_content_hash(artifact_path_dir))
 
         blob_storage_client = get_storage_client(
             credential=storage_account_secret,
@@ -254,7 +254,7 @@ class TestUpload(AzureRecordedTestCase):
         artifact_path_dir, nested_dir_name = top_level.name, nested_level.name
 
         name, version = _parse_name_version(uuid_name)
-        dir_hash = variable_recorder.get_or_record("dir_hash", get_object_hash(artifact_path_dir))
+        dir_hash = variable_recorder.get_or_record("dir_hash", get_content_hash(artifact_path_dir))
 
         gen2_storage_client = get_storage_client(
             credential=storage_account_secret,
@@ -294,7 +294,7 @@ class TestUpload(AzureRecordedTestCase):
         variable_recorder,
     ) -> None:
         name, version = _parse_name_version(uuid_name)
-        file_hash = variable_recorder.get_or_record("file_hash", get_object_hash(artifact_path))
+        file_hash = variable_recorder.get_or_record("file_hash", get_content_hash(artifact_path))
 
         file_storage_client = get_storage_client(
             credential=storage_account_secret,
@@ -325,7 +325,7 @@ class TestUpload(AzureRecordedTestCase):
         variable_recorder,
     ) -> None:
         name, version = _parse_name_version(uuid_name)
-        dir_hash = variable_recorder.get_or_record("dir_hash", get_object_hash(artifact_path_dir))
+        dir_hash = variable_recorder.get_or_record("dir_hash", get_content_hash(artifact_path_dir))
 
         file_storage_client = get_storage_client(
             credential=storage_account_secret,

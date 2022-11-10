@@ -19,7 +19,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 )
 from azure.ai.ml._schema import EnvironmentSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
+from azure.ai.ml._utils._asset_utils import get_ignore_file, get_content_hash
 from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
 from azure.ai.ml.entities._assets.asset import Asset
@@ -142,7 +142,7 @@ class Environment(Asset):
         if self._is_anonymous:
             if self.path:
                 self._ignore_file = get_ignore_file(path)
-                self._upload_hash = get_object_hash(path, self._ignore_file)
+                self._upload_hash = get_content_hash(path, self._ignore_file)
                 self._generate_anonymous_name_version(source="build")
             elif self.image:
                 self._generate_anonymous_name_version(source="image", conda_file=self._translated_conda_file)

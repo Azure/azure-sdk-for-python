@@ -28,7 +28,7 @@ from azure.ai.ml._utils._asset_utils import (
     _build_metadata_dict,
     _validate_path,
     get_ignore_file,
-    get_object_hash,
+    get_content_hash,
 )
 from azure.ai.ml._utils._storage_utils import (
     AzureMLDatastorePathUri,
@@ -293,7 +293,7 @@ def _upload_to_datastore(
     if not ignore_file:
         ignore_file = get_ignore_file(path)
     if not asset_hash:
-        asset_hash = get_object_hash(path, ignore_file)
+        asset_hash = get_content_hash(path, ignore_file)
     artifact = upload_artifact(
         str(path),
         datastore_operation,

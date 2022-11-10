@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import (
 )
 from azure.ai.ml._schema import ModelSchema
 from azure.ai.ml._utils._arm_id_utils import AMLNamedArmId, AMLVersionedArmId
-from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
+from azure.ai.ml._utils._asset_utils import get_ignore_file, get_content_hash
 from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     LONG_URI_FORMAT,
@@ -87,7 +87,7 @@ class Model(Artifact):
         self.type = type or AssetTypes.CUSTOM_MODEL
         if self._is_anonymous and self.path:
             _ignore_file = get_ignore_file(self.path)
-            _upload_hash = get_object_hash(self.path, _ignore_file)
+            _upload_hash = get_content_hash(self.path, _ignore_file)
             self.name = get_md5_string(_upload_hash)
 
     @classmethod

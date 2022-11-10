@@ -9,7 +9,7 @@ from azure.ai.ml._utils._asset_utils import (
     GitIgnoreFile,
     IgnoreFile,
     get_ignore_file,
-    get_object_hash,
+    get_content_hash,
     traverse_directory,
 )
 from azure.ai.ml._utils.utils import convert_windows_path_to_unix
@@ -100,9 +100,9 @@ class TestAssetUtils:
         gitignore_file: GitIgnoreFile,
         no_ignore_file: IgnoreFile,
     ) -> None:
-        no_ignore_hash = get_object_hash(path=storage_test_directory, ignore_file=no_ignore_file)
-        amlignore_hash = get_object_hash(path=storage_test_directory, ignore_file=amlignore_file)
-        gitignore_hash = get_object_hash(path=storage_test_directory, ignore_file=gitignore_file)
+        no_ignore_hash = get_content_hash(path=storage_test_directory, ignore_file=no_ignore_file)
+        amlignore_hash = get_content_hash(path=storage_test_directory, ignore_file=amlignore_file)
+        gitignore_hash = get_content_hash(path=storage_test_directory, ignore_file=gitignore_file)
 
         assert no_ignore_hash != amlignore_hash != gitignore_hash
 
@@ -153,9 +153,9 @@ class TestAssetUtils:
         """Confirm that changes in the original file are respected when the symlink is hashed"""
 
         # hash symlink, update original file, hash symlink again and compare hashes
-        original_hash = get_object_hash(path=link_file_path, ignore_file=no_ignore_file)
+        original_hash = get_content_hash(path=link_file_path, ignore_file=no_ignore_file)
         Path(target_file_path).write_text("some more text")
-        updated_hash = get_object_hash(path=link_file_path, ignore_file=no_ignore_file)
+        updated_hash = get_content_hash(path=link_file_path, ignore_file=no_ignore_file)
         assert original_hash != updated_hash
 
     def test_symlink_upload_paths(

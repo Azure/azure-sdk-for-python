@@ -63,7 +63,7 @@ from azure.core.exceptions import ResourceExistsError, ResourceNotFoundError
 if TYPE_CHECKING:
     from azure.ai.ml.operations import ComponentOperations, DataOperations, EnvironmentOperations, ModelOperations
 
-hash_type = type(hashlib.md5()) # nosec
+hash_type = type(hashlib.sha256()) # nosec
 
 module_logger = logging.getLogger(__name__)
 
@@ -188,23 +188,6 @@ def _get_file_hash(filename: Union[str, Path], _hash: hash_type) -> hash_type:
             _hash.update(chunk)
     return _hash
 
-
-def _get_dir_hash(directory: Union[str, Path], _hash: hash_type, ignore_file: IgnoreFile) -> hash_type:
-    dir_contents = Path(directory).iterdir()
-    sorted_contents = sorted(dir_contents, key=lambda path: str(path).lower())
-    for path in sorted_contents:
-        if ignore_file.is_file_excluded(path):
-            continue
-        _hash.update(path.name.encode())
-        if os.path.islink(path):  # ensure we're hashing the contents of the linked file
-            path = Path(os.readlink(convert_windows_path_to_unix(path)))
-        if path.is_file():
-            _hash = _get_file_hash(path, _hash)
-        elif path.is_dir():
-            _hash = _get_dir_hash(path, _hash, ignore_file)
-    return _hash
-
-
 def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
     """Build metadata dictionary to attach to uploaded data.
 
@@ -226,17 +209,6 @@ def _build_metadata_dict(name: str, version: str) -> Dict[str, str]:
 
     metadata_dict = {**UPLOAD_CONFIRMATION, **linked_asset_arm_id}
     return metadata_dict
-
-
-def get_object_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> str:
-    _hash = hashlib.md5(b"Initialize for october 2021 AML CLI version") # nosec
-    if Path(path).is_dir():
-        object_hash = _get_dir_hash(directory=path, _hash=_hash, ignore_file=ignore_file)
-    else:
-        if os.path.islink(path):  # ensure we're hashing the contents of the linked file
-            path = Path(os.readlink(convert_windows_path_to_unix(path)))
-        object_hash = _get_file_hash(filename=path, _hash=_hash)
-    return str(object_hash.hexdigest())
 
 
 def get_content_hash_version():

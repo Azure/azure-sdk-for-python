@@ -54,7 +54,7 @@ class TestModel(AzureRecordedTestCase):
         assert re.match(LONG_URI_REGEX_FORMAT, model.path)
 
         with pytest.raises(Exception):
-            with patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", return_value="DIFFERENT_HASH"):
+            with patch("azure.ai.ml._artifacts._artifact_utilities.get_content_hash", return_value="DIFFERENT_HASH"):
                 model = load_model(source=artifact_path)
                 model = client.models.create_or_update(model)
 

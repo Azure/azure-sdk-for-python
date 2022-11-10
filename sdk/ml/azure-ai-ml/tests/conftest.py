@@ -377,10 +377,10 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
         return str(uuid.uuid4())
 
     if is_live_and_not_recording():
-        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
+        mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_content_hash", side_effect=generate_hash)
     elif not is_live():
         mocker.patch(
-            "azure.ai.ml._artifacts._artifact_utilities.get_object_hash",
+            "azure.ai.ml._artifacts._artifact_utilities.get_content_hash",
             return_value="00000000000000000000000000000000",
         )
 
