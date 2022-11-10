@@ -8,7 +8,13 @@
 FILE: sample_assign_deployment_resources.py
 
 DESCRIPTION:
-    This sample demonstrates how to assign deployment resources to a project and deploy a project to specific deployment resources. Assigning resources allow you to train your model in one resource and deploy them to other assigned resources.
+    This sample demonstrates how to assign deployment resources to a project and deploy a project
+    to specific deployment resources. Assigning resources allow you to train your model in one
+    resource and deploy them to other assigned resources.
+
+    Assigning deployment resources requires you to authenticate with AAD, you cannot assign
+    deployment resources with key based authentication. You must have the role Cognitive Services
+    Language Owner assigned to the authoring resource and the target resources.
 
 USAGE:
     python sample_assign_deployment_resources.py
@@ -20,69 +26,65 @@ USAGE:
     4) AZURE_CLIENT_SECRET                      - the secret of your active directory application.
 """
 
-"""
-Assigning deployment resources requires you to authenticate with AAD, you cannot assign deployment resources with key based authentication. You must have the role Cognitive Services Language Owner assigned to the authoring resource and the target resources.
-"""
+
 def sample_assign_resources():
     import os
     from azure.identity import DefaultAzureCredential
     from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    
-    client = ConversationAuthoringClient(
-        clu_endpoint, credential=credential
-    )
-    
-    project_name = "test_project"
-
     credential = DefaultAzureCredential()
 
-    poller = client.begin_assign_resource(
+    client = ConversationAuthoringClient(clu_endpoint, credential=credential)
+
+    project_name = "test_project"
+
+    poller = client.begin_assign_deployment_resources(
         project_name=project_name,
-        resourcesMetadata: [
-          {
-            "azureResourceId": "/subscriptions/80000000-0000-4e8a-0000-7ce285849735/resourceGroups/test-rg/providers/Microsoft.CognitiveServices/accounts/LangTestWeu",
-            "customDomain": "lang-test-weu.cognitiveservices.azure.com",
-            "region": "westeurope"
-          },
-          {
-            "azureResourceId": "/subscriptions/80000000-0000-4e8a-0000-7ce285849735/resourceGroups/test-rg/providers/Microsoft.CognitiveServices/accounts/LangTestEus",
-            "customDomain": "lang-test-eus.cognitiveservices.azure.com",
-            "region": "eastus"
-          }
-        ],
+        body={
+            "resourcesMetadata": [
+                {
+                    "azureResourceId": "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.CognitiveServices/accounts/<resource-name>",
+                    "customDomain": "<resource-name>.cognitiveservices.azure.com",
+                    "region": "<region>",
+                },
+                {
+                    "azureResourceId": "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.CognitiveServices/accounts/<resource-name>",
+                    "customDomain": "<resource-name>.cognitiveservices.azure.com",
+                    "region": "<region>",
+                },
+            ],
+        },
     )
-    
+
     response = poller.result()
     print(response)
 
+
 def sample_deploy_model():
     import os
-    from azure.core.credentials import AzureKeyCredential
+    from azure.identity import DefaultAzureCredential
     from azure.ai.language.conversations.authoring import ConversationAuthoringClient
 
     clu_endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
-    clu_key = os.environ["AZURE_CONVERSATIONS_KEY"]
+    credential = DefaultAzureCredential()
 
     project_name = "test_project"
     deployment_name = "production"
 
-    client = ConversationAuthoringClient(
-        clu_endpoint, AzureKeyCredential(clu_key)
-    )
+    client = ConversationAuthoringClient(clu_endpoint, credential=credential)
 
     ## If assigned resource Ids are not provided, project is deployed to all assigned resources
-    
+
     poller = client.begin_deploy_project(
         project_name=project_name,
         deployment_name=deployment_name,
         deployment={
-          "trainedModelLabel": "sample",
-          "assignedResourceIds": [
-            "/subscriptions/80000000-0000-4e8a-0000-7ce285849735/resourceGroups/test-rg/providers/Microsoft.CognitiveServices/accounts/LangTestWeu",
-            "/subscriptions/80000000-0000-4e8a-0000-7ce285849735/resourceGroups/test-rg/providers/Microsoft.CognitiveServices/accounts/LangTestEus"
-          ]
+            "trainedModelLabel": "sample",
+            "assignedResourceIds": [
+                "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.CognitiveServices/accounts/<resource-name>",
+                "/subscriptions/<subscription-id>/resourceGroups/<resource-group-name>/providers/Microsoft.CognitiveServices/accounts/<resource-name>",
+            ],
         },
     )
     response = poller.result()
