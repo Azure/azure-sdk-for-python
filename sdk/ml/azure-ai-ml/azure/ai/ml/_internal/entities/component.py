@@ -5,6 +5,7 @@
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
 from os import PathLike
+from pathlib import Path
 from typing import Dict, Optional, Union
 from uuid import UUID
 
@@ -149,7 +150,10 @@ class InternalComponent(Component):
             self.__additional_includes = _AdditionalIncludes(
                 code_path=self.code,
                 yaml_path=self._source_path,
-                ignore_file=InternalComponentIgnoreFile(self.code, extra_ignores=self._ignores),
+                ignore_file=InternalComponentIgnoreFile(
+                    self.code if self.code is not None else Path(self._source_path).parent,
+                    extra_ignores=self._ignores,
+                ),  # use YAML's parent as code when self.code is None
             )
         return self.__additional_includes
 

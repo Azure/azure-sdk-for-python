@@ -5,7 +5,6 @@
 from typing import List, Optional, Union
 from pathlib import Path
 
-from azure.ai.ml._utils._pathspec import GitWildMatchPattern
 from ...entities._assets import Code
 from ...entities._component.code import ComponentIgnoreFile
 
@@ -13,18 +12,14 @@ from ...entities._component.code import ComponentIgnoreFile
 class InternalComponentIgnoreFile(ComponentIgnoreFile):
     _INTERNAL_COMPONENT_CODE_IGNORES = ["*.additional_includes"]
 
-    def __init__(
-        self,
-        directory_path: Optional[Union[str, Path]] = None,
-        extra_ignores: Optional[List[str]] = None,
-    ):
+    def __init__(self, directory_path: Union[str, Path], extra_ignores: Optional[List[str]] = None):
         super(InternalComponentIgnoreFile, self).__init__(directory_path=directory_path)
-        _extra_ignores = extra_ignores.copy() if extra_ignores is not None else []  # .copy to avoid unexpected error
-        _extra_ignores.extend(self._INTERNAL_COMPONENT_CODE_IGNORES)
-        component_code_ignores = super(InternalComponentIgnoreFile, self)._COMPONENT_CODE_IGNORES
-        # add custom ignores (avoid duplication to component code ignores)
-        for ignore in set(_extra_ignores) - set(component_code_ignores):
-            self._path_spec.append(GitWildMatchPattern(ignore))
+        self._extra_ignores = extra_ignores if extra_ignores is not None else []
+
+    def _get_ignore_list(self) -> List[str]:
+        """Override to add custom ignores for internal component."""
+        internal_component_ignores = self._INTERNAL_COMPONENT_CODE_IGNORES + self._extra_ignores
+        return super(InternalComponentIgnoreFile, self)._get_ignore_list() + internal_component_ignores
 
 
 class InternalCode(Code):

@@ -187,11 +187,10 @@ class _AdditionalIncludes:
         zip_additional_include = (self._additional_includes_file_path.parent / include).resolve()
         folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
         zip_file = dst_path / zip_additional_include.name
-        ignore_file = InternalComponentIgnoreFile()
         with zipfile.ZipFile(zip_file, "w") as zf:
             zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
             for root, _, files in os.walk(folder_to_zip, followlinks=True):
-                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=ignore_file):
+                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=self._ignore_file):
                     zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def cleanup(self) -> None:

@@ -2,41 +2,36 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+import os
 from pathlib import Path
-from typing import List, Optional, Union
+from typing import List, Union
 
 from azure.ai.ml._utils._asset_utils import get_ignore_file, IgnoreFile
-from azure.ai.ml._utils._pathspec import GitWildMatchPattern, normalize_file
 
 
 class ComponentIgnoreFile(IgnoreFile):
     _COMPONENT_CODE_IGNORES = ["__pycache__"]
 
-    def __init__(self, directory_path: Optional[Union[str, Path]] = None):
+    def __init__(self, directory_path: Union[str, Path]):
         # note: the parameter changes to directory path in this class, rather than file path
-        # try except here to avoid unexpected directory path input
-        try:
-            file_path = get_ignore_file(directory_path).path
-        except (OSError, TypeError):
-            file_path = None
+        file_path = get_ignore_file(directory_path).path
         super(ComponentIgnoreFile, self).__init__(file_path=file_path)
-        self._path_spec = self._create_pathspec()  # add custom ignores here
+        self._base_path = Path(directory_path)
 
-    def _create_pathspec(self) -> List[GitWildMatchPattern]:
+    def exists(self) -> bool:
+        """Override to always return True as we do have default ignores."""
+        return True
+
+    def _get_ignore_list(self) -> List[str]:
+        """Override to add custom ignores."""
         if not super(ComponentIgnoreFile, self).exists():
-            path_spec = []
-        else:
-            path_spec = super(ComponentIgnoreFile, self)._create_pathspec()
-        path_spec.extend([GitWildMatchPattern(ignore) for ignore in self._COMPONENT_CODE_IGNORES])
-        return path_spec
+            return self._COMPONENT_CODE_IGNORES
+        return super(ComponentIgnoreFile, self)._get_ignore_list() + self._COMPONENT_CODE_IGNORES
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
-        if self.exists():
-            return super(ComponentIgnoreFile, self).is_file_excluded(file_path)
-        file_path = str(file_path)
-        norm_file = normalize_file(file_path)
-        for pattern in self._path_spec:
-            if pattern.include is not None:
-                if norm_file in pattern.match((norm_file,)):
-                    return bool(pattern.include)
-        return False
+        """Convert file path to relative path to parent method."""
+        try:
+            relative_path = os.path.relpath(file_path, self._base_path)
+        except ValueError:
+            return True
+        return super(ComponentIgnoreFile, self).is_file_excluded(relative_path)
