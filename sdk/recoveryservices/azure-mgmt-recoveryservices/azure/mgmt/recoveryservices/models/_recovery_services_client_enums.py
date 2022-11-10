@@ -11,13 +11,14 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AlertsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AlertsState."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class AuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the authentication type.
-    """
+    """Specifies the authentication type."""
 
     INVALID = "Invalid"
     ACS = "ACS"
@@ -25,54 +26,70 @@ class AuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACCESS_CONTROL_SERVICE = "AccessControlService"
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
 
+
 class BackupStorageVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Backup storage version
-    """
+    """Backup storage version."""
 
     V1 = "V1"
     V2 = "V2"
     UNASSIGNED = "Unassigned"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class CrossRegionRestore(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Flag to show if Cross Region Restore is enabled on the Vault or not
-    """
+    """Flag to show if Cross Region Restore is enabled on the Vault or not."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
+
+
+class ImmutabilityState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ImmutabilityState."""
+
+    DISABLED = "Disabled"
+    UNLOCKED = "Unlocked"
+    LOCKED = "Locked"
+
 
 class InfrastructureEncryptionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Enabling/Disabling the Double Encryption state
-    """
+    """Enabling/Disabling the Double Encryption state."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class PrivateEndpointConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets the status.
-    """
+    """Gets or sets the status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets or sets provisioning state of the private endpoint connection.
-    """
+    """Gets or sets provisioning state of the private endpoint connection."""
 
     SUCCEEDED = "Succeeded"
     DELETING = "Deleting"
     FAILED = "Failed"
     PENDING = "Pending"
+
+
+class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """property to enable or disable resource provider inbound network traffic from public clients."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
 
 class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of managed identity used. The type 'SystemAssigned, UserAssigned' includes both an
@@ -85,9 +102,9 @@ class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
 
+
 class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The State of the Resource after the move operation
-    """
+    """The State of the Resource after the move operation."""
 
     UNKNOWN = "Unknown"
     IN_PROGRESS = "InProgress"
@@ -100,33 +117,34 @@ class ResourceMoveState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     CRITICAL_FAILURE = "CriticalFailure"
     PARTIAL_SUCCESS = "PartialSuccess"
 
+
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Name of SKU is RS0 (Recovery Services 0th version) and the tier is standard tier. They do not
     have affect on backend storage redundancy or any other vault settings. To manage storage
-    redundancy, use the backupstorageconfig
+    redundancy, use the backupstorageconfig.
     """
 
     STANDARD = "Standard"
     RS0 = "RS0"
 
+
 class StandardTierStorageRedundancy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The storage redundancy setting of a vault
-    """
+    """The storage redundancy setting of a vault."""
 
     LOCALLY_REDUNDANT = "LocallyRedundant"
     GEO_REDUNDANT = "GeoRedundant"
     ZONE_REDUNDANT = "ZoneRedundant"
 
+
 class TriggerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The way the vault upgrade was triggered.
-    """
+    """The way the vault upgrade was triggered."""
 
     USER_TRIGGERED = "UserTriggered"
     FORCED_UPGRADE = "ForcedUpgrade"
 
+
 class UsagesUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Unit of the usage.
-    """
+    """Unit of the usage."""
 
     COUNT = "Count"
     BYTES = "Bytes"
@@ -135,16 +153,24 @@ class UsagesUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COUNT_PER_SECOND = "CountPerSecond"
     BYTES_PER_SECOND = "BytesPerSecond"
 
+
 class VaultPrivateEndpointState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Private endpoint state for backup.
-    """
+    """Private endpoint state for backup."""
 
     NONE = "None"
     ENABLED = "Enabled"
 
+
+class VaultSubResourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Subresource type for vault AzureBackup, AzureBackup_secondary or AzureSiteRecovery."""
+
+    AZURE_BACKUP = "AzureBackup"
+    AZURE_BACKUP_SECONDARY = "AzureBackup_secondary"
+    AZURE_SITE_RECOVERY = "AzureSiteRecovery"
+
+
 class VaultUpgradeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Status of the vault upgrade operation.
-    """
+    """Status of the vault upgrade operation."""
 
     UNKNOWN = "Unknown"
     IN_PROGRESS = "InProgress"
