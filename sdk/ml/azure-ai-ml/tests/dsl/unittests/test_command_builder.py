@@ -158,8 +158,6 @@ class TestCommandFunction:
                 "tags": {},
             }
         }
-        a = test_command._component._to_rest_object()
-        b = a.as_dict()
         actual_component = pydash.omit(
             test_command._component._to_rest_object().as_dict(), "name", "properties.component_spec.name"
         )

@@ -212,8 +212,6 @@ def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=
             if not is_empty_target(item) or not remove_empty:
                 new_list.append(item)
         return new_list
-    if isinstance(target_object, OrderedDict):
-        target_object = dict(**target_object)
     if isinstance(target_object, dict):
         new_dict = {}
         for key, value in target_object.items():
