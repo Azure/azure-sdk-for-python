@@ -30,6 +30,8 @@ class ComponentIgnoreFile(IgnoreFile):
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Convert file path to relative path to parent method."""
+        # ValueError is raised when file_path is on different drive with self._base_path
+        # this will be excluded in IgnoreFile, so also exclude it here.
         try:
             relative_path = os.path.relpath(file_path, self._base_path)
         except ValueError:
