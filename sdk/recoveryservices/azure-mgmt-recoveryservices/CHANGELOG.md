@@ -1,5 +1,11 @@
 # Release History
 
+## 2.2.0 (2022-11-10)
+
+### Features Added
+
+  - Model VaultProperties has a new parameter security_settings
+
 ## 2.1.0 (2022-07-28)
 
 **Features**
