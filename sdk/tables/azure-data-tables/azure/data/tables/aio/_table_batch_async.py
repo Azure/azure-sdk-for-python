@@ -4,13 +4,11 @@
 # license information.
 # --------------------------------------------------------------------------
 from typing import Dict, Any, Optional, Union, TYPE_CHECKING
-import msrest
 
 from azure.core import MatchConditions
 
 from .._common_conversion import _transform_patch_to_cosmos_post
 from .._models import UpdateMode
-from .._entity import TableEntity
 from .._table_batch import EntityType, TransactionOperationType
 from .._serialize import (
     _prepare_key,
@@ -23,6 +21,8 @@ from .._generated.aio._configuration import AzureTableConfiguration
 
 if TYPE_CHECKING:
     from .._generated import models
+    from .._generated._serialization import Serializer
+    from .._generated._serialization import Deserializer
 
 
 class TableBatchOperations(object):
@@ -40,8 +40,8 @@ class TableBatchOperations(object):
     def __init__(
         self,
         client: AzureTable,
-        serializer: msrest.Serializer,
-        deserializer: msrest.Deserializer,
+        serializer: Serializer,
+        deserializer: Deserializer,
         config: AzureTableConfiguration,
         table_name: str,
         is_cosmos_endpoint: bool = False,

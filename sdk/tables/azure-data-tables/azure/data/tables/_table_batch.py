@@ -23,9 +23,10 @@ from ._entity import TableEntity
 
 if TYPE_CHECKING:
     from azure.core.pipeline.transport import HttpRequest
-    import msrest
     from ._generated import models, AzureTable
     from ._generated._configuration import AzureTableConfiguration
+    from ._generated._serialization import Serializer
+    from ._generated._serialization import Deserializer
 
 
 EntityType = Union[TableEntity, Mapping[str, Any]]
@@ -48,8 +49,8 @@ class TableBatchOperations(object):
     def __init__(
         self,
         client,  # type: AzureTable
-        serializer,  # type: msrest.Serializer
-        deserializer,  # type: msrest.Deserializer
+        serializer,  # type: Serializer
+        deserializer,  # type: Deserializer
         config,  # type: AzureTableConfiguration
         table_name,  # type: str
         is_cosmos_endpoint=False,  # type: bool
@@ -60,9 +61,9 @@ class TableBatchOperations(object):
         :param client: an AzureTable object
         :type client: AzureTable
         :param serializer: serializer object for request serialization
-        :type serializer: msrest.Serializer
+        :type serializer: ~azure.data.tables._generated._serialization.Serializer
         :param deserializer: deserializer object for request serialization
-        :type deserializer: msrest.Deserializer
+        :type deserializer: ~azure.data.tables._generated._serialization.Deserializer
         :param config: Azure Table Configuration object
         :type config: AzureTableConfiguration
         :param table_name: name of the Table to perform operations on
