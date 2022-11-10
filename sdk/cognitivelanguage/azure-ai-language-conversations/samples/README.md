@@ -89,7 +89,7 @@ what you can do with the Azure Conversational Language Understanding client libr
 [sample_conv_pii_transcript_input_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conv_pii_transcript_input_async.py
 
 [sample_assign_deployment_resources]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/authoring/sample_assign_deployment_resources.py
-[sample_assign_deployment_resources_async.py]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/authoring/sample_assign_deployment_resources_async.py
+[sample_assign_deployment_resources_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/authoring/sample_assign_deployment_resources_async.py
 
 [sample_conv_sentiment]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/sample_conv_sentiment.py
 [sample_conv_sentiment_async]: https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/cognitivelanguage/azure-ai-language-conversations/samples/async/sample_conv_sentiment_async.py
