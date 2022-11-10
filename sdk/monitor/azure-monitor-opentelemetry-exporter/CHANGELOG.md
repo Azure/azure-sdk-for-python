@@ -1,9 +1,21 @@
 # Release History
 
-## 1.0.0b9 (Unreleased)
+## 1.0.0b10 (Unreleased)
 
 ### Features Added
 
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b9 (2022-11-08)
+
+### Features Added
+
+- Add Sampler factory and entry point
+    ([#27236](https://github.com/Azure/azure-sdk-for-python/pull/27236))
 - Add validation logic to ApplicationInsightsSampler
     ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
 - Change default temporality of metrics to follow OTLP
