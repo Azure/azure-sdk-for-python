@@ -4,6 +4,7 @@
 
 # pylint: disable=protected-access,too-many-instance-attributes
 
+import re
 from typing import Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
@@ -126,9 +127,9 @@ class ComputeInstance(Compute):
     :type schedules: Optional[ComputeSchedules], optional
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
-    :param idle_time_before_shutdown: Stops compute instance after user defined period of
-        inactivity. Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
-    :type idle_time_before_shutdown: Optional[str], optional
+    :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
+        inactivity in minutes. Minimum is 15 min, maximum is 3 days.
+    :type idle_time_before_shutdown_minutes: Optional[int], optional
     :param setup_scripts: Details of customized scripts to execute for setting up the cluster.
     :type setup_scripts: Optional[SetupScripts], optional
     """
@@ -145,7 +146,7 @@ class ComputeInstance(Compute):
         ssh_settings: Optional[ComputeInstanceSshSettings] = None,
         schedules: Optional[ComputeSchedules] = None,
         identity: IdentityConfiguration = None,
-        idle_time_before_shutdown: Optional[str] = None,
+        idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,
         **kwargs,
     ):
@@ -168,7 +169,7 @@ class ComputeInstance(Compute):
         self.ssh_settings = ssh_settings
         self.schedules = schedules
         self.identity = identity
-        self.idle_time_before_shutdown = idle_time_before_shutdown
+        self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
         self.subnet = None
 
@@ -250,7 +251,13 @@ class ComputeInstance(Compute):
             subnet=subnet_resource,
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
-            idle_time_before_shutdown=self.idle_time_before_shutdown,
+            idle_time_before_shutdown=f"PT{self.idle_time_before_shutdown_minutes}M",
+        )
+        compute_instance_prop.schedules = (
+            self.schedules._to_rest_object() if self.schedules else None
+        )
+        compute_instance_prop.setup_scripts = (
+            self.setup_scripts._to_rest_object() if self.setup_scripts else None
         )
         compute_instance_prop.schedules = (
             self.schedules._to_rest_object() if self.schedules else None
@@ -339,6 +346,18 @@ class ComputeInstance(Compute):
                 else None,
             )
 
+        idle_time_before_shutdown_minutes = None
+        idle_time_before_shutdown_pattern = r"PT([0-9]+)M"
+        if prop.properties and prop.properties.idle_time_before_shutdown:
+            idle_time_before_shutdown = prop.properties.idle_time_before_shutdown
+            idle_time_match = re.match(
+                pattern=idle_time_before_shutdown_pattern,
+                string=idle_time_before_shutdown,
+            )
+            idle_time_before_shutdown_minutes = (
+                int(idle_time_match[1]) if idle_time_match else None
+            )
+
         response = ComputeInstance(
             name=rest_obj.name,
             id=rest_obj.id,
@@ -381,7 +400,11 @@ class ComputeInstance(Compute):
             setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
             if prop.properties and prop.properties.setup_scripts
             else None,
+<<<<<<< HEAD
             os_image_metadata=os_image_metadata,
+=======
+            idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
+>>>>>>> main
         )
         return response
 

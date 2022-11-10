@@ -1,9 +1,15 @@
 # Release History
 
+## 1.1.2 (Unreleased)
+
+## Features Added
+- Added OS Image Patching parameters to Compute Instance.
+
 ## 1.1.1 (Unreleased)
 
 ## Features Added
 - Added OS Image Patching parameters to Compute Instance.
+- Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
 
 ## 1.1.0 (Unreleased)
 
