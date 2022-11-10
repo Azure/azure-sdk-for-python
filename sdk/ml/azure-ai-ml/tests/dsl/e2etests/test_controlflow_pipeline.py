@@ -33,7 +33,7 @@ def include_private_preview_nodes_in_pipeline():
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
-class TestDynamicPipeline(AzureRecordedTestCase):
+class TestControlFlowPipeline(AzureRecordedTestCase):
     def test_dsl_condition_pipeline(self, client: MLClient):
         # update jobs field to include private preview nodes
 
@@ -125,7 +125,6 @@ class TestDynamicPipeline(AzureRecordedTestCase):
             },
         }
 
-    @pytest.mark.skip(reason="TODO(2027778): Verify after primitive condition is supported.")
     def test_dsl_condition_pipeline_with_primitive_input(self, client: MLClient):
         hello_world_component_no_paths = load_component(
             source="./tests/test_configs/components/helloworld_component_no_paths.yml"
@@ -141,4 +140,8 @@ class TestDynamicPipeline(AzureRecordedTestCase):
             condition(condition=True, false_block=node1, true_block=node2)
 
         pipeline_job = condition_pipeline()
-        client.jobs.create_or_update(pipeline_job)
+        with include_private_preview_nodes_in_pipeline():
+            client.jobs.create_or_update(pipeline_job)
+
+    def test_dsl_parallel_for_pipeline(self, client: MLClient):
+        pass
