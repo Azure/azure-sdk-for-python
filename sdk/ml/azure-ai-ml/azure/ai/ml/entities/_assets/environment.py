@@ -24,7 +24,7 @@ from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import get_md5_string, load_from_dict
+from azure.ai.ml.entities._util import get_sha256_string, load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
@@ -320,17 +320,17 @@ class Environment(Asset):
         hash_str = ""
         if source == "image":
             if not conda_file:
-                hash_str = hash_str.join(get_md5_string(self.image))
+                hash_str = hash_str.join(get_sha256_string(self.image))
             else:
-                hash_str = hash_str.join(get_md5_string(self.image)).join(get_md5_string(conda_file))
+                hash_str = hash_str.join(get_sha256_string(self.image)).join(get_sha256_string(conda_file))
         if source == "build":
             if not self.build.dockerfile_path:
-                hash_str = hash_str.join(get_md5_string(self._upload_hash))
+                hash_str = hash_str.join(get_sha256_string(self._upload_hash))
             else:
-                hash_str = hash_str.join(get_md5_string(self._upload_hash)).join(
-                    get_md5_string(self.build.dockerfile_path)
+                hash_str = hash_str.join(get_sha256_string(self._upload_hash)).join(
+                    get_sha256_string(self.build.dockerfile_path)
                 )
-        version_hash = get_md5_string(hash_str)
+        version_hash = get_sha256_string(hash_str)
         self.version = version_hash
         self.name = ANONYMOUS_ENV_NAME
 

@@ -23,7 +23,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.entities._assets import Artifact
 from azure.ai.ml.entities._system_data import SystemData
-from azure.ai.ml.entities._util import get_md5_string, load_from_dict
+from azure.ai.ml.entities._util import get_sha256_string, load_from_dict
 
 from .artifact import ArtifactStorageInfo
 
@@ -88,7 +88,7 @@ class Model(Artifact):
         if self._is_anonymous and self.path:
             _ignore_file = get_ignore_file(self.path)
             _upload_hash = get_content_hash(self.path, _ignore_file)
-            self.name = get_md5_string(_upload_hash)
+            self.name = get_sha256_string(_upload_hash)
 
     @classmethod
     def _load(

@@ -163,9 +163,9 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
     return f"Validation for {schema.__name__} failed:\n\n {pretty_error} \n\n {additional_message}"
 
 
-def get_md5_string(text):
+def get_sha256_string(text):
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
+        return hashlib.sha256(text.encode("utf8")).hexdigest()  # nosec
     except Exception as ex:
         raise ex
 
