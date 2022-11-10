@@ -408,9 +408,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         """Convert self to a rest object for remote call."""
         base_dict, rest_obj = self._to_dict(), {}
         for key in self._picked_fields_from_dict_to_rest_object():
-            if key not in base_dict:
-                rest_obj[key] = None
-            else:
+            if key in base_dict:
                 rest_obj[key] = base_dict.get(key)
 
         rest_obj.update(
