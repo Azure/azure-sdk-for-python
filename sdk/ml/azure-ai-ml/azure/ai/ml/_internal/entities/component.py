@@ -147,6 +147,9 @@ class InternalComponent(Component):
         if self.__additional_includes is None:
             # use property as `self._source_path` is set after __init__ now
             # `self._source_path` is not None when enter this function
+
+            # ignore file
+
             self.__additional_includes = _AdditionalIncludes(
                 code_path=self.code,
                 yaml_path=self._source_path,
@@ -163,7 +166,9 @@ class InternalComponent(Component):
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
-        if self._additional_includes.with_includes:
+        # if the code is not local path, no need for additional includes
+        code = Path(self.code) if self.code is not None else Path(self._source_path).parent
+        if code.exists() and self._additional_includes.with_includes:
             validation_result.merge_with(self._additional_includes._validate())
             # resolving additional includes & update self._base_path can be dangerous,
             # so we just skip path validation if additional_includes is used
