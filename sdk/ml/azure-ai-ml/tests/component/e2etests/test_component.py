@@ -182,7 +182,6 @@ class TestComponent(AzureRecordedTestCase):
             "mini_batch_size": "10240",
             "outputs": {"scored_result": {"type": "mltable"}, "scoring_summary": {"type": "uri_file"}},
             "retry_settings": {"max_retries": 10, "timeout": 3},
-            "tags": {},
             "type": "parallel",
             "version": "1.0.0",
         }
@@ -198,7 +197,6 @@ class TestComponent(AzureRecordedTestCase):
     def test_automl_component(self, client: MLClient, registry_client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_component_dict = {
             "description": "Component that executes an AutoML Classification task model training in a pipeline.",
-            "tags": {},
             "version": "1.0",
             "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json",
             "display_name": "AutoML Classification",
@@ -787,7 +785,6 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
                 # The azureml: prefix has been resolve and removed by service
                 "node_compute": {"type": "string", "default": "cpu-cluster"},
             },
-            "outputs": {},
             "type": "pipeline",
         }
         assert component_dict == expected_dict

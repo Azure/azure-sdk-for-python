@@ -69,6 +69,7 @@ def generate_weekly_fixed_job_name(variable_recorder) -> str:
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
+    @pytest.mark.skip("Skip for broken job service type, need fix")
     def test_pipeline_job_create(
         self,
         client: MLClient,
@@ -105,7 +106,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert job.name == params_override[0]["name"]
         assert job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
 
-    @pytest.mark.skip("Skip for compute reaource not ready.")
+    @pytest.mark.skip("Skip for compute resource not ready.")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -414,13 +415,8 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "jobs": {
                         "hello_world_inline_commandjob_1": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
                             "environment_variables": {"FOO": "bar"},
                             "name": "hello_world_inline_commandjob_1",
-                            "display_name": None,
-                            "tags": {},
                             "computeId": "cpu-cluster",
                             "inputs": {
                                 "test1": {
@@ -430,21 +426,11 @@ class TestPipelineJob(AzureRecordedTestCase):
                                 },
                                 "literal_input": {"job_input_type": "literal", "value": "2"},
                             },
-                            "outputs": {},
                             "_source": "REMOTE.WORKSPACE.COMPONENT",
                         },
                         "hello_world_inline_commandjob_2": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
-                            "environment_variables": {},
                             "name": "hello_world_inline_commandjob_2",
-                            "display_name": None,
-                            "tags": {},
-                            "computeId": None,
-                            "inputs": {},
-                            "outputs": {},
                             "_source": "REMOTE.WORKSPACE.COMPONENT",
                         },
                     },
@@ -487,14 +473,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "jobs": {
                         "train_job": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
-                            "environment_variables": {},
                             "name": "train_job",
-                            "display_name": None,
-                            "tags": {},
-                            "computeId": None,
                             "inputs": {
                                 "training_data": {
                                     "job_input_type": "literal",
@@ -524,14 +503,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                         },
                         "score_job": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
-                            "environment_variables": {},
                             "name": "score_job",
-                            "display_name": None,
-                            "tags": {},
-                            "computeId": None,
                             "inputs": {
                                 "model_input": {
                                     "job_input_type": "literal",
@@ -542,7 +514,6 @@ class TestPipelineJob(AzureRecordedTestCase):
                                     "value": "${{parent.inputs.pipeline_job_test_input}}",
                                 },
                             },
-                            "outputs": {},
                             "_source": "REMOTE.WORKSPACE.COMPONENT",
                         },
                     },
