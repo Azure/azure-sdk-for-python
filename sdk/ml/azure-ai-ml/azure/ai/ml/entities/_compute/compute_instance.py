@@ -8,7 +8,9 @@ from typing import Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ComputeInstanceSshSettings as CiSShSettings,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
@@ -29,7 +31,6 @@ from azure.ai.ml._utils._experimental import experimental
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
 from ._image_metadata import ImageMetadata
-
 
 
 class ComputeInstanceSshSettings:
@@ -87,6 +88,7 @@ class AssignedUserConfiguration(DictMixin):
         """
         self.user_tenant_id = user_tenant_id
         self.user_object_id = user_object_id
+
 
 class ComputeInstance(Compute):
     """Compute Instance resource.
@@ -196,7 +198,7 @@ class ComputeInstance(Compute):
         rtype: str
         """
         return self._state
-   
+
     @experimental
     @property
     def os_image_metadata(self) -> ImageMetadata:
@@ -213,7 +215,9 @@ class ComputeInstance(Compute):
             subnet_resource = ResourceId(id=self.subnet)
         else:
             subnet_resource = None
-        if self.ssh_public_access_enabled and not (self.ssh_settings and self.ssh_settings.ssh_key_value):
+        if self.ssh_public_access_enabled and not (
+            self.ssh_settings and self.ssh_settings.ssh_key_value
+        ):
             msg = "ssh_key_value is required when ssh_public_access_enabled = True."
             raise ValidationException(
                 message=msg,
@@ -227,7 +231,9 @@ class ComputeInstance(Compute):
                 admin_public_key=self.ssh_settings.ssh_key_value,
             )
             if self.ssh_public_access_enabled is not None:
-                ssh_settings.ssh_public_access = "Enabled" if self.ssh_public_access_enabled else "Disabled"
+                ssh_settings.ssh_public_access = (
+                    "Enabled" if self.ssh_public_access_enabled else "Disabled"
+                )
             else:
                 ssh_settings.ssh_public_access = "NotSpecified"
         personal_compute_instance_settings = None
@@ -246,8 +252,12 @@ class ComputeInstance(Compute):
             personal_compute_instance_settings=personal_compute_instance_settings,
             idle_time_before_shutdown=self.idle_time_before_shutdown,
         )
-        compute_instance_prop.schedules = self.schedules._to_rest_object() if self.schedules else None
-        compute_instance_prop.setup_scripts = self.setup_scripts._to_rest_object() if self.setup_scripts else None
+        compute_instance_prop.schedules = (
+            self.schedules._to_rest_object() if self.schedules else None
+        )
+        compute_instance_prop.setup_scripts = (
+            self.setup_scripts._to_rest_object() if self.setup_scripts else None
+        )
         compute_instance = CIRest(
             description=self.description,
             compute_type=self.type,
@@ -256,7 +266,9 @@ class ComputeInstance(Compute):
         return ComputeResource(
             location=self.location,
             properties=compute_instance,
-            identity=(self.identity._to_compute_rest_object() if self.identity else None),
+            identity=(
+                self.identity._to_compute_rest_object() if self.identity else None
+            ),
         )
 
     def _to_dict(self) -> Dict:
@@ -303,10 +315,12 @@ class ComputeInstance(Compute):
             network_settings = NetworkSettings(
                 subnet=prop.properties.subnet.id if prop.properties.subnet else None,
                 public_ip_address=prop.properties.connectivity_endpoints.public_ip_address
-                if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.public_ip_address
+                if prop.properties.connectivity_endpoints
+                and prop.properties.connectivity_endpoints.public_ip_address
                 else None,
                 private_ip_address=prop.properties.connectivity_endpoints.private_ip_address
-                if prop.properties.connectivity_endpoints and prop.properties.connectivity_endpoints.private_ip_address
+                if prop.properties.connectivity_endpoints
+                and prop.properties.connectivity_endpoints.private_ip_address
                 else None,
             )
         os_image_metadata = None
@@ -315,11 +329,15 @@ class ComputeInstance(Compute):
             print(metadata)
             os_image_metadata = ImageMetadata(
                 is_latest_os_image_version=metadata.is_latest_os_image_version
-                if metadata.is_latest_os_image_version is not None else None,
+                if metadata.is_latest_os_image_version is not None
+                else None,
                 current_image_version=metadata.current_image_version
-                if metadata.current_image_version else None,
+                if metadata.current_image_version
+                else None,
                 latest_image_version=metadata.latest_image_version
-                if metadata.latest_image_version else None,)
+                if metadata.latest_image_version
+                else None,
+            )
 
         response = ComputeInstance(
             name=rest_obj.name,
@@ -343,17 +361,27 @@ class ComputeInstance(Compute):
             create_on_behalf_of=create_on_behalf_of,
             network_settings=network_settings,
             ssh_settings=ssh_settings,
-            ssh_public_access_enabled=_ssh_public_access_to_bool(prop.properties.ssh_settings.ssh_public_access)
-            if (prop.properties and prop.properties.ssh_settings and prop.properties.ssh_settings.ssh_public_access)
+            ssh_public_access_enabled=_ssh_public_access_to_bool(
+                prop.properties.ssh_settings.ssh_public_access
+            )
+            if (
+                prop.properties
+                and prop.properties.ssh_settings
+                and prop.properties.ssh_settings.ssh_public_access
+            )
             else None,
             schedules=ComputeSchedules._from_rest_object(prop.properties.schedules)
-            if prop.properties and prop.properties.schedules and prop.properties.schedules.compute_start_stop
+            if prop.properties
+            and prop.properties.schedules
+            and prop.properties.schedules.compute_start_stop
             else None,
-            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity) if rest_obj.identity else None,
+            identity=IdentityConfiguration._from_compute_rest_object(rest_obj.identity)
+            if rest_obj.identity
+            else None,
             setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
             if prop.properties and prop.properties.setup_scripts
             else None,
-            os_image_metadata=os_image_metadata
+            os_image_metadata=os_image_metadata,
         )
         return response
 
