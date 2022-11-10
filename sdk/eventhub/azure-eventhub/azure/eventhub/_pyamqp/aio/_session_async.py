@@ -181,8 +181,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 await self.links[frame[0].decode("utf-8")].detach(
                     error=AMQPError(
                         condition=ErrorCondition.LinkDetachForced,
-                        description="""Cannot allocate more handles, """
-                        """the max number of handles is {}. Detaching link""".format(self.handle_max),
+                        description=f"Cannot allocate more handles, the max number of handles is {self.handle_max}. Detaching link",
                         info=None,
                     )
                 )
@@ -224,11 +223,10 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         if frame[4] is not None:  # handle
             await self._input_handles[frame[4]]._incoming_flow(frame)  # pylint: disable=protected-access
         else:
-            futures = []
             for link in self._output_handles.values():
                 if self.remote_incoming_window > 0 and not link._is_closed:  # pylint: disable=protected-access
-                    futures.append(link._incoming_flow(frame))  # pylint: disable=protected-access
-            await asyncio.gather(*futures)
+                    await link._incoming_flow(frame)  # pylint: disable=protected-access
+            
 
     async def _outgoing_transfer(self, delivery):
         if self.state != SessionState.MAPPED:

@@ -757,10 +757,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 description="Can not send frame out due to exception: " + str(exc),
                 error=exc,
             )
-        except asyncio.CancelledError:
-            raise
-        except Exception: # pylint: disable=try-except-raise
-            raise
 
     def create_session(self, **kwargs):
         # type: (Any) -> Session
