@@ -120,7 +120,6 @@ class InternalComponent(Component):
         self.code = code
         self.environment = InternalEnvironment(**environment) if isinstance(environment, dict) else environment
         self.environment_variables = environment_variables
-        self._ignores = None  # can be set from kwargs
         self.__additional_includes = None
         # TODO: remove these to keep it a general component class
         self.command = command
@@ -147,15 +146,11 @@ class InternalComponent(Component):
         if self.__additional_includes is None:
             # use property as `self._source_path` is set after __init__ now
             # `self._source_path` is not None when enter this function
-
-            # ignore file
-
             self.__additional_includes = _AdditionalIncludes(
                 code_path=self.code,
                 yaml_path=self._source_path,
                 ignore_file=InternalComponentIgnoreFile(
                     self.code if self.code is not None else Path(self._source_path).parent,
-                    extra_ignores=self._ignores,
                 ),  # use YAML's parent as code when self.code is None
             )
         return self.__additional_includes
@@ -245,7 +240,7 @@ class InternalComponent(Component):
             self.environment.resolve(self._additional_includes.code)
         # use absolute path in case temp folder & work dir are in different drive
         tmp_code_dir = self._additional_includes.code.absolute()
-        ignore_file = InternalComponentIgnoreFile(tmp_code_dir, extra_ignores=self._ignores)
+        ignore_file = InternalComponentIgnoreFile(tmp_code_dir)
         # Use the snapshot id in ml-components as code name to enable anonymous
         # component reuse from ml-component runs.
         # calculate snapshot id here instead of inside InternalCode to ensure that

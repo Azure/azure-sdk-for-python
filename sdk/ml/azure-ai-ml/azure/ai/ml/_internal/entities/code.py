@@ -12,14 +12,12 @@ from ...entities._component.code import ComponentIgnoreFile
 class InternalComponentIgnoreFile(ComponentIgnoreFile):
     _INTERNAL_COMPONENT_CODE_IGNORES = ["*.additional_includes"]
 
-    def __init__(self, directory_path: Union[str, Path], extra_ignores: Optional[List[str]] = None):
+    def __init__(self, directory_path: Union[str, Path]):
         super(InternalComponentIgnoreFile, self).__init__(directory_path=directory_path)
-        self._extra_ignores = extra_ignores if extra_ignores is not None else []
 
     def _get_ignore_list(self) -> List[str]:
         """Override to add custom ignores for internal component."""
-        internal_component_ignores = self._INTERNAL_COMPONENT_CODE_IGNORES + self._extra_ignores
-        return super(InternalComponentIgnoreFile, self)._get_ignore_list() + internal_component_ignores
+        return super(InternalComponentIgnoreFile, self)._get_ignore_list() + self._INTERNAL_COMPONENT_CODE_IGNORES
 
 
 class InternalCode(Code):
