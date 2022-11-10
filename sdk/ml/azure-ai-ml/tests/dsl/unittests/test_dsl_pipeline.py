@@ -29,7 +29,7 @@ from azure.ai.ml.entities import (
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException, NonExistParamValueError, UnExpectedNonPipelineParameterTypeError
+from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -2058,7 +2058,7 @@ class TestDSLPipeline:
         def pipeline_func():
             pass
 
-        with pytest.raises(UnExpectedNonPipelineParameterTypeError) as error_info:
+        with pytest.raises(UserErrorException) as error_info:
             pipeline_func()
         assert "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string" in str(error_info)
 
@@ -2066,7 +2066,7 @@ class TestDSLPipeline:
         def pipeline_func():
             pass
 
-        with pytest.raises(NonExistParamValueError) as error_info:
+        with pytest.raises(ParamValueNotExistsError) as error_info:
             pipeline_func()
         assert "pipeline_func() got unexpected params in non_pipeline_inputs ['non_exist_param1', 'non_exist_param2']" in str(error_info)
 
@@ -2086,3 +2086,37 @@ class TestDSLPipeline:
             component_func=component_func2)
         assert len(pipeline.jobs) == 2
         assert component_func2.name in pipeline.jobs
+
+    def test_condition_node_consumption(self):
+        from azure.ai.ml.dsl._condition import condition
+
+        component_yaml = components_dir / "helloworld_component_no_paths.yml"
+        component_func = load_component(component_yaml)
+
+        # consume expression (also component with only one output)
+        @dsl.pipeline
+        def pipeline_func_consume_expression(int_param: int):
+            node1 = component_func()
+            node2 = component_func()
+            expression = int_param == 0
+            control_node = condition(expression, true_block=node1, false_block=node2)  # noqa: F841
+
+        pipeline_job = pipeline_func_consume_expression(int_param=1)
+        assert pipeline_job.jobs["control_node"]._to_rest_object() == {
+            "type": "if_else",
+            "condition": "${{parent.jobs.expression_component.outputs.output}}",
+            "true_block": "${{parent.jobs.node1}}",
+            "false_block": "${{parent.jobs.node2}}",
+        }
+
+        # consume component with not one output
+        @dsl.pipeline
+        def pipeline_func_consume_invalid_component():
+            node0 = component_func()
+            node1 = component_func()
+            node2 = component_func()
+            control_node = condition(node0, true_block=node1, false_block=node2)  # noqa: F841
+
+        with pytest.raises(UserErrorException) as e:
+            pipeline_func_consume_invalid_component()
+        assert str(e.value) == "Exactly one output is expected for condition node, 0 outputs found."

@@ -409,6 +409,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
             dynamic_allocation_max_executors=self.dynamic_allocation_max_executors,
             conf=self.conf,
             environment=self.environment,
+            status=self.status,
             inputs=self._job_inputs,
             outputs=self._job_outputs,
             services=self.services,
