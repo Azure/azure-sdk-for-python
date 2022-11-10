@@ -20,6 +20,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestInitFinalizeJob:
     component_func = partial(
         load_component(str(components_dir / "echo_string_component.yml")),
@@ -143,7 +144,7 @@ class TestInitFinalizeJob:
             subgraph_with_init_func()
         assert str(e.value) == "On_init/on_finalize is not supported for pipeline component."
 
-    def test_init_finalize_job_with_subgraph(self, caplog) -> None:
+    def test_init_finalize_job_with_subgraph(self) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
 
         # happy path
@@ -231,8 +232,6 @@ class TestInitFinalizeJob:
                     "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
                     "py_files": ["utils.zip"],
                     "files": ["my_files.txt"],
-                    "archives": None,
-                    "jars": None,
                     "identity": {"identity_type": "UserIdentity"},
                     "conf": {
                         "spark.driver.cores": 2,
@@ -243,20 +242,14 @@ class TestInitFinalizeJob:
                     },
                     "args": "--file_input ${{inputs.file_input}}",
                     "name": "add_greeting_column",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
                     "inputs": {
                         "file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
                     },
-                    "outputs": {},
                     "_source": "YAML.COMPONENT",
                 },
                 "count_by_row": {
                     "_source": "YAML.COMPONENT",
-                    "archives": None,
                     "args": "--file_input ${{inputs.file_input}} " "--output ${{outputs.output}}",
-                    "computeId": None,
                     "conf": {
                         "spark.driver.cores": 2,
                         "spark.driver.memory": "1g",
@@ -264,7 +257,6 @@ class TestInitFinalizeJob:
                         "spark.executor.instances": 1,
                         "spark.executor.memory": "1g",
                     },
-                    "display_name": None,
                     "entry": {"file": "count_by_row.py", "spark_job_entry_type": "SparkJobPythonEntry"},
                     "files": ["my_files.txt"],
                     "identity": {"identity_type": "Managed"},
@@ -272,9 +264,7 @@ class TestInitFinalizeJob:
                     "jars": ["scalaproj.jar"],
                     "name": "count_by_row",
                     "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-                    "py_files": None,
                     "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
-                    "tags": {},
                     "type": "spark",
                 },
             },

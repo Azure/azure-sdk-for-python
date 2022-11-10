@@ -5,6 +5,7 @@ import copy
 import os
 from pathlib import Path
 from typing import Dict
+from zipfile import ZipFile
 
 import pydash
 import pytest
@@ -17,6 +18,7 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.exceptions import ValidationException
 
 from .._utils import PARAMETERS_TO_TEST
@@ -24,6 +26,7 @@ from .._utils import PARAMETERS_TO_TEST
 
 @pytest.mark.usefixtures("enable_internal_components")
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestComponent:
     def test_load_v2_component(self):
         yaml_path = "./tests/test_configs/components/helloworld_component.yml"
@@ -182,18 +185,16 @@ class TestComponent:
         entity = load_component(yaml_path)
 
         expected_dict = copy.deepcopy(yaml_dict)
-        for key, value in {
-            "type": expected_dict["type"].rsplit("@", 1)[0]
+        type_value = (
+            expected_dict["type"].rsplit("@", 1)[0]
             if expected_dict["type"].endswith("@1-legacy")
-            else expected_dict["type"],
-            "tags": expected_dict.get("tags", {}),
-            "inputs": expected_dict.get("inputs", {}),
-            "outputs": expected_dict.get("outputs", {}),
-        }.items():
-            pydash.set_(expected_dict, key, value)
+            else expected_dict["type"]
+        )
+        pydash.set_(expected_dict, "type", type_value)
         if "environment" in expected_dict:
             expected_dict["environment"]["os"] = "Linux"
-        for input_port_name in expected_dict["inputs"]:
+
+        for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
             if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum"]:
@@ -208,7 +209,12 @@ class TestComponent:
         assert entity._to_dict() == expected_dict
         rest_obj = entity._to_rest_object()
         assert rest_obj.properties.component_spec == expected_dict
-        assert InternalComponent._load_from_rest(rest_obj)._to_dict() == expected_dict
+
+        # inherit input type map from Component._from_rest_object
+        for input_port in expected_dict.get("inputs", {}).values():
+            if input_port["type"] == "String":
+                input_port["type"] = input_port["type"].lower()
+        assert InternalComponent._from_rest_object(rest_obj)._to_dict() == expected_dict
         result = entity._validate()
         assert result._to_dict() == {"result": "Succeeded"}
 
@@ -327,11 +333,14 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code_path:
+        with component._resolve_local_code() as code:
+            code_path = code.path
             assert code_path.is_dir()
-            assert (code_path / "LICENSE").exists(), component.code
-            assert (code_path / "library" / "hello.py").exists(), component.code
-            assert (code_path / "library" / "world.py").exists(), component.code
+            assert (code_path / "LICENSE").exists()
+            assert (code_path / "library.zip").exists()
+            assert ZipFile(code_path / "library.zip").namelist() == ["hello.py", "world.py"]
+            assert (code_path / "library1" / "hello.py").exists()
+            assert (code_path / "library1" / "world.py").exists()
 
         assert not code_path.is_dir()
 
@@ -348,7 +357,8 @@ class TestComponent:
         component: InternalComponent = load_component(source=yaml_path)
         assert component._validate().passed, repr(component._validate())
         # resolve
-        with component._resolve_local_code() as code_path:
+        with component._resolve_local_code() as code:
+            code_path = code.path
             assert code_path.is_dir()
             if has_additional_includes:
                 # additional includes is specified, code will be tmp folder and need to check each item
@@ -411,6 +421,10 @@ class TestComponent:
             (
                 "helloworld_invalid_additional_includes_existing_file.yml",
                 "A file already exists for additional include",
+            ),
+            (
+                "helloworld_invalid_additional_includes_zip_file_not_found.yml",
+                "Unable to find additional include ../additional_includes/assets/LICENSE.zip",
             ),
         ],
     )
@@ -521,3 +535,18 @@ class TestComponent:
         with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
             validate_result = loop_node._validate_body(raise_error=False)
             assert validate_result.passed
+
+    def test_anonymous_component_reuse(self):
+        yaml_path = Path("./tests/test_configs/internal/command-component-reuse/powershell_copy.yaml")
+        expected_snapshot_id = "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+
+        component: InternalComponent = load_component(source=yaml_path)
+        with component._resolve_local_code() as code:
+            assert code.name == expected_snapshot_id
+
+            code.name = expected_snapshot_id
+            with pytest.raises(
+                AttributeError,
+                match="InternalCode name are calculated based on its content and cannot be changed.*"
+            ):
+                code.name = expected_snapshot_id + "1"

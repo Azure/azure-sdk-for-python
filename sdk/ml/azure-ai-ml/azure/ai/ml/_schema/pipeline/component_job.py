@@ -144,6 +144,13 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         ],
     )
     services = fields.Dict(keys=fields.Str(), values=NestedField(JobServiceSchema))
+    identity = UnionField(
+        [
+            NestedField(ManagedIdentitySchema),
+            NestedField(AMLTokenIdentitySchema),
+            NestedField(UserIdentitySchema),
+        ]
+    )
 
     @post_load
     def make(self, data, **kwargs) -> "Command":

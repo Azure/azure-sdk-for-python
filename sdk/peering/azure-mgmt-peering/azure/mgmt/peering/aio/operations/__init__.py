@@ -6,28 +6,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
+from ._cdn_peering_prefixes_operations import CdnPeeringPrefixesOperations
 from ._peering_management_client_operations import PeeringManagementClientOperationsMixin
 from ._legacy_peerings_operations import LegacyPeeringsOperations
+from ._looking_glass_operations import LookingGlassOperations
 from ._operations import Operations
 from ._peer_asns_operations import PeerAsnsOperations
 from ._peering_locations_operations import PeeringLocationsOperations
+from ._registered_asns_operations import RegisteredAsnsOperations
+from ._registered_prefixes_operations import RegisteredPrefixesOperations
 from ._peerings_operations import PeeringsOperations
+from ._received_routes_operations import ReceivedRoutesOperations
+from ._connection_monitor_tests_operations import ConnectionMonitorTestsOperations
+from ._peering_service_countries_operations import PeeringServiceCountriesOperations
 from ._peering_service_locations_operations import PeeringServiceLocationsOperations
-from ._peering_service_prefixes_operations import PeeringServicePrefixesOperations
 from ._prefixes_operations import PrefixesOperations
 from ._peering_service_providers_operations import PeeringServiceProvidersOperations
 from ._peering_services_operations import PeeringServicesOperations
+from ._rp_unbilled_prefixes_operations import RpUnbilledPrefixesOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'PeeringManagementClientOperationsMixin',
-    'LegacyPeeringsOperations',
-    'Operations',
-    'PeerAsnsOperations',
-    'PeeringLocationsOperations',
-    'PeeringsOperations',
-    'PeeringServiceLocationsOperations',
-    'PeeringServicePrefixesOperations',
-    'PrefixesOperations',
-    'PeeringServiceProvidersOperations',
-    'PeeringServicesOperations',
+    "CdnPeeringPrefixesOperations",
+    "PeeringManagementClientOperationsMixin",
+    "LegacyPeeringsOperations",
+    "LookingGlassOperations",
+    "Operations",
+    "PeerAsnsOperations",
+    "PeeringLocationsOperations",
+    "RegisteredAsnsOperations",
+    "RegisteredPrefixesOperations",
+    "PeeringsOperations",
+    "ReceivedRoutesOperations",
+    "ConnectionMonitorTestsOperations",
+    "PeeringServiceCountriesOperations",
+    "PeeringServiceLocationsOperations",
+    "PrefixesOperations",
+    "PeeringServiceProvidersOperations",
+    "PeeringServicesOperations",
+    "RpUnbilledPrefixesOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

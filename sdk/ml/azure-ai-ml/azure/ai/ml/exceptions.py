@@ -571,6 +571,15 @@ class MultipleValueError(KeywordError):
         super().__init__(message=message, no_personal_data_message=message)
 
 
+class ParamValueNotExistsError(KeywordError):
+    """Exception raised when items in non_pipeline_inputs not in keyword parameters in
+    dynamic functions."""
+
+    def __init__(self, func_name, keywords):
+        message = "%s() got unexpected params in non_pipeline_inputs %r." % (func_name, keywords)
+        super().__init__(message=message, no_personal_data_message=message)
+
+
 class UnsupportedOperationError(UserErrorException):
     """Exception raised when specified operation is not supported."""
 

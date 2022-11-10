@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "220",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -34,41 +34,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "eacdf7a6-a4e5-4f9f-a857-db70195b353a",
+        "apim-request-id": "470e1c53-7245-4735-a31e-e7efd8682442",
         "Content-Length": "0",
-        "Date": "Thu, 23 Jun 2022 02:11:39 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ca072c7d-0d74-44af-9bd6-b4fa9c9c416e?api-version=2022-05-01",
+        "Date": "Mon, 10 Oct 2022 19:15:47 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/90c03aa5-2c8f-41ea-99df-3775f0fb2900?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "130"
+        "x-envoy-upstream-service-time": "255"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ca072c7d-0d74-44af-9bd6-b4fa9c9c416e?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/90c03aa5-2c8f-41ea-99df-3775f0fb2900?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e197e167-b37f-43e6-8617-7f7409a494ff",
-        "Content-Length": "679",
+        "apim-request-id": "efbd5a8e-5dd2-4fa9-94f7-5772cda59bc5",
+        "Content-Length": "678",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 23 Jun 2022 02:11:44 GMT",
+        "Date": "Mon, 10 Oct 2022 19:15:52 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "54"
+        "x-envoy-upstream-service-time": "150"
       },
       "ResponseBody": {
-        "jobId": "ca072c7d-0d74-44af-9bd6-b4fa9c9c416e",
-        "lastUpdatedDateTime": "2022-06-23T02:11:40Z",
-        "createdDateTime": "2022-06-23T02:11:39Z",
-        "expirationDateTime": "2022-06-24T02:11:39Z",
+        "jobId": "90c03aa5-2c8f-41ea-99df-3775f0fb2900",
+        "lastUpdateDateTime": "2022-10-10T19:15:50Z",
+        "createdDateTime": "2022-10-10T19:15:47Z",
+        "expirationDateTime": "2022-10-11T19:15:47Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -80,7 +80,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-23T02:11:40.8943502Z",
+              "lastUpdateDateTime": "2022-10-10T19:15:50.6125398Z",
               "status": "succeeded",
               "results": {
                 "statistics": {

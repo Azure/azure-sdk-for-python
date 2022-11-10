@@ -1,9 +1,20 @@
 # Release History
 
-## 1.0.0b9 (Unreleased)
+## 1.0.0b10 (2022-11-10)
+
+### Bugs Fixed
+
+- Fix missing local storage attribute
+    ([#27405](https://github.com/Azure/azure-sdk-for-python/pull/27405))
+- Fix offline storage rename
+    ([#27414](https://github.com/Azure/azure-sdk-for-python/pull/27414))
+
+## 1.0.0b9 (2022-11-08)
 
 ### Features Added
 
+- Add Sampler factory and entry point
+    ([#27236](https://github.com/Azure/azure-sdk-for-python/pull/27236))
 - Add validation logic to ApplicationInsightsSampler
     ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
 - Add pre-aggregated standard metrics - requests/duration, dependencies/duration
@@ -15,6 +26,8 @@
 
 - Rename local storage configuration, change default path
     ([#26891](https://github.com/Azure/azure-sdk-for-python/pull/26891))
+- Change default storage retention period to 48 hours
+    ([#26960](https://github.com/Azure/azure-sdk-for-python/pull/26960))
 
 ### Bugs Fixed
 

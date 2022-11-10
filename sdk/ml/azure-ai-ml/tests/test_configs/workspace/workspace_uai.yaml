@@ -1,0 +1,17 @@
+name: e2etest_test_974459993619
+identity:
+   type: user_assigned
+   tenant_id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+   user_assigned_identities:
+    '/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.ManagedIdentity/userAssignedIdentities/fake-uai':
+      principal_id: 12314790-cb6d-0000-af2c-3a1db8731732
+      client_id: 85192328-37cb-40c2-804c-13c397f64690
+    '/subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.ManagedIdentity/userAssignedIdentities/fake-uai2':
+      principal_id: 37e0ec69-7512-0000-b534-580c867c7e04
+      client_id: 555bf85b-1d34-4b5e-98d3-621615d5c6da
+#storage_account: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.Storage/storageAccounts/stmhe1anam
+#key_vault: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.Keyvault/vaults/kv-mhe1-anam
+#application_insights: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.insights/components/appi-mhe1-anam
+#image_build_compute: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.Compute/virtualMachines/vm-mhe1-anam0001
+#container_registry: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.ContainerRegistry/registries/crmhe1anam
+primary_user_assigned_identity: /subscriptions/b17253fa-f327-42d6-9686-f3e553e24763/resourceGroups/rg-xxx/providers/Microsoft.ManagedIdentity/userAssignedIdentities/fake-uai2

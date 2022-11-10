@@ -69,6 +69,7 @@ def mock_artifact_storage(_one, _two, _three, **kwargs) -> Mock:
 @patch("azure.ai.ml._artifacts._artifact_utilities._upload_to_datastore", new=mock_artifact_storage)
 @patch.object(Data, "_from_rest_object", new=Mock())
 @patch.object(Data, "_from_container_rest_object", new=Mock())
+@pytest.mark.data_experiences_test
 class TestDataOperations:
     def test_list(self, mock_data_operations: DataOperations) -> None:
         mock_data_operations._operation.list.return_value = [Mock(Data) for _ in range(10)]
@@ -213,7 +214,7 @@ class TestDataOperations:
         mock_data_operations.create_or_update(data)
 
         _mock_read_remote_mltable_metadata_contents.assert_called_once_with(
-            path=data_path,
+            base_uri=data_path,
             datastore_operations=mock_datastore_operation,
             requests_pipeline=mock_data_operations._requests_pipeline,
         )

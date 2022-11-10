@@ -103,14 +103,11 @@ class PhoneNumberIdentifier(object):
             self.raw_id = _phone_number_raw_id(self)
 
 
-_PHONE_NUMBER_PREFIX = re.compile(r'^\+')
-
-
 def _phone_number_raw_id(identifier: PhoneNumberIdentifier) -> str:
     value = identifier.properties['value']
-    # strip the leading +. We just assume correct E.164 format here because
+    # We just assume correct E.164 format here because
     # validation should only happen server-side, not client-side.
-    return '4:{}'.format(_PHONE_NUMBER_PREFIX.sub('', value))
+    return f'4:{value}'
 
 
 class UnknownIdentifier(object):
@@ -201,7 +198,7 @@ def identifier_from_raw_id(raw_id: str) -> CommunicationIdentifier:
     """
     if raw_id.startswith('4:'):
         return PhoneNumberIdentifier(
-            value='+{}'.format(raw_id[len('4:'):])
+            value = raw_id[len('4:'):]
         )
 
     segments = raw_id.split(':', maxsplit=2)

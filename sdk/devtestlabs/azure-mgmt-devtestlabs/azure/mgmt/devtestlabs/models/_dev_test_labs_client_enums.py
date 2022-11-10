@@ -6,64 +6,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CostThresholdStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether this threshold will be displayed on cost charts.
-    """
+class CostThresholdStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether this threshold will be displayed on cost charts."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class CostType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of the cost.
-    """
+
+class CostType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the cost."""
 
     UNAVAILABLE = "Unavailable"
     REPORTED = "Reported"
     PROJECTED = "Projected"
 
-class CustomImageOsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The OS type of the custom image (i.e. Windows, Linux)
-    """
+
+class CustomImageOsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The OS type of the custom image (i.e. Windows, Linux)."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
     NONE = "None"
 
-class EnableStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """If notifications are enabled for this schedule (i.e. Enabled, Disabled).
-    """
+
+class EnableStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates if the artifact source is enabled (values: Enabled, Disabled)."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class EnvironmentPermission(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The access rights to be granted to the user when provisioning an environment
-    """
+
+class EnvironmentPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The access rights to be granted to the user when provisioning an environment."""
 
     READER = "Reader"
     CONTRIBUTOR = "Contributor"
 
-class FileUploadOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class FileUploadOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Options for uploading the files for the artifact. UploadFilesAndGenerateSasTokens is the
     default value.
     """
@@ -71,19 +55,19 @@ class FileUploadOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPLOAD_FILES_AND_GENERATE_SAS_TOKENS = "UploadFilesAndGenerateSasTokens"
     NONE = "None"
 
-class HostCachingOptions(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Caching option for a data disk (i.e. None, ReadOnly, ReadWrite).
-    """
+
+class HostCachingOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Caching option for a data disk (i.e. None, ReadOnly, ReadWrite)."""
 
     NONE = "None"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
-class HttpStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status code for the operation.
-    """
 
-    CONTINUE_ENUM = "Continue"
+class HttpStatusCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status code for the operation."""
+
+    CONTINUE = "Continue"
     SWITCHING_PROTOCOLS = "SwitchingProtocols"
     OK = "OK"
     CREATED = "Created"
@@ -93,13 +77,18 @@ class HttpStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RESET_CONTENT = "ResetContent"
     PARTIAL_CONTENT = "PartialContent"
     MULTIPLE_CHOICES = "MultipleChoices"
+    AMBIGUOUS = "Ambiguous"
     MOVED_PERMANENTLY = "MovedPermanently"
+    MOVED = "Moved"
+    FOUND = "Found"
     REDIRECT = "Redirect"
     SEE_OTHER = "SeeOther"
+    REDIRECT_METHOD = "RedirectMethod"
     NOT_MODIFIED = "NotModified"
     USE_PROXY = "UseProxy"
     UNUSED = "Unused"
     TEMPORARY_REDIRECT = "TemporaryRedirect"
+    REDIRECT_KEEP_VERB = "RedirectKeepVerb"
     BAD_REQUEST = "BadRequest"
     UNAUTHORIZED = "Unauthorized"
     PAYMENT_REQUIRED = "PaymentRequired"
@@ -126,31 +115,40 @@ class HttpStatusCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     GATEWAY_TIMEOUT = "GatewayTimeout"
     HTTP_VERSION_NOT_SUPPORTED = "HttpVersionNotSupported"
 
-class LinuxOsState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of the Linux OS (i.e. NonDeprovisioned, DeprovisionRequested, DeprovisionApplied).
-    """
+
+class LinuxOsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the Linux OS (i.e. NonDeprovisioned, DeprovisionRequested, DeprovisionApplied)."""
 
     NON_DEPROVISIONED = "NonDeprovisioned"
     DEPROVISION_REQUESTED = "DeprovisionRequested"
     DEPROVISION_APPLIED = "DeprovisionApplied"
 
-class NotificationChannelEventType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The event type for which this notification is enabled (i.e. AutoShutdown, Cost)
-    """
+
+class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Managed identity."""
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
+
+
+class NotificationChannelEventType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The event type for which this notification is enabled (i.e. AutoShutdown, Cost)."""
 
     AUTO_SHUTDOWN = "AutoShutdown"
     COST = "Cost"
 
-class PolicyEvaluatorType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The evaluator type of the policy (i.e. AllowedValuesPolicy, MaxValuePolicy).
-    """
+
+class PolicyEvaluatorType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The evaluator type of the policy (i.e. AllowedValuesPolicy, MaxValuePolicy)."""
 
     ALLOWED_VALUES_POLICY = "AllowedValuesPolicy"
     MAX_VALUE_POLICY = "MaxValuePolicy"
 
-class PolicyFactName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The fact name of the policy (e.g. LabVmCount, LabVmSize, MaxVmsAllowedPerLab, etc.
-    """
+
+class PolicyFactName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The fact name of the policy (e.g. LabVmCount, LabVmSize, MaxVmsAllowedPerLab, etc."""
 
     USER_OWNED_LAB_VM_COUNT = "UserOwnedLabVmCount"
     USER_OWNED_LAB_PREMIUM_VM_COUNT = "UserOwnedLabPremiumVmCount"
@@ -163,14 +161,15 @@ class PolicyFactName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     ENVIRONMENT_TEMPLATE = "EnvironmentTemplate"
     SCHEDULE_EDIT_PERMISSION = "ScheduleEditPermission"
 
-class PolicyStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The status of the policy.
-    """
+
+class PolicyStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the policy."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class PremiumDataDisk(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class PremiumDataDisk(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The setting to enable usage of premium data disks.
     When its value is 'Enabled', creation of standard or premium data disks is allowed.
     When its value is 'Disabled', only creation of standard data disks is allowed.
@@ -179,61 +178,62 @@ class PremiumDataDisk(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class ReportingCycleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Reporting cycle type.
-    """
+
+class ReportingCycleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reporting cycle type."""
 
     CALENDAR_MONTH = "CalendarMonth"
     CUSTOM = "Custom"
 
-class SourceControlType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The artifact source's type.
-    """
+
+class SourceControlType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The artifact source's type."""
 
     VSO_GIT = "VsoGit"
     GIT_HUB = "GitHub"
+    STORAGE_ACCOUNT = "StorageAccount"
 
-class StorageType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The storage type for the disk (i.e. Standard, Premium).
-    """
+
+class StorageType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The storage type for the disk (i.e. Standard, Premium)."""
 
     STANDARD = "Standard"
     PREMIUM = "Premium"
     STANDARD_SSD = "StandardSSD"
 
-class TargetCostStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Target cost status
-    """
+
+class TargetCostStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Target cost status."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class TransportProtocol(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The transport protocol for the endpoint.
-    """
+
+class TransportProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The transport protocol for the endpoint."""
 
     TCP = "Tcp"
     UDP = "Udp"
 
-class UsagePermissionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The permission policy of the subnet for allowing public IP addresses (i.e. Allow, Deny)).
-    """
+
+class UsagePermissionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The permission policy of the subnet for allowing public IP addresses (i.e. Allow, Deny))."""
 
     DEFAULT = "Default"
     DENY = "Deny"
     ALLOW = "Allow"
 
-class VirtualMachineCreationSource(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Tells source of creation of lab virtual machine. Output property only.
-    """
+
+class VirtualMachineCreationSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Tells source of creation of lab virtual machine. Output property only."""
 
     FROM_CUSTOM_IMAGE = "FromCustomImage"
     FROM_GALLERY_IMAGE = "FromGalleryImage"
     FROM_SHARED_GALLERY_IMAGE = "FromSharedGalleryImage"
 
-class WindowsOsState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The state of the Windows OS (i.e. NonSysprepped, SysprepRequested, SysprepApplied).
-    """
+
+class WindowsOsState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the Windows OS (i.e. NonSysprepped, SysprepRequested, SysprepApplied)."""
 
     NON_SYSPREPPED = "NonSysprepped"
     SYSPREP_REQUESTED = "SysprepRequested"

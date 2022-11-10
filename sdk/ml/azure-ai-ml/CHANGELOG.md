@@ -1,18 +1,34 @@
 # Release History
 
+## 1.1.1 (Unreleased)
+
+## Features Added
+- Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
+
 ## 1.1.0 (Unreleased)
 
 ### Features Added
 - Registry list operation now accepts scope value to allow subscription-only based requests.
 - Most configuration classes from the entity package now implement the standard mapping protocol.
 - Add registry delete operation.
+- The values of JobService.job_service_type are now using the snake case. e.g jupyter_lab, ssh, tensor_board, vs_code.
+- Command function now accepts services param of type Dict[str, JobService] instead of dict.
 
 ### Breaking Changes
 
 ### Bugs Fixed
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
+- Fixed job inputs not accepting datastores or job inputs.
+- Registries now assign managed tags to match registry's tags.
+- Adjust registry experimental tags and imports to avoid warning printouts for unrelated operations.
+- Make registry delete operation return an LROPoller, and change name to begin_delete.
+- Prevent registering an already existing environment that references conda file.
+- Fix ARM ID logic for registry environments (ex: Creating a registry component that references a registry environment).
+- Fix ARM ID logic for passing models and environments with ID (ex: Creating endpoint deployment for a registry model should return said model's ID immediately)
 
 ### Other Changes
+- Switched compute operations to go through 2022-10-01-preview API version.
+
 
 ## 1.0.0 (2022-10-10)
 - GA release

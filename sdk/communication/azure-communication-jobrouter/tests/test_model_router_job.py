@@ -10,7 +10,7 @@ from azure.core.serialization import _datetime_as_isostr  # pylint:disable=prote
 from azure.communication.jobrouter import RouterJob
 
 
-class TestRouterJob(unittest.TestCase):
+class TestRouterJob(object):
 
     def test_job_router_accepts_notes_with_datetime_and_str(self):
 
@@ -27,10 +27,10 @@ class TestRouterJob(unittest.TestCase):
             notes = notes
         )
 
-        self.assertTrue(second_timestamp in router_job.notes)
-        self.assertTrue(current_timestamp_as_str in router_job.notes)
+        assert (second_timestamp in router_job.notes) is True
+        assert (current_timestamp_as_str in router_job.notes) is True
 
-        self.assertIsNotNone(router_job)
+        assert router_job is not None
 
 
 if __name__ == '__main__':

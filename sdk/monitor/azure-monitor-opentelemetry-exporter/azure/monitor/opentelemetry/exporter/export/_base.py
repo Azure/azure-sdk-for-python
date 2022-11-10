@@ -79,7 +79,7 @@ class BaseExporter:
             tempfile.gettempdir(), _AZURE_TEMPDIR_PREFIX, _TEMPDIR_PREFIX + temp_suffix
         )
         self._storage_directory = kwargs.get('storage_directory', default_storage_directory)  # Storage path in which to store retry files.
-        self._storage_retention_period = kwargs.get('storage_retention_period', 7 * 24 * 60 * 60)  # Retention period in seconds
+        self._storage_retention_period = kwargs.get('storage_retention_period', 48 * 60 * 60)  # Retention period in seconds (default 48 hrs)
         self._timeout = kwargs.get('timeout', 10.0)  # networking timeout in seconds
 
         config = AzureMonitorClientConfiguration(self._endpoint, **kwargs)
@@ -208,18 +208,22 @@ class BaseExporter:
                     self._consecutive_redirects = self._consecutive_redirects + 1
                     if self._consecutive_redirects < self.client._config.redirect_policy.max_redirects:  # pylint: disable=W0212
                         if response_error.response and response_error.response.headers:
+                            redirect_has_headers = True
                             location = response_error.response.headers.get("location")
-                            if location:
-                                url = urlparse(location)
-                                if url.scheme and url.netloc:
-                                    # Change the host to the new redirected host
-                                    self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
-                                    # Attempt to export again
-                                    result =  self._transmit(envelopes)
-                        if not self._is_stats_exporter():
-                            logger.error(
-                                "Error parsing redirect information."
-                            )
+                            url = urlparse(location)
+                        else:
+                            redirect_has_headers = False
+                        if redirect_has_headers and url.scheme and url.netloc:
+                            # Change the host to the new redirected host
+                            self.client._config.host = "{}://{}".format(url.scheme, url.netloc)  # pylint: disable=W0212
+                            # Attempt to export again
+                            result = self._transmit(envelopes)
+                        else:
+                            if not self._is_stats_exporter():
+                                logger.error(
+                                    "Error parsing redirect information.",
+                                )
+                            result = ExportResult.FAILED_NOT_RETRYABLE
                     else:
                         if not self._is_stats_exporter():
                             logger.error(
