@@ -30,6 +30,7 @@ from azure.monitor.opentelemetry.exporter.statsbeat._state import (
 )
 from azure.monitor.opentelemetry.exporter import _utils
 
+# cSpell:disable
 
 _AIMS_URI = "http://169.254.169.254/metadata/instance/compute"
 _AIMS_API_VERSION = "api-version=2017-12-01"
@@ -51,8 +52,6 @@ class _StatsbeatFeature:
     DISK_RETRY = 1
     AAD = 2
 
-
-# cSpell:disable
 
 # pylint: disable=R0902
 class _StatsbeatMetrics:
