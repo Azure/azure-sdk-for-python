@@ -506,7 +506,7 @@ class WebSocketTransportAsync(
             )
         except OSError as e:
             await self.session.close()
-            raise ConnectionError('Websocket connection closed: %r', e) from e
+            raise ConnectionError('Websocket connection closed: %r' % e) from e
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
@@ -532,7 +532,7 @@ class WebSocketTransportAsync(
             raise ConnectionError('recv timed out (%s)' % te)
         except OSError as e:
             await self.session.close()
-            raise ConnectionError('Websocket connection closed: %r', e) from e
+            raise ConnectionError('Websocket connection closed: %r' % e) from e
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -552,4 +552,4 @@ class WebSocketTransportAsync(
             raise ConnectionError('send timed out (%s)' % te)
         except OSError as e:
             await self.session.close()
-            raise ConnectionError('Websocket connection closed: %r', e) from e
+            raise ConnectionError('Websocket connection closed: %r' % e) from e
