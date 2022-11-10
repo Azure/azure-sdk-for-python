@@ -82,8 +82,7 @@ class LoopNode(ControlFlowNode, ABC):
         return self._body
 
     def _register_in_current_pipeline_component_builder(self):
-        """Register this node in current pipeline component builder by adding
-        self to a global stack."""
+        """Register this node in current pipeline component builder by adding self to a global stack."""
         # pylint: disable=protected-access
         super(LoopNode, self)._register_in_current_pipeline_component_builder()
         self.body._set_referenced_control_flow_node_instance_id(self._instance_id)
@@ -109,6 +108,9 @@ class LoopNode(ControlFlowNode, ABC):
             # When the body is used in another loop node record the error message in validation result.
             validation_result.append_error("body", "The body of loop node cannot be promoted as another loop again.")
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+
+    def _get_body_binding_str(self):
+        return "${{parent.jobs.%s}}" % self.body.name
 
     @staticmethod
     def _get_data_binding_expression_value(expression, regex):

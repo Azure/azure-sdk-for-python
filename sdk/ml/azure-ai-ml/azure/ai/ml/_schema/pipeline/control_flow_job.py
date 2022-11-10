@@ -66,3 +66,16 @@ class DoWhileSchema(BaseLoopSchema):
 
         result._condition = result._condition._name
         return result
+
+
+class ParallelForSchema(BaseLoopSchema):
+    type = StringTransformedEnum(allowed_values=[ControlFlowType.PARALLEL_FOR])
+    items = UnionField(
+        [
+            DataBindingStr(),
+            fields.Dict(keys=fields.Str(), values=fields.Dict()),
+            fields.List(fields.Dict()),
+        ],
+        required=True
+    )
+    max_concurrency = fields.Int()

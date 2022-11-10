@@ -143,7 +143,7 @@ class PipelineComponent(Component):
                 pass
             elif isinstance(node, ControlFlowNode):
                 # Validate control flow node.
-                validation_result.merge_with(node._customized_validate(), "jobs.{}".format(node_name))
+                validation_result.merge_with(node._validate(), "jobs.{}".format(node_name))
             else:
                 validation_result.append_error(
                     yaml_path="jobs.{}".format(node_name),

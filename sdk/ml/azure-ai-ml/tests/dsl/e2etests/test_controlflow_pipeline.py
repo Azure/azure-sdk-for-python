@@ -2,12 +2,13 @@ import contextlib
 import pytest
 
 from azure.ai.ml._schema.pipeline import PipelineJobSchema
+from azure.ai.ml.dsl._parallel_for import parallel_for
 from .._util import _DSL_TIMEOUT_SECOND
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineJobsField
 from devtools_testutils import AzureRecordedTestCase
 
-from azure.ai.ml import MLClient, load_component
+from azure.ai.ml import MLClient, load_component, Input
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
 
@@ -21,6 +22,12 @@ def include_private_preview_nodes_in_pipeline():
         yield
     finally:
         PipelineJobSchema._declared_fields["jobs"] = original_jobs
+
+
+test_input = Input(
+    type="uri_file",
+    path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
+)
 
 
 @pytest.mark.usefixtures(
@@ -144,4 +151,29 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
             client.jobs.create_or_update(pipeline_job)
 
     def test_dsl_parallel_for_pipeline(self, client: MLClient):
-        pass
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+        echo_string_component = load_component(
+            source="./tests/test_configs/components/echo_string_component.yml"
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component(component_in_path=test_input)
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            echo_string_component(component_in_string=parallel_node.outputs.component_out_path)
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        rest_pipeline_job = pipeline_job._to_rest_object().as_dict()
+        with include_private_preview_nodes_in_pipeline():
+            client.jobs.create_or_update(pipeline_job)
+

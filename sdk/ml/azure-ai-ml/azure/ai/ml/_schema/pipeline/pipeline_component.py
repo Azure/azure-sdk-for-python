@@ -33,7 +33,7 @@ from azure.ai.ml._schema.pipeline.component_job import (
     _resolve_inputs_outputs,
 )
 from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
-from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema
+from azure.ai.ml._schema.pipeline.control_flow_job import DoWhileSchema, ParallelForSchema
 from azure.ai.ml._schema.pipeline.pipeline_command_job import PipelineCommandJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_import_job import PipelineImportJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_parallel_job import PipelineParallelJobSchema
@@ -77,6 +77,7 @@ def PipelineJobsField():
     if is_private_preview_enabled():
         pipeline_enable_job_type[ControlFlowType.DO_WHILE] = [NestedField(DoWhileSchema, unknown=INCLUDE)]
         pipeline_enable_job_type[ControlFlowType.IF_ELSE] = [NestedField(ConditionNodeSchema, unknown=INCLUDE)]
+        pipeline_enable_job_type[ControlFlowType.PARALLEL_FOR] = [NestedField(ParallelForSchema, unknown=INCLUDE)]
 
     pipeline_job_field = fields.Dict(
         keys=NodeNameStr(),

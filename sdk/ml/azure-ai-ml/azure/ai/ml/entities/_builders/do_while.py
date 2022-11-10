@@ -175,9 +175,6 @@ class DoWhile(LoopNode):
         else:
             self._limits = DoWhileJobLimits(max_iteration_count=max_iteration_count)
 
-    def _get_body_binding_str(self):
-        return "${{parent.jobs.%s}}" % self.body.name
-
     def _customized_validate(self):
         validation_result = self._validate_loop_condition(raise_error=False)
         validation_result.merge_with(self._validate_body(raise_error=False))
