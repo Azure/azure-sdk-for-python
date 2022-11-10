@@ -52,7 +52,7 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
             await self.on_request(request)
 
             response = await self.next.send(request)
-   
+
             if response.http_response.status_code == 401:
                 challenge = response.http_response.headers.get("WWW-Authenticate")
                 if challenge and await self.on_challenge(request, response, challenge):
@@ -70,7 +70,7 @@ class ContainerRegistryChallengePolicy(AsyncHTTPPolicy):
         finally:
             if request.http_request.body and hasattr(request.http_request.body, 'close'):
                 request.http_request.body.close = original
-                request.http_request.body.close()           
+                request.http_request.body.close()
 
     async def on_challenge(self, request, response, challenge):
         # type: (PipelineRequest, PipelineResponse, str) -> bool
