@@ -60,6 +60,7 @@ The connection may have timed out. These errors can be retried for idempotent or
 
 A request was made, and a non-success status code was received from the service.
 
+<!-- SNIPPET:test_example_async.asyncio -->
 ```python
 class HttpResponseError(AzureError):
     def __init__(self, message=None, response=None, **kwargs):
@@ -78,6 +79,7 @@ class HttpResponseError(AzureError):
 
         super(HttpResponseError, self).__init__(message=message, **kwargs)
 ```
+<!-- END SNIPPET -->
 
 *message* is the HTTP response error message (optional)
 
