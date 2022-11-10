@@ -15,14 +15,12 @@ from .._serialize import (
     _get_match_headers,
     _add_entity_properties,
 )
-
 from .._generated.aio import AzureTable
 from .._generated.aio._configuration import AzureTableConfiguration
+from .._generated._serialization import Serializer, Deserializer
 
 if TYPE_CHECKING:
     from .._generated import models
-    from .._generated._serialization import Serializer
-    from .._generated._serialization import Deserializer
 
 
 class TableBatchOperations(object):

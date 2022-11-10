@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import functools
-from typing import Optional, Any, TYPE_CHECKING, Union, List, Dict, Mapping, Iterable, overload, cast
+from typing import Optional, Any, TYPE_CHECKING, Union, List, Dict, Mapping, Iterable, overload
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -174,7 +174,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
         """
         timeout = kwargs.pop("timeout", None)
         try:
-            _, identifier = self._client.table.get_access_policy(
+            identifier = self._client.table.get_access_policy(
                 table=self.table_name,
                 timeout=timeout,
                 cls=kwargs.pop("cls", None) or _return_headers_and_deserialized,
