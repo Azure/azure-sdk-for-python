@@ -728,6 +728,7 @@ def _archive_or_restore(
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
+    registry_name = asset_operations._registry_name
     if version and label:
         msg = "Cannot specify both version and label."
         raise ValidationException(
@@ -737,7 +738,7 @@ def _archive_or_restore(
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
-    if label:
+    if label: #bani
         version = _resolve_label_to_asset(asset_operations, name, label).version
 
     if version:
@@ -745,10 +746,21 @@ def _archive_or_restore(
             name=name,
             version=version,
             resource_group_name=resource_group_name,
+            registry_name=registry_name,
+        ) if registry_name else version_operation.get(
+            name=name,
+            version=version,
+            resource_group_name=resource_group_name,
             workspace_name=workspace_name,
         )
         version_resource.properties.is_archived = is_archived
-        version_operation.create_or_update(
+        version_operation.begin_create_or_update(
+            name=name,
+            version=version,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            body=version_resource,
+            ) if registry_name else version_operation.create_or_update(
             name=name,
             version=version,
             resource_group_name=resource_group_name,
