@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "1889",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -179,89 +179,53 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "3e02216f-1b6e-4cce-8539-323af0dbe35a",
+        "apim-request-id": "6fe6da64-59be-4949-9e75-078d794c97ff",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:10:16 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c4ad7d9c-ad6e-427b-8192-dad85fdde870?api-version=2022-05-01",
+        "Date": "Mon, 17 Oct 2022 18:50:10 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3ee16e1d-abd2-408c-b2c0-9e684370a2f8?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "934"
+        "x-envoy-upstream-service-time": "868"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c4ad7d9c-ad6e-427b-8192-dad85fdde870?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3ee16e1d-abd2-408c-b2c0-9e684370a2f8?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "09c5d0a5-43b0-4131-a16e-fa1a9e1bce9d",
-        "Content-Length": "280",
+        "apim-request-id": "6a4c3ae6-900a-43e0-ab8a-8aa84a52da40",
+        "Content-Length": "9793",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:10:21 GMT",
+        "Date": "Mon, 17 Oct 2022 18:50:15 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "9"
+        "x-envoy-upstream-service-time": "377"
       },
       "ResponseBody": {
-        "jobId": "c4ad7d9c-ad6e-427b-8192-dad85fdde870",
-        "lastUpdatedDateTime": "2022-06-09T17:10:22Z",
-        "createdDateTime": "2022-06-09T17:10:16Z",
-        "expirationDateTime": "2022-06-10T17:10:16Z",
+        "jobId": "3ee16e1d-abd2-408c-b2c0-9e684370a2f8",
+        "lastUpdateDateTime": "2022-10-17T18:50:16Z",
+        "createdDateTime": "2022-10-17T18:50:10Z",
+        "expirationDateTime": "2022-10-18T18:50:10Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 0,
+          "completed": 2,
           "failed": 0,
-          "inProgress": 5,
-          "total": 5,
-          "items": []
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c4ad7d9c-ad6e-427b-8192-dad85fdde870?api-version=2022-05-01\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "514de72e-63ff-4c13-8e64-0cb7ab768504",
-        "Content-Length": "14873",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:10:28 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "723"
-      },
-      "ResponseBody": {
-        "jobId": "c4ad7d9c-ad6e-427b-8192-dad85fdde870",
-        "lastUpdatedDateTime": "2022-06-09T17:10:27Z",
-        "createdDateTime": "2022-06-09T17:10:16Z",
-        "expirationDateTime": "2022-06-10T17:10:16Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 4,
-          "failed": 0,
-          "inProgress": 1,
+          "inProgress": 3,
           "total": 5,
           "items": [
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:10:26.357003Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:16.1990045Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -493,429 +457,13 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
-              }
-            },
-            {
-              "kind": "PiiEntityRecognitionLROResults",
-              "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:10:23.3308281Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 20,
-                  "validDocumentsCount": 20,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 20
-                },
-                "documents": [
-                  {
-                    "redactedText": "hello world",
-                    "id": "0",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "2",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "3",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "4",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "5",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "6",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "7",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "8",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "9",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "10",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "11",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "12",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "13",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "14",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "15",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "16",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "17",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "18",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "redactedText": "hello world",
-                    "id": "19",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-01-15"
-              }
-            },
-            {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:10:25.5234125Z",
-              "status": "succeeded",
-              "results": {
-                "statistics": {
-                  "documentsCount": 20,
-                  "validDocumentsCount": 20,
-                  "erroneousDocumentsCount": 0,
-                  "transactionsCount": 20
-                },
-                "documents": [
-                  {
-                    "id": "0",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "1",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "2",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "3",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "4",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "5",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "6",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "7",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "8",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "9",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "10",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "11",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "12",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "13",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "14",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "15",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "16",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "17",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "18",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  },
-                  {
-                    "id": "19",
-                    "statistics": {
-                      "charactersCount": 11,
-                      "transactionsCount": 1
-                    },
-                    "entities": [],
-                    "warnings": []
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-06-09T17:10:27.4359085Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:15.267163Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -933,16 +481,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -960,16 +508,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -987,16 +535,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1014,16 +562,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1041,16 +589,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1068,16 +616,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1095,16 +643,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1122,16 +670,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1149,16 +697,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1176,16 +724,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1203,16 +751,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1230,16 +778,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1257,16 +805,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1284,16 +832,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1311,16 +859,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1338,16 +886,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1365,16 +913,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1392,16 +940,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1419,16 +967,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1446,16 +994,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1467,39 +1015,39 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
         },
-        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c4ad7d9c-ad6e-427b-8192-dad85fdde870?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-05-01"
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3ee16e1d-abd2-408c-b2c0-9e684370a2f8?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-10-01-preview"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c4ad7d9c-ad6e-427b-8192-dad85fdde870?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3ee16e1d-abd2-408c-b2c0-9e684370a2f8?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "a4282867-52af-4a1a-b091-170db0b4aa51",
-        "Content-Length": "17129",
+        "apim-request-id": "823c65c8-08fe-4c61-a499-63ff242bb049",
+        "Content-Length": "17136",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:10:33 GMT",
+        "Date": "Mon, 17 Oct 2022 18:50:21 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "937"
+        "x-envoy-upstream-service-time": "1051"
       },
       "ResponseBody": {
-        "jobId": "c4ad7d9c-ad6e-427b-8192-dad85fdde870",
-        "lastUpdatedDateTime": "2022-06-09T17:10:32Z",
-        "createdDateTime": "2022-06-09T17:10:16Z",
-        "expirationDateTime": "2022-06-10T17:10:16Z",
+        "jobId": "3ee16e1d-abd2-408c-b2c0-9e684370a2f8",
+        "lastUpdateDateTime": "2022-10-17T18:50:17Z",
+        "createdDateTime": "2022-10-17T18:50:10Z",
+        "expirationDateTime": "2022-10-18T18:50:10Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -1511,7 +1059,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:10:32.9504525Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:16.6493956Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1709,7 +1257,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:10:26.357003Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:16.1990045Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1941,13 +1489,13 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:10:23.3308281Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:17.4616485Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2165,7 +1713,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:10:25.5234125Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:17.3882905Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2363,7 +1911,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-06-09T17:10:27.4359085Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:15.267163Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2381,16 +1929,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2408,16 +1956,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2435,16 +1983,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2462,16 +2010,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2489,16 +2037,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2516,16 +2064,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2543,16 +2091,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2570,16 +2118,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2597,16 +2145,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2624,16 +2172,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2651,16 +2199,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2678,16 +2226,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2705,16 +2253,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2732,16 +2280,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2759,16 +2307,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2786,16 +2334,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2813,16 +2361,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2840,16 +2388,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2867,16 +2415,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2894,16 +2442,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2915,39 +2463,39 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
         },
-        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c4ad7d9c-ad6e-427b-8192-dad85fdde870?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-05-01"
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3ee16e1d-abd2-408c-b2c0-9e684370a2f8?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-10-01-preview"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/c4ad7d9c-ad6e-427b-8192-dad85fdde870?api-version=2022-05-01\u0026showStats=true\u0026top=5\u0026skip=20",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3ee16e1d-abd2-408c-b2c0-9e684370a2f8?api-version=2022-10-01-preview\u0026showStats=true\u0026top=5\u0026skip=20",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6ea75295-9fd4-4be8-83f8-6fe4092325eb",
-        "Content-Length": "5586",
+        "apim-request-id": "5a53aeaa-ac49-42d2-8b3a-32dfc88df270",
+        "Content-Length": "5585",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:10:34 GMT",
+        "Date": "Mon, 17 Oct 2022 18:50:23 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "360"
+        "x-envoy-upstream-service-time": "296"
       },
       "ResponseBody": {
-        "jobId": "c4ad7d9c-ad6e-427b-8192-dad85fdde870",
-        "lastUpdatedDateTime": "2022-06-09T17:10:32Z",
-        "createdDateTime": "2022-06-09T17:10:16Z",
-        "expirationDateTime": "2022-06-10T17:10:16Z",
+        "jobId": "3ee16e1d-abd2-408c-b2c0-9e684370a2f8",
+        "lastUpdateDateTime": "2022-10-17T18:50:17Z",
+        "createdDateTime": "2022-10-17T18:50:10Z",
+        "expirationDateTime": "2022-10-18T18:50:10Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -2959,7 +2507,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:10:32.9504525Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:16.6493956Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3022,7 +2570,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:10:26.357003Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:16.1990045Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3089,13 +2637,13 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:10:23.3308281Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:17.4616485Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3163,7 +2711,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:10:25.5234125Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:17.3882905Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3226,7 +2774,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-06-09T17:10:27.4359085Z",
+              "lastUpdateDateTime": "2022-10-17T18:50:15.267163Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3244,16 +2792,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3271,16 +2819,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3298,16 +2846,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3325,16 +2873,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3352,16 +2900,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3373,7 +2921,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]

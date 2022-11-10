@@ -49,6 +49,7 @@ class PatchedSchemaMeta(SchemaMeta):
             if not hasattr(meta, "ordered"):
                 dct["Meta"].ordered = True
 
-        bases = bases + (PatchedBaseSchema,)
+        if PatchedBaseSchema not in bases:
+            bases = bases + (PatchedBaseSchema,)
         klass = super().__new__(cls, name, bases, dct)
         return klass

@@ -25,7 +25,7 @@ _LOGGER = logging.getLogger()
 CONTAINER_NAME = "ambitious_azsdk_test_proxy"
 LINUX_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
 WINDOWS_IMAGE_SOURCE_PREFIX = "azsdkengsys.azurecr.io/engsys/testproxy-win"
-CONTAINER_STARTUP_TIMEOUT = 6000
+CONTAINER_STARTUP_TIMEOUT = 60
 PROXY_MANUALLY_STARTED = os.getenv("PROXY_MANUAL_START", False)
 
 PROXY_CHECK_URL = PROXY_URL + "/Info/Available"
@@ -71,22 +71,27 @@ def ascend_to_root(start_dir_or_file: str) -> str:
 
 def delete_container() -> None:
     """Delete container if it remained"""
-    proc = subprocess.Popen(shlex.split(f"docker rm -f {CONTAINER_NAME}"))
-    output, stderr = proc.communicate()
+    proc = subprocess.Popen(
+        shlex.split(f"docker rm -f {CONTAINER_NAME}"),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        stdin=subprocess.DEVNULL,
+    )
+    output, stderr = proc.communicate(timeout=10)
     return None
 
 
 def check_availability() -> None:
     """Attempts request to /Info/Available. If a test-proxy instance is responding, we should get a response."""
     try:
-        response = requests.get(PROXY_CHECK_URL, timeout=60)
+        response = requests.get(PROXY_CHECK_URL, timeout=10)
         return response.status_code
     # We get an SSLError if the container is started but the endpoint isn't available yet
     except requests.exceptions.SSLError as sslError:
         _LOGGER.debug(sslError)
         return 404
     except Exception as e:
-        _LOGGER.error(e)
+        _LOGGER.debug(e)
         return 404
 
 
@@ -121,7 +126,10 @@ def create_container(repo_root: str) -> None:
         shlex.split(
             f"docker run --rm --name {CONTAINER_NAME} -v '{repo_root}:{path_prefix}/srv/testproxy' "
             f"{linux_container_args} -p 5001:5001 -p 5000:5000 {image_prefix}:{image_tag}"
-        )
+        ),
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        stdin=subprocess.DEVNULL,
     )
 
 
@@ -181,7 +189,12 @@ def stop_test_proxy() -> None:
 
         else:
             _LOGGER.info("Stopping the test proxy container...")
-            subprocess.Popen(shlex.split("docker stop " + CONTAINER_NAME))
+            subprocess.Popen(
+                shlex.split(f"docker stop {CONTAINER_NAME}"),
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                stdin=subprocess.DEVNULL,
+            )
 
 
 @pytest.fixture(scope="session")

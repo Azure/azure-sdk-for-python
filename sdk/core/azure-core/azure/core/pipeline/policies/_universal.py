@@ -26,7 +26,6 @@
 """
 This module is the requests implementation of Pipeline ABC
 """
-from __future__ import absolute_import  # we have a "requests" module that conflicts with "requests" on Py2.7
 import json
 import inspect
 import logging
@@ -563,12 +562,6 @@ class ContentDecodePolicy(SansIOHTTPPolicy):
                 raise DecodeError(message="JSON is invalid: {}".format(err), response=response, error=err)
         elif "xml" in (mime_type or []):
             try:
-                try:
-                    if isinstance(data, unicode):  # type: ignore
-                        # If I'm Python 2.7 and unicode XML will scream if I try a "fromstring" on unicode string
-                        data_as_str = cast(str, data_as_str.encode(encoding="utf-8"))
-                except NameError:
-                    pass
                 return ET.fromstring(data_as_str)   # nosec
             except ET.ParseError:
                 # It might be because the server has an issue, and returned JSON with

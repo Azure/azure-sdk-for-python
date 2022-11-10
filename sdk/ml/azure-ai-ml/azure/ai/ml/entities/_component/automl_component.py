@@ -1,9 +1,6 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-import typing
-
-from marshmallow import Schema
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.component.automl_component import AutoMLComponentSchema
@@ -43,5 +40,5 @@ class AutoMLComponent(Component):
         return self._task
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         return AutoMLComponentSchema(context=context)

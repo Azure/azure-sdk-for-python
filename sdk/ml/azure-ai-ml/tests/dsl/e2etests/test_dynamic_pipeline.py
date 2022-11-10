@@ -32,6 +32,7 @@ def include_private_preview_nodes_in_pipeline():
 )
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestDynamicPipeline(AzureRecordedTestCase):
     def test_dsl_condition_pipeline(self, client: MLClient):
         # update jobs field to include private preview nodes
@@ -76,51 +77,24 @@ class TestDynamicPipeline(AzureRecordedTestCase):
             },
             "node1": {
                 "_source": "REMOTE.WORKSPACE.COMPONENT",
-                "computeId": None,
-                "display_name": None,
-                "distribution": None,
-                "environment_variables": {},
                 "inputs": {"component_in_number": {"job_input_type": "literal", "value": "1"}},
-                "limits": None,
                 "name": "node1",
-                "outputs": {},
-                "resources": None,
-                "tags": {},
                 "type": "command",
-                "properties": {},
             },
             "node2": {
                 "_source": "REMOTE.WORKSPACE.COMPONENT",
-                "computeId": None,
-                "display_name": None,
-                "distribution": None,
-                "environment_variables": {},
                 "inputs": {"component_in_number": {"job_input_type": "literal", "value": "2"}},
-                "limits": None,
                 "name": "node2",
-                "outputs": {},
-                "resources": None,
-                "tags": {},
                 "type": "command",
-                "properties": {},
             },
             "result": {
                 "_source": "REMOTE.WORKSPACE.COMPONENT",
-                "computeId": None,
-                "display_name": None,
-                "distribution": None,
-                "environment_variables": {},
                 "inputs": {
                     "int_param": {"job_input_type": "literal", "value": "1"},
                     "str_param": {"job_input_type": "literal", "value": "abc"},
                 },
-                "limits": None,
                 "name": "result",
-                "outputs": {},
-                "resources": None,
-                "tags": {},
                 "type": "command",
-                "properties": {},
             },
         }
 

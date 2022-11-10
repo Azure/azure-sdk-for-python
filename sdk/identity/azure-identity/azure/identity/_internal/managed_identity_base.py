@@ -3,14 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import abc
-from typing import cast, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING, Any, Optional
 
 from .. import CredentialUnavailableError
 from .._internal.managed_identity_client import ManagedIdentityClient
 from .._internal.get_token_mixin import GetTokenMixin
 
 if TYPE_CHECKING:
-    from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
 
@@ -23,8 +22,7 @@ class ManagedIdentityBase(GetTokenMixin):
         self._client = self.get_client(**kwargs)
 
     @abc.abstractmethod
-    def get_client(self, **kwargs):
-        # type: (**Any) -> Optional[ManagedIdentityClient]
+    def get_client(self, **kwargs) -> Optional[ManagedIdentityClient]:
         pass
 
     @abc.abstractmethod

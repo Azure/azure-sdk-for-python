@@ -9,6 +9,7 @@ from azure.identity import (
     AzureAuthorityHosts,
     CredentialUnavailableError,
     SharedTokenCacheCredential,
+    TokenCachePersistenceOptions,
 )
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
@@ -762,6 +763,18 @@ def test_initialization():
             with pytest.raises(CredentialUnavailableError, match="Shared token cache unavailable"):
                 credential.get_token("scope")
             assert mock_cache_loader.call_count == 1
+
+
+def test_initialization_with_cache_options():
+    """the credential should use user-supplied persistence options"""
+
+    with patch("azure.identity._internal.shared_token_cache._load_persistent_cache") as mock_cache_loader:
+        options = TokenCachePersistenceOptions(name="foo.cache")
+        credential = SharedTokenCacheCredential(cache_persistence_options=options)
+
+        with pytest.raises(CredentialUnavailableError):
+            credential.get_token("scope")
+        mock_cache_loader.assert_called_once_with(options)
 
 
 def test_authentication_record_authenticating_tenant():

@@ -4,7 +4,16 @@ import logging
 
 from typing import Optional, Any
 
+from opentelemetry.sdk.metrics import (
+    Counter,
+    Histogram,
+    ObservableCounter,
+    ObservableGauge,
+    ObservableUpDownCounter,
+    UpDownCounter,
+)
 from opentelemetry.sdk.metrics.export import (
+    AggregationTemporality,
     DataPointT,
     HistogramDataPoint,
     MetricExporter,
@@ -32,6 +41,16 @@ _logger = logging.getLogger(__name__)
 __all__ = ["AzureMonitorMetricExporter"]
 
 
+APPLICATION_INSIGHTS_METRIC_TEMPORALITIES = {
+    Counter: AggregationTemporality.DELTA,
+    Histogram: AggregationTemporality.DELTA,
+    ObservableCounter: AggregationTemporality.DELTA,
+    ObservableGauge: AggregationTemporality.CUMULATIVE,
+    ObservableUpDownCounter: AggregationTemporality.CUMULATIVE,
+    UpDownCounter: AggregationTemporality.CUMULATIVE,
+}
+
+
 class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
     """Azure Monitor Metric exporter for OpenTelemetry."""
 
@@ -39,7 +58,7 @@ class AzureMonitorMetricExporter(BaseExporter, MetricExporter):
         BaseExporter.__init__(self, **kwargs)
         MetricExporter.__init__(
             self,
-            preferred_temporality=kwargs.get("preferred_temporality"),
+            preferred_temporality=APPLICATION_INSIGHTS_METRIC_TEMPORALITIES,
             preferred_aggregation=kwargs.get("preferred_aggregation"),
         )
 

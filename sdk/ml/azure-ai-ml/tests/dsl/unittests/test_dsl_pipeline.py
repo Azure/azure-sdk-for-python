@@ -9,7 +9,8 @@ import pytest
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
-from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, spark
+from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, spark, \
+    AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
@@ -28,7 +29,7 @@ from azure.ai.ml.entities import (
 from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException
+from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -39,6 +40,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 @pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestDSLPipeline:
     def test_dsl_pipeline(self) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
@@ -213,21 +215,21 @@ class TestDSLPipeline:
 
         @dsl.pipeline()
         def pipeline(
-            job_in_data_name_version_def_mode,
-            job_in_data_name_version_mode_mount,
-            job_in_data_name_version_mode_download,
-            job_in_data_by_name,
-            job_in_data_by_armid,
-            job_in_data_by_store_path,
-            job_in_data_by_path_default_store,
-            job_in_data_by_store_path_and_mount,
-            job_in_data_by_store_path_and_download,
-            job_in_data_by_blob_dir,
-            job_in_data_by_blob_file,
-            job_in_data_local_dir,
-            job_in_data_local_file,
-            job_in_data_local_yaml_definition,
-            job_in_data_uri,
+                job_in_data_name_version_def_mode,
+                job_in_data_name_version_mode_mount,
+                job_in_data_name_version_mode_download,
+                job_in_data_by_name,
+                job_in_data_by_armid,
+                job_in_data_by_store_path,
+                job_in_data_by_path_default_store,
+                job_in_data_by_store_path_and_mount,
+                job_in_data_by_store_path_and_download,
+                job_in_data_by_blob_dir,
+                job_in_data_by_blob_file,
+                job_in_data_local_dir,
+                job_in_data_local_file,
+                job_in_data_local_yaml_definition,
+                job_in_data_uri,
         ):
             component_func = load_component(source=yaml_file)
             multiple_data_component = component_func(
@@ -729,8 +731,8 @@ class TestDSLPipeline:
         with pytest.raises(UserErrorException) as ex:
             pipeline(10, test_job_input)
         assert (
-            "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), but got type <class 'tuple'>."
-            in ex.__str__()
+                "Pipeline input expected an azure.ai.ml.Input or primitive types (str, bool, int or float), but got type <class 'tuple'>."
+                in ex.__str__()
         )
 
     def test_dsl_pipeline_multi_times(self):
@@ -765,8 +767,8 @@ class TestDSLPipeline:
             _add_component_to_current_definition_builder(component)
 
         with mock.patch(
-            "azure.ai.ml.dsl._pipeline_component_builder._add_component_to_current_definition_builder",
-            side_effect=mock_add_to_builder,
+                "azure.ai.ml.dsl._pipeline_component_builder._add_component_to_current_definition_builder",
+                side_effect=mock_add_to_builder,
         ) as mocker:
             # DSL
             yaml_file = "./tests/test_configs/components/helloworld_component.yml"
@@ -824,18 +826,12 @@ class TestDSLPipeline:
         expected_component = {
             "_source": "YAML.COMPONENT",
             "computeId": "cpu-cluster",
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_number}}"},
                 "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
             },
-            "limits": None,
             "name": "hello_world_component_1",
             "outputs": {"component_out_path": {"job_output_type": "uri_folder", "mode": "Upload"}},
-            "resources": None,
-            "tags": {},
             "type": "command",
         }
         omit_fields = ["componentId", "properties"]
@@ -876,12 +872,12 @@ class TestDSLPipeline:
 
         component_names = set()
         with mock.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
-            side_effect=mock_arm_id,
+                "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id",
+                side_effect=mock_arm_id,
         ):
             with mock.patch(
-                "azure.ai.ml._restclient.v2022_05_01.operations.ComponentVersionsOperations.create_or_update",
-                side_effect=mock_create,
+                    "azure.ai.ml._restclient.v2022_05_01.operations.ComponentVersionsOperations.create_or_update",
+                    side_effect=mock_create,
             ):
                 with mock.patch.object(Component, "_from_rest_object", side_effect=mock_from_rest):
                     for _, job in pipeline.jobs.items():
@@ -1049,56 +1045,56 @@ class TestDSLPipeline:
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(pipeline1)
             assert (
-                "display_name: pipeline\ntype: pipeline\ninputs:\n  number: 10\n  path:\n    type: uri_folder"
-                in std_out.getvalue()
+                    "display_name: pipeline\ntype: pipeline\ninputs:\n  number: 10\n  path:\n    type: uri_folder"
+                    in std_out.getvalue()
             )
 
     @pytest.mark.parametrize(
         "target_yml, target_dsl_pipeline",
         [
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
-                data_binding_expression.input_basic(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_basic.yml",
+                    data_binding_expression.input_basic(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
-                data_binding_expression.input_literal_cross_type(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_cross_type.yml",
+                    data_binding_expression.input_literal_cross_type(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
-                data_binding_expression.input_literal_meta(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_literal_meta.yml",
+                    data_binding_expression.input_literal_meta(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
-                data_binding_expression.input_path_concatenate(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path_concatenate.yml",
+                    data_binding_expression.input_path_concatenate(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
-                data_binding_expression.input_reason_expression(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_reason_expression.yml",
+                    data_binding_expression.input_reason_expression(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
-                data_binding_expression.input_string_concatenate(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_string_concatenate.yml",
+                    data_binding_expression.input_string_concatenate(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
-                data_binding_expression.run_settings_compute(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_compute.yml",
+                    data_binding_expression.run_settings_compute(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
-                data_binding_expression.input_path(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/input_path.yml",
+                    data_binding_expression.input_path(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
-                data_binding_expression.run_settings_sweep_choice(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_choice.yml",
+                    data_binding_expression.run_settings_sweep_choice(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_limits.yml",
-                data_binding_expression.run_settings_sweep_limits(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_limits.yml",
+                    data_binding_expression.run_settings_sweep_limits(),
             ),
             (
-                "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_literal.yml",
-                data_binding_expression.run_settings_sweep_literal(),
+                    "./tests/test_configs/dsl_pipeline/data_binding_expression/run_settings_sweep_literal.yml",
+                    data_binding_expression.run_settings_sweep_literal(),
             ),
         ],
     )
@@ -1126,7 +1122,6 @@ class TestDSLPipeline:
         distribution.process_count_per_instance = test_input
         dumped = schema.dump(distribution)
         assert dumped == {"type": "mpi", "process_count_per_instance": "${{parent.inputs.test}}"}
-
 
     def test_dsl_pipeline_without_setting_binding_node(self) -> None:
         from dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import pipeline_without_setting_binding_node
@@ -1160,14 +1155,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1228,14 +1216,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1295,14 +1276,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1371,14 +1345,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1440,22 +1407,18 @@ class TestDSLPipeline:
         expected_sub_dict = {
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
-            "tags": {},
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
             "jobs": {
                 "node1": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "node2": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
@@ -1479,19 +1442,14 @@ class TestDSLPipeline:
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
-            "tags": {},
-            "properties": {},
             "type": "pipeline",
-            "settings": {},
             "inputs": {"component_in_number": 1, "component_in_path": "test"},
-            "outputs": {"sub_pipeline_out": None},
             "jobs": {
                 "node1": {
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -1543,14 +1501,8 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
                         "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1619,9 +1571,6 @@ class TestDSLPipeline:
                 "jobs": {
                     "subgraph1": {
                         "name": "subgraph1",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "type": "pipeline",
                         "inputs": {
                             "training_input": {
@@ -1673,7 +1622,7 @@ class TestDSLPipeline:
             node.outputs.component_out_path.mode = "upload"
             return node.outputs
 
-        component = pipeline_func._pipeline_builder.build()
+        component = pipeline_func._pipeline_builder.build(user_provided_kwargs={})
 
         expected_dict = {
             "name": "pipeline_comp",
@@ -1700,9 +1649,9 @@ class TestDSLPipeline:
 
         pipeline = concatenation_in_pipeline(str_param="string value")
         for node_name, expected_value in (
-            ("microsoft_samples_echo_string", "${{parent.inputs.str_param}} right"),
-            ("microsoft_samples_echo_string_1", "left ${{parent.inputs.str_param}}"),
-            ("microsoft_samples_echo_string_2", "${{parent.inputs.str_param}}${{parent.inputs.str_param}}"),
+                ("microsoft_samples_echo_string", "${{parent.inputs.str_param}} right"),
+                ("microsoft_samples_echo_string_1", "left ${{parent.inputs.str_param}}"),
+                ("microsoft_samples_echo_string_2", "${{parent.inputs.str_param}}${{parent.inputs.str_param}}"),
         ):
             assert pipeline.jobs[node_name].inputs.component_in_string._data == expected_value
 
@@ -1732,22 +1681,18 @@ class TestDSLPipeline:
         expected_sub_dict = {
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
-            "tags": {},
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
             "jobs": {
                 "node1": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "node2": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
@@ -1768,19 +1713,14 @@ class TestDSLPipeline:
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
-            "tags": {},
-            "properties": {},
             "type": "pipeline",
-            "settings": {},
             "inputs": {"component_in_number": 1, "component_in_path": "test"},
-            "outputs": {"sub_pipeline_out": None},
             "jobs": {
                 "node1": {
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -1820,22 +1760,18 @@ class TestDSLPipeline:
         expected_sub_dict = {
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
-            "tags": {},
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
             "jobs": {
                 "node1": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "node2": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
@@ -1852,19 +1788,14 @@ class TestDSLPipeline:
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
-            "tags": {},
-            "properties": {},
             "type": "pipeline",
-            "settings": {},
             "inputs": {"component_in_number": 1, "component_in_path": "test"},
-            "outputs": {"sub_pipeline_out": None},
             "jobs": {
                 "node1": {
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -1940,3 +1871,155 @@ class TestDSLPipeline:
         pipeline_job = pipeline_func(component_in_path=Data(name="test", version="1", type=AssetTypes.MLTABLE))
         result = pipeline_job._validate()
         assert result._to_dict() == {"result": "Succeeded"}
+
+    def test_pipeline_node_identity_with_component(self):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(path)
+
+        @dsl.pipeline
+        def pipeline_func(component_in_path):
+            node1 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node1.identity = AmlTokenConfiguration()
+
+            node2 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node2.identity = UserIdentityConfiguration()
+
+            node3 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node3.identity = ManagedIdentityConfiguration()
+
+        pipeline = pipeline_func(component_in_path=Data(name="test", version="1", type=AssetTypes.MLTABLE))
+        omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source"
+        ]
+        actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
+
+        assert actual_dict["jobs"] == {
+            'node1': {'identity': {'type': 'aml_token'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'name': 'node1',
+                      'type': 'command'},
+            'node2': {'identity': {'type': 'user_identity'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'name': 'node2',
+                      'type': 'command'},
+            'node3': {'identity': {'type': 'managed_identity'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'name': 'node3',
+                      'type': 'command'}
+        }
+
+    def test_pipeline_with_non_pipeline_inputs(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml, params_override=[{"name": "component_name_1"}])
+        component_func2 = load_component(source=component_yaml, params_override=[{"name": "component_name_2"}])
+
+        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component"])
+        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component):
+            component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
+            component_func2(component_in_number=other_params, component_in_path=job_in_path)
+            if is_add_component:
+                component_func2(component_in_number=other_params, component_in_path=job_in_path)
+
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, False)
+        assert len(pipeline.jobs) == 2
+        assert "other_params" not in pipeline.inputs
+        assert isinstance(pipeline.jobs[component_func1.name].inputs["component_in_number"]._data, PipelineInput)
+        assert pipeline.jobs[component_func2.name].inputs["component_in_number"]._data == 15
+
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True)
+        assert len(pipeline.jobs) == 3
+
+        @dsl.pipeline(non_pipeline_parameters=["other_params", "is_add_component"])
+        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component):
+            component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
+            component_func2(component_in_number=other_params, component_in_path=job_in_path)
+            if is_add_component:
+                component_func2(component_in_number=other_params, component_in_path=job_in_path)
+
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True)
+        assert len(pipeline.jobs) == 3
+
+    def test_pipeline_with_invalid_non_pipeline_inputs(self):
+
+        @dsl.pipeline(non_pipeline_inputs=[123])
+        def pipeline_func():
+            pass
+
+        with pytest.raises(UserErrorException) as error_info:
+            pipeline_func()
+        assert "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string" in str(error_info)
+
+        @dsl.pipeline(non_pipeline_inputs=["non_exist_param1", "non_exist_param2"])
+        def pipeline_func():
+            pass
+
+        with pytest.raises(ParamValueNotExistsError) as error_info:
+            pipeline_func()
+        assert "pipeline_func() got unexpected params in non_pipeline_inputs ['non_exist_param1', 'non_exist_param2']" in str(error_info)
+
+    def test_component_func_as_non_pipeline_inputs(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml, params_override=[{"name": "component_name_1"}])
+        component_func2 = load_component(source=component_yaml, params_override=[{"name": "component_name_2"}])
+
+        @dsl.pipeline(non_pipeline_inputs=["component_func"])
+        def pipeline_func(job_in_number, job_in_path, component_func):
+            component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
+            component_func(component_in_number=job_in_number, component_in_path=job_in_path)
+
+        pipeline = pipeline_func(
+            job_in_number=10,
+            job_in_path=Input(path="/a/path/on/ds"),
+            component_func=component_func2)
+        assert len(pipeline.jobs) == 2
+        assert component_func2.name in pipeline.jobs
+
+    def test_condition_node_consumption(self):
+        from azure.ai.ml.dsl._condition import condition
+
+        component_yaml = components_dir / "helloworld_component_no_paths.yml"
+        component_func = load_component(component_yaml)
+
+        # consume expression (also component with only one output)
+        @dsl.pipeline
+        def pipeline_func_consume_expression(int_param: int):
+            node1 = component_func()
+            node2 = component_func()
+            expression = int_param == 0
+            control_node = condition(expression, true_block=node1, false_block=node2)  # noqa: F841
+
+        pipeline_job = pipeline_func_consume_expression(int_param=1)
+        assert pipeline_job.jobs["control_node"]._to_rest_object() == {
+            "type": "if_else",
+            "condition": "${{parent.jobs.expression_component.outputs.output}}",
+            "true_block": "${{parent.jobs.node1}}",
+            "false_block": "${{parent.jobs.node2}}",
+        }
+
+        # consume component with not one output
+        @dsl.pipeline
+        def pipeline_func_consume_invalid_component():
+            node0 = component_func()
+            node1 = component_func()
+            node2 = component_func()
+            control_node = condition(node0, true_block=node1, false_block=node2)  # noqa: F841
+
+        with pytest.raises(UserErrorException) as e:
+            pipeline_func_consume_invalid_component()
+        assert str(e.value) == "Exactly one output is expected for condition node, 0 outputs found."

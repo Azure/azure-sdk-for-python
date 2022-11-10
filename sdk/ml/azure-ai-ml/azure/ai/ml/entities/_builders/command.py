@@ -14,8 +14,8 @@ from marshmallow import INCLUDE, Schema
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJob as RestCommandJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
-from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._schema.core.fields import NestedField, UnionField
 from azure.ai.ml._schema.job.command_job import CommandJobSchema
 from azure.ai.ml._schema.job.services import JobServiceSchema
@@ -117,7 +117,8 @@ class Command(BaseNode):
     :type limits: ~azure.ai.ml.entities.CommandJobLimits
     :param identity: Identity that training job will use while running on compute.
     :type identity: Union[ManagedIdentity, AmlToken, UserIdentity]
-    :param services: Interactive services for the node.
+    :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
+        Please see https://aka.ms/azuremlexperimental for more information.
     :type services: Dict[str, JobService]
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Command cannot be successfully validated.
         Details will be provided in the error message.
@@ -142,10 +143,7 @@ class Command(BaseNode):
         ] = None,
         outputs: Dict[str, Union[str, Output]] = None,
         limits: CommandJobLimits = None,
-        identity: Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+        identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
         distribution: Union[Dict, MpiDistribution, TensorFlowDistribution, PyTorchDistribution] = None,
         environment: Union[Environment, str] = None,
         environment_variables: Dict = None,
@@ -350,10 +348,7 @@ class Command(BaseNode):
             str,
             Union[Choice, LogNormal, LogUniform, Normal, QLogNormal, QLogUniform, QNormal, QUniform, Randint, Uniform],
         ] = None,
-        identity: Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+        identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
     ) -> Sweep:
         """Turn the command into a sweep node with extra sweep run setting. The
         command component in current Command node will be used as its trial
@@ -474,6 +469,7 @@ class Command(BaseNode):
             "limits": get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
             "resources": get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
             "services": get_rest_dict_for_node_attrs(self.services),
+            "identity": self.identity._to_dict() if self.identity else None,
         }.items():
             if value is not None:
                 rest_obj[key] = value
@@ -496,21 +492,12 @@ class Command(BaseNode):
         return command_job
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Command":
-        obj = BaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
+        obj = BaseNode._from_rest_object_to_init_params(obj)
 
-        # resources, sweep won't have resources
         if "resources" in obj and obj["resources"]:
             resources = RestJobResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        # distribution, sweep won't have distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
 
         # services, sweep won't have services
         if "services" in obj and obj["services"]:
@@ -529,7 +516,10 @@ class Command(BaseNode):
             rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
             obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
 
-        return Command(**obj)
+        if "identity" in obj and obj["identity"]:
+            obj["identity"] = _BaseJobIdentityConfiguration._load(obj["identity"])
+
+        return obj
 
     @classmethod
     def _load_from_rest_job(cls, obj: JobBase) -> "Command":
@@ -553,8 +543,9 @@ class Command(BaseNode):
             environment=rest_command_job.environment_id,
             distribution=DistributionConfiguration._from_rest_object(rest_command_job.distribution),
             parameters=rest_command_job.parameters,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                rest_command_job.identity) if rest_command_job.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(rest_command_job.identity)
+            if rest_command_job.identity
+            else None,
             environment_variables=rest_command_job.environment_variables,
             inputs=from_rest_inputs_to_dataset_literal(rest_command_job.inputs),
             outputs=from_rest_data_outputs(rest_command_job.outputs),
@@ -621,6 +612,7 @@ class Command(BaseNode):
             node.distribution = copy.deepcopy(self.distribution)
             node.resources = copy.deepcopy(self.resources)
             node.services = copy.deepcopy(self.services)
+            node.identity = copy.deepcopy(self.identity)
             return node
         msg = "Command can be called as a function only when referenced component is {}, currently got {}."
         raise ValidationException(

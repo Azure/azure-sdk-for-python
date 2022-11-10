@@ -6,7 +6,7 @@ import re
 
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
-from subprocess import check_call, getoutput
+from subprocess import check_call
 from typing import List, Dict, Any
 from glob import glob
 import yaml
@@ -113,25 +113,11 @@ def update_servicemetadata(sdk_folder, data, config, folder_name, package_name, 
                 f.write("".join(includes))
 
 
-# find all the files of one folder, including files in subdirectory
-def all_files(path: str, files: List[str]):
-    all_folder = os.listdir(path)
-    for item in all_folder:
-        folder = str(Path(f"{path}/{item}"))
-        if os.path.isdir(folder):
-            all_files(folder, files)
-        else:
-            files.append(folder)
-
-
 def judge_tag_preview(path: str) -> bool:
-    files = []
-    all_files(path, files)
+    files = [i for i in Path(path).glob("**/*.py")]
     default_api_version = ""  # for multi-api
     api_version = ""  # for single-api
     for file in files:
-        if ".py" not in file or ".pyc" in file:
-            continue
         try:
             with open(file, "r") as file_in:
                 list_in = file_in.readlines()
@@ -140,10 +126,10 @@ def judge_tag_preview(path: str) -> bool:
             continue
 
         for line in list_in:
-            if line.find("DEFAULT_API_VERSION = ") > -1:
+            if "DEFAULT_API_VERSION = " in line:
                 default_api_version += line.split("=")[-1].strip("\n")  # collect all default api version
-            if default_api_version == "" and line.find("api_version = ") > -1:
-                api_version += line.split("=")[-1].strip("\n")  # collect all single api version
+            if default_api_version == "" and "api_version" in line:
+                api_version += ", ".join(re.findall("\d{4}-\d{2}-\d{2}[-a-z]*", line))  # collect all single api version
     if default_api_version != "":
         _LOGGER.info(f"find default api version:{default_api_version}")
         return "preview" in default_api_version
@@ -329,9 +315,21 @@ def format_samples(sdk_code_path) -> None:
 
     _LOGGER.info(f"format generated_samples successfully")
 
+def get_npm_package_version(package: str) -> Dict[any, any]:
+    temp_file = "python_temp.json"
+    check_call(f"npm list {package} -json > {temp_file}", shell=True)
+    with open(temp_file, "r") as file_in:
+        data = json.load(file_in)
+    if "dependencies" not in data:
+        _LOGGER.info(f"can not find {package}: {data}")
+        return {}
+    
+    return data["dependencies"]
+
 def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     # update config file
     cadl_python = "@azure-tools/cadl-python"
+    autorest_python = "@autorest/python"
     project_yaml_path = Path(spec_folder) / cadl_relative_path / "cadl-project.yaml"
     with open(project_yaml_path, "r") as file_in:
         project_yaml = yaml.safe_load(file_in)
@@ -358,10 +356,10 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     if Path(output_path / "output.yaml").exists():
         os.remove(Path(output_path / "output.yaml"))
 
-    # get version of @azure-tools/cadl-python used in generation
-    cadl_python_version = getoutput(f"npm view {cadl_python} version").split('\n')[-1]
+    # get version of codegen used in generation
+    npm_package_verstion = get_npm_package_version(autorest_python)
 
     # return to original folder
     os.chdir(origin_path)
 
-    return {cadl_python: cadl_python_version}
+    return npm_package_verstion
