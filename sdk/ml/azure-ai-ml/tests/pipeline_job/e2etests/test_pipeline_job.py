@@ -69,6 +69,7 @@ def generate_weekly_fixed_job_name(variable_recorder) -> str:
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
+    @pytest.mark.skip("Skip for broken job service type, need fix")
     def test_pipeline_job_create(
         self,
         client: MLClient,
@@ -105,7 +106,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert job.name == params_override[0]["name"]
         assert job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
 
-    @pytest.mark.skip("Skip for compute reaource not ready.")
+    @pytest.mark.skip("Skip for compute resource not ready.")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
