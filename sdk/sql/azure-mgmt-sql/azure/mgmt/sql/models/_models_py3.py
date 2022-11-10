@@ -16872,6 +16872,9 @@ class ServerDevOpsAuditingSettings(ProxyResource):
      <https://go.microsoft.com/fwlink/?linkid=2033207>`_
      or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
     :vartype is_azure_monitor_target_enabled: bool
+    :ivar is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+     storage.
+    :vartype is_managed_identity_in_use: bool
     :ivar state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
      isAzureMonitorTargetEnabled are required. Known values are: "Enabled" and "Disabled".
     :vartype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -16909,6 +16912,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
         "type": {"key": "type", "type": "str"},
         "system_data": {"key": "systemData", "type": "SystemData"},
         "is_azure_monitor_target_enabled": {"key": "properties.isAzureMonitorTargetEnabled", "type": "bool"},
+        "is_managed_identity_in_use": {"key": "properties.isManagedIdentityInUse", "type": "bool"},
         "state": {"key": "properties.state", "type": "str"},
         "storage_endpoint": {"key": "properties.storageEndpoint", "type": "str"},
         "storage_account_access_key": {"key": "properties.storageAccountAccessKey", "type": "str"},
@@ -16919,6 +16923,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
         self,
         *,
         is_azure_monitor_target_enabled: Optional[bool] = None,
+        is_managed_identity_in_use: Optional[bool] = None,
         state: Optional[Union[str, "_models.BlobAuditingPolicyState"]] = None,
         storage_endpoint: Optional[str] = None,
         storage_account_access_key: Optional[str] = None,
@@ -16942,6 +16947,9 @@ class ServerDevOpsAuditingSettings(ProxyResource):
          <https://go.microsoft.com/fwlink/?linkid=2033207>`_
          or `Diagnostic Settings PowerShell <https://go.microsoft.com/fwlink/?linkid=2033043>`_.
         :paramtype is_azure_monitor_target_enabled: bool
+        :keyword is_managed_identity_in_use: Specifies whether Managed Identity is used to access blob
+         storage.
+        :paramtype is_managed_identity_in_use: bool
         :keyword state: Specifies the state of the audit. If state is Enabled, storageEndpoint or
          isAzureMonitorTargetEnabled are required. Known values are: "Enabled" and "Disabled".
         :paramtype state: str or ~azure.mgmt.sql.models.BlobAuditingPolicyState
@@ -16969,6 +16977,7 @@ class ServerDevOpsAuditingSettings(ProxyResource):
         super().__init__(**kwargs)
         self.system_data = None
         self.is_azure_monitor_target_enabled = is_azure_monitor_target_enabled
+        self.is_managed_identity_in_use = is_managed_identity_in_use
         self.state = state
         self.storage_endpoint = storage_endpoint
         self.storage_account_access_key = storage_account_access_key
