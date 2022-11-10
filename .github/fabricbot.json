@@ -1061,6 +1061,15 @@
             ]
           },
           {
+            "label": "Cognitive - Personalizer",
+            "pathFilter": [
+              "sdk/personalizer/"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
             "label": "ML-AutoML",
             "pathFilter": [
               "/sdk/ml/automl.tests.yml",
@@ -1898,7 +1907,8 @@
               "Cognitive - Personalizer"
             ],
             "mentionees": [
-              "dwaijam"
+              "dwaijam",
+              "sharathmalladi"
             ]
           },
           {
