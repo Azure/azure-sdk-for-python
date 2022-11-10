@@ -523,4 +523,4 @@ class Component(
                     f.write(COMPONENT_CODE_PLACEHOLDER)
                 yield Code(base_path=self._base_path, path=code)
         else:
-            yield Code(base_path=self._base_path, path=code, ignore_file=ComponentIgnoreFile())
+            yield Code(base_path=self._base_path, path=code, ignore_file=ComponentIgnoreFile(code))
