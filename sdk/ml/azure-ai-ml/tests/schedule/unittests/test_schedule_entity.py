@@ -117,6 +117,9 @@ class TestScheduleEntity:
             "trigger_type": "Recurrence",
         }
 
+    @pytest.mark.usefixtures(
+        "enable_pipeline_private_preview_features",
+    )
     def test_schedule_with_command_job(self):
         # Test with local file job
         test_path = "./tests/test_configs/schedule/local_cron_command_job.yml"

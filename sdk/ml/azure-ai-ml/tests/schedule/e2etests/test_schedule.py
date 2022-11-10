@@ -158,6 +158,9 @@ class TestSchedule(AzureRecordedTestCase):
             "schedule": {"hours": [10], "minutes": [15], "week_days": ["Monday"]},
         }
 
+    @pytest.mark.usefixtures(
+        "enable_pipeline_private_preview_features",
+    )
     def test_command_job_schedule(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/local_cron_command_job.yml"

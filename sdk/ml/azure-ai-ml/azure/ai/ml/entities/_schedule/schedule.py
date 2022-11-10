@@ -13,7 +13,7 @@ from azure.ai.ml._restclient.v2022_10_01.models import PipelineJob as RestPipeli
 from azure.ai.ml._restclient.v2022_10_01.models import Schedule as RestSchedule
 from azure.ai.ml._restclient.v2022_10_01.models import ScheduleProperties
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
-from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
+from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, is_private_preview_enabled
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.entities._job.job import Job
@@ -256,11 +256,12 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
         """
         if isinstance(self.create_job, BaseNode):
             self.create_job = self.create_job._to_job()
+        private_enabled = is_private_preview_enabled()
         if isinstance(self.create_job, PipelineJob):
             job_definition = self.create_job._to_rest_object().properties
             # Set the source job id, as it is used only for schedule scenario.
             job_definition.source_job_id = self.create_job.id
-        elif isinstance(self.create_job, CommandJob):
+        elif private_enabled and isinstance(self.create_job, CommandJob):
             job_definition = self.create_job._to_rest_object().properties
             # TODO: Merge this branch with PipelineJob after source job id move to JobBaseProperties
             # job_definition.source_job_id = self.create_job.id
