@@ -192,15 +192,15 @@ ANONYMOUS_COMPONENT_TEST_PARAMS = [
         "simple-command/powershell_copy.yaml",
         "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
     ),
-    # TODO(2076035): skip tests related to additional includes for now
     (
         "additional-includes/component_spec.yaml",
         "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
     ),
-    (
-        "additional-includes-in-zip/component_spec.yaml",
-        "24f26249-94c3-19c5-effe-030a60205d88"
-    ),
+    # TODO(2076035): skip tests related to zip additional includes for now
+    # (
+    #     "additional-includes-in-zip/component_spec.yaml",
+    #     "24f26249-94c3-19c5-effe-030a60205d88"
+    # ),
 ]
 
 
