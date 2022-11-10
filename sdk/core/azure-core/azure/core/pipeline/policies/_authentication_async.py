@@ -47,7 +47,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 
-        if self._always_adding_header or not(self._domain_changed(request.http_request.url)):
+        if self._always_adding_header or not self._domain_changed(request.http_request.url):
             if self._token is None or self._need_new_token():
                 async with self._lock:
                     # double check because another coroutine may have acquired a token
