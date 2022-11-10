@@ -446,7 +446,6 @@ class TestPipelineJob:
                 "ExtractionClause": "column1:string, column2:int",
                 "TextData": {"path": "azureml:scope_tsv:1", "type": "mltable"},
             },
-            "outputs": {},
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
         assert pydash.omit(scope_node._to_rest_object(), "componentId") == {
@@ -459,7 +458,6 @@ class TestPipelineJob:
                 "ExtractionClause": {"job_input_type": "literal", "value": "column1:string, column2:int"},
                 "TextData": {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"},
             },
-            "outputs": {},
             "type": "ScopeComponent",
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
@@ -469,12 +467,7 @@ class TestPipelineJob:
         assert pydash.omit(dsl_pipeline._to_dict(), *omit_fields) == pydash.omit(
             {
                 "display_name": "pipeline_func",
-                "inputs": {},
                 "jobs": {"node": dsl_pipeline.jobs["node"]._to_dict(), "node_internal": scope_node._to_dict()},
-                "outputs": {},
-                "properties": {},
-                "settings": {},
-                "tags": {},
                 "type": "pipeline",
             },
             *omit_fields,

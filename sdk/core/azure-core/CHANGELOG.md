@@ -1,6 +1,6 @@
 # Release History
 
-## 1.26.1 (Unreleased)
+## 1.26.2 (Unreleased)
 
 ### Features Added
 
@@ -9,6 +9,13 @@
 ### Bugs Fixed
 
 ### Other Changes
+
+## 1.26.1 (2022-11-03)
+
+### Other Changes
+
+- Added example of RequestsTransport with custom session.  (thanks to @inirudebwoy for the contribution)   #26768
+- Added Python 3.11 support.
 
 ## 1.26.0 (2022-10-06)
 

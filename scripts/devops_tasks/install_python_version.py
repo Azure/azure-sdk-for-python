@@ -20,7 +20,7 @@ MANIFEST_LOCATION = "https://raw.githubusercontent.com/actions/python-versions/m
 
 MAX_INSTALLER_RETRY = 3
 CURRENT_UBUNTU_VERSION = "20.04"  # full title is ubuntu-20.04
-MAX_PRECACHED_VERSION = "3.9.0"
+MAX_PRECACHED_VERSION = "3.10.0"
 
 UNIX_INSTALL_ARRAY = ["sh", "setup.sh"]
 WIN_INSTALL_ARRAY = ["pwsh", "setup.ps1"]

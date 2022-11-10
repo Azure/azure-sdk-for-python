@@ -2,15 +2,13 @@ import re
 import uuid
 from itertools import tee
 from pathlib import Path
-from time import sleep
 from typing import Callable
 
 import pydash
 import pytest
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, MpiDistribution, load_component, load_environment
-from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ListViewType
+from azure.ai.ml._restclient.v2022_05_01.models import ListViewType
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.constants._common import (
     ANONYMOUS_COMPONENT_NAME,
@@ -23,8 +21,8 @@ from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._load_functions import load_code, load_job
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 from azure.core.paging import ItemPaged
-from azure.core.polling import LROPoller
 
+from test_utilities.utils import assert_job_cancel, sleep_if_live
 from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
 
@@ -85,10 +83,7 @@ def tensorflow_distribution():
 
     return create_tensorflow_distribution
 
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 def assert_component_basic_workflow(
@@ -187,7 +182,6 @@ class TestComponent(AzureRecordedTestCase):
             "mini_batch_size": "10240",
             "outputs": {"scored_result": {"type": "mltable"}, "scoring_summary": {"type": "uri_file"}},
             "retry_settings": {"max_retries": 10, "timeout": 3},
-            "tags": {},
             "type": "parallel",
             "version": "1.0.0",
         }
@@ -203,7 +197,6 @@ class TestComponent(AzureRecordedTestCase):
     def test_automl_component(self, client: MLClient, registry_client: MLClient, randstr: Callable[[str], str]) -> None:
         expected_component_dict = {
             "description": "Component that executes an AutoML Classification task model training in a pipeline.",
-            "tags": {},
             "version": "1.0",
             "$schema": "http://azureml/sdk-2-0/AutoMLComponent.json",
             "display_name": "AutoML Classification",
@@ -325,7 +318,7 @@ class TestComponent(AzureRecordedTestCase):
         assert isinstance(component_containers.next(), Component)
 
         # there might be delay so getting latest version immediately after creation might get wrong result
-        sleep(5)
+        sleep_if_live(5)
 
         # list component versions
         components = client.components.list(name=component_name)
@@ -603,7 +596,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
                     params_override=[{"name": environment_name}, {"version": version}],
                 )
             )
-        sleep(10)
+        sleep_if_live(10)
 
         created_component = create_component(
             client,
@@ -627,7 +620,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
         for version in versions:
             create_component(client, name, params_override=[{"version": version}])
-            sleep(1)
+            sleep_if_live(1)
             assert client.components.get(name, label="latest").version == version
 
     @pytest.mark.skip(reason="Test fails because MFE index service consistency bug")
@@ -638,14 +631,14 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             created_component = create_component(client, name, params_override=[{"version": version}])
             assert created_component.version == version
             assert created_component.name == name
-            sleep(3)
+            sleep_if_live(3)
 
         for version in reversed(versions):
             assert client.components.get(name, label=version).version == version
             client.components.delete(name, label="latest")
             with pytest.raises(ResourceNotFoundError):
                 client.components.get(name=name, version=version)
-            sleep(10)
+            sleep_if_live(10)
 
     def test_anonymous_registration_from_load_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
@@ -672,7 +665,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         def get_component_list():
             # Wait for list index to update before calling list
             if is_live():
-                sleep(30)
+                sleep_if_live(30)
             component_list = client.components.list(name=name, list_view_type=ListViewType.ACTIVE_ONLY)
             return [c.version for c in component_list]
 
@@ -689,7 +682,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
         def get_component_list():
             # Wait for list index to update before calling list
-            sleep(30)
+            sleep_if_live(30)
             component_list = client.components.list(list_view_type=ListViewType.ACTIVE_ONLY)
             return [c.name for c in component_list]
 
@@ -780,7 +773,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "version": "1",
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
             "display_name": "Hello World Pipeline Component",
-            "is_deterministic": True,
+            "is_deterministic": False,
             "inputs": {
                 "component_in_path": {"type": "uri_folder", "description": "A path"},
                 "component_in_number": {
@@ -792,7 +785,6 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
                 # The azureml: prefix has been resolve and removed by service
                 "node_compute": {"type": "string", "default": "cpu-cluster"},
             },
-            "outputs": {},
             "type": "pipeline",
         }
         assert component_dict == expected_dict
@@ -819,7 +811,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "version": "1",
             "$schema": "https://azuremlschemas.azureedge.net/development/pipelineComponent.schema.json",
             "display_name": "Hello World Pipeline Component",
-            "is_deterministic": True,
+            "is_deterministic": False,
             "inputs": {
                 "component_in_path": {"type": "uri_folder", "description": "A path for pipeline component"},
                 "component_in_number": {
@@ -840,13 +832,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "./tests/test_configs/dsl_pipeline/pipeline_with_pipeline_component/pipeline.yml",
             params_override=params_override,
         )
-        job = client.jobs.create_or_update(pipeline_job)
-        try:
-            cancel_poller = client.jobs.begin_cancel(job.name)
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
-        except Exception:
-            pass
+        job = assert_job_cancel(pipeline_job, client)
         name = randstr("component_name_1")
         component = PipelineComponent(name=name, source_job_id=job.id)
         rest_component = client.components.create_or_update(component)
@@ -876,3 +862,43 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
             node = default_component()
             assert node._to_rest_object()["componentId"] == default_component.id
+
+    def test_command_component_with_properties_e2e_flow(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        command_component = load_component(
+            source="./tests/test_configs/components/helloworld_component_with_properties.yml",
+        )
+        expected_dict = {
+            '$schema': 'https://azuremlschemas.azureedge.net/development/commandComponent.schema.json',
+            '_source': 'YAML.COMPONENT',
+            'command': 'echo Hello World & echo $[[${{inputs.component_in_number}}]] & '
+                       'echo ${{inputs.component_in_path}} & echo '
+                       '${{outputs.component_out_path}} > '
+                       '${{outputs.component_out_path}}/component_in_number',
+            'description': 'This is the basic command component',
+            'display_name': 'CommandComponentBasic',
+            'inputs': {'component_in_number': {'default': '10.99',
+                                               'description': 'A number',
+                                               'optional': True,
+                                               'type': 'number'},
+                       'component_in_path': {'description': 'A path',
+                                             'type': 'uri_folder'}},
+            'is_deterministic': True,
+            'outputs': {'component_out_path': {'type': 'uri_folder'}},
+            'properties': {'azureml.pipelines.dynamic': 'true'},
+            'tags': {'owner': 'sdkteam', 'tag': 'tagvalue'},
+            'type': 'command',
+        }
+        omit_fields = ["name", "creation_context", "id", "code", "environment", "version"]
+        rest_component = pydash.omit(
+            command_component._to_rest_object().as_dict()["properties"]["component_spec"],
+            omit_fields,
+        )
+
+        assert rest_component == expected_dict
+
+        from_rest_component = client.components.create_or_update(command_component, is_anonymous=True)
+
+        previous_dict = pydash.omit(command_component._to_dict(), omit_fields)
+        current_dict = pydash.omit(from_rest_component._to_dict(), omit_fields)
+        # TODO(2037030): verify when backend ready
+        # assert previous_dict == current_dict
