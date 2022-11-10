@@ -410,10 +410,19 @@ class TestComponent:
             assert code_path.is_dir()
             if has_additional_includes:
                 # additional includes is specified, code will be tmp folder and need to check each item
-                for path in os.listdir(Path(yaml_path).parent.parent):
-                    if not path.endswith(ADDITIONAL_INCLUDES_SUFFIX):
-                        assert (code_path / path).exists(), component.code
-                assert (code_path / "LICENSE").exists(), component.code
+                # manually list here to avoid temp folder like __pycache__ breaking test.
+                for path in [
+                    "additional_includes_merge_folder.yml",
+                    "code_and_additional_includes",
+                    "code_only",
+                    "helloworld_additional_includes.yml",
+                    "helloworld_invalid_additional_includes_existing_file.yml",
+                    "helloworld_invalid_additional_includes_root_directory.yml",
+                    "helloworld_invalid_additional_includes_zip_file_not_found.yml",
+                    "no_code_and_additional_includes",
+                ]:
+                    assert (code_path / path).exists()
+                assert (code_path / "LICENSE").exists()
             else:
                 # additional includes not specified, code should be specified path (default yaml folder)
                 yaml_dict = load_yaml(yaml_path)
