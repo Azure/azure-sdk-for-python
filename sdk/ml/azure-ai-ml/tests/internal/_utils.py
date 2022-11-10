@@ -195,11 +195,11 @@ ANONYMOUS_COMPONENT_TEST_PARAMS = [
     # TODO(2076035): skip tests related to additional includes for now
     (
         "additional-includes/component_spec.yaml",
-        "f38b2f67-c6d0-9fb7-e3fa-7e3431587164"
+        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
     ),
     (
         "additional-includes-in-zip/component_spec.yaml",
-        "d0732050-71f0-cc8b-fba3-bf726aaf3be1"
+        "24f26249-94c3-19c5-effe-030a60205d88"
     ),
 ]
 
