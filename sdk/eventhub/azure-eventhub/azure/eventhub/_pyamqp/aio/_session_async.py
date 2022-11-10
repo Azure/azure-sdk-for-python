@@ -181,7 +181,7 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
                 await self.links[frame[0].decode("utf-8")].detach(
                     error=AMQPError(
                         condition=ErrorCondition.LinkDetachForced,
-                        description=f"Cannot allocate more handles, the max number of handles is {self.handle_max}. Detaching link",
+                        description=f"Cannot allocate more handles, the max number of handles is {self.handle_max}. Detaching link", # pylint: disable=line-too-long
                         info=None,
                     )
                 )
@@ -226,7 +226,6 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
             for link in self._output_handles.values():
                 if self.remote_incoming_window > 0 and not link._is_closed:  # pylint: disable=protected-access
                     await link._incoming_flow(frame)  # pylint: disable=protected-access
-            
 
     async def _outgoing_transfer(self, delivery):
         if self.state != SessionState.MAPPED:
