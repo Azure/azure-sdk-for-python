@@ -87,12 +87,12 @@ class _StatsbeatMetrics:
         meter_provider: MeterProvider,
         instrumentation_key: str,
         endpoint: str,
-        enable_local_storage: bool,
+        disable_offline_storage: bool,
         long_interval_threshold: int,
     ) -> None:
         self._ikey = instrumentation_key
         self._feature = _StatsbeatFeature.NONE
-        if enable_local_storage:
+        if not disable_offline_storage:
             self._feature |= _StatsbeatFeature.DISK_RETRY
         # TODO: AAD
         self._ikey = instrumentation_key
