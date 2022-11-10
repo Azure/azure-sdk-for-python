@@ -122,6 +122,8 @@ class AsyncTransportMixin:
                     read_frame_buffer.write(
                         await self._read(payload_size, buffer=payload)
                     )
+            except asyncio.CancelledError: # pylint: disable=try-except-raise
+                raise
             except (TimeoutError, socket.timeout, asyncio.IncompleteReadError):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
@@ -384,10 +386,11 @@ class AsyncTransport(
 
     async def close(self):
         if self.writer is not None:
+            self.writer.close()
             if self.sslopts:
                 # see issue: https://github.com/encode/httpx/issues/914
+                await asyncio.sleep(0)
                 self.writer.transport.abort()
-            self.writer.close()
             await self.writer.wait_closed()
             self.writer, self.reader = None, None
         self.sock = None

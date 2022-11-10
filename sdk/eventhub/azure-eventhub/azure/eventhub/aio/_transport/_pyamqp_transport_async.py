@@ -171,7 +171,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
     async def _receive_task(consumer):
         max_retries = consumer._client._config.max_retries  # pylint:disable=protected-access
         retried_times = 0
-        while retried_times <= max_retries:
+        while retried_times <= max_retries and consumer._callback_task_run: # pylint: disable=protected-access
             try:
                 await consumer._open() # pylint: disable=protected-access
                 await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch) # pylint: disable=protected-access
@@ -214,16 +214,26 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint:disable=protected-access
         consumer._callback_task_run = True
         consumer._last_callback_called_time = time.time()
-        callback_task = asyncio.ensure_future(
+        callback_task = asyncio.create_task(
             PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
         )
-        receive_task = asyncio.ensure_future(PyamqpTransportAsync._receive_task(consumer))
+        receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer))
 
+        tasks = [callback_task, receive_task]
         try:
-            await receive_task
-        finally:
+            for task in asyncio.as_completed(tasks):
+                try:
+                    await task
+                    await asyncio.sleep(0)
+                except Exception: # pylint: disable=broad-except
+                    consumer._callback_task_run = False
+            for task in tasks:
+                if task.done() and task.exception():
+                    raise task.exception()
+        except asyncio.CancelledError:
             consumer._callback_task_run = False
-            await callback_task
+            await asyncio.sleep(0)
+            raise
 
     @staticmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
