@@ -358,7 +358,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Archive a component.
 
         :param name: Name of the component.
@@ -379,7 +379,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Restore an archived component.
 
         :param name: Name of the component.
@@ -603,7 +603,10 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 component_func._job_settings,
                 component_func.__name__,
             )
-        return component_func._pipeline_builder.build()
+        # Normally pipeline component are created when dsl.pipeline inputs are provided
+        # so pipeline input .result() can resolve to correct value.
+        # When pipeline component created without dsl.pipeline inputs, pipeline input .result() won't work.
+        return component_func._pipeline_builder.build(user_provided_kwargs={})
     msg = "Function must be a dsl or mldesigner component function： {!r}"
     raise ValidationException(
         message=msg.format(component_func),

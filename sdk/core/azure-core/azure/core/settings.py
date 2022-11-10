@@ -31,15 +31,10 @@ from enum import Enum
 import logging
 import os
 import sys
+from typing import Type, Optional, Dict, Callable, cast, Any, Union, TYPE_CHECKING
 from azure.core.tracing import AbstractSpan
 
-try:
-    from typing import Type, Optional, Dict, Callable, cast, TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    from typing import Any, Union
     try:
         # pylint:disable=unused-import
         from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name

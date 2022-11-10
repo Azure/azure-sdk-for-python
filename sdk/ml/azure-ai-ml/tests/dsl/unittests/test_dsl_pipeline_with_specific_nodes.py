@@ -1133,6 +1133,7 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": None,
                         "retry_settings": None,
                         "logging_level": None,
                         "max_concurrency_per_instance": 1,
@@ -1240,6 +1241,7 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": None,
                         "task": {
                             "type": "run_function",
                             "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
@@ -1274,6 +1276,7 @@ class TestDSLPipelineWithSpecificNodes:
                         },
                         "resources": {"instance_count": 2, "properties": {}},
                         "mini_batch_size": 5,
+                        "partition_keys": None,
                         "task": {
                             "type": "run_function",
                             "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
@@ -1467,6 +1470,7 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                     "outputs": {},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "code": "./src",
@@ -1518,6 +1522,7 @@ class TestDSLPipelineWithSpecificNodes:
                     },
                     "outputs": {"job_output_path": {"value": "${{parent.outputs.job_out_data}}", "type": "literal"}},
                     "mini_batch_size": 1,
+                    "partition_keys": None,
                     "task": {
                         "program_arguments": "--job_output_path " "${{outputs.job_output_path}}",
                         "code": "./src",
@@ -1836,14 +1841,14 @@ class TestDSLPipelineWithSpecificNodes:
 
     def test_pipeline_with_command_services(self):
         services = {
-            "my_ssh": {"job_service_type": "ssh"},
-            "my_tensorboard": {
-                "job_service_type": "tensor_board",
-                "properties": {
+            "my_ssh": JobService(job_service_type="ssh"),
+            "my_tensorboard": JobService(
+                job_service_type="tensor_board",
+                properties={
                     "logDir": "~/tblog",
                 },
-            },
-            "my_jupyterlab": {"job_service_type": "jupyter_lab"},
+            ),
+            "my_jupyterlab": JobService(job_service_type="jupyter_lab"),
         }
         rest_services = {
             "my_ssh": {"job_service_type": "SSH"},
@@ -1895,7 +1900,7 @@ class TestDSLPipelineWithSpecificNodes:
             assert isinstance(service, JobService)
 
         # test set services in pipeline
-        new_services = {"my_jupyter": {"job_service_type": "jupyter_lab"}}
+        new_services = {"my_jupyter": JobService(job_service_type="jupyter_lab")}
         rest_new_services = {"my_jupyter": {"job_service_type": "JupyterLab"}}
 
         @dsl.pipeline()
