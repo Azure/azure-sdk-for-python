@@ -1,6 +1,6 @@
 import os
+import shutil
 import sys
-import tempfile
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -11,7 +11,9 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.entities import CommandComponent, CommandJobLimits, Component, JobResourceConfiguration
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
@@ -197,11 +199,18 @@ class TestCommandComponentEntity:
             os.chdir(old_cwd)
 
     def test_command_component_code_git_path(self):
+        from azure.ai.ml.operations._component_operations import _try_resolve_code_for_component
+
         yaml_path = "./tests/test_configs/components/component_git_path.yml"
         yaml_dict = load_yaml(yaml_path)
         component = load_component(yaml_path)
-        with component._resolve_local_code() as code:
-            assert code.path == yaml_dict["code"]
+
+        def mock_get_arm_id_and_fill_back(asset: Code, azureml_type: str) -> None:
+            assert isinstance(asset, Code)
+            assert azureml_type == AzureMLResourceType.CODE
+            assert asset.path == yaml_dict["code"]
+
+        _try_resolve_code_for_component(component, mock_get_arm_id_and_fill_back)
 
     @pytest.mark.skipif(
         sys.version_info[1] == 11,
@@ -430,14 +439,22 @@ class TestCommandComponentEntity:
     def test_component_code_asset_ignoring_pycache(self) -> None:
         component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
         component = load_component(component_yaml)
-        code_folder = "./tests/test_configs/components/helloworld_components_with_env/"
-        with tempfile.TemporaryDirectory(dir=code_folder) as tmp_dir:
-            # create temp folder and write some files under pycache
-            tmp_pycache_folder = Path(tmp_dir) / "__pycache__"
-            tmp_pycache_folder.mkdir()
-            (tmp_pycache_folder / "a.pyc").touch()
-            (tmp_pycache_folder / "b.pyc").touch()
-            # resolve and check if pycache exists in code asset
+        # create some files/folders expected to ignore
+        pycache = Path("./tests/test_configs/components/helloworld_components_with_env/__pycache__")
+        try:
+            if not pycache.is_dir():
+                pycache.mkdir()
+            expected_exclude = pycache / "a.pyc"
+            expected_exclude.touch()
+            # resolve and test for ignore_file's is_file_excluded
             with component._resolve_local_code() as code:
-                pycache_path = Path(component_yaml).parent / code.path / Path(tmp_dir).name / "__pycache__"
-                assert not pycache_path.exists()
+                excluded = []
+                for root, _, files in os.walk(code.path):
+                    for name in files:
+                        path = os.path.join(root, name)
+                        if code._ignore_file.is_file_excluded(path):
+                            excluded.append(path)
+                assert excluded == [str(expected_exclude.absolute())]
+        finally:
+            if pycache.is_dir():
+                shutil.rmtree(pycache)

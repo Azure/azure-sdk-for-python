@@ -11,4 +11,4 @@ environment:
   docker:
     image: zzn2/azureml_sdk
 command: >-
-  echo Hello World
+  python run.py

@@ -82,10 +82,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     )
     # for internal code whose upload_hash is of length 36
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s]{36})\\/?", group_for_replace="1"
+        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s\"]{36})\\/?", group_for_replace="1"
     )
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s]{36})\\/",
+        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s\"]{36})\\/",
         group_for_replace="1"
     )
 
