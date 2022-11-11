@@ -1,13 +1,11 @@
-# Docstrings and Type Hints
+# Docstrings
 
 All public methods should have docstrings to document the parameters, keywords, exceptions raised, and return types for each method. Models and clients should also document properties, instance variables, and class variables.
 
 * [Docstrings](#docstrings)
     * [Method Docstrings](#method_docstrings)
     * [Model and Client Docstrings](#model_and_client_docstrings)
-* [Type Hints](#type_hints)
-    * [Type Hints for Python 2.7 and 3.5+](#type_hints_for_python_2.7_and_3.5+)
-    * [Type Hints for Python 3.5+](#type_hints_for_python_3.5+)
+
 
 ## Docstrings
 
@@ -189,54 +187,3 @@ class DocumentTranslationInput(object):  # pylint: disable=useless-object-inheri
 ```
 
 Positional parameters and keyword arguments are documented in the exact same way as a client method would be, using the `param` and `keyword` descriptors. Although not required, a new line between `param` and `keyword` descriptors helps to separate the docstring into logically separated groups.
-
-
-## Type Hints
-
-### Type Hints for Python 2.7 and 3.5+
-
-Python 2.7 does not support in-line type hints, the type hints for all sync code will have to adhere to type-hints in comments only. On all public methods include a type-hint by using the `# type: (...) -> (...)` format:
-```python
-def add(num1, num2):
-    # type: (int, int) -> int
-    return num1 + num2
-```
-The spacing in type hints is important, there must be a space between "#" and "type", after the semicolon, and before and after the "->". If the type hint is not properly formatted API View will not recognize them.
-
-Here is a more complex example from `azure-ai-textanalytics`
-```python
-from typing import List, Dict, Union, TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from ._models import TextDocumentInput, RecognizeEntitiesResult
-
-def recognize_entities(
-    self,
-    documents,  # type: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]]
-    **kwargs  # type: Any
-):
-    # type: (...) -> List[Union[RecognizeEntitiesResult, DocumentError]]
-```
-
-If a parameter can be one of many types use the `Union` type to describe all possible options. Types such as dict, list, and tuple have to be imported from the `typing` module as demonstrated at the top of the snippet. For the complex types (Dict, List, Tuple), the inner type has to be declared as well. For example, a list of strings is `List[str]`, a dictionary mapping strings to many different types of objects can be described as `Dict[str, object]`. Custom types have to be imported under a type checking conditional, importing `TYPE_CHECKING` from the `typing` module and only importing the custom models within this `if` statement.
-
-### Type Hints for Python 3.5+
-
-The async models and clients are only valid in Python 3.5+ which allows for the use of in-line type hints. A simple example follows:
-```python
-def add(num1: int, num2: int) -> int:
-    return num1 + num2
-```
-
-Here is a more complex example from `azure-ai-textanalytics`
-```python
-from typing import List, Dict, Union
-from ._models import TextDocumentInput, RecognizeEntitiesResult
-
-def recognize_entities(
-    self,
-    documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
-    **kwargs: Any
-) -> List[Union[RecognizeEntitiesResult, DocumentError]]:
-```
-Note that in the in-line type hints the custom models do not to be guarded by an `if TYPE_CHECKING` conditional. These custom models must be included in imports or the program will fail on the type not being found. Do not use `dict[str,list[str]]`, always use the upper case version from the `typing` module, instead do `Dict[str, List[str]]`.

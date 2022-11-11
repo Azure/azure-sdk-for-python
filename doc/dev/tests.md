@@ -117,6 +117,8 @@ To run a tox command from your directory use the following commands:
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e sphinx
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e lint
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e mypy
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e pyright
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e verifytypes
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e whl
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e sdist
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e samples
@@ -125,7 +127,9 @@ To run a tox command from your directory use the following commands:
 A quick description of the five commands above:
 * sphinx: documentation generation using the inline comments written in our code
 * lint: runs pylint to make sure our code adheres to the style guidance
-* mypy: runs the mypy static type checker for Python to make sure that our types are valid. In order to opt-in to mypy checks, add your package name to [this](https://github.com/Azure/azure-sdk-for-python/blob/main/eng/tox/mypy_hard_failure_packages.py) list of packages.
+* mypy: runs the mypy static type checker for Python to make sure that our types are valid.
+* pyright: runs the pyright static type checker for Python to make sure that our types are valid.
+* verifytypes: runs pyright's verifytypes tool to verify the type completeness of the library.
 * whl: creates a whl package for installing our package
 * sdist: creates a zipped distribution of our files that the end user could install with pip
 * samples: runs all of the samples in the `samples` directory and verifies they are working correctly
@@ -170,7 +174,7 @@ To create a `test-resources` file:
 done in the [Portal][azure_portal] by creating a resource, and at the very last step (Review + Create), clicking
 "Download a template for automation".
 2. Save this template to a `test-resources.json` file under the directory that contains your package
-(`sdk/<my-service>/test-resources.json`) or create a `test-resouces.bicep` file. You can refer to
+(`sdk/<my-service>/test-resources.json`) or create a `test-resources.bicep` file. You can refer to
 [Key Vault's][kv_test_resources] as an example.
 3. Add templates for any additional resources in a grouped `"resources"` section of `test-resources`
 ([example][kv_test_resources_resources]).
