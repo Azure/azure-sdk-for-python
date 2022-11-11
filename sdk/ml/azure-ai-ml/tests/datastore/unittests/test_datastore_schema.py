@@ -39,6 +39,7 @@ def b64read(p):
 
 @pytest.mark.unittest
 @pytest.mark.skip(reason="Disable until preview release")
+@pytest.mark.data_experiences_test
 class TestHdfsDatastore:
     @pytest.mark.parametrize(
         "path, cred_type, is_key_tab",

@@ -16,7 +16,7 @@ from devtools_testutils import AzureRecordedTestCase
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test", "mock_code_hash", "mock_asset_name", "mock_component_hash")
-@pytest.mark.skip(reason="tests failing while recording. Re-enable once fixed.")
+@pytest.mark.pipeline_test
 class TestSchedule(AzureRecordedTestCase):
     def test_schedule_lifetime(self, client: MLClient, randstr: Callable[[], str]):
         params_override = [{"name": randstr("name")}]
@@ -57,9 +57,10 @@ class TestSchedule(AzureRecordedTestCase):
             client.schedules.get(schedule.name)
         assert "not found" in str(e)
 
-    def test_load_cron_schedule_with_job_updates(self, client: MLClient):
+    def test_load_cron_schedule_with_job_updates(self, client: MLClient, randstr: Callable[[], str]):
+        params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_job_updates.yml"
-        schedule = load_schedule(test_path, params_override=TRIGGER_ENDTIME_DICT)
+        schedule = load_schedule(test_path, params_override=[*TRIGGER_ENDTIME_DICT, *params_override])
         rest_schedule = client.schedules.begin_create_or_update(schedule).result(
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
@@ -70,9 +71,8 @@ class TestSchedule(AzureRecordedTestCase):
         assert isinstance(job.identity, AmlTokenConfiguration)
         assert job.inputs["hello_string_top_level_input"]._data == "${{creation_context.trigger_time}}"
 
-    @pytest.mark.skip(reason="flaky test")
     def test_load_cron_schedule_with_arm_id(self, client: MLClient, randstr: Callable[[], str]):
-        params_override = [{"name": randstr()}]
+        params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_inline_comps.yml",
             params_override=params_override,
@@ -95,7 +95,7 @@ class TestSchedule(AzureRecordedTestCase):
         )
 
     def test_load_cron_schedule_with_arm_id_and_updates(self, client: MLClient, randstr: Callable[[], str]):
-        params_override = [{"name": randstr()}]
+        params_override = [{"name": randstr("name")}]
         test_job_path = "./tests/test_configs/pipeline_jobs/hello-pipeline-abc.yml"
         pipeline_job = load_job(
             test_job_path,
@@ -121,9 +121,10 @@ class TestSchedule(AzureRecordedTestCase):
         # assert rest_schedule.create_job.inputs["hello_string_top_level_input"] == "${{name}}"
         # assert rest_schedule.create_job.settings.continue_on_step_failure is True
 
-    def test_load_recurrence_schedule_no_pattern(self, client: MLClient):
+    def test_load_recurrence_schedule_no_pattern(self, client: MLClient, randstr: Callable[[], str]):
+        params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/hello_recurrence_schedule_no_pattern.yml"
-        schedule = load_schedule(test_path, params_override=TRIGGER_ENDTIME_DICT)
+        schedule = load_schedule(test_path, params_override=[*TRIGGER_ENDTIME_DICT, *params_override])
         rest_schedule = client.schedules.begin_create_or_update(schedule).result(
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
@@ -139,9 +140,10 @@ class TestSchedule(AzureRecordedTestCase):
             "schedule": {"hours": [], "minutes": []},
         }
 
-    def test_load_recurrence_schedule_with_pattern(self, client: MLClient):
+    def test_load_recurrence_schedule_with_pattern(self, client: MLClient, randstr: Callable[[], str]):
+        params_override = [{"name": randstr("name")}]
         test_path = "./tests/test_configs/schedule/hello_recurrence_schedule_with_pattern.yml"
-        schedule = load_schedule(test_path)
+        schedule = load_schedule(test_path, params_override=params_override)
         rest_schedule = client.schedules.begin_create_or_update(schedule).result(
             timeout=LROConfigurations.POLLING_TIMEOUT
         )
@@ -155,3 +157,28 @@ class TestSchedule(AzureRecordedTestCase):
             "interval": 1,
             "schedule": {"hours": [10], "minutes": [15], "week_days": ["Monday"]},
         }
+
+    @pytest.mark.usefixtures(
+        "enable_pipeline_private_preview_features",
+    )
+    def test_command_job_schedule(self, client: MLClient, randstr: Callable[[], str]):
+        params_override = [{"name": randstr("name")}]
+        test_path = "./tests/test_configs/schedule/local_cron_command_job.yml"
+        schedule = load_schedule(test_path, params_override=params_override)
+        rest_schedule = client.schedules.begin_create_or_update(schedule).result(
+            timeout=LROConfigurations.POLLING_TIMEOUT
+        )
+        assert rest_schedule.name == schedule.name
+        client.schedules.begin_disable(schedule.name)
+        rest_schedule_job_dict = rest_schedule._to_dict()["create_job"]
+        # pop added status, default resources, empty services from rest dict
+        rest_schedule_job_dict.pop("status", None)
+        rest_schedule_job_dict.pop("services", None)
+        rest_schedule_job_dict.pop("resources", None)
+        schedule_job_dict = schedule._to_dict()["create_job"]
+        # pop job name, empty parameters from local dict
+        schedule_job_dict.pop("parameters", None)
+        schedule_job_dict.pop("name", None)
+        # add default mode for local
+        schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
+        assert schedule_job_dict == rest_schedule_job_dict

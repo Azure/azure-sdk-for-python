@@ -10,8 +10,6 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, Union
 
-from marshmallow import Schema
-
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
@@ -28,6 +26,7 @@ from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR, BASE
 from azure.ai.ml.constants._component import ComponentSource
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode
+from azure.ai.ml.entities._builders.condition_node import ConditionNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._builders.import_node import Import
 from azure.ai.ml.entities._builders.parallel import Parallel
@@ -218,7 +217,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         return ErrorTarget.PIPELINE
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         # import this to ensure that nodes are registered before schema is created.
 
         return PipelineJobSchema(context=context)
@@ -266,11 +265,13 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
 
     def _validate_input(self):
         validation_result = self._create_empty_validation_result()
+        # TODO(1979547): refine this logic: not all nodes have `_get_input_binding_dict` method
         used_pipeline_inputs = set(
             itertools.chain(
                 *[
                     self.component._get_input_binding_dict(node if not isinstance(node, LoopNode) else node.body)[0]
-                    for node in self.jobs.values()
+                    for node in self.jobs.values() if not isinstance(node, ConditionNode)
+                    # condition node has no inputs
                 ]
             )
         )
@@ -283,7 +284,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 continue
             # raise error when required input with no default value not set
             if (
-                not self.inputs.get(key, None)  # input not provided
+                self.inputs.get(key, None) is None  # input not provided
                 and meta.optional is not True  # and it's required
                 and meta.default is None  # and it does not have default
             ):
@@ -328,8 +329,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             validation_result.append_error(yaml_path="jobs", message="No other job except for on_init/on_finalize job.")
 
         def _is_isolated_job(_validate_job_name: str) -> bool:
-            # no input to validate job
             _validate_job = self.jobs[_validate_job_name]
+            # no input to validate job
             for _input_name in _validate_job.inputs:
                 if not hasattr(_validate_job.inputs[_input_name]._data, "_data_binding"):
                     continue
@@ -346,19 +347,29 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                         return False
             return True
 
+        def _is_control_flow_node(_validate_job_name: str) -> bool:
+            from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+
+            _validate_job = self.jobs[_validate_job_name]
+            return issubclass(type(_validate_job), ControlFlowNode)
+
         # validate on_init
         if on_init is not None:
             if on_init not in self.jobs:
                 append_on_init_error(f"On_init job name {on_init} not exists in jobs.")
             else:
-                if not _is_isolated_job(on_init):
+                if _is_control_flow_node(on_init):
+                    append_on_init_error("On_init job should not be a control flow node.")
+                elif not _is_isolated_job(on_init):
                     append_on_init_error("On_init job should not have connection to other execution node.")
         # validate on_finalize
         if on_finalize is not None:
             if on_finalize not in self.jobs:
                 append_on_finalize_error(f"On_finalize job name {on_finalize} not exists in jobs.")
             else:
-                if not _is_isolated_job(on_finalize):
+                if _is_control_flow_node(on_finalize):
+                    append_on_finalize_error("On_finalize job should not be a control flow node.")
+                elif not _is_isolated_job(on_finalize):
                     append_on_finalize_error("On_finalize job should not have connection to other execution node.")
         return validation_result
 
@@ -484,13 +495,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs) or {}
         from_rest_outputs = from_rest_data_outputs(properties.outputs) or {}
         # Unpack the component jobs
-        sub_nodes = {}
-        if properties.jobs:
-            for node_name, node in properties.jobs.items():
-                if LoopNode._is_loop_node_dict(node):
-                    sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
-                else:
-                    sub_nodes[node_name] = BaseNode._from_rest_object(node)
+        sub_nodes = PipelineComponent._resolve_sub_nodes(properties.jobs) if properties.jobs else {}
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
         settings_dict = transform_dict_keys(properties.settings, camel_to_snake) if properties.settings else None
         settings_sdk = PipelineJobSettings(**settings_dict) if settings_dict else PipelineJobSettings()

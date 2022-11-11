@@ -155,8 +155,7 @@ You must specify use_cache=True in the preparer decorator""".format(
                     fn(test_class_instance, **trimmed_kwargs)
                 else:
                     if asyncio.iscoroutinefunction(fn):
-                        loop = asyncio.get_event_loop()
-                        loop.run_until_complete(fn(test_class_instance, **trimmed_kwargs))
+                        asyncio.run(fn(test_class_instance, **trimmed_kwargs))
                     else:
                         fn(test_class_instance, **trimmed_kwargs)
             finally:

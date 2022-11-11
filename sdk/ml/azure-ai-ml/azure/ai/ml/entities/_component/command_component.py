@@ -11,16 +11,20 @@ from azure.ai.ml._schema.component.command_component import CommandComponentSche
 from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import NodeType
 from azure.ai.ml.entities._assets import Environment
-from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
+from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution, \
+    DistributionConfiguration
 from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.parameterized_command import ParameterizedCommand
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from ..._restclient.v2022_05_01.models import ComponentVersionData
 
 from ..._schema import PathAwareSchema
 from ..._utils.utils import get_all_data_binding_expressions, parse_args_description_from_docstring
 from .._util import convert_ordered_dict_to_dict, validate_attribute_type
 from .._validation import MutableValidationResult
 from .component import Component
+
+# pylint: disable=protected-access
 
 
 class CommandComponent(Component, ParameterizedCommand):
@@ -54,6 +58,9 @@ class CommandComponent(Component, ParameterizedCommand):
     :type instance_count: int
     :param is_deterministic: Whether the command component is deterministic.
     :type is_deterministic: bool
+    :param properties: Properties of the component. Contents inside will pass through to backend as a dictionary.
+    :type properties: dict
+
     :raises ~azure.ai.ml.exceptions.ValidationException: Raised if CommandComponent cannot be successfully validated.
         Details will be provided in the error message.
     """
@@ -75,6 +82,7 @@ class CommandComponent(Component, ParameterizedCommand):
         outputs: Dict = None,
         instance_count: int = None,  # promoted property from resources.instance_count
         is_deterministic: bool = True,
+        properties: Dict = None,
         **kwargs,
     ):
         # validate init params are valid type
@@ -98,6 +106,7 @@ class CommandComponent(Component, ParameterizedCommand):
             inputs=inputs,
             outputs=outputs,
             is_deterministic=is_deterministic,
+            properties=properties,
             **kwargs,
         )
 
@@ -151,6 +160,15 @@ class CommandComponent(Component, ParameterizedCommand):
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""
         return convert_ordered_dict_to_dict({**self._other_parameter, **super(CommandComponent, self)._to_dict()})
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+        # put it here as distribution is shared by some components, e.g. command
+        distribution = obj.properties.component_spec.pop("distribution", None)
+        init_kwargs = super()._from_rest_object_to_init_params(obj)
+        if distribution:
+            init_kwargs["distribution"] = DistributionConfiguration._from_rest_object(distribution)
+        return init_kwargs
 
     def _get_environment_id(self) -> Union[str, None]:
         # Return environment id of environment

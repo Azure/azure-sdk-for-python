@@ -16,6 +16,7 @@ from azure.ai.formrecognizer.aio import FormTrainingClient
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTrainingClient)
@@ -23,6 +24,7 @@ FormTrainingClientPreparer = functools.partial(_GlobalClientPreparer, FormTraini
 
 class TestManagementAsync(AsyncFormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -33,6 +35,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             assert properties.custom_model_limit
             assert properties.custom_model_count
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -70,6 +73,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             with pytest.raises(ResourceNotFoundError):
                 await client.get_custom_model(labeled_model_from_train.model_id)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormTrainingClientPreparer(client_kwargs={"api_version": "2.1"})
     @recorded_by_proxy_async
@@ -106,6 +110,7 @@ class TestManagementAsync(AsyncFormRecognizerTest):
             with pytest.raises(ResourceNotFoundError):
                 await client.get_custom_model(unlabeled_model_from_train.model_id)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_get_form_recognizer_client(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):

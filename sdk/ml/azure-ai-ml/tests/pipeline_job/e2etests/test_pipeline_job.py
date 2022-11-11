@@ -1,15 +1,16 @@
 import json
+import os.path
 import re
-import time
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Callable, Dict, Optional
+from typing import Any, Callable, Dict
 
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import is_live
 import pydash
 import pytest
 from marshmallow import ValidationError
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, wait_until_done, sleep_if_live
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -21,13 +22,15 @@ from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
-from azure.ai.ml.exceptions import JobException, ValidationException
-from azure.ai.ml.operations._job_ops_helper import _wait_before_polling
-from azure.ai.ml.operations._run_history_constants import JobStatus, RunHistoryConstants
+from azure.ai.ml.exceptions import JobException
+from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
-from azure.core.polling import LROPoller
 
-from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES
+from .._util import (
+    _PIPELINE_JOB_TIMEOUT_SECOND,
+    DATABINDING_EXPRESSION_TEST_CASES,
+    DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
+)
 
 
 def assert_job_input_output_types(job: PipelineJob):
@@ -44,17 +47,6 @@ def assert_job_input_output_types(job: PipelineJob):
             assert isinstance(output, NodeOutput)
 
 
-def assert_job_cancel(pipeline, client: MLClient):
-    job = client.jobs.create_or_update(pipeline)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
-    return job
-
-
 @pytest.fixture
 def generate_weekly_fixed_job_name(variable_recorder) -> str:
     def create_or_record_weekly_fixed_job_name(job_name: str):
@@ -65,23 +57,7 @@ def generate_weekly_fixed_job_name(variable_recorder) -> str:
     return create_or_record_weekly_fixed_job_name
 
 
-def wait_until_done(client: MLClient, job: Job, timeout: int = None) -> str:
-    poll_start_time = time.time()
-    while job.status not in RunHistoryConstants.TERMINAL_STATUSES:
-        time.sleep(_wait_before_polling(time.time() - poll_start_time))
-        job = client.jobs.get(job.name)
-        if timeout is not None and time.time() - poll_start_time > timeout:
-            # if timeout is passed in, execute job cancel if timeout and directly return CANCELED status
-            cancel_poller = client.jobs.begin_cancel(job.name)
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
-            return JobStatus.CANCELED
-    return job.status
-
-
-@pytest.mark.fixture(autouse=True)
-def bodiless_matching(test_proxy):
-    set_bodiless_matcher()
+# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.usefixtures(
@@ -94,6 +70,7 @@ def bodiless_matching(test_proxy):
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
     def test_pipeline_job_create(
         self,
@@ -126,12 +103,17 @@ class TestPipelineJob(AzureRecordedTestCase):
             source="./tests/test_configs/pipeline_jobs/hello_pipeline_job_with_registries.yml",
             params_override=params_override,
         )
-        assert pipeline_job.jobs.get("a").environment == "azureml://registries/testFeed/environments/sklearn-10-ubuntu2004-py38-cpu/versions/19.dev6"
+        assert (
+            pipeline_job.jobs.get("a").environment
+            == "azureml://registries/testFeed/environments/sklearn-10-ubuntu2004-py38-cpu/versions/19.dev6"
+        )
         job = client.jobs.create_or_update(pipeline_job)
         assert job.name == params_override[0]["name"]
-        assert job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
+        assert (
+            job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
+        )
 
-    @pytest.mark.skip("Skip for compute reaource not ready.")
+    @pytest.mark.skip("Skip for compute resource not ready.")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -166,15 +148,13 @@ class TestPipelineJob(AzureRecordedTestCase):
         try:
             job = client.jobs.get(job_name)
         except ResourceNotFoundError:
-            job = client.jobs.create_or_update(
+            job = assert_job_cancel(
                 load_job(
                     source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
                     params_override=[{"name": job_name}],
-                )
+                ),
+                client=client,
             )
-            cancel_poller = client.jobs.begin_cancel(job.name)
-            assert isinstance(cancel_poller, LROPoller)
-            assert cancel_poller.result() is None
 
         child_job = next(
             job
@@ -187,20 +167,13 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert isinstance(retrieved_child_run, Job)
         assert retrieved_child_run.name == child_job.name
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
-        "pipeline_job_path, expected_error_type",
+        "pipeline_job_path",
         [
             # flaky parameterization
-            # ("./tests/test_configs/pipeline_jobs/invalid/non_existent_remote_component.yml", Exception),
-            (
-                "tests/test_configs/pipeline_jobs/invalid/non_existent_remote_version.yml",
-                Exception,
-            ),
-            (
-                "tests/test_configs/pipeline_jobs/invalid/non_existent_compute.yml",
-                Exception,
-            ),
+            # "non_existent_remote_component.yml",
+            "non_existent_remote_version.yml",
+            "non_existent_compute.yml",
         ],
     )
     def test_pipeline_job_validation_remote(
@@ -208,14 +181,14 @@ class TestPipelineJob(AzureRecordedTestCase):
         client: MLClient,
         randstr: Callable[[str], str],
         pipeline_job_path: str,
-        expected_error_type,
     ) -> None:
+        base_dir = "./tests/test_configs/pipeline_jobs/invalid/"
         pipeline_job: PipelineJob = load_job(
-            source=pipeline_job_path,
+            source=os.path.join(base_dir, pipeline_job_path),
             params_override=[{"name": randstr("name")}],
         )
         with pytest.raises(
-            expected_error_type,
+            Exception,
             # hide this as server side error message is not consistent
             # match=str(expected_error),
         ):
@@ -333,11 +306,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         # Some sanity checking of the outputs. Unit tests already extensively cover the translation to/from REST of outputs. If the job finishes successfully,
         # that means all of the outputs were set properly by the CLI.
         job_out_1 = created_job.outputs.get("job_out_path_1", None)
-        assert job_out_1
+        assert job_out_1 is not None
         assert job_out_1.mode == InputOutputModes.RW_MOUNT
 
         job_out_2 = created_job.outputs.get("job_out_path_2", None)
-        assert job_out_2
+        assert job_out_2 is not None
         assert job_out_2.mode == InputOutputModes.UPLOAD
 
         hello_world_component_1_outputs = created_job.jobs["hello_world_component_1"].outputs
@@ -414,10 +387,22 @@ class TestPipelineJob(AzureRecordedTestCase):
             else:
                 assert job.compute in pipeline_job.jobs[job_name].compute
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
-        "pipeline_job_path, converted_jobs, expected_dict, fields_to_omit",
+        "test_case_i,test_case_name",
         [
+            # TODO: enable this after identity support released to canary
+            # (0, "helloworld_pipeline_job_with_component_output"),
+            (1, "helloworld_pipeline_job_with_paths"),
+        ],
+    )
+    def test_pipeline_job_with_command_job(
+        self,
+        client: MLClient,
+        randstr: Callable[[str], str],
+        test_case_i,
+        test_case_name,
+    ) -> None:
+        params = [
             (
                 "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_command_job_e2e.yml",
                 2,
@@ -437,13 +422,8 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "jobs": {
                         "hello_world_inline_commandjob_1": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
                             "environment_variables": {"FOO": "bar"},
                             "name": "hello_world_inline_commandjob_1",
-                            "display_name": None,
-                            "tags": {},
                             "computeId": "cpu-cluster",
                             "inputs": {
                                 "test1": {
@@ -453,21 +433,11 @@ class TestPipelineJob(AzureRecordedTestCase):
                                 },
                                 "literal_input": {"job_input_type": "literal", "value": "2"},
                             },
-                            "outputs": {},
                             "_source": "REMOTE.WORKSPACE.COMPONENT",
                         },
                         "hello_world_inline_commandjob_2": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
-                            "environment_variables": {},
                             "name": "hello_world_inline_commandjob_2",
-                            "display_name": None,
-                            "tags": {},
-                            "computeId": None,
-                            "inputs": {},
-                            "outputs": {},
                             "_source": "REMOTE.WORKSPACE.COMPONENT",
                         },
                     },
@@ -510,14 +480,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "jobs": {
                         "train_job": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
-                            "environment_variables": {},
                             "name": "train_job",
-                            "display_name": None,
-                            "tags": {},
-                            "computeId": None,
                             "inputs": {
                                 "training_data": {
                                     "job_input_type": "literal",
@@ -547,14 +510,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                         },
                         "score_job": {
                             "type": "command",
-                            "resources": None,
-                            "distribution": None,
-                            "limits": None,
-                            "environment_variables": {},
                             "name": "score_job",
-                            "display_name": None,
-                            "tags": {},
-                            "computeId": None,
                             "inputs": {
                                 "model_input": {
                                     "job_input_type": "literal",
@@ -565,7 +521,6 @@ class TestPipelineJob(AzureRecordedTestCase):
                                     "value": "${{parent.inputs.pipeline_job_test_input}}",
                                 },
                             },
-                            "outputs": {},
                             "_source": "REMOTE.WORKSPACE.COMPONENT",
                         },
                     },
@@ -586,17 +541,9 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "source_job_id",
                 ],
             ),
-        ],
-    )
-    def test_pipeline_job_with_command_job(
-        self,
-        client: MLClient,
-        randstr: Callable[[str], str],
-        pipeline_job_path: str,
-        converted_jobs,
-        expected_dict,
-        fields_to_omit,
-    ) -> None:
+        ]
+        pipeline_job_path, converted_jobs, expected_dict, fields_to_omit = params[test_case_i]
+
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
             source=pipeline_job_path,
@@ -615,21 +562,24 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
+    @pytest.mark.skipif(
+        condition=not is_live(), reason="need further investigation for these cases unreliability under none live mode"
+    )
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
-            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_component_input_e2e.yml",
-            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_file_input_e2e.yml",
-            "tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_tabular_input_e2e.yml",
+            "file_component_input_e2e.yml",
+            "file_input_e2e.yml",
+            "tabular_input_e2e.yml",
         ],
     )
     def test_pipeline_job_with_parallel_job(
         self, client: MLClient, randstr: Callable[[str], str], pipeline_job_path: str
     ) -> None:
+        base_file_name = "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_defaults_with_parallel_job_"
         params_override = [{"name": randstr("name")}]
         pipeline_job = load_job(
-            source=pipeline_job_path,
+            source=base_file_name + pipeline_job_path,
             params_override=params_override,
         )
         created_job = client.jobs.create_or_update(pipeline_job)
@@ -766,7 +716,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             params_override=[{"name": randstr("job_name")}],
         )
         # sleep for some time to so more likely to resolve the correct component latest version
-        time.sleep(10)
+        sleep_if_live(10)
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
@@ -941,18 +891,19 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_pipeline_dict = created_pipeline._to_dict()
         assert pydash.get(created_pipeline_dict, "jobs.hello_sweep_inline_trial.early_termination") == policy_yaml_dict
 
-    @pytest.mark.skipif(condition=not is_live(), reason="Recording file names are too long and need to be shortened")
     @pytest.mark.parametrize(
-        "pipeline_job_path, expected_error",
-        DATABINDING_EXPRESSION_TEST_CASES,
+        "test_case_i, test_case_name",
+        DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
     )
     def test_pipeline_job_with_data_binding_expression(
         self,
         client: MLClient,
         randstr: Callable[[str], str],
-        pipeline_job_path: str,
-        expected_error: Optional[Exception],
+        test_case_i: int,
+        test_case_name: str,
     ):
+        pipeline_job_path, expected_error = DATABINDING_EXPRESSION_TEST_CASES[test_case_i]
+
         pipeline: PipelineJob = load_job(source=pipeline_job_path, params_override=[{"name": randstr("name")}])
         if expected_error is None:
             assert_job_cancel(pipeline, client)
@@ -961,7 +912,6 @@ class TestPipelineJob(AzureRecordedTestCase):
                 client.jobs.create_or_update(pipeline)
         elif isinstance(expected_error, JobException):
             assert_job_cancel(pipeline, client)
-            # skip streaming to avoid timeout due to no compute resources. Expected to fail with runtime error
         else:
             raise Exception("Unexpected error type {}".format(type(expected_error)))
 
@@ -1328,11 +1278,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.RW_MOUNT
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.RO_MOUNT
 
         train_job = created_job.jobs["train_job"]
@@ -1348,11 +1298,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.UPLOAD
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.RO_MOUNT
 
         train_job = created_job.jobs["train_job"]
@@ -1368,11 +1318,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.RW_MOUNT
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.RO_MOUNT
 
         train_job = created_job.jobs["train_job"]
@@ -1390,11 +1340,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.RW_MOUNT
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.DOWNLOAD
 
         train_job = created_job.jobs["train_job"]
@@ -1412,11 +1362,11 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
         created_job = client.jobs.create_or_update(pipeline_job)
         trained_model = created_job.outputs.get("trained_model", None)
-        assert trained_model
+        assert trained_model is not None
         assert trained_model.mode == InputOutputModes.RW_MOUNT
 
         training_input = created_job.inputs.get("training_input", None)
-        assert training_input
+        assert training_input is not None
         assert training_input.mode == InputOutputModes.DOWNLOAD
 
         train_job = created_job.jobs["train_job"]
@@ -1442,63 +1392,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             "force_rerun": True,
             "_source": "YAML.JOB",
         }
-
-    @pytest.mark.skip(reason="Currently do_while only enable in master region.")
-    def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr()}]
-        pipeline_job = load_job(
-            "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline.yml",
-            params_override=params_override,
-        )
-        created_pipeline = assert_job_cancel(pipeline_job, client)
-        assert len(created_pipeline.jobs) == 5
-        assert isinstance(created_pipeline.jobs["pipeline_body_node"], Pipeline)
-        assert isinstance(created_pipeline.jobs["do_while_job_with_pipeline_job"], DoWhile)
-        assert isinstance(created_pipeline.jobs["do_while_job_with_command_component"], DoWhile)
-        assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
-        assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
-
-    @pytest.mark.skip(reason="Currently not enable submit a pipeline with primitive inputs")
-    def test_do_while_pipeline_with_primitive_inputs(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr()}]
-        pipeline_job = load_job(
-            path="./tests/test_configs/dsl_pipeline/pipeline_with_do_while/pipeline_with_primitive_inputs.yml",
-            params_override=params_override,
-        )
-        created_pipeline = assert_job_cancel(pipeline_job, client)
-        assert len(created_pipeline.jobs) == 5
-        assert isinstance(created_pipeline.jobs["pipeline_body_node"], Pipeline)
-        assert isinstance(created_pipeline.jobs["do_while_job_with_pipeline_job"], DoWhile)
-        assert isinstance(created_pipeline.jobs["do_while_job_with_command_component"], DoWhile)
-        assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
-        assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
-
-    @pytest.mark.skip(reason="Currently do_while only enable in master region.")
-    def test_pipeline_with_invalid_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
-        params_override = [{"name": randstr()}]
-        with pytest.raises(ValidationError) as exception:
-            load_job(
-                "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
-                params_override=params_override,
-            )
-        error_message_str = re.findall(r"(\{.*\})", exception.value.args[0].replace("\n", ""))[0]
-        error_messages = json.loads(error_message_str.replace("\\", "\\\\"))
-
-        def assert_error_message(path, except_message, error_messages):
-            msgs = next(filter(lambda item: item["path"] == path, error_messages))
-            assert except_message == msgs["message"]
-
-        assert_error_message("jobs.empty_mapping.mapping", "Missing data for required field.", error_messages["errors"])
-        assert_error_message(
-            "jobs.out_of_range_max_iteration_count.limits.max_iteration_count",
-            "Must be greater than or equal to 1 and less than or equal to 1000.",
-            error_messages["errors"],
-        )
-        assert_error_message(
-            "jobs.invalid_max_iteration_count.limits.max_iteration_count",
-            "Not a valid integer.",
-            error_messages["errors"],
-        )
 
     def test_pipeline_component_job(self, client: MLClient):
         test_path = "./tests/test_configs/pipeline_jobs/pipeline_component_job.yml"
@@ -1542,6 +1435,37 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
+    @pytest.mark.skip(
+        reason="request body still exits when re-record and will raise error "
+        "'Unable to find a record for the request' in playback mode"
+    )
+    def test_pipeline_job_create_with_registry_model_as_input(
+        self,
+        client: MLClient,
+        registry_client: MLClient,
+        randstr: Callable[[str], str],
+    ) -> None:
+        params_override = [{"name": randstr("name")}]
+        pipeline_job = load_job(
+            source="./tests/test_configs/pipeline_jobs/job_with_registry_model_as_input/pipeline.yml",
+            params_override=params_override,
+        )
+        job = client.jobs.create_or_update(pipeline_job)
+        assert job.name == params_override[0]["name"]
+
+    def test_pipeline_node_with_default_component(self, client: MLClient, randstr: Callable[[str], str]):
+        params_override = [{"name": randstr("job_name")}]
+        pipeline_job = load_job(
+            "./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_with_default_component.yml",
+            params_override=params_override,
+        )
+
+        created_pipeline_job = client.jobs.create_or_update(pipeline_job)
+        assert (
+            created_pipeline_job.jobs["hello_world_component"].component
+            == "microsoftsamples_command_component_basic@default"
+        )
+
 
 @pytest.mark.usefixtures(
     "recorded_test",
@@ -1552,6 +1476,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 )
 @pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
+@pytest.mark.pipeline_test
 class TestPipelineJobReuse(AzureRecordedTestCase):
     @pytest.mark.skip(reason="flaky test")
     def test_reused_pipeline_child_job_download(

@@ -94,9 +94,11 @@ See full SDK logging documentation with examples [here][sdk_logging_docs].
 
 ### Telemetry
 
-The Azure ML Python SDK includes a telemetry feature that collects usage and failure data about the SDK and sends it to Microsoft when you use the SDK.
+The Azure ML Python SDK includes a telemetry feature that collects usage and failure data about the SDK and sends it to Microsoft when you use the SDK in a Jupyter Notebook only.
+<u>Telemetry will **not** be collected for any use of the Python SDK outside of a Jupyter Notebook.</u>
+
 Telemetry data helps the SDK team understand how the SDK is used so it can be improved and the information about failures helps the team resolve problems and fix bugs.
-The SDK telemetry feature is enabled by default. To opt out of the telemetry feature, set the AZUREML_SDKV2_TELEMETRY_OPTOUT environment variable to 1 or true.
+The SDK telemetry feature is enabled by default for Jupyter Notebook usage. To opt out of the telemetry feature, set the AZUREML_SDKV2_TELEMETRY_OPTOUT environment variable to '1' or 'true'.
 
 ## Next steps
 

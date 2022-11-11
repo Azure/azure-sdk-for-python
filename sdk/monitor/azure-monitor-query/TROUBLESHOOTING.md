@@ -58,7 +58,7 @@ MetricsQueryClient have methods to set the `credential`. To provide a valid cred
 `azure-identity` dependency. For more details on getting started, refer to
 the [README](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/monitor/azure-monitor-query#create-the-client)
 of Azure Monitor Query library. You can also refer to
-the [Azure Identity documentation](https://docs.microsoft.com/python/api/overview/azure/identity-readme)
+the [Azure Identity documentation](https://learn.microsoft.com/python/api/overview/azure/identity-readme)
 for more details on the various types of credential supported in `azure-identity`.
 
 For more help on troubleshooting authentication errors please see the Azure Identity client library [troubleshooting guide](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/identity/azure-identity/TROUBLESHOOTING.md).
@@ -82,7 +82,7 @@ sufficient permissions to query the workspace.
 ```
 
 1. Check that the application or user that is making the request has sufficient permissions:
-    * You can refer to this document to [manage access to workspaces](https://docs.microsoft.com/azure/azure-monitor/logs/manage-access#manage-access-using-workspace-permissions)
+    * You can refer to this document to [manage access to workspaces](https://learn.microsoft.com/azure/azure-monitor/logs/manage-access#manage-access-using-workspace-permissions)
 2. If the user or application is granted sufficient privileges to query the workspace, make sure you are
    authenticating as that user/application. If you are authenticating using the
    [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential)
@@ -110,7 +110,7 @@ Inner error: {
 }
 ```
 
-The error message in the innererror may include the where the Kusto query has an error. You may also refer to the [Kusto Query Language](https://docs.microsoft.com/azure/data-explorer/kusto/query) reference docs to learn more about querying logs using KQL.
+The error message in the innererror may include the where the Kusto query has an error. You may also refer to the [Kusto Query Language](https://learn.microsoft.com/azure/data-explorer/kusto/query) reference docs to learn more about querying logs using KQL.
 
 ### Troubleshooting empty log query results
 
@@ -185,7 +185,7 @@ sufficient permissions to query the workspace.
 ```
 
 1. Check that the application or user that is making the request has sufficient permissions:
-    * You can refer to this document to [manage access to workspaces](https://docs.microsoft.com/azure/azure-monitor/logs/manage-access#manage-access-using-workspace-permissions)
+    * You can refer to this document to [manage access to workspaces](https://learn.microsoft.com/azure/azure-monitor/logs/manage-access#manage-access-using-workspace-permissions)
 2. If the user or application is granted sufficient privileges to query the workspace, make sure you are
    authenticating as that user/application. If you are authenticating using the
    [DefaultAzureCredential](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/identity/azure-identity#defaultazurecredential)

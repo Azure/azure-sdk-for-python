@@ -6,33 +6,26 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Error
-    from ._models_py3 import ExtendedErrorInfo
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import OperationList
-    from ._models_py3 import OperationResponse
-    from ._models_py3 import PartnerResponse
-except (SyntaxError, ImportError):
-    from ._models import Error  # type: ignore
-    from ._models import ExtendedErrorInfo  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import OperationList  # type: ignore
-    from ._models import OperationResponse  # type: ignore
-    from ._models import PartnerResponse  # type: ignore
+from ._models_py3 import Error
+from ._models_py3 import ExtendedErrorInfo
+from ._models_py3 import OperationDisplay
+from ._models_py3 import OperationList
+from ._models_py3 import OperationResponse
+from ._models_py3 import PartnerResponse
 
-from ._ace_provisioning_management_partner_api_enums import (
-    ErrorResponseCode,
-    ManagementPartnerState,
-)
+from ._ace_provisioning_management_partner_api_enums import ManagementPartnerState
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Error',
-    'ExtendedErrorInfo',
-    'OperationDisplay',
-    'OperationList',
-    'OperationResponse',
-    'PartnerResponse',
-    'ErrorResponseCode',
-    'ManagementPartnerState',
+    "Error",
+    "ExtendedErrorInfo",
+    "OperationDisplay",
+    "OperationList",
+    "OperationResponse",
+    "PartnerResponse",
+    "ManagementPartnerState",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

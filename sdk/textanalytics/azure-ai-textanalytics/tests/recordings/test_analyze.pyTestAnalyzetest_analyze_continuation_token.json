@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "1171",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -67,41 +67,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "7ae604f7-dc43-47bf-bc2c-ead7bfe1dce0",
+        "apim-request-id": "2638b263-9c61-4a21-b95c-53d5f6f5246b",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:12:31 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea4ab399-9bae-41f9-9eb3-7f05747c0ac9?api-version=2022-05-01",
+        "Date": "Mon, 17 Oct 2022 18:51:17 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea5e6051-0f39-4194-b75c-60ccbcd5303e?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1909"
+        "x-envoy-upstream-service-time": "240"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea4ab399-9bae-41f9-9eb3-7f05747c0ac9?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea5e6051-0f39-4194-b75c-60ccbcd5303e?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "16c311ab-75f9-4e7d-99ef-cee99be06db6",
-        "Content-Length": "8464",
+        "apim-request-id": "872d5db7-31b6-4be7-aeb6-e877d0092026",
+        "Content-Length": "8463",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:12:37 GMT",
+        "Date": "Mon, 17 Oct 2022 18:51:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "228"
+        "x-envoy-upstream-service-time": "318"
       },
       "ResponseBody": {
-        "jobId": "ea4ab399-9bae-41f9-9eb3-7f05747c0ac9",
-        "lastUpdatedDateTime": "2022-06-09T17:12:35Z",
-        "createdDateTime": "2022-06-09T17:12:30Z",
-        "expirationDateTime": "2022-06-10T17:12:30Z",
+        "jobId": "ea5e6051-0f39-4194-b75c-60ccbcd5303e",
+        "lastUpdateDateTime": "2022-10-17T18:51:19Z",
+        "createdDateTime": "2022-10-17T18:51:16Z",
+        "expirationDateTime": "2022-10-18T18:51:16Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -113,7 +113,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:12:34.7235622Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:18.8650847Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -305,7 +305,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:12:34.7020439Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:18.8327788Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -424,7 +424,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:12:34.5609874Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:19.0866398Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -442,17 +442,17 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.23,
-                      "neutral": 0.61,
-                      "negative": 0.16
+                      "positive": 0.0,
+                      "neutral": 0.59,
+                      "negative": 0.41
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.23,
-                          "neutral": 0.61,
-                          "negative": 0.16
+                          "positive": 0.0,
+                          "neutral": 0.59,
+                          "negative": 0.41
                         },
                         "offset": 0,
                         "length": 295,
@@ -469,16 +469,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 1.0,
+                      "positive": 0.01,
+                      "neutral": 0.99,
                       "negative": 0.0
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 1.0,
+                          "positive": 0.01,
+                          "neutral": 0.99,
                           "negative": 0.0
                         },
                         "offset": 0,
@@ -490,45 +490,45 @@
                   },
                   {
                     "id": "4",
-                    "sentiment": "positive",
+                    "sentiment": "neutral",
                     "statistics": {
                       "charactersCount": 121,
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.57,
-                      "neutral": 0.41,
-                      "negative": 0.02
+                      "positive": 0.07,
+                      "neutral": 0.86,
+                      "negative": 0.07
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.03,
-                          "neutral": 0.96,
-                          "negative": 0.01
+                          "positive": 0.01,
+                          "neutral": 0.99,
+                          "negative": 0.0
                         },
                         "offset": 0,
-                        "length": 55,
-                        "text": "I need a reservation for an indoor restaurant in China."
+                        "length": 56,
+                        "text": "I need a reservation for an indoor restaurant in China. "
                       },
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.12,
-                          "neutral": 0.78,
-                          "negative": 0.1
+                          "positive": 0.02,
+                          "neutral": 0.8,
+                          "negative": 0.19
                         },
                         "offset": 56,
-                        "length": 28,
-                        "text": "Please don\u0027t stop the music."
+                        "length": 29,
+                        "text": "Please don\u0027t stop the music. "
                       },
                       {
-                        "sentiment": "positive",
+                        "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.57,
-                          "neutral": 0.41,
-                          "negative": 0.02
+                          "positive": 0.2,
+                          "neutral": 0.79,
+                          "negative": 0.01
                         },
                         "offset": 85,
                         "length": 36,
@@ -551,13 +551,13 @@
                     }
                   }
                 ],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:12:35.2689287Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:19.1773859Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -636,7 +636,7 @@
                     }
                   }
                 ],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
@@ -644,30 +644,30 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea4ab399-9bae-41f9-9eb3-7f05747c0ac9?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ea5e6051-0f39-4194-b75c-60ccbcd5303e?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "df9dd2e1-76cd-46de-a483-20e8ba703479",
-        "Content-Length": "8464",
+        "apim-request-id": "ee9d6ee7-c626-4247-9a71-64762821be83",
+        "Content-Length": "8463",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:12:37 GMT",
+        "Date": "Mon, 17 Oct 2022 18:51:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "228"
+        "x-envoy-upstream-service-time": "201"
       },
       "ResponseBody": {
-        "jobId": "ea4ab399-9bae-41f9-9eb3-7f05747c0ac9",
-        "lastUpdatedDateTime": "2022-06-09T17:12:35Z",
-        "createdDateTime": "2022-06-09T17:12:30Z",
-        "expirationDateTime": "2022-06-10T17:12:30Z",
+        "jobId": "ea5e6051-0f39-4194-b75c-60ccbcd5303e",
+        "lastUpdateDateTime": "2022-10-17T18:51:19Z",
+        "createdDateTime": "2022-10-17T18:51:16Z",
+        "expirationDateTime": "2022-10-18T18:51:16Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -679,7 +679,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:12:34.7235622Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:18.8650847Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -871,7 +871,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:12:34.7020439Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:18.8327788Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -990,7 +990,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:12:34.5609874Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:19.0866398Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1008,17 +1008,17 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.23,
-                      "neutral": 0.61,
-                      "negative": 0.16
+                      "positive": 0.0,
+                      "neutral": 0.59,
+                      "negative": 0.41
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.23,
-                          "neutral": 0.61,
-                          "negative": 0.16
+                          "positive": 0.0,
+                          "neutral": 0.59,
+                          "negative": 0.41
                         },
                         "offset": 0,
                         "length": 295,
@@ -1035,16 +1035,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.0,
-                      "neutral": 1.0,
+                      "positive": 0.01,
+                      "neutral": 0.99,
                       "negative": 0.0
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.0,
-                          "neutral": 1.0,
+                          "positive": 0.01,
+                          "neutral": 0.99,
                           "negative": 0.0
                         },
                         "offset": 0,
@@ -1056,45 +1056,45 @@
                   },
                   {
                     "id": "4",
-                    "sentiment": "positive",
+                    "sentiment": "neutral",
                     "statistics": {
                       "charactersCount": 121,
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.57,
-                      "neutral": 0.41,
-                      "negative": 0.02
+                      "positive": 0.07,
+                      "neutral": 0.86,
+                      "negative": 0.07
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.03,
-                          "neutral": 0.96,
-                          "negative": 0.01
+                          "positive": 0.01,
+                          "neutral": 0.99,
+                          "negative": 0.0
                         },
                         "offset": 0,
-                        "length": 55,
-                        "text": "I need a reservation for an indoor restaurant in China."
+                        "length": 56,
+                        "text": "I need a reservation for an indoor restaurant in China. "
                       },
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.12,
-                          "neutral": 0.78,
-                          "negative": 0.1
+                          "positive": 0.02,
+                          "neutral": 0.8,
+                          "negative": 0.19
                         },
                         "offset": 56,
-                        "length": 28,
-                        "text": "Please don\u0027t stop the music."
+                        "length": 29,
+                        "text": "Please don\u0027t stop the music. "
                       },
                       {
-                        "sentiment": "positive",
+                        "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.57,
-                          "neutral": 0.41,
-                          "negative": 0.02
+                          "positive": 0.2,
+                          "neutral": 0.79,
+                          "negative": 0.01
                         },
                         "offset": 85,
                         "length": 36,
@@ -1117,13 +1117,13 @@
                     }
                   }
                 ],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:12:35.2689287Z",
+              "lastUpdateDateTime": "2022-10-17T18:51:19.1773859Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1202,7 +1202,7 @@
                     }
                   }
                 ],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
