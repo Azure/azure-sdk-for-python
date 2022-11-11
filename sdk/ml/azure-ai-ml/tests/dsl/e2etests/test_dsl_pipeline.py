@@ -32,6 +32,7 @@ from devtools_testutils import AzureRecordedTestCase
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel, sleep_if_live
 
+from devtools_testutils import is_live
 from .._util import _DSL_TIMEOUT_SECOND
 
 tests_root_dir = Path(__file__).parent.parent.parent
@@ -1311,7 +1312,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         assert len(component_ids) == 1, f"Got multiple component id: {component_ids} for same anon component."
 
-    @pytest.mark.skip(reason="migration skip: need to discuss reuse in current test mechanism.")
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="this test targets to verify service-side behaviour, only enable it in live test.",
+    )
     def test_pipeline_reuse(self, client: MLClient, randstr: Callable[[str], str], randint: Callable) -> None:
         component_yaml = components_dir / "helloworld_component.yml"
         component_func1 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
