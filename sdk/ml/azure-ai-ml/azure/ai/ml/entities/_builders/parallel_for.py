@@ -45,7 +45,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
             **kwargs,
         )
         # parallel for node shares output meta with body
-        # TODO: handle when body don't have component or outputs
+        # TODO: handle when body don't have component or component.outputs
         outputs = self.body._component.outputs
         self._outputs = self._build_outputs_dict_without_meta(outputs or {})
 
