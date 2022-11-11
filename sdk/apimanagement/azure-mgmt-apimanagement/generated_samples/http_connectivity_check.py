@@ -37,7 +37,7 @@ def main():
             "protocol": "HTTPS",
             "protocolConfiguration": {
                 "HTTPConfiguration": {
-                    "headers": [{"name": "Authorization", "value": "Bearer myPreciousToken"}],
+                    "headers": [{"name": "Authorization", "value": "Bearer myPrecious"}],
                     "method": "GET",
                     "validStatusCodes": [200, 204],
                 }
