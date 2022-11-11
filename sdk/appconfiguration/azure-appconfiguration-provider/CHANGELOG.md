@@ -13,6 +13,7 @@
 ### Other Changes
 
 * Fixed load doc that used `selector` instead of `selects`.
+* Fixed CLI link in Readme.
 
 ## 1.0.0b1 (2022-10-13)
 
