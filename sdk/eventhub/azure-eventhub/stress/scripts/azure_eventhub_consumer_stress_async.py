@@ -191,9 +191,8 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_logging_enable,
+            logging_enable=args.pyamqp_logging_enable,
             uamqp_transport=args.uamqp_mode,
-            # starting_position="-1",
         )
     elif args.conn_str:
         client = EventHubConsumerClientTest.from_connection_string(
@@ -207,7 +206,6 @@ def create_client(args):
             transport_type=transport_type,
             logging_enable=args.pyamqp_logging_enable,
             uamqp_transport=args.uamqp_mode,
-            # starting_position="-1",
         )
     elif args.hostname:
         client = EventHubConsumerClientTest(
@@ -222,7 +220,6 @@ def create_client(args):
             transport_type=transport_type,
             logging_enable=args.pyamqp_logging_enable,
             uamqp_transport=args.uamqp_mode,
-            # starting_position="-1",
         )
     elif args.aad_client_id:
         credential = ClientSecretCredential(args.tenant_id, args.aad_client_id, args.aad_secret)
@@ -238,7 +235,6 @@ def create_client(args):
             transport_type=transport_type,
             logging_enable=args.pyamqp_logging_enable,
             uamqp_transport=args.uamqp_mode,
-            # starting_position="-1",
         )
 
     return client
@@ -251,7 +247,7 @@ async def run(args):
             "prefetch": args.link_credit,
             "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
             "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties,
-            "starting_position": "-1",
+            "starting_position": starting_position,
             "owner_level": args.owner_level,
             "on_error": on_error
         }
