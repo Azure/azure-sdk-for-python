@@ -146,7 +146,37 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
         pipeline_job = parallel_for_pipeline()
         pipeline_job.settings.default_compute = "cpu-cluster"
 
-        rest_pipeline_job = pipeline_job._to_rest_object().as_dict()
         with include_private_preview_nodes_in_pipeline():
             client.jobs.create_or_update(pipeline_job)
 
+    def test_dsl_parallel_for_pipeline_unprovided_input(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component_alt1.yml"
+        )
+        echo_string_component = load_component(
+            source="./tests/test_configs/components/echo_string_component.yml"
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component(component_in_path=test_input)
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            echo_string_component(component_in_string=parallel_node.outputs.component_out_path)
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            client.jobs.create_or_update(pipeline_job)
+
+    def test_dsl_parallel_for_pipeline_illegal_cases(self):
+        # required field unprovided
+        # body unsupported
+        # items unsupported
+        pass
