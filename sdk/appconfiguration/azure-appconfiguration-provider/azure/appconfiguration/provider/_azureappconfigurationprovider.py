@@ -29,7 +29,7 @@ class AzureAppConfigurationProvider:
         self._client = None
 
     @classmethod
-    def load(cls, connection_string=None, endpoint=None, credential=None, **kwargs):
+    def load(cls, *, connection_string=None, endpoint=None, credential=None, **kwargs):
         """
         Loads configuration settings from Azure App Configuration into a Python application.
 
@@ -39,8 +39,8 @@ class AzureAppConfigurationProvider:
         :type endpoint: str
         :param credential: Credential (one of connection_string or endpoint and credential must be set)
         :type credential: Union[AppConfigConnectionStringCredential, TokenCredential]
-        :keyword selectors: List of setting selectors to filter configuration settings
-        :type selectors: list[~azure.appconfigurationprovider.SettingSelector]
+        :keyword selects: List of setting selectors to filter configuration settings
+        :type selects: list[~azure.appconfigurationprovider.SettingSelector]
         :keyword trim_prefixes: List of prefixes to trim from configuration keys
         :type trim_prefixes: list[str]
         :keyword key_vault_options: Options for resolving Key Vault references
