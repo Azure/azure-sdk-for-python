@@ -34,24 +34,20 @@ def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_me
 
 def on_success(events, pid):
     # sending succeeded
-    # print(events, pid)
     pass
 
 
 def on_error(events, pid, error):
     # sending failed
-    # print(events, pid, error)
     pass
 
 async def on_success_async(events, pid):
     # sending succeeded
-    # print(events, pid)
     pass
 
 
 async def on_error_async(events, pid, error):
     # sending failed
-    # print(events, pid, error)
     pass
 
 
@@ -206,7 +202,7 @@ class StressTestRunner(object):
                     logging_enable=self.args.pyamqp_logging_enable,
                     buffered_mode=self.args.buffered_mode,
                     on_success=on_success_async,
-                    on_error=on_error_async,
+                    on_error=on_error_async, 
                     uamqp_transport=self.args.uamqp_mode,
                 **retry_options
                 )
@@ -419,6 +415,7 @@ class StressTestRunner(object):
 
     async def run_test_method_async(self, test_method, worker, logger, process_monitor):
         deadline = time.time() + self.args.duration
+        logger.info(f"The deadline is {deadline}")
         azure_monitor_metric = AzureMonitorMetric("Async EventHubProducerClient")
         async with worker:
             total_processed = 0
@@ -427,7 +424,9 @@ class StressTestRunner(object):
             while self.running and time.time() < deadline:
                 try:
                     cur_iter_start_time = time.perf_counter()
+                    # logger.info("Before we call test method")
                     processed = await test_method(worker, self.args, logger, azure_monitor_metric)
+                    # logger.info("After we call test method")
                     now_time = time.perf_counter()
                     cur_iter_time_elapsed = now_time - cur_iter_start_time
                     total_processed += processed
