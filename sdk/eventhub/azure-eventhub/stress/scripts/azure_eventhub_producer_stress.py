@@ -415,7 +415,6 @@ class StressTestRunner(object):
 
     async def run_test_method_async(self, test_method, worker, logger, process_monitor):
         deadline = time.time() + self.args.duration
-        logger.info(f"The deadline is {deadline}")
         azure_monitor_metric = AzureMonitorMetric("Async EventHubProducerClient")
         async with worker:
             total_processed = 0
