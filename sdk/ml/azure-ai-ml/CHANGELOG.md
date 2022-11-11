@@ -1,5 +1,10 @@
 # Release History
 
+## 1.1.1 (Unreleased)
+
+## Features Added
+- Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
+
 ## 1.1.0 (Unreleased)
 
 ### Features Added
@@ -13,6 +18,7 @@
 
 ### Bugs Fixed
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
+- Fixed job inputs not accepting datastores or job inputs.
 - Registries now assign managed tags to match registry's tags.
 - Adjust registry experimental tags and imports to avoid warning printouts for unrelated operations.
 - Make registry delete operation return an LROPoller, and change name to begin_delete.
