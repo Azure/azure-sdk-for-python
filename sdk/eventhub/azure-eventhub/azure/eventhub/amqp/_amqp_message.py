@@ -346,6 +346,12 @@ class AmqpMessageHeader(DictMixin):
         self.durable = kwargs.get("durable")
         self.priority = kwargs.get("priority")
 
+    def _any(self):
+        # Returns True for values 0, False, "", etc. unlike any()
+        for val in self.values():
+            if val is not None:
+                return True
+        return False
 
 class AmqpMessageProperties(DictMixin):
     # pylint: disable=too-many-instance-attributes
@@ -437,3 +443,10 @@ class AmqpMessageProperties(DictMixin):
         self.group_id = kwargs.get("group_id")
         self.group_sequence = kwargs.get("group_sequence")
         self.reply_to_group_id = kwargs.get("reply_to_group_id")
+
+    def _any(self):
+        # Returns True for values 0, False, "", etc. unlike any()
+        for val in self.values():
+            if val is not None:
+                return True
+        return False

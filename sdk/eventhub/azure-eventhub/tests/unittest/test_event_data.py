@@ -173,6 +173,22 @@ def test_amqp_message_str_repr():
     assert str(message) == 'A'
     assert 'AmqpAnnotatedMessage(body=A, body_type=data' in repr(message)
 
+def test_amqp_message_header_properties_any():
+    header = AmqpMessageHeader()
+    header.first_acquirer = False
+    properties = AmqpMessageProperties()
+    properties.creation_time = 0
+
+    assert header._any()
+    assert properties._any()
+
+    header = AmqpMessageHeader()
+    properties = AmqpMessageProperties()
+    properties.message_id = ""
+
+    assert not header._any()
+    assert properties
+
 
 def test_amqp_message_from_message(uamqp_transport):
     if uamqp_transport:

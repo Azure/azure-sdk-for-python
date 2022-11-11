@@ -83,7 +83,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: pyamqp.Message
         """
         message_header = None
-        if annotated_message.header and any(annotated_message.header.values()):
+        if annotated_message.header and annotated_message.header._any():    # pylint: disable=protected-access
             message_header = Header(
                 delivery_count=annotated_message.header.delivery_count,
                 ttl=annotated_message.header.time_to_live,
@@ -93,7 +93,7 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
 
         message_properties = None
-        if annotated_message.properties and any(annotated_message.properties.values()):
+        if annotated_message.properties and annotated_message.properties._any():    # pylint: disable=protected-access
             message_properties = Properties(
                 message_id=annotated_message.properties.message_id,
                 user_id=annotated_message.properties.user_id,
