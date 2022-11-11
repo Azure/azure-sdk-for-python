@@ -160,6 +160,13 @@ class IPAddressProvisioningType(str, Enum):
     no_public_ip_addresses = "nopublicipaddresses"  #: No public IP Address will be created.
 
 
+class NodeCommunicationMode(str, Enum):
+
+    default = "default"  #: The node communication mode is automatically set by the Batch service.
+    classic = "classic"  #: Nodes using the classic communication mode require inbound TCP communication on ports 29876 and 29877 from the "BatchNodeManagement.{region}" service tag and outbound TCP communication on port 443 to the "Storage.region" and "BatchNodeManagement.{region}" service tags.
+    simplified = "simplified"  #: Nodes using the simplified communication mode require outbound TCP communication on port 443 to the "BatchNodeManagement.{region}" service tag. No open inbound ports are required.
+
+
 class PoolLifetimeOption(str, Enum):
 
     job_schedule = "jobschedule"  #: The Pool exists for the lifetime of the Job Schedule. The Batch Service creates the Pool when it creates the first Job on the schedule. You may apply this option only to Job Schedules, not to Jobs.

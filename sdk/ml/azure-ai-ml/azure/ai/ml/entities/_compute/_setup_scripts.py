@@ -6,9 +6,9 @@
 import re
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ScriptReference as RestScriptReference
-from azure.ai.ml._restclient.v2022_01_01_preview.models import ScriptsToExecute as RestScriptsToExecute
-from azure.ai.ml._restclient.v2022_01_01_preview.models import SetupScripts as RestSetupScripts
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ScriptReference as RestScriptReference
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ScriptsToExecute as RestScriptsToExecute
+from azure.ai.ml._restclient.v2022_10_01_preview.models import SetupScripts as RestSetupScripts
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
