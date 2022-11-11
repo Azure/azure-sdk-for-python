@@ -442,7 +442,8 @@ class TestCommandComponentEntity:
         # create some files/folders expected to ignore
         pycache = Path("./tests/test_configs/components/helloworld_components_with_env/__pycache__")
         try:
-            pycache.mkdir()
+            if not pycache.is_dir():
+                pycache.mkdir()
             expected_exclude = pycache / "a.pyc"
             expected_exclude.touch()
             # resolve and test for ignore_file's is_file_excluded
