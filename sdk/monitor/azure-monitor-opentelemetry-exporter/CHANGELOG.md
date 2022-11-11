@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+
 ### Breaking Changes
 
 ### Bugs Fixed
@@ -27,8 +30,6 @@
     ([#27236](https://github.com/Azure/azure-sdk-for-python/pull/27236))
 - Add validation logic to ApplicationInsightsSampler
     ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
-- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
-    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
 - Change default temporality of metrics to follow OTLP
     ([#26924](https://github.com/Azure/azure-sdk-for-python/pull/26924))
 
