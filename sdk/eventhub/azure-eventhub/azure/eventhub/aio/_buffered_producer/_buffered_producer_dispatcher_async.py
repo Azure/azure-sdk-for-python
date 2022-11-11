@@ -3,7 +3,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-import asyncio # pylint: disable=unused-import
 import logging
 from typing import Dict, List, Callable, Optional, Awaitable, TYPE_CHECKING
 from asyncio import Lock
