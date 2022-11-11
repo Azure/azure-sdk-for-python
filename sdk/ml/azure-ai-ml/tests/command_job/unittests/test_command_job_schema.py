@@ -11,6 +11,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     JobOutputType,
     OutputDeliveryMode,
 )
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobService as RestJobService
 from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._utils.utils import is_valid_uuid, load_yaml
