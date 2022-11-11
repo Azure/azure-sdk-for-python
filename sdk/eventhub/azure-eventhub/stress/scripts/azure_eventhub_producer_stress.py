@@ -424,9 +424,7 @@ class StressTestRunner(object):
             while self.running and time.time() < deadline:
                 try:
                     cur_iter_start_time = time.perf_counter()
-                    # logger.info("Before we call test method")
                     processed = await test_method(worker, self.args, logger, azure_monitor_metric)
-                    # logger.info("After we call test method")
                     now_time = time.perf_counter()
                     cur_iter_time_elapsed = now_time - cur_iter_start_time
                     total_processed += processed
