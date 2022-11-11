@@ -16,14 +16,13 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-d05e1wmdGHmLOcaeyfBJrw\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 11 Nov 2022 06:02:53 GMT",
+        "Date": "Fri, 11 Nov 2022 07:06:19 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14059.13 - KRSLR1 ProdSlices",
+        "x-ms-ests-server": "2.1.14059.13 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -112,12 +111,12 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 11 Nov 2022 06:02:53 GMT",
+        "Date": "Fri, 11 Nov 2022 07:06:19 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": "[set-cookie;]",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14059.13 - KRC ProdSlices",
+        "x-ms-ests-server": "2.1.14059.13 - SEASLR1 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -173,7 +172,7 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "c764a429-22ca-4832-9d6e-268cc2195752",
+        "client-request-id": "34064352-7b95-490e-985f-6af2a0f66bf8",
         "Connection": "keep-alive",
         "Content-Length": "288",
         "Content-Type": "application/x-www-form-urlencoded",
@@ -191,10 +190,10 @@
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "c764a429-22ca-4832-9d6e-268cc2195752",
+        "client-request-id": "34064352-7b95-490e-985f-6af2a0f66bf8",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 11 Nov 2022 06:02:53 GMT",
+        "Date": "Fri, 11 Nov 2022 07:06:20 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
@@ -202,7 +201,7 @@
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
         "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14059.13 - SEASLR2 ProdSlices",
+        "x-ms-ests-server": "2.1.14059.13 - KRC ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -238,30 +237,30 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 11 Nov 2022 06:02:55 GMT",
-        "ETag": "W/\u00220x8DAC3AA60CA47B3\u0022",
+        "Date": "Fri, 11 Nov 2022 07:06:22 GMT",
+        "ETag": "W/\u00220x8DAC3B33D75D525\u0022",
         "Expires": "-1",
-        "Last-Modified": "Fri, 11 Nov 2022 06:02:56 GMT",
+        "Last-Modified": "Fri, 11 Nov 2022 07:06:22 GMT",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "1ce79cb4-cba8-45fc-a42d-3bff956d84d4",
+        "x-ms-correlation-request-id": "ebb5788c-694a-4250-8342-1014099dbbf2",
         "x-ms-ratelimit-remaining-subscription-writes": "1194",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060256Z:1ce79cb4-cba8-45fc-a42d-3bff956d84d4"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070622Z:ebb5788c-694a-4250-8342-1014099dbbf2"
       },
       "ResponseBody": {
         "name": "sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
         "type": "Microsoft.Batch/batchAccounts/certificates",
-        "etag": "W/\u00220x8DAC3AA60CA47B3\u0022",
+        "etag": "W/\u00220x8DAC3B33D75D525\u0022",
         "properties": {
           "thumbprintAlgorithm": "sha1",
           "thumbprint": "cff2ab63c8c955aaf71989efa641b906558d9fb7",
           "provisioningState": "Succeeded",
-          "provisioningStateTransitionTime": "2022-11-11T06:02:56.1942868Z",
+          "provisioningStateTransitionTime": "2022-11-11T07:06:22.39982Z",
           "format": "Pfx",
           "publicData": "MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd\u002BnalxwlQ9\u002BqbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq\u002Bx1LG83761Ir8PiSy\u002B6oxwCHOaYZyvheW0PByntC/WFwUipfn78"
         }
@@ -282,7 +281,7 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 11 Nov 2022 06:02:56 GMT",
+        "Date": "Fri, 11 Nov 2022 07:06:22 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
@@ -290,9 +289,9 @@
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "857f7f42-e906-4f69-823c-62af95a66f94",
+        "x-ms-correlation-request-id": "a1e05bb4-e18a-4d1a-a34c-d5640b424cca",
         "x-ms-ratelimit-remaining-subscription-reads": "11991",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060256Z:857f7f42-e906-4f69-823c-62af95a66f94"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070623Z:a1e05bb4-e18a-4d1a-a34c-d5640b424cca"
       },
       "ResponseBody": {
         "value": [
@@ -300,12 +299,12 @@
             "name": "sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
             "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
             "type": "Microsoft.Batch/batchAccounts/certificates",
-            "etag": "W/\u00220x8DAC3AA60CA47B3\u0022",
+            "etag": "W/\u00220x8DAC3B33D75D525\u0022",
             "properties": {
               "thumbprintAlgorithm": "sha1",
               "thumbprint": "cff2ab63c8c955aaf71989efa641b906558d9fb7",
               "provisioningState": "Succeeded",
-              "provisioningStateTransitionTime": "2022-11-11T06:02:56.1942868Z",
+              "provisioningStateTransitionTime": "2022-11-11T07:06:22.39982Z",
               "format": "Pfx",
               "publicData": "MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd\u002BnalxwlQ9\u002BqbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq\u002Bx1LG83761Ir8PiSy\u002B6oxwCHOaYZyvheW0PByntC/WFwUipfn78"
             }
@@ -328,30 +327,30 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 11 Nov 2022 06:02:56 GMT",
-        "ETag": "W/\u00220x8DAC3AA60CA47B3\u0022",
+        "Date": "Fri, 11 Nov 2022 07:06:23 GMT",
+        "ETag": "W/\u00220x8DAC3B33D75D525\u0022",
         "Expires": "-1",
-        "Last-Modified": "Fri, 11 Nov 2022 06:02:56 GMT",
+        "Last-Modified": "Fri, 11 Nov 2022 07:06:22 GMT",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a5743890-a458-4dda-86d0-994f0186b494",
+        "x-ms-correlation-request-id": "549cfa4d-03cb-49f1-8006-5cea6bd2a8c3",
         "x-ms-ratelimit-remaining-subscription-reads": "11990",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060257Z:a5743890-a458-4dda-86d0-994f0186b494"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070623Z:549cfa4d-03cb-49f1-8006-5cea6bd2a8c3"
       },
       "ResponseBody": {
         "name": "sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
         "type": "Microsoft.Batch/batchAccounts/certificates",
-        "etag": "W/\u00220x8DAC3AA60CA47B3\u0022",
+        "etag": "W/\u00220x8DAC3B33D75D525\u0022",
         "properties": {
           "thumbprintAlgorithm": "sha1",
           "thumbprint": "cff2ab63c8c955aaf71989efa641b906558d9fb7",
           "provisioningState": "Succeeded",
-          "provisioningStateTransitionTime": "2022-11-11T06:02:56.1942868Z",
+          "provisioningStateTransitionTime": "2022-11-11T07:06:22.39982Z",
           "format": "Pfx",
           "publicData": "MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd\u002BnalxwlQ9\u002BqbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq\u002Bx1LG83761Ir8PiSy\u002B6oxwCHOaYZyvheW0PByntC/WFwUipfn78"
         }
@@ -379,30 +378,30 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 11 Nov 2022 06:02:58 GMT",
-        "ETag": "W/\u00220x8DAC3AA60CA47B3\u0022",
+        "Date": "Fri, 11 Nov 2022 07:06:24 GMT",
+        "ETag": "W/\u00220x8DAC3B33D75D525\u0022",
         "Expires": "-1",
-        "Last-Modified": "Fri, 11 Nov 2022 06:02:56 GMT",
+        "Last-Modified": "Fri, 11 Nov 2022 07:06:22 GMT",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "21d1357d-9a16-48e4-afee-0f91c928c825",
+        "x-ms-correlation-request-id": "458c28d3-2a5b-4a45-b249-51a02f5a0a5d",
         "x-ms-ratelimit-remaining-subscription-writes": "1193",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060258Z:21d1357d-9a16-48e4-afee-0f91c928c825"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070624Z:458c28d3-2a5b-4a45-b249-51a02f5a0a5d"
       },
       "ResponseBody": {
         "name": "sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
         "type": "Microsoft.Batch/batchAccounts/certificates",
-        "etag": "W/\u00220x8DAC3AA60CA47B3\u0022",
+        "etag": "W/\u00220x8DAC3B33D75D525\u0022",
         "properties": {
           "thumbprintAlgorithm": "sha1",
           "thumbprint": "cff2ab63c8c955aaf71989efa641b906558d9fb7",
           "provisioningState": "Succeeded",
-          "provisioningStateTransitionTime": "2022-11-11T06:02:56.1942868Z",
+          "provisioningStateTransitionTime": "2022-11-11T07:06:22.39982Z",
           "format": "Pfx",
           "publicData": "MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd\u002BnalxwlQ9\u002BqbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq\u002Bx1LG83761Ir8PiSy\u002B6oxwCHOaYZyvheW0PByntC/WFwUipfn78"
         }
@@ -424,30 +423,30 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 11 Nov 2022 06:02:58 GMT",
-        "ETag": "W/\u00220x8DAC3AA60CA47B3\u0022",
+        "Date": "Fri, 11 Nov 2022 07:06:24 GMT",
+        "ETag": "W/\u00220x8DAC3B33D75D525\u0022",
         "Expires": "-1",
-        "Last-Modified": "Fri, 11 Nov 2022 06:02:56 GMT",
+        "Last-Modified": "Fri, 11 Nov 2022 07:06:22 GMT",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "31a5d161-cc39-406b-95d1-31debc3dafe1",
+        "x-ms-correlation-request-id": "7f2532e5-8c27-459a-ad73-17a97e5809df",
         "x-ms-ratelimit-remaining-subscription-writes": "1195",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060259Z:31a5d161-cc39-406b-95d1-31debc3dafe1"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070625Z:7f2532e5-8c27-459a-ad73-17a97e5809df"
       },
       "ResponseBody": {
         "name": "sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
         "id": "/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificates/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7",
         "type": "Microsoft.Batch/batchAccounts/certificates",
-        "etag": "W/\u00220x8DAC3AA60CA47B3\u0022",
+        "etag": "W/\u00220x8DAC3B33D75D525\u0022",
         "properties": {
           "thumbprintAlgorithm": "sha1",
           "thumbprint": "cff2ab63c8c955aaf71989efa641b906558d9fb7",
           "provisioningState": "Succeeded",
-          "provisioningStateTransitionTime": "2022-11-11T06:02:56.1942868Z",
+          "provisioningStateTransitionTime": "2022-11-11T07:06:22.39982Z",
           "format": "Pfx",
           "publicData": "MIIBrzCCAV2gAwIBAgIQHZGt2k0LCLFKYYCFxlJnkTAJBgUrDgMCHQUAMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5MB4XDTE2MDEwMTA3MDAwMFoXDTE4MDEwMTA3MDAwMFowEjEQMA4GA1UEAxMHbm9kZXNkazCBnzANBgkqhkiG9w0BAQEFAAOBjQAwgYkCgYEAuX4XMWyR8cQRCA81TjHOerNOFOpOBj2O8jEdZvqwRlUYgMleEY2OlPd\u002BnalxwlQ9\u002BqbNkNGfjnhIMgiJ5CMlXgdRMF3E6DnMnktmHFG9L0VmQ6Lgt7bhXR8IitRHeYlvy5LJlw6Lcle5Kas2j4ThYjLQbjBMDSXD4HvZNe4UYEUCAwEAAaNLMEkwRwYDVR0BBEAwPoAQEuQJLQYdHU8AjWEh3BZkY6EYMBYxFDASBgNVBAMTC1Jvb3QgQWdlbmN5ghAGN2wAqgBkihHPuNSqXDX0MAkGBSsOAwIdBQADQQB5djPe0G6c3Z8DuR6EQbIhBMTnC0zYPhigq\u002Bx1LG83761Ir8PiSy\u002B6oxwCHOaYZyvheW0PByntC/WFwUipfn78"
         }
@@ -468,22 +467,22 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 11 Nov 2022 06:02:59 GMT",
+        "Date": "Fri, 11 Nov 2022 07:06:26 GMT",
         "Expires": "-1",
-        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8DAC3AA62DE7DD6?api-version=2022-10-01",
+        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8DAC3B33FC45B2A?api-version=2022-10-01",
         "Pragma": "no-cache",
         "Retry-After": "15",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "2fc779c4-3b90-4402-9ac4-be335a739d37",
+        "x-ms-correlation-request-id": "aae39d0e-a10b-4674-a3ab-d3474e40ad29",
         "x-ms-ratelimit-remaining-subscription-deletes": "14996",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060259Z:2fc779c4-3b90-4402-9ac4-be335a739d37"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070626Z:aae39d0e-a10b-4674-a3ab-d3474e40ad29"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8DAC3AA62DE7DD6?api-version=2022-10-01",
+      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8DAC3B33FC45B2A?api-version=2022-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -496,22 +495,22 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 11 Nov 2022 06:02:59 GMT",
+        "Date": "Fri, 11 Nov 2022 07:06:26 GMT",
         "Expires": "-1",
-        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3aa62de7dd6?api-version=2022-10-01",
+        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3b33fc45b2a?api-version=2022-10-01",
         "Pragma": "no-cache",
         "Retry-After": "15",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "77024d74-b9b3-42bd-a281-e08364877df2",
+        "x-ms-correlation-request-id": "eeeec366-1c61-411d-b86c-e462f548ea29",
         "x-ms-ratelimit-remaining-subscription-reads": "11989",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060300Z:77024d74-b9b3-42bd-a281-e08364877df2"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070626Z:eeeec366-1c61-411d-b86c-e462f548ea29"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3aa62de7dd6?api-version=2022-10-01",
+      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3b33fc45b2a?api-version=2022-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -524,22 +523,22 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 11 Nov 2022 06:03:15 GMT",
+        "Date": "Fri, 11 Nov 2022 07:06:42 GMT",
         "Expires": "-1",
-        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3aa62de7dd6?api-version=2022-10-01",
+        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3b33fc45b2a?api-version=2022-10-01",
         "Pragma": "no-cache",
         "Retry-After": "15",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d310bd70-acf7-43f9-bdaa-7d71ba837f20",
+        "x-ms-correlation-request-id": "0ad8f704-eae7-47fe-a1b9-d3c34c681dd8",
         "x-ms-ratelimit-remaining-subscription-reads": "11988",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060316Z:d310bd70-acf7-43f9-bdaa-7d71ba837f20"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070642Z:0ad8f704-eae7-47fe-a1b9-d3c34c681dd8"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3aa62de7dd6?api-version=2022-10-01",
+      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3b33fc45b2a?api-version=2022-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -552,22 +551,22 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 11 Nov 2022 06:03:31 GMT",
+        "Date": "Fri, 11 Nov 2022 07:06:58 GMT",
         "Expires": "-1",
-        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3aa62de7dd6?api-version=2022-10-01",
+        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3b33fc45b2a?api-version=2022-10-01",
         "Pragma": "no-cache",
         "Retry-After": "15",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9294f00d-7ea7-44a5-b6bb-2dfdccbcf66b",
+        "x-ms-correlation-request-id": "a3bd9690-f759-467e-8ecb-bbf4b7071e3c",
         "x-ms-ratelimit-remaining-subscription-reads": "11987",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060331Z:9294f00d-7ea7-44a5-b6bb-2dfdccbcf66b"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070658Z:a3bd9690-f759-467e-8ecb-bbf4b7071e3c"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3aa62de7dd6?api-version=2022-10-01",
+      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3b33fc45b2a?api-version=2022-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -580,22 +579,22 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 11 Nov 2022 06:03:46 GMT",
+        "Date": "Fri, 11 Nov 2022 07:07:13 GMT",
         "Expires": "-1",
-        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3aa62de7dd6?api-version=2022-10-01",
+        "Location": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3b33fc45b2a?api-version=2022-10-01",
         "Pragma": "no-cache",
         "Retry-After": "15",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "fe200810-9d9b-4cdb-837d-afc223780699",
+        "x-ms-correlation-request-id": "414b6542-d24d-4993-b91f-a3e97da604f5",
         "x-ms-ratelimit-remaining-subscription-reads": "11986",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060347Z:fe200810-9d9b-4cdb-837d-afc223780699"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070714Z:414b6542-d24d-4993-b91f-a3e97da604f5"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3aa62de7dd6?api-version=2022-10-01",
+      "RequestUri": "https://centraluseuap.management.azure.com/subscriptions/00000000-0000-0000-0000-000000000000/resourceGroups/rgpy-3ef274e/providers/Microsoft.Batch/batchAccounts/batch113ef274e/certificateOperationResults/sha1-cff2ab63c8c955aaf71989efa641b906558d9fb7-8dac3b33fc45b2a?api-version=2022-10-01",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -608,15 +607,15 @@
       "ResponseHeaders": {
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Fri, 11 Nov 2022 06:04:03 GMT",
+        "Date": "Fri, 11 Nov 2022 07:07:28 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Server": "Microsoft-HTTPAPI/2.0",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "9e805590-9284-495a-bc19-347a6c700541",
+        "x-ms-correlation-request-id": "d3fb5a25-f972-4d38-a5f1-bbad042b5523",
         "x-ms-ratelimit-remaining-subscription-reads": "11985",
-        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T060403Z:9e805590-9284-495a-bc19-347a6c700541"
+        "x-ms-routing-request-id": "CENTRALUSEUAP:20221111T070729Z:d3fb5a25-f972-4d38-a5f1-bbad042b5523"
       },
       "ResponseBody": null
     }
