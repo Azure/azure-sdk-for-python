@@ -4,6 +4,9 @@
 
 ### Features Added
 
+- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+
 ### Breaking Changes
 
 ### Bugs Fixed
