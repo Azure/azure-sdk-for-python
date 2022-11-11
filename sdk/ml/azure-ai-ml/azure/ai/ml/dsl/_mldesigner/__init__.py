@@ -10,28 +10,6 @@ original function/module names the same as before, otherwise mldesigner will be 
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
-from azure.ai.ml import(
-    Input,
-    Output,
-    MLClient,
-    load_component,
-    load_environment,
-    MpiDistribution,
-    PyTorchDistribution,
-    TensorFlowDistribution,
-)
-from azure.ai.ml.entities import(
-    Component,
-    CommandComponent,
-    PipelineComponent,
-    Environment,
-    ResourceConfiguration,
-    ValidationResult,
-    Command,
-    Pipeline,
-    Parallel,
-)
-from azure.identity import AzureCliCredential
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
 from azure.ai.ml.entities._component.component_factory import component_factory
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
@@ -55,68 +33,23 @@ from azure.ai.ml._internal.entities import (
 
 component_factory_load_from_dict = component_factory.load_from_dict
 
-assert hasattr(Component, "_customized_validate")
-assert hasattr(Component, "_source_path")
-assert hasattr(CommandComponent, "_to_dict")
-assert hasattr(CommandComponent, "_source_path")
-assert hasattr(PipelineComponent, "_to_dict")
-assert hasattr(PipelineComponent, "_source_path")
-assert hasattr(PipelineComponent, "jobs")
-assert hasattr(InternalComponent, "_to_dict")
-assert hasattr(InternalComponent, "_source_path")
-assert hasattr(InternalComponent, "_additional_includes")
-assert hasattr(_AdditionalIncludes, "with_includes")
-assert hasattr(_AdditionalIncludes, "_code_path")
-assert hasattr(_AdditionalIncludes, "_includes")
-assert hasattr(ValidationResult, "passed")
-assert hasattr(ValidationResult, "error_messages")
-assert hasattr(ErrorTarget, "PIPELINE")
-
-input_obj = Input()
-assert hasattr(input_obj, "type")
-assert hasattr(input_obj, "_is_enum")
-assert hasattr(input_obj, "default")
-assert hasattr(input_obj, "min")
-assert hasattr(input_obj, "max")
-assert hasattr(input_obj, "optional")
-assert hasattr(input_obj, "_is_literal")
-assert hasattr(input_obj, "_get_python_builtin_type_str")
-assert hasattr(input_obj, "_get_param_with_standard_annotation")
-
 
 __all__ = [
     "Ae365exepool",
     "AzureCliCredential",
-    "Command",
-    "CommandComponent",
-    "Component",
     "DataTransfer",
     "Distributed",
-    "Environment",
     "HDInsight",
     "Hemera",
-    "Input",
     "InternalCommand",
     "InternalParallel",
-    "MLClient",
-    "MpiDistribution",
-    "Output",
-    "Parallel",
     "PathAwareSchema",
-    "Pipeline",
-    "PipelineComponent",
-    "PyTorchDistribution",
-    "ResourceConfiguration",
     "SchemaValidatableMixin",
     "Scope",
     "Starlite",
-    "TensorFlowDistribution",
     "UserErrorException",
-    "ValidationResult",
     "_generate_component_function",
     "_sanitize_python_variable_name",
     "component_factory_load_from_dict",
-    "load_component",
-    "load_environment",
     "load_yaml",
 ]
