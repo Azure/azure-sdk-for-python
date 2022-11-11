@@ -1114,7 +1114,7 @@ class Serializer(object):
         """Serialize Datetime object into ISO-8601 formatted string.
 
         :param Datetime attr: Object to be serialized.
-        :keyword str decimals: Number of decimal places to truncate to.
+        :keyword int decimals: Number of decimal places to truncate to.
         :rtype: str
         :raises: SerializationError if format invalid.
         """
