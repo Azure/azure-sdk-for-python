@@ -3,6 +3,7 @@
 -e ../../../tools/azure-devtools
 ../../identity/azure-identity
 marshmallow-jsonschema==0.10.0
+docker
 mock
 pytest-cov
 pytest-forked
