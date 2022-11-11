@@ -4,7 +4,6 @@ metadata:
   labels:
     testName: "deploy-python-eh-stress"
     testInstance: "eventhub-{{ .Release.Name }}-{{ .Release.Revision }}"
-    # chaos: "true"
 spec:
   nodeSelector:
     sku: 'd4v4'
