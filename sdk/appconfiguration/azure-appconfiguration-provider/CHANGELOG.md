@@ -1,6 +1,20 @@
 # Release History
 
-## 1.0.0b1 (Unreleased)
+## 1.0.0b2 (Unreleased)
+
+### Features Added
+
+* Made load method properties unordered.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+* Fixed load doc that used `selector` instead of `selects`.
+
+## 1.0.0b1 (2022-10-13)
 
 New Azure App Configuration Provider
 
