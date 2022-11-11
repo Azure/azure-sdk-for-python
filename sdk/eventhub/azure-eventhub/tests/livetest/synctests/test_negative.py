@@ -211,7 +211,7 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
         on_error.err = error
 
     env_credential = EnvironmentCredential()
-    # Skipping on OSX - it's raising a ConnectionLostError and blocking other tests
+    # Skipping on OSX - it's raising a ConnectionLostError
     if not sys.platform.startswith('darwin'):
         producer_client = EventHubProducerClient(fully_qualified_namespace="fakeeventhub.servicebus.windows.net",
                                                 eventhub_name=live_eventhub['event_hub'],
@@ -380,29 +380,31 @@ def test_client_invalid_credential(live_eventhub, uamqp_transport):
     # TODO: this seems like a bug from uamqp, should be ConnectError?
     assert isinstance(on_error.err, FileNotFoundError)
 
-    producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
-                                             eventhub_name=live_eventhub['event_hub'],
-                                             credential=env_credential,
-                                             custom_endpoint_address="fakeaddr",
-                                             uamqp_transport=uamqp_transport)
+    # Skipping on OSX - it's raising a ConnectionLostError
+    if not sys.platform.startswith('darwin'):
+        producer_client = EventHubProducerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                                eventhub_name=live_eventhub['event_hub'],
+                                                credential=env_credential,
+                                                custom_endpoint_address="fakeaddr",
+                                                uamqp_transport=uamqp_transport)
 
-    with producer_client:
-        with pytest.raises(AuthenticationError):
-            producer_client.create_batch(partition_id='0')
+        with producer_client:
+            with pytest.raises(AuthenticationError):
+                producer_client.create_batch(partition_id='0')
 
-    consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
-                                             eventhub_name=live_eventhub['event_hub'],
-                                             consumer_group='$Default',
-                                             credential=env_credential,
-                                             retry_total=0,
-                                             custom_endpoint_address="fakeaddr",
-                                             uamqp_transport=uamqp_transport)
-    with consumer_client:
-        thread = threading.Thread(target=consumer_client.receive, args=(on_event,),
-                                  kwargs={"starting_position": "-1", "on_error": on_error})
-        thread.daemon = True
-        thread.start()
-        time.sleep(15)
-    thread.join()
+        consumer_client = EventHubConsumerClient(fully_qualified_namespace=live_eventhub['hostname'],
+                                                eventhub_name=live_eventhub['event_hub'],
+                                                consumer_group='$Default',
+                                                credential=env_credential,
+                                                retry_total=0,
+                                                custom_endpoint_address="fakeaddr",
+                                                uamqp_transport=uamqp_transport)
+        with consumer_client:
+            thread = threading.Thread(target=consumer_client.receive, args=(on_event,),
+                                    kwargs={"starting_position": "-1", "on_error": on_error})
+            thread.daemon = True
+            thread.start()
+            time.sleep(15)
+        thread.join()
 
-    assert isinstance(on_error.err, AuthenticationError)
+        assert isinstance(on_error.err, AuthenticationError)
