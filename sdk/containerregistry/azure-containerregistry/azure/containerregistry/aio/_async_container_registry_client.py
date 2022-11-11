@@ -819,12 +819,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             _, _, start_upload_response_headers = await self._client.container_registry_blob.start_upload(
                 repository, cls=_return_response, **kwargs
             )
-            original = data.close
-            data.close = lambda: None
             _, _, upload_chunk_response_headers = await self._client.container_registry_blob.upload_chunk(
                 start_upload_response_headers['Location'], data, cls=_return_response, **kwargs
             )
-            data.close = original
             digest = _compute_digest(data)
             _, _, complete_upload_response_headers = await self._client.container_registry_blob.complete_upload(
                 digest=digest, next_link=upload_chunk_response_headers['Location'], cls=_return_response, **kwargs
