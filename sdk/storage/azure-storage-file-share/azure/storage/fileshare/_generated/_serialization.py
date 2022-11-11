@@ -1114,9 +1114,11 @@ class Serializer(object):
         """Serialize Datetime object into ISO-8601 formatted string.
 
         :param Datetime attr: Object to be serialized.
+        :keyword str decimals: Number of decimal places to truncate to.
         :rtype: str
         :raises: SerializationError if format invalid.
         """
+        decimals = kwargs.pop('decimals', 6)
         if isinstance(attr, str):
             attr = isodate.parse_datetime(attr)
         try:
@@ -1126,7 +1128,7 @@ class Serializer(object):
             if utc.tm_year > 9999 or utc.tm_year < 1:
                 raise OverflowError("Hit max or min date")
 
-            microseconds = str(attr.microsecond).rjust(6, "0").rstrip("0").ljust(3, "0")
+            microseconds = str(attr.microsecond).rjust(decimals, "0").rstrip("0").ljust(3, "0")
             if microseconds:
                 microseconds = "." + microseconds
             date = "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}".format(
