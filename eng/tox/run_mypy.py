@@ -13,7 +13,7 @@ import os
 import logging
 import sys
 
-from allowed_type_checking_failures import (
+from environment_exclusion_list import (
     is_ignored_package,
     MYPY_OPT_OUT,
     TYPE_CHECK_SAMPLES_OPT_OUT,
