@@ -16,8 +16,7 @@ class TestOnlineDeployment(AzureRecordedTestCase):
     @pytest.mark.skip(
         reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
     )
-    @pytest.mark.parametrize("local", [True, False])
-    def test_online_deployment(self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str], local: bool) -> None:
+    def test_online_deployment(self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str]) -> None:
         endpoint_yaml = "tests/test_configs/deployments/online/simple_online_endpoint_mir.yaml"
         deployment_yaml = "tests/test_configs/deployments/online/online_deployment_1.yaml"
         name = rand_online_name("name")
@@ -30,30 +29,29 @@ class TestOnlineDeployment(AzureRecordedTestCase):
         deployment.name = deployment_name
 
         # create a endpoint
-        client.online_endpoints.begin_create_or_update(endpoint, local=local).result()
+        client.online_endpoints.begin_create_or_update(endpoint).result()
 
         try:
             # create a deployment
-            client.online_deployments.begin_create_or_update(deployment, local=local).result()
-            dep = client.online_deployments.get(name=deployment.name, endpoint_name=endpoint.name, local=local)
+            client.online_deployments.begin_create_or_update(deployment).result()
+            dep = client.online_deployments.get(name=deployment.name, endpoint_name=endpoint.name)
             assert dep.name == deployment.name
 
-            deps = client.online_deployments.list(endpoint_name=endpoint.name, local=local)
+            deps = client.online_deployments.list(endpoint_name=endpoint.name)
             assert len(list(deps)) > 0
 
             endpoint.traffic = {deployment.name: 100}
-            client.online_endpoints.begin_create_or_update(endpoint, local=local).result()
-            endpoint_updated = client.online_endpoints.get(endpoint.name, local=local)
+            client.online_endpoints.begin_create_or_update(endpoint).result()
+            endpoint_updated = client.online_endpoints.get(endpoint.name)
             assert endpoint_updated.traffic[deployment.name] == 100
             client.online_endpoints.invoke(
                 endpoint_name=endpoint.name,
                 request_file="tests/test_configs/deployments/model-1/sample-request.json",
-                local=local,
             )
         except Exception as ex:
             raise ex
         finally:
-            client.online_endpoints.begin_delete(name=endpoint.name, local=local)
+            client.online_endpoints.begin_delete(name=endpoint.name)
 
     @pytest.mark.skip(reason="Known failure")
     def test_online_deployment_skip_script_validation(self, client: MLClient, rand_online_name: Callable[[], str], rand_online_deployment_name: Callable[[], str]) -> None:
