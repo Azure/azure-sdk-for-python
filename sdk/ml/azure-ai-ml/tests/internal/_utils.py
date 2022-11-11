@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pydash
 
 from azure.ai.ml import Input
@@ -176,6 +178,29 @@ PARAMETERS_TO_TEST = [
     ),  # Ae365exepool
     # Pipeline  we can't test this because we can't create a v1.5 pipeline component in v2, instead we test v2 pipeline
     # component containing v1.5 nodes
+]
+
+# this is to shorten the test name
+TEST_CASE_NAME_ENUMERATE = list(enumerate(map(
+    lambda params: Path(params[0]).name,
+    PARAMETERS_TO_TEST,
+)))
+
+
+ANONYMOUS_COMPONENT_TEST_PARAMS = [
+    (
+        "simple-command/powershell_copy.yaml",
+        "75c43313-4777-b2e9-fe3a-3b98cabfaa77"
+    ),
+    (
+        "additional-includes/component_spec.yaml",
+        "a0083afd-fee4-9c0d-65c2-ec75d0d5f048"
+    ),
+    # TODO(2076035): skip tests related to zip additional includes for now
+    # (
+    #     "additional-includes-in-zip/component_spec.yaml",
+    #     "24f26249-94c3-19c5-effe-030a60205d88"
+    # ),
 ]
 
 

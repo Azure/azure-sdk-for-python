@@ -22,6 +22,7 @@ from azure.ai.textanalytics import (
     VERSION,
     TextAnalyticsApiVersion,
     HealthcareEntityRelation,
+    HealthcareDocumentType
 )
 from azure.ai.textanalytics.aio import AsyncAnalyzeHealthcareEntitiesLROPoller
 
@@ -228,7 +229,7 @@ class TestHealth(TextAnalyticsTest):
             for task in tasks["items"]:
                 num_tasks += 1
                 task_stats = task['results']['statistics']
-                # assert "2022-03-01" == task['results']['modelVersion']  https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/14685418
+                assert task['results']['modelVersion']
                 assert task_stats['documentsCount'] == 5
                 assert task_stats['validDocumentsCount'] == 4
                 assert task_stats['erroneousDocumentsCount'] == 1
@@ -461,6 +462,7 @@ class TestHealth(TextAnalyticsTest):
 
         relation = result.entity_relations[0]
         assert relation.relation_type == HealthcareEntityRelation.ABBREVIATION
+        assert relation.confidence_score
         assert len(relation.roles) == 2
 
         parkinsons_entity = list(filter(lambda x: x.text == "Parkinsons Disease", result.entities))[0]
@@ -563,11 +565,12 @@ class TestHealth(TextAnalyticsTest):
                     assert result.is_error
                 else:
                     assert result.id == document_order[doc_idx]
-                    assert result.statistics
+                    # assert result.statistics FIXME https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714
                     assert result.entities
 
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15758510")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -629,3 +632,21 @@ class TestHealth(TextAnalyticsTest):
                 polling_interval=self._interval(),
             )
         assert str(e.value) == "'display_name' is not available in API version v3.1. Use service API version 2022-05-01 or newer.\n"
+
+    @TextAnalyticsPreparer()
+    @TextAnalyticsClientPreparer()
+    @recorded_by_proxy_async
+    async def test_healthcare_fhir_bundle(self, client):
+        async with client:
+            poller = await client.begin_analyze_healthcare_entities(
+                documents=[
+                    "Baby not likely to have Meningitis. In case of fever in the mother, consider Penicillin for the baby too."
+                ],
+                fhir_version="4.0.1",
+                document_type=HealthcareDocumentType.PROGRESS_NOTE,
+                polling_interval=self._interval(),
+            )
+
+            response = await poller.result()
+            async for res in response:
+                assert res.fhir_bundle

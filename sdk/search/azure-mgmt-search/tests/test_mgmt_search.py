@@ -94,12 +94,6 @@ class TestMgmtSearch(AzureMgmtRecordedTestCase):
         assert keys[0].name is None
         assert keys[1].name == key_name
 
-        self.client.query_keys.delete(
-            resource_group.name,
-            account_name,
-            key_name
-        )
-
     @ResourceGroupPreparer()
     @recorded_by_proxy
     def test_search_admin_keys(self, resource_group, location):

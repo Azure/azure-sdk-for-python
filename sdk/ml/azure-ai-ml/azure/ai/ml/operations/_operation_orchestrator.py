@@ -15,6 +15,7 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsC
 from azure.ai.ml._utils._arm_id_utils import (
     AMLNamedArmId,
     AMLVersionedArmId,
+    AMLLabelledArmId,
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
@@ -23,7 +24,6 @@ from azure.ai.ml._utils._arm_id_utils import (
 )
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
-from azure.ai.ml._utils.utils import is_private_preview_enabled # pylint: disable=unused-import
 from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
@@ -36,7 +36,11 @@ from azure.ai.ml.constants._common import (
     NAMED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_NAME,
+    LABELLED_RESOURCE_NAME,
     AzureMLResourceType,
+    LABELLED_RESOURCE_ID_FORMAT,
+    DEFAULT_LABEL_NAME,
+    REGISTRY_VERSION_PATTERN
 )
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
@@ -138,17 +142,22 @@ class OperationOrchestrator(object):
                 # CLI strips off azureml: in the schema, appending it back as required by backend
                 if (
                     azureml_type == "environments"
-                    and asset.startswith(CURATED_ENV_PREFIX)
+                    and (asset.startswith(CURATED_ENV_PREFIX) or re.match(REGISTRY_VERSION_PATTERN, f"azureml:{asset}"))
                 ):
-                    module_logger.warning(
-                        "This job/deployment uses curated environments. The syntax for using curated "
-                        "environments has changed to include azureml registry name: "
-                        "azureml:registries/azureml/environments//versions/ or "
-                        "azureml:registries/azureml/environments/labels/latest. "
-                        "Support for format you are using will be removed in future versions of the "
-                        "CLI and SDK. Learn more at aka.ms/curatedenv"
-                    )
                     return f"azureml:{asset}"
+
+                name, label = parse_name_label(asset)
+                # TODO: remove this condition after label is fully supported for all versioned resources
+                if label == DEFAULT_LABEL_NAME and azureml_type == AzureMLResourceType.COMPONENT:
+                    return LABELLED_RESOURCE_ID_FORMAT.format(
+                        self._operation_scope.subscription_id,
+                        self._operation_scope.resource_group_name,
+                        AZUREML_RESOURCE_PROVIDER,
+                        self._operation_scope.workspace_name,
+                        azureml_type,
+                        name,
+                        label,
+                    )
                 name, version = self._resolve_name_version_from_name_label(asset, azureml_type)
                 if not version:
                     name, version = parse_prefixed_name_version(asset)
@@ -173,7 +182,7 @@ class OperationOrchestrator(object):
                             "Use fully qualified name to reference custom environments "
                             "when creating assets in registry. "
                             "The syntax for fully qualified names is "
-                            "azureml:registries/azureml/environments/{{env-name}}/versions/{{version}}"
+                            "azureml://registries/azureml/environments/{{env-name}}/versions/{{version}}"
                         )
                         raise ValidationException(
                             message=msg.format(asset, azureml_type),
@@ -272,6 +281,8 @@ class OperationOrchestrator(object):
 
     def _get_environment_arm_id(self, environment: Environment, register_asset: bool = True) -> Union[str, Environment]:
         if register_asset:
+            if environment.id:
+                return environment.id
             env_response = self._environments.create_or_update(environment)
             return env_response.id
         environment = _check_and_upload_env_build_context(
@@ -290,6 +301,8 @@ class OperationOrchestrator(object):
             self._validate_datastore_name(model.path)
 
             if register_asset:
+                if model.id:
+                    return model.id
                 return self._model.create_or_update(model).id
             uploaded_model, _ = _check_and_upload_path(
                 artifact=model,
@@ -394,6 +407,12 @@ class OperationOrchestrator(object):
                     return arm_id
                 if self._match(arm_id_obj):
                     return VERSIONED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_version)
+            except ValidationException:
+                pass  # fall back to named arm id
+            try:
+                arm_id_obj = AMLLabelledArmId(arm_id)
+                if self._match(arm_id_obj):
+                    return LABELLED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_label)
             except ValidationException:
                 pass  # fall back to named arm id
             try:

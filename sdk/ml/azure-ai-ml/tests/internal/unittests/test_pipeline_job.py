@@ -8,7 +8,7 @@ import pydash
 import pytest
 import yaml
 
-from azure.ai.ml import Input, load_component
+from azure.ai.ml import Input, load_component, load_job
 from azure.ai.ml._internal import (
     AISuperComputerConfiguration,
     AISuperComputerScalePolicy,
@@ -47,6 +47,7 @@ from .._utils import (
 
 @pytest.mark.usefixtures("enable_internal_components")
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestPipelineJob:
     @pytest.mark.parametrize(
         "yaml_path,inputs,runsettings_dict,pipeline_runsettings_dict",
@@ -445,7 +446,6 @@ class TestPipelineJob:
                 "ExtractionClause": "column1:string, column2:int",
                 "TextData": {"path": "azureml:scope_tsv:1", "type": "mltable"},
             },
-            "outputs": {},
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
         assert pydash.omit(scope_node._to_rest_object(), "componentId") == {
@@ -458,7 +458,6 @@ class TestPipelineJob:
                 "ExtractionClause": {"job_input_type": "literal", "value": "column1:string, column2:int"},
                 "TextData": {"job_input_type": "mltable", "uri": "azureml:scope_tsv:1"},
             },
-            "outputs": {},
             "type": "ScopeComponent",
             "properties": {"AZURE_ML_PathOnCompute_mock_output": "mock_path"},
         }
@@ -468,12 +467,7 @@ class TestPipelineJob:
         assert pydash.omit(dsl_pipeline._to_dict(), *omit_fields) == pydash.omit(
             {
                 "display_name": "pipeline_func",
-                "inputs": {},
                 "jobs": {"node": dsl_pipeline.jobs["node"]._to_dict(), "node_internal": scope_node._to_dict()},
-                "outputs": {},
-                "properties": {},
-                "settings": {},
-                "tags": {},
                 "type": "pipeline",
             },
             *omit_fields,
@@ -592,3 +586,18 @@ class TestPipelineJob:
         copy_file.outputs.output_dir.path = "path_on_datastore"
         assert copy_file.outputs.output_dir.path == "path_on_datastore"
         assert copy_file.outputs.output_dir.type == "path"
+
+    def test_job_properties(self):
+        pipeline_job: PipelineJob = load_job(
+            source="./tests/test_configs/internal/pipeline_jobs/pipeline_job_with_properties.yml"
+        )
+        pipeline_dict = pipeline_job._to_dict()
+        rest_pipeline_dict = pipeline_job._to_rest_object().as_dict()["properties"]
+        assert pipeline_dict["properties"] == {"AZURE_ML_PathOnCompute_input_data": "/tmp/test"}
+        assert rest_pipeline_dict["properties"] == pipeline_dict["properties"]
+        for name, node_dict in pipeline_dict["jobs"].items():
+            rest_node_dict = rest_pipeline_dict["jobs"][name]
+            assert len(node_dict["properties"]) == 1
+            assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
+            assert node_dict["properties"] == rest_node_dict["properties"]
+
