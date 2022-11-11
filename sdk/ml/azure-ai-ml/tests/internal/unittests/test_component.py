@@ -356,10 +356,12 @@ class TestComponent:
         additional_includes_ignore = additional_includes_dir / "library1" / "x.additional_includes"
         additional_includes_pycache = additional_includes_dir / "library1" / "__pycache__"
         try:
-            code_pycache.mkdir()
+            if not code_pycache.is_dir():
+                code_pycache.mkdir()
             (code_pycache / "a.pyc").touch()
             additional_includes_ignore.touch()
-            additional_includes_pycache.mkdir()
+            if not additional_includes_pycache.is_dir():
+                additional_includes_pycache.mkdir()
             (additional_includes_pycache / "a.pyc").touch()
             # resolve and check snapshot directory
             with component._resolve_local_code() as code:
