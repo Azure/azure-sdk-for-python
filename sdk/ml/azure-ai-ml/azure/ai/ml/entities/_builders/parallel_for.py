@@ -50,6 +50,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
         self._outputs = self._build_outputs_dict_without_meta(outputs or {})
 
         self.items = items
+        self.max_concurrency = max_concurrency
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
