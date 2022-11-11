@@ -103,10 +103,9 @@ class AsyncTransportMixin:
                 offset = frame_header[4]
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
-                    raise ValueError(
-                        f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                    _LOGGER.debug(
+                        "Received invalid frame type: %r, expected: %r", frame_type, verify_frame_type
                     )
-
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
                 payload_size = size - len(frame_header)
@@ -124,6 +123,8 @@ class AsyncTransportMixin:
                     read_frame_buffer.write(
                         await self._read(payload_size, buffer=payload)
                     )
+            except asyncio.CancelledError: # pylint: disable=try-except-raise
+                raise
             except (TimeoutError, socket.timeout, asyncio.IncompleteReadError):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
@@ -401,11 +402,12 @@ class AsyncTransport(
 
     async def close(self):
         if self.writer is not None:
-            if self.sslopts:
-                # see issue: https://github.com/encode/httpx/issues/914
-                self.writer.transport.abort()
             # Closing the writer closes the underlying socket.
             self.writer.close()
+            if self.sslopts:
+                # see issue: https://github.com/encode/httpx/issues/914
+                await asyncio.sleep(0)
+                self.writer.transport.abort()
             await self.writer.wait_closed()
             self.writer, self.reader = None, None
         self.sock = None
@@ -530,6 +532,9 @@ class WebSocketTransportAsync(
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
+        except OSError:
+            await self.session.close()
+            raise ConnectionError('Client Session Closed')
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
