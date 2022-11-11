@@ -468,6 +468,9 @@ class Component(
             component["type"] = NodeType.COMMAND
             component["inputs"] = component.pop("source")
             component["outputs"] = dict({"output": component.pop("output")})
+            # method _to_dict() will remove empty keys
+            if "tags" not in component:
+                component["tags"] = {}
             component["tags"]["component_type_overwrite"] = NodeType.IMPORT
             component["command"] = NodeType.IMPORT
 

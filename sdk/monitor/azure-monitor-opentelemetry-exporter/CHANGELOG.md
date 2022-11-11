@@ -1,5 +1,24 @@
 # Release History
 
+## 1.0.0b11 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b10 (2022-11-10)
+
+### Bugs Fixed
+
+- Fix missing local storage attribute
+    ([#27405](https://github.com/Azure/azure-sdk-for-python/pull/27405))
+- Fix offline storage rename
+    ([#27414](https://github.com/Azure/azure-sdk-for-python/pull/27414))
+
 ## 1.0.0b9 (2022-11-08)
 
 ### Features Added

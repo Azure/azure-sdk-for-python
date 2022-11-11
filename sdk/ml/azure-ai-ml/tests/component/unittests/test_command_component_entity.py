@@ -54,7 +54,6 @@ class TestCommandComponentEntity:
         assert command_component._other_parameter.get("mock_option_param") == yaml_dict["mock_option_param"]
 
         yaml_dict["version"] = str(yaml_dict["version"])
-        yaml_dict["inputs"] = {}
         component_dict = command_component._to_dict()
         component_dict.pop("is_deterministic")
         assert yaml_dict == component_dict
@@ -220,17 +219,6 @@ class TestCommandComponentEntity:
     def test_command_component_version_as_a_function(self):
         expected_rest_component = {
             "componentId": "fake_component",
-            "computeId": None,
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
-            "inputs": {},
-            "properties": {},
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
             "type": "command",
             "_source": "YAML.COMPONENT",
         }
@@ -259,20 +247,10 @@ class TestCommandComponentEntity:
     def test_command_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "componentId": "fake_component",
-            "computeId": None,
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "10"},
                 "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
-            "properties": {},
             "type": "command",
             "_source": "YAML.COMPONENT",
         }
@@ -413,7 +391,6 @@ class TestCommandComponentEntity:
             "description": "This is the basic command component",
             "display_name": "CommandComponentBasic",
             "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-            "inputs": {},
             "is_deterministic": True,
             "name": "sample_command_component_basic",
             "outputs": {

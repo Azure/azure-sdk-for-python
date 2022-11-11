@@ -826,18 +826,12 @@ class TestDSLPipeline:
         expected_component = {
             "_source": "YAML.COMPONENT",
             "computeId": "cpu-cluster",
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_number}}"},
                 "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
             },
-            "limits": None,
             "name": "hello_world_component_1",
             "outputs": {"component_out_path": {"job_output_type": "uri_folder", "mode": "Upload"}},
-            "resources": None,
-            "tags": {},
             "type": "command",
         }
         omit_fields = ["componentId", "properties"]
@@ -1161,14 +1155,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1229,14 +1216,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1296,14 +1276,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1372,14 +1345,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1441,22 +1407,18 @@ class TestDSLPipeline:
         expected_sub_dict = {
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
-            "tags": {},
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
             "jobs": {
                 "node1": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "node2": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
@@ -1480,19 +1442,14 @@ class TestDSLPipeline:
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
-            "tags": {},
-            "properties": {},
             "type": "pipeline",
-            "settings": {},
             "inputs": {"component_in_number": 1, "component_in_path": "test"},
-            "outputs": {"sub_pipeline_out": None},
             "jobs": {
                 "node1": {
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -1544,14 +1501,8 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
                         "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1620,9 +1571,6 @@ class TestDSLPipeline:
                 "jobs": {
                     "subgraph1": {
                         "name": "subgraph1",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "type": "pipeline",
                         "inputs": {
                             "training_input": {
@@ -1733,22 +1681,18 @@ class TestDSLPipeline:
         expected_sub_dict = {
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
-            "tags": {},
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
             "jobs": {
                 "node1": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "node2": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
@@ -1769,19 +1713,14 @@ class TestDSLPipeline:
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
-            "tags": {},
-            "properties": {},
             "type": "pipeline",
-            "settings": {},
             "inputs": {"component_in_number": 1, "component_in_path": "test"},
-            "outputs": {"sub_pipeline_out": None},
             "jobs": {
                 "node1": {
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -1821,22 +1760,18 @@ class TestDSLPipeline:
         expected_sub_dict = {
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
-            "tags": {},
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
             "jobs": {
                 "node1": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "node2": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
@@ -1853,19 +1788,14 @@ class TestDSLPipeline:
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
-            "tags": {},
-            "properties": {},
             "type": "pipeline",
-            "settings": {},
             "inputs": {"component_in_number": 1, "component_in_path": "test"},
-            "outputs": {"sub_pipeline_out": None},
             "jobs": {
                 "node1": {
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -1971,53 +1901,26 @@ class TestDSLPipeline:
         actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
 
         assert actual_dict["jobs"] == {
-            'node1': {'computeId': None,
-                      'display_name': None,
-                      'distribution': None,
-                      'environment_variables': {},
-                      'identity': {'type': 'aml_token'},
+            'node1': {'identity': {'type': 'aml_token'},
                       'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                          'value': '1'},
                                  'component_in_path': {'job_input_type': 'literal',
                                                        'value': '${{parent.inputs.component_in_path}}'}},
-                      'limits': None,
                       'name': 'node1',
-                      'outputs': {},
-                      'properties': {},
-                      'resources': None,
-                      'tags': {},
                       'type': 'command'},
-            'node2': {'computeId': None,
-                      'display_name': None,
-                      'distribution': None,
-                      'identity': {'type': 'user_identity'},
-                      'environment_variables': {},
+            'node2': {'identity': {'type': 'user_identity'},
                       'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                          'value': '1'},
                                  'component_in_path': {'job_input_type': 'literal',
                                                        'value': '${{parent.inputs.component_in_path}}'}},
-                      'limits': None,
                       'name': 'node2',
-                      'outputs': {},
-                      'properties': {},
-                      'resources': None,
-                      'tags': {},
                       'type': 'command'},
-            'node3': {'computeId': None,
-                      'display_name': None,
-                      'distribution': None,
-                      'environment_variables': {},
-                      'identity': {'type': 'managed_identity'},
+            'node3': {'identity': {'type': 'managed_identity'},
                       'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                          'value': '1'},
                                  'component_in_path': {'job_input_type': 'literal',
                                                        'value': '${{parent.inputs.component_in_path}}'}},
-                      'limits': None,
                       'name': 'node3',
-                      'outputs': {},
-                      'properties': {},
-                      'resources': None,
-                      'tags': {},
                       'type': 'command'}
         }
 

@@ -20,6 +20,7 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
+from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.exceptions import ValidationException
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
@@ -186,18 +187,16 @@ class TestComponent:
         entity = load_component(yaml_path)
 
         expected_dict = copy.deepcopy(yaml_dict)
-        for key, value in {
-            "type": expected_dict["type"].rsplit("@", 1)[0]
+        type_value = (
+            expected_dict["type"].rsplit("@", 1)[0]
             if expected_dict["type"].endswith("@1-legacy")
-            else expected_dict["type"],
-            "tags": expected_dict.get("tags", {}),
-            "inputs": expected_dict.get("inputs", {}),
-            "outputs": expected_dict.get("outputs", {}),
-        }.items():
-            pydash.set_(expected_dict, key, value)
+            else expected_dict["type"]
+        )
+        pydash.set_(expected_dict, "type", type_value)
         if "environment" in expected_dict:
             expected_dict["environment"]["os"] = "Linux"
-        for input_port_name in expected_dict["inputs"]:
+
+        for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
             if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum"]:
@@ -214,7 +213,7 @@ class TestComponent:
         assert rest_obj.properties.component_spec == expected_dict
 
         # inherit input type map from Component._from_rest_object
-        for input_port in expected_dict["inputs"].values():
+        for input_port in expected_dict.get("inputs", {}).values():
             if input_port["type"] == "String":
                 input_port["type"] = input_port["type"].lower()
         assert InternalComponent._from_rest_object(rest_obj)._to_dict() == expected_dict
