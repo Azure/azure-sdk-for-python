@@ -138,20 +138,29 @@ class _LocalDeploymentHelper(object):
             deployments.append(_convert_container_to_deployment(container=container))
         return deployments
 
-    def delete(self, name: str, deployment_name: str = None):
-        """Delete a local deployment.
+    def delete(self, name: str, deployment_name: str = None) -> LROPoller[None]:
+        def local_delete_wrapper(name: str, deployment_name: str = None):
+            """Delete a local deployment.
 
-        :param name: Name of endpoint associated with the deployment to delete.
-        :type name: str
-        :param deployment_name: Name of specific deployment to delete.
-        :type deployment_name: str
-        """
-        self._docker_client.delete(endpoint_name=name, deployment_name=deployment_name)
-        try:
-            build_directory = _get_deployment_directory(endpoint_name=name, deployment_name=deployment_name)
-            shutil.rmtree(build_directory)
-        except (PermissionError, OSError):
-            pass
+            :param name: Name of endpoint associated with the deployment to delete.
+            :type name: str
+            :param deployment_name: Name of specific deployment to delete.
+            :type deployment_name: str
+            """
+            self._docker_client.delete(endpoint_name=name, deployment_name=deployment_name)
+            try:
+                build_directory = _get_deployment_directory(endpoint_name=name, deployment_name=deployment_name)
+                shutil.rmtree(build_directory)
+            except (PermissionError, OSError):
+                pass
+
+        return local_endpoint_polling_wrapper(
+            func=local_delete_wrapper,
+            message=f"Deleting deployment {deployment_name} on endpoint {name}",
+            name=name,
+            deployment_name=deployment_name
+        )
+
 
     def _create_deployment(
         self,
