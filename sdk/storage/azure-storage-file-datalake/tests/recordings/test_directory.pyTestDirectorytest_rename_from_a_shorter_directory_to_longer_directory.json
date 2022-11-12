@@ -1,23 +1,24 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/filesystem58243cd1?restype=container\u0026timeout=5",
+      "RequestUri": "https://storagename.blob.core.windows.net/filesystemc76a3856?restype=container\u0026timeout=5",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 12 Nov 2022 00:41:20 GMT",
+        "x-ms-date": "Sat, 12 Nov 2022 00:40:18 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 12 Nov 2022 00:41:20 GMT",
-        "ETag": "\u00220x8DAC4469E6C91F5\u0022",
-        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "Date": "Sat, 12 Nov 2022 00:40:18 GMT",
+        "ETag": "\u00220x8DAC44679519619\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:40:18 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -27,23 +28,24 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem58243cd1/directory58243cd1?resource=directory",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystemc76a3856/directoryc76a3856?resource=directory",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "x-ms-date": "Sat, 12 Nov 2022 00:40:18 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 12 Nov 2022 00:41:21 GMT",
-        "ETag": "\u00220x8DAC4469EDFFF74\u0022",
-        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "Date": "Sat, 12 Nov 2022 00:40:19 GMT",
+        "ETag": "\u00220x8DAC44679AC0306\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:40:19 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -54,23 +56,24 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem58243cd1/newname?resource=directory",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystemc76a3856/newname?resource=directory",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "x-ms-date": "Sat, 12 Nov 2022 00:40:19 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 12 Nov 2022 00:41:21 GMT",
-        "ETag": "\u00220x8DAC4469EF5A24A\u0022",
-        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "Date": "Sat, 12 Nov 2022 00:40:19 GMT",
+        "ETag": "\u00220x8DAC44679BCFEC2\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:40:19 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -81,23 +84,24 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem58243cd1/newname%2Fnewsub?resource=directory",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystemc76a3856/newname%2Fnewsub?resource=directory",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "x-ms-date": "Sat, 12 Nov 2022 00:40:19 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 12 Nov 2022 00:41:21 GMT",
-        "ETag": "\u00220x8DAC4469F05B3B5\u0022",
-        "Last-Modified": "Sat, 12 Nov 2022 00:41:22 GMT",
+        "Date": "Sat, 12 Nov 2022 00:40:19 GMT",
+        "ETag": "\u00220x8DAC44679D3A672\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:40:19 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -108,15 +112,16 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.dfs.core.windows.net/filesystem58243cd1/newname%2Fnewsub?mode=legacy",
+      "RequestUri": "https://storagename.dfs.core.windows.net/filesystemc76a3856/newname%2Fnewsub?mode=legacy",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
         "Content-Length": "0",
         "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 12 Nov 2022 00:41:22 GMT",
-        "x-ms-rename-source": "/filesystem58243cd1/directory58243cd1",
+        "x-ms-date": "Sat, 12 Nov 2022 00:40:19 GMT",
+        "x-ms-rename-source": "/filesystemc76a3856/directoryc76a3856",
         "x-ms-source-lease-id": "",
         "x-ms-version": "2021-08-06"
       },
@@ -124,9 +129,9 @@
       "StatusCode": 201,
       "ResponseHeaders": {
         "Content-Length": "0",
-        "Date": "Sat, 12 Nov 2022 00:41:21 GMT",
-        "ETag": "\u00220x8DAC4469EDFFF74\u0022",
-        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "Date": "Sat, 12 Nov 2022 00:40:19 GMT",
+        "ETag": "\u00220x8DAC44679AC0306\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:40:19 GMT",
         "Server": [
           "Windows-Azure-HDFS/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -136,13 +141,14 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://storagename.blob.core.windows.net/filesystem58243cd1/newname/newsub",
+      "RequestUri": "https://storagename.blob.core.windows.net/filesystemc76a3856/newname/newsub",
       "RequestMethod": "HEAD",
       "RequestHeaders": {
         "Accept": "application/xml",
         "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
         "User-Agent": "azsdk-python-storage-dfs/12.9.2 Python/3.10.2 (Windows-10-10.0.19044-SP0)",
-        "x-ms-date": "Sat, 12 Nov 2022 00:41:22 GMT",
+        "x-ms-date": "Sat, 12 Nov 2022 00:40:19 GMT",
         "x-ms-version": "2021-08-06"
       },
       "RequestBody": null,
@@ -151,9 +157,9 @@
         "Accept-Ranges": "bytes",
         "Content-Length": "0",
         "Content-Type": "application/octet-stream",
-        "Date": "Sat, 12 Nov 2022 00:41:22 GMT",
-        "ETag": "\u00220x8DAC4469EDFFF74\u0022",
-        "Last-Modified": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "Date": "Sat, 12 Nov 2022 00:40:19 GMT",
+        "ETag": "\u00220x8DAC44679AC0306\u0022",
+        "Last-Modified": "Sat, 12 Nov 2022 00:40:19 GMT",
         "Server": [
           "Windows-Azure-Blob/1.0",
           "Microsoft-HTTPAPI/2.0"
@@ -161,7 +167,7 @@
         "x-ms-access-tier": "Hot",
         "x-ms-access-tier-inferred": "true",
         "x-ms-blob-type": "BlockBlob",
-        "x-ms-creation-time": "Sat, 12 Nov 2022 00:41:21 GMT",
+        "x-ms-creation-time": "Sat, 12 Nov 2022 00:40:19 GMT",
         "x-ms-group": "$superuser",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
