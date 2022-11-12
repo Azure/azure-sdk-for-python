@@ -16,6 +16,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as Rest
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
@@ -109,6 +110,8 @@ class BatchDeployment(Deployment):
         instance_count: int = None,  # promoted property from resources.instance_count
         **kwargs,
     ) -> None:
+
+        self.job_definiton = kwargs.pop("job_definiton", None)
 
         super(BatchDeployment, self).__init__(
             name=name,
@@ -210,6 +213,12 @@ class BatchDeployment(Deployment):
             environment_variables=self.environment_variables,
             properties=self.properties,
         )
+
+        if is_private_preview_enabled() and self.job_definiton:
+            rest_job_dictionary = self.job_definiton._to_dict()
+            self.properties.component_deployment.component_id =rest_job_dictionary["component_id"]
+            self.properties.component_deployment.run_settings_type = rest_job_dictionary["type"]
+            self.properties.component_deployment.run_settings_authorization_exception = rest_job_dictionary["run_settings"]
 
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 

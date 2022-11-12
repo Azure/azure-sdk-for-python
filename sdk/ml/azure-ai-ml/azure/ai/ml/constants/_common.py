@@ -577,3 +577,8 @@ class IdentityType:
     AML_TOKEN = "aml_token"
     USER_IDENTITY = "user_identity"
     MANAGED_IDENTITY = "managed_identity"
+
+class JobTypes:
+    SWEEP_JOB = "sweep"
+    COMMAND_JOB = "command"
+    PIPELINE_JOB = "pipeline"

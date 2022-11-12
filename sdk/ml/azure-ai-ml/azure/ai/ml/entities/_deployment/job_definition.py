@@ -1,0 +1,40 @@
+# ---------------------------------------------------------
+# Copyright (c) Microsoft Corporation. All rights reserved.
+# ---------------------------------------------------------
+
+from typing import Dict
+
+from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.entities._deployment.run_settings import RunSettings
+
+
+class JobDefinition:
+    """Data Capture deployment entity
+
+    :param enabled: Is data capture enabled.
+    :type enabled: bool
+    :param rolling_rate: The rolling rate of mdc files, possible values: ["year", "month", "day", "hour", "minute"].
+    :type rolling_rate: str
+    :param destination: Must be blob store.
+    :type destination: Destination
+    :param sampling_strategy: Sample percent of traffic.
+    :type sampling_strategy: SamplingStrategy, optional
+    :param request_logging: Logging of request payload parameters.
+    :type request_logging: RequestLogging
+    """
+
+    def __init__(
+        self,
+        component_id: str = None,
+        type: str = None,
+        run_settings: RunSettings = None,
+        **kwargs,
+    ):  # pylint: disable=unused-argument
+        self.component_id = component_id
+        self.type = type
+        self.run_settings = run_settings
+
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        return JobDefinitionSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
