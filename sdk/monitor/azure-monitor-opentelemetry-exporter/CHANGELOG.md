@@ -1,5 +1,18 @@
 # Release History
 
+## 1.0.0b11 (Unreleased)
+
+### Features Added
+
+- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.0.0b10 (2022-11-10)
 
 ### Bugs Fixed

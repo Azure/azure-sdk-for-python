@@ -5,15 +5,19 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-# This script is used to execute mypy within a tox environment. Packages can opt in to fail CI job if mypy fails.
+# This script is used to execute mypy within a tox environment.
 
-from subprocess import check_call, CalledProcessError
+from subprocess import check_call
 import argparse
 import os
 import logging
 import sys
 
-from mypy_hard_failure_packages import MYPY_HARD_FAILURE_OPTED
+from environment_exclusion_list import (
+    is_ignored_package,
+    MYPY_OPT_OUT,
+    TYPE_CHECK_SAMPLES_OPT_OUT,
+)
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -32,15 +36,31 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     package_name = os.path.basename(os.path.abspath(args.target_package))
-
-    if package_name in MYPY_HARD_FAILURE_OPTED:
-        logging.info("Package {} has opted to run mypy".format(package_name))
-        check_call(
-            [
-                sys.executable,
-                "-m",
-                "mypy",
-                "--ignore-missing-imports",
-                os.path.join(args.target_package, "azure"),
-            ]
+    if package_name in MYPY_OPT_OUT or is_ignored_package(package_name):
+        logging.info(
+            f"Package {package_name} opts-out of mypy check. See https://aka.ms/python/typing-guide for information."
         )
+        exit(0)
+
+    paths = [
+        os.path.join(args.target_package, "azure"),
+        os.path.join(args.target_package, "samples"),
+    ]
+    if package_name in TYPE_CHECK_SAMPLES_OPT_OUT:
+        logging.info(
+            f"Package {package_name} opts-out of mypy check on samples."
+        )
+        paths = paths[:-1]
+
+    commands = [
+        sys.executable,
+        "-m",
+        "mypy",
+        "--python-version",
+        "3.10",
+        "--show-error-codes",
+        "--ignore-missing-imports",
+    ]
+    commands.extend(paths)
+    check_call(commands)
+    print("See https://aka.ms/python/typing-guide for information.")

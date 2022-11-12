@@ -868,7 +868,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
         assert isinstance(action_results[1][1], RecognizePiiEntitiesResult)
         assert action_results[1][1].id == "2"
 
-    @pytest.mark.skip("test is hanging with PPE")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1961,7 +1960,6 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert sentence.length is not None
                     assert result.id is not None
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15772270")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -2181,13 +2179,11 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     else:
                         assert doc.detected_language.iso6391_name == "es"
 
-    @pytest.mark.skip("https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15816856")
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
-    async def test_autodetect_with_default_and_script(self, client):
-        single_doc = "Tumhara naam kya hai?"
-        docs = [{"id": "1", "text": single_doc}]
+    async def test_autodetect_with_default(self, client):
+        docs = ["hello world"]
         actions=[
             RecognizeEntitiesAction(),
             ExtractKeyPhrasesAction(),
@@ -2199,12 +2195,11 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             docs,
             actions,
             language="auto",
-            autodetect_default_language="en",
+            autodetect_default_language="es",
             polling_interval=self._interval(),
         )
 
         result = await poller.result()
         async for res in result:
             for doc in res:
-                assert doc.detected_language.iso6391_name == "hi"
-                assert doc.detected_language.script == "Latin"
+                assert doc.detected_language.iso6391_name == "en"
