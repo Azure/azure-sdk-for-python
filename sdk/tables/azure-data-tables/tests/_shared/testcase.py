@@ -26,6 +26,7 @@ from azure.data.tables import (
     TableServiceClient,
     _error
 )
+from azure.data.tables._constants import DEFAULT_COSMOS_ENDPOINT_SUFFIX, DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from azure.data.tables._error import _decode_error
 from azure.identity import DefaultAzureCredential
 
@@ -41,9 +42,6 @@ SERVICE_LIVE_RESP_BODY = '<?xml version="1.0" encoding="utf-8"?><StorageServiceS
                          '>live</Status><LastSyncTime>Wed, 19 Jan 2021 22:28:43 GMT</LastSyncTime></GeoReplication' \
                          '></StorageServiceStats> '
 
-DEFAULT_STORAGE_ENDPOINT_SUFFIX = "core.windows.net"
-DEFAULT_COSMOS_ENDPOINT_SUFFIX = "cosmos.azure.com"
-
 
 class FakeTokenCredential(object):
     """Protocol for classes able to provide OAuth tokens.
@@ -58,13 +56,26 @@ class FakeTokenCredential(object):
 
 
 class TableTestCase(object):
-    def connection_string(self, account, key):
+    def storage_connection_string(self, account, key):
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         return (
             "DefaultEndpointsProtocol=https;AccountName="
             + account
             + ";AccountKey="
             + str(key)
-            + ";EndpointSuffix=core.windows.net"
+            + ";EndpointSuffix="
+            + endpoint_suffix
+        )
+    
+    def cosmos_connection_string(self, account, key):
+        endpoint_suffix = os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
+        return (
+            "DefaultEndpointsProtocol=https;AccountName="
+            + account
+            + ";AccountKey="
+            + str(key)
+            + ";EndpointSuffix="
+            + endpoint_suffix
         )
 
     def account_url(self, account, endpoint_type):
