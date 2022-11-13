@@ -1,5 +1,10 @@
 # Release History
 
+## 1.1.1 (Unreleased)
+
+## Features Added
+- Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
+
 ## 1.1.0 (Unreleased)
 
 ### Features Added
