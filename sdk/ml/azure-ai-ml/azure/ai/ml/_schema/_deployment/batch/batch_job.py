@@ -2,68 +2,46 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=unused-argument,no-self-use,protected-access
+# pylint: disable=unused-argument,no-self-use
 
+import logging
 from typing import Any
 
-from marshmallow import fields
-from marshmallow.decorators import post_load
+from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
-    BatchJob,
-    DataVersion,
-    UriFileJobInput,
-    UriFolderJobInput,
-)
-from azure.ai.ml._schema.core.fields import ArmStr, NestedField
-from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
-from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.constants._common import AzureMLResourceType
-from azure.ai.ml.constants._endpoint import EndpointYamlFields
-from azure.ai.ml.entities import ComputeConfiguration
-from azure.ai.ml.entities._inputs_outputs import Input
-
+from azure.ai.ml._schema.core.fields import  NestedField, PathAwareSchema
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml._schema._deployment.batch.batch_job_property import OutputDataSchema
+from azure.ai.ml._schema._deployment.batch.system_data_schema import SystemDataSchema
 from .batch_deployment_settings import BatchRetrySettingsSchema
 from .compute_binding import ComputeBindingSchema
 
 
-class OutputDataSchema(metaclass=PatchedSchemaMeta):
-    datastore_id = ArmStr(azureml_type=AzureMLResourceType.DATASTORE)
-    path = fields.Str()
-
-    @post_load
-    def make(self, data: Any, **kwargs: Any) -> Any:
-        return DataVersion(**data)
+module_logger = logging.getLogger(__name__)
 
 
 class BatchJobSchema(PathAwareSchema):
+    id = fields.Str()
+    name = fields.Str()
+    type = fields.Str()
+    system_data = NestedField(SystemDataSchema)
     compute = NestedField(ComputeBindingSchema)
     dataset = fields.Str()
     error_threshold = fields.Int()
     input_data = fields.Dict()
     mini_batch_size = fields.Int()
-    name = fields.Str(data_key="job_name")
+    batch_job_name = fields.Str()
     output_data = fields.Dict()
     output_dataset = NestedField(OutputDataSchema)
     output_file_name = fields.Str()
     retry_settings = NestedField(BatchRetrySettingsSchema)
+    status = fields.Str()
+
+
+
 
     @post_load
-    def make(self, data: Any, **kwargs: Any) -> Any:
-        if data.get(EndpointYamlFields.BATCH_JOB_INPUT_DATA, None):
-            for key, input_data in data[EndpointYamlFields.BATCH_JOB_INPUT_DATA].items():
-                if isinstance(input_data, Input):
-                    if input_data.type == AssetTypes.URI_FILE:
-                        data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = UriFileJobInput(uri=input_data.path)
-                    elif input_data.type == AssetTypes.URI_FOLDER:
-                        data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = UriFolderJobInput(uri=input_data.path)
-        if data.get(EndpointYamlFields.COMPUTE, None):
-            data[EndpointYamlFields.COMPUTE] = ComputeConfiguration(
-                **data[EndpointYamlFields.COMPUTE]
-            )._to_rest_object()
+    def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument
+        from azure.ai.ml.entities._deployment.batch_job import BatchJob
 
-        if data.get(EndpointYamlFields.RETRY_SETTINGS, None):
-            data[EndpointYamlFields.RETRY_SETTINGS] = data[EndpointYamlFields.RETRY_SETTINGS]._to_rest_object()
-
-        return BatchJob(**data)
+        return BatchJob(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)

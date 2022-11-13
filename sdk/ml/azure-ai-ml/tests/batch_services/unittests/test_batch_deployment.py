@@ -9,6 +9,7 @@ from azure.ai.ml import load_batch_deployment
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
+from azure.core.credentials import TokenCredential
 from azure.ai.ml.operations import BatchDeploymentOperations, WorkspaceOperations
 from azure.core.polling import LROPoller
 
@@ -61,6 +62,7 @@ def mock_batch_deployment_operations(
     mock_aml_services_2022_05_01: Mock,
     mock_aml_services_2020_09_01_dataplanepreview: Mock,
     mock_machinelearning_client: Mock,
+    mock_credential: TokenCredential,
 ) -> BatchDeploymentOperations:
     mock_machinelearning_client._operation_container.add(AzureMLResourceType.WORKSPACE, mock_workspace_operations)
     kwargs = {"service_client_09_2020_dataplanepreview": mock_aml_services_2020_09_01_dataplanepreview}
@@ -71,6 +73,7 @@ def mock_batch_deployment_operations(
         service_client_05_2022=mock_aml_services_2022_05_01,
         all_operations=mock_machinelearning_client._operation_container,
         requests_pipeline=mock_machinelearning_client._requests_pipeline,
+        credentials=mock_credential,
         **kwargs,
     )
 
@@ -107,13 +110,16 @@ class TestBatchDeploymentOperations:
             "azure.ai.ml.operations._batch_deployment_operations._get_mfe_base_url_from_discovery_service",
             return_value="https://somebatch-url.com",
         )
+        mock_list_jobs_batch_deployment = mocker.patch.object(
+            BatchDeploymentOperations, "list_jobs", autospec=True
+        )
         mockresponse = Mock()
         mockresponse.text = '{"key": "value"}'
         mockresponse.status_code = 200
         mocker.patch("requests.request", return_value=mockresponse)
 
         mock_batch_deployment_operations.list_jobs(endpoint_name="batch-ept", name="testdeployment")
-        mock_batch_deployment_operations._batch_job_deployment.list.assert_called_once()
+        mock_list_jobs_batch_deployment.assert_called_once()
 
     def test_delete_batch_endpoint(
         self,
