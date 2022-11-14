@@ -93,6 +93,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
 
+    @pytest.mark.usefixtures("only_enable_in_master")
     def test_pipeline_job_create_with_registries(
         self,
         client: MLClient,
