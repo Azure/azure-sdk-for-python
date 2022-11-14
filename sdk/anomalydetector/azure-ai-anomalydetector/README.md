@@ -191,7 +191,7 @@ for i in range(len(data_file.values)):
     print("Anomaly detected at index:      "+ str(i))
 ```
 
-To see how to use Anomaly Detector library to conduct Multivariate Anomaly Detection, see this [sample](/samples/sample_multivariate_detect.py). To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
+To see how to use Anomaly Detector library to conduct Multivariate Anomaly Detection, see this [sample](samples/sample_multivariate_detect.py). To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
 
 ## Troubleshooting
 
@@ -217,12 +217,12 @@ The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.
 
 These code samples show common scenario operations with the Azure Anomaly Detector library. More samples can be found under the [samples](samples) directory.
 
-* Univariate Anomaly Detection - Batch Detection: [sample_detect_entire_series_anomaly.py](/samples/sample_detect_entire_series_anomaly.py)
+* Univariate Anomaly Detection - Batch Detection: [sample_detect_entire_series_anomaly.py](samples/sample_detect_entire_series_anomaly.py)
 
-* Univariate Anomaly Detection - Streaming Detection: [sample_detect_last_point_anomaly.py](/samples/sample_detect_last_point_anomaly.py)
+* Univariate Anomaly Detection - Streaming Detection: [sample_detect_last_point_anomaly.py](samples/sample_detect_last_point_anomaly.py)
 
-* Univariate Anomaly Detection - Change Point Detection: [sample_detect_change_point.py](/samples/sample_detect_change_point.py)
-* Multivariate Anomaly Detection: [sample_multivariate_detect.py](/samples/sample_multivariate_detect.py)
+* Univariate Anomaly Detection - Change Point Detection: [sample_detect_change_point.py](samples/sample_detect_change_point.py)
+* Multivariate Anomaly Detection: [sample_multivariate_detect.py](samples/sample_multivariate_detect.py)
 
 
 ### Additional documentation
