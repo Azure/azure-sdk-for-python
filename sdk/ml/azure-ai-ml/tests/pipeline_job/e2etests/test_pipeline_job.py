@@ -660,6 +660,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             )
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_pipeline_job_anonymous_component_reuse(
         self,
         client: MLClient,

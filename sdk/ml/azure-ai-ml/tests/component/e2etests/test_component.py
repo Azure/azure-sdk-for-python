@@ -372,7 +372,7 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.display_name == display_name
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="non-deterministic upload fails in playback on CI")
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_twice_same_code_arm_id(
         self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
     ) -> None:
@@ -424,6 +424,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             client.components.create_or_update(command_component)
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_default_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # step2: test component without code
         component_name = randstr("component_name")
@@ -441,6 +442,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         assert component_resource2.display_name == display_name
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_mpi_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_name = randstr("component_name")
         # Test mpi distribution
@@ -549,6 +551,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         assert next_component_asset._auto_increment_version is False
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_anonymous_component_reuse(self, client: MLClient, variable_recorder) -> None:
         # component without code
         component_name_1 = variable_recorder.get_or_record("component_name_1", str(uuid.uuid4()))

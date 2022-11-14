@@ -1285,6 +1285,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # assert "optional_param_with_default" not in pipeline_job.inputs
         # assert "optional_param_with_default" not in next(pipeline_job.jobs.values().__iter__()).inputs
 
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_reuse(self, client: MLClient) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func1 = load_component(source=path)
