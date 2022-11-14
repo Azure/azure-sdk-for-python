@@ -32,9 +32,10 @@ client = EventGridPublisherClient(endpoint, credential)
 client.send(
     [
         CloudEvent(
-            source = "http://samplesource.dev",
-            data = "cloudevent",
-            type="Sample.Cloud.Event"
+            type="Contoso.Items.ItemReceived",
+            source="/contoso/items",
+            data={"itemSku": "Contoso Item SKU #1"},
+            subject="Door1",
         )
     ],
     channel_name=channel_name,
