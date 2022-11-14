@@ -2106,6 +2106,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert context.length is not None
                     assert summary.text
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -2183,6 +2184,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     else:
                         assert doc.detected_language.iso6391_name == "es"
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
