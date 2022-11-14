@@ -20,7 +20,7 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 from ._merkle_tree import create_merkletree
 
 from ... import Input, Output
-from .._schema.component import InternalBaseComponentSchema
+from .._schema.component import InternalComponentSchema
 from ._additional_includes import _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
@@ -157,7 +157,7 @@ class InternalComponent(Component):
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
-        return InternalBaseComponentSchema(context=context)
+        return InternalComponentSchema(context=context)
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
