@@ -30,11 +30,11 @@ def main():
     )
 
     response = client.check_name_availability.execute(
-        name_availability_request={"name": "name1", "type": "Microsoft.DBforPostgreSQL/flexibleServers"},
+        name_availability_request={"name": "name1", "type": "Microsoft.DBforPostgreSQL"},
     )
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/CheckNameAvailability.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/CheckNameAvailability.json
 if __name__ == "__main__":
     main()

@@ -14,7 +14,7 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python operation_list.py
+    python server_administrator_get.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,13 +26,16 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 def main():
     client = PostgreSQLManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.operations.list()
+    response = client.server_administrators.get(
+        resource_group_name="testrg",
+        server_name="pgtestsvc4",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/OperationList.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerAdminGet.json
 if __name__ == "__main__":
     main()

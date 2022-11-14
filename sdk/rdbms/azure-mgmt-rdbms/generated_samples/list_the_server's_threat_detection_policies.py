@@ -14,7 +14,7 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python operation_list.py
+    python list_the_server's_threat_detection_policies.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,13 +26,17 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 def main():
     client = PostgreSQLManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="00000000-1111-2222-3333-444444444444",
     )
 
-    response = client.operations.list()
-    print(response)
+    response = client.server_security_alert_policies.list_by_server(
+        resource_group_name="securityalert-4799",
+        server_name="securityalert-6440",
+    )
+    for item in response:
+        print(item)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/OperationList.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerSecurityAlertsListByServer.json
 if __name__ == "__main__":
     main()

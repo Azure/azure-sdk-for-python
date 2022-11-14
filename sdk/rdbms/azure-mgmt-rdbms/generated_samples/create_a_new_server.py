@@ -30,31 +30,25 @@ def main():
     )
 
     response = client.servers.begin_create(
-        resource_group_name="testrg",
+        resource_group_name="TestGroup",
         server_name="pgtestsvc4",
         parameters={
             "location": "westus",
             "properties": {
                 "administratorLogin": "cloudsa",
-                "administratorLoginPassword": "password",
-                "availabilityZone": "1",
-                "backup": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled"},
-                "createMode": "Create",
-                "highAvailability": {"mode": "ZoneRedundant"},
-                "network": {
-                    "delegatedSubnetResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.Network/virtualNetworks/test-vnet/subnets/test-vnet-subnet",
-                    "privateDnsZoneArmResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourcegroups/testrg/providers/Microsoft.Network/privateDnsZones/test-private-dns-zone.postgres.database.azure.com",
-                },
-                "storage": {"storageSizeGB": 512},
-                "version": "12",
+                "administratorLoginPassword": "<administratorLoginPassword>",
+                "createMode": "Default",
+                "minimalTlsVersion": "TLS1_2",
+                "sslEnforcement": "Enabled",
+                "storageProfile": {"backupRetentionDays": 7, "geoRedundantBackup": "Disabled", "storageMB": 128000},
             },
-            "sku": {"name": "Standard_D4s_v3", "tier": "GeneralPurpose"},
+            "sku": {"capacity": 2, "family": "Gen5", "name": "B_Gen5_2", "tier": "Basic"},
             "tags": {"ElasticServer": "1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/ServerCreate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerCreate.json
 if __name__ == "__main__":
     main()

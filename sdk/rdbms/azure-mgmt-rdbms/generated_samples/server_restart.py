@@ -30,12 +30,12 @@ def main():
     )
 
     response = client.servers.begin_restart(
-        resource_group_name="testrg",
+        resource_group_name="TestGroup",
         server_name="testserver",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/ServerRestart.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerRestart.json
 if __name__ == "__main__":
     main()

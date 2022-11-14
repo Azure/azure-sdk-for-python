@@ -14,7 +14,7 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python operation_list.py
+    python create_or_update_a_virtual_network_rule.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,13 +26,23 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 def main():
     client = PostgreSQLManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.operations.list()
+    response = client.virtual_network_rules.begin_create_or_update(
+        resource_group_name="TestGroup",
+        server_name="vnet-test-svr",
+        virtual_network_rule_name="vnet-firewall-rule",
+        parameters={
+            "properties": {
+                "ignoreMissingVnetServiceEndpoint": False,
+                "virtualNetworkSubnetId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/TestGroup/providers/Microsoft.Network/virtualNetworks/testvnet/subnets/testsubnet",
+            }
+        },
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/OperationList.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/VirtualNetworkRulesCreateOrUpdate.json
 if __name__ == "__main__":
     main()

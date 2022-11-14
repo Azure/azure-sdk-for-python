@@ -14,7 +14,7 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
     pip install azure-identity
     pip install azure-mgmt-rdbms
 # USAGE
-    python operation_list.py
+    python get_the_postgre_sql_server_key.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -26,13 +26,17 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 def main():
     client = PostgreSQLManagementClient(
         credential=DefaultAzureCredential(),
-        subscription_id="SUBSCRIPTION_ID",
+        subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.operations.list()
+    response = client.server_keys.get(
+        resource_group_name="testrg",
+        server_name="testserver",
+        key_name="someVault_someKey_01234567890123456789012345678901",
+    )
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/OperationList.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2020-01-01/examples/ServerKeyGet.json
 if __name__ == "__main__":
     main()

@@ -30,13 +30,13 @@ def main():
     )
 
     response = client.configurations.get(
-        resource_group_name="testrg",
+        resource_group_name="TestGroup",
         server_name="testserver",
         configuration_name="array_nulls",
     )
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/ConfigurationGet.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ConfigurationGet.json
 if __name__ == "__main__":
     main()
