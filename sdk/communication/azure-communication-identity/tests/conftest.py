@@ -35,9 +35,10 @@ def add_sanitizers(test_proxy):
 
     connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING') or \
                           os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
-    endpoint, _ = parse_connection_str(connection_str)
-    resource_name = endpoint.split(".")[0]
-    add_general_regex_sanitizer(regex=resource_name, value="sanitized")
+    if connection_str is not None:
+        endpoint, _ = parse_connection_str(connection_str)
+        resource_name = endpoint.split(".")[0]
+        add_general_regex_sanitizer(regex=resource_name, value="sanitized")
 
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
