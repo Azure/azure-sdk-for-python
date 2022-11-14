@@ -528,6 +528,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             for r in healthcare_result.relations
         ]
         fhir_bundle = healthcare_result.fhir_bundle if hasattr(healthcare_result, "fhir_bundle") else None
+        detected_language = healthcare_result.detected_language if hasattr(healthcare_result, "detected_language") else None
         return cls(
             id=healthcare_result.id,
             entities=entities,
@@ -542,9 +543,10 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
                 healthcare_result.statistics
             ),
             fhir_bundle=fhir_bundle,
-            detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
-                healthcare_result.detected_language
-            ) if hasattr(healthcare_result, "detected_language") and healthcare_result.detected_language else None
+            detected_language=detected_language  # https://github.com/Azure/azure-sdk-for-python/issues/27171
+            # detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            #     healthcare_result.detected_language
+            # ) if hasattr(healthcare_result, "detected_language") and healthcare_result.detected_language else None
         )
 
     def __repr__(self):

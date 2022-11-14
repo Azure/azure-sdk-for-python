@@ -54,6 +54,7 @@ from ._models_py3 import CustomTaskParameters
 from ._models_py3 import DateTimeResolution
 from ._models_py3 import DetectedLanguage
 from ._models_py3 import DocumentDetectedLanguage
+from ._models_py3 import DocumentDetectedLanguageString
 from ._models_py3 import DocumentError
 from ._models_py3 import DocumentRequestStatistics
 from ._models_py3 import DocumentResult
@@ -66,14 +67,14 @@ from ._models_py3 import DynamicClassificationTaskResult
 from ._models_py3 import EntitiesDocumentResult
 from ._models_py3 import EntitiesLROTask
 from ._models_py3 import EntitiesResult
-from ._models_py3 import EntitiesResultDocumentsItem
+from ._models_py3 import EntitiesResultWithDetectedLanguage
 from ._models_py3 import EntitiesTaskParameters
 from ._models_py3 import EntitiesTaskResult
 from ._models_py3 import Entity
 from ._models_py3 import EntityLinkingLROResult
 from ._models_py3 import EntityLinkingLROTask
 from ._models_py3 import EntityLinkingResult
-from ._models_py3 import EntityLinkingResultDocumentsItem
+from ._models_py3 import EntityLinkingResultWithDetectedLanguage
 from ._models_py3 import EntityLinkingTaskParameters
 from ._models_py3 import EntityLinkingTaskResult
 from ._models_py3 import EntityRecognitionLROResult
@@ -89,6 +90,7 @@ from ._models_py3 import ExtractiveSummarizationResult
 from ._models_py3 import ExtractiveSummarizationTaskParameters
 from ._models_py3 import HealthcareAssertion
 from ._models_py3 import HealthcareEntitiesDocumentResult
+from ._models_py3 import HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage
 from ._models_py3 import HealthcareEntity
 from ._models_py3 import HealthcareEntityLink
 from ._models_py3 import HealthcareLROResult
@@ -96,7 +98,6 @@ from ._models_py3 import HealthcareLROTask
 from ._models_py3 import HealthcareRelation
 from ._models_py3 import HealthcareRelationEntity
 from ._models_py3 import HealthcareResult
-from ._models_py3 import HealthcareResultDocumentsItem
 from ._models_py3 import HealthcareTaskParameters
 from ._models_py3 import InformationResolution
 from ._models_py3 import InnerErrorModel
@@ -124,12 +125,12 @@ from ._models_py3 import MultiLanguageInput
 from ._models_py3 import NumberResolution
 from ._models_py3 import NumericRangeResolution
 from ._models_py3 import OrdinalResolution
+from ._models_py3 import PIIResultWithDetectedLanguage
 from ._models_py3 import Pagination
 from ._models_py3 import PiiEntitiesDocumentResult
 from ._models_py3 import PiiEntityRecognitionLROResult
 from ._models_py3 import PiiLROTask
 from ._models_py3 import PiiResult
-from ._models_py3 import PiiResultDocumentsItem
 from ._models_py3 import PiiTaskParameters
 from ._models_py3 import PiiTaskResult
 from ._models_py3 import PreBuiltResult
@@ -253,6 +254,7 @@ __all__ = [
     'DateTimeResolution',
     'DetectedLanguage',
     'DocumentDetectedLanguage',
+    'DocumentDetectedLanguageString',
     'DocumentError',
     'DocumentRequestStatistics',
     'DocumentResult',
@@ -265,14 +267,14 @@ __all__ = [
     'EntitiesDocumentResult',
     'EntitiesLROTask',
     'EntitiesResult',
-    'EntitiesResultDocumentsItem',
+    'EntitiesResultWithDetectedLanguage',
     'EntitiesTaskParameters',
     'EntitiesTaskResult',
     'Entity',
     'EntityLinkingLROResult',
     'EntityLinkingLROTask',
     'EntityLinkingResult',
-    'EntityLinkingResultDocumentsItem',
+    'EntityLinkingResultWithDetectedLanguage',
     'EntityLinkingTaskParameters',
     'EntityLinkingTaskResult',
     'EntityRecognitionLROResult',
@@ -288,6 +290,7 @@ __all__ = [
     'ExtractiveSummarizationTaskParameters',
     'HealthcareAssertion',
     'HealthcareEntitiesDocumentResult',
+    'HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage',
     'HealthcareEntity',
     'HealthcareEntityLink',
     'HealthcareLROResult',
@@ -295,7 +298,6 @@ __all__ = [
     'HealthcareRelation',
     'HealthcareRelationEntity',
     'HealthcareResult',
-    'HealthcareResultDocumentsItem',
     'HealthcareTaskParameters',
     'InformationResolution',
     'InnerErrorModel',
@@ -323,12 +325,12 @@ __all__ = [
     'NumberResolution',
     'NumericRangeResolution',
     'OrdinalResolution',
+    'PIIResultWithDetectedLanguage',
     'Pagination',
     'PiiEntitiesDocumentResult',
     'PiiEntityRecognitionLROResult',
     'PiiLROTask',
     'PiiResult',
-    'PiiResultDocumentsItem',
     'PiiTaskParameters',
     'PiiTaskResult',
     'PreBuiltResult',

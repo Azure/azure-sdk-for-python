@@ -2990,6 +2990,35 @@ class DetectedLanguage(_serialization.Model):
         self.script = script
 
 
+class DocumentDetectedLanguageString(_serialization.Model):
+    """DocumentDetectedLanguageString.
+
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+     field will contain a 2 letter ISO 639-1 representation of the language detected for this
+     document.
+    :vartype detected_language: str
+    """
+
+    _attribute_map = {
+        "detected_language": {"key": "detectedLanguage", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        detected_language: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
+         field will contain a 2 letter ISO 639-1 representation of the language detected for this
+         document.
+        :paramtype detected_language: str
+        """
+        super().__init__(**kwargs)
+        self.detected_language = detected_language
+
+
 class DocumentError(_serialization.Model):
     """DocumentError.
 
@@ -3514,7 +3543,7 @@ class EntitiesResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntitiesResultDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntitiesResultWithDetectedLanguage]
     """
 
     _validation = {
@@ -3527,7 +3556,7 @@ class EntitiesResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[EntitiesResultDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[EntitiesResultWithDetectedLanguage]"},
     }
 
     def __init__(
@@ -3535,7 +3564,7 @@ class EntitiesResult(PreBuiltResult):
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.EntitiesResultDocumentsItem"],
+        documents: List["_models.EntitiesResultWithDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -3549,14 +3578,14 @@ class EntitiesResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntitiesResultDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntitiesResultWithDetectedLanguage]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
 
 
-class EntitiesResultDocumentsItem(EntitiesDocumentResult, DocumentDetectedLanguage):
-    """EntitiesResultDocumentsItem.
+class EntitiesResultWithDetectedLanguage(EntitiesDocumentResult, DocumentDetectedLanguage):
+    """EntitiesResultWithDetectedLanguage.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -3911,7 +3940,7 @@ class EntityLinkingResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityLinkingResultDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityLinkingResultWithDetectedLanguage]
     """
 
     _validation = {
@@ -3924,7 +3953,7 @@ class EntityLinkingResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[EntityLinkingResultDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[EntityLinkingResultWithDetectedLanguage]"},
     }
 
     def __init__(
@@ -3932,7 +3961,7 @@ class EntityLinkingResult(PreBuiltResult):
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.EntityLinkingResultDocumentsItem"],
+        documents: List["_models.EntityLinkingResultWithDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -3946,7 +3975,7 @@ class EntityLinkingResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityLinkingResultDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.EntityLinkingResultWithDetectedLanguage]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
@@ -4005,8 +4034,8 @@ class LinkedEntitiesDocumentResult(DocumentResult):
         self.entities = entities
 
 
-class EntityLinkingResultDocumentsItem(LinkedEntitiesDocumentResult, DocumentDetectedLanguage):
-    """EntityLinkingResultDocumentsItem.
+class EntityLinkingResultWithDetectedLanguage(LinkedEntitiesDocumentResult, DocumentDetectedLanguage):
+    """EntityLinkingResultWithDetectedLanguage.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -4946,6 +4975,91 @@ class HealthcareEntitiesDocumentResult(DocumentResult):
         self.fhir_bundle = fhir_bundle
 
 
+class HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage(HealthcareEntitiesDocumentResult, DocumentDetectedLanguageString):
+    """HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
+     field will contain a 2 letter ISO 639-1 representation of the language detected for this
+     document.
+    :vartype detected_language: str
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar warnings: Warnings encountered while processing document. Required.
+    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
+    :ivar entities: Healthcare entities. Required.
+    :vartype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntity]
+    :ivar relations: Healthcare entity relations. Required.
+    :vartype relations: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareRelation]
+    :ivar fhir_bundle: JSON bundle containing a FHIR compatible object for consumption in other
+     Healthcare tools. For additional information see https://www.hl7.org/fhir/overview.html.
+    :vartype fhir_bundle: dict[str, any]
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'warnings': {'required': True},
+        'entities': {'required': True},
+        'relations': {'required': True},
+    }
+
+    _attribute_map = {
+        "detected_language": {"key": "detectedLanguage", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
+        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
+        "entities": {"key": "entities", "type": "[HealthcareEntity]"},
+        "relations": {"key": "relations", "type": "[HealthcareRelation]"},
+        "fhir_bundle": {"key": "fhirBundle", "type": "{object}"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        warnings: List["_models.DocumentWarning"],
+        entities: List["_models.HealthcareEntity"],
+        relations: List["_models.HealthcareRelation"],
+        detected_language: Optional[str] = None,
+        statistics: Optional["_models.DocumentStatistics"] = None,
+        fhir_bundle: Optional[Dict[str, Any]] = None,
+        **kwargs
+    ):
+        """
+        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
+         field will contain a 2 letter ISO 639-1 representation of the language detected for this
+         document.
+        :paramtype detected_language: str
+        :keyword id: Unique, non-empty document identifier. Required.
+        :paramtype id: str
+        :keyword warnings: Warnings encountered while processing document. Required.
+        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
+        :keyword statistics: if showStats=true was specified in the request this field will contain
+         information about the document payload.
+        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
+        :keyword entities: Healthcare entities. Required.
+        :paramtype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntity]
+        :keyword relations: Healthcare entity relations. Required.
+        :paramtype relations:
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareRelation]
+        :keyword fhir_bundle: JSON bundle containing a FHIR compatible object for consumption in other
+         Healthcare tools. For additional information see https://www.hl7.org/fhir/overview.html.
+        :paramtype fhir_bundle: dict[str, any]
+        """
+        super().__init__(id=id, warnings=warnings, statistics=statistics, entities=entities, relations=relations, fhir_bundle=fhir_bundle, detected_language=detected_language, **kwargs)
+        self.detected_language = detected_language
+        self.id = id
+        self.warnings = warnings
+        self.statistics = statistics
+        self.entities = entities
+        self.relations = relations
+        self.fhir_bundle = fhir_bundle
+
+
 class HealthcareEntity(_serialization.Model):
     """HealthcareEntity.
 
@@ -5327,7 +5441,7 @@ class HealthcareResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareResultDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage]
     """
 
     _validation = {
@@ -5340,7 +5454,7 @@ class HealthcareResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[HealthcareResultDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage]"},
     }
 
     def __init__(
@@ -5348,7 +5462,7 @@ class HealthcareResult(PreBuiltResult):
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.HealthcareResultDocumentsItem"],
+        documents: List["_models.HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -5362,96 +5476,10 @@ class HealthcareResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareResultDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntitiesDocumentResultWithDocumentDetectedLanguage]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
-
-
-class HealthcareResultDocumentsItem(HealthcareEntitiesDocumentResult, DocumentDetectedLanguage):
-    """HealthcareResultDocumentsItem.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-     field will contain a 2 letter ISO 639-1 representation of the language detected for this
-     document.
-    :vartype detected_language: ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
-    :ivar id: Unique, non-empty document identifier. Required.
-    :vartype id: str
-    :ivar warnings: Warnings encountered while processing document. Required.
-    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-    :ivar statistics: if showStats=true was specified in the request this field will contain
-     information about the document payload.
-    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-    :ivar entities: Healthcare entities. Required.
-    :vartype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntity]
-    :ivar relations: Healthcare entity relations. Required.
-    :vartype relations: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareRelation]
-    :ivar fhir_bundle: JSON bundle containing a FHIR compatible object for consumption in other
-     Healthcare tools. For additional information see https://www.hl7.org/fhir/overview.html.
-    :vartype fhir_bundle: dict[str, any]
-    """
-
-    _validation = {
-        'id': {'required': True},
-        'warnings': {'required': True},
-        'entities': {'required': True},
-        'relations': {'required': True},
-    }
-
-    _attribute_map = {
-        "detected_language": {"key": "detectedLanguage", "type": "DetectedLanguage"},
-        "id": {"key": "id", "type": "str"},
-        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
-        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "entities": {"key": "entities", "type": "[HealthcareEntity]"},
-        "relations": {"key": "relations", "type": "[HealthcareRelation]"},
-        "fhir_bundle": {"key": "fhirBundle", "type": "{object}"},
-    }
-
-    def __init__(
-        self,
-        *,
-        id: str,  # pylint: disable=redefined-builtin
-        warnings: List["_models.DocumentWarning"],
-        entities: List["_models.HealthcareEntity"],
-        relations: List["_models.HealthcareRelation"],
-        detected_language: Optional["_models.DetectedLanguage"] = None,
-        statistics: Optional["_models.DocumentStatistics"] = None,
-        fhir_bundle: Optional[Dict[str, Any]] = None,
-        **kwargs
-    ):
-        """
-        :keyword detected_language: If 'language' is set to 'auto' for the document in the request this
-         field will contain a 2 letter ISO 639-1 representation of the language detected for this
-         document.
-        :paramtype detected_language:
-         ~azure.ai.textanalytics.v2022_10_01_preview.models.DetectedLanguage
-        :keyword id: Unique, non-empty document identifier. Required.
-        :paramtype id: str
-        :keyword warnings: Warnings encountered while processing document. Required.
-        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
-        :keyword statistics: if showStats=true was specified in the request this field will contain
-         information about the document payload.
-        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-        :keyword entities: Healthcare entities. Required.
-        :paramtype entities: list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareEntity]
-        :keyword relations: Healthcare entity relations. Required.
-        :paramtype relations:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.HealthcareRelation]
-        :keyword fhir_bundle: JSON bundle containing a FHIR compatible object for consumption in other
-         Healthcare tools. For additional information see https://www.hl7.org/fhir/overview.html.
-        :paramtype fhir_bundle: dict[str, any]
-        """
-        super().__init__(id=id, warnings=warnings, statistics=statistics, entities=entities, relations=relations, fhir_bundle=fhir_bundle, detected_language=detected_language, **kwargs)
-        self.detected_language = detected_language
-        self.id = id
-        self.warnings = warnings
-        self.statistics = statistics
-        self.entities = entities
-        self.relations = relations
-        self.fhir_bundle = fhir_bundle
 
 
 class HealthcareTaskParameters(PreBuiltTaskParameters):
@@ -6947,7 +6975,7 @@ class PiiResult(PreBuiltResult):
     :vartype model_version: str
     :ivar documents: Response by document. Required.
     :vartype documents:
-     list[~azure.ai.textanalytics.v2022_10_01_preview.models.PiiResultDocumentsItem]
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.PIIResultWithDetectedLanguage]
     """
 
     _validation = {
@@ -6960,7 +6988,7 @@ class PiiResult(PreBuiltResult):
         "errors": {"key": "errors", "type": "[InputError]"},
         "statistics": {"key": "statistics", "type": "RequestStatistics"},
         "model_version": {"key": "modelVersion", "type": "str"},
-        "documents": {"key": "documents", "type": "[PiiResultDocumentsItem]"},
+        "documents": {"key": "documents", "type": "[PIIResultWithDetectedLanguage]"},
     }
 
     def __init__(
@@ -6968,7 +6996,7 @@ class PiiResult(PreBuiltResult):
         *,
         errors: List["_models.InputError"],
         model_version: str,
-        documents: List["_models.PiiResultDocumentsItem"],
+        documents: List["_models.PIIResultWithDetectedLanguage"],
         statistics: Optional["_models.RequestStatistics"] = None,
         **kwargs
     ):
@@ -6982,14 +7010,14 @@ class PiiResult(PreBuiltResult):
         :paramtype model_version: str
         :keyword documents: Response by document. Required.
         :paramtype documents:
-         list[~azure.ai.textanalytics.v2022_10_01_preview.models.PiiResultDocumentsItem]
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.PIIResultWithDetectedLanguage]
         """
         super().__init__(errors=errors, statistics=statistics, model_version=model_version, **kwargs)
         self.documents = documents
 
 
-class PiiResultDocumentsItem(PiiEntitiesDocumentResult, DocumentDetectedLanguage):
-    """PiiResultDocumentsItem.
+class PIIResultWithDetectedLanguage(PiiEntitiesDocumentResult, DocumentDetectedLanguage):
+    """PIIResultWithDetectedLanguage.
 
     All required parameters must be populated in order to send to Azure.
 
