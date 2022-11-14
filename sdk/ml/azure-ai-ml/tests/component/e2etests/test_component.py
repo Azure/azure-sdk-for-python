@@ -27,7 +27,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
 
 
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 def create_component(
@@ -841,6 +841,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         rest_component = client.components.create_or_update(component)
         assert rest_component.name == name
 
+    @pytest.mark.skipif(condition=not is_live(), reason="registry test, target to verify service-side behavior")
     def test_component_with_default_label(
         self,
         client: MLClient,
@@ -850,6 +851,8 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         component_name = randstr("component_name")
 
         create_component(client, component_name, path=yaml_path)
+
+        sleep_if_live(5)  # sleep 5 seconds to wait for index service update
 
         target_component = client.components.get(component_name, label="latest")
 
