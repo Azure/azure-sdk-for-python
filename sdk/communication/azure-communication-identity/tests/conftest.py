@@ -44,13 +44,7 @@ def add_sanitizers(test_proxy):
 
     m365_client_id = os.environ.get("COMMUNICATION_M365_APP_ID", "sanitized")
     add_general_regex_sanitizer(regex=m365_client_id, value="sanitized")
-    #
-    m365_aad_authority = os.environ.get("COMMUNICATION_M365_AAD_AUTHORITY", "sanitized")
-    add_general_regex_sanitizer(regex=m365_aad_authority, value="sanitized")
 
-    m365_aad_tenant = os.environ.get("COMMUNICATION_M365_AAD_TENANT", "sanitized")
-    add_general_regex_sanitizer(regex=m365_aad_tenant, value="sanitized")
-    #
     msal_username = os.environ.get("COMMUNICATION_MSAL_USERNAME", "sanitized")
     add_general_regex_sanitizer(regex=msal_username, value="sanitized")
 

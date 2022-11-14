@@ -19,13 +19,6 @@ from azure.communication.identity._shared.utils import parse_connection_str
 from msal import PublicClientApplication
 
 
-class ArgumentPasserTime:
-    def __call__(self, fn):
-        def _wrapper(test_class, _, time, **kwargs):
-            fn(test_class, _, time, **kwargs)
-        return _wrapper
-
-
 class ArgumentPasser:
     def __call__(self, fn):
         def _wrapper(test_class, _, value, **kwargs):
@@ -87,8 +80,8 @@ class TestCommunicationIdentityClient(AzureRecordedTestCase):
         assert token_response.token is not None
 
     @CommunicationPreparer()
-    @pytest.mark.parametrize("_, time", [("min_valid_hours", 1), ("max_valid_hours", 24)])
-    @ArgumentPasserTime()
+    @pytest.mark.parametrize("_, value", [("min_valid_hours", 1), ("max_valid_hours", 24)])
+    @ArgumentPasser()
     @recorded_by_proxy
     def test_create_user_and_token_with_valid_custom_expirations_new(self, _, valid_hours):
         self.communication_environment()
@@ -108,8 +101,8 @@ class TestCommunicationIdentityClient(AzureRecordedTestCase):
             assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
 
     @CommunicationPreparer()
-    @pytest.mark.parametrize("_, time", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)])
-    @ArgumentPasserTime()
+    @pytest.mark.parametrize("_, value", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)])
+    @ArgumentPasser()
     @recorded_by_proxy
     def test_create_user_and_token_with_invalid_custom_expirations(self, _, time):
         self.communication_environment()
@@ -162,10 +155,10 @@ class TestCommunicationIdentityClient(AzureRecordedTestCase):
         assert token_response.token is not None
 
     @CommunicationPreparer()
-    @pytest.mark.parametrize("_, time", [("min_valid_hours", 1), ("max_valid_hours", 24)])
-    @ArgumentPasserTime()
+    @pytest.mark.parametrize("_, value", [("min_valid_hours", 1), ("max_valid_hours", 24)])
+    @ArgumentPasser()
     @recorded_by_proxy
-    def test_get_token_with_valid_custom_expirations(self, _, time):
+    def test_get_token_with_valid_custom_expirations(self, _, value):
         self.communication_environment()
 
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -174,7 +167,7 @@ class TestCommunicationIdentityClient(AzureRecordedTestCase):
         )
         user = identity_client.create_user()
 
-        token_expires_in = timedelta(hours=time)
+        token_expires_in = timedelta(hours=value)
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT],
                                                    token_expires_in=token_expires_in)
 
@@ -184,10 +177,10 @@ class TestCommunicationIdentityClient(AzureRecordedTestCase):
             assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
 
     @CommunicationPreparer()
-    @pytest.mark.parametrize("_, time", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)])
-    @ArgumentPasserTime()
+    @pytest.mark.parametrize("_, value", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)])
+    @ArgumentPasser()
     @recorded_by_proxy
-    def test_get_token_with_invalid_custom_expirations(self, _, time):
+    def test_get_token_with_invalid_custom_expirations(self, _, value):
         self.communication_environment()
 
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -196,7 +189,7 @@ class TestCommunicationIdentityClient(AzureRecordedTestCase):
         )
         user = identity_client.create_user()
 
-        token_expires_in = timedelta(minutes=time)
+        token_expires_in = timedelta(minutes=value)
 
         with pytest.raises(Exception) as ex:
             identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
@@ -432,7 +425,7 @@ class TestCommunicationIdentityClient(AzureRecordedTestCase):
         )
         aad_token, user_object_id = self.generate_teams_user_aad_token()
         with pytest.raises(Exception) as ex:
-            token_response = identity_client.get_token_for_teams_user(aad_token, user_object_id, user_object_id)
+            _ = identity_client.get_token_for_teams_user(aad_token, user_object_id, user_object_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
@@ -481,7 +474,7 @@ class TestCommunicationIdentityClient(AzureRecordedTestCase):
             self.msal_username = "sanitized"
             self.msal_password = "sanitized"
             self.expired_teams_token = "sanitized"
-            self.skip_get_token_for_teams_user_tests = "false"
+            self.skip_get_token_for_teams_user_tests = "true"
         else:
             self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING') or \
                                   os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
