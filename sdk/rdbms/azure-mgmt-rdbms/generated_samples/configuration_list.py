@@ -30,13 +30,13 @@ def main():
     )
 
     response = client.configurations.list_by_server(
-        resource_group_name="TestGroup",
+        resource_group_name="testrg",
         server_name="testserver",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ConfigurationListByServer.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/ConfigurationListByServer.json
 if __name__ == "__main__":
     main()

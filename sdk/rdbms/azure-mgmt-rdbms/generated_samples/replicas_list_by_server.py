@@ -30,13 +30,13 @@ def main():
     )
 
     response = client.replicas.list_by_server(
-        resource_group_name="TestGroup_WestCentralUS",
-        server_name="testserver-master",
+        resource_group_name="testrg",
+        server_name="sourcepgservername",
     )
     for item in response:
         print(item)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ReplicasListByServer.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/ReplicasListByServer.json
 if __name__ == "__main__":
     main()

@@ -29,14 +29,14 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.firewall_rules.list_by_server(
-        resource_group_name="TestGroup",
+    response = client.firewall_rules.get(
+        resource_group_name="testrg",
         server_name="testserver",
+        firewall_rule_name="rule1",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/FirewallRuleListByServer.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/FirewallRuleGet.json
 if __name__ == "__main__":
     main()
