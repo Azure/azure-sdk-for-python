@@ -720,7 +720,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
-    @pytest.mark.skip(reason="migration skip: refactor for download.")
+    @pytest.mark.skipif(condition=not is_live(), reason="test download behaviour in live test.")
     def test_pipeline_job_download(
         self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]
     ) -> None:
@@ -746,6 +746,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         else:
             print("Job is canceled, not execute downloaded artifacts assertion.")
 
+    @pytest.mark.skipif(condition=not is_live(), reason="test download behaviour in live test.")
     def test_pipeline_job_child_run_download(
         self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]
     ) -> None:
