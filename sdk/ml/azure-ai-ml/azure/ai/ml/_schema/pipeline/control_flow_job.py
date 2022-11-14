@@ -86,5 +86,5 @@ class ParallelForSchema(BaseLoopSchema):
         result = copy.copy(data)
         if isinstance(result.items, (dict, list)):
             # use str to serialize input/output builder
-            result.items = json.dumps(result.items, default=lambda x: str(x) if isinstance(x, InputOutputBase) else x)
+            result._items = json.dumps(result.items, default=lambda x: str(x) if isinstance(x, InputOutputBase) else x)
         return result

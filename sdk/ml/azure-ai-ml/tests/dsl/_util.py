@@ -7,7 +7,7 @@ _DSL_TIMEOUT_SECOND = 20 * 60  # timeout for dsl's tests, unit in second.
 
 
 @contextlib.contextmanager
-def include_private_preview_nodes_in_pipeline():  # pylint: disable=protected-access
+def include_private_preview_nodes_in_pipeline():
     original_jobs = PipelineJobSchema._declared_fields["jobs"]
     PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
 

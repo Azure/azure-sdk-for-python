@@ -3,6 +3,7 @@ import pytest
 from azure.ai.ml import load_component, Input
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._parallel_for import parallel_for
+from azure.ai.ml.entities import Command
 from azure.ai.ml.exceptions import ValidationException
 from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
 
@@ -23,6 +24,10 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         parallel_component = load_component(
             source="./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml")
 
+        basic_component = load_component(
+            source="./tests/test_configs/components/component_with_conditional_output/spec.yaml"
+        )
+
         @pipeline
         def invalid_pipeline(test_path1, test_path2):
             body = parallel_component()
@@ -41,11 +46,8 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             )
         assert "Expecting (<class 'azure.ai.ml.entities._builders.command.Command'>, " \
                "<class 'azure.ai.ml.entities._builders.pipeline.Pipeline'>) for body" in str(e.value)
-        # items unsupported
 
-        basic_component = load_component(
-            source="./tests/test_configs/components/component_with_conditional_output/spec.yaml"
-        )
+        # items with invalid type
 
         @pipeline
         def invalid_pipeline():
@@ -55,12 +57,71 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
                 items=1,
             )
 
-        invalid_pipeline()
+        with pytest.raises(ValidationException) as e:
+            invalid_pipeline()
 
-        # invalid items
+        assert "got <class 'int'> instead." in str(e.value)
 
-        # item inputs not exist in body
-        pass
+    @pytest.mark.parametrize(
+        "items, error_message",
+        [
+            (
+                    # items with invalid content type
+                    {"a": 1},
+                    "but got <class 'int'> for 1.",
+            ),
+            (
+                    # items with empty dict as content
+
+                    [],
+                    "Items is an empty list/dict"
+
+            ),
+            (
+                    # items with empty dict as content
+
+                    [{}],
+                    "but got <class \'dict\'> for {}"
+            ),
+            (
+                    # item meta not match
+                    [
+                        {"component_in_path": "test_path1"},
+                        {"component_in_path": "test_path2", "component_in_number": 1}
+                    ],
+                    "Items should to have same keys, but got "
+            ),
+            (
+                    # item inputs not exist in body
+                    [
+                        {"job_data_path": "test_path1"},
+                    ],
+                    "Item {\'job_data_path\': \'test_path1\'} got unmatched inputs "
+            ),
+            (
+                    # invalid JSON string items
+
+                    '[{"component_in_number": 1}, {}]',
+                    "Items has to be list/dict of non-empty dict as value"
+            )
+        ],
+    )
+    def test_dsl_parallel_for_pipeline_illegal_items_content(self, items, error_message):
+        basic_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+
+        @pipeline
+        def invalid_pipeline():
+            body = basic_component()
+            parallel_for(
+                body=body,
+                items=items,
+            )
+
+        with pytest.raises(ValidationException) as e:
+            invalid_pipeline()
+        assert error_message in str(e.value)
 
     def test_dsl_parallel_for_pipeline_items(self):
         # TODO: submit those pipelines
@@ -161,3 +222,32 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         assert rest_items == '[{"component_in_string": "component_in_string", ' \
                              '"component_in_ranged_integer": 10, "component_in_enum": "world", ' \
                              '"component_in_boolean": true, "component_in_ranged_number": 5.5}]'
+
+        # JSON string items
+        @pipeline
+        def my_pipeline():
+            body = basic_component(component_in_path=Input(path="test_path1"))
+            parallel_for(
+                body=body,
+                items='[{"component_in_number": 1}, {"component_in_number": 2}]'
+            )
+
+        my_job = my_pipeline()
+        rest_job = my_job._to_rest_object().as_dict()
+        rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
+        assert rest_items == '[{"component_in_number": 1}, {"component_in_number": 2}]'
+
+    def test_dsl_parallel_for_pipeline_with_string_component(self):
+        # no validation on items if body's component is a string
+
+        @pipeline
+        def my_pipeline():
+            body = Command(
+                component="component_id",
+            )
+            parallel_for(
+                body=body,
+                items='[{"not_exist": 1}, {"not_exist": 2}]'
+            )
+
+        my_pipeline()

@@ -1,12 +1,15 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import json
 from typing import Dict, Union
 
 from azure.ai.ml import Output
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
+from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants._component import ControlFlowType
+from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
@@ -44,20 +47,30 @@ class ParallelFor(LoopNode, NodeIOMixin):
             body=body,
             **kwargs,
         )
-        # parallel for node shares output meta with body
-        # TODO: handle when body don't have component or component.outputs
-        outputs = self.body._component.outputs
-        self._outputs = self._build_outputs_dict_without_meta(outputs or {})
-
-        self.items = items
-        self.max_concurrency = max_concurrency
-
         # loop body is incomplete in submission time, so won't validate required inputs
         self.body._validate_required_input_not_provided = False
+
+        # parallel for node shares output meta with body
+        # TODO: handle when body don't have component or component.outputs
+        try:
+            outputs = self.body._component.outputs
+            self._outputs = self._build_outputs_dict_without_meta(outputs or {})
+        except AttributeError:
+            pass
+
+        self._items = items
+        self._validate_items(raise_error=True)
+
+        self.max_concurrency = max_concurrency
 
     @property
     def outputs(self) -> Dict[str, Union[str, Output]]:
         return self._outputs
+
+    @property
+    def items(self):
+        """The loop body's input which will bind to the loop node."""
+        return self._items
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> PathAwareSchema:
@@ -78,7 +91,64 @@ class ParallelFor(LoopNode, NodeIOMixin):
         #     rest_node["items"] = json.dumps(rest_node["items"])
         return rest_node
 
+    def _validate_items(self, raise_error=True):
+        validation_result = self._create_empty_validation_result()
+        if self.items is not None:
+            items = self.items
+            if isinstance(items, str):
+                # try to deserialize str if it's a json string
+                try:
+                    items = json.loads(items)
+                except json.JSONDecodeError as e:
+                    if not is_data_binding_expression(items, ["parent"]):
+                        validation_result.append_error(
+                            f"Items is neither a valid JSON string due to {e} or a binding string."
+                        )
+            if isinstance(items, dict):
+                # Validate dict keys
+                items = list(items.values())
+            if isinstance(items, list):
+                if len(items) > 0:
+                    self._validate_items_list(items, validation_result)
+                else:
+                    validation_result.append_error("Items is an empty list/dict.")
+        else:
+            validation_result.append_error(
+                "Items is required for parallel_for node",
+            )
+        return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
+
     def _customized_validate(self):
         """Customized validation for parallel for node."""
         validation_result = self._validate_body(raise_error=False)
+        validation_result.merge_with(self._validate_items(raise_error=False))
         return validation_result
+
+    def _validate_items_list(self, items: list, validation_result):
+        # pylint: disable=protected-access
+        meta = {}
+        # all items have to be dict and have matched meta
+        for item in items:
+            # item has to be dict
+            if not isinstance(item, dict) or item == {}:
+                validation_result.append_error(
+                    f"Items has to be list/dict of non-empty dict as value, "
+                    f"but got {type(item)} for {item}."
+                )
+            else:
+                # item has to have matched meta
+                if meta.keys() != item.keys():
+                    if not meta.keys():
+                        meta = item
+                    else:
+                        validation_result.append_error(
+                            f"Items should to have same keys, but got {item.keys()} and {meta.keys()}."
+                        )
+                # items' keys should appear in body's inputs
+                body_component = self.body._component
+                if isinstance(body_component, Component) and (
+                        not item.keys() <= body_component.inputs.keys()):
+                    validation_result.append_error(
+                        f"Item {item} got unmatched inputs with "
+                        f"loop body component inputs {body_component.inputs}."
+                    )
