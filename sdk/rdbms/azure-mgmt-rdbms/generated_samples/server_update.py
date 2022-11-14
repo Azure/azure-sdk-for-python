@@ -30,19 +30,21 @@ def main():
     )
 
     response = client.servers.begin_update(
-        resource_group_name="testrg",
+        resource_group_name="TestGroup",
         server_name="pgtestsvc4",
         parameters={
             "properties": {
-                "administratorLoginPassword": "<administratorLoginPassword>",
-                "minimalTlsVersion": "TLS1_2",
-                "sslEnforcement": "Enabled",
-            }
+                "administratorLoginPassword": "newpassword",
+                "backup": {"backupRetentionDays": 20},
+                "createMode": "Update",
+                "storage": {"storageSizeGB": 1024},
+            },
+            "sku": {"name": "Standard_D8s_v3", "tier": "GeneralPurpose"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerUpdate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/ServerUpdate.json
 if __name__ == "__main__":
     main()

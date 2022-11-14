@@ -29,13 +29,14 @@ def main():
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.servers.get(
+    response = client.administrators.get(
         resource_group_name="testrg",
         server_name="pgtestsvc1",
+        object_id="oooooooo-oooo-oooo-oooo-oooooooooooo",
     )
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerGet.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/AdministratorGet.json
 if __name__ == "__main__":
     main()

@@ -30,12 +30,12 @@ def main():
     )
 
     response = client.servers.begin_delete(
-        resource_group_name="TestGroup",
+        resource_group_name="testrg",
         server_name="testserver",
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/ServerDelete.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/ServerDelete.json
 if __name__ == "__main__":
     main()
