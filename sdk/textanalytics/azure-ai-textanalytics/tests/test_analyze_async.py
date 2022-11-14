@@ -1911,6 +1911,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                 await poller.cancel()
             assert"Cancellation not supported by API versions v3.0, v3.1." in str(e.value)
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -1960,6 +1961,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert sentence.length is not None
                     assert result.id is not None
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -2009,6 +2011,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert sentence.length is not None
                     assert result.id is not None
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -2063,6 +2066,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     if res.resolution_kind == "AgeResolution":
                         assert res.value == 1
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
