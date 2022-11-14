@@ -12,12 +12,30 @@ If you are a client library developer, please reference [client library develope
 
 _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to <https://github.com/Azure/azure-sdk-for-python/issues/20691>_
 
+<!-- SNIPPET: test_example_async.trio -->
+```python
+from azure.core.pipeline.transport import TrioRequestsTransport
+
+async with AsyncPipeline(TrioRequestsTransport(), policies=policies) as pipeline:
+    return await pipeline.run(request)
+```
+<!-- END SNIPPET -->
+
 ## Getting started
 
 Typically, you will not need to install azure core;
 it will be installed when you install one of the client libraries using it.
 In case you want to install it explicitly (to implement your own client library, for example),
 you can find it [here](https://pypi.org/project/azure-core/).
+
+<!-- SNIPPET: test_example_async.asyncio -->
+```python
+from azure.core.pipeline.transport import AsyncioRequestsTransport
+
+async with AsyncPipeline(AsyncioRequestsTransport(), policies=policies) as pipeline:
+    response = await pipeline.run(request)
+```
+<!-- END SNIPPET -->
 
 ## Key concepts
 
@@ -59,6 +77,15 @@ The connection may have timed out. These errors can be retried for idempotent or
 #### HttpResponseError
 
 A request was made, and a non-success status code was received from the service.
+
+<!-- SNIPPET:test_example_async.asyncio -->
+```python
+from azure.core.pipeline.transport import AsyncioRequestsTransport
+
+async with AsyncPipeline(AsyncioRequestsTransport(), policies=policies) as pipeline:
+    response = await pipeline.run(request)
+```
+<!-- END SNIPPET -->
 
 ```python
 class HttpResponseError(AzureError):
