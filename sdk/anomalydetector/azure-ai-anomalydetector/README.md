@@ -3,6 +3,9 @@
 
 ## Getting started
 
+
+#### Prequisites
+
 - Python 3.7 or later is required to use this package.
 - You need an [Azure subscription][azure_sub] to use this package.
 - An existing Cognitive Services Anomaly Detector instance.
@@ -187,38 +190,38 @@ for i in range(len(data_file.values)):
     print("Anomaly detected at index:      "+ str(i))
 ```
 
-To see how to use Anomaly Detector library to conduct Multivariate Anomaly Detection, see this [sample](sample_multivariate_detect.py). To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
+To see how to use Anomaly Detector library to conduct Multivariate Anomaly Detection, see this [sample](../samples/sample_multivariate_detect.py). To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
 
 ## Troubleshooting
 
 ### General
-Anomaly Detector client library will raise exceptions defined in [Azure Core][azure_core_exceptions].
+Anomaly Detector client library will raise exceptions defined in [Azure Core](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html#module-azure.core.exceptions).
 
 ### Logging
-This library uses the standard [logging][python_logging] library for logging.
+This library uses the standard [logging](https://docs.python.org/3/library/logging.html) library for logging.
 
 Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` level.
 
 Detailed `DEBUG` level logging, including request/response bodies and **unredacted**
 headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
 
-See full SDK logging documentation with examples [here][sdk_logging_docs].
+See full SDK logging documentation with examples [here](https://learn.microsoft.com/en-us/azure/developer/python/sdk/azure-sdk-logging).
 
 ### Optional Configuration
 
 Optional keyword arguments can be passed in at the client and per-operation level.
-The azure-core [reference documentation][azure_core_ref_docs] describes available configurations for retries, logging, transport protocols, and more.
+The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-core/latest/azure.core.html) describes available configurations for retries, logging, transport protocols, and more.
 
 ## Next steps
 
 These code samples show common scenario operations with the Azure Anomaly Detector library. More samples can be found under the [samples](samples) directory.
 
-* Univariate Anomaly Detection - Batch Detection: [sample_detect_entire_series_anomaly.py](sample_detect_entire_series_anomaly.py)
+* Univariate Anomaly Detection - Batch Detection: [sample_detect_entire_series_anomaly.py](../samples/sample_detect_entire_series_anomaly.py)
 
-* Univariate Anomaly Detection - Streaming Detection: [sample_detect_last_point_anomaly.py](sample_detect_last_point_anomaly.py)
+* Univariate Anomaly Detection - Streaming Detection: [sample_detect_last_point_anomaly.py](../samples/sample_detect_last_point_anomaly.py)
 
-* Univariate Anomaly Detection - Change Point Detection: [sample_detect_change_point.py](sample_detect_change_point.py)
-* Multivariate Anomaly Detection: [sample_multivariate_detect.py](sample_multivariate_detect.py)
+* Univariate Anomaly Detection - Change Point Detection: [sample_detect_change_point.py](../samples/sample_detect_change_point.py)
+* Multivariate Anomaly Detection: [sample_multivariate_detect.py](../samples/sample_multivariate_detect.py)
 
 
 ### Additional documentation
