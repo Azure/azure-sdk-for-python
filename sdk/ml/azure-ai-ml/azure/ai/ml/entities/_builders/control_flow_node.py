@@ -81,14 +81,8 @@ class LoopNode(ControlFlowNode, ABC):
     def body(self):
         return self._body
 
-    def _register_in_current_pipeline_component_builder(self):
-        """Register this node in current pipeline component builder by adding self to a global stack."""
-        # pylint: disable=protected-access
-        super(LoopNode, self)._register_in_current_pipeline_component_builder()
-        self.body._set_referenced_control_flow_node_instance_id(self._instance_id)
-
-    def _validate_body(self, raise_error=True):
-        # pylint: disable=protected-access
+    @classmethod
+    def _attr_type_map(cls) -> dict:
         from .command import Command
         from .pipeline import Pipeline
 
@@ -98,13 +92,21 @@ class LoopNode(ControlFlowNode, ABC):
             from azure.ai.ml._internal.entities import Pipeline as InternalPipeline
 
             enable_body_type = enable_body_type + (InternalCommand, InternalPipeline)
+        return {
+            "body": enable_body_type,
+        }
 
+    def _register_in_current_pipeline_component_builder(self):
+        """Register this node in current pipeline component builder by adding self to a global stack."""
+        # pylint: disable=protected-access
+        super(LoopNode, self)._register_in_current_pipeline_component_builder()
+        self.body._set_referenced_control_flow_node_instance_id(self._instance_id)
+
+    def _validate_body(self, raise_error=True):
+        # pylint: disable=protected-access
         validation_result = self._create_empty_validation_result()
-        if not isinstance(self.body, enable_body_type):
-            validation_result.append_error(
-                yaml_path="body", message="Only command or pipeline job is supported as the body of control flow."
-            )
-        elif self._instance_id != self.body._referenced_control_flow_node_instance_id:
+
+        if self._instance_id != self.body._referenced_control_flow_node_instance_id:
             # When the body is used in another loop node record the error message in validation result.
             validation_result.append_error("body", "The body of loop node cannot be promoted as another loop again.")
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)

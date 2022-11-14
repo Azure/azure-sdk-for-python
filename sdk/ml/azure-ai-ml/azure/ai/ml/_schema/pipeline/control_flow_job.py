@@ -1,6 +1,8 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+import copy
+import json
 
 # pylint: disable=no-self-use,protected-access
 
@@ -23,7 +25,6 @@ class BaseLoopSchema(ControlFlowSchema):
 
     @pre_dump
     def convert_control_flow_body_to_binding_str(self, data, **kwargs):  # pylint: disable=no-self-use, unused-argument
-        import copy
 
         result = copy.copy(data)
         # Update body object to data_binding_str
@@ -55,8 +56,6 @@ class DoWhileSchema(BaseLoopSchema):
     @pre_dump
     def resolve_inputs_outputs(self, data, **kwargs):  # pylint: disable=no-self-use
         # Try resolve object's mapping and condition and return a resolved new object
-        import copy
-
         result = copy.copy(data)
         mapping = {}
         for k, v in result.mapping.items():
@@ -72,10 +71,20 @@ class ParallelForSchema(BaseLoopSchema):
     type = StringTransformedEnum(allowed_values=[ControlFlowType.PARALLEL_FOR])
     items = UnionField(
         [
-            DataBindingStr(),
+            fields.Str(),
             fields.Dict(keys=fields.Str(), values=fields.Dict()),
             fields.List(fields.Dict()),
         ],
         required=True
     )
     max_concurrency = fields.Int()
+
+    @pre_dump
+    def serialize_items(self, data, **kwargs):   # pylint: disable=no-self-use, unused-argument
+        from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
+
+        result = copy.copy(data)
+        if isinstance(result.items, (dict, list)):
+            # use str to serialize input/output builder
+            result.items = json.dumps(result.items, default=lambda x: str(x) if isinstance(x, InputOutputBase) else x)
+        return result

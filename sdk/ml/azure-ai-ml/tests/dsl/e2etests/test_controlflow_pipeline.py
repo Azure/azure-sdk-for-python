@@ -1,28 +1,13 @@
-import contextlib
 import pytest
 
-from azure.ai.ml._schema.pipeline import PipelineJobSchema
 from azure.ai.ml.dsl._parallel_for import parallel_for
-from .._util import _DSL_TIMEOUT_SECOND
+from .._util import _DSL_TIMEOUT_SECOND, include_private_preview_nodes_in_pipeline
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
-from azure.ai.ml._schema.pipeline.pipeline_component import PipelineJobsField
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml import MLClient, load_component, Input
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
-
-
-@contextlib.contextmanager
-def include_private_preview_nodes_in_pipeline():
-    original_jobs = PipelineJobSchema._declared_fields["jobs"]
-    PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
-
-    try:
-        yield
-    finally:
-        PipelineJobSchema._declared_fields["jobs"] = original_jobs
-
 
 test_input = Input(
     type="uri_file",
@@ -41,6 +26,10 @@ test_input = Input(
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestControlFlowPipeline(AzureRecordedTestCase):
+    pass
+
+
+class TestIfElsePipeline(TestControlFlowPipeline):
     def test_dsl_condition_pipeline(self, client: MLClient):
         # update jobs field to include private preview nodes
 
@@ -123,7 +112,9 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
         with include_private_preview_nodes_in_pipeline():
             client.jobs.create_or_update(pipeline_job)
 
-    def test_dsl_parallel_for_pipeline(self, client: MLClient):
+
+class TestParallelForPipeline(TestControlFlowPipeline):
+    def test_simple_dsl_parallel_for_pipeline(self, client: MLClient):
         hello_world_component = load_component(
             source="./tests/test_configs/components/helloworld_component.yml"
         )
@@ -174,9 +165,3 @@ class TestControlFlowPipeline(AzureRecordedTestCase):
 
         with include_private_preview_nodes_in_pipeline():
             client.jobs.create_or_update(pipeline_job)
-
-    def test_dsl_parallel_for_pipeline_illegal_cases(self):
-        # required field unprovided
-        # body unsupported
-        # items unsupported
-        pass

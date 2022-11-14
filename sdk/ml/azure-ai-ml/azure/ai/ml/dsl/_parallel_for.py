@@ -4,7 +4,7 @@
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 
 
-def parallel_for(body, items):
+def parallel_for(*, body, items):
     """Build a parallel for loop by specifying the loop body and input items.
 
     .. remarks::
@@ -38,7 +38,7 @@ def parallel_for(body, items):
     :param body: Node to execute as the loop body.
     :type body: BaseNode
     :param items: The loop body's input which will bind to the loop node.
-    :type items: Union[list, dict]
+    :type items: Union[list, dict, str, PipelineInput, NodeOutput]
     """
     parallel_for_node = ParallelFor(
         body=body,

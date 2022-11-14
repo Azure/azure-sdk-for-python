@@ -80,6 +80,7 @@ class DoWhile(LoopNode):
     @classmethod
     def _attr_type_map(cls) -> dict:
         return {
+            **super(DoWhile, cls)._attr_type_map(),
             "mapping": dict,
             "limits": (dict, DoWhileJobLimits),
         }
