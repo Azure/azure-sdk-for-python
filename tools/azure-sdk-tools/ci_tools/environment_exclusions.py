@@ -5,10 +5,6 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
-import logging
-logging.getLogger().setLevel(logging.INFO)
-
-
 PYLINT_ACCEPTABLE_FAILURES = [
     "azure-applicationinsights",
     "azure-batch",
@@ -351,7 +347,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
 
 # --------------------------------------------------------------------------------------------------------------------
 # DO NOT add packages to the below lists. They are used to omit packages that will never run type checking.
-
 IGNORE_FILTER = ["nspkg", "mgmt", "cognitiveservices"]
 FILTER_EXCLUSIONS = ["azure-mgmt-core"]
 IGNORE_PACKAGES = [
@@ -373,7 +368,10 @@ IGNORE_PACKAGES = [
 ]
 
 
-def is_ignored_package(package_name):
+def is_ignored_package(package_name: str) -> bool:
+    """
+    Evaluates a package name and evaluates whether or not tox environments should run against it.
+    """
     if package_name in IGNORE_PACKAGES:
         return True
     if package_name not in FILTER_EXCLUSIONS and any([identifier in package_name for identifier in IGNORE_FILTER]):

@@ -14,7 +14,7 @@ import os
 import logging
 import sys
 
-from environment_exclusion_list import PYLINT_ACCEPTABLE_FAILURES
+from ci_tools.environment_exclusions import PYLINT_ACCEPTABLE_FAILURES
 from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
