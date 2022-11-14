@@ -3,7 +3,7 @@ from pathlib import Path
 
 import pydash
 import pytest
-from azure.ai.ml import Input, dsl, load_component
+from azure.ai.ml import Input, dsl, load_component, load_job
 from azure.ai.ml.constants._common import (
     AssetTypes,
     InputOutputModes,
@@ -28,7 +28,16 @@ class TestInitFinalizeJob:
     )
     hello_world_func = load_component(str(components_dir / "helloworld_component.yml"))
 
-    def test_init_finalize_job(self) -> None:
+    def test_init_finalize_job_from_yaml(self) -> None:
+        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize.yaml")
+        assert pipeline_job._validate_init_finalize_job().passed
+        assert pipeline_job.settings.on_init == "a"
+        assert pipeline_job.settings.on_finalize == "c"
+        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
+        assert pipeline_job_dict["properties"]["settings"]["on_init"] == "a"
+        assert pipeline_job_dict["properties"]["settings"]["on_finalize"] == "c"
+
+    def test_init_finalize_job_from_sdk(self) -> None:
         from azure.ai.ml._internal.dsl import set_pipeline_settings
         from azure.ai.ml.dsl import pipeline
 
@@ -80,7 +89,16 @@ class TestInitFinalizeJob:
         pipeline3 = in_decorator_func()
         assert_pipeline_job_init_finalize_job(pipeline3)
 
-    def test_invalid_init_finalize_job(self) -> None:
+    def test_invalid_init_finalize_job_from_yaml(self) -> None:
+        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize_invalid.yaml")
+        validation_result = pipeline_job._validate_init_finalize_job()
+        assert not validation_result.passed
+        assert (
+            validation_result.error_messages["settings.on_finalize"]
+            == "On_finalize job should not have connection to other execution node."
+        )
+
+    def test_invalid_init_finalize_job_from_sdk(self) -> None:
         # invalid case: job name not exists
         @dsl.pipeline()
         def invalid_init_finalize_job_func():
