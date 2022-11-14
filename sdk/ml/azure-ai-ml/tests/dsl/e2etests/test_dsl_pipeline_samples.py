@@ -228,8 +228,8 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = e2e_inline_components()
         assert_job_cancel(pipeline, client)
 
+    @pytest.mark.usefixtures("mock_asset_name")
     @pytest.mark.e2etest
-    @pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
     def test_command_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.command_job_in_pipeline.pipeline import generate_dsl_pipeline as command_job_in_pipeline
 

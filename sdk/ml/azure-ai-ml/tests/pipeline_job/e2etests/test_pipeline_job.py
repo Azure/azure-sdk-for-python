@@ -26,8 +26,11 @@ from azure.ai.ml.exceptions import JobException
 from azure.ai.ml.operations._run_history_constants import JobStatus
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
-from .._util import _PIPELINE_JOB_TIMEOUT_SECOND, DATABINDING_EXPRESSION_TEST_CASES, \
-    DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE
+from .._util import (
+    _PIPELINE_JOB_TIMEOUT_SECOND,
+    DATABINDING_EXPRESSION_TEST_CASES,
+    DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
+)
 
 
 def assert_job_input_output_types(job: PipelineJob):
@@ -69,7 +72,6 @@ def generate_weekly_fixed_job_name(variable_recorder) -> str:
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestPipelineJob(AzureRecordedTestCase):
-    @pytest.mark.skip("Skip for broken job service type, need fix")
     def test_pipeline_job_create(
         self,
         client: MLClient,
@@ -101,10 +103,15 @@ class TestPipelineJob(AzureRecordedTestCase):
             source="./tests/test_configs/pipeline_jobs/hello_pipeline_job_with_registries.yml",
             params_override=params_override,
         )
-        assert pipeline_job.jobs.get("a").environment == "azureml://registries/testFeed/environments/sklearn-10-ubuntu2004-py38-cpu/versions/19.dev6"
+        assert (
+            pipeline_job.jobs.get("a").environment
+            == "azureml://registries/testFeed/environments/sklearn-10-ubuntu2004-py38-cpu/versions/19.dev6"
+        )
         job = client.jobs.create_or_update(pipeline_job)
         assert job.name == params_override[0]["name"]
-        assert job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
+        assert (
+            job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
+        )
 
     @pytest.mark.skip("Skip for compute resource not ready.")
     @pytest.mark.parametrize(
@@ -386,7 +393,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             # TODO: enable this after identity support released to canary
             # (0, "helloworld_pipeline_job_with_component_output"),
             (1, "helloworld_pipeline_job_with_paths"),
-        ]
+        ],
     )
     def test_pipeline_job_with_command_job(
         self,
@@ -556,8 +563,8 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert actual_dict == expected_dict
 
     @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="need further investigation for these cases unreliability under none live mode")
+        condition=not is_live(), reason="need further investigation for these cases unreliability under none live mode"
+    )
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -713,7 +720,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
-    @pytest.mark.skip(reason="migration skip: refactor for download.")
+    @pytest.mark.skipif(condition=not is_live(), reason="test download behaviour in live test.")
     def test_pipeline_job_download(
         self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]
     ) -> None:
@@ -739,6 +746,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         else:
             print("Job is canceled, not execute downloaded artifacts assertion.")
 
+    @pytest.mark.skipif(condition=not is_live(), reason="test download behaviour in live test.")
     def test_pipeline_job_child_run_download(
         self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]
     ) -> None:
@@ -1428,8 +1436,10 @@ class TestPipelineJob(AzureRecordedTestCase):
         # assert pipeline_dict["outputs"] == {"output_path": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}}
         assert pipeline_dict["settings"] == {"default_compute": "cpu-cluster", "_source": "REMOTE.WORKSPACE.COMPONENT"}
 
-    @pytest.mark.skip(reason="request body still exits when re-record and will raise error "
-                             "'Unable to find a record for the request' in playback mode")
+    @pytest.mark.skip(
+        reason="request body still exits when re-record and will raise error "
+        "'Unable to find a record for the request' in playback mode"
+    )
     def test_pipeline_job_create_with_registry_model_as_input(
         self,
         client: MLClient,
@@ -1452,8 +1462,10 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
         created_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert created_pipeline_job.jobs["hello_world_component"].component == \
-               "microsoftsamples_command_component_basic@default"
+        assert (
+            created_pipeline_job.jobs["hello_world_component"].component
+            == "microsoftsamples_command_component_basic@default"
+        )
 
 
 @pytest.mark.usefixtures(
