@@ -21,8 +21,8 @@ def get_http_request_kwargs(kwargs):
 
 def get_content_type(format: str):
     if format.lower() == SchemaFormat.CUSTOM.value.lower():
-        return "application/octet-stream"
-    return "application/json; serialization={}".format(format)
+        return "text/plain; charset=utf-8"
+    return f"application/json; serialization={format}"
 
 def get_case_insensitive_format(
     format: Union[str, SchemaFormat]

@@ -46,10 +46,7 @@ def _parse_response_schema_properties(response, format):
 def _parse_response_schema(response):
     # pylint:disable=redefined-builtin
     schema_props_dict = _parse_schema_properties_dict(response)
-    try:
-        format = response.headers.get("content-type").split("serialization=")[1]
-    except IndexError:
-        format = response.headers.get("content-type").split("schema+")[1]
+    format = response.headers.get("content-type").split("serialization=")[1]
     try:
         schema_props_dict["format"] = SchemaFormat(format)
     except ValueError:
