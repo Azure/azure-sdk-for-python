@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,26 +24,28 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
     response = client.servers.begin_create(
-        resource_group_name="testrg",
-        server_name="pgtestsvc5",
+        resource_group_name="TargetResourceGroup",
+        server_name="targetserver",
         parameters={
-            "location": "westus",
+            "location": "brazilsouth",
             "properties": {
                 "createMode": "PointInTimeRestore",
-                "pointInTimeUTC": "2021-06-27T00:04:59.4078005+00:00",
-                "sourceServerResourceId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/testrg/providers/Microsoft.DBforPostgreSQL/flexibleServers/sourcepgservername",
+                "restorePointInTime": "2017-12-14T00:00:37.467Z",
+                "sourceServerId": "/subscriptions/ffffffff-ffff-ffff-ffff-ffffffffffff/resourceGroups/SourceResourceGroup/providers/Microsoft.DBforMySQL/servers/sourceserver",
             },
+            "sku": {"capacity": 2, "family": "Gen5", "name": "GP_Gen5_2", "tier": "GeneralPurpose"},
+            "tags": {"ElasticServer": "1"},
         },
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/ServerCreatePointInTimeRestore.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/stable/2017-12-01/examples/ServerCreatePointInTimeRestore.json
 if __name__ == "__main__":
     main()
