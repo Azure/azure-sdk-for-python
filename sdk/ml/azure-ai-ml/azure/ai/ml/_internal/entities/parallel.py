@@ -62,15 +62,6 @@ class Parallel(Command):
         self._mini_batch_size = value
 
     @property
-    def partition_keys(self) -> List:
-        """The keys used to partition dataset into mini-batches."""
-        return self._partition_keys
-
-    @partition_keys.setter
-    def partition_keys(self, value: List):
-        self._partition_keys = value
-
-    @property
     def logging_level(self) -> str:
         """A string of the logging level name"""
         return self._logging_level
