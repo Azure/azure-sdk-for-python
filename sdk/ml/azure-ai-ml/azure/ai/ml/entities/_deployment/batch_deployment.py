@@ -23,7 +23,7 @@ from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
@@ -145,6 +145,7 @@ class BatchDeployment(Deployment):
                 target=ErrorTarget.BATCH_DEPLOYMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         if not self.resources and instance_count:
@@ -297,4 +298,5 @@ class BatchDeployment(Deployment):
                 target=ErrorTarget.BATCH_DEPLOYMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )

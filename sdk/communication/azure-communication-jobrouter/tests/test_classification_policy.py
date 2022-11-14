@@ -7,8 +7,9 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import ResourceNotFoundError, HttpResponseError
-from _router_test_case import RouterTestCase
+from _router_test_case import RouterRecordedTestCase
 from _decorators import RouterPreparers
 from _validators import ClassificationPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str
@@ -154,13 +155,7 @@ worker_selectors = [
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestClassificationPolicy(RouterTestCase):
-    def __init__(self, method_name):
-        super(TestClassificationPolicy, self).__init__(method_name)
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.classification_policy_ids = {}  # type: Dict[str, List[str]]
-
+class TestClassificationPolicy(RouterRecordedTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
@@ -179,15 +174,6 @@ class TestClassificationPolicy(RouterTestCase):
                     and any(self.distribution_policy_ids[self._testMethodName]):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                     router_client.delete_distribution_policy(distribution_policy_id = policy_id)
-
-    def setUp(self):
-        super(TestClassificationPolicy, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestClassificationPolicy, self).tearDown()
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp"
@@ -239,8 +225,11 @@ class TestClassificationPolicy(RouterTestCase):
         else:
             self.queue_ids[self._testMethodName] = [job_queue_id]
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_create_classification_policy(self):
         router_client: RouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_create_cp'
@@ -275,10 +264,12 @@ class TestClassificationPolicy(RouterTestCase):
                         prioritization_rule = rule,
                         worker_selectors = [ws]
                     )
-        self.clean_up()
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_classification_policy(self):
         router_client: RouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_update_cp'
@@ -331,10 +322,11 @@ class TestClassificationPolicy(RouterTestCase):
                         worker_selectors = [ws]
                     )
 
-        self.clean_up()
-
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_classification_policy_w_kwargs(self):
         router_client: RouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_update_cp_w_kwargs'
@@ -386,10 +378,11 @@ class TestClassificationPolicy(RouterTestCase):
                         worker_selectors = [ws]
                     )
 
-        self.clean_up()
-
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_get_classification_policy(self):
         router_client: RouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_get_cp'
@@ -437,10 +430,11 @@ class TestClassificationPolicy(RouterTestCase):
                         worker_selectors = [ws]
                     )
 
-        self.clean_up()
-
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_list_classification_policies(self):
         router_client: RouterAdministrationClient = self.create_admin_client()
         cp_identifiers = ['tst_list_cp_1', 'tst_list_cp_2', 'tst_list_cp_3']
@@ -510,10 +504,11 @@ class TestClassificationPolicy(RouterTestCase):
                             )
                             policy_count -= 1
 
-        self.clean_up()
-
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_delete_classification_policy(self):
         router_client: RouterAdministrationClient = self.create_admin_client()
         cp_identifier = 'tst_delete_cp'
@@ -557,5 +552,3 @@ class TestClassificationPolicy(RouterTestCase):
 
                     assert nfe.value.reason == "Not Found"
                     assert nfe.value.status_code == 404
-
-        self.clean_up()

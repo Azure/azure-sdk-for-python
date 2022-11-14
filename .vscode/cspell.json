@@ -203,6 +203,7 @@
     "iscsi",
     "iterrows",
     "ivar",
+    "ivars",
     "jwks",
     "keybak",
     "kube",
@@ -277,6 +278,8 @@
     "pyfuncitem",
     "pygobject",
     "pyodide",
+    "pyright",
+    "pyrightconfig",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -409,6 +412,12 @@
         "mytable",
         "edmtypes",
         "specifed"
+      ]
+    },
+    {
+      "filename": "sdk/tables/test-resources.json",
+      "words": [
+        "mmspecial"
       ]
     },
     {

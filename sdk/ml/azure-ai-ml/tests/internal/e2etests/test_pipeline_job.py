@@ -17,7 +17,8 @@ from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
 
 from test_utilities.utils import assert_job_cancel
-from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings, TEST_CASE_NAME_ENUMERATE
+from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings, TEST_CASE_NAME_ENUMERATE, \
+    get_expected_runsettings_items
 
 _dependent_datasets = {}
 
@@ -80,22 +81,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         node_rest_dict = created_pipeline._to_rest_object().properties.jobs["node"]
         del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
         mismatched_runsettings = {}
-        dot_key_map = {"compute": "computeId"}
-        for dot_key, expected_value in runsettings_dict.items():
-            if dot_key in dot_key_map:
-                dot_key = dot_key_map[dot_key]
-
-            # hack: timeout will be transformed into str
-            if dot_key == "limits.timeout":
-                expected_value = "PT5M"
-            # hack: compute_name for hdinsight will be transformed into arm str
-            if dot_key == "compute_name":
-                expected_value = f"/subscriptions/{client.subscription_id}/" \
-                                 f"resourceGroups/{client.resource_group_name}/" \
-                                 f"providers/Microsoft.MachineLearningServices/" \
-                                 f"workspaces/{client.workspace_name}/" \
-                                 f"computes/{expected_value}"
-
+        for dot_key, expected_value in get_expected_runsettings_items(runsettings_dict, client):
             value = pydash.get(node_rest_dict, dot_key)
             if value != expected_value:
                 mismatched_runsettings[dot_key] = (value, expected_value)
