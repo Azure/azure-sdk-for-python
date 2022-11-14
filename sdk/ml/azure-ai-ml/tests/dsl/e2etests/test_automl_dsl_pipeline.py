@@ -25,6 +25,10 @@ from test_utilities.utils import cancel_job
 
 tests_root_dir = Path(__file__).parent.parent.parent
 
+# declare variables for compute, so that we can easily change them later
+CPU_CLUSTER = "cpu-cluster"
+GPU_CLUSTER = "gpu-cluster"
+
 
 @pytest.mark.usefixtures(
     "enable_environment_id_arm_expansion",
@@ -63,7 +67,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_automl_classification_in_pipeline(class_train, class_valid)
-        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job.settings.default_compute = CPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
@@ -106,7 +110,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_automl_regression_in_pipeline(regression_train)
-        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job.settings.default_compute = CPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
@@ -153,7 +157,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_automl_forecasting_in_pipeline(forecasting_train_data=forecasting_train)
-        pipeline_job.settings.default_compute = "cpu-cluster"
+        pipeline_job.settings.default_compute = CPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
@@ -205,7 +209,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         pipeline_job: PipelineJob = train_automl_text_class_in_pipeline(
             text_classification_train, text_classification_valid
         )
-        pipeline_job.settings.default_compute = "gpu-cluster"
+        pipeline_job.settings.default_compute = GPU_CLUSTER
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
 
@@ -253,7 +257,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         pipeline_job: PipelineJob = train_automl_text_class_multilabel_in_pipeline(
             text_classification_multilabel_train, text_classification_multilabel_valid
         )
-        pipeline_job.settings.default_compute = "gpu-cluster"
+        pipeline_job.settings.default_compute = GPU_CLUSTER
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
 
@@ -297,7 +301,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_automl_text_ner_in_pipeline(text_ner_train, text_ner_valid)
-        pipeline_job.settings.default_compute = "gpu-cluster"
+        pipeline_job.settings.default_compute = GPU_CLUSTER
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
 
@@ -363,7 +367,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_multiclass_with_automl_in_pipeline(multiclass_train, multiclass_valid)
-        pipeline_job.settings.default_compute = "gpu-cluster"
+        pipeline_job.settings.default_compute = GPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
@@ -451,7 +455,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_multilabel_with_automl_in_pipeline(multilabel_train, multilabel_valid)
-        pipeline_job.settings.default_compute = "gpu-cluster"
+        pipeline_job.settings.default_compute = GPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
@@ -544,7 +548,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         )
 
         pipeline_job: PipelineJob = train_od_with_automl_in_pipeline(object_detection_train, object_detection_valid)
-        pipeline_job.settings.default_compute = "gpu-cluster"
+        pipeline_job.settings.default_compute = GPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
@@ -641,7 +645,7 @@ class TestAutomlDSLPipeline(AzureRecordedTestCase):
         pipeline_job: PipelineJob = train_segmentation_with_automl_in_pipeline(
             instance_segmentation_train, instance_segmentation_valid
         )
-        pipeline_job.settings.default_compute = "gpu-cluster"
+        pipeline_job.settings.default_compute = GPU_CLUSTER
 
         from_rest_pipeline_job = client.jobs.create_or_update(pipeline_job)
         cancel_job(client, from_rest_pipeline_job)
