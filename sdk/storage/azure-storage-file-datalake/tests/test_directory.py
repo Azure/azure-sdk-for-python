@@ -1307,7 +1307,7 @@ class TestDirectory(StorageRecordedTestCase):
 
         assert non_existing_dir_name == res.path_name
 
-    @pytest.mark.skip(reason="Investigate why renaming to non-empty directory doesn't work")
+    @pytest.mark.skip(reason="Investigate why renaming non-empty directory doesn't work")
     @DataLakePreparer()
     def test_rename_directory_to_non_empty_directory(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
