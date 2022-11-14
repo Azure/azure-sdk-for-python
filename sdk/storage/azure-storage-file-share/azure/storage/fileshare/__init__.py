@@ -35,9 +35,7 @@ from ._models import (
     ContentSettings,
     NTFSAttributes)
 from ._generated.models import (
-    ShareAccessTier
-)
-from ._generated.models import (
+    ShareAccessTier,
     ShareRootSquash
 )
 
@@ -78,3 +76,9 @@ __all__ = [
     'generate_share_sas',
     'generate_file_sas'
 ]
+
+
+def __getattr__(name):
+    if name == 'HandleItem':
+        from ._generated.models import HandleItem
+        return HandleItem
