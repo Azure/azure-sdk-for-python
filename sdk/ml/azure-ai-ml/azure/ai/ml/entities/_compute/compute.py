@@ -201,6 +201,7 @@ class NetworkSettings:
         *,
         vnet_name: str = None,
         subnet: str = None,
+        enable_node_public_ip: bool = True,
         **kwargs,
     ):
         """Network settings for a compute.
@@ -209,9 +210,12 @@ class NetworkSettings:
         :type vnet_name: str, optional
         :param subnet: The subnet name, defaults to None
         :type subnet: str, optional
+        :param enable_node_public_ip: Enables public ip on the compute, defaults to True
+        :type subnet: bool, optional
         """
         self.vnet_name = vnet_name
         self.subnet = subnet
+        self.enable_node_public_ip = enable_node_public_ip
         self._public_ip_address = kwargs.pop("public_ip_address", None)
         self._private_ip_address = kwargs.pop("private_ip_address", None)
 

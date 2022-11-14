@@ -194,6 +194,10 @@ class AmlCompute(Compute):
             subnet_resource = ResourceId(id=self.subnet)
         else:
             subnet_resource = None
+        if self.network_settings and self.network_settings.enable_node_public_ip:
+            enable_node_public_ip = self.network_settings.enable_node_public_ip
+        else:
+            enable_node_public_ip = True
 
         # Scale settings is required when creating an AzureML compute cluster
         scale_settings = ScaleSettings(
@@ -214,6 +218,7 @@ class AmlCompute(Compute):
             user_account_credentials=self.ssh_settings._to_user_account_credentials() if self.ssh_settings else None,
             scale_settings=scale_settings,
             subnet=subnet_resource,
+            enable_node_public_ip=enable_node_public_ip,
             remote_login_port_public_access=remote_login_public_access,
         )
 

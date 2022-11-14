@@ -200,6 +200,11 @@ class ComputeInstance(Compute):
             subnet_resource = ResourceId(id=self.subnet)
         else:
             subnet_resource = None
+        if self.network_settings and self.network_settings.enable_node_public_ip:
+            enable_node_public_ip = self.network_settings.enable_node_public_ip
+        else:
+            enable_node_public_ip = True
+
         if self.ssh_public_access_enabled and not (
             self.ssh_settings and self.ssh_settings.ssh_key_value
         ):
@@ -233,6 +238,7 @@ class ComputeInstance(Compute):
         compute_instance_prop = ComputeInstanceProperties(
             vm_size=self.size if self.size else ComputeDefaults.VMSIZE,
             subnet=subnet_resource,
+            enable_node_public_ip=enable_node_public_ip,
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
             idle_time_before_shutdown=f"PT{self.idle_time_before_shutdown_minutes}M",
