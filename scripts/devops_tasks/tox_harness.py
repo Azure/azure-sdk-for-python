@@ -1,10 +1,12 @@
 import sys
 import os
-import errno
 import shutil
 import re
 import multiprocessing
 import glob
+
+from typing import List
+from argparse import Namespace
 
 from common_tasks import (
     run_check_call,
@@ -253,7 +255,15 @@ def execute_tox_serial(tox_command_tuples):
     return return_code
 
 
-def prep_and_run_tox(targeted_packages, parsed_args, options_array=[]):
+def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, options_array: List[str] = []) -> None:
+    """
+    Primary entry point for tox invocations during CI runs.
+
+    :param targeted_packages: The set of targeted packages. These are not just package names, and are instead the full absolute path to the package root directory.
+    :param parsed_args: An argparse namespace object from setup_execute_tests.py. Not including it will effectively disable "customizations"
+        of the tox invocation.
+    :param options_array: When invoking tox, these additional options will be additionally passed to the invocation.
+    """
     if parsed_args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = parsed_args.wheel_dir
 
