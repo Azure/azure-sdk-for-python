@@ -645,10 +645,3 @@ def pytest_configure(config):
         config.addinivalue_line("markers", f"{marker}: {description}")
 
     config.addinivalue_line("markers", f"{marker}: {description}")
-
-
-@pytest.fixture()
-def only_enable_in_master(client: MLClient):
-    location = next(client.workspaces.list()).location
-    if location != "centraluseuap":
-        pytest.skip(f"this test is only enabled in master region, current in {location}")
