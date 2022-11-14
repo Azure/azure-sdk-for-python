@@ -1321,14 +1321,6 @@ class TestPipelineJobEntity:
             },
         }
 
-    def test_pipeline_with_init_finalize(self) -> None:
-        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize.yaml")
-        assert pipeline_job.settings.on_init == "a"
-        assert pipeline_job.settings.on_finalize == "c"
-        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
-        assert pipeline_job_dict["properties"]["settings"]["on_init"] == "a"
-        assert pipeline_job_dict["properties"]["settings"]["on_finalize"] == "c"
-
     def test_non_string_pipeline_node_input(self):
         test_path = "./tests/test_configs/pipeline_jobs/rest_non_string_input_pipeline.json"
         with open(test_path, "r") as f:
