@@ -51,8 +51,6 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
     """
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
-        api_version = kwargs.pop("api_version", "v1.1")  # type: Literal["v1.1"]
-
         _endpoint = "{Endpoint}/anomalydetector/{ApiVersion}"
         self._config = AnomalyDetectorClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
