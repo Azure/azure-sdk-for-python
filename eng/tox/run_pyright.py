@@ -7,7 +7,7 @@
 
 # This script is used to execute pyright within a tox environment.
 
-from subprocess import check_call
+from subprocess import check_call, CalledProcessError
 import argparse
 import os
 import logging
@@ -58,5 +58,8 @@ if __name__ == "__main__":
         "pyright",
     ]
     commands.extend(paths)
-    check_call(commands)
-    print("See https://aka.ms/python/typing-guide for information.")
+    try:
+        check_call(commands)
+    except CalledProcessError as error:
+        print("See https://aka.ms/python/typing-guide for information.\n\n")
+        raise error
