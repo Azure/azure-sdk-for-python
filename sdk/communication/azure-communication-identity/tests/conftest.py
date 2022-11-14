@@ -23,6 +23,8 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
+
+# cSpell:ignore ests
 import pytest
 import os
 from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_header_regex_sanitizer, \
