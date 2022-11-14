@@ -15,6 +15,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, C
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     AZUREML_RESOURCE_PROVIDER,
+    InputOutputModes,
     NAMED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     AssetTypes,
@@ -26,10 +27,10 @@ from azure.ai.ml.entities import (
     JobResourceConfiguration,
     PipelineJob,
 )
-from azure.ai.ml.entities._builders import Command
+from azure.ai.ml.entities._builders import Command, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException, NonExistParamValueError, UnExpectedNonPipelineParameterTypeError
+from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -826,18 +827,12 @@ class TestDSLPipeline:
         expected_component = {
             "_source": "YAML.COMPONENT",
             "computeId": "cpu-cluster",
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_number}}"},
                 "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
             },
-            "limits": None,
             "name": "hello_world_component_1",
             "outputs": {"component_out_path": {"job_output_type": "uri_folder", "mode": "Upload"}},
-            "resources": None,
-            "tags": {},
             "type": "command",
         }
         omit_fields = ["componentId", "properties"]
@@ -1161,14 +1156,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1229,14 +1217,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1296,14 +1277,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1372,14 +1346,7 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
-                        "distribution": None,
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1441,22 +1408,18 @@ class TestDSLPipeline:
         expected_sub_dict = {
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
-            "tags": {},
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
             "jobs": {
                 "node1": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "node2": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
@@ -1480,19 +1443,14 @@ class TestDSLPipeline:
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
-            "tags": {},
-            "properties": {},
             "type": "pipeline",
-            "settings": {},
             "inputs": {"component_in_number": 1, "component_in_path": "test"},
-            "outputs": {"sub_pipeline_out": None},
             "jobs": {
                 "node1": {
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -1544,14 +1502,8 @@ class TestDSLPipeline:
                 "jobs": {
                     "train_with_sample_data": {
                         "type": "command",
-                        "resources": None,
                         "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
-                        "limits": None,
-                        "environment_variables": {},
                         "name": "train_with_sample_data",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "inputs": {
                             "training_data": {
                                 "job_input_type": "literal",
@@ -1620,9 +1572,6 @@ class TestDSLPipeline:
                 "jobs": {
                     "subgraph1": {
                         "name": "subgraph1",
-                        "display_name": None,
-                        "tags": {},
-                        "computeId": None,
                         "type": "pipeline",
                         "inputs": {
                             "training_input": {
@@ -1674,7 +1623,7 @@ class TestDSLPipeline:
             node.outputs.component_out_path.mode = "upload"
             return node.outputs
 
-        component = pipeline_func._pipeline_builder.build()
+        component = pipeline_func._pipeline_builder.build(user_provided_kwargs={})
 
         expected_dict = {
             "name": "pipeline_comp",
@@ -1733,22 +1682,18 @@ class TestDSLPipeline:
         expected_sub_dict = {
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
-            "tags": {},
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
             "jobs": {
                 "node1": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "node2": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
@@ -1769,19 +1714,14 @@ class TestDSLPipeline:
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
-            "tags": {},
-            "properties": {},
             "type": "pipeline",
-            "settings": {},
             "inputs": {"component_in_number": 1, "component_in_path": "test"},
-            "outputs": {"sub_pipeline_out": None},
             "jobs": {
                 "node1": {
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -1821,22 +1761,18 @@ class TestDSLPipeline:
         expected_sub_dict = {
             "name": "sub_pipeline",
             "display_name": "sub_pipeline",
-            "tags": {},
             "inputs": {"component_in_number": {"type": "integer"}, "component_in_path": {"type": "string"}},
             "outputs": {"sub_pipeline_out": {"type": "uri_folder"}},
             "type": "pipeline",
             "jobs": {
                 "node1": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "command",
                 },
                 "node2": {
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.jobs.node1.outputs.component_out_path}}"},
@@ -1853,19 +1789,14 @@ class TestDSLPipeline:
         assert actual_dict == expected_sub_dict
         expected_root_dict = {
             "display_name": "root_pipeline",
-            "tags": {},
-            "properties": {},
             "type": "pipeline",
-            "settings": {},
             "inputs": {"component_in_number": 1, "component_in_path": "test"},
-            "outputs": {"sub_pipeline_out": None},
             "jobs": {
                 "node1": {
                     "inputs": {
                         "component_in_number": {"path": "${{parent.inputs.component_in_number}}"},
                         "component_in_path": {"path": "${{parent.inputs.component_in_path}}"},
                     },
-                    "outputs": {},
                     "type": "pipeline",
                 },
                 "node2": {
@@ -1971,53 +1902,26 @@ class TestDSLPipeline:
         actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
 
         assert actual_dict["jobs"] == {
-            'node1': {'computeId': None,
-                      'display_name': None,
-                      'distribution': None,
-                      'environment_variables': {},
-                      'identity': {'type': 'aml_token'},
+            'node1': {'identity': {'type': 'aml_token'},
                       'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                          'value': '1'},
                                  'component_in_path': {'job_input_type': 'literal',
                                                        'value': '${{parent.inputs.component_in_path}}'}},
-                      'limits': None,
                       'name': 'node1',
-                      'outputs': {},
-                      'properties': {},
-                      'resources': None,
-                      'tags': {},
                       'type': 'command'},
-            'node2': {'computeId': None,
-                      'display_name': None,
-                      'distribution': None,
-                      'identity': {'type': 'user_identity'},
-                      'environment_variables': {},
+            'node2': {'identity': {'type': 'user_identity'},
                       'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                          'value': '1'},
                                  'component_in_path': {'job_input_type': 'literal',
                                                        'value': '${{parent.inputs.component_in_path}}'}},
-                      'limits': None,
                       'name': 'node2',
-                      'outputs': {},
-                      'properties': {},
-                      'resources': None,
-                      'tags': {},
                       'type': 'command'},
-            'node3': {'computeId': None,
-                      'display_name': None,
-                      'distribution': None,
-                      'environment_variables': {},
-                      'identity': {'type': 'managed_identity'},
+            'node3': {'identity': {'type': 'managed_identity'},
                       'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                          'value': '1'},
                                  'component_in_path': {'job_input_type': 'literal',
                                                        'value': '${{parent.inputs.component_in_path}}'}},
-                      'limits': None,
                       'name': 'node3',
-                      'outputs': {},
-                      'properties': {},
-                      'resources': None,
-                      'tags': {},
                       'type': 'command'}
         }
 
@@ -2058,7 +1962,7 @@ class TestDSLPipeline:
         def pipeline_func():
             pass
 
-        with pytest.raises(UnExpectedNonPipelineParameterTypeError) as error_info:
+        with pytest.raises(UserErrorException) as error_info:
             pipeline_func()
         assert "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string" in str(error_info)
 
@@ -2066,7 +1970,7 @@ class TestDSLPipeline:
         def pipeline_func():
             pass
 
-        with pytest.raises(NonExistParamValueError) as error_info:
+        with pytest.raises(ParamValueNotExistsError) as error_info:
             pipeline_func()
         assert "pipeline_func() got unexpected params in non_pipeline_inputs ['non_exist_param1', 'non_exist_param2']" in str(error_info)
 
@@ -2086,3 +1990,144 @@ class TestDSLPipeline:
             component_func=component_func2)
         assert len(pipeline.jobs) == 2
         assert component_func2.name in pipeline.jobs
+
+    def test_condition_node_consumption(self):
+        from azure.ai.ml.dsl._condition import condition
+
+        component_yaml = components_dir / "helloworld_component_no_paths.yml"
+        component_func = load_component(component_yaml)
+
+        # consume expression (also component with only one output)
+        @dsl.pipeline
+        def pipeline_func_consume_expression(int_param: int):
+            node1 = component_func()
+            node2 = component_func()
+            expression = int_param == 0
+            control_node = condition(expression, true_block=node1, false_block=node2)  # noqa: F841
+
+        pipeline_job = pipeline_func_consume_expression(int_param=1)
+        assert pipeline_job.jobs["control_node"]._to_rest_object() == {
+            "type": "if_else",
+            "condition": "${{parent.jobs.expression_component.outputs.output}}",
+            "true_block": "${{parent.jobs.node1}}",
+            "false_block": "${{parent.jobs.node2}}",
+        }
+
+        # consume component with not one output
+        @dsl.pipeline
+        def pipeline_func_consume_invalid_component():
+            node0 = component_func()
+            node1 = component_func()
+            node2 = component_func()
+            control_node = condition(node0, true_block=node1, false_block=node2)  # noqa: F841
+
+        with pytest.raises(UserErrorException) as e:
+            pipeline_func_consume_invalid_component()
+        assert str(e.value) == "Exactly one output is expected for condition node, 0 outputs found."
+
+    def test_dsl_pipeline_with_spark_hobo(self) -> None:
+        add_greeting_column_func = load_component(
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+        )
+        count_by_row_func = load_component(
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
+        )
+
+        @dsl.pipeline(description="submit a pipeline with spark job")
+        def spark_pipeline_from_yaml(iris_data):
+            add_greeting_column = add_greeting_column_func(file_input=iris_data)
+            add_greeting_column.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            count_by_row = count_by_row_func(file_input=iris_data)
+            count_by_row.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            count_by_row.identity = {"type": "managed"}
+
+            return {"output": count_by_row.outputs.output}
+
+        dsl_pipeline: PipelineJob = spark_pipeline_from_yaml(
+            iris_data=Input(
+                path="https://azuremlexamples.blob.core.windows.net/datasets/iris.csv",
+                type=AssetTypes.URI_FILE,
+                mode=InputOutputModes.DIRECT,
+            ),
+        )
+        dsl_pipeline.outputs.output.mode = "Direct"
+
+        spark_node = dsl_pipeline.jobs["add_greeting_column"]
+        job_data_path_input = spark_node.inputs["file_input"]._meta
+        assert job_data_path_input
+        # spark_node.component._id = "azureml:test_component:1"
+        spark_node_dict = spark_node._to_dict()
+
+        spark_node_rest_obj = spark_node._to_rest_object()
+        regenerated_spark_node = Spark._from_rest_object(spark_node_rest_obj)
+
+        spark_node_dict_from_rest = regenerated_spark_node._to_dict()
+        omit_fields = []
+        assert pydash.omit(spark_node_dict, *omit_fields) == pydash.omit(spark_node_dict_from_rest, *omit_fields)
+        omit_fields = [
+            "jobs.add_greeting_column.componentId",
+            "jobs.count_by_row.componentId",
+            "jobs.add_greeting_column.properties",
+            "jobs.count_by_row.properties",
+        ]
+        actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
+        assert actual_job == {
+            "description": "submit a pipeline with spark job",
+            "properties": {},
+            "tags": {},
+            "display_name": "spark_pipeline_from_yaml",
+            "is_archived": False,
+            "job_type": "Pipeline",
+            "inputs": {
+                "iris_data": {
+                    "mode": "Direct",
+                    "uri": "https://azuremlexamples.blob.core.windows.net/datasets/iris.csv",
+                    "job_input_type": "uri_file",
+                }
+            },
+            "jobs": {
+                "add_greeting_column": {
+                    "type": "spark",
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "py_files": ["utils.zip"],
+                    "files": ["my_files.txt"],
+                    "identity": {"identity_type": "UserIdentity"},
+                    "conf": {
+                        "spark.driver.cores": 2,
+                        "spark.driver.memory": "1g",
+                        "spark.executor.cores": 1,
+                        "spark.executor.memory": "1g",
+                        "spark.executor.instances": 1,
+                    },
+                    "args": "--file_input ${{inputs.file_input}}",
+                    "name": "add_greeting_column",
+                    "inputs": {
+                        "file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
+                    },
+                    "_source": "YAML.COMPONENT",
+                },
+                "count_by_row": {
+                    "_source": "YAML.COMPONENT",
+                    "args": "--file_input ${{inputs.file_input}} " "--output ${{outputs.output}}",
+                    "conf": {
+                        "spark.driver.cores": 2,
+                        "spark.driver.memory": "1g",
+                        "spark.executor.cores": 1,
+                        "spark.executor.instances": 1,
+                        "spark.executor.memory": "1g",
+                    },
+                    "entry": {"file": "count_by_row.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "files": ["my_files.txt"],
+                    "identity": {"identity_type": "Managed"},
+                    "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+                    "jars": ["scalaproj.jar"],
+                    "name": "count_by_row",
+                    "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "type": "spark",
+                },
+            },
+            "outputs": {"output": {"job_output_type": "uri_folder", "mode": "Direct"}},
+            "settings": {"_source": "DSL"},
+        }

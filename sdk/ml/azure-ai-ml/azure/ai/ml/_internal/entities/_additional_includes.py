@@ -5,20 +5,29 @@
 import os
 import shutil
 import tempfile
+import zipfile
 from pathlib import Path
 from typing import Union
 
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
+from azure.ai.ml._utils._asset_utils import traverse_directory
+from .code import InternalComponentIgnoreFile
 
-ADDITIONAL_INCLUDES_SUFFIX = "additional_includes"
+ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
 
 
 class _AdditionalIncludes:
-    def __init__(self, code_path: Union[None, str], yaml_path: str):
+    def __init__(
+        self,
+        code_path: Union[None, str],
+        yaml_path: str,
+        ignore_file: InternalComponentIgnoreFile = None,
+    ):
         self.__yaml_path = yaml_path
         self.__code_path = code_path
+        self._ignore_file = ignore_file
 
         self._tmp_code_path = None
         self.__includes = None
@@ -57,18 +66,50 @@ class _AdditionalIncludes:
 
     @property
     def _additional_includes_file_path(self) -> Path:
-        return self._yaml_path.with_suffix(f".{ADDITIONAL_INCLUDES_SUFFIX}")
+        return self._yaml_path.with_suffix(ADDITIONAL_INCLUDES_SUFFIX)
 
     @property
     def code(self) -> Path:
         return self._tmp_code_path if self._tmp_code_path else self._code_path
 
-    @staticmethod
-    def _copy(src: Path, dst: Path) -> None:
+    def _copy(self, src: Path, dst: Path) -> None:
         if src.is_file():
             _general_copy(src, dst)
         else:
-            shutil.copytree(src, dst)
+            # use os.walk to replace shutil.copytree, which may raise FileExistsError
+            # for same folder, the expected behavior is merging
+            # ignore will be also applied during this process
+            for root, _, files in os.walk(src):
+                dst_root = Path(dst) / Path(root).relative_to(src)
+                dst_root_mkdir_flag = dst_root.is_dir()
+                for path, _ in traverse_directory(root, files, str(src), "", ignore_file=self._ignore_file):
+                    # if there is nothing to copy under current dst_root, no need to create this folder
+                    if dst_root_mkdir_flag is False:
+                        dst_root.mkdir()
+                        dst_root_mkdir_flag = True
+                    _general_copy(path, dst_root / Path(path).name)
+
+    @staticmethod
+    def _is_folder_to_compress(path: Path) -> bool:
+        """Check if the additional include needs to compress corresponding folder as a zip.
+
+        For example, given additional include /mnt/c/hello.zip
+          1) if a file named /mnt/c/hello.zip already exists, return False (simply copy)
+          2) if a folder named /mnt/c/hello exists, return True (compress as a zip and copy)
+
+        :param path: Given path in additional include.
+        :type path: Path
+        :return: If the path need to be compressed as a zip file.
+        :rtype: bool
+        """
+        if path.suffix != ".zip":
+            return False
+        # if zip file exists, simply copy as other additional includes
+        if path.exists():
+            return False
+        # remove .zip suffix and check whether the folder exists
+        stem_path = path.parent / path.stem
+        return stem_path.is_dir()
 
     def _validate(self) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
@@ -84,7 +125,7 @@ class _AdditionalIncludes:
                 validation_result.append_error(message=error_msg)
                 continue
 
-            if not src_path.exists():
+            if not src_path.exists() and not self._is_folder_to_compress(src_path):
                 error_msg = f"Unable to find additional include {additional_include} for {self._yaml_name}."
                 validation_result.append_error(message=error_msg)
                 continue
@@ -133,10 +174,24 @@ class _AdditionalIncludes:
         base_path = self._additional_includes_file_path.parent
         for additional_include in self._includes:
             src_path = (base_path / additional_include).resolve()
-            dst_path = (tmp_folder_path / src_path.name).resolve()
-            self._copy(src_path, dst_path)
+            if self._is_folder_to_compress(src_path):
+                self._resolve_folder_to_compress(additional_include, Path(tmp_folder_path))
+            else:
+                dst_path = (tmp_folder_path / src_path.name).resolve()
+                self._copy(src_path, dst_path)
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
         return
+
+    def _resolve_folder_to_compress(self, include: str, dst_path: Path) -> None:
+        """resolve the zip additional include, need to compress corresponding folder."""
+        zip_additional_include = (self._additional_includes_file_path.parent / include).resolve()
+        folder_to_zip = zip_additional_include.parent / zip_additional_include.stem
+        zip_file = dst_path / zip_additional_include.name
+        with zipfile.ZipFile(zip_file, "w") as zf:
+            zf.write(folder_to_zip, os.path.relpath(folder_to_zip, folder_to_zip.parent))  # write root in zip
+            for root, _, files in os.walk(folder_to_zip, followlinks=True):
+                for path, _ in traverse_directory(root, files, str(folder_to_zip), "", ignore_file=self._ignore_file):
+                    zf.write(path, os.path.relpath(path, folder_to_zip.parent))
 
     def cleanup(self) -> None:
         """Clean up potential tmp folder generated during resolve as it can be

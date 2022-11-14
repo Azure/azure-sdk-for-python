@@ -10,8 +10,6 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, Union
 
-from marshmallow import Schema
-
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
@@ -219,7 +217,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         return ErrorTarget.PIPELINE
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         # import this to ensure that nodes are registered before schema is created.
 
         return PipelineJobSchema(context=context)
@@ -286,7 +284,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 continue
             # raise error when required input with no default value not set
             if (
-                not self.inputs.get(key, None)  # input not provided
+                self.inputs.get(key, None) is None  # input not provided
                 and meta.optional is not True  # and it's required
                 and meta.default is None  # and it does not have default
             ):
@@ -331,21 +329,26 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             validation_result.append_error(yaml_path="jobs", message="No other job except for on_init/on_finalize job.")
 
         def _is_isolated_job(_validate_job_name: str) -> bool:
+            def _try_get_data_binding(_input_output_data) -> Union[str, None]:
+                """Try to get data binding from input/output data, return None if not found."""
+                if isinstance(_input_output_data, str):
+                    return _input_output_data
+                if not hasattr(_input_output_data, "_data_binding"):
+                    return None
+                return _input_output_data._data_binding()
+
             _validate_job = self.jobs[_validate_job_name]
             # no input to validate job
             for _input_name in _validate_job.inputs:
-                if not hasattr(_validate_job.inputs[_input_name]._data, "_data_binding"):
-                    continue
-                _data_binding = _validate_job.inputs[_input_name]._data._data_binding()
-                if is_data_binding_expression(_data_binding, ["parent", "jobs"]):
+                _data_binding = _try_get_data_binding(_validate_job.inputs[_input_name]._data)
+                if _data_binding is not None and is_data_binding_expression(_data_binding, ["parent", "jobs"]):
                     return False
             # no output from validate job
             for _job_name, _job in self.jobs.items():
                 for _input_name in _job.inputs:
-                    if not hasattr(_job.inputs[_input_name]._data, "_data_binding"):
-                        continue
-                    _data_binding = _job.inputs[_input_name]._data._data_binding()
-                    if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
+                    _data_binding = _try_get_data_binding(_job.inputs[_input_name]._data)
+                    if _data_binding is not None \
+                            and is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
                         return False
             return True
 

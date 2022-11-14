@@ -129,6 +129,7 @@ class TestDataOperations:
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
                 show_progress=True,
+                ignore_file=None,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -168,6 +169,7 @@ class TestDataOperations:
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
                 show_progress=True,
+                ignore_file=None,
             )
         mock_data_operations._operation.create_or_update.assert_called_once()
         assert "version='1'" in str(mock_data_operations._operation.create_or_update.call_args)
@@ -214,7 +216,7 @@ class TestDataOperations:
         mock_data_operations.create_or_update(data)
 
         _mock_read_remote_mltable_metadata_contents.assert_called_once_with(
-            path=data_path,
+            base_uri=data_path,
             datastore_operations=mock_datastore_operation,
             requests_pipeline=mock_data_operations._requests_pipeline,
         )
@@ -474,4 +476,5 @@ class TestDataOperations:
                 sas_uri=None,
                 artifact_type=ErrorTarget.DATA,
                 show_progress=True,
+                ignore_file=None,
             )

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,80 +8,98 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import List, Optional, Union
+from typing import List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._ace_provisioning_management_partner_api_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """this is the management partner operations error.
 
-    :param error: this is the ExtendedErrorInfo property.
-    :type error: ~azure.mgmt.managementpartner.models.ExtendedErrorInfo
+    :ivar error: this is the ExtendedErrorInfo property.
+    :vartype error: ~azure.mgmt.managementpartner.models.ExtendedErrorInfo
+    :ivar code: this is the error response code.
+    :vartype code: str
+    :ivar message: this is the extended error info message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ExtendedErrorInfo'},
+        "error": {"key": "error", "type": "ExtendedErrorInfo"},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        error: Optional["ExtendedErrorInfo"] = None,
-        **kwargs
-    ):
-        super(Error, self).__init__(**kwargs)
-        self.error = error
-
-
-class ExtendedErrorInfo(msrest.serialization.Model):
-    """this is the extended error info.
-
-    :param code: this is the error response code. Possible values include: "NotFound", "Conflict",
-     "BadRequest".
-    :type code: str or ~azure.mgmt.managementpartner.models.ErrorResponseCode
-    :param message: this is the extended error info message.
-    :type message: str
-    """
-
-    _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        *,
-        code: Optional[Union[str, "ErrorResponseCode"]] = None,
+        error: Optional["_models.ExtendedErrorInfo"] = None,
+        code: Optional[str] = None,
         message: Optional[str] = None,
         **kwargs
     ):
-        super(ExtendedErrorInfo, self).__init__(**kwargs)
+        """
+        :keyword error: this is the ExtendedErrorInfo property.
+        :paramtype error: ~azure.mgmt.managementpartner.models.ExtendedErrorInfo
+        :keyword code: this is the error response code.
+        :paramtype code: str
+        :keyword message: this is the extended error info message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.error = error
         self.code = code
         self.message = message
 
 
-class OperationDisplay(msrest.serialization.Model):
-    """this is the management partner operation.
+class ExtendedErrorInfo(_serialization.Model):
+    """this is the extended error info.
 
-    :param provider: the is management partner provider.
-    :type provider: str
-    :param resource: the is management partner resource.
-    :type resource: str
-    :param operation: the is management partner operation.
-    :type operation: str
-    :param description: the is management partner operation description.
-    :type description: str
+    :ivar code: this is the error response code.
+    :vartype code: str
+    :ivar message: this is the extended error info message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+    }
+
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: this is the error response code.
+        :paramtype code: str
+        :keyword message: this is the extended error info message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
+        self.code = code
+        self.message = message
+
+
+class OperationDisplay(_serialization.Model):
+    """this is the management partner operation.
+
+    :ivar provider: the is management partner provider.
+    :vartype provider: str
+    :ivar resource: the is management partner resource.
+    :vartype resource: str
+    :ivar operation: the is management partner operation.
+    :vartype operation: str
+    :ivar description: the is management partner operation description.
+    :vartype description: str
+    """
+
+    _attribute_map = {
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -92,120 +111,140 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: the is management partner provider.
+        :paramtype provider: str
+        :keyword resource: the is management partner resource.
+        :paramtype resource: str
+        :keyword operation: the is management partner operation.
+        :paramtype operation: str
+        :keyword description: the is management partner operation description.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """this is the management partner operations list.
 
-    :param value: this is the operation response list.
-    :type value: list[~azure.mgmt.managementpartner.models.OperationResponse]
-    :param next_link: Url to get the next page of items.
-    :type next_link: str
+    :ivar value: this is the operation response list.
+    :vartype value: list[~azure.mgmt.managementpartner.models.OperationResponse]
+    :ivar next_link: Url to get the next page of items.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationResponse]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationResponse]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["OperationResponse"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.OperationResponse"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(OperationList, self).__init__(**kwargs)
+        """
+        :keyword value: this is the operation response list.
+        :paramtype value: list[~azure.mgmt.managementpartner.models.OperationResponse]
+        :keyword next_link: Url to get the next page of items.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class OperationResponse(msrest.serialization.Model):
+class OperationResponse(_serialization.Model):
     """this is the management partner operations response.
 
-    :param name: this is the operation response name.
-    :type name: str
-    :param display: this is the operation display.
-    :type display: ~azure.mgmt.managementpartner.models.OperationDisplay
-    :param origin: the is operation response origin information.
-    :type origin: str
+    :ivar name: this is the operation response name.
+    :vartype name: str
+    :ivar display: this is the operation display.
+    :vartype display: ~azure.mgmt.managementpartner.models.OperationDisplay
+    :ivar origin: the is operation response origin information.
+    :vartype origin: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
         **kwargs
     ):
-        super(OperationResponse, self).__init__(**kwargs)
+        """
+        :keyword name: this is the operation response name.
+        :paramtype name: str
+        :keyword display: this is the operation display.
+        :paramtype display: ~azure.mgmt.managementpartner.models.OperationDisplay
+        :keyword origin: the is operation response origin information.
+        :paramtype origin: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
 
 
-class PartnerResponse(msrest.serialization.Model):
+class PartnerResponse(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """this is the management partner operations response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param etag: Type of the partner.
-    :type etag: int
+    :ivar etag: Type of the partner.
+    :vartype etag: int
     :ivar id: Identifier of the partner.
     :vartype id: str
     :ivar name: Name of the partner.
     :vartype name: str
     :ivar type: Type of resource. "Microsoft.ManagementPartner/partners".
     :vartype type: str
-    :param partner_id: This is the partner id.
-    :type partner_id: str
-    :param partner_name: This is the partner name.
-    :type partner_name: str
-    :param tenant_id: This is the tenant id.
-    :type tenant_id: str
-    :param object_id: This is the object id.
-    :type object_id: str
-    :param version: This is the version.
-    :type version: int
-    :param updated_time: This is the DateTime when the partner was updated.
-    :type updated_time: ~datetime.datetime
-    :param created_time: This is the DateTime when the partner was created.
-    :type created_time: ~datetime.datetime
-    :param state: This is the partner state. Possible values include: "Active", "Deleted".
-    :type state: str or ~azure.mgmt.managementpartner.models.ManagementPartnerState
+    :ivar partner_id: This is the partner id.
+    :vartype partner_id: str
+    :ivar partner_name: This is the partner name.
+    :vartype partner_name: str
+    :ivar tenant_id: This is the tenant id.
+    :vartype tenant_id: str
+    :ivar object_id: This is the object id.
+    :vartype object_id: str
+    :ivar version: This is the version.
+    :vartype version: int
+    :ivar updated_time: This is the DateTime when the partner was updated.
+    :vartype updated_time: ~datetime.datetime
+    :ivar created_time: This is the DateTime when the partner was created.
+    :vartype created_time: ~datetime.datetime
+    :ivar state: This is the partner state. Known values are: "Active" and "Deleted".
+    :vartype state: str or ~azure.mgmt.managementpartner.models.ManagementPartnerState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'etag': {'key': 'etag', 'type': 'int'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'partner_id': {'key': 'properties.partnerId', 'type': 'str'},
-        'partner_name': {'key': 'properties.partnerName', 'type': 'str'},
-        'tenant_id': {'key': 'properties.tenantId', 'type': 'str'},
-        'object_id': {'key': 'properties.objectId', 'type': 'str'},
-        'version': {'key': 'properties.version', 'type': 'int'},
-        'updated_time': {'key': 'properties.updatedTime', 'type': 'iso-8601'},
-        'created_time': {'key': 'properties.createdTime', 'type': 'iso-8601'},
-        'state': {'key': 'properties.state', 'type': 'str'},
+        "etag": {"key": "etag", "type": "int"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "partner_id": {"key": "properties.partnerId", "type": "str"},
+        "partner_name": {"key": "properties.partnerName", "type": "str"},
+        "tenant_id": {"key": "properties.tenantId", "type": "str"},
+        "object_id": {"key": "properties.objectId", "type": "str"},
+        "version": {"key": "properties.version", "type": "int"},
+        "updated_time": {"key": "properties.updatedTime", "type": "iso-8601"},
+        "created_time": {"key": "properties.createdTime", "type": "iso-8601"},
+        "state": {"key": "properties.state", "type": "str"},
     }
 
     def __init__(
@@ -219,10 +258,30 @@ class PartnerResponse(msrest.serialization.Model):
         version: Optional[int] = None,
         updated_time: Optional[datetime.datetime] = None,
         created_time: Optional[datetime.datetime] = None,
-        state: Optional[Union[str, "ManagementPartnerState"]] = None,
+        state: Optional[Union[str, "_models.ManagementPartnerState"]] = None,
         **kwargs
     ):
-        super(PartnerResponse, self).__init__(**kwargs)
+        """
+        :keyword etag: Type of the partner.
+        :paramtype etag: int
+        :keyword partner_id: This is the partner id.
+        :paramtype partner_id: str
+        :keyword partner_name: This is the partner name.
+        :paramtype partner_name: str
+        :keyword tenant_id: This is the tenant id.
+        :paramtype tenant_id: str
+        :keyword object_id: This is the object id.
+        :paramtype object_id: str
+        :keyword version: This is the version.
+        :paramtype version: int
+        :keyword updated_time: This is the DateTime when the partner was updated.
+        :paramtype updated_time: ~datetime.datetime
+        :keyword created_time: This is the DateTime when the partner was created.
+        :paramtype created_time: ~datetime.datetime
+        :keyword state: This is the partner state. Known values are: "Active" and "Deleted".
+        :paramtype state: str or ~azure.mgmt.managementpartner.models.ManagementPartnerState
+        """
+        super().__init__(**kwargs)
         self.etag = etag
         self.id = None
         self.name = None
