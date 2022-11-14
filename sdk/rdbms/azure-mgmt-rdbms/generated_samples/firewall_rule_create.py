@@ -30,7 +30,7 @@ def main():
     )
 
     response = client.firewall_rules.begin_create_or_update(
-        resource_group_name="TestGroup",
+        resource_group_name="testrg",
         server_name="testserver",
         firewall_rule_name="rule1",
         parameters={"properties": {"endIpAddress": "255.255.255.255", "startIpAddress": "0.0.0.0"}},
@@ -38,6 +38,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/stable/2017-12-01/examples/FirewallRuleCreate.json
+# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/FirewallRuleCreate.json
 if __name__ == "__main__":
     main()
