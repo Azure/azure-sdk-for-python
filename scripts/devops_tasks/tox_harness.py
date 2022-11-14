@@ -9,8 +9,6 @@ import glob
 from common_tasks import (
     run_check_call,
     clean_coverage,
-    log_file,
-    read_file,
     is_error_code_5_allowed,
     create_code_coverage_params,
     find_whl,
@@ -18,6 +16,7 @@ from common_tasks import (
 
 from ci_tools.parsing import ParsedSetup
 from ci_tools.build import create_package
+from ci_tools.variables import in_ci
 
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
@@ -31,10 +30,6 @@ DEFAULT_TOX_INI_LOCATION = os.path.join(root_dir, "eng/tox/tox.ini")
 IGNORED_TOX_INIS = ["azure-cosmos"]
 test_tools_path = os.path.join(root_dir, "eng", "test_tools.txt")
 dependency_tools_path = os.path.join(root_dir, "eng", "dependency_tools.txt")
-
-
-def in_ci():
-    return os.getenv("TF_BUILD", False)
 
 
 def combine_coverage_files(targeted_packages):
