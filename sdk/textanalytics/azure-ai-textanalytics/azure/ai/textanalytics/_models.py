@@ -528,7 +528,8 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             for r in healthcare_result.relations
         ]
         fhir_bundle = healthcare_result.fhir_bundle if hasattr(healthcare_result, "fhir_bundle") else None
-        detected_language = healthcare_result.detected_language if hasattr(healthcare_result, "detected_language") else None
+        detected_language = healthcare_result.detected_language \
+            if hasattr(healthcare_result, "detected_language") else None
         return cls(
             id=healthcare_result.id,
             entities=entities,
