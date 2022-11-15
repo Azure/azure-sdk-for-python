@@ -16,7 +16,8 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import AnomalyDetectorClientConfiguration
 from ._operations import AnomalyDetectorClientOperationsMixin
 from ._serialization import Deserializer, Serializer
-
+# FIXME: this is handwritten
+from . import models as _models
 
 class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """The Anomaly Detector API detects anomalies automatically in time series data.

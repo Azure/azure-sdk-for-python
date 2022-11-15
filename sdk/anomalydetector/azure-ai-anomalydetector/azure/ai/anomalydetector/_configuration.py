@@ -12,6 +12,8 @@ from typing import Any, Union
 from azure.core.configuration import Configuration
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
+# FIXME: this is handwritten
+from . import models as _models
 
 from ._version import VERSION
 
