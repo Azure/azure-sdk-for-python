@@ -47,13 +47,14 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         result = await self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
+        converted_result = [KeyVaultSetting._from_generated(setting) for setting in result.settings]
 
         # We don't actually get a paged response from the generated method, so we mock the typical iteration methods
         async def get_next(next_link=None):
-            return result.settings
+            return converted_result
 
         async def extract_data(pipeline_response):
-            return None, AsyncList(result.settings)
+            return None, AsyncList(converted_result)
 
         return AsyncItemPaged(get_next, extract_data)
 
