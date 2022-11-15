@@ -415,6 +415,12 @@
       ]
     },
     {
+      "filename": "sdk/tables/test-resources.json",
+      "words": [
+        "mmspecial"
+      ]
+    },
+    {
       "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
       "words": [
         "essai"

@@ -270,6 +270,7 @@ VERIFYTYPES_OPT_OUT = [
   "azure-synapse-managedprivateendpoints",
   "azure-synapse-monitoring",
   "azure-synapse-spark",
+  "azure-ai-textanalytics",
   "azure-data-tables",
   "azure-messaging-webpubsubservice",
 
