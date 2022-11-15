@@ -7,10 +7,11 @@
 # --------------------------------------------------------------------------
 
 import pytest
+from devtools_testutils import recorded_by_proxy
 from azure.core.exceptions import (
     HttpResponseError,
 )
-from _router_test_case import RouterTestCase
+from _router_test_case import RouterRecordedTestCase
 
 from _decorators import RouterPreparers
 from azure.communication.jobrouter._shared.utils import parse_connection_str
@@ -39,16 +40,9 @@ channel_id = 'fakeChannel1'
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestAssignmentScenario(RouterTestCase):
-    def __init__(self, method_name):
-        super(TestAssignmentScenario, self).__init__(method_name)
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.classification_policy_ids = {}  # type: Dict[str, List[str]]
-        self.worker_ids = {}  # type: Dict[str, List[str]]
-        self.job_ids = {}  # type: Dict[str, List[str]]
+class TestAssignmentScenario(RouterRecordedTestCase):
 
-    def clean_up(self):
+    def clean_up(self, **kwargs):
         # delete in live mode
         if not self.is_playback():
             router_admin_client: RouterAdministrationClient = self.create_admin_client()
@@ -87,19 +81,10 @@ class TestAssignmentScenario(RouterTestCase):
                 for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                     router_admin_client.delete_distribution_policy(distribution_policy_id = policy_id)
 
-    def setUp(self):
-        super(TestAssignmentScenario, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestAssignmentScenario, self).tearDown()
-
-    def get_distribution_policy_id(self):
+    def get_distribution_policy_id(self, **kwargs):
         return self._testMethodName + "_tst_dp"
 
-    def setup_distribution_policy(self):
+    def setup_distribution_policy(self, **kwargs):
         client: RouterAdministrationClient = self.create_admin_client()
         distribution_policy_id = self.get_distribution_policy_id()
 
@@ -122,10 +107,10 @@ class TestAssignmentScenario(RouterTestCase):
         else:
             self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
 
-    def get_job_queue_id(self):
+    def get_job_queue_id(self, **kwargs):
         return self._testMethodName + "_tst_q"
 
-    def setup_job_queue(self):
+    def setup_job_queue(self, **kwargs):
         client: RouterAdministrationClient = self.create_admin_client()
         job_queue_id = self.get_job_queue_id()
 
@@ -146,10 +131,10 @@ class TestAssignmentScenario(RouterTestCase):
         else:
             self.queue_ids[self._testMethodName] = [job_queue_id]
 
-    def get_router_worker_id(self):
+    def get_router_worker_id(self, **kwargs):
         return self._testMethodName + "_tst_w"
 
-    def setup_router_worker(self):
+    def setup_router_worker(self, **kwargs):
         w_identifier = self.get_router_worker_id()
         router_client: RouterClient = self.create_client()
         worker_queue_assignments = {self.get_job_queue_id(): QueueAssignment()}
@@ -202,10 +187,13 @@ class TestAssignmentScenario(RouterTestCase):
         router_worker: RouterWorker = router_client.get_worker(worker_id = worker_id)
         assert router_worker.state == RouterWorkerState.INACTIVE
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_router_worker')
-    def test_assignment_scenario(self):
+    @RouterPreparers.after_test_execute('clean_up')
+    def test_assignment_scenario(self, **kwargs):
         router_client: RouterClient = self.create_client()
 
         # create job

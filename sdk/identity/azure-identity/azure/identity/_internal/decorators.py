@@ -10,7 +10,7 @@ import base64
 from six import raise_from
 from azure.core.exceptions import ClientAuthenticationError
 
-from . import within_credential_chain
+from .utils import within_credential_chain
 
 
 _LOGGER = logging.getLogger(__name__)

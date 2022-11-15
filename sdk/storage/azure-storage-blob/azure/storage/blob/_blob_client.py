@@ -1164,6 +1164,10 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         Operation will only be successful if used within the specified number of days
         set in the delete retention policy.
 
+        If blob versioning is enabled, the base blob cannot be restored using this
+        method. Instead use :func:`start_copy_from_url` with the URL of the blob version
+        you wish to promote to the current version.
+
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
         :rtype: None

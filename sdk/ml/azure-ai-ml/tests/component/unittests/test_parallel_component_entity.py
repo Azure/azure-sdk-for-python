@@ -80,8 +80,6 @@ class TestParallelComponentEntity:
         expected_rest_component = {
             "componentId": "fake_component",
             "_source": "YAML.COMPONENT",
-            "computeId": None,
-            "display_name": None,
             "input_data": "${{inputs.component_in_path}}",
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "10"},
@@ -90,20 +88,9 @@ class TestParallelComponentEntity:
                     "value": "${{parent.inputs.pipeline_input}}",
                 },
             },
-            "name": None,
-            "outputs": {},
-            "tags": {},
-            "properties": {},
             "input_data": "${{inputs.component_in_path}}",
             "type": "parallel",
-            "error_threshold": None,
-            "logging_level": None,
-            "max_concurrency_per_instance": None,
-            "mini_batch_error_threshold": None,
             "mini_batch_size": 10485760,
-            "retry_settings": None,
-            "resources": None,
-            "environment_variables": {},
             "task": {
                 "append_row_to": "${{outputs.scoring_summary}}",
                 "program_arguments": "--label ${{inputs.label}} --model ${{inputs.model}} "

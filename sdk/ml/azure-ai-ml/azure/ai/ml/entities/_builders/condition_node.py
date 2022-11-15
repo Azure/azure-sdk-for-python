@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import typing
 from typing import Dict
-
-from marshmallow import Schema
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants._component import ControlFlowType
@@ -31,7 +28,7 @@ class ConditionNode(ControlFlowNode):
     @classmethod
     def _create_schema_for_validation(
         cls, context
-    ) -> typing.Union[PathAwareSchema, Schema]:  # pylint: disable=unused-argument
+    ) -> PathAwareSchema:  # pylint: disable=unused-argument
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)
@@ -61,7 +58,7 @@ class ConditionNode(ControlFlowNode):
         if isinstance(self.condition, InputOutputBase) and self.condition._meta is not None:
             # pylint: disable=protected-access
             output_definition = self.condition._meta
-            if output_definition and not output_definition.is_control:
+            if output_definition is not None and not output_definition.is_control:
                 validation_result.append_error(
                     yaml_path="condition",
                     message=f"'condition' of dsl.condition node must have 'is_control' field "

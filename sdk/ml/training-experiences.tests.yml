@@ -4,3 +4,7 @@ extends:
   template: ./tests.yml
   parameters:
     TestMarkArgument: "training_experiences_test"
+    CloudConfig:
+      Public:
+        SubscriptionConfiguration: $(python-ml-experiences-sub-scope)
+        Location: eastus

@@ -20,6 +20,8 @@ from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 
+from test_utilities.utils import sleep_if_live
+
 container_name = "testblob"
 file_share_name = "testfileshare"
 file_system_name = "testfilesystem"
@@ -473,6 +475,6 @@ class TestUpload(AzureRecordedTestCase):
         test_model = Model(path=artifact_path)
         created_model = client.models.create_or_update(test_model)
         assert test_model.name == created_model.name
-        time.sleep(5)  # wait for create/upload step
+        sleep_if_live(5)  # wait for create/upload step
 
         client.models.download(name=created_model.name, version=created_model.version)

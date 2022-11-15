@@ -1,11 +1,11 @@
-# Testing azure-identity in Azure Arc
+# Test Azure Identity in Azure Arc
 
 ## Prerequisite tools
 
 1. A non-Azure Windows or Linux VM.
 2. Administrator privileges on the VM.
 3. An Azure Key Vault.
-4. Python 3.6+
+4. Python 3.7+
 
 ### Install Azure Arc on the VM
 
@@ -25,8 +25,8 @@ sudo setfacl -m "g:himds:r-x" /var/opt/azcmagent/tokens/
 sudo setfacl -m "g::r-x" /var/opt/azcmagent/tokens/
 ```
 7. Arc setup should now be complete. Restart your VM to finalize your environment setup.
-8. After restarting, check your environment by searching for environment variables named `IDENTITY_ENDPOINT` and 
-`IMDS_ENDPOINT`. If they are not present, or don't resemble `http://localhost:40342/metadata/identity/oauth2/token` and 
+8. After restarting, check your environment by searching for environment variables named `IDENTITY_ENDPOINT` and
+`IMDS_ENDPOINT`. If they are not present, or don't resemble `http://localhost:40342/metadata/identity/oauth2/token` and
 `http://localhost:40342` respectively, you may need to wait a short while or try restarting the VM again.
 
 ## Give the Azure Arc VM access to the key vault
@@ -34,28 +34,34 @@ sudo setfacl -m "g::r-x" /var/opt/azcmagent/tokens/
 For the tests to pass, the VM will need secret management permissions in your key vault.
 
 1. Go to your key vault resource in the [Azure Portal](https://portal.azure.com).
-2. Go to the vault's "Access policies" page, and click "Add Access Policy".
-3. Using the secret management template, select your Arc VM resource as the principal.
-4. Click "Add".
-5. Don't forget to click "Save" at the top of the access policies page after the policy is added.
+2. Go to the vault's "Access policies" page, and click "Create".
+3. Using the "Secret Management" template, select your Arc VM resource as the principal.
+4. Click "Create".
 
 ## Run the azure-identity Tests on the Azure Arc VM
 
 > **Note:** The following steps are specific to Python.
 
 In a terminal window, run:
-```
-git clone https://github.com/Azure/azure-sdk-for-python --single-branch --branch master --depth 1
+```sh
+git clone https://github.com/Azure/azure-sdk-for-python --single-branch --branch main --depth 1
 cd azure-sdk-for-python/sdk/identity/azure-identity/tests/managed-identity-live
 ```
-Set the environment variable `AZURE_IDENTITY_TEST_VAULT_URL` to the vault URI of your key vault.
 
 Install `requirements.txt`:
-```
+```sh
 pip install -r requirements.txt
 ```
-Run the managed identity tests, using the below command with Python 3.6+:
+
+Set the following environment variables, being sure to update the URL value:
 ```
-pytest -k managed_identity_live
+AZURE_IDENTITY_TEST_VAULT_URL=<URL of your key vault>
+AZURE_TEST_RUN_LIVE=true
+AZURE_SKIP_LIVE_RECORDING=true
 ```
+Run the managed identity tests, using the below command with Python 3.7+:
+```sh
+pytest -sv -k managed_identity_live
+```
+
 Expected output for each: `passed` for all tests run.

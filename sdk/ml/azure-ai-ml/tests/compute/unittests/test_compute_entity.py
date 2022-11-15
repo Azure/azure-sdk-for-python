@@ -6,7 +6,7 @@ from msrest import Serializer
 from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import load_compute
-from azure.ai.ml._restclient.v2021_10_01.models import ComputeResource
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeResource
 from azure.ai.ml.entities import (
     AmlCompute,
     Compute,
@@ -123,9 +123,11 @@ class TestComputeEntity:
     def test_compute_instance_schedules_from_yaml(self):
         compute_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-schedules.yaml")
         assert len(compute_instance.schedules.compute_start_stop) == 2
-        assert compute_instance.idle_time_before_shutdown == "PT15M"
+        assert compute_instance.idle_time_before_shutdown_minutes == 15
 
         compute_resource = compute_instance._to_rest_object()
+        assert compute_resource.properties.properties.idle_time_before_shutdown == f"PT{compute_instance.idle_time_before_shutdown_minutes}M"
+        
         compute_instance2: ComputeInstance = ComputeInstance._load_from_rest(compute_resource)
         assert len(compute_instance2.schedules.compute_start_stop) == 2
         assert compute_instance2.schedules.compute_start_stop[0].action == "stop"
@@ -140,6 +142,7 @@ class TestComputeEntity:
         assert compute_instance2.schedules.compute_start_stop[1].trigger.frequency == "week"
         assert compute_instance2.schedules.compute_start_stop[1].trigger.interval == 1
         assert compute_instance2.schedules.compute_start_stop[1].trigger.schedule is not None
+        assert compute_instance2.idle_time_before_shutdown_minutes == compute_instance.idle_time_before_shutdown_minutes
 
     def test_compute_instance_setup_scripts_from_yaml(self):
         loaded_instance: ComputeInstance = load_compute("tests/test_configs/compute/compute-ci-setup-scripts.yaml")

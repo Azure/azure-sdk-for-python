@@ -10,7 +10,7 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.async_paging import AsyncItemPaged
-from .._generated.aio import SearchClient as _SearchServiceClient
+from .._generated.aio import SearchServiceClient as _SearchServiceClient
 from ...aio._search_client_async import SearchClient
 from .._utils import (
     get_access_conditions,
@@ -282,6 +282,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
             index_name=index.name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )
@@ -476,6 +477,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         result = await self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )
@@ -630,6 +632,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         result = await self._client.aliases.create_or_update(
             alias_name=alias.name,
             alias=alias,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )

@@ -2,12 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any, Iterable, Optional
 
 from azure.core.exceptions import ClientAuthenticationError
-
-if TYPE_CHECKING:
-    from typing import Any, Iterable, Optional
 
 
 class CredentialUnavailableError(ClientAuthenticationError):
