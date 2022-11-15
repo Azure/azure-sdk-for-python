@@ -34,6 +34,7 @@ from azure.core.pipeline.policies import AzureKeyCredentialPolicy
 from ._client import TextAuthoringClient as GeneratedTextAuthoringClient
 from .._user_agent import USER_AGENT
 
+
 def _authentication_policy(credential):
     authentication_policy = None
     if credential is None:

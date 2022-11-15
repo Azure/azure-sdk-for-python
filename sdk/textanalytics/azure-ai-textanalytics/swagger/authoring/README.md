@@ -25,7 +25,7 @@ package-name: azure-ai-textanalytics
 license-header: MICROSOFT_MIT_NO_VERSION
 no-namespace-folders: true
 python: true
-tag: release_authoring_2022_05_01
+tag: release_authoring_2022_10_01_preview
 openapi-type: data-plane
 clear-output-folder: true
 version-tolerant: true
@@ -40,15 +40,15 @@ modelerfour:
 
 ```yaml
 batch:
-  - tag: release_authoring_2022_05_01
+  - tag: release_authoring_2022_10_01_preview
 ```
 
 ## Authoring
 
-These settings apply only when `--tag=release_authoring_2022_05_01` is specified on the command line.
+These settings apply only when `--tag=release_authoring_2022_10_01_preview` is specified on the command line.
 
-```yaml $(tag) == 'release_authoring_2022_05_01'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/stable/2022-05-01/analyzetext-authoring.json
+```yaml $(tag) == 'release_authoring_2022_10_01_preview'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/main/specification/cognitiveservices/data-plane/Language/preview/2022-10-01-preview/analyzetext-authoring.json
 output-folder: ../../azure/ai/textanalytics/authoring
 title: TextAuthoringClient
 ```
@@ -102,7 +102,7 @@ directive:
 
 ## Give LROs return types
 
-```yaml $(tag) == 'release_authoring_2022_05_01'
+```yaml $(tag) == 'release_authoring_2022_10_01_preview'
 directive:
   - where-operation: TextAnalysisAuthoring_DeleteProject
     transform: >
@@ -168,11 +168,43 @@ directive:
           "$ref": "#/definitions/TextAnalysisAuthoringTrainingJobState"
         }
       };
+  - where-operation: TextAnalysisAuthoring_DeleteDeploymentFromResources
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringDeploymentJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_LoadSnapshot
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringLoadSnapshotJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_AssignDeploymentResources
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringDeploymentResourcesJobState"
+        }
+      };
+  - where-operation: TextAnalysisAuthoring_UnassignDeploymentResources
+    transform: >
+      $["responses"]["200"] = {
+        "description": "dummy schema to get poller response when calling .result()",
+        "schema": {
+          "$ref": "#/definitions/TextAnalysisAuthoringDeploymentResourcesJobState"
+        }
+      };
 ```
 
 ## Rename `body` param for operations
 
-```yaml $(tag) == 'release_authoring_2022_05_01'
+```yaml $(tag) == 'release_authoring_2022_10_01_preview'
 directive:
   - where-operation: TextAnalysisAuthoring_CreateProject
     transform: >
@@ -193,7 +225,7 @@ directive:
 
 ## Rename Authoring client operations
 
-```yaml $(tag) == 'release_authoring_2022_05_01'
+```yaml $(tag) == 'release_authoring_2022_10_01_preview'
 directive:
   - rename-operation:
       from: TextAnalysisAuthoring_ListProjects
@@ -258,7 +290,7 @@ directive:
   - rename-operation:
       from: TextAnalysisAuthoring_ListTrainingConfigVersions
       to: ListTrainingConfigVersions
-    - rename-operation:
+  - rename-operation:
       from: TextAnalysisAuthoring_GetProjectDeletionStatus
       to: GetProjectDeletionJobStatus
   - rename-operation:
@@ -276,5 +308,34 @@ directive:
   - rename-operation:
       from: TextAnalysisAuthoring_GetImportStatus
       to: GetImportProjectJobStatus
-  
+  - rename-operation:
+      from: TextAnalysisAuthoring_DeleteDeploymentFromResources
+      to: DeleteDeploymentFromResources
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetDeploymentDeleteFromResourcesStatus
+      to: GetDeploymentDeleteFromResourcesStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_LoadSnapshot
+      to: LoadSnapshot
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetLoadSnapshotStatus
+      to: GetLoadSnapshotStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_ListDeploymentResources
+      to: ListDeploymentResources
+  - rename-operation:
+      from: TextAnalysisAuthoring_AssignDeploymentResources
+      to: AssignDeploymentResources
+  - rename-operation:
+      from: TextAnalysisAuthoring_UnassignDeploymentResources
+      to: UnassignDeploymentResources
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetAssignDeploymentResourcesStatus
+      to: GetAssignDeploymentResourcesStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_GetUnassignDeploymentResourcesStatus
+      to: GetUnassignDeploymentResourcesStatus
+  - rename-operation:
+      from: TextAnalysisAuthoring_ListAssignedResourceDeployments
+      to: ListAssignedResourceDeployments
 ```
