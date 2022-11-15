@@ -382,10 +382,11 @@ def filter_tox_environment_string(namespace_argument: str, package_name: str) ->
         filtered_set = []
 
         for tox_env in tox_envs:
+            exclusions_for_env = []
             try:
                 exclusions_for_env = globals()[f"{tox_env.strip().upper()}_OPT_OUT"]
             except Exception as e:
-                logging.error(e)
+                pass
 
             if exclusions_for_env:
                 if package_name in exclusions_for_env:
