@@ -64,5 +64,9 @@ class DoWhileSchema(BaseLoopSchema):
             mapping[k] = [item._name for item in v]
         result._mapping = mapping
 
-        result._condition = result._condition._name
+        try:
+            result._condition = result._condition._name
+        except AttributeError:
+            result._condition = result._condition
+
         return result
