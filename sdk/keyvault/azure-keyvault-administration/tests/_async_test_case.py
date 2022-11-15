@@ -79,11 +79,11 @@ class KeyVaultAccessControlClientPreparer(BaseClientPreparer):
 
     def create_access_control_client(self, **kwargs):
         from azure.keyvault.administration.aio import \
-            KeyVaultSettingsClient
+            KeyVaultAccessControlClient
 
-        credential = self.get_credential(KeyVaultSettingsClient, is_async=True)
+        credential = self.get_credential(KeyVaultAccessControlClient, is_async=True)
         return self.create_client_from_credential(
-            KeyVaultSettingsClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
+            KeyVaultAccessControlClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
 
 
@@ -99,11 +99,11 @@ class KeyVaultSettingsClientPreparer(BaseClientPreparer):
 
     def create_access_control_client(self, **kwargs):
         from azure.keyvault.administration.aio import \
-            KeyVaultAccessControlClient
+            KeyVaultSettingsClient
 
-        credential = self.get_credential(KeyVaultAccessControlClient, is_async=True)
+        credential = self.get_credential(KeyVaultSettingsClient, is_async=True)
         return self.create_client_from_credential(
-            KeyVaultAccessControlClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
+            KeyVaultSettingsClient, credential=credential, vault_url=self.managed_hsm_url, **kwargs
         )
 
 
