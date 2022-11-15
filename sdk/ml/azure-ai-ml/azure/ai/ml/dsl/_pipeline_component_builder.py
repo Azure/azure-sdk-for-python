@@ -181,12 +181,13 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, *, user_provided_kwargs=None, non_pipeline_params_dict=None) -> PipelineComponent:
+    def build(self, *, user_provided_kwargs=None, non_pipeline_params_dict=None, non_pipeline_parameters=None) -> PipelineComponent:
         """
         Build a pipeline component from current pipeline builder.
 
         :param user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
         :param non_pipeline_params_dict: Non-pipeline parameters to provided value. None if not exist.
+        :param non_pipeline_parameters: List of non-pipeline parameter name. None if not exist.
         """
         if user_provided_kwargs is None:
             user_provided_kwargs = {}
@@ -198,8 +199,9 @@ class PipelineComponentBuilder:
             user_provided_kwargs=user_provided_kwargs,
             # TODO: support result() for pipeline input inside parameter group
             group_default_kwargs=self._get_group_parameter_defaults(),
-            non_pipeline_parameter_dict=non_pipeline_params_dict
+            non_pipeline_parameters=non_pipeline_parameters
         )
+        kwargs.update(non_pipeline_params_dict or {})
         # We use this stack to store the dsl pipeline definition hierarchy
         _definition_builder_stack.push(self)
 
@@ -401,7 +403,7 @@ class PipelineComponentBuilder:
 
 
 def _build_pipeline_parameter(
-        func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_parameter_dict=None):
+        func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_parameters=None):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
     # @parameter_group
@@ -413,7 +415,7 @@ def _build_pipeline_parameter(
     #   component_func(input=param.key)  <--- param.key should be val.
 
     # transform kwargs
-    transformed_kwargs = non_pipeline_parameter_dict or {}
+    transformed_kwargs = {}
     if group_default_kwargs:
         transformed_kwargs.update(
             {
@@ -434,7 +436,7 @@ def _build_pipeline_parameter(
     parameters = all_params(signature(func).parameters)
     # transform default values
     for left_args in parameters:
-        if left_args.name not in transformed_kwargs.keys():
+        if left_args.name not in transformed_kwargs.keys() and left_args.name not in non_pipeline_parameters:
             default_value = left_args.default if left_args.default is not Parameter.empty else None
             actual_value = user_provided_kwargs.get(left_args.name)
             transformed_kwargs[left_args.name] = _wrap_pipeline_parameter(
