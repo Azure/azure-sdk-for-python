@@ -28,6 +28,7 @@
     "**/*requirement*.txt",
     "**/assets.json",
 
+    "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
