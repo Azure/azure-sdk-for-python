@@ -2,9 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
+
 from ._generated_models import UpdateSettingsRequest
 from ._internal import KeyVaultClientBase
-from ._models import GetSettingsResult, KeyVaultSetting
+from ._models import KeyVaultSetting
 
 class KeyVaultSettingsClient(KeyVaultClientBase):
     """Provides methods to update, get, and list settings for an Azure Key Vault.
@@ -22,6 +25,7 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         Vault or Managed HSM domain. Defaults to True.
     """
 
+    @distributed_trace
     def get_setting(self, name: str, **kwargs) -> KeyVaultSetting:
         """Gets the setting with the specified name.
 
@@ -34,16 +38,18 @@ class KeyVaultSettingsClient(KeyVaultClientBase):
         result = self._client.get_setting_value(vault_base_url=self._vault_url, setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
-    def get_settings(self, **kwargs) -> GetSettingsResult:
-        """Gets all account settings.
+    @distributed_trace
+    def list_settings(self, **kwargs) -> ItemPaged[KeyVaultSetting]:
+        """Lists all account settings.
 
-        :returns: A :class:`~azure.keyvault.administration.GetSettingsResult` object containing the account's settings.
-        :rtype: ~azure.keyvault.administration.GetSettingsResult
+        :returns: A paged object containing the account's settings.
+        :rtype: ~azure.core.paging.ItemPaged[~azure.keyvault.administration.KeyVaultSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         result = self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
         return GetSettingsResult._from_generated(result)
 
+    @distributed_trace
     def update_setting(self, name: str, value: str, **kwargs) -> KeyVaultSetting:
         """Updates a given account setting with the provided value.
 

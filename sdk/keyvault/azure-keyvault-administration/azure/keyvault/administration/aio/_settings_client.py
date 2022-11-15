@@ -2,9 +2,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+from azure.core.async_paging import AsyncItemPaged
+from azure.core.tracing.decorator_async import distributed_trace_async
+
 from .._generated_models import UpdateSettingsRequest
 from .._internal import AsyncKeyVaultClientBase
-from .._models import GetSettingsResult, KeyVaultSetting
+from .._models import KeyVaultSetting
 
 class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
     """Provides methods to update, get, and list settings for an Azure Key Vault.
@@ -22,6 +25,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         Vault or Managed HSM domain. Defaults to True.
     """
 
+    @distributed_trace_async
     async def get_setting(self, name: str, **kwargs) -> KeyVaultSetting:
         """Gets the setting with the specified name.
 
@@ -34,16 +38,18 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         result = await self._client.get_setting_value(vault_base_url=self._vault_url, setting_name=name, **kwargs)
         return KeyVaultSetting._from_generated(result)
 
-    async def get_settings(self, **kwargs) -> GetSettingsResult:
-        """Gets all account settings.
+    @distributed_trace_async
+    async def list_settings(self, **kwargs) -> AsyncItemPaged[KeyVaultSetting]:
+        """Lists all account settings.
 
         :returns: A :class:`~azure.keyvault.administration.GetSettingsResult` object containing the account's settings.
-        :rtype: ~azure.keyvault.administration.GetSettingsResult
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.keyvault.administration.KeyVaultSetting]
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         result = await self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
         return GetSettingsResult._from_generated(result)
 
+    @distributed_trace_async
     async def update_setting(self, name: str, value: str, **kwargs) -> KeyVaultSetting:
         """Updates a given account setting with the provided value.
 
