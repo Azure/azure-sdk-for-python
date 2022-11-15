@@ -26,6 +26,7 @@
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
+    "**/assets.json",
 
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
@@ -60,6 +61,7 @@
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
@@ -201,6 +203,7 @@
     "iscsi",
     "iterrows",
     "ivar",
+    "ivars",
     "jwks",
     "keybak",
     "kube",
@@ -275,6 +278,8 @@
     "pyfuncitem",
     "pygobject",
     "pyodide",
+    "pyright",
+    "pyrightconfig",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -410,6 +415,12 @@
       ]
     },
     {
+      "filename": "sdk/tables/test-resources.json",
+      "words": [
+        "mmspecial"
+      ]
+    },
+    {
       "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
       "words": [
         "essai"
@@ -468,7 +479,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": ["conv"],
+      "words": ["conv", "summ"],
       "caseSensitive": false
     },
     {
@@ -1137,6 +1148,12 @@
       "filename": "sdk/appconfiguration/test-resources.json",
       "words": [
         "azconfig"
+      ]
+    },
+    {
+      "filename": "sdk/personalizer/test-resources.json",
+      "words": [
+        "euap"
       ]
     }
   ],

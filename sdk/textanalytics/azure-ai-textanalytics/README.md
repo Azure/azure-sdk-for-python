@@ -18,10 +18,6 @@ The Azure Cognitive Service for Language is a cloud-based service that provides 
 
 [Source code][source_code] | [Package (PyPI)][ta_pypi] | [API reference documentation][ta_ref_docs] | [Product documentation][language_product_documentation] | [Samples][ta_samples]
 
-## _Disclaimer_
-
-_Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For more information and questions, please refer to https://github.com/Azure/azure-sdk-for-python/issues/20691_
-
 ## Getting started
 
 ### Prerequisites
@@ -79,16 +75,17 @@ For example, `https://<region>.api.cognitive.microsoft.com/`.
 Install the Azure Text Analytics client library for Python with [pip][pip]:
 
 ```bash
-pip install azure-ai-textanalytics
+pip install azure-ai-textanalytics --pre
 ```
 
-> Note that `5.2.X` targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
-In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-05-01`.
+> Note that `5.2.X` and newer targets the Azure Cognitive Service for Language APIs. These APIs include the text analysis and natural language processing features found in the previous versions of the Text Analytics client library.
+In addition, the service API has changed from semantic to date-based versioning. This version of the client library defaults to the latest supported API version, which currently is `2022-10-01-preview`.
 
 This table shows the relationship between SDK versions and supported API versions of the service
 
 | SDK version  | Supported API version of service  |
 | ------------ | --------------------------------- |
+| 5.3.0b1 - Latest beta release | 3.0, 3.1, 2022-05-01, 2022-10-01-preview (default) |
 | 5.2.X - Latest stable release | 3.0, 3.1, 2022-05-01 (default) |
 | 5.1.0  | 3.0, 3.1 (default) |
 | 5.0.0  | 3.0 |

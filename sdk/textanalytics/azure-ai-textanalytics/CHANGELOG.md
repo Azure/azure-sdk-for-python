@@ -15,7 +15,7 @@
   `NumberResolution`, `NumericRangeResolution`, `OrdinalResolution`, `SpeedResolution`, `TemperatureResolution`,
   `TemporalSpanResolution`, `VolumeResolution`, `WeightResolution`, `AgeUnit`, `AreaUnit`, `TemporalModifier`,
   `InformationUnit`, `LengthUnit`, `NumberKind`, `RangeKind`, `RelativeTo`, `SpeedUnit`, `TemperatureUnit`,
-  `VolumeUnit`, and `WeightUnit`.
+  `VolumeUnit`, `DateTimeSubKind`, and `WeightUnit`.
 - Added the Abstractive Summarization feature and related models: `AbstractSummaryAction`, `AbstractSummaryResult`, `AbstractiveSummary`,
   and `SummaryContext`. Access the feature through the `begin_analyze_actions` API.
 - Added automatic language detection to long-running operation APIs. Pass `auto` into the document `language` hint to use this feature.
@@ -31,6 +31,7 @@
 ### Bugs Fixed
 
 ### Other Changes
+- Removed dependency on `msrest`.
 
 ## 5.2.1 (2022-10-26)
 
