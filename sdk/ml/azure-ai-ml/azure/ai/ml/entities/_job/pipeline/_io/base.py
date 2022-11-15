@@ -134,6 +134,9 @@ class InputOutputBase(ABC):
     @property
     def path(self) -> str:
         # This property is introduced for static intellisense.
+        # when data unconfigured, return None for path
+        if self._data is None:
+            return None
         if hasattr(self._data, "path"):
             return self._data.path
         msg = f"{type(self._data)} does not have path."

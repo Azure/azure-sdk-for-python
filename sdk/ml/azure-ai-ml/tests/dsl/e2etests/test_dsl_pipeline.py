@@ -6,6 +6,8 @@ from unittest.mock import patch
 
 import pydash
 import pytest
+from azure.core.exceptions import HttpResponseError
+
 from azure.ai.ml import (
     Input,
     MLClient,
@@ -22,7 +24,7 @@ from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._load_import import to_component
 from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
-from azure.ai.ml.entities import CommandComponent, CommandJob
+from azure.ai.ml.entities import CommandComponent, CommandJob, Command
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
@@ -128,7 +130,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         _ = client.jobs.create_or_update(dsl_pipeline)
         for job_instance in dsl_pipeline.jobs.values():
             assert (
-                isinstance(job_instance.component, str) or job_instance.component.id is not None
+                    isinstance(job_instance.component, str) or job_instance.component.id is not None
             ), "component id will be filled back to the instance during create_or_update"
 
     def test_command_component_create_with_output(self, client: MLClient, randstr: Callable[[str], str]) -> None:
@@ -156,10 +158,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
         client.jobs.create_or_update(pipeline, experiment_name=experiment_name)
 
     def test_command_component_create_from_remote(
-        self,
-        client: MLClient,
-        hello_world_component: ComponentEntity,
-        randstr: Callable[[str], str],
+            self,
+            client: MLClient,
+            hello_world_component: ComponentEntity,
+            randstr: Callable[[str], str],
     ) -> None:
         component_func = load_component(
             client=client,
@@ -186,6 +188,131 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         pipeline = pipeline_remote_component(10, 15, job_input)
         client.jobs.create_or_update(pipeline, experiment_name=experiment_name)
+
+    def test_remote_component_reference(
+            self,
+            client: MLClient,
+            hello_world_component: ComponentEntity,
+            randstr: Callable[[str], str],
+    ) -> None:
+        @dsl.pipeline(
+            name=randstr("pipeline_name"),
+            description="The hello world pipeline job",
+            tags={"owner": "sdkteam", "tag": "tagvalue"},
+            compute="cpu-cluster",
+        )
+        def pipeline_remote_component(job_in_number, job_in_other_number, job_in_path):
+            node1 = Command(
+                component=f"{hello_world_component.name}:{hello_world_component.version}",
+                inputs=dict(
+                    component_in_number=job_in_number, component_in_path=job_in_path,
+                ),
+                _from_component_func=True
+            )
+
+            node2 = Command(
+                component=f"{hello_world_component.name}:{hello_world_component.version}",
+                inputs=dict(
+                    component_in_number=job_in_other_number,
+                    # node with remote component's output can access by any key
+                    component_in_path=node1.outputs.component_out_path,
+                ),
+                _from_component_func=True
+            )
+
+            return {"job_out_data": node2.outputs.component_out_path}
+
+        pipeline = pipeline_remote_component(10, 15, job_input)
+        actual_job = omit_with_wildcard(pipeline._to_rest_object().properties.as_dict(), *common_omit_fields)
+        assert actual_job["jobs"] == {
+            'node1': {'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '${{parent.inputs.job_in_number}}'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.job_in_path}}'}},
+                      'name': 'node1',
+                      'type': 'command'},
+            'node2': {'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '${{parent.inputs.job_in_other_number}}'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.jobs.node1.outputs.component_out_path}}'}},
+                      'name': 'node2',
+                      'outputs': {'component_out_path': {'type': 'literal',
+                                                         'value': '${{parent.outputs.job_out_data}}'}},
+                      'type': 'command'}
+        }
+
+        # reference non-existing key will get error from backend
+        @dsl.pipeline(
+            compute="cpu-cluster",
+        )
+        def pipeline_remote_component(job_in_number, job_in_other_number, job_in_path):
+            node1 = Command(
+                component=f"{hello_world_component.name}:{hello_world_component.version}",
+                inputs=dict(
+                    component_in_number=job_in_number, component_in_path=job_in_path,
+                ),
+                _from_component_func=True
+            )
+
+            node2 = Command(
+                component=f"{hello_world_component.name}:{hello_world_component.version}",
+                inputs=dict(
+                    component_in_number=job_in_other_number,
+                    # node with remote component's output can access by any key
+                    component_in_path=node1.outputs.non_exist,
+                ),
+                _from_component_func=True
+            )
+            return {"job_out_data": node2.outputs.component_out_path}
+
+        pipeline = pipeline_remote_component(10, 15, job_input)
+        with pytest.raises(HttpResponseError) as e:
+            client.jobs.create_or_update(pipeline, experiment_name=experiment_name)
+        msg = "Invalid binding expression since the source output port non_exist of componentJob node1 does not exist."
+        assert msg in str(e.value)
+
+    def test_remote_component_configure(
+            self,
+            client: MLClient,
+            hello_world_component: ComponentEntity,
+    ) -> None:
+
+        @dsl.pipeline(
+            compute="cpu-cluster",
+        )
+        def pipeline_remote_component(job_in_number, job_in_other_number, job_in_path):
+            node1 = hello_world_component(component_in_number=job_in_number, component_in_path=job_in_path)
+            node1.outputs.component_out_path.mode = "upload"
+
+            node2 = hello_world_component(
+                component_in_number=job_in_other_number,
+                # node with remote component's output can access by any key
+                component_in_path=node1.outputs.component_out_path,
+            )
+            return {"job_out_data": node2.outputs.component_out_path}
+
+        pipeline = pipeline_remote_component(10, 15, job_input)
+        actual_job = omit_with_wildcard(pipeline._to_rest_object().properties.as_dict(), *common_omit_fields)
+        assert actual_job["jobs"] == {
+            'node1': {'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '${{parent.inputs.job_in_number}}'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.job_in_path}}'}},
+                      'name': 'node1',
+                      'outputs': {'component_out_path': {'job_output_type': 'uri_folder',
+                                                         'mode': 'Upload'}},
+                      'resources': {'instance_count': 1},
+                      'type': 'command'},
+            'node2': {'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '${{parent.inputs.job_in_other_number}}'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.jobs.node1.outputs.component_out_path}}'}},
+                      'name': 'node2',
+                      'outputs': {'component_out_path': {'type': 'literal',
+                                                         'value': '${{parent.outputs.job_out_data}}'}},
+                      'resources': {'instance_count': 1},
+                      'type': 'command'}
+        }
 
     def test_component_load_from_remote(self, client: MLClient, hello_world_component: ComponentEntity) -> None:
         component_func = load_component(
@@ -621,9 +748,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 "node1": {
                     "archives": None,
                     "args": "--input1 ${{inputs.input1}} --output2 "
-                    "${{outputs.output1}} --my_sample_rate "
-                    "${{inputs.sample_rate}} $[[--input_optional "
-                    "${{inputs.input_optional}}]]",
+                            "${{outputs.output1}} --my_sample_rate "
+                            "${{inputs.sample_rate}} $[[--input_optional "
+                            "${{inputs.input_optional}}]]",
                     "computeId": "spark31",
                     "conf": {
                         "spark.driver.cores": 1,
@@ -744,11 +871,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             description="This is the basic pipeline with several input types",
         )
         def input_types_pipeline(
-            component_in_string="component_in_string",
-            component_in_ranged_integer=10,
-            component_in_enum="world",
-            component_in_boolean=True,
-            component_in_ranged_number=8,
+                component_in_string="component_in_string",
+                component_in_ranged_integer=10,
+                component_in_enum="world",
+                component_in_boolean=True,
+                component_in_ranged_number=8,
         ):
             input_types_func(
                 component_in_string=component_in_string,
@@ -805,9 +932,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
-            required_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -830,8 +957,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
+                required_input,
+                required_param,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -855,8 +982,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
+                required_input,
+                required_param,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -882,11 +1009,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
-            required_param_with_default,
-            optional_param,
-            optional_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
+                optional_param,
+                optional_param_with_default,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -916,11 +1043,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
-            required_param_with_default,
-            optional_param,
-            optional_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
+                optional_param,
+                optional_param_with_default,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -946,11 +1073,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
-            required_param_with_default,
-            optional_param,
-            optional_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
+                optional_param,
+                optional_param_with_default,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -975,11 +1102,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         @dsl.pipeline()
         def pipeline_missing_type(
-            required_input,
-            required_param,
-            required_param_with_default,
-            optional_param,
-            optional_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
+                optional_param,
+                optional_param_with_default,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -992,15 +1119,15 @@ class TestDSLPipeline(AzureRecordedTestCase):
             client.components.create_or_update(pipeline_missing_type)
 
         assert (
-            "Unknown type of parameter ['required_input', 'required_param', 'required_param_with_default', 'optional_param', 'optional_param_with_default'] in pipeline func 'pipeline_missing_type'"
-            in e.value.message
+                "Unknown type of parameter ['required_input', 'required_param', 'required_param_with_default', 'optional_param', 'optional_param_with_default'] in pipeline func 'pipeline_missing_type'"
+                in e.value.message
         )
 
         @dsl.pipeline(non_pipeline_inputs=['param'])
         def pipeline_with_non_pipeline_inputs(
-            required_input: Input,
-            required_param: str,
-            param: str,
+                required_input: Input,
+                required_param: str,
+                param: str,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -1016,9 +1143,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         @dsl.pipeline(continue_on_step_failure=True, force_rerun=True, default_datastore="test")
         def valid_pipeline_func(
-            required_input: Input,
-            required_param: str,
-            node_compute: str = "cpu-cluster",
+                required_input: Input,
+                required_param: str,
+                node_compute: str = "cpu-cluster",
         ):
             default_optional_func(
                 required_input=required_input,
@@ -1046,8 +1173,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         with caplog.at_level(logging.WARNING):
             client.components.create_or_update(valid_pipeline_func)
         assert (
-            "Job settings {'default_datastore': 'test', 'continue_on_step_failure': True, 'force_rerun': True} on pipeline function 'valid_pipeline_func' are ignored when creating PipelineComponent."
-            in caplog.messages
+                "Job settings {'default_datastore': 'test', 'continue_on_step_failure': True, 'force_rerun': True} on pipeline function 'valid_pipeline_func' are ignored when creating PipelineComponent."
+                in caplog.messages
         )
 
     def test_create_pipeline_with_parameter_group(self, client: MLClient) -> None:
@@ -1064,9 +1191,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         @dsl.pipeline()
         def sub_pipeline_func(
-            required_input: Input,
-            group: Group,
-            sub_group: SubGroup,
+                required_input: Input,
+                group: Group,
+                sub_group: SubGroup,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -1080,8 +1207,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         @dsl.pipeline(default_compute="cpu-cluster")
         def root_pipeline_with_group(
-            r_required_input: Input,
-            r_group: Group,
+                r_required_input: Input,
+                r_group: Group,
         ):
             sub_pipeline_func(required_input=r_required_input, group=r_group, sub_group=r_group.sub)
 
@@ -1117,11 +1244,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
-            required_param_with_default,
-            optional_param,
-            optional_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
+                optional_param,
+                optional_param_with_default,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -1151,11 +1278,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
-            required_param_with_default,
-            optional_param,
-            optional_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
+                optional_param,
+                optional_param_with_default,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -1181,11 +1308,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
-            required_param_with_default,
-            optional_param,
-            optional_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
+                optional_param,
+                optional_param_with_default,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -1210,11 +1337,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
-            required_param_with_default,
-            optional_param,
-            optional_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
+                optional_param,
+                optional_param_with_default,
         ):
             default_optional_func(
                 required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
@@ -1250,11 +1377,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             default_compute="cpu-cluster",
         )
         def pipeline_with_default_optional_parameters(
-            required_input,
-            required_param,
-            required_param_with_default,
-            optional_param,
-            optional_param_with_default,
+                required_input,
+                required_param,
+                required_param_with_default,
+                optional_param,
+                optional_param_with_default,
         ):
             default_optional_func(
                 required_input=required_input,
@@ -1393,8 +1520,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         with pytest.raises(ValidationException) as ex:
             hello_world_pipeline(component_in_number=10, component_in_path=job_input)
         assert (
-            "Invalid component input names 'component_in_number' and 'component_In_number', which are equal"
-            in ex.value.message
+                "Invalid component input names 'component_in_number' and 'component_In_number', which are equal"
+                in ex.value.message
         )
 
     def test_pipeline_job_help_function(self, client: MLClient):
@@ -1411,8 +1538,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(pipeline1)
             assert (
-                "display_name: pipeline\ntype: pipeline\ninputs:\n  number: '10'\n  path:\n    mode: ro_mount\n    type: uri_file\n    path:"
-                in std_out.getvalue()
+                    "display_name: pipeline\ntype: pipeline\ninputs:\n  number: '10'\n  path:\n    mode: ro_mount\n    type: uri_file\n    path:"
+                    in std_out.getvalue()
             )
 
     def test_node_property_setting_validation(self, client: MLClient) -> None:
@@ -1431,7 +1558,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             mock_logging.assert_called_with("Warnings: [jobs.node1.jeff_special_option: Unknown field.]")
 
     def test_anon_component_in_pipeline(
-        self, client: MLClient, randstr: Callable[[str], str], hello_world_component: Component
+            self, client: MLClient, randstr: Callable[[str], str], hello_world_component: Component
     ) -> None:
         hello_world_func = load_component(
             client=client, name=hello_world_component.name, version=hello_world_component.version
@@ -1756,9 +1883,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # submit job to workspace
         pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
         omit_fields = [
-            "jobs.parallel_node.task.code",
-            "jobs.parallel_node.task.environment",
-        ] + common_omit_fields
+                          "jobs.parallel_node.task.code",
+                          "jobs.parallel_node.task.environment",
+                      ] + common_omit_fields
         actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *omit_fields)
         expected_job = {
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
@@ -1804,7 +1931,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert expected_job == actual_job
 
     def test_multi_parallel_components_with_file_input_pipeline_output(
-        self, client: MLClient, randstr: Callable[[str], str]
+            self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
@@ -1835,9 +1962,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
 
         omit_fields = [
-            "jobs.*.task.code",
-            "jobs.*.task.environment",
-        ] + common_omit_fields
+                          "jobs.*.task.code",
+                          "jobs.*.task.environment",
+                      ] + common_omit_fields
         actual_job = omit_with_wildcard(pipeline_job._to_rest_object().properties.as_dict(), *omit_fields)
         expected_job = {
             "tags": {},
@@ -2280,9 +2407,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert actual_job["jobs"]["microsoft_samples_command_component_basic_inputs"]["inputs"] == expected_node_inputs
 
     def test_dsl_pipeline_with_default_component(
-        self,
-        client: MLClient,
-        randstr: Callable[[str], str],
+            self,
+            client: MLClient,
+            randstr: Callable[[str], str],
     ) -> None:
         yaml_path: str = "./tests/test_configs/components/helloworld_component.yml"
         component_name = randstr("component_name")
