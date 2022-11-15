@@ -23,10 +23,10 @@ class TextAnalyticsClientConfiguration(Configuration):  # pylint: disable=too-ma
     Note that all parameters used to create this instance are saved as instance
     attributes.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
-     https://westus.api.cognitive.microsoft.com).
+     https://westus.api.cognitive.microsoft.com). Required.
     :type endpoint: str
     """
 

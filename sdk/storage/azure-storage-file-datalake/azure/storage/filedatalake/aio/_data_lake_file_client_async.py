@@ -23,6 +23,7 @@ from .._models import FileProperties
 from ..aio._upload_helper import upload_datalake_file
 
 if TYPE_CHECKING:
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from datetime import datetime
     from .._models import ContentSettings
 
@@ -69,13 +70,12 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
     """
 
     def __init__(
-            self, account_url,  # type: str
-            file_system_name,  # type: str
-            file_path,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+        self, account_url: str,
+        file_system_name: str,
+        file_path: str,
+        credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+        **kwargs: Any
+    ) -> None:
         super(DataLakeFileClient, self).__init__(account_url, file_system_name, path_name=file_path,
                                                  credential=credential, **kwargs)
 
@@ -552,7 +552,7 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         :keyword ~azure.storage.filedatalake.ContentSettings content_settings:
             ContentSettings object used to set path properties.
         :keyword source_lease: A lease ID for the source path. If specified,
-            the source path must have an active lease and the leaase ID must
+            the source path must have an active lease and the lease ID must
             match.
         :paramtype source_lease: ~azure.storage.filedatalake.aio.DataLakeLeaseClient or str
         :keyword lease:

@@ -9,9 +9,11 @@ import sys
 import os
 import logging
 import re
-from common_tasks import run_check_call
+
+from subprocess import run
 
 from code_cov_report import create_coverage_report
+from common_tasks import run_check_call
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -21,7 +23,7 @@ coverage_dir = os.path.join(root_dir, "_all_coverage_files/")
 
 def collect_tox_coverage_files():
     coverage_version_cmd = [sys.executable, "-m", "coverage", "--version"]
-    run_check_call(coverage_version_cmd, root_dir)
+    run(coverage_version_cmd, cwd=root_dir)
 
     logging.info("Running collect tox coverage files...")
     root_coverage_dir = os.path.join(root_dir, "_coverage/")
@@ -40,7 +42,7 @@ def collect_tox_coverage_files():
         cov_cmd_array.extend(coverage_files)
 
         # merge them with coverage combine and copy to root
-        run_check_call(cov_cmd_array, root_dir)
+        run(cov_cmd_array, cwd=root_dir)
 
         logging.info("after running coverage combine")
         for root, _, files in os.walk(root_dir):

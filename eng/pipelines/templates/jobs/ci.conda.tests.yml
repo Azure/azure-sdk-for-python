@@ -83,25 +83,25 @@ jobs:
         versionSpec: $(PythonVersion)
 
     - pwsh: |
-        # due to faulty deployed scripts/how the path gets manipulated by conda actions on 
+        # due to faulty deployed scripts/how the path gets manipulated by conda actions on
         # ubuntu and mac, we can't rely on bin/scripts being referenced correctly. see
         # https://github.com/MicrosoftDocs/azure-devops-docs/issues/3812
         $activateMethod = "source $($env:CONDA)/bin/activate"
 
         # pypy3 is not a true python executable. in conda-land, we need to call it using pypy3, NOT python
 
-        # on windows, we need to add "--user" as otherwise pip won't successfully install/uninstall due to 
+        # on windows, we need to add "--user" as otherwise pip won't successfully install/uninstall due to
         # how windows holds reservation on pip.exe. this is unnecessary on ubuntu/mac.
         $requirementSuffix = ""
 
-        # we always want to prepend the path with conda bin   
+        # we always want to prepend the path with conda bin
         Write-Host "##vso[task.prependpath]]$($env:CONDA)/bin"
 
         if ($IsWindows) {
           # powershell does not have an equivalent of call/source, which is necessary when
           # using conda in azure devops. Note that we use `activate` natively here, as
           # a later path prepend of the /scripts directory actually works.
-          $activateMethod = "call activate" 
+          $activateMethod = "call activate"
           $requirementSuffix = " --user"
 
           # on windows only, need to prepend with the scripts directory as well
@@ -114,7 +114,7 @@ jobs:
         else {
           Write-Host "##vso[task.setvariable variable=PyVersion]python=$(PythonVersion)"
         }
-        
+
         # we will use these variables extensively later
         Write-Host "##vso[task.setvariable variable=activate.method]$activateMethod"
         Write-Host "##vso[task.setvariable variable=requirement.suffix]$requirementSuffix"
@@ -191,7 +191,7 @@ jobs:
               - Name: "Azure/azure-sdk-for-python"
                 Commitish: "${{ checkout.Package }}_${{ checkout.Version }}"
                 WorkingDirectory: "$(conda.build)"
-            SkipDefaultCheckout: true
+            SkipCheckoutNone: true
 
         - script: |
             echo "$(activate.method) ${{ artifact.name }}"

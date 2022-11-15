@@ -12,7 +12,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 class BaseClientPreparer(AzureRecordedTestCase):
     def __init__(self, **kwargs) -> None:
-        hsm_playback_url = "https://managedhsmvaultname.vault.azure.net"
+        hsm_playback_url = "https://managedhsmvaultname.managedhsm.azure.net"
         container_playback_uri = "https://storagename.blob.core.windows.net/container"
         playback_sas_token = "fake-sas"
 

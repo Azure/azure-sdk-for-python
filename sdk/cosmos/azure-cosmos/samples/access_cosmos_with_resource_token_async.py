@@ -13,7 +13,7 @@ import config
 import json
 
 # ----------------------------------------------------------------------------------------------------------
-# Prerequistes -
+# Prerequisites -
 #
 # 1. An Azure Cosmos account -
 #    https://docs.microsoft.com/azure/cosmos-db/create-sql-api-python#create-a-database-account
@@ -251,5 +251,4 @@ async def run_sample():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(run_sample())
+    asyncio.run(run_sample())

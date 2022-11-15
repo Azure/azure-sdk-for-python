@@ -12,20 +12,15 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import ConnectionAuthTyp
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.entities._workspace.connections.credentials import (
-    ManagedIdentityCredentials,
-    PatTokenCredentials,
-    SasTokenCredentials,
-    ServicePrincipalCredentials,
-    UsernamePasswordCredentials,
-)
+from azure.ai.ml.entities._credentials import PatTokenConfiguration, SasTokenConfiguration, \
+    UsernamePasswordConfiguration, ManagedIdentityConfiguration, ServicePrincipalConfiguration
 
 
 class WorkspaceCredentialsSchema(metaclass=PatchedSchemaMeta):
     type = fields.Str()
 
 
-class PatTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
+class PatTokenConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.PAT,
         casing_transform=camel_to_snake,
@@ -34,11 +29,12 @@ class PatTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
     pat = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> PatTokenCredentials:
-        return PatTokenCredentials(**data)
+    def make(self, data: Dict[str, str], **kwargs) -> PatTokenConfiguration:
+        data.pop("type")
+        return PatTokenConfiguration(**data)
 
 
-class SasTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
+class SasTokenConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.SAS,
         casing_transform=camel_to_snake,
@@ -47,11 +43,12 @@ class SasTokenCredentialsSchema(metaclass=PatchedSchemaMeta):
     pat = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> SasTokenCredentials:
-        return SasTokenCredentials(**data)
+    def make(self, data: Dict[str, str], **kwargs) -> SasTokenConfiguration:
+        data.pop("type")
+        return SasTokenConfiguration(**data)
 
 
-class UsernamePasswordCredentialsSchema(metaclass=PatchedSchemaMeta):
+class UsernamePasswordConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.USERNAME_PASSWORD,
         casing_transform=camel_to_snake,
@@ -61,11 +58,12 @@ class UsernamePasswordCredentialsSchema(metaclass=PatchedSchemaMeta):
     password = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> UsernamePasswordCredentials:
-        return UsernamePasswordCredentials(**data)
+    def make(self, data: Dict[str, str], **kwargs) -> UsernamePasswordConfiguration:
+        data.pop("type")
+        return UsernamePasswordConfiguration(**data)
 
 
-class ManagedIdentityCredentialsSchema(metaclass=PatchedSchemaMeta):
+class ManagedIdentityConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.MANAGED_IDENTITY,
         casing_transform=camel_to_snake,
@@ -75,11 +73,12 @@ class ManagedIdentityCredentialsSchema(metaclass=PatchedSchemaMeta):
     resource_id = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> ManagedIdentityCredentials:
-        return ManagedIdentityCredentials(**data)
+    def make(self, data: Dict[str, str], **kwargs) -> ManagedIdentityConfiguration:
+        data.pop("type")
+        return ManagedIdentityConfiguration(**data)
 
 
-class ServicePrincipalCredentialsSchema(metaclass=PatchedSchemaMeta):
+class ServicePrincipalConfigurationSchema(metaclass=PatchedSchemaMeta):
     type = StringTransformedEnum(
         allowed_values=ConnectionAuthType.SERVICE_PRINCIPAL,
         casing_transform=camel_to_snake,
@@ -91,5 +90,6 @@ class ServicePrincipalCredentialsSchema(metaclass=PatchedSchemaMeta):
     tenant_id = fields.Str()
 
     @post_load
-    def make(self, data: Dict[str, str], **kwargs) -> ServicePrincipalCredentials:
-        return ServicePrincipalCredentials(**data)
+    def make(self, data: Dict[str, str], **kwargs) -> ServicePrincipalConfiguration:
+        data.pop("type")
+        return ServicePrincipalConfiguration(**data)

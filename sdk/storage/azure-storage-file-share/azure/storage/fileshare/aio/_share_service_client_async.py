@@ -5,8 +5,10 @@
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
 import functools
-from typing import (  # pylint: disable=unused-import
-    Union, Optional, Any, Iterable, Dict, List,
+import sys
+import warnings
+from typing import (
+    Union, Optional, Any, Dict, List,
     TYPE_CHECKING
 )
 
@@ -15,7 +17,6 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.pipeline import AsyncPipeline
 from azure.core.tracing.decorator_async import distributed_trace_async
-
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin, AsyncTransportWrapper
 from .._shared.response_handlers import process_storage_error
 from .._shared.policies_async import ExponentialRetry
@@ -28,8 +29,7 @@ from ._models import SharePropertiesPaged
 from .._models import service_properties_deserialize
 
 if TYPE_CHECKING:
-    from datetime import datetime
-    from .._shared.models import ResourceTypes, AccountSasPermissions
+    from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from .._models import (
         ShareProperties,
         Metrics,
@@ -67,8 +67,6 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
 
     :keyword str secondary_hostname:
         The hostname of the secondary endpoint.
-    :keyword loop:
-        The event loop to run the asynchronous tasks.
     :keyword int max_range_size: The maximum range size used for a file upload. Defaults to 4*1024*1024.
 
     .. admonition:: Example:
@@ -81,21 +79,21 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             :caption: Create the share service client with url and credential.
     """
     def __init__(
-            self, account_url,  # type: str
-            credential=None,  # type: Optional[Union[str, Dict[str, str], AzureNamedKeyCredential, AzureSasCredential, "TokenCredential"]] # pylint: disable=line-too-long
-            **kwargs  # type: Any
-        ):
-        # type: (...) -> None
+            self, account_url: str,
+            credential: Optional[Union[str, Dict[str, str], "AzureNamedKeyCredential", "AzureSasCredential", "TokenCredential"]] = None,  # pylint: disable=line-too-long
+            **kwargs: Any
+        ) -> None:
         kwargs['retry_policy'] = kwargs.get('retry_policy') or ExponentialRetry(**kwargs)
         loop = kwargs.pop('loop', None)
+        if loop and sys.version_info >= (3, 8):
+            warnings.warn("The 'loop' parameter was deprecated from asyncio's high-level"
+            "APIs in Python 3.8 and is no longer supported.", DeprecationWarning)
         super(ShareServiceClient, self).__init__(
             account_url,
             credential=credential,
-            loop=loop,
             **kwargs)
-        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline, loop=loop)
+        self._client = AzureFileStorage(self.url, base_url=self.url, pipeline=self._pipeline)
         self._client._config.version = get_api_version(kwargs)  # pylint: disable=protected-access
-        self._loop = loop
 
     @distributed_trace_async
     async def get_service_properties(self, **kwargs):
@@ -130,7 +128,7 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
             self, hour_metrics=None,  # type: Optional[Metrics]
             minute_metrics=None,  # type: Optional[Metrics]
             cors=None,  # type: Optional[List[CorsRule]]
-            protocol=None,  # type: Optional[ShareProtocolSettings],
+            protocol=None,  # type: Optional[ShareProtocolSettings]
             **kwargs
         ):
         # type: (...) -> None
@@ -216,13 +214,13 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         """
         timeout = kwargs.pop('timeout', None)
         include = []
+        include_deleted = kwargs.pop('include_deleted', None)
+        if include_deleted:
+            include.append("deleted")
         if include_metadata:
             include.append('metadata')
         if include_snapshots:
             include.append('snapshots')
-        include_deleted = kwargs.pop('include_deleted', None)
-        if include_deleted:
-            include.append("deleted")
 
         results_per_page = kwargs.pop('results_per_page', None)
         command = functools.partial(
@@ -370,4 +368,4 @@ class ShareServiceClient(AsyncStorageAccountHostsMixin, ShareServiceClientBase):
         return ShareClient(
             self.url, share_name=share_name, snapshot=snapshot, credential=self.credential,
             api_version=self.api_version, _hosts=self._hosts, _configuration=self._config,
-            _pipeline=_pipeline, _location_mode=self._location_mode, loop=self._loop)
+            _pipeline=_pipeline, _location_mode=self._location_mode)

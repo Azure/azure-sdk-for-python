@@ -5,7 +5,7 @@ display_name: "test_display_name"
 compute: "azureml:cpu-cluster"
 experiment_name: mfe-test1
 identity:
-  type: AMLToken
+  type: aml_token
 tags:
   empty_tag:
 properties:

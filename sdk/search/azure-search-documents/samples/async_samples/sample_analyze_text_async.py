@@ -42,5 +42,4 @@ async def simple_analyze_text():
     # [END simple_analyze_text_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(simple_analyze_text())
+    asyncio.run(simple_analyze_text())

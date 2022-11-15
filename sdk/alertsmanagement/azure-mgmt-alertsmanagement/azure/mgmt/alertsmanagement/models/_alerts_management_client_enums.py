@@ -6,44 +6,19 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionRuleStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates if the given action rule is enabled or disabled
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Action that should be applied."""
 
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
+    ADD_ACTION_GROUPS = "AddActionGroups"
+    REMOVE_ALL_ACTION_GROUPS = "RemoveAllActionGroups"
 
-class ActionRuleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates type of action rule
-    """
 
-    SUPPRESSION = "Suppression"
-    ACTION_GROUP = "ActionGroup"
-    DIAGNOSTICS = "Diagnostics"
-
-class AlertModificationEvent(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Reason for the modification
-    """
+class AlertModificationEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason for the modification."""
 
     ALERT_CREATED = "AlertCreated"
     STATE_CHANGE = "StateChange"
@@ -55,14 +30,9 @@ class AlertModificationEvent(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)
     ACTIONS_SUPPRESSED = "ActionsSuppressed"
     ACTIONS_FAILED = "ActionsFailed"
 
-class AlertRuleState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The alert rule state.
-    """
 
-    ENABLED = "Enabled"
-    DISABLED = "Disabled"
-
-class AlertsSortByFields(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AlertsSortByFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AlertsSortByFields."""
 
     NAME = "name"
     SEVERITY = "severity"
@@ -75,7 +45,9 @@ class AlertsSortByFields(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     START_DATE_TIME = "startDateTime"
     LAST_MODIFIED_DATE_TIME = "lastModifiedDateTime"
 
-class AlertsSummaryGroupByFields(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class AlertsSummaryGroupByFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AlertsSummaryGroupByFields."""
 
     SEVERITY = "severity"
     ALERT_STATE = "alertState"
@@ -84,33 +56,73 @@ class AlertsSummaryGroupByFields(with_metaclass(_CaseInsensitiveEnumMeta, str, E
     SIGNAL_TYPE = "signalType"
     ALERT_RULE = "alertRule"
 
-class AlertState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class AlertState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AlertState."""
 
     NEW = "New"
     ACKNOWLEDGED = "Acknowledged"
     CLOSED = "Closed"
 
-class Enum11(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
 
-    ASC = "asc"
-    DESC = "desc"
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
-class Identifier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    USER = "User"
+    APPLICATION = "Application"
+    MANAGED_IDENTITY = "ManagedIdentity"
+    KEY = "Key"
+
+
+class DaysOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Days of week."""
+
+    SUNDAY = "Sunday"
+    MONDAY = "Monday"
+    TUESDAY = "Tuesday"
+    WEDNESDAY = "Wednesday"
+    THURSDAY = "Thursday"
+    FRIDAY = "Friday"
+    SATURDAY = "Saturday"
+
+
+class Field(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Field for a given condition."""
+
+    SEVERITY = "Severity"
+    MONITOR_SERVICE = "MonitorService"
+    MONITOR_CONDITION = "MonitorCondition"
+    SIGNAL_TYPE = "SignalType"
+    TARGET_RESOURCE_TYPE = "TargetResourceType"
+    TARGET_RESOURCE = "TargetResource"
+    TARGET_RESOURCE_GROUP = "TargetResourceGroup"
+    ALERT_RULE_ID = "AlertRuleId"
+    ALERT_RULE_NAME = "AlertRuleName"
+    DESCRIPTION = "Description"
+    ALERT_CONTEXT = "AlertContext"
+
+
+class Identifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identifier."""
 
     MONITOR_SERVICE_LIST = "MonitorServiceList"
 
-class MetadataIdentifier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Identification of the information to be retrieved by API call
-    """
+
+class MetadataIdentifier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Identification of the information to be retrieved by API call."""
 
     MONITOR_SERVICE_LIST = "MonitorServiceList"
 
-class MonitorCondition(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class MonitorCondition(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MonitorCondition."""
 
     FIRED = "Fired"
     RESOLVED = "Resolved"
 
-class MonitorService(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class MonitorService(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MonitorService."""
 
     APPLICATION_INSIGHTS = "Application Insights"
     ACTIVITY_LOG_ADMINISTRATIVE = "ActivityLog Administrative"
@@ -127,24 +139,26 @@ class MonitorService(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     VM_INSIGHTS = "VM Insights"
     ZABBIX = "Zabbix"
 
-class Operator(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """operator for a given condition
-    """
+
+class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operator for a given condition."""
 
     EQUALS = "Equals"
     NOT_EQUALS = "NotEquals"
     CONTAINS = "Contains"
     DOES_NOT_CONTAIN = "DoesNotContain"
 
-class ScopeType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """type of target scope
-    """
 
-    RESOURCE_GROUP = "ResourceGroup"
-    RESOURCE = "Resource"
-    SUBSCRIPTION = "Subscription"
+class RecurrenceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Specifies when the recurrence should be applied."""
 
-class Severity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+    DAILY = "Daily"
+    WEEKLY = "Weekly"
+    MONTHLY = "Monthly"
+
+
+class Severity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Severity."""
 
     SEV0 = "Sev0"
     SEV1 = "Sev1"
@@ -152,24 +166,26 @@ class Severity(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SEV3 = "Sev3"
     SEV4 = "Sev4"
 
-class SignalType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of signal the alert is based on, which could be metrics, logs or activity logs.
-    """
+
+class SignalType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of signal the alert is based on, which could be metrics, logs or activity logs."""
 
     METRIC = "Metric"
     LOG = "Log"
     UNKNOWN = "Unknown"
 
-class SmartGroupModificationEvent(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Reason for the modification
-    """
+
+class SmartGroupModificationEvent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Reason for the modification."""
 
     SMART_GROUP_CREATED = "SmartGroupCreated"
     STATE_CHANGE = "StateChange"
     ALERT_ADDED = "AlertAdded"
     ALERT_REMOVED = "AlertRemoved"
 
-class SmartGroupsSortByFields(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class SmartGroupsSortByFields(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SmartGroupsSortByFields."""
 
     ALERTS_COUNT = "alertsCount"
     STATE = "state"
@@ -177,25 +193,24 @@ class SmartGroupsSortByFields(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     START_DATE_TIME = "startDateTime"
     LAST_MODIFIED_DATE_TIME = "lastModifiedDateTime"
 
-class State(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Smart group state
-    """
+
+class SortOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SortOrder."""
+
+    ASC = "asc"
+    DESC = "desc"
+
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Smart group state."""
 
     NEW = "New"
     ACKNOWLEDGED = "Acknowledged"
     CLOSED = "Closed"
 
-class SuppressionType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Specifies when the suppression should be applied
-    """
 
-    ALWAYS = "Always"
-    ONCE = "Once"
-    DAILY = "Daily"
-    WEEKLY = "Weekly"
-    MONTHLY = "Monthly"
-
-class TimeRange(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class TimeRange(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TimeRange."""
 
     ONE_H = "1h"
     ONE_D = "1d"

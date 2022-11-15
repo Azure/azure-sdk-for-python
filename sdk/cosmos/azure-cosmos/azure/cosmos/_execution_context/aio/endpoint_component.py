@@ -40,7 +40,7 @@ class _QueryExecutionEndpointComponent(object):
     def __init__(self, execution_context):
         self._execution_context = execution_context
 
-    async def __aiter__(self):
+    def __aiter__(self):
         return self
 
     async def __anext__(self):
@@ -155,7 +155,7 @@ class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
 class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling aggregate query.
 
-    It returns only aggreated values.
+    It returns only aggregated values.
     """
 
     def __init__(self, execution_context, aggregate_operators):

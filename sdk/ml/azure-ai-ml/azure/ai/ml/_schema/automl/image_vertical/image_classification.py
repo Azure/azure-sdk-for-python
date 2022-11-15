@@ -8,24 +8,23 @@ from typing import Any, Dict
 
 from marshmallow import fields, post_load
 
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
     TaskType,
 )
-from azure.ai.ml._schema.core.fields import NestedField
 from azure.ai.ml._schema.automl.image_vertical.image_model_distribution_settings import (
     ImageModelDistributionSettingsClassificationSchema,
 )
 from azure.ai.ml._schema.automl.image_vertical.image_model_settings import ImageModelSettingsClassificationSchema
 from azure.ai.ml._schema.automl.image_vertical.image_vertical import ImageVerticalSchema
-from azure.ai.ml._schema.core.fields import StringTransformedEnum
+from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._utils.utils import camel_to_snake
-from azure.ai.ml.constants import AutoMLConstants
+from azure.ai.ml.constants._job.automl import AutoMLConstants
 
 
 class ImageClassificationBaseSchema(ImageVerticalSchema):
-    image_model = NestedField(ImageModelSettingsClassificationSchema())
+    training_parameters = NestedField(ImageModelSettingsClassificationSchema())
     search_space = fields.List(NestedField(ImageModelDistributionSettingsClassificationSchema()))
 
 

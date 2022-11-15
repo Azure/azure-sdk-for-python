@@ -1,5 +1,50 @@
 # Release History
 
+## 5.3.0b1 (Unreleased)
+
+### Features Added
+- Added the Extractive Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`.
+  Access the feature through the `begin_analyze_actions` API.
+- Added keyword arguments `fhir_version` and `document_type` to `begin_analyze_healthcare_entities` and `AnalyzeHealthcareEntitiesAction`.
+- Added property `fhir_bundle` to `AnalyzeHealthcareEntitiesResult`.
+- Added property `confidence_score` to `HealthcareRelation`.
+- Added enum `HealthcareDocumentType`.
+- Added property `resolutions` to `CategorizedEntity`.
+- Added models and enums related to resolutions: `BaseResolution`, `ResolutionKind`, `AgeResolution`, `AreaResolution`, 
+  `BooleanResolution`, `CurrencyResolution`, `DateTimeResolution`, `InformationResolution`, `LengthResolution`,
+  `NumberResolution`, `NumericRangeResolution`, `OrdinalResolution`, `SpeedResolution`, `TemperatureResolution`,
+  `TemporalSpanResolution`, `VolumeResolution`, `WeightResolution`, `AgeUnit`, `AreaUnit`, `TemporalModifier`,
+  `InformationUnit`, `LengthUnit`, `NumberKind`, `RangeKind`, `RelativeTo`, `SpeedUnit`, `TemperatureUnit`,
+  `VolumeUnit`, `DateTimeSubKind`, and `WeightUnit`.
+- Added the Abstractive Summarization feature and related models: `AbstractSummaryAction`, `AbstractSummaryResult`, `AbstractiveSummary`,
+  and `SummaryContext`. Access the feature through the `begin_analyze_actions` API.
+- Added automatic language detection to long-running operation APIs. Pass `auto` into the document `language` hint to use this feature.
+- Added `autodetect_default_language` to long-running operation APIs. Pass as the default/fallback language for automatic language detection.
+- Added property `detected_language` to `RecognizeEntitiesResult`, `RecognizePiiEntitiesResult`, `AnalyzeHealthcareEntitiesResult`,
+  `ExtractKeyPhrasesResult`, `RecognizeLinkedEntitiesResult`, `AnalyzeSentimentResult`, `RecognizeCustomEntitiesResult`,
+  `ClassifyDocumentResult`, `ExtractSummaryResult`, and `AbstractSummaryResult` to indicate the language detected by automatic language detection.
+- Added property `script` to `DetectedLanguage` to indicate the script of the input document.
+- Added the `dynamic_classification` client method to perform dynamic classification on documents without needing to train a model.
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Removed dependency on `msrest`.
+
+## 5.2.1 (2022-10-26)
+
+### Bugs Fixed
+- Returns a more helpful message in the document error when all documents fail for an action in the `begin_analyze_actions` API.
+
+## 5.2.0 (2022-09-08)
+
+### Other Changes
+
+This version of the client library marks a stable release and defaults to the service API version `2022-05-01`.
+Includes all changes from `5.2.0b1` to `5.2.0b5`.
+
 ## 5.2.0b5 (2022-08-11)
 
 The version of this client library defaults to the API version `2022-05-01`.

@@ -15,7 +15,9 @@ class XMSRequestIDBody(RecordingProcessor):
 
         if content_type and "multipart/mixed" in content_type:
             response["body"]["string"] = re.sub(
-                b"x-ms-client-request-id: [a-f0-9-]+\r\n", b"", response["body"]["string"]
+                b"x-ms-client-request-id: [a-f0-9-]+\r\n",
+                b"",
+                response["body"]["string"],
             )
 
         return response

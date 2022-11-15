@@ -1,20 +1,22 @@
 import os
+
 import mock
 import pytest
 
 from azure.ai.ml._azure_environments import (
-    _get_default_cloud_name,
-    _set_cloud,
     AzureEnvironments,
-    _get_cloud_information_from_metadata,
-    _get_base_url_from_metadata,
     _get_azure_portal_id_from_metadata,
+    _get_base_url_from_metadata,
+    _get_cloud_information_from_metadata,
+    _get_default_cloud_name,
     _get_storage_endpoint_from_metadata,
+    _set_cloud,
 )
-from azure.ai.ml.constants import AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestCloudEnvironments:
     @mock.patch.dict(os.environ, {AZUREML_CLOUD_ENV_NAME: AzureEnvironments.ENV_DEFAULT}, clear=True)
     def test_set_valid_cloud_details_china(self):

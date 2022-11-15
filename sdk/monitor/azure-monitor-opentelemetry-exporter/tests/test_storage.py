@@ -112,7 +112,7 @@ class TestLocalFileStorage(unittest.TestCase):
     def test_put(self):
         test_input = (1, 2, 3)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
-            stor.put(test_input)
+            stor.put(test_input, 0)
             self.assertEqual(stor.get().get(), test_input)
         with LocalFileStorage(os.path.join(TEST_FOLDER, "bar")) as stor:
             self.assertEqual(stor.get().get(), test_input)

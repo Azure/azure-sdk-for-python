@@ -1,6 +1,6 @@
 # Release History
 
-## 4.5.0b2 (Unreleased)
+## 4.7.0b1 (Unreleased)
 
 ### Features Added
 
@@ -9,7 +9,23 @@
 ### Bugs Fixed
 
 ### Other Changes
- - Python 3.6 is no longer supported. Please use Python version 3.7 or later.
+- Updated minimum `azure-core` version to 1.24.0
+- Dropped `msrest` requirement
+- Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
+- Added requirement for `typing-extensions>=4.0.1`
+
+## 4.6.0 (2022-09-19)
+
+### Breaking Changes
+- Clients verify the challenge resource matches the vault domain. This should affect few customers,
+  who can provide `verify_challenge_resource=False` to client constructors to disable.
+  See https://aka.ms/azsdk/blog/vault-uri for more information.
+
+## 4.5.1 (2022-08-11)
+
+### Other Changes
+- Documentation improvements 
+  ([#25039](https://github.com/Azure/azure-sdk-for-python/issues/25039))
 
 ## 4.5.0b1 (2022-06-07)
 

@@ -1,6 +1,7 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
 import contextlib
 import importlib
 import inspect
@@ -9,13 +10,11 @@ import re
 import sys
 from pathlib import Path
 
-from azure.ai.ml._ml_exceptions import ComponentException, ErrorCategory, ErrorTarget
 from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
+from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget
 
 
 def _normalize_identifier_name(name):
-    import re
-
     normalized_name = name.lower()
     normalized_name = re.sub(r"[\W_]", " ", normalized_name)  # No non-word characters
     normalized_name = re.sub(" +", " ", normalized_name).strip()  # No double spaces, leading or trailing spaces
@@ -54,7 +53,7 @@ def _resolve_source_file():
             ):
                 module = inspect.getmodule(last_frame.frame)
                 return Path(module.__file__).absolute() if module else None
-    except Exception:
+    except Exception:  # pylint: disable=broad-except
         return None
 
 
@@ -65,7 +64,7 @@ def _assert_frame_package_name(pattern, frame):
     # Although __package__ is set when importing, it may happen __package__ does not exist in globals
     # when using exec to execute.
     package_name = frame.f_globals.get("__package__", "")
-    return True if package_name and re.match(pattern, package_name) else False
+    return package_name and re.match(pattern, package_name)
 
 
 def _relative_to(path, basedir, raises_if_impossible=False):

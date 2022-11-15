@@ -114,10 +114,6 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         actual_data = await stream.readall()
         assert actual_data == expected_data
 
-    def _get_datetime_variable(self, variables, name, dt):
-        dt_string = variables.setdefault(name, dt.isoformat())
-        return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")
-
     # --Test cases for page blobs --------------------------------------------
 
     @BlobPreparer()
@@ -193,7 +189,7 @@ class TestStoragePageBlobAsync(AsyncStorageRecordedTestCase):
         blob = bsc.get_blob_client(container_name, blob_name)
 
         # Act
-        expiry_time = self._get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(seconds=5))
         immutability_policy = ImmutabilityPolicy(expiry_time=expiry_time,
                                                  policy_mode=BlobImmutabilityPolicyMode.Unlocked)
         resp = await blob.create_page_blob(1024,

@@ -13,11 +13,12 @@
 # Script adapted from: https://github.com/tensorflow/docs/blob/master/site/en/tutorials/distribute/multi_worker_with_keras.ipynb
 # =========================================================================
 
-import tensorflow as tf
-import numpy as np
-
 import argparse
-import os, json
+import json
+import os
+
+import numpy as np
+import tensorflow as tf
 
 
 def mnist_dataset(batch_size):

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,15 +7,23 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._machine_learning_compute_management_client_enums import *
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AcsClusterProperties(msrest.serialization.Model):
+class AcsClusterProperties(_serialization.Model):
     """Information about the container service backing the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -23,23 +32,23 @@ class AcsClusterProperties(msrest.serialization.Model):
 
     :ivar cluster_fqdn: The FQDN of the cluster.
     :vartype cluster_fqdn: str
-    :param orchestrator_type: Required. Type of orchestrator. It cannot be changed once the cluster
-     is created. Possible values include: "Kubernetes", "None".
-    :type orchestrator_type: str or ~azure.mgmt.machinelearningcompute.models.OrchestratorType
-    :param orchestrator_properties: Orchestrator specific properties.
-    :type orchestrator_properties:
+    :ivar orchestrator_type: Type of orchestrator. It cannot be changed once the cluster is
+     created. Required. Known values are: "Kubernetes" and "None".
+    :vartype orchestrator_type: str or ~azure.mgmt.machinelearningcompute.models.OrchestratorType
+    :ivar orchestrator_properties: Orchestrator specific properties.
+    :vartype orchestrator_properties:
      ~azure.mgmt.machinelearningcompute.models.KubernetesClusterProperties
-    :param system_services: The system services deployed to the cluster.
-    :type system_services: list[~azure.mgmt.machinelearningcompute.models.SystemService]
-    :param master_count: The number of master nodes in the container service.
-    :type master_count: int
-    :param agent_count: The number of agent nodes in the Container Service. This can be changed to
+    :ivar system_services: The system services deployed to the cluster.
+    :vartype system_services: list[~azure.mgmt.machinelearningcompute.models.SystemService]
+    :ivar master_count: The number of master nodes in the container service.
+    :vartype master_count: int
+    :ivar agent_count: The number of agent nodes in the Container Service. This can be changed to
      scale the cluster.
-    :type agent_count: int
-    :param agent_vm_size: The Azure VM size of the agent VM nodes. This cannot be changed once the
+    :vartype agent_count: int
+    :ivar agent_vm_size: The Azure VM size of the agent VM nodes. This cannot be changed once the
      cluster is created. This list is non exhaustive; refer to
      https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes for the possible VM
-     sizes. Possible values include: "Standard_A0", "Standard_A1", "Standard_A2", "Standard_A3",
+     sizes. Known values are: "Standard_A0", "Standard_A1", "Standard_A2", "Standard_A3",
      "Standard_A4", "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A9",
      "Standard_A10", "Standard_A11", "Standard_D1", "Standard_D2", "Standard_D3", "Standard_D4",
      "Standard_D11", "Standard_D12", "Standard_D13", "Standard_D14", "Standard_D1_v2",
@@ -47,40 +56,67 @@ class AcsClusterProperties(msrest.serialization.Model):
      "Standard_D12_v2", "Standard_D13_v2", "Standard_D14_v2", "Standard_G1", "Standard_G2",
      "Standard_G3", "Standard_G4", "Standard_G5", "Standard_DS1", "Standard_DS2", "Standard_DS3",
      "Standard_DS4", "Standard_DS11", "Standard_DS12", "Standard_DS13", "Standard_DS14",
-     "Standard_GS1", "Standard_GS2", "Standard_GS3", "Standard_GS4", "Standard_GS5". Default value:
-     "Standard_D3_v2".
-    :type agent_vm_size: str or ~azure.mgmt.machinelearningcompute.models.AgentVMSizeTypes
+     "Standard_GS1", "Standard_GS2", "Standard_GS3", "Standard_GS4", and "Standard_GS5".
+    :vartype agent_vm_size: str or ~azure.mgmt.machinelearningcompute.models.AgentVMSizeTypes
     """
 
     _validation = {
-        'cluster_fqdn': {'readonly': True},
-        'orchestrator_type': {'required': True},
-        'master_count': {'maximum': 5, 'minimum': 1},
-        'agent_count': {'maximum': 100, 'minimum': 1},
+        "cluster_fqdn": {"readonly": True},
+        "orchestrator_type": {"required": True},
+        "master_count": {"maximum": 5, "minimum": 1},
+        "agent_count": {"maximum": 100, "minimum": 1},
     }
 
     _attribute_map = {
-        'cluster_fqdn': {'key': 'clusterFqdn', 'type': 'str'},
-        'orchestrator_type': {'key': 'orchestratorType', 'type': 'str'},
-        'orchestrator_properties': {'key': 'orchestratorProperties', 'type': 'KubernetesClusterProperties'},
-        'system_services': {'key': 'systemServices', 'type': '[SystemService]'},
-        'master_count': {'key': 'masterCount', 'type': 'int'},
-        'agent_count': {'key': 'agentCount', 'type': 'int'},
-        'agent_vm_size': {'key': 'agentVmSize', 'type': 'str'},
+        "cluster_fqdn": {"key": "clusterFqdn", "type": "str"},
+        "orchestrator_type": {"key": "orchestratorType", "type": "str"},
+        "orchestrator_properties": {"key": "orchestratorProperties", "type": "KubernetesClusterProperties"},
+        "system_services": {"key": "systemServices", "type": "[SystemService]"},
+        "master_count": {"key": "masterCount", "type": "int"},
+        "agent_count": {"key": "agentCount", "type": "int"},
+        "agent_vm_size": {"key": "agentVmSize", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        orchestrator_type: Union[str, "OrchestratorType"],
-        orchestrator_properties: Optional["KubernetesClusterProperties"] = None,
-        system_services: Optional[List["SystemService"]] = None,
-        master_count: Optional[int] = 1,
-        agent_count: Optional[int] = 2,
-        agent_vm_size: Optional[Union[str, "AgentVMSizeTypes"]] = "Standard_D3_v2",
+        orchestrator_type: Union[str, "_models.OrchestratorType"],
+        orchestrator_properties: Optional["_models.KubernetesClusterProperties"] = None,
+        system_services: Optional[List["_models.SystemService"]] = None,
+        master_count: int = 1,
+        agent_count: int = 2,
+        agent_vm_size: Union[str, "_models.AgentVMSizeTypes"] = "Standard_D3_v2",
         **kwargs
     ):
-        super(AcsClusterProperties, self).__init__(**kwargs)
+        """
+        :keyword orchestrator_type: Type of orchestrator. It cannot be changed once the cluster is
+         created. Required. Known values are: "Kubernetes" and "None".
+        :paramtype orchestrator_type: str or ~azure.mgmt.machinelearningcompute.models.OrchestratorType
+        :keyword orchestrator_properties: Orchestrator specific properties.
+        :paramtype orchestrator_properties:
+         ~azure.mgmt.machinelearningcompute.models.KubernetesClusterProperties
+        :keyword system_services: The system services deployed to the cluster.
+        :paramtype system_services: list[~azure.mgmt.machinelearningcompute.models.SystemService]
+        :keyword master_count: The number of master nodes in the container service.
+        :paramtype master_count: int
+        :keyword agent_count: The number of agent nodes in the Container Service. This can be changed
+         to scale the cluster.
+        :paramtype agent_count: int
+        :keyword agent_vm_size: The Azure VM size of the agent VM nodes. This cannot be changed once
+         the cluster is created. This list is non exhaustive; refer to
+         https://docs.microsoft.com/en-us/azure/virtual-machines/windows/sizes for the possible VM
+         sizes. Known values are: "Standard_A0", "Standard_A1", "Standard_A2", "Standard_A3",
+         "Standard_A4", "Standard_A5", "Standard_A6", "Standard_A7", "Standard_A8", "Standard_A9",
+         "Standard_A10", "Standard_A11", "Standard_D1", "Standard_D2", "Standard_D3", "Standard_D4",
+         "Standard_D11", "Standard_D12", "Standard_D13", "Standard_D14", "Standard_D1_v2",
+         "Standard_D2_v2", "Standard_D3_v2", "Standard_D4_v2", "Standard_D5_v2", "Standard_D11_v2",
+         "Standard_D12_v2", "Standard_D13_v2", "Standard_D14_v2", "Standard_G1", "Standard_G2",
+         "Standard_G3", "Standard_G4", "Standard_G5", "Standard_DS1", "Standard_DS2", "Standard_DS3",
+         "Standard_DS4", "Standard_DS11", "Standard_DS12", "Standard_DS13", "Standard_DS14",
+         "Standard_GS1", "Standard_GS2", "Standard_GS3", "Standard_GS4", and "Standard_GS5".
+        :paramtype agent_vm_size: str or ~azure.mgmt.machinelearningcompute.models.AgentVMSizeTypes
+        """
+        super().__init__(**kwargs)
         self.cluster_fqdn = None
         self.orchestrator_type = orchestrator_type
         self.orchestrator_properties = orchestrator_properties
@@ -90,94 +126,107 @@ class AcsClusterProperties(msrest.serialization.Model):
         self.agent_vm_size = agent_vm_size
 
 
-class AppInsightsCredentials(msrest.serialization.Model):
+class AppInsightsCredentials(_serialization.Model):
     """AppInsights credentials.
 
-    :param app_id: The AppInsights application ID.
-    :type app_id: str
-    :param instrumentation_key: The AppInsights instrumentation key. This is not returned in
+    :ivar app_id: The AppInsights application ID.
+    :vartype app_id: str
+    :ivar instrumentation_key: The AppInsights instrumentation key. This is not returned in
      response of GET/PUT on the resource. To see this please call listKeys API.
-    :type instrumentation_key: str
+    :vartype instrumentation_key: str
     """
 
     _attribute_map = {
-        'app_id': {'key': 'appId', 'type': 'str'},
-        'instrumentation_key': {'key': 'instrumentationKey', 'type': 'str'},
+        "app_id": {"key": "appId", "type": "str"},
+        "instrumentation_key": {"key": "instrumentationKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        app_id: Optional[str] = None,
-        instrumentation_key: Optional[str] = None,
-        **kwargs
-    ):
-        super(AppInsightsCredentials, self).__init__(**kwargs)
+    def __init__(self, *, app_id: Optional[str] = None, instrumentation_key: Optional[str] = None, **kwargs):
+        """
+        :keyword app_id: The AppInsights application ID.
+        :paramtype app_id: str
+        :keyword instrumentation_key: The AppInsights instrumentation key. This is not returned in
+         response of GET/PUT on the resource. To see this please call listKeys API.
+        :paramtype instrumentation_key: str
+        """
+        super().__init__(**kwargs)
         self.app_id = app_id
         self.instrumentation_key = instrumentation_key
 
 
-class AppInsightsProperties(msrest.serialization.Model):
+class AppInsightsProperties(_serialization.Model):
     """Properties of App Insights.
 
-    :param resource_id: ARM resource ID of the App Insights.
-    :type resource_id: str
+    :ivar resource_id: ARM resource ID of the App Insights.
+    :vartype resource_id: str
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(AppInsightsProperties, self).__init__(**kwargs)
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs):
+        """
+        :keyword resource_id: ARM resource ID of the App Insights.
+        :paramtype resource_id: str
+        """
+        super().__init__(**kwargs)
         self.resource_id = resource_id
 
 
-class AutoScaleConfiguration(msrest.serialization.Model):
+class AutoScaleConfiguration(_serialization.Model):
     """AutoScale configuration properties.
 
-    :param status: If auto-scale is enabled for all services. Each service can turn it off
-     individually. Possible values include: "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.machinelearningcompute.models.Status
-    :param min_replicas: The minimum number of replicas for each service.
-    :type min_replicas: int
-    :param max_replicas: The maximum number of replicas for each service.
-    :type max_replicas: int
-    :param target_utilization: The target utilization.
-    :type target_utilization: float
-    :param refresh_period_in_seconds: Refresh period in seconds.
-    :type refresh_period_in_seconds: int
+    :ivar status: If auto-scale is enabled for all services. Each service can turn it off
+     individually. Known values are: "Enabled" and "Disabled".
+    :vartype status: str or ~azure.mgmt.machinelearningcompute.models.Status
+    :ivar min_replicas: The minimum number of replicas for each service.
+    :vartype min_replicas: int
+    :ivar max_replicas: The maximum number of replicas for each service.
+    :vartype max_replicas: int
+    :ivar target_utilization: The target utilization.
+    :vartype target_utilization: float
+    :ivar refresh_period_in_seconds: Refresh period in seconds.
+    :vartype refresh_period_in_seconds: int
     """
 
     _validation = {
-        'min_replicas': {'minimum': 1},
-        'max_replicas': {'minimum': 1},
+        "min_replicas": {"minimum": 1},
+        "max_replicas": {"minimum": 1},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'min_replicas': {'key': 'minReplicas', 'type': 'int'},
-        'max_replicas': {'key': 'maxReplicas', 'type': 'int'},
-        'target_utilization': {'key': 'targetUtilization', 'type': 'float'},
-        'refresh_period_in_seconds': {'key': 'refreshPeriodInSeconds', 'type': 'int'},
+        "status": {"key": "status", "type": "str"},
+        "min_replicas": {"key": "minReplicas", "type": "int"},
+        "max_replicas": {"key": "maxReplicas", "type": "int"},
+        "target_utilization": {"key": "targetUtilization", "type": "float"},
+        "refresh_period_in_seconds": {"key": "refreshPeriodInSeconds", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "Status"]] = None,
-        min_replicas: Optional[int] = 1,
-        max_replicas: Optional[int] = 100,
+        status: Optional[Union[str, "_models.Status"]] = None,
+        min_replicas: int = 1,
+        max_replicas: int = 100,
         target_utilization: Optional[float] = None,
         refresh_period_in_seconds: Optional[int] = None,
         **kwargs
     ):
-        super(AutoScaleConfiguration, self).__init__(**kwargs)
+        """
+        :keyword status: If auto-scale is enabled for all services. Each service can turn it off
+         individually. Known values are: "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.machinelearningcompute.models.Status
+        :keyword min_replicas: The minimum number of replicas for each service.
+        :paramtype min_replicas: int
+        :keyword max_replicas: The maximum number of replicas for each service.
+        :paramtype max_replicas: int
+        :keyword target_utilization: The target utilization.
+        :paramtype target_utilization: float
+        :keyword refresh_period_in_seconds: Refresh period in seconds.
+        :paramtype refresh_period_in_seconds: int
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.min_replicas = min_replicas
         self.max_replicas = max_replicas
@@ -185,54 +234,51 @@ class AutoScaleConfiguration(msrest.serialization.Model):
         self.refresh_period_in_seconds = refresh_period_in_seconds
 
 
-class AvailableOperations(msrest.serialization.Model):
+class AvailableOperations(_serialization.Model):
     """Available operation list.
 
-    :param value: An array of available operations.
-    :type value: list[~azure.mgmt.machinelearningcompute.models.ResourceOperation]
+    :ivar value: An array of available operations.
+    :vartype value: list[~azure.mgmt.machinelearningcompute.models.ResourceOperation]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ResourceOperation]'},
+        "value": {"key": "value", "type": "[ResourceOperation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ResourceOperation"]] = None,
-        **kwargs
-    ):
-        super(AvailableOperations, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.ResourceOperation"]] = None, **kwargs):
+        """
+        :keyword value: An array of available operations.
+        :paramtype value: list[~azure.mgmt.machinelearningcompute.models.ResourceOperation]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class CheckSystemServicesUpdatesAvailableResponse(msrest.serialization.Model):
+class CheckSystemServicesUpdatesAvailableResponse(_serialization.Model):
     """Information about updates available for system services in a cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar updates_available: Yes if updates are available for the system services, No if not.
-     Possible values include: "Yes", "No".
+    :ivar updates_available: Yes if updates are available for the system services, No if not. Known
+     values are: "Yes" and "No".
     :vartype updates_available: str or ~azure.mgmt.machinelearningcompute.models.UpdatesAvailable
     """
 
     _validation = {
-        'updates_available': {'readonly': True},
+        "updates_available": {"readonly": True},
     }
 
     _attribute_map = {
-        'updates_available': {'key': 'updatesAvailable', 'type': 'str'},
+        "updates_available": {"key": "updatesAvailable", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CheckSystemServicesUpdatesAvailableResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.updates_available = None
 
 
-class ContainerRegistryCredentials(msrest.serialization.Model):
+class ContainerRegistryCredentials(_serialization.Model):
     """Information about the Azure Container Registry which contains the images deployed to the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -248,54 +294,53 @@ class ContainerRegistryCredentials(msrest.serialization.Model):
     """
 
     _validation = {
-        'login_server': {'readonly': True},
-        'password': {'readonly': True},
-        'password2': {'readonly': True},
-        'username': {'readonly': True},
+        "login_server": {"readonly": True},
+        "password": {"readonly": True},
+        "password2": {"readonly": True},
+        "username": {"readonly": True},
     }
 
     _attribute_map = {
-        'login_server': {'key': 'loginServer', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'password2': {'key': 'password2', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
+        "login_server": {"key": "loginServer", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "password2": {"key": "password2", "type": "str"},
+        "username": {"key": "username", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ContainerRegistryCredentials, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.login_server = None
         self.password = None
         self.password2 = None
         self.username = None
 
 
-class ContainerRegistryProperties(msrest.serialization.Model):
+class ContainerRegistryProperties(_serialization.Model):
     """Properties of Azure Container Registry.
 
-    :param resource_id: ARM resource ID of the Azure Container Registry used to store Docker images
+    :ivar resource_id: ARM resource ID of the Azure Container Registry used to store Docker images
      for web services in the cluster. If not provided one will be created. This cannot be changed
      once the cluster is created.
-    :type resource_id: str
+    :vartype resource_id: str
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(ContainerRegistryProperties, self).__init__(**kwargs)
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs):
+        """
+        :keyword resource_id: ARM resource ID of the Azure Container Registry used to store Docker
+         images for web services in the cluster. If not provided one will be created. This cannot be
+         changed once the cluster is created.
+        :paramtype resource_id: str
+        """
+        super().__init__(**kwargs)
         self.resource_id = resource_id
 
 
-class ContainerServiceCredentials(msrest.serialization.Model):
+class ContainerServiceCredentials(_serialization.Model):
     """Information about the Azure Container Registry which contains the images deployed to the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -310,155 +355,170 @@ class ContainerServiceCredentials(msrest.serialization.Model):
     """
 
     _validation = {
-        'acs_kube_config': {'readonly': True},
-        'service_principal_configuration': {'readonly': True},
-        'image_pull_secret_name': {'readonly': True},
+        "acs_kube_config": {"readonly": True},
+        "service_principal_configuration": {"readonly": True},
+        "image_pull_secret_name": {"readonly": True},
     }
 
     _attribute_map = {
-        'acs_kube_config': {'key': 'acsKubeConfig', 'type': 'str'},
-        'service_principal_configuration': {'key': 'servicePrincipalConfiguration', 'type': 'ServicePrincipalProperties'},
-        'image_pull_secret_name': {'key': 'imagePullSecretName', 'type': 'str'},
+        "acs_kube_config": {"key": "acsKubeConfig", "type": "str"},
+        "service_principal_configuration": {
+            "key": "servicePrincipalConfiguration",
+            "type": "ServicePrincipalProperties",
+        },
+        "image_pull_secret_name": {"key": "imagePullSecretName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ContainerServiceCredentials, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.acs_kube_config = None
         self.service_principal_configuration = None
         self.image_pull_secret_name = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """Error detail information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code.
-    :type code: str
-    :param message: Required. Error message.
-    :type message: str
+    :ivar code: Error code. Required.
+    :vartype code: str
+    :ivar message: Error message. Required.
+    :vartype message: str
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, *, code: str, message: str, **kwargs):
+        """
+        :keyword code: Error code. Required.
+        :paramtype code: str
+        :keyword message: Error message. Required.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param code: Required. Error code.
-    :type code: str
-    :param message: Required. Error message.
-    :type message: str
-    :param details: An array of error detail objects.
-    :type details: list[~azure.mgmt.machinelearningcompute.models.ErrorDetail]
+    :ivar code: Error code. Required.
+    :vartype code: str
+    :ivar message: Error message. Required.
+    :vartype message: str
+    :ivar details: An array of error detail objects.
+    :vartype details: list[~azure.mgmt.machinelearningcompute.models.ErrorDetail]
     """
 
     _validation = {
-        'code': {'required': True},
-        'message': {'required': True},
+        "code": {"required": True},
+        "message": {"required": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        details: Optional[List["ErrorDetail"]] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, code: str, message: str, details: Optional[List["_models.ErrorDetail"]] = None, **kwargs):
+        """
+        :keyword code: Error code. Required.
+        :paramtype code: str
+        :keyword message: Error message. Required.
+        :paramtype message: str
+        :keyword details: An array of error detail objects.
+        :paramtype details: list[~azure.mgmt.machinelearningcompute.models.ErrorDetail]
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
 
 
-class ErrorResponseWrapper(msrest.serialization.Model):
+class ErrorResponseWrapper(_serialization.Model):
     """Wrapper for error response to follow ARM guidelines.
 
-    :param error: The error response.
-    :type error: ~azure.mgmt.machinelearningcompute.models.ErrorResponse
+    :ivar error: The error response.
+    :vartype error: ~azure.mgmt.machinelearningcompute.models.ErrorResponse
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponse'},
+        "error": {"key": "error", "type": "ErrorResponse"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorResponse"] = None,
-        **kwargs
-    ):
-        super(ErrorResponseWrapper, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorResponse"] = None, **kwargs):
+        """
+        :keyword error: The error response.
+        :paramtype error: ~azure.mgmt.machinelearningcompute.models.ErrorResponse
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class GlobalServiceConfiguration(msrest.serialization.Model):
+class GlobalServiceConfiguration(_serialization.Model):
     """Global configuration for services in the cluster.
 
-    :param additional_properties: Unmatched properties from the message are deserialized to this
+    :ivar additional_properties: Unmatched properties from the message are deserialized to this
      collection.
-    :type additional_properties: dict[str, str]
-    :param etag: The configuration ETag for updates.
-    :type etag: str
-    :param ssl: The SSL configuration properties.
-    :type ssl: ~azure.mgmt.machinelearningcompute.models.SslConfiguration
-    :param service_auth: Optional global authorization keys for all user services deployed in
+    :vartype additional_properties: dict[str, JSON]
+    :ivar etag: The configuration ETag for updates.
+    :vartype etag: str
+    :ivar ssl: The SSL configuration properties.
+    :vartype ssl: ~azure.mgmt.machinelearningcompute.models.SslConfiguration
+    :ivar service_auth: Optional global authorization keys for all user services deployed in
      cluster. These are used if the service does not have auth keys.
-    :type service_auth: ~azure.mgmt.machinelearningcompute.models.ServiceAuthConfiguration
-    :param auto_scale: The auto-scale configuration.
-    :type auto_scale: ~azure.mgmt.machinelearningcompute.models.AutoScaleConfiguration
+    :vartype service_auth: ~azure.mgmt.machinelearningcompute.models.ServiceAuthConfiguration
+    :ivar auto_scale: The auto-scale configuration.
+    :vartype auto_scale: ~azure.mgmt.machinelearningcompute.models.AutoScaleConfiguration
     """
 
     _attribute_map = {
-        'additional_properties': {'key': '', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'ssl': {'key': 'ssl', 'type': 'SslConfiguration'},
-        'service_auth': {'key': 'serviceAuth', 'type': 'ServiceAuthConfiguration'},
-        'auto_scale': {'key': 'autoScale', 'type': 'AutoScaleConfiguration'},
+        "additional_properties": {"key": "", "type": "{object}"},
+        "etag": {"key": "etag", "type": "str"},
+        "ssl": {"key": "ssl", "type": "SslConfiguration"},
+        "service_auth": {"key": "serviceAuth", "type": "ServiceAuthConfiguration"},
+        "auto_scale": {"key": "autoScale", "type": "AutoScaleConfiguration"},
     }
 
     def __init__(
         self,
         *,
-        additional_properties: Optional[Dict[str, str]] = None,
+        additional_properties: Optional[Dict[str, JSON]] = None,
         etag: Optional[str] = None,
-        ssl: Optional["SslConfiguration"] = None,
-        service_auth: Optional["ServiceAuthConfiguration"] = None,
-        auto_scale: Optional["AutoScaleConfiguration"] = None,
+        ssl: Optional["_models.SslConfiguration"] = None,
+        service_auth: Optional["_models.ServiceAuthConfiguration"] = None,
+        auto_scale: Optional["_models.AutoScaleConfiguration"] = None,
         **kwargs
     ):
-        super(GlobalServiceConfiguration, self).__init__(**kwargs)
+        """
+        :keyword additional_properties: Unmatched properties from the message are deserialized to this
+         collection.
+        :paramtype additional_properties: dict[str, JSON]
+        :keyword etag: The configuration ETag for updates.
+        :paramtype etag: str
+        :keyword ssl: The SSL configuration properties.
+        :paramtype ssl: ~azure.mgmt.machinelearningcompute.models.SslConfiguration
+        :keyword service_auth: Optional global authorization keys for all user services deployed in
+         cluster. These are used if the service does not have auth keys.
+        :paramtype service_auth: ~azure.mgmt.machinelearningcompute.models.ServiceAuthConfiguration
+        :keyword auto_scale: The auto-scale configuration.
+        :paramtype auto_scale: ~azure.mgmt.machinelearningcompute.models.AutoScaleConfiguration
+        """
+        super().__init__(**kwargs)
         self.additional_properties = additional_properties
         self.etag = etag
         self.ssl = ssl
@@ -466,28 +526,29 @@ class GlobalServiceConfiguration(msrest.serialization.Model):
         self.auto_scale = auto_scale
 
 
-class KubernetesClusterProperties(msrest.serialization.Model):
+class KubernetesClusterProperties(_serialization.Model):
     """Kubernetes cluster specific properties.
 
-    :param service_principal: The Azure Service Principal used by Kubernetes.
-    :type service_principal: ~azure.mgmt.machinelearningcompute.models.ServicePrincipalProperties
+    :ivar service_principal: The Azure Service Principal used by Kubernetes.
+    :vartype service_principal:
+     ~azure.mgmt.machinelearningcompute.models.ServicePrincipalProperties
     """
 
     _attribute_map = {
-        'service_principal': {'key': 'servicePrincipal', 'type': 'ServicePrincipalProperties'},
+        "service_principal": {"key": "servicePrincipal", "type": "ServicePrincipalProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        service_principal: Optional["ServicePrincipalProperties"] = None,
-        **kwargs
-    ):
-        super(KubernetesClusterProperties, self).__init__(**kwargs)
+    def __init__(self, *, service_principal: Optional["_models.ServicePrincipalProperties"] = None, **kwargs):
+        """
+        :keyword service_principal: The Azure Service Principal used by Kubernetes.
+        :paramtype service_principal:
+         ~azure.mgmt.machinelearningcompute.models.ServicePrincipalProperties
+        """
+        super().__init__(**kwargs)
         self.service_principal = service_principal
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Azure resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -498,37 +559,37 @@ class Resource(msrest.serialization.Model):
     :vartype id: str
     :ivar name: Specifies the name of the resource.
     :vartype name: str
-    :param location: Required. Specifies the location of the resource.
-    :type location: str
+    :ivar location: Specifies the location of the resource. Required.
+    :vartype location: str
     :ivar type: Specifies the type of the resource.
     :vartype type: str
-    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :type tags: dict[str, str]
+    :ivar tags: Contains resource tags defined as key/value pairs.
+    :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword location: Specifies the location of the resource. Required.
+        :paramtype location: str
+        :keyword tags: Contains resource tags defined as key/value pairs.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.location = location
@@ -536,7 +597,7 @@ class Resource(msrest.serialization.Model):
         self.tags = tags
 
 
-class OperationalizationCluster(Resource):
+class OperationalizationCluster(Resource):  # pylint: disable=too-many-instance-attributes
     """Instance of an Azure ML Operationalization Cluster resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -547,69 +608,73 @@ class OperationalizationCluster(Resource):
     :vartype id: str
     :ivar name: Specifies the name of the resource.
     :vartype name: str
-    :param location: Required. Specifies the location of the resource.
-    :type location: str
+    :ivar location: Specifies the location of the resource. Required.
+    :vartype location: str
     :ivar type: Specifies the type of the resource.
     :vartype type: str
-    :param tags: A set of tags. Contains resource tags defined as key/value pairs.
-    :type tags: dict[str, str]
-    :param description: The description of the cluster.
-    :type description: str
+    :ivar tags: Contains resource tags defined as key/value pairs.
+    :vartype tags: dict[str, str]
+    :ivar description: The description of the cluster.
+    :vartype description: str
     :ivar created_on: The date and time when the cluster was created.
     :vartype created_on: ~datetime.datetime
     :ivar modified_on: The date and time when the cluster was last modified.
     :vartype modified_on: ~datetime.datetime
     :ivar provisioning_state: The provision state of the cluster. Valid values are Unknown,
-     Updating, Provisioning, Succeeded, and Failed. Possible values include: "Unknown", "Updating",
-     "Creating", "Deleting", "Succeeded", "Failed", "Canceled".
+     Updating, Provisioning, Succeeded, and Failed. Known values are: "Unknown", "Updating",
+     "Creating", "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.machinelearningcompute.models.OperationStatus
     :ivar provisioning_errors: List of provisioning errors reported by the resource provider.
     :vartype provisioning_errors:
      list[~azure.mgmt.machinelearningcompute.models.ErrorResponseWrapper]
-    :param cluster_type: The cluster type. Possible values include: "ACS", "Local".
-    :type cluster_type: str or ~azure.mgmt.machinelearningcompute.models.ClusterType
-    :param storage_account: Storage Account properties.
-    :type storage_account: ~azure.mgmt.machinelearningcompute.models.StorageAccountProperties
-    :param container_registry: Container Registry properties.
-    :type container_registry: ~azure.mgmt.machinelearningcompute.models.ContainerRegistryProperties
-    :param container_service: Parameters for the Azure Container Service cluster.
-    :type container_service: ~azure.mgmt.machinelearningcompute.models.AcsClusterProperties
-    :param app_insights: AppInsights configuration.
-    :type app_insights: ~azure.mgmt.machinelearningcompute.models.AppInsightsProperties
-    :param global_service_configuration: Contains global configuration for the web services in the
+    :ivar cluster_type: The cluster type. Known values are: "ACS" and "Local".
+    :vartype cluster_type: str or ~azure.mgmt.machinelearningcompute.models.ClusterType
+    :ivar storage_account: Storage Account properties.
+    :vartype storage_account: ~azure.mgmt.machinelearningcompute.models.StorageAccountProperties
+    :ivar container_registry: Container Registry properties.
+    :vartype container_registry:
+     ~azure.mgmt.machinelearningcompute.models.ContainerRegistryProperties
+    :ivar container_service: Parameters for the Azure Container Service cluster.
+    :vartype container_service: ~azure.mgmt.machinelearningcompute.models.AcsClusterProperties
+    :ivar app_insights: AppInsights configuration.
+    :vartype app_insights: ~azure.mgmt.machinelearningcompute.models.AppInsightsProperties
+    :ivar global_service_configuration: Contains global configuration for the web services in the
      cluster.
-    :type global_service_configuration:
+    :vartype global_service_configuration:
      ~azure.mgmt.machinelearningcompute.models.GlobalServiceConfiguration
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'location': {'required': True},
-        'type': {'readonly': True},
-        'created_on': {'readonly': True},
-        'modified_on': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'provisioning_errors': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "location": {"required": True},
+        "type": {"readonly": True},
+        "created_on": {"readonly": True},
+        "modified_on": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "provisioning_errors": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'created_on': {'key': 'properties.createdOn', 'type': 'iso-8601'},
-        'modified_on': {'key': 'properties.modifiedOn', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'provisioning_errors': {'key': 'properties.provisioningErrors', 'type': '[ErrorResponseWrapper]'},
-        'cluster_type': {'key': 'properties.clusterType', 'type': 'str'},
-        'storage_account': {'key': 'properties.storageAccount', 'type': 'StorageAccountProperties'},
-        'container_registry': {'key': 'properties.containerRegistry', 'type': 'ContainerRegistryProperties'},
-        'container_service': {'key': 'properties.containerService', 'type': 'AcsClusterProperties'},
-        'app_insights': {'key': 'properties.appInsights', 'type': 'AppInsightsProperties'},
-        'global_service_configuration': {'key': 'properties.globalServiceConfiguration', 'type': 'GlobalServiceConfiguration'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "created_on": {"key": "properties.createdOn", "type": "iso-8601"},
+        "modified_on": {"key": "properties.modifiedOn", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "provisioning_errors": {"key": "properties.provisioningErrors", "type": "[ErrorResponseWrapper]"},
+        "cluster_type": {"key": "properties.clusterType", "type": "str"},
+        "storage_account": {"key": "properties.storageAccount", "type": "StorageAccountProperties"},
+        "container_registry": {"key": "properties.containerRegistry", "type": "ContainerRegistryProperties"},
+        "container_service": {"key": "properties.containerService", "type": "AcsClusterProperties"},
+        "app_insights": {"key": "properties.appInsights", "type": "AppInsightsProperties"},
+        "global_service_configuration": {
+            "key": "properties.globalServiceConfiguration",
+            "type": "GlobalServiceConfiguration",
+        },
     }
 
     def __init__(
@@ -618,15 +683,38 @@ class OperationalizationCluster(Resource):
         location: str,
         tags: Optional[Dict[str, str]] = None,
         description: Optional[str] = None,
-        cluster_type: Optional[Union[str, "ClusterType"]] = None,
-        storage_account: Optional["StorageAccountProperties"] = None,
-        container_registry: Optional["ContainerRegistryProperties"] = None,
-        container_service: Optional["AcsClusterProperties"] = None,
-        app_insights: Optional["AppInsightsProperties"] = None,
-        global_service_configuration: Optional["GlobalServiceConfiguration"] = None,
+        cluster_type: Optional[Union[str, "_models.ClusterType"]] = None,
+        storage_account: Optional["_models.StorageAccountProperties"] = None,
+        container_registry: Optional["_models.ContainerRegistryProperties"] = None,
+        container_service: Optional["_models.AcsClusterProperties"] = None,
+        app_insights: Optional["_models.AppInsightsProperties"] = None,
+        global_service_configuration: Optional["_models.GlobalServiceConfiguration"] = None,
         **kwargs
     ):
-        super(OperationalizationCluster, self).__init__(location=location, tags=tags, **kwargs)
+        """
+        :keyword location: Specifies the location of the resource. Required.
+        :paramtype location: str
+        :keyword tags: Contains resource tags defined as key/value pairs.
+        :paramtype tags: dict[str, str]
+        :keyword description: The description of the cluster.
+        :paramtype description: str
+        :keyword cluster_type: The cluster type. Known values are: "ACS" and "Local".
+        :paramtype cluster_type: str or ~azure.mgmt.machinelearningcompute.models.ClusterType
+        :keyword storage_account: Storage Account properties.
+        :paramtype storage_account: ~azure.mgmt.machinelearningcompute.models.StorageAccountProperties
+        :keyword container_registry: Container Registry properties.
+        :paramtype container_registry:
+         ~azure.mgmt.machinelearningcompute.models.ContainerRegistryProperties
+        :keyword container_service: Parameters for the Azure Container Service cluster.
+        :paramtype container_service: ~azure.mgmt.machinelearningcompute.models.AcsClusterProperties
+        :keyword app_insights: AppInsights configuration.
+        :paramtype app_insights: ~azure.mgmt.machinelearningcompute.models.AppInsightsProperties
+        :keyword global_service_configuration: Contains global configuration for the web services in
+         the cluster.
+        :paramtype global_service_configuration:
+         ~azure.mgmt.machinelearningcompute.models.GlobalServiceConfiguration
+        """
+        super().__init__(location=location, tags=tags, **kwargs)
         self.description = description
         self.created_on = None
         self.modified_on = None
@@ -640,47 +728,66 @@ class OperationalizationCluster(Resource):
         self.global_service_configuration = global_service_configuration
 
 
-class OperationalizationClusterCredentials(msrest.serialization.Model):
+class OperationalizationClusterCredentials(_serialization.Model):
     """Credentials to resources in the cluster.
 
-    :param storage_account: Credentials for the Storage Account.
-    :type storage_account: ~azure.mgmt.machinelearningcompute.models.StorageAccountCredentials
-    :param container_registry: Credentials for Azure Container Registry.
-    :type container_registry:
+    :ivar storage_account: Credentials for the Storage Account.
+    :vartype storage_account: ~azure.mgmt.machinelearningcompute.models.StorageAccountCredentials
+    :ivar container_registry: Credentials for Azure Container Registry.
+    :vartype container_registry:
      ~azure.mgmt.machinelearningcompute.models.ContainerRegistryCredentials
-    :param container_service: Credentials for Azure Container Service.
-    :type container_service: ~azure.mgmt.machinelearningcompute.models.ContainerServiceCredentials
-    :param app_insights: Credentials for Azure AppInsights.
-    :type app_insights: ~azure.mgmt.machinelearningcompute.models.AppInsightsCredentials
-    :param service_auth_configuration: Global authorization keys for all user services deployed in
+    :ivar container_service: Credentials for Azure Container Service.
+    :vartype container_service:
+     ~azure.mgmt.machinelearningcompute.models.ContainerServiceCredentials
+    :ivar app_insights: Credentials for Azure AppInsights.
+    :vartype app_insights: ~azure.mgmt.machinelearningcompute.models.AppInsightsCredentials
+    :ivar service_auth_configuration: Global authorization keys for all user services deployed in
      cluster. These are used if the service does not have auth keys.
-    :type service_auth_configuration:
+    :vartype service_auth_configuration:
      ~azure.mgmt.machinelearningcompute.models.ServiceAuthConfiguration
-    :param ssl_configuration: The SSL configuration for the services.
-    :type ssl_configuration: ~azure.mgmt.machinelearningcompute.models.SslConfiguration
+    :ivar ssl_configuration: The SSL configuration for the services.
+    :vartype ssl_configuration: ~azure.mgmt.machinelearningcompute.models.SslConfiguration
     """
 
     _attribute_map = {
-        'storage_account': {'key': 'storageAccount', 'type': 'StorageAccountCredentials'},
-        'container_registry': {'key': 'containerRegistry', 'type': 'ContainerRegistryCredentials'},
-        'container_service': {'key': 'containerService', 'type': 'ContainerServiceCredentials'},
-        'app_insights': {'key': 'appInsights', 'type': 'AppInsightsCredentials'},
-        'service_auth_configuration': {'key': 'serviceAuthConfiguration', 'type': 'ServiceAuthConfiguration'},
-        'ssl_configuration': {'key': 'sslConfiguration', 'type': 'SslConfiguration'},
+        "storage_account": {"key": "storageAccount", "type": "StorageAccountCredentials"},
+        "container_registry": {"key": "containerRegistry", "type": "ContainerRegistryCredentials"},
+        "container_service": {"key": "containerService", "type": "ContainerServiceCredentials"},
+        "app_insights": {"key": "appInsights", "type": "AppInsightsCredentials"},
+        "service_auth_configuration": {"key": "serviceAuthConfiguration", "type": "ServiceAuthConfiguration"},
+        "ssl_configuration": {"key": "sslConfiguration", "type": "SslConfiguration"},
     }
 
     def __init__(
         self,
         *,
-        storage_account: Optional["StorageAccountCredentials"] = None,
-        container_registry: Optional["ContainerRegistryCredentials"] = None,
-        container_service: Optional["ContainerServiceCredentials"] = None,
-        app_insights: Optional["AppInsightsCredentials"] = None,
-        service_auth_configuration: Optional["ServiceAuthConfiguration"] = None,
-        ssl_configuration: Optional["SslConfiguration"] = None,
+        storage_account: Optional["_models.StorageAccountCredentials"] = None,
+        container_registry: Optional["_models.ContainerRegistryCredentials"] = None,
+        container_service: Optional["_models.ContainerServiceCredentials"] = None,
+        app_insights: Optional["_models.AppInsightsCredentials"] = None,
+        service_auth_configuration: Optional["_models.ServiceAuthConfiguration"] = None,
+        ssl_configuration: Optional["_models.SslConfiguration"] = None,
         **kwargs
     ):
-        super(OperationalizationClusterCredentials, self).__init__(**kwargs)
+        """
+        :keyword storage_account: Credentials for the Storage Account.
+        :paramtype storage_account: ~azure.mgmt.machinelearningcompute.models.StorageAccountCredentials
+        :keyword container_registry: Credentials for Azure Container Registry.
+        :paramtype container_registry:
+         ~azure.mgmt.machinelearningcompute.models.ContainerRegistryCredentials
+        :keyword container_service: Credentials for Azure Container Service.
+        :paramtype container_service:
+         ~azure.mgmt.machinelearningcompute.models.ContainerServiceCredentials
+        :keyword app_insights: Credentials for Azure AppInsights.
+        :paramtype app_insights: ~azure.mgmt.machinelearningcompute.models.AppInsightsCredentials
+        :keyword service_auth_configuration: Global authorization keys for all user services deployed
+         in cluster. These are used if the service does not have auth keys.
+        :paramtype service_auth_configuration:
+         ~azure.mgmt.machinelearningcompute.models.ServiceAuthConfiguration
+        :keyword ssl_configuration: The SSL configuration for the services.
+        :paramtype ssl_configuration: ~azure.mgmt.machinelearningcompute.models.SslConfiguration
+        """
+        super().__init__(**kwargs)
         self.storage_account = storage_account
         self.container_registry = container_registry
         self.container_service = container_service
@@ -689,105 +796,121 @@ class OperationalizationClusterCredentials(msrest.serialization.Model):
         self.ssl_configuration = ssl_configuration
 
 
-class OperationalizationClusterUpdateParameters(msrest.serialization.Model):
+class OperationalizationClusterUpdateParameters(_serialization.Model):
     """Parameters for PATCH operation on an operationalization cluster.
 
-    :param tags: A set of tags. Gets or sets a list of key value pairs that describe the resource.
-     These tags can be used in viewing and grouping this resource (across resource groups). A
-     maximum of 15 tags can be provided for a resource. Each tag must have a key no greater in
-     length than 128 characters and a value no greater in length than 256 characters.
-    :type tags: dict[str, str]
+    :ivar tags: Gets or sets a list of key value pairs that describe the resource. These tags can
+     be used in viewing and grouping this resource (across resource groups). A maximum of 15 tags
+     can be provided for a resource. Each tag must have a key no greater in length than 128
+     characters and a value no greater in length than 256 characters.
+    :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(OperationalizationClusterUpdateParameters, self).__init__(**kwargs)
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Gets or sets a list of key value pairs that describe the resource. These tags
+         can be used in viewing and grouping this resource (across resource groups). A maximum of 15
+         tags can be provided for a resource. Each tag must have a key no greater in length than 128
+         characters and a value no greater in length than 256 characters.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class PaginatedOperationalizationClustersList(msrest.serialization.Model):
+class PaginatedOperationalizationClustersList(_serialization.Model):
     """Paginated list of operationalization clusters.
 
-    :param value: An array of cluster objects.
-    :type value: list[~azure.mgmt.machinelearningcompute.models.OperationalizationCluster]
-    :param next_link: A continuation link (absolute URI) to the next page of results in the list.
-    :type next_link: str
+    :ivar value: An array of cluster objects.
+    :vartype value: list[~azure.mgmt.machinelearningcompute.models.OperationalizationCluster]
+    :ivar next_link: A continuation link (absolute URI) to the next page of results in the list.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[OperationalizationCluster]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[OperationalizationCluster]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["OperationalizationCluster"]] = None,
+        value: Optional[List["_models.OperationalizationCluster"]] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(PaginatedOperationalizationClustersList, self).__init__(**kwargs)
+        """
+        :keyword value: An array of cluster objects.
+        :paramtype value: list[~azure.mgmt.machinelearningcompute.models.OperationalizationCluster]
+        :keyword next_link: A continuation link (absolute URI) to the next page of results in the list.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ResourceOperation(msrest.serialization.Model):
+class ResourceOperation(_serialization.Model):
     """Resource operation.
 
-    :param name: Name of this operation.
-    :type name: str
-    :param display: Display of the operation.
-    :type display: ~azure.mgmt.machinelearningcompute.models.ResourceOperationDisplay
-    :param origin: The operation origin.
-    :type origin: str
+    :ivar name: Name of this operation.
+    :vartype name: str
+    :ivar display: Display of the operation.
+    :vartype display: ~azure.mgmt.machinelearningcompute.models.ResourceOperationDisplay
+    :ivar origin: The operation origin.
+    :vartype origin: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'ResourceOperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "ResourceOperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: Optional[str] = None,
-        display: Optional["ResourceOperationDisplay"] = None,
+        display: Optional["_models.ResourceOperationDisplay"] = None,
         origin: Optional[str] = None,
         **kwargs
     ):
-        super(ResourceOperation, self).__init__(**kwargs)
+        """
+        :keyword name: Name of this operation.
+        :paramtype name: str
+        :keyword display: Display of the operation.
+        :paramtype display: ~azure.mgmt.machinelearningcompute.models.ResourceOperationDisplay
+        :keyword origin: The operation origin.
+        :paramtype origin: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
 
 
-class ResourceOperationDisplay(msrest.serialization.Model):
+class ResourceOperationDisplay(_serialization.Model):
     """Display of the operation.
 
-    :param provider: The resource provider name.
-    :type provider: str
-    :param resource: The resource name.
-    :type resource: str
-    :param operation: The operation.
-    :type operation: str
-    :param description: The description of the operation.
-    :type description: str
+    :ivar provider: The resource provider name.
+    :vartype provider: str
+    :ivar resource: The resource name.
+    :vartype resource: str
+    :ivar operation: The operation.
+    :vartype operation: str
+    :ivar description: The description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -799,121 +922,146 @@ class ResourceOperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(ResourceOperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: The resource provider name.
+        :paramtype provider: str
+        :keyword resource: The resource name.
+        :paramtype resource: str
+        :keyword operation: The operation.
+        :paramtype operation: str
+        :keyword description: The description of the operation.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class ServiceAuthConfiguration(msrest.serialization.Model):
+class ServiceAuthConfiguration(_serialization.Model):
     """Global service auth configuration properties. These are the data-plane authorization keys and are used if a service doesn't define it's own.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param primary_auth_key_hash: Required. The primary auth key hash. This is not returned in
-     response of GET/PUT on the resource.. To see this please call listKeys API.
-    :type primary_auth_key_hash: str
-    :param secondary_auth_key_hash: Required. The secondary auth key hash. This is not returned in
-     response of GET/PUT on the resource.. To see this please call listKeys API.
-    :type secondary_auth_key_hash: str
+    :ivar primary_auth_key_hash: The primary auth key hash. This is not returned in response of
+     GET/PUT on the resource.. To see this please call listKeys API. Required.
+    :vartype primary_auth_key_hash: str
+    :ivar secondary_auth_key_hash: The secondary auth key hash. This is not returned in response of
+     GET/PUT on the resource.. To see this please call listKeys API. Required.
+    :vartype secondary_auth_key_hash: str
     """
 
     _validation = {
-        'primary_auth_key_hash': {'required': True},
-        'secondary_auth_key_hash': {'required': True},
+        "primary_auth_key_hash": {"required": True},
+        "secondary_auth_key_hash": {"required": True},
     }
 
     _attribute_map = {
-        'primary_auth_key_hash': {'key': 'primaryAuthKeyHash', 'type': 'str'},
-        'secondary_auth_key_hash': {'key': 'secondaryAuthKeyHash', 'type': 'str'},
+        "primary_auth_key_hash": {"key": "primaryAuthKeyHash", "type": "str"},
+        "secondary_auth_key_hash": {"key": "secondaryAuthKeyHash", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        primary_auth_key_hash: str,
-        secondary_auth_key_hash: str,
-        **kwargs
-    ):
-        super(ServiceAuthConfiguration, self).__init__(**kwargs)
+    def __init__(self, *, primary_auth_key_hash: str, secondary_auth_key_hash: str, **kwargs):
+        """
+        :keyword primary_auth_key_hash: The primary auth key hash. This is not returned in response of
+         GET/PUT on the resource.. To see this please call listKeys API. Required.
+        :paramtype primary_auth_key_hash: str
+        :keyword secondary_auth_key_hash: The secondary auth key hash. This is not returned in response
+         of GET/PUT on the resource.. To see this please call listKeys API. Required.
+        :paramtype secondary_auth_key_hash: str
+        """
+        super().__init__(**kwargs)
         self.primary_auth_key_hash = primary_auth_key_hash
         self.secondary_auth_key_hash = secondary_auth_key_hash
 
 
-class ServicePrincipalProperties(msrest.serialization.Model):
+class ServicePrincipalProperties(_serialization.Model):
     """The Azure service principal used by Kubernetes for configuring load balancers.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param client_id: Required. The service principal client ID.
-    :type client_id: str
-    :param secret: Required. The service principal secret. This is not returned in response of
-     GET/PUT on the resource. To see this please call listKeys.
-    :type secret: str
+    :ivar client_id: The service principal client ID. Required.
+    :vartype client_id: str
+    :ivar secret: The service principal secret. This is not returned in response of GET/PUT on the
+     resource. To see this please call listKeys. Required.
+    :vartype secret: str
     """
 
     _validation = {
-        'client_id': {'required': True},
-        'secret': {'required': True},
+        "client_id": {"required": True},
+        "secret": {"required": True},
     }
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'secret': {'key': 'secret', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "secret": {"key": "secret", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        client_id: str,
-        secret: str,
-        **kwargs
-    ):
-        super(ServicePrincipalProperties, self).__init__(**kwargs)
+    def __init__(self, *, client_id: str, secret: str, **kwargs):
+        """
+        :keyword client_id: The service principal client ID. Required.
+        :paramtype client_id: str
+        :keyword secret: The service principal secret. This is not returned in response of GET/PUT on
+         the resource. To see this please call listKeys. Required.
+        :paramtype secret: str
+        """
+        super().__init__(**kwargs)
         self.client_id = client_id
         self.secret = secret
 
 
-class SslConfiguration(msrest.serialization.Model):
+class SslConfiguration(_serialization.Model):
     """SSL configuration. If configured data-plane calls to user services will be exposed over SSL only.
 
-    :param status: SSL status. Allowed values are Enabled and Disabled. Possible values include:
-     "Enabled", "Disabled".
-    :type status: str or ~azure.mgmt.machinelearningcompute.models.Status
-    :param cert: The SSL cert data in PEM format.
-    :type cert: str
-    :param key: The SSL key data in PEM format. This is not returned in response of GET/PUT on the
+    :ivar status: SSL status. Allowed values are Enabled and Disabled. Known values are: "Enabled"
+     and "Disabled".
+    :vartype status: str or ~azure.mgmt.machinelearningcompute.models.Status
+    :ivar cert: The SSL cert data in PEM format.
+    :vartype cert: str
+    :ivar key: The SSL key data in PEM format. This is not returned in response of GET/PUT on the
      resource. To see this please call listKeys API.
-    :type key: str
-    :param cname: The CName of the certificate.
-    :type cname: str
+    :vartype key: str
+    :ivar cname: The CName of the certificate.
+    :vartype cname: str
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'cert': {'key': 'cert', 'type': 'str'},
-        'key': {'key': 'key', 'type': 'str'},
-        'cname': {'key': 'cname', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "cert": {"key": "cert", "type": "str"},
+        "key": {"key": "key", "type": "str"},
+        "cname": {"key": "cname", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "Status"]] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
         cert: Optional[str] = None,
         key: Optional[str] = None,
         cname: Optional[str] = None,
         **kwargs
     ):
-        super(SslConfiguration, self).__init__(**kwargs)
+        """
+        :keyword status: SSL status. Allowed values are Enabled and Disabled. Known values are:
+         "Enabled" and "Disabled".
+        :paramtype status: str or ~azure.mgmt.machinelearningcompute.models.Status
+        :keyword cert: The SSL cert data in PEM format.
+        :paramtype cert: str
+        :keyword key: The SSL key data in PEM format. This is not returned in response of GET/PUT on
+         the resource. To see this please call listKeys API.
+        :paramtype key: str
+        :keyword cname: The CName of the certificate.
+        :paramtype cname: str
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.cert = cert
         self.key = key
         self.cname = cname
 
 
-class StorageAccountCredentials(msrest.serialization.Model):
+class StorageAccountCredentials(_serialization.Model):
     """Access information for the storage account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -927,59 +1075,58 @@ class StorageAccountCredentials(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_id': {'readonly': True},
-        'primary_key': {'readonly': True},
-        'secondary_key': {'readonly': True},
+        "resource_id": {"readonly": True},
+        "primary_key": {"readonly": True},
+        "secondary_key": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(StorageAccountCredentials, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.resource_id = None
         self.primary_key = None
         self.secondary_key = None
 
 
-class StorageAccountProperties(msrest.serialization.Model):
+class StorageAccountProperties(_serialization.Model):
     """Properties of Storage Account.
 
-    :param resource_id: ARM resource ID of the Azure Storage Account to store CLI specific files.
-     If not provided one will be created. This cannot be changed once the cluster is created.
-    :type resource_id: str
+    :ivar resource_id: ARM resource ID of the Azure Storage Account to store CLI specific files. If
+     not provided one will be created. This cannot be changed once the cluster is created.
+    :vartype resource_id: str
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(StorageAccountProperties, self).__init__(**kwargs)
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs):
+        """
+        :keyword resource_id: ARM resource ID of the Azure Storage Account to store CLI specific files.
+         If not provided one will be created. This cannot be changed once the cluster is created.
+        :paramtype resource_id: str
+        """
+        super().__init__(**kwargs)
         self.resource_id = resource_id
 
 
-class SystemService(msrest.serialization.Model):
+class SystemService(_serialization.Model):
     """Information about a system service deployed in the cluster.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param system_service_type: Required. The system service type. Possible values include: "None",
-     "ScoringFrontEnd", "BatchFrontEnd".
-    :type system_service_type: str or ~azure.mgmt.machinelearningcompute.models.SystemServiceType
+    :ivar system_service_type: The system service type. Required. Known values are: "None",
+     "ScoringFrontEnd", and "BatchFrontEnd".
+    :vartype system_service_type: str or
+     ~azure.mgmt.machinelearningcompute.models.SystemServiceType
     :ivar public_ip_address: The public IP address of the system service.
     :vartype public_ip_address: str
     :ivar version: The state of the system service.
@@ -987,36 +1134,37 @@ class SystemService(msrest.serialization.Model):
     """
 
     _validation = {
-        'system_service_type': {'required': True},
-        'public_ip_address': {'readonly': True},
-        'version': {'readonly': True},
+        "system_service_type": {"required": True},
+        "public_ip_address": {"readonly": True},
+        "version": {"readonly": True},
     }
 
     _attribute_map = {
-        'system_service_type': {'key': 'systemServiceType', 'type': 'str'},
-        'public_ip_address': {'key': 'publicIpAddress', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "system_service_type": {"key": "systemServiceType", "type": "str"},
+        "public_ip_address": {"key": "publicIpAddress", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        system_service_type: Union[str, "SystemServiceType"],
-        **kwargs
-    ):
-        super(SystemService, self).__init__(**kwargs)
+    def __init__(self, *, system_service_type: Union[str, "_models.SystemServiceType"], **kwargs):
+        """
+        :keyword system_service_type: The system service type. Required. Known values are: "None",
+         "ScoringFrontEnd", and "BatchFrontEnd".
+        :paramtype system_service_type: str or
+         ~azure.mgmt.machinelearningcompute.models.SystemServiceType
+        """
+        super().__init__(**kwargs)
         self.system_service_type = system_service_type
         self.public_ip_address = None
         self.version = None
 
 
-class UpdateSystemServicesResponse(msrest.serialization.Model):
+class UpdateSystemServicesResponse(_serialization.Model):
     """Response of the update system services API.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar update_status: Update status. Possible values include: "Unknown", "Updating", "Creating",
-     "Deleting", "Succeeded", "Failed", "Canceled".
+    :ivar update_status: Update status. Known values are: "Unknown", "Updating", "Creating",
+     "Deleting", "Succeeded", "Failed", and "Canceled".
     :vartype update_status: str or ~azure.mgmt.machinelearningcompute.models.OperationStatus
     :ivar update_started_on: The date and time when the last system services update was started.
     :vartype update_started_on: ~datetime.datetime
@@ -1025,22 +1173,20 @@ class UpdateSystemServicesResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'update_status': {'readonly': True},
-        'update_started_on': {'readonly': True},
-        'update_completed_on': {'readonly': True},
+        "update_status": {"readonly": True},
+        "update_started_on": {"readonly": True},
+        "update_completed_on": {"readonly": True},
     }
 
     _attribute_map = {
-        'update_status': {'key': 'updateStatus', 'type': 'str'},
-        'update_started_on': {'key': 'updateStartedOn', 'type': 'iso-8601'},
-        'update_completed_on': {'key': 'updateCompletedOn', 'type': 'iso-8601'},
+        "update_status": {"key": "updateStatus", "type": "str"},
+        "update_started_on": {"key": "updateStartedOn", "type": "iso-8601"},
+        "update_completed_on": {"key": "updateCompletedOn", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(UpdateSystemServicesResponse, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.update_status = None
         self.update_started_on = None
         self.update_completed_on = None

@@ -1,0 +1,21 @@
+$schema: https://componentsdk.azureedge.net/jsonschema/CommandComponent.json
+name: copy_command
+display_name: Copy Command
+version: 0.0.1
+type: CommandComponent
+is_deterministic: true
+tags: {}
+inputs:
+  input_dir:
+    type: path
+    optional: false
+  file_names:
+    type: string
+    optional: false
+outputs:
+  output_dir:
+    type: path
+command: >-
+  cp {inputs.input_dir}/{inputs.file_names} {outputs.output_dir}
+environment:
+  name: AzureML-Designer

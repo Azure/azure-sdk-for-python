@@ -65,10 +65,6 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         resp = blob.create_append_blob()
         return container, blob
 
-    def _get_datetime_variable(self, variables, name, dt):
-        dt_string = variables.setdefault(name, dt.isoformat())
-        return datetime.strptime(dt_string, "%Y-%m-%dT%H:%M:%S.%f")
-
     @BlobPreparer()
     @recorded_by_proxy
     def test_get_blob_service_client_from_container(self, **kwargs):
@@ -148,7 +144,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '43'}
@@ -170,7 +166,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -192,9 +188,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
-        start_time = self._get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        expiry_time = self._get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
 
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
@@ -219,9 +215,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
-        start_time = self._get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        expiry_time = self._get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
 
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
@@ -246,9 +242,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
-        start_time = self._get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        expiry_time = self._get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
 
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
@@ -273,9 +269,9 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
-        start_time = self._get_datetime_variable(variables, 'start_time', datetime.utcnow())
-        expiry_time = self._get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        start_time = self.get_datetime_variable(variables, 'start_time', datetime.utcnow())
+        expiry_time = self.get_datetime_variable(variables, 'expiry_time', datetime.utcnow() + timedelta(hours=1))
 
         # Act
         access_policy = AccessPolicy(permission=ContainerSasPermissions(read=True),
@@ -300,7 +296,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
@@ -319,7 +315,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
@@ -341,7 +337,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
@@ -360,7 +356,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         test_lease_id = '00000000-1111-2222-3333-444444444444'
 
         # Act
@@ -382,7 +378,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         deleted = container.delete_container(if_modified_since=test_datetime)
@@ -404,7 +400,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -425,7 +421,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         container.delete_container(if_unmodified_since=test_datetime)
@@ -446,7 +442,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container = self._create_container(self.container_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -494,7 +490,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         resp = blob.upload_blob(data, length=len(data), if_modified_since=test_datetime)
@@ -516,7 +512,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -539,7 +535,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         resp = blob.upload_blob(data, length=len(data), if_unmodified_since=test_datetime)
@@ -561,7 +557,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         data = b'hello world'
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', data, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -673,7 +669,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         content = blob.download_blob(if_modified_since=test_datetime).readall()
@@ -694,7 +690,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -716,7 +712,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         content = blob.download_blob(if_unmodified_since=test_datetime).readall()
@@ -737,7 +733,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         container, blob = self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -831,7 +827,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         content_settings = ContentSettings(
             content_language='spanish',
@@ -857,7 +853,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
@@ -882,7 +878,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         content_settings = ContentSettings(
             content_language='spanish',
@@ -908,7 +904,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             content_settings = ContentSettings(
@@ -1051,7 +1047,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         properties = blob.get_blob_properties(if_modified_since=test_datetime)
@@ -1127,7 +1123,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1149,7 +1145,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
         properties = blob.get_blob_properties(if_unmodified_since=test_datetime)
@@ -1173,7 +1169,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1277,7 +1273,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1299,7 +1295,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1322,7 +1318,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1344,7 +1340,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1443,7 +1439,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '42'}
@@ -1467,7 +1463,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1491,7 +1487,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         metadata = {'hello': 'world', 'number': '42'}
@@ -1515,7 +1511,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1619,7 +1615,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1641,7 +1637,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1664,7 +1660,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1686,7 +1682,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
 
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
 
@@ -1788,7 +1784,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1811,7 +1807,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1834,7 +1830,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1857,7 +1853,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -1959,7 +1955,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -1987,7 +1983,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2011,7 +2007,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -2039,7 +2035,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._create_container_and_block_blob(
             self.container_name, 'blob1', b'hello world', bsc)
         test_lease_id = '00000000-1111-2222-3333-444444444444'
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         blob = bsc.get_blob_client(self.container_name, 'blob1')
@@ -2158,7 +2154,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -2232,7 +2228,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2259,7 +2255,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         block_list = [BlobBlock(block_id='1'), BlobBlock(block_id='2'), BlobBlock(block_id='3')]
@@ -2285,7 +2281,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         blob.stage_block('1', b'AAA')
         blob.stage_block('2', b'BBB')
         blob.stage_block('3', b'CCC')
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2400,7 +2396,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2420,7 +2416,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2444,7 +2440,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2464,7 +2460,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         self._create_container_and_page_blob(
             self.container_name, 'blob1', 1024, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         data = b'abcdefghijklmnop' * 32
 
         # Act
@@ -2567,7 +2563,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -2593,7 +2589,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -2618,7 +2614,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -2644,7 +2640,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         container, blob = self._create_container_and_page_blob(
             self.container_name, 'blob1', 2048, bsc)
         data = b'abcdefghijklmnop' * 32
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         blob.upload_page(data, offset=0, length=512)
         blob.upload_page(data, offset=1024, length=512)
 
@@ -2756,7 +2752,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         for i in range(5):
             resp = blob.append_block(u'block {0}'.format(i), if_modified_since=test_datetime)
@@ -2778,7 +2774,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
@@ -2799,7 +2795,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
         # Act
         for i in range(5):
             resp = blob.append_block(u'block {0}'.format(i), if_unmodified_since=test_datetime)
@@ -2821,7 +2817,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key, connection_data_block_size=4 * 1024)
         self._setup()
         container, blob = self._create_container_and_append_blob(self.container_name, 'blob1', bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
         # Act
         with pytest.raises(ResourceModifiedError) as e:
             for i in range(5):
@@ -2916,7 +2912,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
@@ -2939,7 +2935,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:
@@ -2961,7 +2957,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() + timedelta(minutes=15))
 
         # Act
         data = self.get_random_bytes(LARGE_APPEND_BLOB_SIZE)
@@ -2984,7 +2980,7 @@ class TestStorageBlobAccessConditions(StorageRecordedTestCase):
         self._setup()
         blob_name = self.get_resource_name("blob")
         container, blob = self._create_container_and_append_blob(self.container_name, blob_name, bsc)
-        test_datetime = self._get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
+        test_datetime = self.get_datetime_variable(variables, 'if_modified', datetime.utcnow() - timedelta(minutes=15))
 
         # Act
         with pytest.raises(ResourceModifiedError) as e:

@@ -3,21 +3,18 @@
 # Licensed under the MIT License.
 # ------------------------------------
 from enum import Enum
-from six import with_metaclass
 
 from azure.core import CaseInsensitiveEnumMeta
 
-# pylint:skip-file (avoids crash due to six.with_metaclass https://github.com/PyCQA/astroid/issues/713)
 
-
-class KeyVaultRoleScope(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyVaultRoleScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Collection of well known role scopes. This list is not exhaustive."""
 
     GLOBAL = "/"  #: use this if you want role assignments to apply to everything on the resource
     KEYS = "/keys"  #: use this if you want role assignments to apply to all keys
 
 
-class KeyVaultDataAction(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class KeyVaultDataAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Supported permissions for data actions."""
 
     #: Read HSM key metadata.

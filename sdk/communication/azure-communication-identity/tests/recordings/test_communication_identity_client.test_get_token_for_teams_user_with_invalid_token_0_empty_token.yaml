@@ -13,13 +13,13 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.1.1 Python/3.7.12 (Darwin-21.5.0-x86_64-i386-64bit)
+      - azsdk-python-communication-identity/1.3.0 Python/3.10.0 (macOS-12.6-x86_64-i386-64bit)
       x-ms-date:
-      - Wed, 03 Aug 2022 09:15:00 GMT
+      - Fri, 07 Oct 2022 14:38:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-06-01
+    uri: https://sanitized.communication.azure.com/teamsUser/:exchangeAccessToken?api-version=2022-10-01
   response:
     body:
       string: '{"error": {"code": "InvalidAccessToken", "message": "Provided access
@@ -28,9 +28,9 @@ interactions:
       content-type:
       - application/json
       date:
-      - Wed, 03 Aug 2022 09:15:01 GMT
+      - Fri, 07 Oct 2022 14:38:02 GMT
       ms-cv:
-      - 7KrUNc1QhEaSLSPw85d33g.0
+      - nMFKCF6Kl06soIxaTlohiQ.0
       request-context:
       - appId=
       strict-transport-security:
@@ -40,7 +40,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 25ms
+      - 111ms
     status:
       code: 401
       message: Unauthorized

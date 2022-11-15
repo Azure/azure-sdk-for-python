@@ -25,12 +25,29 @@ from . import ApiVersionAssertPolicy, service_version_map
 from .. import FakeTokenCredential
 
 try:
-    from azure.storage.blob import generate_account_sas, AccountSasPermissions, ResourceTypes
+    from cStringIO import StringIO  # Python 2
+except ImportError:
+    from io import StringIO
+
+try:
+    from azure.storage.blob import (
+        generate_account_sas,
+        AccountSasPermissions,
+        ResourceTypes,
+    )
 except:
     try:
-        from azure.storage.queue import generate_account_sas, AccountSasPermissions, ResourceTypes
+        from azure.storage.queue import (
+            generate_account_sas,
+            AccountSasPermissions,
+            ResourceTypes,
+        )
     except:
-        from azure.storage.fileshare import generate_account_sas, AccountSasPermissions, ResourceTypes
+        from azure.storage.fileshare import (
+            generate_account_sas,
+            AccountSasPermissions,
+            ResourceTypes,
+        )
 
 LOGGING_FORMAT = "%(asctime)s %(name)-20s %(levelname)-5s %(message)s"
 
@@ -72,8 +89,12 @@ class StorageTestCase(AzureTestCase):
         :param str storage_account: Storage account name
         :param str storage_type: The Storage type part of the URL. Should be "blob", or "queue", etc.
         """
-        return "{}://{}.{}.{}".format(os.environ.get("PROTOCOL", "https"), storage_account, storage_type,
-                                      os.environ.get("ACCOUNT_URL_SUFFIX", "core.windows.net"))
+        return "{}://{}.{}.{}".format(
+            os.environ.get("PROTOCOL", "https"),
+            storage_account,
+            storage_type,
+            os.environ.get("ACCOUNT_URL_SUFFIX", "core.windows.net"),
+        )
 
     def configure_logging(self):
         enable_logging = ENABLE_LOGGING
@@ -107,11 +128,11 @@ class StorageTestCase(AzureTestCase):
         chunking blob upload."""
         checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xFFFFFFFF
         rand = random.Random(checksum)
-        text = u""
-        words = [u"hello", u"world", u"python", u"啊齄丂狛狜"]
+        text = ""
+        words = ["hello", "world", "python", "啊齄丂狛狜"]
         while len(text) < size:
             index = int(rand.random() * (len(words) - 1))
-            text = text + u" " + words[index]
+            text = text + " " + words[index]
 
         return text
 
@@ -221,7 +242,6 @@ class StorageTestCase(AzureTestCase):
 
 
 class StorageRecordedTestCase(AzureRecordedTestCase):
-
     def setup_class(cls):
         cls.logger = logging.getLogger("azure.storage")
         cls.sas_token = generate_sas_token()
@@ -276,11 +296,11 @@ class StorageRecordedTestCase(AzureRecordedTestCase):
         chunking blob upload."""
         checksum = zlib.adler32(self.qualified_test_name.encode()) & 0xFFFFFFFF
         rand = random.Random(checksum)
-        text = u""
-        words = [u"hello", u"world", u"python", u"啊齄丂狛狜"]
+        text = ""
+        words = ["hello", "world", "python", "啊齄丂狛狜"]
         while len(text) < size:
             index = int(rand.random() * (len(words) - 1))
-            text = text + u" " + words[index]
+            text = text + " " + words[index]
 
         return text
 
@@ -395,7 +415,7 @@ class LogCaptured(object):
         self.handler.setFormatter(logging.Formatter(LOGGING_FORMAT))
 
         # get and enable the logger to send the outputs to the string stream
-        self.logger = logging.getLogger('azure.storage')
+        self.logger = logging.getLogger("azure.storage")
         self.logger.level = logging.DEBUG
         self.logger.addHandler(self.handler)
 

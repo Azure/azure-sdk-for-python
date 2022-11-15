@@ -2,12 +2,12 @@
 
 ## 1.2.0 (Unreleased)
 
-This version and all future versions will require Python 3.6+. Python 2.7 is no longer supported.
+This version and all future versions will require Python 3.7+. Python 2.7 and 3.6 are no longer supported.
 
 ### Bugs Fixed
 
 - Fixed a bug with `BlobCheckpointStore.claim_ownership` mutating the `ownership_list` argument to no longer mutate the argument.
-- Updated `azure-core` dependecy to 1.20.1 to fix `cchardet` ImportError.
+- Updated `azure-core` dependency to 1.20.1 to fix `cchardet` ImportError.
 
 ## 1.1.4 (2021-04-07)
 

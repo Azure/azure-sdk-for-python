@@ -34,7 +34,7 @@ async def sample_conv_summarization_async():
     endpoint = os.environ["AZURE_CONVERSATIONS_ENDPOINT"]
     key = os.environ["AZURE_CONVERSATIONS_KEY"]
 
-    # analyze quey
+    # analyze query
     client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
     async with client:
         poller = await client.begin_conversation_analysis(
@@ -48,18 +48,21 @@ async def sample_conv_summarization_async():
                                     "text": "Hello, how can I help you?",
                                     "modality": "text",
                                     "id": "1",
+                                    "role": "Agent",
                                     "participantId": "Agent"
                                 },
                                 {
                                     "text": "How to upgrade Office? I am getting error messages the whole day.",
                                     "modality": "text",
                                     "id": "2",
+                                    "role": "Customer",
                                     "participantId": "Customer"
                                 },
                                 {
                                     "text": "Press the upgrade button please. Then sign in and follow the instructions.",
                                     "modality": "text",
                                     "id": "3",
+                                    "role": "Agent",
                                     "participantId": "Agent"
                                 }
                             ],
@@ -71,37 +74,44 @@ async def sample_conv_summarization_async():
                 },
                 "tasks": [
                     {
-                        "taskName": "analyze 1",
+                        "taskName": "Issue task",
                         "kind": "ConversationalSummarizationTask",
                         "parameters": {
-                            "summaryAspects": ["Issue, Resolution"]
+                            "summaryAspects": ["issue"]
                         }
-                    }
+                    },
+                    {
+                        "taskName": "Resolution task",
+                        "kind": "ConversationalSummarizationTask",
+                        "parameters": {
+                            "summaryAspects": ["resolution"]
+                        }
+                    },
                 ]
             }
         )
 
         # view result
         result = await poller.result()
-        task_result = result["tasks"]["items"][0]
-        print("... view task status ...")
-        print("status: {}".format(task_result["status"]))
-        resolution_result = task_result["results"]
-        if resolution_result["errors"]:
-            print("... errors occured ...")
-            for error in resolution_result["errors"]:
-                print(error)
-        else:
-            conversation_result = resolution_result["conversations"][0]
-            if conversation_result["warnings"]:
-                print("... view warnings ...")
-                for warning in conversation_result["warnings"]:
-                    print(warning)
+        task_results = result["tasks"]["items"]
+        for task in task_results:
+            print(f"\n{task['taskName']} status: {task['status']}")
+            task_result = task["results"]
+            if task_result["errors"]:
+                print("... errors occurred ...")
+                for error in task_result["errors"]:
+                    print(error)
             else:
-                summaries = conversation_result["summaries"]
-                print("... view task result ...")
-                print("issue: {}".format(summaries[0]["text"]))
-                print("resolution: {}".format(summaries[1]["text"]))
+                conversation_result = task_result["conversations"][0]
+                if conversation_result["warnings"]:
+                    print("... view warnings ...")
+                    for warning in conversation_result["warnings"]:
+                        print(warning)
+                else:
+                    summaries = conversation_result["summaries"]
+                    print("... view task result ...")
+                    for summary in summaries:
+                        print(f"{summary['aspect']}: {summary['text']}")
 
     # [END analyze_conversation_app]
 
@@ -110,5 +120,4 @@ async def main():
     await sample_conv_summarization_async()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

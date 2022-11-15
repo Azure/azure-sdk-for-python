@@ -79,7 +79,7 @@ client = CosmosClient(URL, credential=KEY)
 ### AAD Authentication
 
 You can also authenticate a client utilizing your service principal's AAD credentials and the azure identity package. 
-You can directly pass in the credentials information to ClientSecretCrednetial, or use the DefaultAzureCredential:
+You can directly pass in the credentials information to ClientSecretCredential, or use the DefaultAzureCredential:
 ```Python
 from azure.cosmos import CosmosClient
 from azure.identity import ClientSecretCredential, DefaultAzureCredential
@@ -162,9 +162,6 @@ Currently the features below are **not supported**. For alternatives options, ch
 
 * Get CollectionSizeUsage, DatabaseUsage, and DocumentUsage metrics
 * Create Geospatial Index
-* Provision Autoscale DBs or containers
-* Update Autoscale throughput
-* Update analytical store ttl (time to live)
 * Get the connection string
 * Get the minimum RU/s of a container
 
@@ -633,6 +630,28 @@ Similarly, `logging_enable` can enable detailed logging for a single operation,
 even when it isn't enabled for the client:
 ```py
 database = client.create_database(DATABASE_NAME, logging_enable=True)
+```
+Alternatively, you can log using the CosmosHttpLoggingPolicy, which extends from the azure core HttpLoggingPolicy, by passing in your logger to the `logger` argument.
+By default, it will use the behaviour from HttpLoggingPolicy. The `enable_diagnostics_logging` argument will add additional diagnostic information to the logger.
+```python
+import logging
+from azure.cosmos import CosmosClient
+
+#Create a logger for the 'azure' SDK
+logger = logging.getLogger('azure')
+logger.setLevel(logging.DEBUG)
+
+# Configure a file output
+handler = logging.FileHandler(filename="azure")
+logger.addHandler(handler)
+
+# This client will log diagnostic information from the HTTP session by using the CosmosHttpLoggingPolicy
+client = CosmosClient(URL, credential=KEY, logger=logger, enable_diagnostics_logging=True)
+```
+Similarly, CosmosHttpLoggingPolicy can enable detailed logging for a single operation,
+even when it isn't enabled for the client:
+```py
+database = client.create_database(DATABASE_NAME, logger=logger, enable_diagnostics_logging=True)
 ```
 
 ## Next steps

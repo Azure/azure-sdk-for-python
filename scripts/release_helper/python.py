@@ -9,8 +9,8 @@ from common import IssueProcess, Common, get_origin_link_and_tag, IssuePackage
 from utils import AUTO_CLOSE_LABEL, get_last_released_date, record_release, get_python_release_pipeline, run_pipeline
 
 # assignee dict which will be assigned to handle issues
-_PYTHON_OWNER = {'azure-sdk', 'Wzb123456789', 'BigCat20196'}
-_PYTHON_ASSIGNEE = {'msyyc'}
+_PYTHON_OWNER = {'azure-sdk', 'msyyc'}
+_PYTHON_ASSIGNEE = {'Wzb123456789'}
 
 # labels
 _CONFIGURED = 'Configured'
@@ -33,7 +33,8 @@ class IssueProcessPython(IssueProcess):
         self.is_multiapi = False
         self.pattern_resource_manager = re.compile(r'/specification/([\w-]+/)+resource-manager')
         self.delay_time = self.get_delay_time()
-        self.is_specified_tag = False
+        self.python_tag = ''
+        self.rest_repo_hash = ''
 
     def get_delay_time(self):
         q = [comment.updated_at
@@ -41,12 +42,22 @@ class IssueProcessPython(IssueProcess):
         q.sort()
         return (datetime.now() - (self.created_time if not q else q[-1])).days
 
+    @staticmethod
+    def get_specefied_param(pattern: str, issue_body_list: List[str]) -> str:
+        for line in issue_body_list:
+            if pattern in line:
+                return line.split(":", 1)[-1].strip()
+        return ""
+
     def init_readme_link(self) -> None:
         issue_body_list = self.get_issue_body()
 
         # Get the origin link and readme tag in issue body
         origin_link, self.target_readme_tag = get_origin_link_and_tag(issue_body_list)
-        self.is_specified_tag = any('->Readme Tag:' in line for line in issue_body_list)
+
+        # Get the specified tag and rest repo hash in issue body
+        self.rest_repo_hash = self.get_specefied_param("->hash:", issue_body_list[:5])
+        self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
 
         # get readme_link
         self.get_readme_link(origin_link)
@@ -91,23 +102,28 @@ class IssueProcessPython(IssueProcess):
         if self.issue_package.issue.comments == 0 or _CONFIGURED in self.issue_package.labels_name:
             issue_number = self.issue_package.issue.number
             if not self.readme_comparison:
-                issue_link = self.issue_package.issue.html_url
-                release_pipeline_url = get_python_release_pipeline(self.output_folder)
-                python_tag = self.target_readme_tag if self.is_specified_tag else ""
-                res_run = run_pipeline(issue_link=issue_link,
-                                       pipeline_url=release_pipeline_url,
-                                       spec_readme=self.readme_link + '/readme.md',
-                                       python_tag=python_tag
-                                       )
-                if res_run:
-                    self.log(f'{issue_number} run pipeline successfully')
-                    if _CONFIGURED in self.issue_package.labels_name:
-                        self.issue_package.issue.remove_from_labels(_CONFIGURED)
-                else:
-                    self.log(f'{issue_number} run pipeline fail')
-                self.add_label(_AUTO_ASK_FOR_CHECK)
+                try:
+                    issue_link = self.issue_package.issue.html_url
+                    release_pipeline_url = get_python_release_pipeline(self.output_folder)
+                    res_run = run_pipeline(issue_link=issue_link,
+                                           pipeline_url=release_pipeline_url,
+                                           spec_readme=self.readme_link + '/readme.md',
+                                           python_tag=self.python_tag,
+                                           rest_repo_hash=self.rest_repo_hash
+                                           )
+                    if res_run:
+                        self.log(f'{issue_number} run pipeline successfully')
+                    else:
+                        self.log(f'{issue_number} run pipeline fail')
+                except Exception as e:
+                    self.comment(f'hi @{self.assignee}, please check release-helper: `{e}`')
+                if _AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name:
+                    self.add_label(_AUTO_ASK_FOR_CHECK)
             else:
                 self.log(f'issue {issue_number} need config readme')
+
+            if _CONFIGURED in self.issue_package.labels_name:
+                self.issue_package.issue.remove_from_labels(_CONFIGURED)
 
     def attention_policy(self):
         if _BRANCH_ATTENTION in self.issue_package.labels_name:

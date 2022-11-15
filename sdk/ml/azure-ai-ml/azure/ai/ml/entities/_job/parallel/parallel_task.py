@@ -5,15 +5,14 @@ from os import PathLike
 from pathlib import Path
 from typing import Dict, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
-
 # from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
-from azure.ai.ml.entities._assets import Environment
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
 class ParallelTask(RestTranslatableMixin, DictMixin):
@@ -49,20 +48,20 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
         if it is not set, 'summary_only' would invoked,  which means user script is expected to store the output itself.
     :type append_row_to: str
     :param environment: Environment that training job will run in.
-    :type environment: Union["Environment", str]
+    :type environment: Union[Environment, str]
     """
 
     def __init__(
         self,
         *,
-        type: str = None,
+        type: str = None,  # pylint: disable=redefined-builtin
         code: str = None,
         entry_script: str = None,
         program_arguments: str = None,
         model: str = None,
         append_row_to: str = None,
-        environment: Union["Environment", str] = None,
-        **kwargs,
+        environment: Union[Environment, str] = None,
+        **kwargs,  # pylint: disable=unused-argument
     ):
         self.type = type
         self.code = code
@@ -73,21 +72,22 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
         self.environment = environment
 
     def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
         return ComponentParallelTaskSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
 
     @classmethod
-    def load(
+    def _load(
         cls,
         path: Union[PathLike, str] = None,
         params_override: list = None,
-        **kwargs,
+        **kwargs,  # pylint: disable=unused-argument
     ) -> "ParallelTask":
         params_override = params_override or []
         data = load_yaml(path)
-        return ParallelTask.load_from_dict(data=data, path=path, params_override=params_override)
+        return ParallelTask._load_from_dict(data=data, path=path, params_override=params_override)
 
     @classmethod
-    def load_from_dict(
+    def _load_from_dict(
         cls,
         data: dict,
         path: Union[PathLike, str] = None,
@@ -102,9 +102,9 @@ class ParallelTask(RestTranslatableMixin, DictMixin):
         return load_from_dict(ComponentParallelTaskSchema, data, context, **kwargs)
 
     @classmethod
-    def from_dict(cls, dct: dict):
+    def _from_dict(cls, dct: dict):
         """Convert a dict to an Input object."""
-        obj = cls(**{key: val for key, val in dct.items()})
+        obj = cls(**dict(dct.items()))
         return obj
 
     def _validate(self) -> None:

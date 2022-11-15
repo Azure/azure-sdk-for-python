@@ -10,11 +10,10 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import ServiceResponseTimeoutError
 from ._timer import Timer
-from ._utils_async import get_async_authentication_policy
-from .._utils import is_retryable_status_code
+from .._utils import is_retryable_status_code, get_authentication_policy
 from .._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
-from .._generated.aio import SearchClient as SearchIndexClient
-from .._generated.models import IndexingResult
+from .._generated.aio import SearchIndexClient
+from .._generated.models import IndexingResult, IndexBatch
 from .._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch_async import IndexDocumentsBatch
 from .._headers_mixin import HeadersMixin
@@ -49,6 +48,9 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :keyword callable on_remove: If it is set, the client will call corresponding methods when there
         is a IndexAction removed from the queue (succeeds or fails).
     :keyword str api_version: The Search API version to use for requests.
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+     will be assumed.
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -64,6 +66,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             endpoint=endpoint, index_name=index_name, credential=credential, **kwargs
         )
         self._index_documents_batch = IndexDocumentsBatch()
+        audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = SearchIndexClient(
@@ -75,7 +78,7 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
             )  # type: SearchIndexClient
         else:
             self._aad = True
-            authentication_policy = get_async_authentication_policy(credential)
+            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
             self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
@@ -293,9 +296,10 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         timeout = kwargs.pop("timeout", 86400)
         begin_time = int(time.time())
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        batch = IndexBatch(actions=actions)
         try:
             batch_response = await self._client.documents.index(
-                actions=actions, error_map=error_map, **kwargs
+                batch=batch, error_map=error_map, **kwargs
             )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:

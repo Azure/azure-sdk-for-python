@@ -18,7 +18,6 @@ from azure.core.polling.base_polling import (
     OperationFailed,
     BadStatus,
 )
-from ._generated.v2022_05_01.models import JobState
 
 _FINISHED = frozenset(["succeeded", "cancelled", "failed", "partiallycompleted", "partiallysucceeded"])
 _FAILED = frozenset(["failed"])
@@ -41,6 +40,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         :return: A mapping of details about the long-running operation.
         :rtype: Mapping[str, Any]
         """
+        ...
 
     def continuation_token(self) -> str:  # pylint: disable=no-self-use
         """Return a continuation token that allows to restart the poller later.
@@ -48,6 +48,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         :returns: An opaque continuation token
         :rtype: str
         """
+        ...
 
     def status(self) -> str:  # pylint: disable=no-self-use
         """Returns the current status string.
@@ -55,8 +56,10 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         :returns: The current status string
         :rtype: str
         """
+        ...
 
-    def result(self, timeout: Optional[int] = None) -> PollingReturnType: # pylint: disable=no-self-use, unused-argument
+    # pylint: disable=no-self-use, unused-argument
+    def result(self, timeout: Optional[int] = None) -> PollingReturnType_co:
         """Return the result of the long running operation, or
         the result available after the specified timeout.
 
@@ -64,6 +67,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
          if one is available.
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
+        ...
 
     def wait(self, timeout: Optional[float] = None) -> None:  # pylint: disable=no-self-use, unused-argument
         """Wait on the long running operation for a specified length
@@ -74,6 +78,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
          operation to complete (in seconds).
         :raises ~azure.core.exceptions.HttpResponseError: Server problem with the query.
         """
+        ...
 
     def done(self) -> bool:  # pylint: disable=no-self-use
         """Check status of the long running operation.
@@ -81,6 +86,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         :returns: 'True' if the process has completed, else 'False'.
         :rtype: bool
         """
+        ...
 
     def add_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
         """Add callback function to be run once the long running operation
@@ -89,6 +95,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         :param callable func: Callback function that takes at least one
          argument, a completed LongRunningOperation.
         """
+        ...
 
     def remove_done_callback(self, func: Callable) -> None:  # pylint: disable=no-self-use, unused-argument
         """Remove a callback from the long running operation.
@@ -96,6 +103,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         :param callable func: The function to be removed from the callbacks.
         :raises ValueError: if the long running operation has already completed.
         """
+        ...
 
     def cancel(self) -> None:  # pylint: disable=no-self-use
         """Cancel the operation currently being polled.
@@ -104,6 +112,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError: When the operation has already reached a terminal state.
         """
+        ...
 
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
@@ -209,6 +218,7 @@ class AnalyzeHealthcareEntitiesLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
+        from ._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property
@@ -374,6 +384,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
 
     @property
     def _current_body(self):
+        from ._generated.models import JobState
         return JobState.deserialize(self._pipeline_response)
 
     @property

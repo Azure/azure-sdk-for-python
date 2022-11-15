@@ -7,11 +7,8 @@ Microsoft Azure SDK for Python
 .. image:: https://img.shields.io/pypi/pyversions/azure.svg?maxAge=2592000
     :target: https://pypi.python.org/pypi/azure/
 
-.. image:: https://dev.azure.com/azure-sdk/public/_apis/build/status/46?branchName=master
-    :target: https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46&branchName=master
-
-.. image:: https://travis-ci.org/Azure/azure-sdk-for-python.svg?branch=master
-    :target: https://travis-ci.org/Azure/azure-sdk-for-python
+.. image:: https://dev.azure.com/azure-sdk/public/_apis/build/status/46?branchName=main
+    :target: https://dev.azure.com/azure-sdk/public/_build/latest?definitionId=46&branchName=main
 
 .. image:: https://img.shields.io/badge/dependencies-analyzed-blue.svg
     :target: https://azuresdkartifacts.blob.core.windows.net/azure-sdk-for-python/dependencies/dependencies.html
@@ -22,7 +19,7 @@ access Management (Virtual Machines, ...) or Runtime (ServiceBus using HTTP, Bat
 Complete feature list of this repo and where to find Python packages not in this repo can be found on our 
 `Azure SDK for Python documentation <https://docs.microsoft.com/python/api/overview/azure/?view=azure-python>`__.
 
-The SDK supports Python 2.7, 3.4, 3.5 and 3.6.
+The SDK supports Python 3.7 or later. For more details, please read our page on `Azure SDK for Python version support policy <https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy>`__.
 
 If you're currently using the ``azure`` package < 1.0 then please read important information in `this issue <https://github.com/Azure/azure-sdk-for-python/issues/440>`__.
 

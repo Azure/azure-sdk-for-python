@@ -1,14 +1,12 @@
 # Release History
 
-## 4.9.1 (Unreleased)
+## 4.9.1 (2022-11-08)
+
+- This version and all future versions will require Python 3.7+.
 
 ### Features Added
 
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Added new enum values to `SystemEventNames` related to health care APIs.
 
 ## 4.9.0 (2022-07-05)
 
@@ -190,7 +188,7 @@ introduce breaking changes.
       - "is" should not be used at all.
       - "format" will return the string value, where "%s" string
         formatting will return `NameOfEnum.stringvalue`. Format syntax
-        should be prefered.
+        should be preferred.
   - New Long Running Operation:
       - Return type changes from
         `msrestazure.azure_operation.AzureOperationPoller` to

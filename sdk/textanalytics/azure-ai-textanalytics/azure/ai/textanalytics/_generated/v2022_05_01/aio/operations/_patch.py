@@ -57,8 +57,7 @@ class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsM
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version = kwargs.pop('api_version', _params.pop('api-version', "2022-05-01"))  # type: str
-        content_type = kwargs.pop('content_type',
-                                  _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
+        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
         cls = kwargs.pop('cls', None)  # type: ClsType[_models.AnalyzeTextJobState]
         polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop(
@@ -71,7 +70,7 @@ class TextAnalyticsClientOperationsMixin(GeneratedTextAnalyticsClientOperationsM
                 body=body,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x, y, z: x,
+                cls=lambda x,y,z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs

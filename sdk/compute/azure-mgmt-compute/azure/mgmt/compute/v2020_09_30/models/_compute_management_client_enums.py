@@ -11,23 +11,24 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessLevel."""
 
     NONE = "None"
     READ = "Read"
     WRITE = "Write"
 
+
 class AggregatedReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This is the aggregated replication status based on all the regional replication status flags.
-    """
+    """This is the aggregated replication status based on all the regional replication status flags."""
 
     UNKNOWN = "Unknown"
     IN_PROGRESS = "InProgress"
     COMPLETED = "Completed"
     FAILED = "Failed"
 
+
 class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This enumerates the possible sources of a disk's creation.
-    """
+    """This enumerates the possible sources of a disk's creation."""
 
     #: Create an empty data disk of a size given by diskSizeGB.
     EMPTY = "Empty"
@@ -38,7 +39,7 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FROM_IMAGE = "FromImage"
     #: Create a disk by importing from a blob specified by a sourceUri in a storage account specified
     #: by storageAccountId.
-    IMPORT_ENUM = "Import"
+    IMPORT = "Import"
     #: Create a new disk or snapshot by copying from a disk or snapshot specified by the given
     #: sourceResourceId.
     COPY = "Copy"
@@ -47,6 +48,7 @@ class DiskCreateOption(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Create a new disk by obtaining a write token and using it to directly upload the contents of
     #: the disk.
     UPLOAD = "Upload"
+
 
 class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of Managed Identity used by the DiskEncryptionSet. Only SystemAssigned is supported
@@ -58,9 +60,9 @@ class DiskEncryptionSetIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta
     SYSTEM_ASSIGNED = "SystemAssigned"
     NONE = "None"
 
+
 class DiskEncryptionSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of key used to encrypt the data of the disk.
-    """
+    """The type of key used to encrypt the data of the disk."""
 
     #: Resource using diskEncryptionSet would be encrypted at rest with Customer managed key that can
     #: be changed and revoked by a customer.
@@ -69,15 +71,15 @@ class DiskEncryptionSetType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: of the keys is Customer managed and the other key is Platform managed.
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
 
+
 class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This enumerates the possible state of the disk.
-    """
+    """This enumerates the possible state of the disk."""
 
     #: The disk is not being used and can be attached to a VM.
     UNATTACHED = "Unattached"
     #: The disk is currently mounted to a running VM.
     ATTACHED = "Attached"
-    #: The disk is mounted to a stopped-deallocated VM.
+    #: The disk is mounted to a stopped-deallocated VM
     RESERVED = "Reserved"
     #: The disk currently has an Active SAS Uri associated with it.
     ACTIVE_SAS = "ActiveSAS"
@@ -86,9 +88,9 @@ class DiskState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: A disk is created for upload and a write token has been issued for uploading to it.
     ACTIVE_UPLOAD = "ActiveUpload"
 
+
 class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The sku name.
-    """
+    """The sku name."""
 
     #: Standard HDD locally redundant storage. Best for backup, non-critical, and infrequent access.
     STANDARD_LRS = "Standard_LRS"
@@ -101,9 +103,9 @@ class DiskStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: databases (for example, SQL, Oracle), and other transaction-heavy workloads.
     ULTRA_SSD_LRS = "UltraSSD_LRS"
 
+
 class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of key used to encrypt the data of the disk.
-    """
+    """The type of key used to encrypt the data of the disk."""
 
     #: Disk is encrypted at rest with Platform managed key. It is the default encryption type. This is
     #: not a valid encryption type for disk encryption sets.
@@ -115,15 +117,15 @@ class EncryptionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: the other key is Platform managed.
     ENCRYPTION_AT_REST_WITH_PLATFORM_AND_CUSTOMER_KEYS = "EncryptionAtRestWithPlatformAndCustomerKeys"
 
+
 class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of extendedLocation.
-    """
+    """The type of extendedLocation."""
 
     EDGE_ZONE = "EdgeZone"
 
+
 class GalleryApplicationVersionPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state, which only appears in the response.
-    """
+    """The provisioning state, which only appears in the response."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -131,10 +133,10 @@ class GalleryApplicationVersionPropertiesProvisioningState(str, Enum, metaclass=
     SUCCEEDED = "Succeeded"
     DELETING = "Deleting"
     MIGRATING = "Migrating"
+
 
 class GalleryImagePropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state, which only appears in the response.
-    """
+    """The provisioning state, which only appears in the response."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -142,10 +144,10 @@ class GalleryImagePropertiesProvisioningState(str, Enum, metaclass=CaseInsensiti
     SUCCEEDED = "Succeeded"
     DELETING = "Deleting"
     MIGRATING = "Migrating"
+
 
 class GalleryImageVersionPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state, which only appears in the response.
-    """
+    """The provisioning state, which only appears in the response."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -153,10 +155,10 @@ class GalleryImageVersionPropertiesProvisioningState(str, Enum, metaclass=CaseIn
     SUCCEEDED = "Succeeded"
     DELETING = "Deleting"
     MIGRATING = "Migrating"
+
 
 class GalleryPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The provisioning state, which only appears in the response.
-    """
+    """The provisioning state, which only appears in the response."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -164,33 +166,34 @@ class GalleryPropertiesProvisioningState(str, Enum, metaclass=CaseInsensitiveEnu
     SUCCEEDED = "Succeeded"
     DELETING = "Deleting"
     MIGRATING = "Migrating"
+
 
 class GallerySharingPermissionTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the permission of sharing gallery. :code:`<br>`:code:`<br>`
-    Possible values are: :code:`<br>`:code:`<br>` **Private** :code:`<br>`:code:`<br>` **Groups**
+    Possible values are: :code:`<br>`:code:`<br>` **Private** :code:`<br>`:code:`<br>` **Groups**.
     """
 
     PRIVATE = "Private"
     GROUPS = "Groups"
 
+
 class HostCaching(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The host caching of the disk. Valid values are 'None', 'ReadOnly', and 'ReadWrite'
-    """
+    """The host caching of the disk. Valid values are 'None', 'ReadOnly', and 'ReadWrite'."""
 
     NONE = "None"
     READ_ONLY = "ReadOnly"
     READ_WRITE = "ReadWrite"
 
+
 class HyperVGeneration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only.
-    """
+    """The hypervisor generation of the Virtual Machine. Applicable to OS disks only."""
 
     V1 = "V1"
     V2 = "V2"
 
+
 class NetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Policy for accessing the disk via network.
-    """
+    """Policy for accessing the disk via network."""
 
     #: The disk can be exported or uploaded to from any network.
     ALLOW_ALL = "AllowAll"
@@ -198,6 +201,7 @@ class NetworkAccessPolicy(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ALLOW_PRIVATE = "AllowPrivate"
     #: The disk cannot be exported.
     DENY_ALL = "DenyAll"
+
 
 class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows the user to specify whether the virtual machines created under this image
@@ -207,80 +211,89 @@ class OperatingSystemStateTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     GENERALIZED = "Generalized"
     SPECIALIZED = "Specialized"
 
+
 class OperatingSystemTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The Operating System type.
-    """
+    """The Operating System type."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
+
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
+
 class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private endpoint connection status.
-    """
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
+
 class ReplicationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This is the regional replication state.
-    """
+    """This is the regional replication state."""
 
     UNKNOWN = "Unknown"
     REPLICATING = "Replicating"
     COMPLETED = "Completed"
     FAILED = "Failed"
 
+
 class ReplicationStatusTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ReplicationStatusTypes."""
 
     REPLICATION_STATUS = "ReplicationStatus"
 
+
 class SelectPermissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SelectPermissions."""
 
     PERMISSIONS = "Permissions"
 
+
 class SharedToValues(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SharedToValues."""
 
     TENANT = "tenant"
+
 
 class SharingProfileGroupTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the type of sharing group. :code:`<br>`:code:`<br>`
     Possible values are: :code:`<br>`:code:`<br>` **Subscriptions** :code:`<br>`:code:`<br>`
-    **AADTenants**
+    **AADTenants**.
     """
 
     SUBSCRIPTIONS = "Subscriptions"
     AAD_TENANTS = "AADTenants"
 
+
 class SharingUpdateOperationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property allows you to specify the operation type of gallery sharing update.
     :code:`<br>`:code:`<br>` Possible values are: :code:`<br>`:code:`<br>` **Add**
-    :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**
+    :code:`<br>`:code:`<br>` **Remove** :code:`<br>`:code:`<br>` **Reset**.
     """
 
     ADD = "Add"
     REMOVE = "Remove"
     RESET = "Reset"
 
-class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The sku name.
-    """
 
-    #: Standard HDD locally redundant storage.
+class SnapshotStorageAccountTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sku name."""
+
+    #: Standard HDD locally redundant storage
     STANDARD_LRS = "Standard_LRS"
-    #: Premium SSD locally redundant storage.
+    #: Premium SSD locally redundant storage
     PREMIUM_LRS = "Premium_LRS"
-    #: Standard zone redundant storage.
+    #: Standard zone redundant storage
     STANDARD_ZRS = "Standard_ZRS"
+
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the storage account type to be used to store the image. This property is not

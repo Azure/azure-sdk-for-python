@@ -2,10 +2,16 @@ import functools
 import os
 import tempfile
 
-from devtools_testutils import AzureTestCase, PowerShellPreparer
+from devtools_testutils import (
+    AzureRecordedTestCase,
+    PowerShellPreparer,
+)
 
 from azure.confidentialledger.certificate import (
     ConfidentialLedgerCertificateClient,
+)
+from azure.confidentialledger.certificate.aio import (
+    ConfidentialLedgerCertificateClient as ConfidentialLedgerCertificateClientAsync
 )
 
 from .constants import USER_CERTIFICATE
@@ -20,32 +26,42 @@ ConfidentialLedgerPreparer = functools.partial(
 )
 
 
-class ConfidentialLedgerTestCase(AzureTestCase):
-    def __init__(self, *args, **kwargs):
-        super(ConfidentialLedgerTestCase, self).__init__(*args, **kwargs)
-
-    def setUp(self):
-        super().setUp()
+class ConfidentialLedgerTestCase(AzureRecordedTestCase):
+    @classmethod
+    def setup_class(cls):
+        """setup any state specific to the execution of the given class (which
+        usually contains tests).
+        """
 
         with tempfile.NamedTemporaryFile(
             "w", suffix=".pem", delete=False
         ) as tls_cert_file:
-            self.network_certificate_path = tls_cert_file.name
+            cls.network_certificate_path = tls_cert_file.name
 
         with tempfile.NamedTemporaryFile(
             "w", suffix=".pem", delete=False
         ) as user_cert_file:
             user_cert_file.write(USER_CERTIFICATE)
-            self.user_certificate_path = user_cert_file.name
+            cls.user_certificate_path = user_cert_file.name
 
-    def tearDown(self):
-        os.remove(self.user_certificate_path)
-        if self.network_certificate_path:
-            os.remove(self.network_certificate_path)
+    @classmethod
+    def teardown_class(cls):
+        """teardown any state that was previously setup with a call to
+        setup_class.
+        """
+        os.remove(cls.user_certificate_path)
+        if cls.network_certificate_path:
+            os.remove(cls.network_certificate_path)
 
-        return super().tearDown()
+    def set_ledger_identity(self, confidentialledger_id: str) -> str:
+        """Retrieves the Confidential Ledger's TLS certificate, saving it to the object's network
+        certificate path as well as returning it directly.
 
-    def set_ledger_identity(self, confidentialledger_id):
+        :param confidentialledger_id: Id of the Confidential Ledger.
+        :type confidentialledger_id: str
+        :return: The Confidential Ledger's TLS certificate.
+        :rtype: str
+        """
         client = self.create_client_from_credential(
             ConfidentialLedgerCertificateClient,
             credential=None,
@@ -59,3 +75,35 @@ class ConfidentialLedgerTestCase(AzureTestCase):
 
         with open(self.network_certificate_path, "w", encoding="utf-8") as outfile:
             outfile.write(network_identity["ledgerTlsCertificate"])
+
+        return network_identity["ledgerTlsCertificate"]
+
+    async def set_ledger_identity_async(self, confidentialledger_id: str) -> str:
+        """Retrieves the Confidential Ledger's TLS certificate, saving it to the object's network
+        certificate path as well as returning it directly.
+
+        An async version of this method is needed so that this request is recorded by async tests.
+
+        :param confidentialledger_id: Id of the Confidential Ledger.
+        :type confidentialledger_id: str
+        :return: The Confidential Ledger's TLS certificate.
+        :rtype: str
+        """
+        client = self.create_client_from_credential(
+            ConfidentialLedgerCertificateClientAsync,
+            credential=None,
+        )
+
+        try:
+            network_identity = (
+                await client.get_ledger_identity(
+                    ledger_id=confidentialledger_id
+                )
+            )
+
+            with open(self.network_certificate_path, "w", encoding="utf-8") as outfile:
+                outfile.write(network_identity["ledgerTlsCertificate"])
+
+            return network_identity["ledgerTlsCertificate"]
+        finally:
+            await client.close()

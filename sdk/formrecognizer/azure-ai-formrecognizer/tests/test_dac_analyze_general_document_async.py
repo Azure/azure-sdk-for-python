@@ -13,6 +13,7 @@ from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
@@ -20,6 +21,7 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -55,6 +57,7 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -90,7 +93,7 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
-    @pytest.mark.skip()
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -127,6 +130,7 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -145,6 +149,7 @@ class TestDACAnalyzeDocumentAsync(AsyncFormRecognizerTest):
         assert document.tables[2].row_count == 24
         assert document.tables[2].column_count == 5
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async

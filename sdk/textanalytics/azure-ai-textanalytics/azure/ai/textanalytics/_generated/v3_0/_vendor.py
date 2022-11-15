@@ -14,9 +14,9 @@ from ._configuration import TextAnalyticsClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from msrest import Deserializer, Serializer
-
     from azure.core import PipelineClient
+
+    from .._serialization import Deserializer, Serializer
 
 def _convert_request(request, files=None):
     data = request.content if not files else None

@@ -1,21 +1,21 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
-from typing import Union, List
+# pylint: disable=protected-access
+from typing import Dict, List, Union
 
-from marshmallow import Schema
+from marshmallow import INCLUDE, Schema
 
+from azure.ai.ml import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
 from azure.ai.ml._internal._schema.component import NodeType
-
 from azure.ai.ml._internal.entities.component import InternalComponent
 from azure.ai.ml._internal.entities.node import InternalBaseNode
+from azure.ai.ml._restclient.v2022_10_01_preview.models import CommandJobLimits as RestCommandJobLimits
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobResourceConfiguration as RestJobResourceConfiguration
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.entities import CommandJobLimits, ResourceConfiguration
-from azure.ai.ml._restclient.v2022_02_01_preview.models import (
-    CommandJobLimits as RestCommandJobLimits,
-    ResourceConfiguration as RestResourceConfiguration,
-)
-from azure.ai.ml.entities._job.distribution import DistributionConfiguration
+from azure.ai.ml._schema.core.fields import DistributionField
+from azure.ai.ml.entities import CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.entities._util import get_rest_dict_for_node_attrs
 
 
 class Command(InternalBaseNode):
@@ -24,12 +24,13 @@ class Command(InternalBaseNode):
     """
 
     def __init__(self, **kwargs):
-        kwargs.pop("type", None)
-        super(Command, self).__init__(type=NodeType.COMMAND, **kwargs)
+        node_type = kwargs.pop("type", None) or NodeType.COMMAND
+        super(Command, self).__init__(type=node_type, **kwargs)
         self._init = True
-        self._resources = ResourceConfiguration()
+        self._resources = kwargs.pop("resources", JobResourceConfiguration())
         self._compute = kwargs.pop("compute", None)
         self._environment = kwargs.pop("environment", None)
+        self.environment_variables = kwargs.pop("environment_variables", None)
         self._limits = kwargs.pop("limits", CommandJobLimits())
         self._init = False
 
@@ -41,8 +42,6 @@ class Command(InternalBaseNode):
     @compute.setter
     def compute(self, value: str):
         """Set the compute definition for the command."""
-        if value is not None and not isinstance(value, str):
-            raise ValueError(f"Failed in setting compute: only string is supported in DPv2 but got {type(value)}")
         self._compute = value
 
     @property
@@ -53,8 +52,6 @@ class Command(InternalBaseNode):
     @environment.setter
     def environment(self, value: str):
         """Set the environment definition for the command."""
-        if value is not None and not isinstance(value, str):
-            raise ValueError(f"Failed in setting environment: only string is supported in DPv2 but got {type(value)}")
         self._environment = value
 
     @property
@@ -66,16 +63,17 @@ class Command(InternalBaseNode):
         self._limits = value
 
     @property
-    def resources(self):
+    def resources(self) -> JobResourceConfiguration:
+        """Compute Resource configuration for the component."""
         return self._resources
 
     @resources.setter
-    def resources(self, value: ResourceConfiguration):
+    def resources(self, value: JobResourceConfiguration):
         self._resources = value
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["environment", "limits"]
+        return ["environment", "limits", "resources", "environment_variables"]
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -83,34 +81,67 @@ class Command(InternalBaseNode):
 
         return CommandSchema(context=context)
 
+    def _to_rest_object(self, **kwargs) -> dict:
+        rest_obj = super()._to_rest_object(**kwargs)
+        rest_obj.update(
+            dict(
+                limits=get_rest_dict_for_node_attrs(self.limits, clear_empty_value=True),
+                resources=get_rest_dict_for_node_attrs(self.resources, clear_empty_value=True),
+            )
+        )
+        return rest_obj
+
     @classmethod
-    def _from_rest_object(cls, obj: dict):
-        # resources, sweep won't have resources
+    def _from_rest_object_to_init_params(cls, obj):
+        obj = InternalBaseNode._from_rest_object_to_init_params(obj)
+
         if "resources" in obj and obj["resources"]:
-            resources = RestResourceConfiguration.from_dict(obj["resources"])
-            obj["resources"] = ResourceConfiguration._from_rest_object(resources)
-
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        # Change componentId -> component
-        obj["compute"] = obj.pop("computeId", None)
-
-        # distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
+            resources = RestJobResourceConfiguration.from_dict(obj["resources"])
+            obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
 
         # handle limits
         if "limits" in obj and obj["limits"]:
-            obj["limits"] = CommandJobLimits(**obj["limits"])
-        return Command(**obj)
+            rest_limits = RestCommandJobLimits.from_dict(obj["limits"])
+            obj["limits"] = CommandJobLimits()._from_rest_object(rest_limits)
+        return obj
 
 
 class Distributed(Command):
     def __init__(self, **kwargs):
         super(Distributed, self).__init__(**kwargs)
+        self._distribution = kwargs.pop("distribution", None)
         self._type = NodeType.DISTRIBUTED
+        if self._distribution is None:
+            # hack: distribution.type is required to set distribution, which is defined in launcher.type
+            if (
+                isinstance(self.component, InternalComponent)
+                and self.component.launcher
+                and "type" in self.component.launcher
+            ):
+                self.distribution = {"type": self.component.launcher["type"]}
+            else:
+                raise ValueError(
+                    "launcher.type must be specified in definition of DistributedComponent but got {}".format(
+                        self.component
+                    )
+                )
+
+    @property
+    def distribution(
+        self,
+    ) -> Union[PyTorchDistribution, MpiDistribution, TensorFlowDistribution]:
+        """The distribution config of component, e.g. distribution={'type': 'mpi'}."""
+        return self._distribution
+
+    @distribution.setter
+    def distribution(
+        self,
+        value: Union[Dict, PyTorchDistribution, TensorFlowDistribution, MpiDistribution],
+    ):
+        if isinstance(value, dict):
+            dist_schema = DistributionField(unknown=INCLUDE)
+            value = dist_schema._deserialize(value=value, attr=None, data=None)
+        self._distribution = value
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
@@ -118,9 +149,16 @@ class Distributed(Command):
 
         return DistributedSchema(context=context)
 
+    @classmethod
+    def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
+        return Command._picked_fields_from_dict_to_rest_object() + ["distribution"]
 
-class CommandComponent(InternalComponent):
-    """Command component. Override __call__ to enable strong type intelligence for command specific run settings."""
-
-    def __call__(self, *args, **kwargs) -> Command:
-        return super(InternalComponent, self).__call__(*args, **kwargs)
+    def _to_rest_object(self, **kwargs) -> dict:
+        rest_obj = super()._to_rest_object(**kwargs)
+        distribution = self.distribution._to_rest_object() if self.distribution else None  # pylint: disable=no-member
+        rest_obj.update(
+            dict(
+                distribution=get_rest_dict_for_node_attrs(distribution),
+            )
+        )
+        return rest_obj
