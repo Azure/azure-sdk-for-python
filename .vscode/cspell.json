@@ -28,6 +28,7 @@
     "**/*requirement*.txt",
     "**/assets.json",
 
+    "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
@@ -97,6 +98,8 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "qnamaker",
+    "mindependency",
     "automl",
     "pyyaml",
     "CONLL",
@@ -412,6 +415,12 @@
         "mytable",
         "edmtypes",
         "specifed"
+      ]
+    },
+    {
+      "filename": "sdk/tables/test-resources.json",
+      "words": [
+        "mmspecial"
       ]
     },
     {
