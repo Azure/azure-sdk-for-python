@@ -2,6 +2,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+
+# pylint: disable=enum-must-be-uppercase
+
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
