@@ -5,6 +5,7 @@ import pytest
 
 from azure.ai.ml import load_component, Input
 from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.entities import Command
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.base import _resolve_builders_2_data_bindings
 from test_utilities.utils import omit_with_wildcard
@@ -131,7 +132,7 @@ class TestInputOutputBuilder:
                                                *common_omit_fields)
         assert rest_pipeline_job["jobs"] == expected_pipeline_job1
 
-    def test_pipeline_input_result_multiple_levle(self):
+    def test_pipeline_input_result_multiple_level(self):
         component_yaml = components_dir / "helloworld_component.yml"
         component_func = load_component(source=component_yaml)
 
@@ -177,3 +178,25 @@ class TestInputOutputBuilder:
                 'type': 'pipeline'}
         }
         assert rest_pipeline_job["jobs"] == expected_pipeline_job
+
+    def test_pipeline_with_remote_component_node(self):
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func = load_component(source=component_yaml)
+
+        @pipeline
+        def my_pipeline():
+            node1 = Command(
+                component="fake_component_arm_id"
+            )
+
+            # when node has remote component, it's output will become a dynamic and can be access with any key
+            # validation will be done when pipeline created to remote.
+            component_func(
+                component_in_path=node1.outputs.output1
+            )
+
+            component_func(
+                component_in_path=node1.outputs.output2
+            )
+
+        my_pipeline()
