@@ -442,7 +442,6 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         assert component_resource2.display_name == display_name
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_mpi_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_name = randstr("component_name")
         # Test mpi distribution
