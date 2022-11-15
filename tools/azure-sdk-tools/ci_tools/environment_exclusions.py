@@ -4,6 +4,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+import logging
 
 PYLINT_ACCEPTABLE_FAILURES = [
     "azure-applicationinsights",
@@ -376,7 +377,21 @@ def filter_tox_environment_string(namespace_argument: str, package_name: str) ->
     :param package_name: The name of the package. This takes the form of a comma separated list: "whl,sdist,mindepedency". "whl". "lint,pyright,sphinx".
     """
     if namespace_argument:
-        pass
+        tox_envs = namespace_argument.strip().split(",")
+        filtered_set = []
+
+        for tox_env in tox_envs:
+            try:
+                exclusions_for_env = globals()[f"{tox_env.strip().upper()}_OPT_OUT"]
+            except Exception as e:
+                logging.error(e)
+
+            if exclusions_for_env:
+                if package_name in exclusions_for_env:
+                    continue
+
+            filtered_set.append(tox_env)
+        return ",".join(filtered_set)
 
     return namespace_argument
 
