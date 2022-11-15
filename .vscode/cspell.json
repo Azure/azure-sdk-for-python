@@ -97,6 +97,8 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "qnamaker",
+    "mindependency",
     "automl",
     "pyyaml",
     "CONLL",

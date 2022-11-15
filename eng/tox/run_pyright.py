@@ -13,7 +13,7 @@ import os
 import logging
 import sys
 
-from environment_exclusion_list import (
+from ci_tools.environment_exclusions import (
     is_ignored_package,
     PYRIGHT_OPT_OUT,
     TYPE_CHECK_SAMPLES_OPT_OUT,

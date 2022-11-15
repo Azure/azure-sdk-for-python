@@ -5,23 +5,36 @@ testing infrastructure, and demonstrates how to write and run tests for a servic
 
 ### Table of contents
 
-- [Set up your development environment](#set-up-your-development-environment)
-- [Integrate with pytest](#integrate-with-the-pytest-test-framework)
-- [Use Tox](#tox)
-- [The `devtools_testutils` package](#the-devtools_testutils-package)
-- [Write or run tests](#write-or-run-tests)
-  - [Set up the test proxy](#perform-one-time-test-proxy-setup)
-  - [Set up test resources](#set-up-test-resources)
-  - [Configure credentials](#configure-credentials)
-  - [Start the test proxy server](#start-the-test-proxy-server)
-  - [Deliver environment variables to tests](#deliver-environment-variables-to-tests)
-  - [Write your tests](#write-your-tests)
-  - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
-  - [Run and record tests](#run-and-record-tests)
-  - [Sanitize secrets](#sanitize-secrets)
-- [Functional vs. unit tests](#functional-vs-unit-tests)
-- [Further reading](#further-reading)
-- [Deprecated testing instructions](#deprecated-testing-instructions)
+- [Python SDK testing guide](#python-sdk-testing-guide)
+        - [Table of contents](#table-of-contents)
+    - [Set up your development environment](#set-up-your-development-environment)
+        - [SDK root directory](#sdk-root-directory)
+        - [Dependency installation](#dependency-installation)
+        - [Open code in IDE](#open-code-in-ide)
+    - [Integrate with the pytest test framework](#integrate-with-the-pytest-test-framework)
+    - [Tox](#tox)
+    - [The `devtools_testutils` package](#the-devtools_testutils-package)
+    - [Write or run tests](#write-or-run-tests)
+        - [Perform one-time test proxy setup](#perform-one-time-test-proxy-setup)
+        - [Set up test resources](#set-up-test-resources)
+        - [Configure credentials](#configure-credentials)
+        - [Start the test proxy server](#start-the-test-proxy-server)
+        - [Deliver environment variables to tests](#deliver-environment-variables-to-tests)
+        - [Write your tests](#write-your-tests)
+        - [Configure live or playback testing mode](#configure-live-or-playback-testing-mode)
+        - [Run and record tests](#run-and-record-tests)
+        - [Sanitize secrets](#sanitize-secrets)
+            - [Special case: SAS tokens](#special-case-sas-tokens)
+    - [Functional vs. unit tests](#functional-vs-unit-tests)
+    - [Further reading](#further-reading)
+    - [Deprecated testing instructions](#deprecated-testing-instructions)
+        - [Define credentials (deprecated)](#define-credentials-deprecated)
+        - [Create live test resources (deprecated)](#create-live-test-resources-deprecated)
+        - [Write your tests (deprecated)](#write-your-tests-deprecated)
+        - [An example test (deprecated)](#an-example-test-deprecated)
+        - [Run and record the test (deprecated)](#run-and-record-the-test-deprecated)
+        - [Purging secrets (deprecated)](#purging-secrets-deprecated)
+            - [Special case: Shared Access Signature (deprecated)](#special-case-shared-access-signature-deprecated)
 
 ## Set up your development environment
 
@@ -115,7 +128,7 @@ The Python SDK uses the [tox project](https://tox.readthedocs.io/en/latest/) to 
 To run a tox command from your directory use the following commands:
 ```cmd
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e sphinx
-(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e lint
+(env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e pylint
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e mypy
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e pyright
 (env) azure-sdk-for-python\sdk\my-service\my-package> tox -c ../../../eng/tox/tox.ini -e verifytypes
