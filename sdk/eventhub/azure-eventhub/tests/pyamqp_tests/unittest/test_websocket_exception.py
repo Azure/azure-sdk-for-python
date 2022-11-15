@@ -1,6 +1,6 @@
 import pytest
 import asyncio
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import aiohttp
 from azure.eventhub._pyamqp.aio._transport_async import WebSocketTransportAsync
