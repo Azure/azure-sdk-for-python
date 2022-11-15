@@ -135,6 +135,7 @@ jobs:
           TargetRepoOwner: $(DocRepoOwner)
           WorkingDirectory: $(DocRepoLocation)
           ScriptDirectory: $(Build.SourcesDirectory)/eng/common/scripts
+          PushArgs: -f
 
       - task: PowerShell@2
         displayName: Queue Docs CI build
