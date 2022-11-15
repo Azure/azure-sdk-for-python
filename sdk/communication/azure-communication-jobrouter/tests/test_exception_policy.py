@@ -7,7 +7,8 @@
 # --------------------------------------------------------------------------
 
 import pytest
-from _router_test_case import RouterTestCase
+from devtools_testutils import recorded_by_proxy
+from _router_test_case import RouterRecordedTestCase
 from _decorators import RouterPreparers
 from _validators import ExceptionPolicyValidator
 from azure.communication.jobrouter._shared.utils import parse_connection_str  # pylint:disable=protected-access
@@ -49,14 +50,7 @@ exception_actions = [
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestExceptionPolicy(RouterTestCase):
-    def __init__(self, method_name):
-        super(TestExceptionPolicy, self).__init__(method_name)
-        self.exception_policy_ids = {}  # type: Dict[str, List[str]]
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.classification_policy_ids = {}  # type: Dict[str, List[str]]
-
+class TestExceptionPolicy(RouterRecordedTestCase):
     def clean_up(self):
         # delete in live mode
         if not self.is_playback():
@@ -156,18 +150,12 @@ class TestExceptionPolicy(RouterTestCase):
         else:
             self.classification_policy_ids[self._testMethodName] = [cp_id]
 
-    def setUp(self):
-        super(TestExceptionPolicy, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestExceptionPolicy, self).tearDown()
-
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_create_exception_policy(self):
         ep_identifier = "tst_create_ep"
         router_client: RouterAdministrationClient = self.create_admin_client()
@@ -219,9 +207,12 @@ class TestExceptionPolicy(RouterTestCase):
                     exception_rules = exception_rules
                 )
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_exception_policy(self):
         ep_identifier = "tst_update_ep"
         router_client: RouterAdministrationClient = self.create_admin_client()
@@ -297,9 +288,12 @@ class TestExceptionPolicy(RouterTestCase):
                     exception_rules = updated_exception_rules
                 )
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_update_exception_policy_w_kwargs(self):
         ep_identifier = "tst_update_ep_w_kwargs"
         router_client: RouterAdministrationClient = self.create_admin_client()
@@ -374,9 +368,12 @@ class TestExceptionPolicy(RouterTestCase):
                     exception_rules = updated_exception_rules
                 )
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_get_exception_policy(self):
         ep_identifier = "tst_get_ep"
         router_client: RouterAdministrationClient = self.create_admin_client()
@@ -439,9 +436,12 @@ class TestExceptionPolicy(RouterTestCase):
                     exception_rules = exception_rules
                 )
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_delete_exception_policy(self):
         ep_identifier = "tst_delete_ep"
         router_client: RouterAdministrationClient = self.create_admin_client()
@@ -498,9 +498,12 @@ class TestExceptionPolicy(RouterTestCase):
                 assert nfe.value.reason == "Not Found"
                 assert nfe.value.status_code == 404
 
+    @RouterPreparers.router_test_decorator
+    @recorded_by_proxy
     @RouterPreparers.before_test_execute('setup_distribution_policy')
     @RouterPreparers.before_test_execute('setup_job_queue')
     @RouterPreparers.before_test_execute('setup_classification_policy')
+    @RouterPreparers.after_test_execute('clean_up')
     def test_list_exception_policies(self):
         ep_identifiers = ["tst_list_ep_1", "tst_list_ep_2", "tst_list_ep_3"]
         created_ep_response = {}

@@ -1119,6 +1119,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         combine multiple text analysis actions into one call. Otherwise, we recommend you use
         the action specific endpoints, for example :func:`analyze_sentiment`.
 
+        .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
+            https://aka.ms/applyforgatedsummarizationfeatures
+
         .. note:: See the service documentation for regional support of custom action features:
             https://aka.ms/azsdk/textanalytics/customfunctionalities
 
@@ -1713,6 +1716,9 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         On the fly classification of the input documents into one or multiple categories.
         Assigns either one or multiple categories per document. This type of classification
         doesn't require model training.
+
+        .. note:: The dynamic classification feature is part of a gated preview. Request access here:
+            https://aka.ms/applyforgatedlanguagefeature
 
         See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 

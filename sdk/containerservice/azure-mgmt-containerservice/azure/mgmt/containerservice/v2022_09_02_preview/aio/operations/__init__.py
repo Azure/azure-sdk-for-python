@@ -17,6 +17,8 @@ from ._snapshots_operations import SnapshotsOperations
 from ._managed_cluster_snapshots_operations import ManagedClusterSnapshotsOperations
 from ._trusted_access_roles_operations import TrustedAccessRolesOperations
 from ._trusted_access_role_bindings_operations import TrustedAccessRoleBindingsOperations
+from ._fleets_operations import FleetsOperations
+from ._fleet_members_operations import FleetMembersOperations
 
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
@@ -34,6 +36,8 @@ __all__ = [
     "ManagedClusterSnapshotsOperations",
     "TrustedAccessRolesOperations",
     "TrustedAccessRoleBindingsOperations",
+    "FleetsOperations",
+    "FleetMembersOperations",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

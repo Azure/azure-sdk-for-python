@@ -6,16 +6,15 @@ from marshmallow import INCLUDE, fields
 
 from azure.ai.ml._schema.component.parallel_task import ComponentParallelTaskSchema
 from azure.ai.ml._schema.component.retry_settings import RetrySettingsSchema
-from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
+from azure.ai.ml._schema.core.fields import NestedField, DumpableEnumField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import LoggingLevel
 
 
 class ParameterizedParallelSchema(PathAwareSchema):
-    logging_level = StringTransformedEnum(
+    logging_level = DumpableEnumField(
         allowed_values=[LoggingLevel.DEBUG, LoggingLevel.INFO, LoggingLevel.WARN],
-        casing_transform=lambda x: x,
         dump_default=LoggingLevel.INFO,
         metadata={
             "description": (

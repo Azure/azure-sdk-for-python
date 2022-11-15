@@ -8,7 +8,7 @@ from os import PathLike
 from typing import IO, Any, AnyStr, Dict, Optional, Union
 
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -102,6 +102,7 @@ class Endpoint(Resource):  # pylint: disable=too-many-instance-attributes
                     target=ErrorTarget.ENDPOINT,
                     no_personal_data_message=msg.format("[name1]", "[name2]"),
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             self.description = other.description or self.description
             if other.tags:
