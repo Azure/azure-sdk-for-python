@@ -326,7 +326,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            # FIXME: this is handwritten
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -433,7 +434,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            # FIXME: this is handwritten
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -544,7 +546,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            # FIXME: this is handwritten
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -599,7 +602,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            # FIXME: this is handwritten
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -721,7 +725,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            # FIXME: this is handwritten
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -786,7 +791,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    # FIXME: this is handwritten
+                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
                     "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -805,7 +811,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
                     "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
                 )
                 path_format_arguments = {
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+                    # FIXME: this is handwritten
+                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
                     "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -869,7 +876,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            # FIXME: this is handwritten
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -920,7 +928,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            # FIXME: this is handwritten
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1051,7 +1060,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            # FIXME: this is handwritten
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
@@ -1180,7 +1190,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
+            # FIXME: this is handwritten
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
             "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
