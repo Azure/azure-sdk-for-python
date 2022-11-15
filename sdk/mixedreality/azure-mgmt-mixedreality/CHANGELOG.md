@@ -1,5 +1,23 @@
 # Release History
 
+## 1.1.0b1 (2022-11-01)
+
+### Features Added
+
+  - Model MetricDimension has a new parameter to_be_exported_for_shoebox
+  - Model MetricSpecification has a new parameter category
+  - Model MetricSpecification has a new parameter enable_regional_mdm_account
+  - Model MetricSpecification has a new parameter fill_gap_with_zero
+  - Model MetricSpecification has a new parameter locked_aggregation_type
+  - Model MetricSpecification has a new parameter metric_filter_pattern
+  - Model MetricSpecification has a new parameter source_mdm_account
+  - Model MetricSpecification has a new parameter source_mdm_namespace
+  - Model MetricSpecification has a new parameter supported_aggregation_types
+  - Model MetricSpecification has a new parameter supported_time_grain_types
+  - Model ObjectAnchorsAccount has a new parameter kind
+  - Model ObjectAnchorsAccount has a new parameter plan
+  - Model ObjectAnchorsAccount has a new parameter sku
+
 ## 1.0.0 (2021-04-27)
 
 **Features**

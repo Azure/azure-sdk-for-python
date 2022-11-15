@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_dump
+from marshmallow import fields, post_dump, INCLUDE, EXCLUDE
 
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
@@ -15,6 +15,7 @@ from .input_output import (
     InternalInputPortSchema,
     InternalOutputPortSchema,
     InternalParameterSchema,
+    InternalPrimitiveOutputSchema,
 )
 
 
@@ -41,7 +42,9 @@ class NodeType:
         return all_values
 
 
-class InternalBaseComponentSchema(ComponentSchema):
+class InternalComponentSchema(ComponentSchema):
+    class Meta:
+        unknown = INCLUDE
     # override name as 1p components allow . in name, which is not allowed in v2 components
     name = fields.Str()
 
@@ -60,7 +63,16 @@ class InternalBaseComponentSchema(ComponentSchema):
             ]
         ),
     )
-    outputs = fields.Dict(keys=fields.Str(), values=NestedField(InternalOutputPortSchema))
+    # support primitive output for all internal components for now
+    outputs = fields.Dict(
+        keys=fields.Str(),
+        values=UnionField(
+            [
+                NestedField(InternalPrimitiveOutputSchema, unknown=EXCLUDE),
+                NestedField(InternalOutputPortSchema, unknown=EXCLUDE),
+            ]
+        ),
+    )
 
     # type field is required for registration
     type = StringTransformedEnum(
@@ -84,8 +96,8 @@ class InternalBaseComponentSchema(ComponentSchema):
     def _serialize(self, obj, *, many: bool = False):
         # pylint: disable=no-member
         if many and obj is not None:
-            return super(InternalBaseComponentSchema, self)._serialize(obj, many=many)
-        ret = super(InternalBaseComponentSchema, self)._serialize(obj)
+            return super(InternalComponentSchema, self)._serialize(obj, many=many)
+        ret = super(InternalComponentSchema, self)._serialize(obj)
         for attr_name in obj.__dict__.keys():
             if (
                 not attr_name.startswith("_")

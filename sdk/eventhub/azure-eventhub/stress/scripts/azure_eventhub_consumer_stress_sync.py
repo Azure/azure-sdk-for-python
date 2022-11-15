@@ -13,7 +13,7 @@ from collections import defaultdict
 from functools import partial
 from dotenv import load_dotenv
 
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 from azure.eventhub.extensions.checkpointstoreblob import BlobCheckpointStore
 from azure.eventhub import EventHubConsumerClient, TransportType, EventHubSharedKeyCredential
 
@@ -50,6 +50,7 @@ parser.add_argument("--starting_offset", help="Starting offset", type=str, defau
 parser.add_argument("--starting_sequence_number", help="Starting sequence number", type=int)
 parser.add_argument("--starting_datetime", help="Starting datetime string, should be format of YYYY-mm-dd HH:mm:ss")
 parser.add_argument("--partitions", help="Number of partitions. 0 means to get partitions from eventhubs", type=int, default=0)
+parser.add_argument("--owner_level", help="The owner level, or epoch, of the consumer", type=int, default=None)
 parser.add_argument("--recv_partition_id", help="Receive from a specific partition if this is set", type=int)
 parser.add_argument("--max_batch_size", type=int, default=int(os.environ.get("MAX_BATCH_SIZE", 0)),
                     help="Call EventHubConsumerClient.receive_batch() if not 0, otherwise call receive()")
@@ -60,6 +61,8 @@ parser.add_argument("--track_last_enqueued_event_properties", action="store_true
 parser.add_argument("--load_balancing_interval", help="time duration in seconds between two load balance", type=float, default=10)
 parser.add_argument("--conn_str", help="EventHub connection string",
                     default=os.environ.get('EVENT_HUB_CONN_STR'))
+parser.add_argument("--azure_identity", help="Use identity", type=bool, default=False)
+parser.add_argument("--hostname", help="The fully qualified host name for the Event Hubs namespace.", default=os.environ.get("EVENT_HUB_HOSTNAME"))
 parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get('EVENT_HUB_NAME'))
 parser.add_argument("--address", help="Address URI to the EventHub entity")
 parser.add_argument("--sas-policy", help="Name of the shared access policy to authenticate with")
@@ -177,8 +180,20 @@ def create_client(args):
             "username": args.proxy_username,
             "password": args.proxy_password,
         }
-
-    if args.conn_str:
+    if args.azure_identity:
+        client = EventHubConsumerClientTest(
+            fully_qualified_namespace=args.hostname,
+            eventhub_name=args.eventhub,
+            consumer_group=args.consumer_group,
+            credential=DefaultAzureCredential(),
+            checkpoint_store=checkpoint_store,
+            load_balancing_interval=args.load_balancing_interval,
+            auth_timeout=args.auth_timeout,
+            http_proxy=http_proxy,
+            transport_type=transport_type,
+            logging_enable=args.uamqp_logging_enable
+        )
+    elif args.conn_str:
         client = EventHubConsumerClientTest.from_connection_string(
             args.conn_str,
             args.consumer_group,
@@ -233,6 +248,7 @@ def run(args):
             "partition_id": str(args.recv_partition_id) if args.recv_partition_id else None,
             "track_last_enqueued_event_properties": args.track_last_enqueued_event_properties,
             "starting_position": starting_position,
+            "owner_level": args.owner_level,
             "on_error": on_error
         }
         if args.max_batch_size:

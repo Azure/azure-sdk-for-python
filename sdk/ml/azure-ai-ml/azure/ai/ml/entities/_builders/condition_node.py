@@ -2,10 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-import typing
 from typing import Dict
-
-from marshmallow import Schema
 
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.constants._component import ControlFlowType
@@ -13,7 +10,7 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._io import InputOutputBase
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult
 
 
 class ConditionNode(ControlFlowNode):
@@ -31,18 +28,22 @@ class ConditionNode(ControlFlowNode):
     @classmethod
     def _create_schema_for_validation(
         cls, context
-    ) -> typing.Union[PathAwareSchema, Schema]:  # pylint: disable=unused-argument
+    ) -> PathAwareSchema:  # pylint: disable=unused-argument
         from azure.ai.ml._schema.pipeline.condition_node import ConditionNodeSchema
 
         return ConditionNodeSchema(context=context)
 
+    @classmethod
+    def _from_rest_object(cls, obj: dict) -> "ConditionNode":
+        return cls(**obj)
+
     def _to_dict(self) -> Dict:
         return self._dump_for_validation()
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         return self._validate_params(raise_error=False)
 
-    def _validate_params(self, raise_error=True) -> ValidationResult:
+    def _validate_params(self, raise_error=True) -> MutableValidationResult:
         # pylint disable=protected-access
         validation_result = self._create_empty_validation_result()
         if not isinstance(self.condition, (str, bool, InputOutputBase)):
@@ -53,9 +54,11 @@ class ConditionNode(ControlFlowNode):
             )
 
         # Check if output is a control output.
+        # pylint: disable=protected-access
         if isinstance(self.condition, InputOutputBase) and self.condition._meta is not None:
+            # pylint: disable=protected-access
             output_definition = self.condition._meta
-            if output_definition and not output_definition.is_control:
+            if output_definition is not None and not output_definition.is_control:
                 validation_result.append_error(
                     yaml_path="condition",
                     message=f"'condition' of dsl.condition node must have 'is_control' field "

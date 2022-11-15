@@ -1,5 +1,12 @@
 # Release History
 
+## 12.1.0b1 (2022-10-21)
+
+### Breaking Changes
+
+  - Renamed operation CustomDomainsOperations.disable_custom_https to CustomDomainsOperations.begin_disable_custom_https
+  - Renamed operation CustomDomainsOperations.enable_custom_https to CustomDomainsOperations.begin_enable_custom_https
+
 ## 12.0.0 (2022-03-22)
 
 **Features**

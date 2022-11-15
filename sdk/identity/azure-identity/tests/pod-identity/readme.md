@@ -93,7 +93,7 @@ az role assignment create --role "Managed Identity Operator" \
 
 # build images
 The test application must be packaged as a Docker image before deployment.
-Test runs must include Python 3.6+.
+Test runs must include Python 3.7+.
 
 ### authenticate to ACR
 ```sh
@@ -102,7 +102,7 @@ az acr login -n $ACR_NAME
 
 ### acquire the test code
 ```sh
-git clone https://github.com/Azure/azure-sdk-for-python/ --branch master --single-branch --depth 1
+git clone https://github.com/Azure/azure-sdk-for-python/ --branch main --single-branch --depth 1
 ```
 
 The rest of this section assumes this working directory:

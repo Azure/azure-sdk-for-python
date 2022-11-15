@@ -4,7 +4,8 @@
 # ------------------------------------
 import logging
 import os
-
+from typing import Optional, Union, TYPE_CHECKING
+from azure.core.credentials import AccessToken
 
 from .. import CredentialUnavailableError
 from .._constants import EnvironmentVariables
@@ -14,15 +15,7 @@ from .client_secret import ClientSecretCredential
 from .user_password import UsernamePasswordCredential
 
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    from typing import Any, Mapping, Optional, Union
-    from azure.core.credentials import AccessToken
-
     EnvironmentCredentialTypes = Union["CertificateCredential", "ClientSecretCredential", "UsernamePasswordCredential"]
 
 _LOGGER = logging.getLogger(__name__)
@@ -45,8 +38,8 @@ class EnvironmentCredential(object):
     Service principal with certificate:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
-      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key. The
-        certificate must not be password-protected.
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key.
+      - **AZURE_CLIENT_CERTIFICATE_PASSWORD**: (optional) password of the certificate file, if any.
       - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
@@ -63,8 +56,7 @@ class EnvironmentCredential(object):
         when no value is given.
     """
 
-    def __init__(self, **kwargs):
-        # type: (Mapping[str, Any]) -> None
+    def __init__(self, **kwargs) -> None:
         self._credential = None  # type: Optional[EnvironmentCredentialTypes]
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
@@ -79,6 +71,7 @@ class EnvironmentCredential(object):
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
+                password=os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PASSWORD),
                 **kwargs
             )
         elif all(os.environ.get(v) is not None for v in EnvironmentVariables.USERNAME_PASSWORD_VARS):
@@ -115,14 +108,12 @@ class EnvironmentCredential(object):
         if self._credential:
             self._credential.__exit__(*args)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         """Close the credential's transport session."""
         self.__exit__()
 
     @log_get_token("EnvironmentCredential")
-    def get_token(self, *scopes, **kwargs):  # pylint:disable=unused-argument
-        # type: (*str, **Any) -> AccessToken
+    def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

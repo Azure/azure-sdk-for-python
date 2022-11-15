@@ -1,38 +1,37 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/d482be83-95bf-4b93-b739-8a8ce8d3e404",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/e34c7665-c0bd-4e8a-937e-1c1b77f0326a",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
-        "x-ms-client-request-id": "26b89356-9f1d-11ec-a513-acde48001122"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d15347a9-5f3e-451d-be8c-31eaa3d93def",
+        "apim-request-id": "67520670-9ed8-4629-bffb-0446e3a42a35",
         "Content-Length": "1314",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 08 Mar 2022 20:20:10 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:49 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "263",
-        "X-Request-ID": "d15347a9-5f3e-451d-be8c-31eaa3d93def"
+        "x-envoy-upstream-service-time": "161",
+        "X-Request-ID": "67520670-9ed8-4629-bffb-0446e3a42a35"
       },
       "ResponseBody": {
-        "dataFeedId": "d482be83-95bf-4b93-b739-8a8ce8d3e404",
-        "dataFeedName": "datafeed3bb7a319-015c-4506-9dd9-c9e1e3a7efec",
+        "dataFeedId": "e34c7665-c0bd-4e8a-937e-1c1b77f0326a",
+        "dataFeedName": "datafeedb3440082-5ba0-4b2a-84c0-175f6bb58575",
         "metrics": [
           {
-            "metricId": "26c0cd29-183f-431a-a459-157cd860cae4",
+            "metricId": "950217ef-1681-4752-a9c8-c1bbbdbf390a",
             "metricName": "cost",
             "metricDisplayName": "cost",
             "metricDescription": "the cost"
           },
           {
-            "metricId": "a1f5b384-6824-4c2e-aea9-dbb08472aa88",
+            "metricId": "4ab7ad2a-186b-4dc3-9ea6-d23b96d027fe",
             "metricName": "revenue",
             "metricDisplayName": "revenue",
             "metricDescription": "the revenue"
@@ -72,7 +71,7 @@
         ],
         "creator": "krpratic@microsoft.com",
         "status": "Active",
-        "createdTime": "2022-03-08T20:20:08Z",
+        "createdTime": "2022-09-29T23:25:49Z",
         "isAdmin": true,
         "actionLinkTemplate": "action link template",
         "dataSourceParameter": {
@@ -82,18 +81,17 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/d482be83-95bf-4b93-b739-8a8ce8d3e404",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/e34c7665-c0bd-4e8a-937e-1c1b77f0326a",
       "RequestMethod": "PATCH",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "687",
         "Content-Type": "application/merge-patch\u002Bjson",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
-        "x-ms-client-request-id": "27a38ac8-9f1d-11ec-a513-acde48001122"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
-        "dataFeedName": "update62ce8dd6-f550-43b3-a788-e011d5db2e56",
+        "dataFeedName": "update45e7c0d7-f97e-4dda-9c98-2eb9163defec",
         "dataFeedDescription": "updated",
         "timestampColumn": "time",
         "dataStartFrom": "2021-09-10T00:00:00.000Z",
@@ -122,27 +120,27 @@
       },
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "27455555-5a7e-470b-8073-02554116e439",
+        "apim-request-id": "2580144d-1998-497d-8f04-4423254606a7",
         "Content-Length": "1274",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 08 Mar 2022 20:20:11 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:50 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "633",
-        "X-Request-ID": "27455555-5a7e-470b-8073-02554116e439"
+        "x-envoy-upstream-service-time": "572",
+        "X-Request-ID": "2580144d-1998-497d-8f04-4423254606a7"
       },
       "ResponseBody": {
-        "dataFeedId": "d482be83-95bf-4b93-b739-8a8ce8d3e404",
-        "dataFeedName": "update62ce8dd6-f550-43b3-a788-e011d5db2e56",
+        "dataFeedId": "e34c7665-c0bd-4e8a-937e-1c1b77f0326a",
+        "dataFeedName": "update45e7c0d7-f97e-4dda-9c98-2eb9163defec",
         "metrics": [
           {
-            "metricId": "26c0cd29-183f-431a-a459-157cd860cae4",
+            "metricId": "950217ef-1681-4752-a9c8-c1bbbdbf390a",
             "metricName": "cost",
             "metricDisplayName": "cost",
             "metricDescription": "the cost"
           },
           {
-            "metricId": "a1f5b384-6824-4c2e-aea9-dbb08472aa88",
+            "metricId": "4ab7ad2a-186b-4dc3-9ea6-d23b96d027fe",
             "metricName": "revenue",
             "metricDisplayName": "revenue",
             "metricDescription": "the revenue"
@@ -183,7 +181,7 @@
         ],
         "creator": "krpratic@microsoft.com",
         "status": "Paused",
-        "createdTime": "2022-03-08T20:20:08Z",
+        "createdTime": "2022-09-29T23:25:49Z",
         "isAdmin": true,
         "actionLinkTemplate": "updated",
         "dataSourceParameter": {
@@ -193,38 +191,37 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/d482be83-95bf-4b93-b739-8a8ce8d3e404",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/e34c7665-c0bd-4e8a-937e-1c1b77f0326a",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
-        "x-ms-client-request-id": "281677e0-9f1d-11ec-a513-acde48001122"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "6f0848ca-5f9e-4d0d-ae76-25a8ff9dcf66",
+        "apim-request-id": "eb667aed-188d-4bfc-859f-2245526d3db0",
         "Content-Length": "1274",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 08 Mar 2022 20:20:11 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:50 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "186",
-        "X-Request-ID": "6f0848ca-5f9e-4d0d-ae76-25a8ff9dcf66"
+        "x-envoy-upstream-service-time": "207",
+        "X-Request-ID": "eb667aed-188d-4bfc-859f-2245526d3db0"
       },
       "ResponseBody": {
-        "dataFeedId": "d482be83-95bf-4b93-b739-8a8ce8d3e404",
-        "dataFeedName": "update62ce8dd6-f550-43b3-a788-e011d5db2e56",
+        "dataFeedId": "e34c7665-c0bd-4e8a-937e-1c1b77f0326a",
+        "dataFeedName": "update45e7c0d7-f97e-4dda-9c98-2eb9163defec",
         "metrics": [
           {
-            "metricId": "26c0cd29-183f-431a-a459-157cd860cae4",
+            "metricId": "950217ef-1681-4752-a9c8-c1bbbdbf390a",
             "metricName": "cost",
             "metricDisplayName": "cost",
             "metricDescription": "the cost"
           },
           {
-            "metricId": "a1f5b384-6824-4c2e-aea9-dbb08472aa88",
+            "metricId": "4ab7ad2a-186b-4dc3-9ea6-d23b96d027fe",
             "metricName": "revenue",
             "metricDisplayName": "revenue",
             "metricDescription": "the revenue"
@@ -265,7 +262,7 @@
         ],
         "creator": "krpratic@microsoft.com",
         "status": "Paused",
-        "createdTime": "2022-03-08T20:20:08Z",
+        "createdTime": "2022-09-29T23:25:49Z",
         "isAdmin": true,
         "actionLinkTemplate": "updated",
         "dataSourceParameter": {
@@ -275,33 +272,32 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/d482be83-95bf-4b93-b739-8a8ce8d3e404",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/e34c7665-c0bd-4e8a-937e-1c1b77f0326a",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.9.7 (macOS-12.2.1-x86_64-i386-64bit)",
-        "x-ms-client-request-id": "285edfbc-9f1d-11ec-a513-acde48001122"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "7037e5bb-4d29-4b0a-824f-302a15035af6",
+        "apim-request-id": "eacf141f-ec4d-4d6b-9c8a-021bbe70d08d",
         "Content-Length": "0",
-        "Date": "Tue, 08 Mar 2022 20:20:12 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:50 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "518",
-        "X-Request-ID": "7037e5bb-4d29-4b0a-824f-302a15035af6"
+        "x-envoy-upstream-service-time": "333",
+        "X-Request-ID": "eacf141f-ec4d-4d6b-9c8a-021bbe70d08d"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "data_feed_id": "d482be83-95bf-4b93-b739-8a8ce8d3e404",
-    "data_feed_metric_id": "26c0cd29-183f-431a-a459-157cd860cae4",
-    "data_feed_name": "datafeed3bb7a319-015c-4506-9dd9-c9e1e3a7efec",
-    "data_feed_updated_name": "update62ce8dd6-f550-43b3-a788-e011d5db2e56"
+    "data_feed_id": "e34c7665-c0bd-4e8a-937e-1c1b77f0326a",
+    "data_feed_metric_id": "950217ef-1681-4752-a9c8-c1bbbdbf390a",
+    "data_feed_name": "datafeedb3440082-5ba0-4b2a-84c0-175f6bb58575",
+    "data_feed_updated_name": "update45e7c0d7-f97e-4dda-9c98-2eb9163defec"
   }
 }

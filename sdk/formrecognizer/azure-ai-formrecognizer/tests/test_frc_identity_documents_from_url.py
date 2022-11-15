@@ -15,12 +15,14 @@ from azure.ai.formrecognizer import FormRecognizerClient, FormRecognizerApiVersi
 from testcase import FormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
 from preparers import FormRecognizerPreparer
+from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
 
 class TestIdDocumentsFromUrl(FormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy
     def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -34,6 +36,7 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
         poller2.wait()
         assert poller2._polling_method._timeout ==  7  # goes back to client default
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -70,6 +73,7 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy
@@ -92,6 +96,7 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
                 self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     def test_identity_document_continuation_token(self, **kwargs):
@@ -111,6 +116,7 @@ class TestIdDocumentsFromUrl(FormRecognizerTest):
             client.begin_recognize_identity_documents_from_url(self.identity_document_url_jpg)
         assert "Method 'begin_recognize_identity_documents_from_url' is only available for API version V2_1 and up" in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy

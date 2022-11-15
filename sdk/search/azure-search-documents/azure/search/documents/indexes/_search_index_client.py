@@ -11,7 +11,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.paging import ItemPaged
 
 from .._api_versions import DEFAULT_VERSION
-from ._generated import SearchClient as _SearchServiceClient
+from ._generated import SearchServiceClient as _SearchServiceClient
 from ._utils import (
     get_access_conditions,
     normalize_endpoint,
@@ -275,6 +275,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
             index_name=index.name,
             index=patched_index,
             allow_index_downtime=allow_index_downtime,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )
@@ -468,6 +469,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         result = self._client.synonym_maps.create_or_update(
             synonym_map_name=synonym_map.name,
             synonym_map=patched_synonym_map,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )
@@ -622,6 +624,7 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
         result = self._client.aliases.create_or_update(
             alias_name=alias.name,
             alias=alias,
+            prefer="return=representation",
             error_map=error_map,
             **kwargs
         )

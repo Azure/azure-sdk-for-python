@@ -48,5 +48,4 @@ async def change_connection_retry_policy_configs():
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(change_connection_retry_policy_configs())
+    asyncio.run(change_connection_retry_policy_configs())

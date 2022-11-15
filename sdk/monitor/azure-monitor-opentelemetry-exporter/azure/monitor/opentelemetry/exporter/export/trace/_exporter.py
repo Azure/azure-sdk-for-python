@@ -11,6 +11,10 @@ from opentelemetry.sdk.trace import ReadableSpan
 from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.trace import SpanKind
 
+from azure.monitor.opentelemetry.exporter._constants import (
+    _INSTRUMENTATION_SUPPORTING_METRICS_LIST,
+    _SAMPLE_RATE_KEY,
+)
 from azure.monitor.opentelemetry.exporter import _utils
 from azure.monitor.opentelemetry.exporter._generated.models import (
     MessageData,
@@ -43,6 +47,10 @@ _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES = [
     "thread.",
     "fass.",
     "code.",
+]
+
+_STANDARD_AZURE_MONITOR_ATTRIBUTES = [
+    _SAMPLE_RATE_KEY,
 ]
 
 
@@ -420,10 +428,21 @@ def _convert_span_to_envelope(span: ReadableSpan) -> TelemetryItem:
         if target:
             data.target = str(target)[:1024]
 
+    # sampleRate
+    if _SAMPLE_RATE_KEY in span.attributes:
+        envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
+
     data.properties = _utils._filter_custom_properties(
         span.attributes,
-        lambda key, val: not _is_opentelemetry_standard_attribute(key)
+        lambda key, val: not _is_standard_attribute(key)
     )
+
+    # Standard metrics special properties
+    # Only add the property if span was generated from instrumentation that supports metrics collection
+    if span.instrumentation_scope is not None and \
+        span.instrumentation_scope.name in _INSTRUMENTATION_SUPPORTING_METRICS_LIST:
+        data.properties["_MS.ProcessedByMetricExtractors"] = "True"
+
     if span.links:
         # Max length for value is 8192
         # Since links are a fixed length (80) in json, max number of links would be 102
@@ -450,7 +469,7 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             )
         properties = _utils._filter_custom_properties(
             event.attributes,
-            lambda key, val: not _is_opentelemetry_standard_attribute(key)
+            lambda key, val: not _is_standard_attribute(key)
         )
         if event.name == "exception":
             envelope.name = 'Microsoft.ApplicationInsights.Exception'
@@ -545,11 +564,12 @@ def _check_instrumentation_span(span: ReadableSpan) -> None:
         _utils.add_instrumentation(name)
 
 
-def _is_opentelemetry_standard_attribute(key: str) -> bool:
+def _is_standard_attribute(key: str) -> bool:
     for prefix in _STANDARD_OPENTELEMETRY_ATTRIBUTE_PREFIXES:
         if key.startswith(prefix):
             return True
-    return False
+    return key in _STANDARD_AZURE_MONITOR_ATTRIBUTES
+
 
 def _get_azure_sdk_target_source(attributes: Attributes) -> Optional[str]:
     # Currently logic only works for ServiceBus and EventHub

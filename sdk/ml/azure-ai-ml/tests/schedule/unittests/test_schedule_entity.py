@@ -13,6 +13,7 @@ from .._util import _SCHEDULE_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_SCHEDULE_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestScheduleEntity:
     def test_load_cron_schedule_with_file_reference(self):
         test_path = "./tests/test_configs/schedule/hello_cron_schedule_with_file_reference.yml"
@@ -116,21 +117,31 @@ class TestScheduleEntity:
             "trigger_type": "Recurrence",
         }
 
-    def test_unsupported_job_type(self):
-        test_path = "./tests/test_configs/schedule/invalid/hello_cron_schedule_with_unsupported_job.yml"
+    @pytest.mark.usefixtures(
+        "enable_pipeline_private_preview_features",
+    )
+    def test_schedule_with_command_job(self):
+        # Test with local file job
+        test_path = "./tests/test_configs/schedule/local_cron_command_job.yml"
+        inner_job_path = "./tests/test_configs/command_job/command_job_test.yml"
+        inner_job = load_job(inner_job_path)._to_job()
         schedule = load_schedule(test_path)
-        with pytest.raises(ValidationException) as e:
-            schedule._to_rest_object()
-        assert "Unsupported job type 'Command'" in str(e)
-        test_path = "./tests/test_configs/schedule/invalid/hello_cron_schedule_with_unsupported_job2.yml"
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
+        loaded_job_dict = inner_job._to_rest_object().as_dict()["properties"]
+        assert rest_schedule_job_dict == loaded_job_dict
+        # Test with local file + overwrites
+        test_path = "./tests/test_configs/schedule/local_cron_command_job2.yml"
         schedule = load_schedule(test_path)
-        with pytest.raises(ValidationException) as e:
-            schedule._to_rest_object()
-        assert "Unsupported job type 'Command'" in str(e)
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
+        # assert overwrite values
+        assert rest_schedule_job_dict["environment_variables"] == {"key": "val"}
+        assert rest_schedule_job_dict["resources"] == {'properties': {}, 'shm_size': '1g'}
+        assert rest_schedule_job_dict["distribution"] == {'distribution_type': 'PyTorch', 'process_count_per_instance': 1}
+        assert rest_schedule_job_dict["limits"] == {'job_limits_type': 'Command', 'timeout': 'PT50M'}
 
     def test_invalid_date_string(self):
         pipeline_job = load_job(
-            path="./tests/test_configs/command_job/local_job.yaml",
+            "./tests/test_configs/command_job/local_job.yaml",
         )
         trigger = RecurrenceTrigger(
             frequency="week",

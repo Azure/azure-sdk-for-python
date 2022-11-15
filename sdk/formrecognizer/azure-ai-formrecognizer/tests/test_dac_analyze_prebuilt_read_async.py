@@ -13,6 +13,7 @@ from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
@@ -20,6 +21,7 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -57,6 +59,7 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
 
         self.assertDocumentParagraphsTransformCorrect(returned_model.paragraphs, raw_analyze_result.paragraphs)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -94,6 +97,7 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
 
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_document_read_stream_html(self, **kwargs):
@@ -132,6 +136,7 @@ class TestDACAnalyzeReadAsync(AsyncFormRecognizerTest):
         self.assertDocumentParagraphsTransformCorrect(returned_model.paragraphs, raw_analyze_result.paragraphs)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_document_read_stream_spreadsheet(self, **kwargs):

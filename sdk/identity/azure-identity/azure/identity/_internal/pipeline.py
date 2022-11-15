@@ -15,7 +15,7 @@ from azure.core.pipeline.policies import (
     UserAgentPolicy,
     HttpLoggingPolicy,
 )
-from azure.core.pipeline.transport import RequestsTransport
+
 
 from .user_agent import USER_AGENT
 
@@ -62,6 +62,7 @@ def build_pipeline(transport=None, policies=None, **kwargs):
         config.retry_policy = RetryPolicy(**kwargs)
         policies = _get_policies(config, **kwargs)
     if not transport:
+        from azure.core.pipeline.transport import RequestsTransport
         transport = RequestsTransport(**kwargs)
 
     return Pipeline(transport, policies=policies)

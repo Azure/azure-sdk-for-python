@@ -3,18 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-from typing import TYPE_CHECKING
+from typing import Optional, Union
 
 from azure.core.exceptions import ClientAuthenticationError
-
+from azure.core.credentials import AccessToken
 from .._internal import AadClient, AsyncContextManager
 from .._internal.get_token_mixin import GetTokenMixin
 from ..._credentials.certificate import get_client_credential
 from ..._internal import AadClientCertificate, validate_tenant_id
-
-if TYPE_CHECKING:
-    from typing import Any, Optional, Union, List
-    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,9 +41,9 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
-        may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-        any tenant the application is installed.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
     def __init__(
@@ -58,7 +54,7 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
         client_certificate: bytes = None,
         client_secret: str = None,
         user_assertion: str,
-        **kwargs: "Any"
+        **kwargs
     ) -> None:
         super().__init__()
         validate_tenant_id(tenant_id)
@@ -93,10 +89,10 @@ class OnBehalfOfCredential(AsyncContextManager, GetTokenMixin):
     async def close(self):
         await self._client.close()
 
-    async def _acquire_token_silently(self, *scopes: str, **kwargs: "Any") -> "Optional[AccessToken]":
+    async def _acquire_token_silently(self, *scopes: str, **kwargs) -> Optional[AccessToken]:
         return self._client.get_cached_access_token(scopes, **kwargs)
 
-    async def _request_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def _request_token(self, *scopes: str, **kwargs) -> AccessToken:
         # Note we assume the cache has tokens for one user only. That's okay because each instance of this class is
         # locked to a single user (assertion). This assumption will become unsafe if this class allows applications
         # to change an instance's assertion.

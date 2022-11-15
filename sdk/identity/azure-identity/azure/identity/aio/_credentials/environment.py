@@ -4,19 +4,15 @@
 # ------------------------------------
 import logging
 import os
-from typing import TYPE_CHECKING
+from typing import Optional, Union
 
+from azure.core.credentials import AccessToken
 from .._internal.decorators import log_get_token_async
-
 from ... import CredentialUnavailableError
 from ..._constants import EnvironmentVariables
 from .._internal import AsyncContextManager
 from .certificate import CertificateCredential
 from .client_secret import ClientSecretCredential
-
-if TYPE_CHECKING:
-    from typing import Any, Optional, Union
-    from azure.core.credentials import AccessToken
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,14 +34,14 @@ class EnvironmentCredential(AsyncContextManager):
     Service principal with certificate:
       - **AZURE_TENANT_ID**: ID of the service principal's tenant. Also called its 'directory' ID.
       - **AZURE_CLIENT_ID**: the service principal's client ID
-      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key. The
-        certificate must not be password-protected.
+      - **AZURE_CLIENT_CERTIFICATE_PATH**: path to a PEM or PKCS12 certificate file including the private key.
+      - **AZURE_CLIENT_CERTIFICATE_PASSWORD**: (optional) password of the certificate file, if any.
       - **AZURE_AUTHORITY_HOST**: authority of an Azure Active Directory endpoint, for example
         "login.microsoftonline.com", the authority for Azure Public Cloud, which is the default
         when no value is given.
     """
 
-    def __init__(self, **kwargs: "Any") -> None:
+    def __init__(self, **kwargs) -> None:
         self._credential = None  # type: Optional[Union[CertificateCredential, ClientSecretCredential]]
 
         if all(os.environ.get(v) is not None for v in EnvironmentVariables.CLIENT_SECRET_VARS):
@@ -60,6 +56,7 @@ class EnvironmentCredential(AsyncContextManager):
                 client_id=os.environ[EnvironmentVariables.AZURE_CLIENT_ID],
                 tenant_id=os.environ[EnvironmentVariables.AZURE_TENANT_ID],
                 certificate_path=os.environ[EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PATH],
+                password=os.environ.get(EnvironmentVariables.AZURE_CLIENT_CERTIFICATE_PASSWORD),
                 **kwargs
             )
 
@@ -87,7 +84,7 @@ class EnvironmentCredential(AsyncContextManager):
             await self._credential.__aexit__()
 
     @log_get_token_async
-    async def get_token(self, *scopes: str, **kwargs: "Any") -> "AccessToken":
+    async def get_token(self, *scopes: str, **kwargs) -> AccessToken:
         """Asynchronously request an access token for `scopes`.
 
         This method is called automatically by Azure SDK clients.

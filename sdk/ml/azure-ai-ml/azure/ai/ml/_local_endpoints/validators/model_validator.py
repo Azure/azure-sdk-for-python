@@ -7,13 +7,12 @@
 from pathlib import Path
 
 from azure.ai.ml._artifacts._artifact_utilities import download_artifact
-from azure.ai.ml._local_endpoints.errors import RequiredLocalArtifactsNotFoundError
 from azure.ai.ml._utils._arm_id_utils import parse_prefixed_name_version
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
 from azure.ai.ml.entities import OnlineDeployment
 from azure.ai.ml.entities._assets import Model
+from azure.ai.ml.exceptions import RequiredLocalArtifactsNotFoundError
 from azure.ai.ml.operations._model_operations import ModelOperations
-
 
 
 def get_model_artifacts(
@@ -53,12 +52,15 @@ def get_model_artifacts(
         Path(deployment._base_path, deployment.model.path).resolve().parent,
     )
 
+
 def _local_model_is_valid(deployment: OnlineDeployment):
     return deployment.model and isinstance(deployment.model, Model) and deployment.model.path
+
 
 def _model_contains_cloud_artifacts(deployment: OnlineDeployment):
     # If the deployment.model is a string, then it is the cloud model name or full arm ID
     return isinstance(deployment.model, str)
+
 
 def _get_cloud_model_artifacts(model_operations: ModelOperations, model: str, download_path: str) -> str:
     name, version = parse_prefixed_name_version(model)

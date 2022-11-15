@@ -31,8 +31,8 @@ TEST_ERROR_OUTPUTS = (
 )
 
 
-def raise_called_process_error(return_code, output, cmd="..."):
-    error = subprocess.CalledProcessError(return_code, cmd=cmd, output=output)
+def raise_called_process_error(return_code, output="", cmd="...", stderr=""):
+    error = subprocess.CalledProcessError(return_code, cmd=cmd, output=output, stderr=stderr)
     return mock.Mock(side_effect=error)
 
 
@@ -76,8 +76,8 @@ def test_get_token():
 def test_cli_not_installed_linux():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    output = "/bin/sh: 1: az: not found"
-    with mock.patch(CHECK_OUTPUT, raise_called_process_error(127, output)):
+    stderr = "/bin/sh: 1: az: not found"
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(127, stderr=stderr)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
             AzureCliCredential().get_token("scope")
 
@@ -85,8 +85,8 @@ def test_cli_not_installed_linux():
 def test_cli_not_installed_windows():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    output = "'az' is not recognized as an internal or external command, operable program or batch file."
-    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output)):
+    stderr = "'az' is not recognized as an internal or external command, operable program or batch file."
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, stderr=stderr)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
             AzureCliCredential().get_token("scope")
 
@@ -102,8 +102,8 @@ def test_cannot_execute_shell():
 def test_not_logged_in():
     """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
-    output = "ERROR: Please run 'az login' to setup account."
-    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, output)):
+    stderr = "ERROR: Please run 'az login' to setup account."
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, stderr=stderr)):
         with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
             AzureCliCredential().get_token("scope")
 
@@ -111,9 +111,9 @@ def test_not_logged_in():
 def test_unexpected_error():
     """When the CLI returns an unexpected error, the credential should raise an error containing the CLI's output"""
 
-    output = "something went wrong"
-    with mock.patch(CHECK_OUTPUT, raise_called_process_error(42, output)):
-        with pytest.raises(ClientAuthenticationError, match=output):
+    stderr = "something went wrong"
+    with mock.patch(CHECK_OUTPUT, raise_called_process_error(42, stderr=stderr)):
+        with pytest.raises(ClientAuthenticationError, match=stderr):
             AzureCliCredential().get_token("scope")
 
 
@@ -152,7 +152,36 @@ def test_timeout():
             AzureCliCredential().get_token("scope")
 
 
-        
+def test_multitenant_authentication_class():
+    default_tenant = "first-tenant"
+    first_token = "***"
+    second_tenant = "second-tenant"
+    second_token = first_token * 2
+
+    def fake_check_output(command_line, **_):
+        match = re.search("--tenant (.*)", command_line[-1])
+        tenant = match.groups()[0] if match else default_tenant
+        assert tenant in (default_tenant, second_tenant), 'unexpected tenant "{}"'.format(tenant)
+        return json.dumps(
+            {
+                "expiresOn": datetime.now().strftime("%Y-%m-%d %H:%M:%S.%f"),
+                "accessToken": first_token if tenant == default_tenant else second_token,
+                "subscription": "some-guid",
+                "tenant": tenant,
+                "tokenType": "Bearer",
+            }
+        )
+
+    with mock.patch(CHECK_OUTPUT, fake_check_output):
+        token = AzureCliCredential().get_token("scope")
+        assert token.token == first_token
+
+        token = AzureCliCredential(tenant_id=default_tenant).get_token("scope")
+        assert token.token == first_token
+
+        token = AzureCliCredential(tenant_id=second_tenant).get_token("scope")
+        assert token.token == second_token
+
 def test_multitenant_authentication():
     default_tenant = "first-tenant"
     first_token = "***"
@@ -211,7 +240,7 @@ def test_multitenant_authentication_not_allowed():
         assert token.token == expected_token
 
         with mock.patch.dict(
-                "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
+            "os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}
         ):
             token = credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert token.token == expected_token

@@ -195,7 +195,6 @@ def test_timeout():
             AzurePowerShellCredential().get_token("scope")
 
     assert proc.communicate.call_count == 1
-    assert proc.kill.call_count == 1
 
 
 def test_unexpected_error():
@@ -299,6 +298,7 @@ def test_multitenant_authentication_not_allowed():
         match = re.search(r"Get-AzAccessToken -ResourceUrl '(\S+)'(?: -TenantId (\S+))?", decoded_script)
         tenant = match.groups()[1]
 
+        assert tenant is None, "credential shouldn't accept an explicit tenant ID"
         stdout = "azsdk%{}%{}".format(expected_token, int(time.time()) + 3600)
 
         communicate = Mock(return_value=(stdout, ""))
@@ -309,5 +309,6 @@ def test_multitenant_authentication_not_allowed():
         token = credential.get_token("scope")
         assert token.token == expected_token
 
-        token = credential.get_token("scope", tenant_id="some tenant")
-        assert token.token == expected_token
+        with patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+            token = credential.get_token("scope", tenant_id="some tenant")
+            assert token.token == expected_token

@@ -12,8 +12,8 @@ Example to show sending message through http proxy to a Service Bus Queue.
 import os
 from azure.servicebus import ServiceBusClient, ServiceBusMessage
 
-CONNECTION_STR = os.environ['SERVICE_BUS_CONNECTION_STR']
-QUEUE_NAME = os.environ["SERVICE_BUS_QUEUE_NAME"]
+CONNECTION_STR = os.environ['SERVICEBUS_CONNECTION_STR']
+QUEUE_NAME = os.environ["SERVICEBUS_QUEUE_NAME"]
 
 
 HTTP_PROXY = {

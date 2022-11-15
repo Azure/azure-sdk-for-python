@@ -20,7 +20,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 from devtools_testutils import is_live
 
-from .testcase import TableTestCase, SLEEP_DELAY
+from .testcase import TableTestCase
 
 
 TEST_TABLE_PREFIX = "pytableasync"

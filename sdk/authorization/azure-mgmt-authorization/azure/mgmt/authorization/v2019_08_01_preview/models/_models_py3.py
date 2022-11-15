@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,13 +7,16 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from ... import _serialization
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -20,29 +24,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -61,26 +63,24 @@ class ErrorDetail(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -88,28 +88,27 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~azure.mgmt.authorization.v2019_08_01_preview.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.authorization.v2019_08_01_preview.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.authorization.v2019_08_01_preview.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class RoleAssignmentMetricsResult(msrest.serialization.Model):
+class RoleAssignmentMetricsResult(_serialization.Model):
     """Role Assignment Metrics.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -117,32 +116,30 @@ class RoleAssignmentMetricsResult(msrest.serialization.Model):
     :ivar subscription_id: The subscription ID.
     :vartype subscription_id: str
     :ivar role_assignments_limit: The role assignment limit.
-    :vartype role_assignments_limit: long
+    :vartype role_assignments_limit: int
     :ivar role_assignments_current_count: The number of current role assignments.
-    :vartype role_assignments_current_count: long
+    :vartype role_assignments_current_count: int
     :ivar role_assignments_remaining_count: The number of remaining role assignments available.
-    :vartype role_assignments_remaining_count: long
+    :vartype role_assignments_remaining_count: int
     """
 
     _validation = {
-        'subscription_id': {'readonly': True},
-        'role_assignments_limit': {'readonly': True},
-        'role_assignments_current_count': {'readonly': True},
-        'role_assignments_remaining_count': {'readonly': True},
+        "subscription_id": {"readonly": True},
+        "role_assignments_limit": {"readonly": True},
+        "role_assignments_current_count": {"readonly": True},
+        "role_assignments_remaining_count": {"readonly": True},
     }
 
     _attribute_map = {
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
-        'role_assignments_limit': {'key': 'roleAssignmentsLimit', 'type': 'long'},
-        'role_assignments_current_count': {'key': 'roleAssignmentsCurrentCount', 'type': 'long'},
-        'role_assignments_remaining_count': {'key': 'roleAssignmentsRemainingCount', 'type': 'long'},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+        "role_assignments_limit": {"key": "roleAssignmentsLimit", "type": "int"},
+        "role_assignments_current_count": {"key": "roleAssignmentsCurrentCount", "type": "int"},
+        "role_assignments_remaining_count": {"key": "roleAssignmentsRemainingCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(RoleAssignmentMetricsResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.subscription_id = None
         self.role_assignments_limit = None
         self.role_assignments_current_count = None

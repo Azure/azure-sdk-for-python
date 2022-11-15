@@ -29,7 +29,7 @@ import warnings
 from azure.core.tracing.decorator import distributed_trace  # type: ignore
 
 from ._cosmos_client_connection import CosmosClientConnection
-from ._base import build_options, validate_cache_staleness_value, _deserialize_throughput
+from ._base import build_options, validate_cache_staleness_value, _deserialize_throughput, _replace_throughput
 from .exceptions import CosmosResourceNotFoundError
 from .http_constants import StatusCodes
 from .offer import ThroughputProperties
@@ -669,7 +669,7 @@ class ContainerProxy(object):
 
     @distributed_trace
     def replace_throughput(self, throughput, **kwargs):
-        # type: (int, Any) -> ThroughputProperties
+        # type: (Optional[Union[int, ThroughputProperties]], Any) -> ThroughputProperties
         """Replace the container's throughput.
 
         If no ThroughputProperties already exist for the container, an exception is raised.
@@ -694,7 +694,7 @@ class ContainerProxy(object):
                 status_code=StatusCodes.NOT_FOUND,
                 message="Could not find Offer for container " + self.container_link)
         new_throughput_properties = throughput_properties[0].copy()
-        new_throughput_properties["content"]["offerThroughput"] = throughput
+        _replace_throughput(throughput=throughput, new_throughput_properties=new_throughput_properties)
         data = self.client_connection.ReplaceOffer(
             offer_link=throughput_properties[0]["_self"], offer=throughput_properties[0], **kwargs)
 

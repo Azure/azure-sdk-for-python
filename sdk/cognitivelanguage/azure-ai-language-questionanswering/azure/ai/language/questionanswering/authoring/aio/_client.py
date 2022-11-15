@@ -7,29 +7,26 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, Awaitable
 
 from azure.core import AsyncPipelineClient
 from azure.core.credentials import AzureKeyCredential
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 
 from .._serialization import Deserializer, Serializer
-from ._configuration import QuestionAnsweringAuthoringClientConfiguration
-from ._operations import QuestionAnsweringAuthoringClientOperationsMixin
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Dict
+from ._configuration import AuthoringClientConfiguration
+from ._operations import AuthoringClientOperationsMixin
 
 
-class QuestionAnsweringAuthoringClient(
-    QuestionAnsweringAuthoringClientOperationsMixin
+class AuthoringClient(
+    AuthoringClientOperationsMixin
 ):  # pylint: disable=client-accepts-api-version-keyword
     """The language service API is a suite of natural language processing (NLP) skills built with
     best-in-class Microsoft machine learning algorithms.  The API can be used to analyze
     unstructured text for tasks such as sentiment analysis, key phrase extraction, language
     detection and question answering. Further documentation can be found in :code:`<a
-    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
+    href="https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview">
+    https://docs.microsoft.com/en-us/azure/cognitive-services/text-analytics/overview</a>`.
 
     :param endpoint: Supported Cognitive Services endpoint (e.g.,
      https://:code:`<resource-name>`.api.cognitiveservices.azure.com). Required.
@@ -45,7 +42,7 @@ class QuestionAnsweringAuthoringClient(
 
     def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/language"
-        self._config = QuestionAnsweringAuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
+        self._config = AuthoringClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = AsyncPipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -81,7 +78,7 @@ class QuestionAnsweringAuthoringClient(
     async def close(self) -> None:
         await self._client.close()
 
-    async def __aenter__(self) -> "QuestionAnsweringAuthoringClient":
+    async def __aenter__(self) -> "AuthoringClient":
         await self._client.__aenter__()
         return self
 

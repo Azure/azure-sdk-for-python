@@ -1,6 +1,56 @@
 # Release History
 
-## 1.0.0b8 (Unreleased)
+## 1.0.0b11 (Unreleased)
+
+### Features Added
+
+- Add pre-aggregated standard metrics - requests/duration, dependencies/duration
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+## 1.0.0b10 (2022-11-10)
+
+### Bugs Fixed
+
+- Fix missing local storage attribute
+    ([#27405](https://github.com/Azure/azure-sdk-for-python/pull/27405))
+- Fix offline storage rename
+    ([#27414](https://github.com/Azure/azure-sdk-for-python/pull/27414))
+
+## 1.0.0b9 (2022-11-08)
+
+### Features Added
+
+- Add Sampler factory and entry point
+    ([#27236](https://github.com/Azure/azure-sdk-for-python/pull/27236))
+- Add validation logic to ApplicationInsightsSampler
+    ([#26546](https://github.com/Azure/azure-sdk-for-python/pull/26546))
+- Change default temporality of metrics to follow OTLP
+    ([#26924](https://github.com/Azure/azure-sdk-for-python/pull/26924))
+
+### Breaking Changes
+
+- Rename local storage configuration, change default path
+    ([#26891](https://github.com/Azure/azure-sdk-for-python/pull/26891))
+- Change default storage retention period to 48 hours
+    ([#26960](https://github.com/Azure/azure-sdk-for-python/pull/26960))
+
+### Bugs Fixed
+
+- Fixed sampleRate field in ApplicationInsightsSampler, changed attribute to `_MS.sampleRate`
+    ([#26771](https://github.com/Azure/azure-sdk-for-python/pull/26771))
+
+### Other Changes
+
+- Update `README.md`
+    ([#26520](https://github.com/Azure/azure-sdk-for-python/pull/26520))
+
+## 1.0.0b8 (2022-09-26)
 
 ### Features Added
 
@@ -20,12 +70,8 @@
     ([#26224](https://github.com/Azure/azure-sdk-for-python/pull/26224))
 - Implement truncation logic for telemetry payload
     ([#26257](https://github.com/Azure/azure-sdk-for-python/pull/26257))
-
-### Breaking Changes
-
-### Bugs Fixed
-
-### Other Changes
+- Populate metric namespace with meter instrumentation scope name
+    ([#26257](https://github.com/Azure/azure-sdk-for-python/pull/26257))
 
 ## 1.0.0b7 (2022-08-12)
 

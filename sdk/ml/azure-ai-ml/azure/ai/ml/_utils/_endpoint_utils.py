@@ -4,8 +4,10 @@
 
 # pylint: disable=protected-access
 
+import ast
 import concurrent.futures
 import logging
+from pathlib import Path
 import time
 from concurrent.futures import Future
 from typing import Any, Callable, Union
@@ -24,12 +26,24 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException, MlException, ErrorCategory
 from azure.core.polling import LROPoller
 from azure.core.rest import HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
 
 module_logger = logging.getLogger(__name__)
 initialize_logger_info(module_logger, terminator="")
+
+
+def get_duration(start_time: float) -> None:
+    """Calculates the duration of the Long running operation took to finish
+
+    :param start_time: Start time
+    :type start_time: float
+    """
+    end_time = time.time()
+    duration = divmod(int(round(end_time - start_time)), 60)
+    module_logger.warning("(%sm %ss)\n", duration[0], duration[1])
 
 
 def polling_wait(
@@ -67,9 +81,7 @@ def polling_wait(
         module_logger.warning("Timeout waiting for long running operation")
 
     if start_time:
-        end_time = time.time()
-        duration = divmod(int(round(end_time - start_time)), 60)
-        module_logger.warning("(%sm %ss)\n", duration[0], duration[1])
+        get_duration(start_time)
 
 
 def local_endpoint_polling_wrapper(func: Callable, message: str, **kwargs) -> Any:
@@ -157,4 +169,44 @@ def upload_dependencies(deployment: Deployment, orchestrators: OperationOrchestr
     if isinstance(deployment, BatchDeployment) and deployment.compute:
         deployment.compute = orchestrators.get_asset_arm_id(
             deployment.compute, azureml_type=AzureMLResourceType.COMPUTE
+        )
+
+def validate_scoring_script(deployment):
+    score_script_path = Path(deployment.base_path).joinpath(
+        deployment.code_configuration.code, deployment.scoring_script
+    )
+    try:
+        with open(score_script_path, "r") as script:
+            contents = script.read()
+            try:
+                ast.parse(contents, score_script_path)
+            except Exception as err: # pylint: disable=broad-except
+                err.filename = err.filename.split("/")[-1]
+                msg = (
+                    f"Failed to submit deployment {deployment.name} due to syntax errors " # pylint: disable=no-member
+                    f"in scoring script {err.filename}.\nError on line {err.lineno}: "
+                    f"{err.text}\nIf you wish to bypass this validation use --skip-script-validation paramater."
+                )
+
+                np_msg = (
+                    "Failed to submit deployment due to syntax errors in deployment script."
+                    "\n If you wish to bypass this validation use --skip-script-validation paramater."
+                )
+                raise ValidationException(
+                    message=msg,
+                    target=(
+                        ErrorTarget.BATCH_DEPLOYMENT
+                        if isinstance(deployment, BatchDeployment)
+                        else ErrorTarget.ONLINE_DEPLOYMENT
+                    ),
+                    no_personal_data_message=np_msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.CANNOT_PARSE,
+                )
+    except Exception as err:
+        if isinstance(err, ValidationException):
+            raise err
+        raise MlException(
+            message= f"Failed to open scoring script {err.filename}.",
+            no_personal_data_message= "Failed to open scoring script.",
         )

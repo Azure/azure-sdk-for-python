@@ -8,12 +8,8 @@ import tempfile
 from io import StringIO, BytesIO
 from json import loads
 from math import ceil
-from os import (
-    urandom,
-    path,
-    remove,
-    unlink
-)
+from os import path, remove, unlink, urandom
+from unittest import mock
 
 import pytest
 from azure.core.exceptions import HttpResponseError
@@ -27,12 +23,9 @@ from azure.storage.blob._encryption import (
 )
 from cryptography.hazmat.primitives.padding import PKCS7
 
-from devtools_testutils.storage import StorageTestCase
-from encryption_test_helper import (
-    KeyWrapper,
-    KeyResolver,
-    RSAKeyWrapper,
-)
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
+from encryption_test_helper import KeyResolver, KeyWrapper, mock_urandom, RSAKeyWrapper
 from settings.testcase import BlobPreparer
 
 
@@ -46,7 +39,8 @@ _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION = 'The require_encryption flag is set, 
 # ------------------------------------------------------------------------------
 
 
-class StorageBlobEncryptionTest(StorageTestCase):
+@mock.patch('os.urandom', mock_urandom)
+class TestStorageBlobEncryption(StorageRecordedTestCase):
     # --Helpers-----------------------------------------------------------------
     def _setup(self, storage_account_name, key):
         self.bsc = BlobServiceClient(
@@ -91,9 +85,11 @@ class StorageBlobEncryptionTest(StorageTestCase):
     # --Test cases for blob encryption ----------------------------------------
 
     @BlobPreparer()
-    def test_missing_attribute_kek_wrap(self, storage_account_name, storage_account_key):
-        # In the shared method _generate_blob_encryption_key
-        self._setup(storage_account_name, storage_account_key)
+    def test_missing_attribute_kek_wrap(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
         self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
 
@@ -103,7 +99,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute wrap_key
         self.bsc.key_encryption_key = invalid_key_1
-        with self.assertRaises(AttributeError):
+        with pytest.raises(AttributeError):
             self._create_small_blob(BlobType.BlockBlob)
 
         invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
@@ -111,7 +107,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         invalid_key_2.get_kid = valid_key.get_kid
         # No attribute get_key_wrap_algorithm
         self.bsc.key_encryption_key = invalid_key_2
-        with self.assertRaises(AttributeError):
+        with pytest.raises(AttributeError):
             self._create_small_blob(BlobType.BlockBlob)
 
         invalid_key_3 = lambda: None  # functions are objects, so this effectively creates an empty object
@@ -119,12 +115,15 @@ class StorageBlobEncryptionTest(StorageTestCase):
         invalid_key_3.wrap_key = valid_key.wrap_key
         # No attribute get_kid
         self.bsc.key_encryption_key = invalid_key_2
-        with self.assertRaises(AttributeError):
+        with pytest.raises(AttributeError):
             self._create_small_blob(BlobType.BlockBlob)
 
     @BlobPreparer()
-    def test_invalid_value_kek_wrap(self, storage_account_name, storage_account_key):
-        self._setup(storage_account_name, storage_account_key)
+    def test_invalid_value_kek_wrap(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self.bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), credential=storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
 
@@ -133,21 +132,24 @@ class StorageBlobEncryptionTest(StorageTestCase):
             self._create_small_blob(BlobType.BlockBlob)
             self.fail()
         except AttributeError as e:
-            self.assertEqual(str(e), _ERROR_OBJECT_INVALID.format('key encryption key', 'get_key_wrap_algorithm'))
+            assert str(e), _ERROR_OBJECT_INVALID.format('key encryption key' == 'get_key_wrap_algorithm')
 
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.key_encryption_key.get_kid = None
-        with self.assertRaises(AttributeError):
+        with pytest.raises(AttributeError):
             self._create_small_blob(BlobType.BlockBlob)
 
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.key_encryption_key.wrap_key = None
-        with self.assertRaises(AttributeError):
+        with pytest.raises(AttributeError):
             self._create_small_blob(BlobType.BlockBlob)
 
     @BlobPreparer()
-    def test_missing_attribute_kek_unwrap(self, storage_account_name, storage_account_key):
-        # Shared between all services in decrypt_blob
+    @recorded_by_proxy
+    def test_missing_attribute_kek_unwrap(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         valid_key = KeyWrapper('key1')
@@ -161,19 +163,22 @@ class StorageBlobEncryptionTest(StorageTestCase):
         invalid_key_1.get_kid = valid_key.get_kid
         # No attribute unwrap_key
         blob.key_encryption_key = invalid_key_1
-        with self.assertRaises(HttpResponseError):
-            blob.download_blob().content_as_bytes()
+        with pytest.raises(HttpResponseError):
+            blob.download_blob().readall()
 
         invalid_key_2 = lambda: None  # functions are objects, so this effectively creates an empty object
         invalid_key_2.unwrap_key = valid_key.unwrap_key
         blob.key_encryption_key = invalid_key_2
         # No attribute get_kid
-        with self.assertRaises(HttpResponseError):
-            blob.download_blob().content_as_bytes()
+        with pytest.raises(HttpResponseError):
+            blob.download_blob().readall()
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_invalid_value_kek_unwrap(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_invalid_value_kek_unwrap(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -183,12 +188,16 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob.key_encryption_key = KeyWrapper('key1')
         blob.key_encryption_key.unwrap_key = None
 
-        with self.assertRaises(HttpResponseError) as e:
-            blob.download_blob().content_as_bytes()
-        self.assertTrue('Decryption failed.' in str(e.exception))
+        with pytest.raises(HttpResponseError) as e:
+            blob.download_blob().readall()
+        assert 'Decryption failed.' in str(e.value.message)
 
     @BlobPreparer()
-    def test_get_blob_kek(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_kek(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -198,11 +207,14 @@ class StorageBlobEncryptionTest(StorageTestCase):
         content = blob.download_blob()
 
         # Assert
-        self.assertEqual(b"".join(list(content.chunks())), self.bytes)
-
+        assert b"".join(list(content.chunks())) == self.bytes
 
     @BlobPreparer()
-    def test_get_blob_resolver(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_resolver(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -213,16 +225,19 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         self.bsc.key_encryption_key = None
-        content = blob.download_blob().content_as_bytes()
+        content = blob.download_blob().readall()
 
         # Assert
-        self.assertEqual(content, self.bytes)
+        assert content == self.bytes
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_get_blob_kek_RSA(self, storage_account_name, storage_account_key):
+    def test_get_blob_kek_RSA(self, **kwargs):
         # We can only generate random RSA keys, so this must be run live or
         # the playback test will fail due to a change in kek values.
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = RSAKeyWrapper('key2')
@@ -232,11 +247,14 @@ class StorageBlobEncryptionTest(StorageTestCase):
         content = blob.download_blob()
 
         # Assert
-        self.assertEqual(b"".join(list(content.chunks())), self.bytes)
+        assert b"".join(list(content.chunks())) == self.bytes
 
-    @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_get_blob_nonmatching_kid(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_nonmatching_kid(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -246,12 +264,16 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self.bsc.key_encryption_key.kid = 'Invalid'
 
         # Assert
-        with self.assertRaises(HttpResponseError) as e:
-            blob.download_blob().content_as_bytes()
-        self.assertTrue('Decryption failed.' in str(e.exception))
+        with pytest.raises(HttpResponseError) as e:
+            blob.download_blob().readall()
+        assert 'Decryption failed.' in str(e.value.message)
 
     @BlobPreparer()
-    def test_put_blob_invalid_stream_type(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_put_blob_invalid_stream_type(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -262,19 +284,22 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Assert
         # Block blob specific single shot
-        with self.assertRaises(TypeError) as e:
+        with pytest.raises(TypeError) as e:
             blob.upload_blob(small_stream, length=5)
-        self.assertTrue('Blob data should be of type bytes.' in str(e.exception))
+        assert 'Blob data should be of type bytes.' in str(e.value)
 
         # Generic blob chunked
-        with self.assertRaises(TypeError) as e:
+        with pytest.raises(TypeError) as e:
             blob.upload_blob(large_stream)
-        self.assertTrue('Blob data should be of type bytes.' in str(e.exception))
+        assert 'Blob data should be of type bytes.' in str(e.value)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_put_blob_chunking_required_mult_of_block_size(self, storage_account_name, storage_account_key):
+    def test_put_blob_chunking_required_mult_of_block_size(self, **kwargs):
         # parallel tests introduce random order of requests, can only run live
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -285,15 +310,18 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content, max_concurrency=3)
-        blob_content = blob.download_blob().content_as_bytes(max_concurrency=3)
+        blob_content = blob.download_blob(max_concurrency=3).readall()
 
         # Assert
-        self.assertEqual(content, blob_content)
+        assert content == blob_content
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_put_blob_chunking_required_non_mult_of_block_size(self, storage_account_name, storage_account_key):
+    def test_put_blob_chunking_required_non_mult_of_block_size(self, **kwargs):
         # parallel tests introduce random order of requests, can only run live
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -303,15 +331,18 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content, max_concurrency=3)
-        blob_content = blob.download_blob().content_as_bytes(max_concurrency=3)
+        blob_content = blob.download_blob(max_concurrency=3).readall()
 
         # Assert
-        self.assertEqual(content, blob_content)
+        assert content == blob_content
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_put_blob_chunking_required_range_specified(self, storage_account_name, storage_account_key):
+    def test_put_blob_chunking_required_range_specified(self, **kwargs):
         # parallel tests introduce random order of requests, can only run live
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -324,13 +355,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
             content,
             length=self.config.max_single_put_size + 53,
             max_concurrency=3)
-        blob_content = blob.download_blob().content_as_bytes(max_concurrency=3)
+        blob_content = blob.download_blob(max_concurrency=3).readall()
 
         # Assert
-        self.assertEqual(content[:self.config.max_single_put_size + 53], blob_content)
+        assert content[:self.config.max_single_put_size + 53] == blob_content
 
     @BlobPreparer()
-    def test_put_block_blob_single_shot(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_put_block_blob_single_shot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -340,13 +375,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob().content_as_bytes()
+        blob_content = blob.download_blob().readall()
 
         # Assert
-        self.assertEqual(content, blob_content)
+        assert content == blob_content
 
     @BlobPreparer()
-    def test_put_blob_range(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_put_blob_range(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -362,13 +401,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
             content[2:],
             length=self.config.max_single_put_size + 5,
             max_concurrency=1)
-        blob_content = blob.download_blob().content_as_bytes(max_concurrency=1)
+        blob_content = blob.download_blob().readall()
 
         # Assert
-        self.assertEqual(content[2:2 + self.config.max_single_put_size + 5], blob_content)
+        assert content[2:2 + self.config.max_single_put_size + 5] == blob_content
 
     @BlobPreparer()
-    def test_put_blob_empty(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_put_blob_empty(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -378,13 +421,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob().content_as_bytes(max_concurrency=2)
+        blob_content = blob.download_blob(max_concurrency=2).readall()
 
         # Assert
-        self.assertEqual(content, blob_content)
+        assert content == blob_content
 
     @BlobPreparer()
-    def test_put_blob_serial_upload_chunking(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_put_blob_serial_upload_chunking(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -394,13 +441,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content, max_concurrency=1)
-        blob_content = blob.download_blob().content_as_bytes(max_concurrency=1)
+        blob_content = blob.download_blob().readall()
 
         # Assert
-        self.assertEqual(content, blob_content)
+        assert content == blob_content
 
     @BlobPreparer()
-    def test_get_blob_range_beginning_to_middle(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_range_beginning_to_middle(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -410,13 +461,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content, max_concurrency=1)
-        blob_content = blob.download_blob(offset=0, length=50).content_as_bytes(max_concurrency=1)
+        blob_content = blob.download_blob(offset=0, length=50).readall()
 
         # Assert
-        self.assertEqual(content[:50], blob_content)
+        assert content[:50] == blob_content
 
     @BlobPreparer()
-    def test_get_blob_range_middle_to_end(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_range_middle_to_end(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -426,15 +481,19 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content, max_concurrency=1)
-        blob_content = blob.download_blob(offset=100, length=28).content_as_bytes()
-        blob_content2 = blob.download_blob(offset=100).content_as_bytes()
+        blob_content = blob.download_blob(offset=100, length=28).readall()
+        blob_content2 = blob.download_blob(offset=100).readall()
 
         # Assert
-        self.assertEqual(content[100:], blob_content)
-        self.assertEqual(content[100:], blob_content2)
+        assert content[100:] == blob_content
+        assert content[100:] == blob_content2
 
     @BlobPreparer()
-    def test_get_blob_range_middle_to_middle(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_range_middle_to_middle(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -444,13 +503,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob(offset=5, length=93).content_as_bytes()
+        blob_content = blob.download_blob(offset=5, length=93).readall()
 
         # Assert
-        self.assertEqual(content[5:98], blob_content)
+        assert content[5:98] == blob_content
 
     @BlobPreparer()
-    def test_get_blob_range_aligns_on_16_byte_block(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_range_aligns_on_16_byte_block(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -460,13 +523,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob(offset=48, length=16).content_as_bytes()
+        blob_content = blob.download_blob(offset=48, length=16).readall()
 
         # Assert
-        self.assertEqual(content[48:64], blob_content)
+        assert content[48:64] == blob_content
 
     @BlobPreparer()
-    def test_get_blob_range_expanded_to_beginning_block_align(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_range_expanded_to_beginning_block_align(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -476,13 +543,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob(offset=5, length=50).content_as_bytes()
+        blob_content = blob.download_blob(offset=5, length=50).readall()
 
         # Assert
-        self.assertEqual(content[5:55], blob_content)
+        assert content[5:55] == blob_content
 
     @BlobPreparer()
-    def test_get_blob_range_expanded_to_beginning_iv(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_range_expanded_to_beginning_iv(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -492,13 +563,17 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         blob.upload_blob(content)
-        blob_content = blob.download_blob(offset=22, length=20).content_as_bytes()
+        blob_content = blob.download_blob(offset=22, length=20).readall()
 
         # Assert
-        self.assertEqual(content[22:42], blob_content)
+        assert content[22:42] == blob_content
 
     @BlobPreparer()
-    def test_get_blob_range_cross_chunk(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_range_cross_chunk(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         self.bsc.require_encryption = True
@@ -513,39 +588,47 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob_content = blob.download_blob(offset=offset, length=length).readall()
 
         # Assert
-        self.assertEqual(data[offset:offset + length], blob_content)
+        assert data[offset:offset + length] == blob_content
 
     @BlobPreparer()
-    def test_put_blob_strict_mode(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_put_blob_strict_mode(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
-        content = urandom(512)
+        content = b'Hello world'
 
         # Assert
         for service in self.blob_types:
             blob_name = self._get_blob_reference(service)
             blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 blob.upload_blob(content, blob_type=service)
 
             stream = BytesIO(content)
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 blob.upload_blob(stream, length=512, blob_type=service)
 
             file_name = 'blob_strict_mode.temp.dat'
             with open(file_name, 'wb') as stream:
                 stream.write(content)
             with open(file_name, 'rb') as stream:
-                with self.assertRaises(ValueError):
+                with pytest.raises(ValueError):
                     blob.upload_blob(stream, blob_type=service)
 
-            with self.assertRaises(ValueError):
+            with pytest.raises(ValueError):
                 blob.upload_blob('To encrypt', blob_type=service)
         self._teardown(file_name)
 
     @BlobPreparer()
-    def test_get_blob_strict_mode_no_policy(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_strict_mode_no_policy(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -555,11 +638,15 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob.key_encryption_key = None
 
         # Assert
-        with self.assertRaises(ValueError):
-            blob.download_blob().content_as_bytes()
+        with pytest.raises(ValueError):
+            blob.download_blob().readall()
 
     @BlobPreparer()
-    def test_get_blob_strict_mode_unencrypted_blob(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_strict_mode_unencrypted_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         blob = self._create_small_blob(BlobType.BlockBlob)
 
@@ -568,64 +655,80 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob.key_encryption_key = KeyWrapper('key1')
 
         # Assert
-        with self.assertRaises(HttpResponseError):
-            blob.download_blob().content_as_bytes()
+        with pytest.raises(HttpResponseError):
+            blob.download_blob().readall()
 
     @BlobPreparer()
-    def test_invalid_methods_fail_block(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_invalid_methods_fail_block(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         blob_name = self._get_blob_reference(BlobType.BlockBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
-        with self.assertRaises(ValueError) as e:
-            blob.stage_block('block1', urandom(32))
-        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        with pytest.raises(ValueError) as e:
+            blob.stage_block('block1', b'hello world')
+        assert str(e.value) == _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 
-        with self.assertRaises(ValueError) as e:
+        with pytest.raises(ValueError) as e:
             blob.commit_block_list(['block1'])
-        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        assert str(e.value) == _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 
     @BlobPreparer()
-    def test_invalid_methods_fail_append(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_invalid_methods_fail_append(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         blob_name = self._get_blob_reference(BlobType.AppendBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
-        with self.assertRaises(ValueError) as e:
-            blob.append_block(urandom(32))
-        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        with pytest.raises(ValueError) as e:
+            blob.append_block(b'hello world')
+        assert str(e.value) == _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 
-        with self.assertRaises(ValueError) as e:
+        with pytest.raises(ValueError) as e:
             blob.create_append_blob()
-        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        assert str(e.value) == _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 
         # All append_from operations funnel into append_from_stream, so testing one is sufficient
-        with self.assertRaises(ValueError) as e:
+        with pytest.raises(ValueError) as e:
             blob.upload_blob(b'To encrypt', blob_type=BlobType.AppendBlob)
-        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        assert str(e.value) == _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 
     @BlobPreparer()
-    def test_invalid_methods_fail_page(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_invalid_methods_fail_page(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.key_encryption_key = KeyWrapper('key1')
         blob_name = self._get_blob_reference(BlobType.PageBlob)
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
 
         # Assert
-        with self.assertRaises(ValueError) as e:
-            blob.upload_page(urandom(512), offset=0, length=512)
-        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        with pytest.raises(ValueError) as e:
+            blob.upload_page(b'a' * 512, offset=0, length=512)
+        assert str(e.value) == _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 
-        with self.assertRaises(ValueError) as e:
+        with pytest.raises(ValueError) as e:
             blob.create_page_blob(512)
-        self.assertEqual(str(e.exception), _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION)
+        assert str(e.value) == _ERROR_UNSUPPORTED_METHOD_FOR_ENCRYPTION
 
     @BlobPreparer()
-    def test_validate_encryption(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_validate_encryption(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         kek = KeyWrapper('key1')
@@ -636,7 +739,7 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob.require_encryption = False
         blob.key_encryption_key = None
         content = blob.download_blob()
-        data = content.content_as_bytes()
+        data = content.readall()
 
         encryption_data = _dict_to_encryption_data(loads(content.properties.metadata['encryptiondata']))
         iv = encryption_data.content_encryption_IV
@@ -648,10 +751,14 @@ class StorageBlobEncryptionTest(StorageTestCase):
         content = decryptor.update(data) + decryptor.finalize()
         content = unpadder.update(content) + unpadder.finalize()
 
-        self.assertEqual(self.bytes, content)
+        assert self.bytes == content
 
     @BlobPreparer()
-    def test_create_block_blob_from_star(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_block_blob_from_star(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self._create_blob_from_star(BlobType.BlockBlob, self.bytes, self.bytes)
 
@@ -668,7 +775,11 @@ class StorageBlobEncryptionTest(StorageTestCase):
         self._teardown(file_name)
 
     @BlobPreparer()
-    def test_create_page_blob_from_star(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_create_page_blob_from_star(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         content = self.get_random_bytes(512)
         self._create_blob_from_star(BlobType.PageBlob, content, content)
@@ -693,12 +804,16 @@ class StorageBlobEncryptionTest(StorageTestCase):
         blob.require_encryption = True
         blob.upload_blob(data, blob_type=blob_type, **kwargs)
 
-        blob_content = blob.download_blob().content_as_bytes()
-        self.assertEqual(content, blob_content)
+        blob_content = blob.download_blob().readall()
+        assert content == blob_content
         blob.delete_blob()
 
     @BlobPreparer()
-    def test_get_blob_to_star(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_to_star(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -706,21 +821,24 @@ class StorageBlobEncryptionTest(StorageTestCase):
 
         # Act
         iter_blob = b"".join(list(blob.download_blob().chunks()))
-        bytes_blob = blob.download_blob().content_as_bytes()
+        bytes_blob = blob.download_blob().readall()
         stream_blob = BytesIO()
         blob.download_blob().download_to_stream(stream_blob)
         stream_blob.seek(0)
         text_blob = blob.download_blob(encoding='UTF-8').readall()
 
         # Assert
-        self.assertEqual(self.bytes, iter_blob)
-        self.assertEqual(self.bytes, bytes_blob)
-        self.assertEqual(self.bytes, stream_blob.read())
-        self.assertEqual(self.bytes.decode(), text_blob)
+        assert self.bytes == iter_blob
+        assert self.bytes == bytes_blob
+        assert self.bytes == stream_blob.read()
+        assert self.bytes.decode() == text_blob
 
     @pytest.mark.live_test_only
     @BlobPreparer()
-    def test_get_blob_read(self, storage_account_name, storage_account_key):
+    def test_get_blob_read(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')
@@ -745,7 +863,11 @@ class StorageBlobEncryptionTest(StorageTestCase):
         assert result == data
 
     @BlobPreparer()
-    def test_get_blob_read_with_other_read_operations_ranged(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_get_blob_read_with_other_read_operations_ranged(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         self._setup(storage_account_name, storage_account_key)
         self.bsc.require_encryption = True
         self.bsc.key_encryption_key = KeyWrapper('key1')

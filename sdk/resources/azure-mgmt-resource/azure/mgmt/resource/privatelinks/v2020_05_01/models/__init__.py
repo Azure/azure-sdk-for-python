@@ -18,22 +18,24 @@ from ._models_py3 import ResourceManagementPrivateLinkEndpointConnections
 from ._models_py3 import ResourceManagementPrivateLinkListResult
 from ._models_py3 import ResourceManagementPrivateLinkLocation
 
-
-from ._resource_private_link_client_enums import (
-    PublicNetworkAccessOptions,
-)
+from ._resource_private_link_client_enums import PublicNetworkAccessOptions
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ErrorAdditionalInfo',
-    'ErrorResponse',
-    'PrivateLinkAssociation',
-    'PrivateLinkAssociationGetResult',
-    'PrivateLinkAssociationObject',
-    'PrivateLinkAssociationProperties',
-    'PrivateLinkAssociationPropertiesExpanded',
-    'ResourceManagementPrivateLink',
-    'ResourceManagementPrivateLinkEndpointConnections',
-    'ResourceManagementPrivateLinkListResult',
-    'ResourceManagementPrivateLinkLocation',
-    'PublicNetworkAccessOptions',
+    "ErrorAdditionalInfo",
+    "ErrorResponse",
+    "PrivateLinkAssociation",
+    "PrivateLinkAssociationGetResult",
+    "PrivateLinkAssociationObject",
+    "PrivateLinkAssociationProperties",
+    "PrivateLinkAssociationPropertiesExpanded",
+    "ResourceManagementPrivateLink",
+    "ResourceManagementPrivateLinkEndpointConnections",
+    "ResourceManagementPrivateLinkListResult",
+    "ResourceManagementPrivateLinkLocation",
+    "PublicNetworkAccessOptions",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

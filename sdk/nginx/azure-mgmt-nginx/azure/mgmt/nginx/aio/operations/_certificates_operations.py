@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Union, cast, overload
-from urllib.parse import parse_qs, urljoin, urlparse
+import urllib.parse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.exceptions import (
@@ -15,6 +15,7 @@ from azure.core.exceptions import (
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -30,7 +31,7 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._certificates_operations import (
-    build_create_request,
+    build_create_or_update_request,
     build_delete_request,
     build_get_request,
     build_list_request,
@@ -79,12 +80,18 @@ class CertificatesOperations:
         :rtype: ~azure.mgmt.nginx.models.NginxCertificate
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NginxCertificate]
 
         request = build_get_request(
@@ -92,6 +99,7 @@ class CertificatesOperations:
             deployment_name=deployment_name,
             certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
@@ -121,7 +129,7 @@ class CertificatesOperations:
 
     get.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
 
-    async def _create_initial(
+    async def _create_or_update_initial(
         self,
         resource_group_name: str,
         deployment_name: str,
@@ -129,12 +137,18 @@ class CertificatesOperations:
         body: Optional[Union[_models.NginxCertificate, IO]] = None,
         **kwargs: Any
     ) -> _models.NginxCertificate:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NginxCertificate]
 
@@ -149,15 +163,16 @@ class CertificatesOperations:
             else:
                 _json = None
 
-        request = build_create_request(
+        request = build_create_or_update_request(
             resource_group_name=resource_group_name,
             deployment_name=deployment_name,
             certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_initial.metadata["url"],
+            template_url=self._create_or_update_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -188,10 +203,10 @@ class CertificatesOperations:
 
         return deserialized
 
-    _create_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
+    _create_or_update_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
 
     @overload
-    async def begin_create(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         deployment_name: str,
@@ -232,7 +247,7 @@ class CertificatesOperations:
         """
 
     @overload
-    async def begin_create(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         deployment_name: str,
@@ -273,7 +288,7 @@ class CertificatesOperations:
         """
 
     @distributed_trace_async
-    async def begin_create(
+    async def begin_create_or_update(
         self,
         resource_group_name: str,
         deployment_name: str,
@@ -311,19 +326,21 @@ class CertificatesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NginxCertificate]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
-            raw_result = await self._create_initial(  # type: ignore
+            raw_result = await self._create_or_update_initial(  # type: ignore
                 resource_group_name=resource_group_name,
                 deployment_name=deployment_name,
                 certificate_name=certificate_name,
                 body=body,
+                api_version=api_version,
                 content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
@@ -356,17 +373,23 @@ class CertificatesOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
+    begin_create_or_update.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Nginx.NginxPlus/nginxDeployments/{deploymentName}/certificates/{certificateName}"}  # type: ignore
 
     async def _delete_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, deployment_name: str, certificate_name: str, **kwargs: Any
     ) -> None:
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_request(
@@ -374,6 +397,7 @@ class CertificatesOperations:
             deployment_name=deployment_name,
             certificate_name=certificate_name,
             subscription_id=self._config.subscription_id,
+            api_version=api_version,
             template_url=self._delete_initial.metadata["url"],
             headers=_headers,
             params=_params,
@@ -427,8 +451,9 @@ class CertificatesOperations:
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
         polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -438,6 +463,7 @@ class CertificatesOperations:
                 resource_group_name=resource_group_name,
                 deployment_name=deployment_name,
                 certificate_name=certificate_name,
+                api_version=api_version,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -490,7 +516,12 @@ class CertificatesOperations:
         api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NginxCertificateListResponse]
 
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         def prepare_request(next_link=None):
@@ -510,10 +541,17 @@ class CertificatesOperations:
 
             else:
                 # make call to next link with the client's api-version
-                _parsed_next_link = urlparse(next_link)
-                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
                 _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"

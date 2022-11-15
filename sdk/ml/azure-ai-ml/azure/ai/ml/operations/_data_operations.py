@@ -19,8 +19,8 @@ from azure.ai.ml._artifacts._constants import (
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_02_01_preview.models import ListViewType
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -51,19 +51,20 @@ from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class DataOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: ServiceClient052022,
         datastore_operations: DatastoreOperations,
         **kwargs: Dict,
     ):
 
-        super(DataOperations, self).__init__(operation_scope)
+        super(DataOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = service_client.data_versions
         self._container_operation = service_client.data_containers
@@ -116,39 +117,44 @@ class DataOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the data asset. (mutually exclusive with version)
         :type label: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully
+            identified and retrieved. Details will be provided in the error message.
         :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
         """
-        if version and label:
-            msg = "Cannot specify both version and label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.DATA,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
+        try:
+            if version and label:
+                msg = "Cannot specify both version and label."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.DATA,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
+
+            if label:
+                return _resolve_label_to_asset(self, name, label)
+
+            if not version:
+                msg = "Must provide either version or label."
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.DATA,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.MISSING_FIELD,
+                )
+            data_version_resource = self._operation.get(
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                name=name,
+                version=version,
+                **self._init_kwargs,
             )
-
-        if label:
-            return _resolve_label_to_asset(self, name, label)
-
-        if not version:
-            msg = "Must provide either version or label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.DATA,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.MISSING_FIELD,
-            )
-        data_version_resource = self._operation.get(
-            resource_group_name=self._resource_group_name,
-            workspace_name=self._workspace_name,
-            name=name,
-            version=version,
-            **self._init_kwargs,
-        )
-
-        return Data._from_rest_object(data_version_resource)
+            return Data._from_rest_object(data_version_resource)
+        except (ValidationException, SchemaValidationError) as ex:
+            log_and_raise_error(ex)
 
     @monitor_with_activity(logger, "Data.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, data: Data) -> Data:
@@ -157,8 +163,14 @@ class DataOperations(_ScopeDependentOperations):
         If not already in storage, asset will be uploaded to the workspace's blob storage.
 
         :param data: Data asset object.
-        :type data: Data
+        :type data: azure.ai.ml.entities.Data
+        :raises ~azure.ai.ml.exceptions.AssetPathException: Raised when the Data artifact path is
+            already linked to another asset
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Data cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Data asset object.
+        :rtype: ~azure.ai.ml.entities.Data
         """
         try:
             name = data.name
@@ -225,7 +237,7 @@ class DataOperations(_ScopeDependentOperations):
             if is_url(asset_path):
                 try:
                     metadata_contents = read_remote_mltable_metadata_contents(
-                        path=asset_path,
+                        base_uri=asset_path,
                         datastore_operations=self._datastore_operation,
                         requests_pipeline=self._requests_pipeline,
                     )
@@ -234,8 +246,7 @@ class DataOperations(_ScopeDependentOperations):
                     # skip validation for remote MLTable when the contents cannot be read
                     logger.info(
                         "Unable to access MLTable metadata at path %s",
-                        asset_path,
-                        exc_info=1,
+                        asset_path
                     )
                     return
             else:
@@ -261,20 +272,21 @@ class DataOperations(_ScopeDependentOperations):
             _assert_local_path_matches_asset_type(abs_path, asset_type)
 
     def _try_get_mltable_metadata_jsonschema(
-        self, mltable_schema_url: str = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
+        self, mltable_schema_url: str
     ) -> Union[Dict, None]:
+        if mltable_schema_url is None:
+            mltable_schema_url = MLTABLE_METADATA_SCHEMA_URL_FALLBACK
         try:
             return download_mltable_metadata_schema(mltable_schema_url, self._requests_pipeline)
         except Exception:  # pylint: disable=broad-except
             logger.info(
                 'Failed to download MLTable metadata jsonschema from "%s", skipping validation',
-                mltable_schema_url,
-                exc_info=1,
+                mltable_schema_url
             )
             return None
 
     @monitor_with_activity(logger, "Data.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Archive a data asset.
 
         :param name: Name of data asset.
@@ -297,7 +309,7 @@ class DataOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Data.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Restore an archived data asset.
 
         :param name: Name of data asset.

@@ -17,15 +17,21 @@ from ._private_link_resources_operations import PrivateLinkResourcesOperations
 from ._deployments_operations import DeploymentsOperations
 from ._commitment_plans_operations import CommitmentPlansOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'AccountsOperations',
-    'DeletedAccountsOperations',
-    'ResourceSkusOperations',
-    'Operations',
-    'CognitiveServicesManagementClientOperationsMixin',
-    'CommitmentTiersOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'DeploymentsOperations',
-    'CommitmentPlansOperations',
+    "AccountsOperations",
+    "DeletedAccountsOperations",
+    "ResourceSkusOperations",
+    "Operations",
+    "CognitiveServicesManagementClientOperationsMixin",
+    "CommitmentTiersOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "DeploymentsOperations",
+    "CommitmentPlansOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

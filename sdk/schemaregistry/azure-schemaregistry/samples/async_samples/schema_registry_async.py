@@ -81,7 +81,7 @@ async def get_schema_by_id(client, schema_id):
 
 async def get_schema_by_version(client, group_name, name, version):
     print("Getting schema by version...")
-    schema = await client.get_schema_by_version(group_name, name, version)
+    schema = await client.get_schema(group_name=group_name, name=name, version=version)
     print(
         "The schema string of schema id: {} is {}".format(schema.properties.id, schema.definition)
     )
@@ -94,7 +94,7 @@ async def get_old_schema_by_version(client, group_name, name, new_definition):
     )
     print(f"Registered new schema of version: {updated_schema_properties.version}")
     old_version = updated_schema_properties.version - 1
-    schema = await client.get_schema_by_version(group_name, name, old_version)
+    schema = await client.get_schema(group_name=group_name, name=name, version=old_version)
     print(f"Retrieving old schema v{schema.properties.version}: {schema.definition}")
     return schema.definition
 

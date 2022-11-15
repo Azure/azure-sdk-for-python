@@ -132,7 +132,7 @@ def _test_parts(response):
     assert parts1.status_code == 404
     assert parts1.headers['x-ms-fun'] == 'true'
 
-@pytest.mark.skipif(sys.version_info < (3, 0), reason="Multipart serialization not supported on 2.7")
+
 def test_response_parts(port):
     old_request = _create_multiapart_request(PipelineTransportHttpRequest)
     new_request = _create_multiapart_request(RestHttpRequest)

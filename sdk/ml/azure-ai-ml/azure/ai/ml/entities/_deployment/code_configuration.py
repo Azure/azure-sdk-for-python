@@ -6,12 +6,13 @@ import logging
 
 from azure.ai.ml._restclient.v2021_10_01.models import CodeConfiguration as RestCodeConfiguration
 from azure.ai.ml.entities._assets import Code
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._mixins import DictMixin
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
 
-class CodeConfiguration:
+class CodeConfiguration(DictMixin):
     """CodeConfiguration.
 
     :param code: Code entity, defaults to None
@@ -43,6 +44,7 @@ class CodeConfiguration:
                 target=ErrorTarget.CODE,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
 
     @staticmethod

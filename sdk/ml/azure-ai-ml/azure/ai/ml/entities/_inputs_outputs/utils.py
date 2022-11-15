@@ -12,7 +12,7 @@ from enum import EnumMeta
 from inspect import Parameter, signature
 
 from azure.ai.ml.constants._component import IOConstants
-from azure.ai.ml.entities._job.pipeline._exceptions import UserErrorException
+from azure.ai.ml.exceptions  import UserErrorException
 
 
 def is_parameter_group(obj):
@@ -59,7 +59,7 @@ def _get_annotation_cls_by_type(t: type, raise_error=False, optional=None):
 
 
 # pylint: disable=too-many-statements
-def _get_param_with_standard_annotation(cls_or_func, is_func=False):
+def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=None):
     """Standardize function parameters or class fields with dsl.types
     annotation."""
     # TODO: we'd better remove this potential recursive import
@@ -207,20 +207,69 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False):
             }
         )
 
+    skip_params = skip_params or []
     inherited_fields = _get_inherited_fields()
     # From annotations get field with type
     annotations = getattr(cls_or_func, "__annotations__", {})
+    annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
     # Update fields use class field with defaults from class dict or signature(func).paramters
     if not is_func:
         # Only consider public fields in class dict
-        defaults_dict = {key: val for key, val in cls_or_func.__dict__.items() if not key.startswith("_")}
+        defaults_dict = {
+            key: val for key, val in cls_or_func.__dict__.items()
+            if not key.startswith("_") and key not in skip_params
+        }
     else:
         # Infer parameter type from value if is function
-        defaults_dict = {key: val.default for key, val in signature(cls_or_func).parameters.items()}
+        defaults_dict = {
+            key: val.default for key, val in signature(cls_or_func).parameters.items()
+            if key not in skip_params
+        }
     fields = _update_fields_with_default(annotation_fields, defaults_dict)
     all_fields = _merge_and_reorder(inherited_fields, fields)
     return all_fields
+
+
+def _update_io_from_mldesigner(annotations: dict) -> dict:
+    """This function will translate IOBase from mldesigner package to azure.ml.entities.Input/Output.
+
+    This function depend on `mldesigner._input_output._IOBase._to_io_entity_args_dict` to translate Input/Output
+    instance annotations to IO entities.
+    This function depend on class names of `mldesigner._input_output` to translate Input/Output class annotations
+    to IO entities.
+    """
+    from azure.ai.ml import Input, Output
+    mldesigner_pkg = "mldesigner"
+
+    def _is_input_or_output_type(io: type, type_str: str):
+        """Return true if type name contains type_str"""
+        if isinstance(io, type) and io.__module__.startswith(mldesigner_pkg):
+            if type_str in io.__name__:
+                return True
+        return False
+
+    result = {}
+    for key, io in annotations.items():
+        if isinstance(io, type):
+            if _is_input_or_output_type(io, "Input"):
+                # mldesigner.Input -> entities.Input
+                io = Input
+            elif _is_input_or_output_type(io, "Output"):
+                # mldesigner.Output -> entities.Output
+                io = Output
+        elif hasattr(io, "_to_io_entity_args_dict"):
+            try:
+                if _is_input_or_output_type(type(io), "Input"):
+                    # mldesigner.Input() -> entities.Input()
+                    io = Input(**io._to_io_entity_args_dict())
+                elif _is_input_or_output_type(type(io), "Output"):
+                    # mldesigner.Output() -> entities.Output()
+                    io = Output(**io._to_io_entity_args_dict())
+            except BaseException as e:
+                raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
+        result[key] = io
+    return result
 
 
 def _remove_empty_values(data, ignore_keys=None):

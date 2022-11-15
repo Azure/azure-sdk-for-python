@@ -9,7 +9,14 @@
 import datetime
 from typing import Any, Callable, Dict, Optional, TypeVar, Union
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +27,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._metrics_operations import build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class MetricsOperations:
     """
@@ -42,7 +51,6 @@ class MetricsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def list(
         self,
@@ -54,12 +62,12 @@ class MetricsOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         filter: Optional[str] = None,
-        result_type: Optional[Union[str, "_models.ResultType"]] = None,
+        result_type: Optional[Union[str, _models.ResultType]] = None,
         **kwargs: Any
     ) -> _models.Response:
         """**Lists the metric values for a resource**.
 
-        :param resource_uri: The identifier of the resource.
+        :param resource_uri: The identifier of the resource. Required.
         :type resource_uri: str
         :param timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Default value is None.
@@ -90,28 +98,30 @@ class MetricsOperations:
          B eq ‘\ *’ and C eq ‘*\ ’**. Default value is None.
         :type filter: str
         :param result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details. Default value is None.
+         operation. See the operation's description for details. Known values are: "Data" and
+         "Metadata". Default value is None.
         :type result_type: str or ~$(python-base-namespace).v2017_05_01_preview.models.ResultType
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: Response, or the result of cls(response)
+        :return: Response or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2017_05_01_preview.models.Response
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2017-05-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.Response]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2017-05-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Response]
 
-        
         request = build_list_request(
             resource_uri=resource_uri,
-            api_version=api_version,
             timespan=timespan,
             interval=interval,
             metric=metric,
@@ -120,7 +130,8 @@ class MetricsOperations:
             orderby=orderby,
             filter=filter,
             result_type=result_type,
-            template_url=self.list.metadata['url'],
+            api_version=api_version,
+            template_url=self.list.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -128,10 +139,9 @@ class MetricsOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -139,12 +149,11 @@ class MetricsOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('Response', pipeline_response)
+        deserialized = self._deserialize("Response", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    list.metadata = {'url': "/{resourceUri}/providers/microsoft.insights/metrics"}  # type: ignore
-
+    list.metadata = {"url": "/{resourceUri}/providers/microsoft.insights/metrics"}  # type: ignore

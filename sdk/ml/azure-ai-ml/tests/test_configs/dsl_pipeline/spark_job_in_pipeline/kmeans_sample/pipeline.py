@@ -10,7 +10,7 @@ cluster_name = "cpu-cluster"
 
 
 def generate_dsl_pipeline_from_yaml() -> PipelineJob:
-    spark_component_func = load_component(path=parent_dir + "/component.yml")
+    spark_component_func = load_component(parent_dir + "/component.yml")
 
     @dsl.pipeline(description="submit a pipeline with spark job")
     def spark_pipeline_from_yaml(sample_data):

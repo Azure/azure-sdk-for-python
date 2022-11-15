@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
 import six
 
@@ -17,7 +17,6 @@ from .._internal.interactive import _build_auth_record
 from .._internal.msal_credentials import MsalCredential
 
 if TYPE_CHECKING:
-    from typing import Any, List, Optional
     import msal
     from .. import AuthenticationRecord
 
@@ -48,13 +47,17 @@ class OnBehalfOfCredential(MsalCredential, GetTokenMixin):
         is a unicode string, it will be encoded as UTF-8. If the certificate requires a different encoding, pass
         appropriately encoded bytes instead.
     :paramtype password: str or bytes
-    :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
-        may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-        any tenant the application is installed.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id, client_id, **kwargs):
-        # type: (str, str, **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            **kwargs
+    ) -> None:
         self._assertion = kwargs.pop("user_assertion", None)
         if not self._assertion:
             raise TypeError('"user_assertion" is required.')

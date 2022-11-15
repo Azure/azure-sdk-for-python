@@ -44,7 +44,7 @@ class Asset(Resource):
         self._auto_increment_version = kwargs.pop("auto_increment_version", False)
 
         if not name and version is None:
-            name = str(uuid.uuid4())
+            name = _get_random_name()
             version = "1"
             self._is_anonymous = True
         elif version is not None and not name:
@@ -72,7 +72,6 @@ class Asset(Resource):
     @abstractmethod
     def _to_dict(self) -> Dict:
         """Dump the artifact content into a pure dict object."""
-        pass
 
     @property
     def version(self) -> str:
@@ -95,9 +94,7 @@ class Asset(Resource):
         self._version = value
         self._auto_increment_version = self.name and not self._version
 
-    def dump(
-        self, *args, dest: Union[str, PathLike, IO[AnyStr]] = None, path: Union[str, PathLike] = None, **kwargs
-    ) -> None:
+    def dump(self, dest: Union[str, PathLike, IO[AnyStr]], **kwargs) -> None:
         """Dump the asset content into a file in yaml format.
 
         :param dest: The destination to receive this asset's content.
@@ -107,15 +104,10 @@ class Asset(Resource):
             If dest is an open file, the file will be written to directly,
             and an exception will be raised if the file is not writable.
         :type dest: Union[PathLike, str, IO[AnyStr]]
-        :param path: Deprecated path to a local file as the target, a new file
-            will be created, raises exception if the file exists.
-            It's recommended what you change 'path=' inputs to 'dest='.
-            The first unnamed input of this function will also be treated like
-            a path input.
-        :type path: Union[str, Pathlike]
         """
+        path = kwargs.pop("path", None)
         yaml_serialized = self._to_dict()
-        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, args=args, **kwargs)
+        dump_yaml_to_file(dest, yaml_serialized, default_flow_style=False, path=path, **kwargs)
 
     def __eq__(self, other) -> bool:
         return (
@@ -132,3 +124,7 @@ class Asset(Resource):
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
+
+
+def _get_random_name() -> str:
+    return str(uuid.uuid4())

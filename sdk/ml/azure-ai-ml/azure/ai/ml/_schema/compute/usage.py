@@ -7,7 +7,7 @@
 from marshmallow import fields
 from marshmallow.decorators import post_load
 
-from azure.ai.ml._restclient.v2021_10_01.models import UsageUnit
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake

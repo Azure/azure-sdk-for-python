@@ -11,14 +11,14 @@ from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient2022_05_01
 from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreSecrets, NoneDatastoreCredentials
-from azure.ai.ml._scope_dependent_operations import OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.exceptions import ValidationException
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class DatastoreOperations(_ScopeDependentOperations):
@@ -30,9 +30,13 @@ class DatastoreOperations(_ScopeDependentOperations):
     """
 
     def __init__(
-        self, operation_scope: OperationScope, serviceclient_2022_05_01: ServiceClient2022_05_01, **kwargs: Dict
+        self,
+        operation_scope: OperationScope,
+        operation_config: OperationConfig,
+        serviceclient_2022_05_01: ServiceClient2022_05_01,
+        **kwargs: Dict
     ):
-        super(DatastoreOperations, self).__init__(operation_scope)
+        super(DatastoreOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._operation = serviceclient_2022_05_01.datastores
         self._credential = serviceclient_2022_05_01._config.credential
@@ -98,16 +102,18 @@ class DatastoreOperations(_ScopeDependentOperations):
         :return: Datastore with the specified name.
         :rtype: Datastore
         """
-
-        datastore_resource = self._operation.get(
-            name=name,
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            **self._init_kwargs
-        )
-        if include_secrets:
-            self._fetch_and_populate_secret(datastore_resource)
-        return Datastore._from_rest_object(datastore_resource)
+        try:
+            datastore_resource = self._operation.get(
+                name=name,
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                **self._init_kwargs
+            )
+            if include_secrets:
+                self._fetch_and_populate_secret(datastore_resource)
+            return Datastore._from_rest_object(datastore_resource)
+        except (ValidationException, SchemaValidationError) as ex:
+            log_and_raise_error(ex)
 
     def _fetch_and_populate_secret(self, datastore_resource: DatastoreData) -> None:
         if datastore_resource.name and not isinstance(
@@ -125,16 +131,18 @@ class DatastoreOperations(_ScopeDependentOperations):
         :return: The default datastore.
         :rtype: Datastore
         """
-
-        datastore_resource = self._operation.list(
-            resource_group_name=self._operation_scope.resource_group_name,
-            workspace_name=self._workspace_name,
-            is_default=True,
-            **self._init_kwargs
-        ).next()
-        if include_secrets:
-            self._fetch_and_populate_secret(datastore_resource)
-        return Datastore._from_rest_object(datastore_resource)
+        try:
+            datastore_resource = self._operation.list(
+                resource_group_name=self._operation_scope.resource_group_name,
+                workspace_name=self._workspace_name,
+                is_default=True,
+                **self._init_kwargs
+            ).next()
+            if include_secrets:
+                self._fetch_and_populate_secret(datastore_resource)
+            return Datastore._from_rest_object(datastore_resource)
+        except (ValidationException, SchemaValidationError) as ex:
+            log_and_raise_error(ex)
 
     @monitor_with_activity(logger, "Datastore.CreateOrUpdate", ActivityType.PUBLICAPI)
     def create_or_update(self, datastore: Datastore) -> Datastore:
@@ -156,7 +164,7 @@ class DatastoreOperations(_ScopeDependentOperations):
                 skip_validation=True,
             )
             return Datastore._from_rest_object(datastore_resource)
-        except Exception as ex:
+        except Exception as ex: # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:

@@ -2,13 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
-
 from .._internal.client_credential_base import ClientCredentialBase
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, List
 
 
 class ClientSecretCredential(ClientCredentialBase):
@@ -24,13 +18,18 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword cache_persistence_options: Configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword List[str] additionally_allowed_tenants: Optional additional tenant ids for which the credential
-        may acquire tokens. Add the wildcard value "*" to allow the credential to acquire tokens for
-        any tenant the application is installed.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
     """
 
-    def __init__(self, tenant_id, client_id, client_secret, **kwargs):
-        # type: (str, str, str, **Any) -> None
+    def __init__(
+            self,
+            tenant_id: str,
+            client_id: str,
+            client_secret: str,
+            **kwargs
+    ) -> None:
         if not client_id:
             raise ValueError("client_id should be the id of an Azure Active Directory application")
         if not client_secret:

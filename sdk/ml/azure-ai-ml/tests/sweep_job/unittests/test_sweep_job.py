@@ -1,6 +1,6 @@
 import pytest
 
-from azure.ai.ml import UserIdentity
+from azure.ai.ml import UserIdentityConfiguration
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.entities import CommandJob, CommandJobLimits, Job
 from azure.ai.ml.entities._assets import Code
@@ -22,6 +22,7 @@ from azure.ai.ml.sweep import (
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestSweepJob:
     def test_sweep_job_top_level_properties(self):
         command_job = CommandJob(
@@ -43,7 +44,7 @@ class TestSweepJob:
             inputs={"input1": {"path": "top_level.csv", "type": "uri_file", "mode": "ro_mount"}},
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
-            identity=UserIdentity(),
+            identity=UserIdentityConfiguration(),
         )
         rest = sweep._to_rest_object()
         sweep_job: SweepJob = Job._from_rest_object(rest)
@@ -205,7 +206,7 @@ class TestSweepJob:
             display_name="builder-sweep-job-display",
             compute="testCompute",
             experiment_name="mfe-test1-dataset",
-            identity=UserIdentity(),
+            identity=UserIdentityConfiguration(),
             tags={"tag1": "value1"},
             properties={"prop1": "value1"},
             distribution=MpiDistribution(),
@@ -255,7 +256,7 @@ class TestSweepJob:
             display_name="builder-sweep-job-display",
             compute="sweep-compute",
             experiment_name="mfe-test1-dataset",
-            identity=UserIdentity(),
+            identity=UserIdentityConfiguration(),
             tags={"tag1": "value1"},
             properties={"prop1": "value1"},
             objective=Objective(goal="maximize", primary_metric="accuracy"),
@@ -285,7 +286,7 @@ class TestSweepJob:
             MpiDistribution(process_count_per_instance=2),
             PyTorchDistribution(process_count_per_instance=4),
             TensorFlowDistribution(parameter_server_count=2, worker_count=10),
-        ]
+        ],
     )
     def test_sweep_job_trial_distribution_to_rest(self, distribution) -> None:
         command_job = CommandJob(
@@ -306,7 +307,7 @@ class TestSweepJob:
             inputs={"input1": {"path": "top_level.csv", "type": "uri_file", "mode": "ro_mount"}},
             compute="top_level",
             limits=SweepJobLimits(trial_timeout=600),
-            identity=UserIdentity(),
+            identity=UserIdentityConfiguration(),
         )
 
         rest_obj = sweep._to_rest_object()

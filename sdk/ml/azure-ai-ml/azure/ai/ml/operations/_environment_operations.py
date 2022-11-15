@@ -15,8 +15,13 @@ from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
 )
 from azure.ai.ml._restclient.v2022_02_01_preview.models import EnvironmentVersionData, ListViewType
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope, _ScopeDependentOperations
-from azure.ai.ml._telemetry import AML_INTERNAL_LOGGER_NAMESPACE, ActivityType, monitor_with_activity
+from azure.ai.ml._scope_dependent_operations import (
+    OperationConfig,
+    OperationsContainer,
+    OperationScope,
+    _ScopeDependentOperations,
+)
+from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -30,7 +35,7 @@ from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class EnvironmentOperations(_ScopeDependentOperations):
@@ -44,11 +49,12 @@ class EnvironmentOperations(_ScopeDependentOperations):
     def __init__(
         self,
         operation_scope: OperationScope,
+        operation_config: OperationConfig,
         service_client: Union[ServiceClient052022, ServiceClient102021Dataplane],
         all_operations: OperationsContainer,
         **kwargs: Any,
     ):
-        super(EnvironmentOperations, self).__init__(operation_scope)
+        super(EnvironmentOperations, self).__init__(operation_scope, operation_config)
         ops_logger.update_info(kwargs)
         self._kwargs = kwargs
         self._containers_operations = service_client.environment_containers
@@ -66,8 +72,12 @@ class EnvironmentOperations(_ScopeDependentOperations):
         """Returns created or updated environment asset.
 
         :param environment: Environment object
-        :type environment: Environment
+        :type environment: ~azure.ai.ml.entities._assets.Environment
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
+            Details will be provided in the error message.
+        :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: Created or updated Environment object
+        :rtype: ~azure.ai.ml.entities.Environment
         """
         try:
             sas_uri = None
@@ -140,7 +150,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
             if not env_rest_obj and self._registry_name:
                 env_rest_obj = self._get(name=environment.name, version=environment.version)
             return Environment._from_rest_object(env_rest_obj)
-        except Exception as ex:
+        except Exception as ex: # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -191,7 +201,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :type version: str
         :param label: Label of the environment. (mutually exclusive with version)
         :type label: str
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
+            Details will be provided in the error message.
         :return: Environment object
+        :rtype: ~azure.ai.ml.entities.Environment
         """
         if version and label:
             msg = "Cannot specify both version and label."
@@ -274,7 +287,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Archive an environment or an environment version.
 
         :param name: Name of the environment.
@@ -296,7 +309,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Restore an archived environment version.
 
         :param name: Name of the environment.

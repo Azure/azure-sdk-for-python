@@ -17,6 +17,14 @@ cd <swagger-folder>
 autorest
 ```
 
+1) After generation, run the [postprocessing](https://github.com/Azure/autorest.python/blob/autorestv3/docs/customizations.md#postprocessing) script to fix linting issues in the runtime library.
+
+`autorest --postprocess --output-folder=<path-to-root-of-package> --perform-load=false --python`
+
+2) Revert the changes made by the script in all files except:
+.../azure-sdk-for-python/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/_operations/__init__.py
+.../azure-sdk-for-python/sdk/cognitivelanguage/azure-ai-language-questionanswering/azure/ai/language/questionanswering/aio/_operations/__init__.py
+
 ### Settings
 
 ```yaml
@@ -27,7 +35,7 @@ clear-output-folder: true
 no-namespace-folders: true
 python: true
 version-tolerant: true
-package-version: 1.1.0b3
+package-version: 1.1.0
 add-credential: true
 credential-default-policy-type: AzureKeyCredentialPolicy
 credential-key-header-name: Ocp-Apim-Subscription-Key
@@ -38,17 +46,17 @@ black: true
 
 ```yaml
 batch:
-  - tag: release_runtime_1_1_preview
-  - tag: release_authoring_1_1_preview
+  - tag: release_runtime_1_1
+  - tag: release_authoring_1_1
 ```
 
 
 ## Runtime
 
-These settings apply only when `--tag=release_runtime_1_1_preview` is specified on the command line.
+These settings apply only when `--tag=release_runtime_1_1` is specified on the command line.
 
-```yaml $(tag) == 'release_runtime_1_1_preview'
-input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/34a2c0723155d134311419fd997925ce96b85bec/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering.json
+```yaml $(tag) == 'release_runtime_1_1'
+input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/59ad2b7dd63e952822aa51e11a26a0af5724f996/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering.json
 output-folder: ../azure/ai/language/questionanswering
 models-mode: msrest
 title: QuestionAnsweringClient
@@ -56,17 +64,79 @@ title: QuestionAnsweringClient
 
 ## Authoring
 
-These settings apply only when `--tag=release_authoring_1_1_preview` is specified on the command line.
+These settings apply only when `--tag=release_authoring_1_1` is specified on the command line.
 
-```yaml $(tag) == 'release_authoring_1_1_preview'
+```yaml $(tag) == 'release_authoring_1_1'
 input-file: https://raw.githubusercontent.com/Azure/azure-rest-api-specs/59ad2b7dd63e952822aa51e11a26a0af5724f996/specification/cognitiveservices/data-plane/Language/stable/2021-10-01/questionanswering-authoring.json
 output-folder: ../azure/ai/language/questionanswering/authoring
-title: QuestionAnsweringAuthoringClient
+title: AuthoringClient
 ```
 
 
 
 ## Customizations
+
+### General customizations
+
+#### Add docs to authoring operations
+
+```yaml
+directive:
+- from: questionanswering-authoring.json
+  where: $.paths.*.*
+  transform: |
+    var operationId = $.operationId.replace(/_/g, "/").replace(/([a-z0-9])([A-Z])/g, "$1-$2").toLowerCase();
+    $.description = "See https://learn.microsoft.com/rest/api/cognitiveservices/questionanswering/" + operationId + " for more information.";
+```
+
+```yaml
+# Define HTTP 200 responses for LROs to document result model.
+# Note there is no transform for DeleteProject. This should return None.
+directive:
+- where-operation: QuestionAnsweringProjects_DeployProject
+  transform: |
+    $.responses["200"] = {
+      description: "Project deployment details.",
+      schema: {
+        "$ref": "#/definitions/ProjectDeployment"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_Import
+  transform: |
+    $.responses["200"] = {
+      description: "Gets the status of an Import job.",
+      schema: {
+        "$ref": "#/definitions/JobState"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_UpdateQnas
+  transform: |
+    $["x-ms-pageable"] = {
+      "nextLinkName": "nextLink",
+      "itemName": "value"
+    };
+    $.responses["200"] = {
+      description: "All the QnAs of a project.",
+      schema: {
+        "$ref": "#/definitions/QnaAssets"
+      }
+    };
+- where-operation: QuestionAnsweringProjects_UpdateSources
+  transform: |
+    $["x-ms-pageable"] = {
+      "nextLinkName": "nextLink",
+      "itemName": "value"
+    };
+    $.responses["200"] = {
+      description: "All the sources of a project.",
+      schema: {
+        "$ref": "#/definitions/QnaSources"
+      }
+    };
+```
+
+
+### Python Customizations
 
 ### Runtime
 
@@ -273,4 +343,14 @@ directive:
     where: $["paths"]["/query-knowledgebases/projects/{projectName}"]["patch"]
     transform: >
         $["parameters"][1]["x-ms-client-name"] = "options";
+```
+
+#### Rename format parameter
+
+```yaml
+directive:
+  - from: swagger-document
+    where: $["parameters"]["ImportExportFormatParameter"]
+    transform: >
+        $["x-ms-client-name"] = "file_format";
 ```
