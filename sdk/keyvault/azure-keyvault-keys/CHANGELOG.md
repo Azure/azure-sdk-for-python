@@ -3,14 +3,15 @@
 ## 4.8.0b2 (2022-11-15)
 
 ### Features Added
+- Added support for service API version `7.4-preview.1`
 - `KeyClient` has a `create_okp_key` method to create an octet key pair (OKP) on Managed HSM
 - Added `eddsa` to `SignatureAlgorithm` enum to support signing and verifying using an
   Edwards-Curve Digital Signature Algorithm (EdDSA) on Managed HSM
 - Added `okp` and `okp_hsm` to `KeyType` enum for octet key pairs
 - Added `ed25519` to `KeyCurveName` enum to support use of the Ed25519 Edwards curve
-- Key Vault API version 7.4-preview.1 is now the default
 
 ### Other Changes
+- Key Vault API version `7.4-preview.1` is now the default
 - Dropped `msrest` requirement
 - Dropped `six` requirement
 - Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
