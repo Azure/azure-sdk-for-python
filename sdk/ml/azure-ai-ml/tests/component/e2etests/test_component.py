@@ -230,7 +230,6 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="registry_component_name",
         )
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
             "entry": {"file": "add_greeting_column.py"},
@@ -245,13 +244,11 @@ class TestComponent(AzureRecordedTestCase):
             },
             "args": "--file_input ${{inputs.file_input}}",
             "description": "Aml Spark add greeting column test module",
-            "tags": {},
             "version": "1",
             "$schema": "https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json",
             "display_name": "Aml Spark add greeting column test module",
             "is_deterministic": True,
             "inputs": {"file_input": {"type": "uri_file"}},
-            "outputs": {},
             "type": "spark",
         }
         assert_component_basic_workflow(

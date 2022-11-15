@@ -799,7 +799,7 @@ class TestPipelineJobEntity:
         assert actual_dict == expected_dict
 
     def test_default_user_identity_if_empty_identity_input(self):
-        test_path = "./tests/test_configs/pipeline_jobs/shakespear-sample-and-word-count-using-spark/pipeline.yml"
+        test_path = "./tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml"
         job = load_job(test_path)
         omit_fields = [
             "jobs.sample_word.componentId",
