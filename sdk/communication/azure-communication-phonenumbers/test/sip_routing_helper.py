@@ -4,20 +4,24 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import uuid
+import os
 
-def get_randomised_domain():
-    return "." + uuid.uuid4().hex + ".com"
+from devtools_testutils import is_live
 
-def get_trunk_with_actual_domain(trunk_fqdn, actual_trunk_fqdn):
-    actual_domain = actual_trunk_fqdn.split(".",1)[1]
-    return trunk_fqdn[0:5] + actual_domain
+from azure_devtools.scenario_tests import RecordingProcessor
+
+def get_user_domain():
+    if(is_live()):
+        sip_domain = os.getenv("AZURE_TEST_SIP_DOMAIN")
+        assert sip_domain is not None, "Missing AZURE_TEST_SIP_DOMAIN environment variable."
+        return os.getenv("AZURE_TEST_SIP_DOMAIN")
+    return "sanitized.com"
 
 def trunks_are_equal(response_trunks, request_trunks):
     assert len(response_trunks) == len(request_trunks), "Length of trunk list doesn't match."
 
     for k in range(len(request_trunks)):
-        assert _compare_fqdns_domain_agnostic(response_trunks[k].fqdn, request_trunks[k].fqdn), "Trunk FQDNs don't match."
+        assert response_trunks[k].fqdn == request_trunks[k].fqdn, "Trunk FQDNs don't match."
         assert (
             response_trunks[k].sip_signaling_port==request_trunks[k].sip_signaling_port
         ), "SIP signaling ports don't match."
@@ -33,9 +37,23 @@ def routes_are_equal(response_routes, request_routes):
         ), "Number patterns don't match."
         assert len(request_routes[k].trunks) == len(response_routes[k].trunks), "Trunk lists length doesn't match."
         for m in range(len(request_routes[k].trunks)):
-            assert _compare_fqdns_domain_agnostic(request_routes[k].trunks[m], response_routes[k].trunks[m]) , "Trunk lists don't match."
+            assert request_routes[k].trunks[m] == response_routes[k].trunks[m] , "Trunk lists don't match."
 
-def _compare_fqdns_domain_agnostic(trunk1_fqdn, trunk2_fqdn):
-    trunk1_fqdn_no_domain = trunk1_fqdn.split(".",)[0]
-    trunk2_fqdn_no_domain = trunk2_fqdn.split(".",)[0]
-    return trunk1_fqdn_no_domain == trunk2_fqdn_no_domain
+class DomainReplacerProcessor(RecordingProcessor):
+    """Sanitize the sensitive info inside request or response bodies"""
+
+    def __init__(self, replacement="sanitized.com", domain=None):
+        self._replacement = replacement
+        self._domain = domain
+        
+    def process_request(self, request):
+        if request.body is not None:
+            request.body = request.body.decode().replace(self._domain,self._replacement).encode()
+
+        return request
+
+    def process_response(self, response):
+        if response['body']['string']:
+            response['body']['string'] = response['body']['string'].replace(self._domain,self._replacement)
+
+        return response

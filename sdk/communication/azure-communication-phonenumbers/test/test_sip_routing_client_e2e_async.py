@@ -4,10 +4,12 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
+
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.helper import URIReplacerProcessor
 from _shared.utils import async_create_token_credential, get_http_logging_policy
-from sip_routing_helper import get_randomised_domain, get_trunk_with_actual_domain, trunks_are_equal, routes_are_equal
+from sip_routing_helper import DomainReplacerProcessor, get_user_domain, trunks_are_equal, routes_are_equal
 
 from azure.communication.phonenumbers.siprouting.aio import SipRoutingClient
 from azure.communication.phonenumbers.siprouting._generated.models import SipTrunkRoute
@@ -15,11 +17,15 @@ from azure.communication.phonenumbers.siprouting._models import SipTrunk
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
 class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
-    # Tests have to use randomised domain, because of domain name collision check on BE. It returns errror, if trunk domain is already used with any other ACS resource.
-    randomisedDomain = get_randomised_domain()
-    additionalTrunkFqdn = "sbs3" + randomisedDomain
-    TRUNKS = [SipTrunk(fqdn="sbs1" + randomisedDomain, sip_signaling_port=1122), SipTrunk(fqdn="sbs2" + randomisedDomain, sip_signaling_port=1123)]
-    ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\\+123[0-9]+", trunks=["sbs1" + randomisedDomain])]
+    os.environ["COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING"] = "endpoint=https://jb-sdk-e2e-test.communication.azure.com/;accesskey=hFczbnt24ZdYed5wVNS8vS+Vp13Zj00edAPJ/d6Wo16PZORrypOwIk0B1V+pGgMmzU4+3ypbL4oqLwOG6gfNtg=="
+    os.environ["AZURE_TEST_RUN_LIVE"] = "False"
+    os.environ["AZURE_TEST_SIP_DOMAIN"] = "gfgfgfgfg.net"
+
+    user_domain = get_user_domain()
+    additionalTrunkFqdn = "sbs3." + user_domain
+
+    TRUNKS = [SipTrunk(fqdn="sbs1." + user_domain, sip_signaling_port=1122), SipTrunk(fqdn="sbs2." + user_domain, sip_signaling_port=1123)]
+    ROUTES = [SipTrunkRoute(name="First rule", description="Handle numbers starting with '+123'", number_pattern="\\+123[0-9]+", trunks=["sbs1." + user_domain])]
 
     def __init__(self, method_name):
         super(TestSipRoutingClientE2EAsync, self).__init__(method_name)
@@ -29,7 +35,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
         )
-        self.recording_processors.extend([URIReplacerProcessor()])
+        self.recording_processors.extend([URIReplacerProcessor(), DomainReplacerProcessor(domain=get_user_domain())])
 
     async def _prepare_test(self):
         await self._sip_routing_client.set_routes([])
@@ -157,9 +163,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
     async def test_get_trunk(self):
         await self._prepare_test()
         async with self._sip_routing_client:
-            actual_trunks = await self._sip_routing_client.get_trunks()
-            trunk_actual_domain = get_trunk_with_actual_domain(self.TRUNKS[0].fqdn, actual_trunks[0].fqdn)
-            trunk = await self._sip_routing_client.get_trunk(trunk_actual_domain)
+            trunk = await self._sip_routing_client.get_trunk(self.TRUNKS[0].fqdn)
         assert trunk is not None, "No trunk was returned."
         trunks_are_equal([trunk],[self.TRUNKS[0]]), "Returned trunk does not match the required trunk."
 
@@ -168,9 +172,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         await self._prepare_test()
         self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
-            actual_trunks = await self._sip_routing_client.get_trunks()
-            trunk_actual_domain = get_trunk_with_actual_domain(self.TRUNKS[0].fqdn, actual_trunks[0].fqdn)
-            trunk = await self._sip_routing_client.get_trunk(trunk_actual_domain)
+            trunk = await self._sip_routing_client.get_trunk(self.TRUNKS[0].fqdn)
         assert trunk is not None, "No trunk was returned."
         trunks_are_equal([trunk],[self.TRUNKS[0]]), "Returned trunk does not match the required trunk."
         

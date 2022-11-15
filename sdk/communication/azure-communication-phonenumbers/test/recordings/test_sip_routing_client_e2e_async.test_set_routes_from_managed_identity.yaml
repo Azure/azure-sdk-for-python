@@ -11,23 +11,23 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 09 Nov 2022 12:02:14 GMT
+      - Tue, 15 Nov 2022 12:25:37 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
   response:
     body:
-      string: '{"trunks":{"sbs1.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1122},"sbs2.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1123}},"routes":[]}'
+      string: '{"trunks":{"sbs1.sanitized.com":{"sipSignalingPort":1122},"sbs2.sanitized.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       api-supported-versions: 2021-05-01-preview, 2022-09-01-preview
       content-type: application/json; charset=utf-8
-      date: Wed, 09 Nov 2022 12:02:12 GMT
-      ms-cv: edHOE83V10yiRYYuhFYX7g.0
+      date: Tue, 15 Nov 2022 12:25:30 GMT
+      ms-cv: zGhP2MVjQkGCe3yNHtcAuQ.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 190ms
+      x-processing-time: 183ms
     status:
       code: 200
       message: OK
@@ -40,69 +40,69 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 09 Nov 2022 12:02:14 GMT
+      - Tue, 15 Nov 2022 12:25:38 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
     uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
   response:
     body:
-      string: '{"trunks":{"sbs1.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1122},"sbs2.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1123}},"routes":[]}'
+      string: '{"trunks":{"sbs1.sanitized.com":{"sipSignalingPort":1122},"sbs2.sanitized.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       api-supported-versions: 2021-05-01-preview, 2022-09-01-preview
       content-type: application/json; charset=utf-8
-      date: Wed, 09 Nov 2022 12:02:12 GMT
-      ms-cv: /X5yqCV56Em8tic19G7Apw.0
+      date: Tue, 15 Nov 2022 12:25:30 GMT
+      ms-cv: QJLZUg/N8EKuoHYl+HujSg.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 91ms
+      x-processing-time: 97ms
     status:
       code: 200
       message: OK
     url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
 - request:
-    body: '{"trunks": {"sbs1.00035101e6744cde8e2dd763e44696ee.com": {"sipSignalingPort":
-      1122}, "sbs2.00035101e6744cde8e2dd763e44696ee.com": {"sipSignalingPort": 1123}}}'
+    body: '{"trunks": {"sbs1.sanitized.com": {"sipSignalingPort": 1122}, "sbs2.sanitized.com":
+      {"sipSignalingPort": 1123}}}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '158'
+      - '112'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 09 Nov 2022 12:02:14 GMT
+      - Tue, 15 Nov 2022 12:25:38 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
     uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
   response:
     body:
-      string: '{"trunks":{"sbs1.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1122},"sbs2.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1123}},"routes":[]}'
+      string: '{"trunks":{"sbs1.sanitized.com":{"sipSignalingPort":1122},"sbs2.sanitized.com":{"sipSignalingPort":1123}},"routes":[]}'
     headers:
       api-supported-versions: 2021-05-01-preview, 2022-09-01-preview
       content-type: application/json; charset=utf-8
-      date: Wed, 09 Nov 2022 12:02:13 GMT
-      ms-cv: /NwzWYglAEeWdW4G47ompw.0
+      date: Tue, 15 Nov 2022 12:25:31 GMT
+      ms-cv: c8bPKoS+oEGoStdJP8hQgg.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 370ms
+      x-processing-time: 555ms
     status:
       code: 200
       message: OK
     url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
 - request:
     body: '{"routes": [{"description": "Handle numbers starting with ''+123''", "name":
-      "First rule", "numberPattern": "\\+123[0-9]+", "trunks": ["sbs1.00035101e6744cde8e2dd763e44696ee.com"]}]}'
+      "First rule", "numberPattern": "\\+123[0-9]+", "trunks": ["sbs1.sanitized.com"]}]}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '180'
+      - '157'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
@@ -111,29 +111,29 @@ interactions:
     uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
   response:
     body:
-      string: '{"trunks":{"sbs1.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1122},"sbs2.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1123}},"routes":[{"description":"Handle
-        numbers starting with ''+123''","name":"First rule","numberPattern":"\\+123[0-9]+","trunks":["sbs1.00035101e6744cde8e2dd763e44696ee.com"]}]}'
+      string: '{"trunks":{"sbs1.sanitized.com":{"sipSignalingPort":1122},"sbs2.sanitized.com":{"sipSignalingPort":1123}},"routes":[{"description":"Handle
+        numbers starting with ''+123''","name":"First rule","numberPattern":"\\+123[0-9]+","trunks":["sbs1.sanitized.com"]}]}'
     headers:
       api-supported-versions: 2021-05-01-preview, 2022-09-01-preview
       content-type: application/json; charset=utf-8
-      date: Wed, 09 Nov 2022 12:02:14 GMT
-      ms-cv: l1D+QrDx4Eiui8wCiLvPOg.0
+      date: Tue, 15 Nov 2022 12:25:32 GMT
+      ms-cv: HLKWezWMmkC57Cy3dtrrNQ.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 315ms
+      x-processing-time: 779ms
     status:
       code: 200
       message: OK
     url: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
 - request:
     body: '{"routes": [{"description": "Handle numbers starting with ''+999''", "name":
-      "Alternative rule", "numberPattern": "\\+999[0-9]+", "trunks": ["sbs2.00035101e6744cde8e2dd763e44696ee.com"]}]}'
+      "Alternative rule", "numberPattern": "\\+999[0-9]+", "trunks": ["sbs2.sanitized.com"]}]}'
     headers:
       Accept:
       - application/json
       Content-Length:
-      - '186'
+      - '163'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
@@ -142,17 +142,17 @@ interactions:
     uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
   response:
     body:
-      string: '{"trunks":{"sbs1.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1122},"sbs2.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1123}},"routes":[{"description":"Handle
-        numbers starting with ''+999''","name":"Alternative rule","numberPattern":"\\+999[0-9]+","trunks":["sbs2.00035101e6744cde8e2dd763e44696ee.com"]}]}'
+      string: '{"trunks":{"sbs1.sanitized.com":{"sipSignalingPort":1122},"sbs2.sanitized.com":{"sipSignalingPort":1123}},"routes":[{"description":"Handle
+        numbers starting with ''+999''","name":"Alternative rule","numberPattern":"\\+999[0-9]+","trunks":["sbs2.sanitized.com"]}]}'
     headers:
       api-supported-versions: 2021-05-01-preview, 2022-09-01-preview
       content-type: application/json; charset=utf-8
-      date: Wed, 09 Nov 2022 12:02:14 GMT
-      ms-cv: xSGb95GaiEOmM+lSfRdzXg.0
+      date: Tue, 15 Nov 2022 12:25:32 GMT
+      ms-cv: ClP+esQnd0On5L0C0TO1gg.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 211ms
+      x-processing-time: 161ms
     status:
       code: 200
       message: OK
@@ -168,17 +168,17 @@ interactions:
     uri: https://sanitized.communication.azure.com/sip?api-version=2021-05-01-preview
   response:
     body:
-      string: '{"trunks":{"sbs1.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1122},"sbs2.00035101e6744cde8e2dd763e44696ee.com":{"sipSignalingPort":1123}},"routes":[{"description":"Handle
-        numbers starting with ''+999''","name":"Alternative rule","numberPattern":"\\+999[0-9]+","trunks":["sbs2.00035101e6744cde8e2dd763e44696ee.com"]}]}'
+      string: '{"trunks":{"sbs1.sanitized.com":{"sipSignalingPort":1122},"sbs2.sanitized.com":{"sipSignalingPort":1123}},"routes":[{"description":"Handle
+        numbers starting with ''+999''","name":"Alternative rule","numberPattern":"\\+999[0-9]+","trunks":["sbs2.sanitized.com"]}]}'
     headers:
       api-supported-versions: 2021-05-01-preview, 2022-09-01-preview
       content-type: application/json; charset=utf-8
-      date: Wed, 09 Nov 2022 12:02:15 GMT
-      ms-cv: RDROey4dl0CUA6P2GI/cpg.0
+      date: Tue, 15 Nov 2022 12:25:33 GMT
+      ms-cv: OcO/oONG/0qmwbsDCKlXxw.0
       strict-transport-security: max-age=2592000
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 97ms
+      x-processing-time: 310ms
     status:
       code: 200
       message: OK
