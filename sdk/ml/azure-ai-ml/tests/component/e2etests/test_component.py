@@ -625,7 +625,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
         for version in versions:
             create_component(client, name, params_override=[{"version": version}])
-            sleep_if_live(1)
+            sleep_if_live(5)
             assert client.components.get(name, label="latest").version == version
 
     @pytest.mark.skip(reason="Test fails because MFE index service consistency bug")
