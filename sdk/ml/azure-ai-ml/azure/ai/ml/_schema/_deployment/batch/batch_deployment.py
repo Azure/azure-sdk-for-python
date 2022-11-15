@@ -53,6 +53,7 @@ class BatchDeploymentSchema(DeploymentSchema):
         metadata={"description": "Indicates maximum number of parallelism per instance."}
     )
     resources = NestedField(JobResourceConfigurationSchema)
+    type = fields.Str()
 
     job_definition =ExperimentalField(NestedField(JobDefinitionSchema))
 

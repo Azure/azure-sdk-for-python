@@ -2,11 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from typing import Dict
+from typing import Dict, Union, Any
 
 from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._deployment.run_settings import RunSettings
+from azure.ai.ml.entities._component.component import Component
 
 
 class JobDefinition:
@@ -26,14 +27,19 @@ class JobDefinition:
 
     def __init__(
         self,
-        component_id: str = None,
+        job: Union[Component, str] = None,
+        component : Union[Component, str] = None,
         type: str = None,
-        run_settings: RunSettings = None,
+        settings: Dict[str, Any] = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
-        self.component_id = component_id
+        import debugpy
+        debugpy.connect(('localhost', 5678))
+        debugpy.breakpoint()
+        self.job = job
+        self.component = component
         self.type = type
-        self.run_settings = run_settings
+        self.settings = settings
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

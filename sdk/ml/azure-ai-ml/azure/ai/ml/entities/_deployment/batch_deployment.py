@@ -24,6 +24,7 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
@@ -108,6 +109,7 @@ class BatchDeployment(Deployment):
         code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
         scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
         instance_count: int = None,  # promoted property from resources.instance_count
+        type: str = None,
         **kwargs,
     ) -> None:
 
@@ -216,10 +218,12 @@ class BatchDeployment(Deployment):
         )
 
         if is_private_preview_enabled() and self.job_definiton:
-            rest_job_dictionary = self.job_definiton._to_dict()
-            self.properties.component_deployment.component_id =rest_job_dictionary["component_id"]
-            self.properties.component_deployment.run_settings_type = rest_job_dictionary["type"]
-            self.properties.component_deployment.run_settings_authorization_exception = rest_job_dictionary["run_settings"]
+            non_flat_data = {}
+            non_flat_data["component_deployment"] = self.job_definiton._to_dict()
+            flat_data = flatten(non_flat_data, ".")
+            flat_data_keys = flat_data.keys()
+            for k in flat_data_keys:
+                self.properties[k] = flat_data[k]
 
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 
