@@ -56,7 +56,7 @@ async def test_get_properties_with_connect_error(live_eventhub, uamqp_transport)
         uamqp_transport=uamqp_transport
     )
     async with client:
-        with pytest.raises(EventHubError) as e:  # This can be either ConnectError or ConnectionLostError
+        with pytest.raises(ConnectError) as e:
             await client.get_eventhub_properties()
 
 @pytest.mark.liveTest
