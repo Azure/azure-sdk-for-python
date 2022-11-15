@@ -23,7 +23,7 @@ from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
-from .. import CommandJob
+from .. import CommandJob, SparkJob
 from .._builders import BaseNode
 
 from ...exceptions import ErrorCategory, ErrorTarget, ScheduleException, ValidationException
@@ -261,7 +261,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
             job_definition = self.create_job._to_rest_object().properties
             # Set the source job id, as it is used only for schedule scenario.
             job_definition.source_job_id = self.create_job.id
-        elif private_enabled and isinstance(self.create_job, CommandJob):
+        elif private_enabled and isinstance(self.create_job, (CommandJob, SparkJob)):
             job_definition = self.create_job._to_rest_object().properties
             # TODO: Merge this branch with PipelineJob after source job id move to JobBaseProperties
             # job_definition.source_job_id = self.create_job.id
