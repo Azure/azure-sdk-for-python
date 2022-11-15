@@ -98,5 +98,5 @@ class TestEnvironmentEntity:
 
         assert env_no_inference_config.name == env_no_inference_config.name == ANONYMOUS_ENV_NAME
         assert env_no_inference_config.version != env_with_inference_config.version 
-        assert env_no_inference_config.version == "71fccbc128a554b5c3e23330ded8963b"
-        assert env_with_inference_config.version == "f223fcd33d34c386cf763b856300f3ce"
+        assert env_no_inference_config.version == "ad7970a6602910b6c958a1b43aae89ec6d46197a6ea921e034b665831aaa4823"
+        assert env_with_inference_config.version == "1cd97ba4822572378153ff58660ae00958b5cd4aba6019ae98ec2a6452555ae5"
