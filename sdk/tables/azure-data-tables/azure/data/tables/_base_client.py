@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+import os
 from typing import Dict, Optional, Any, List, Mapping, Union, TYPE_CHECKING
 from uuid import uuid4
 try:
@@ -36,7 +36,8 @@ from ._common_conversion import _is_cosmos_endpoint
 from ._shared_access_signature import QueryStringConstants
 from ._constants import (
     STORAGE_OAUTH_SCOPE,
-    SERVICE_HOST_BASE,
+    DEFAULT_COSMOS_ENDPOINT_SUFFIX,
+    DEFAULT_STORAGE_ENDPOINT_SUFFIX,
 )
 from ._error import (
     RequestTooLargeError,
@@ -58,6 +59,7 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 _SUPPORTED_API_VERSIONS = ["2019-02-02", "2019-07-07", "2020-12-06"]
+# cspell:disable-next-line
 _DEV_CONN_STRING = "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;TableEndpoint=http://127.0.0.1:10002/devstoreaccount1" # pylint: disable=line-too-long
 
 
@@ -121,9 +123,10 @@ class AccountHostsMixin(object):  # pylint: disable=too-many-instance-attributes
         if self.scheme.lower() != "https" and hasattr(self.credential, "get_token"):
             raise ValueError("Token credential is only supported with HTTPS.")
         if hasattr(self.credential, "named_key"):
-            self.account_name = self.credential.named_key.name  # type: ignore
+            self.account_name = self.credential.named_key.name # type: ignore
             secondary_hostname = "{}-secondary.table.{}".format(
-                self.credential.named_key.name, SERVICE_HOST_BASE  # type: ignore
+                self.credential.named_key.name, # type: ignore
+                os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
             )
 
         if not self._hosts:
@@ -353,6 +356,7 @@ def parse_connection_str(conn_str, credential, keyword_args):
     conn_settings = parse_connection_string(conn_str)
     primary = None
     secondary = None
+    endpoint_type = keyword_args.pop("endpoint_type", None)
     if not credential:
         try:
             credential = AzureNamedKeyCredential(name=conn_settings["accountname"], key=conn_settings["accountkey"])
@@ -379,10 +383,14 @@ def parse_connection_str(conn_str, credential, keyword_args):
             pass
 
     if not primary:
+        if endpoint_type and endpoint_type == "cosmos":
+            endpoint_suffix = os.getenv("TABLES_COSMOS_ENDPOINT_SUFFIX", DEFAULT_COSMOS_ENDPOINT_SUFFIX)
+        else:
+            endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         try:
             primary = "https://{}.table.{}".format(
                 conn_settings["accountname"],
-                conn_settings.get("endpointsuffix", SERVICE_HOST_BASE),
+                conn_settings.get("endpointsuffix", endpoint_suffix),
             )
         except KeyError:
             raise ValueError("Connection string missing required connection details.")

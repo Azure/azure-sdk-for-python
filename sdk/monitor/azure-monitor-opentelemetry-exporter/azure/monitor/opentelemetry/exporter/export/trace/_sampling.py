@@ -89,3 +89,11 @@ class ApplicationInsightsSampler(Sampler):
 
     def get_description(self) -> str:
         return "ApplicationInsightsSampler{}".format(self._ratio)
+
+
+def azure_monitor_opentelemetry_sampler_factory(sampler_argument):
+    try:
+        rate = float(sampler_argument)
+        return ApplicationInsightsSampler(rate)
+    except ValueError:
+        return ApplicationInsightsSampler()

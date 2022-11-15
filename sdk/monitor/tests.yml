@@ -16,3 +16,4 @@ stages:
         SECONDARY_WORKSPACE_ID: $(python-query-secondary-workspace-id)
         METRICS_RESOURCE_URI: $(azure-monitor-query-metrics-uri)
         AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_SKIP_LIVE_RECORDING: 'true'

@@ -80,7 +80,7 @@ class TestBaseExporter(unittest.TestCase):
         base = BaseExporter(
             api_version="2021-02-10_Preview",
             connection_string="InstrumentationKey=4321abcd-5678-4efa-8abc-1234567890ab;IngestionEndpoint=https://westus-0.in.applicationinsights.azure.com/",
-            enable_local_storage=True,
+            disable_offline_storage=False,
             storage_maintenance_period=30,
             storage_max_size=1000,
             storage_min_retry_interval=100,
@@ -192,6 +192,32 @@ class TestBaseExporter(unittest.TestCase):
         self._base.client._config.redirect_policy.max_redirects = prev_redirects
         self._base.client._config.host = prev_host
 
+    def test_transmit_http_error_redirect_missing_headers(self):
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = None
+        error = HttpResponseError(response=response)
+        prev_host = self._base.client._config.host
+        with mock.patch.object(AzureMonitorClient, 'track') as post:
+            post.side_effect = error
+            result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(post.call_count, 1)
+            self.assertEqual(self._base.client._config.host, prev_host)
+
+    def test_transmit_http_error_redirect_invalid_location_header(self):
+        response = HttpResponse(None, None)
+        response.status_code = 307
+        response.headers = {"location":"123"}
+        error = HttpResponseError(response=response)
+        prev_host = self._base.client._config.host
+        with mock.patch.object(AzureMonitorClient, 'track') as post:
+            post.side_effect = error
+            result = self._base._transmit(self._envelopes_to_export)
+            self.assertEqual(result, ExportResult.FAILED_NOT_RETRYABLE)
+            self.assertEqual(post.call_count, 1)
+            self.assertEqual(self._base.client._config.host, prev_host)
+
     def test_transmit_request_error(self):
         with mock.patch.object(AzureMonitorClient, 'track', throw(ServiceRequestError, message="error")):
             result = self._base._transmit(self._envelopes_to_export)
@@ -205,7 +231,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_transmit_request_error_statsbeat(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch.object(AzureMonitorClient, 'track', throw(ServiceRequestError, message="error")):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
@@ -228,7 +254,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_transmit_request_exception_statsbeat(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch.object(AzureMonitorClient, 'track', throw(Exception)):
             result = exporter._transmit(self._envelopes_to_export)
         stats_mock.assert_called_once()
@@ -256,7 +282,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_200(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch.object(AzureMonitorClient, 'track') as post:
             post.return_value = TrackResponse(
                 items_received=1,
@@ -272,7 +298,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.SUCCESS)
 
     def test_transmission_206_retry(self):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
         test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
         custom_envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now(
@@ -306,7 +332,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_206_retry(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
         test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
         custom_envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now(
@@ -337,7 +363,7 @@ class TestBaseExporter(unittest.TestCase):
         self.assertEqual(result, ExportResult.FAILED_RETRYABLE)
 
     def test_transmission_206_no_retry(self):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
         test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
         custom_envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now(
@@ -366,7 +392,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_206_no_retry(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         exporter.storage = mock.Mock()
         test_envelope = TelemetryItem(name="testEnvelope", time=datetime.now())
         custom_envelopes_to_export = [TelemetryItem(name="Test", time=datetime.now(
@@ -404,7 +430,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_400(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(400, "{}")
             result = exporter._transmit(self._envelopes_to_export)
@@ -429,7 +455,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_402(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(402, "{}")
             result = exporter._transmit(self._envelopes_to_export)
@@ -454,7 +480,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_408(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(408, "{}")
             result = exporter._transmit(self._envelopes_to_export)
@@ -479,7 +505,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_429(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(429, "{}")
             result = exporter._transmit(self._envelopes_to_export)
@@ -504,7 +530,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_439(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(439, "{}")
             result = exporter._transmit(self._envelopes_to_export)
@@ -529,7 +555,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_500(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(500, "{}")
             result = exporter._transmit(self._envelopes_to_export)
@@ -554,7 +580,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_502(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(502, "{}")
             result = exporter._transmit(self._envelopes_to_export)
@@ -601,7 +627,7 @@ class TestBaseExporter(unittest.TestCase):
     )
     @mock.patch("azure.monitor.opentelemetry.exporter.statsbeat._statsbeat.collect_statsbeat_metrics")
     def test_statsbeat_504(self, stats_mock):
-        exporter = BaseExporter(enable_local_storage=False)
+        exporter = BaseExporter(disable_offline_storage=True)
         with mock.patch("requests.Session.request") as post:
             post.return_value = MockResponse(504, "{}")
             result = exporter._transmit(self._envelopes_to_export)
