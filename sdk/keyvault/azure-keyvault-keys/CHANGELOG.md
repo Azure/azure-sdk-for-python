@@ -12,6 +12,7 @@
 
 ### Other Changes
 - Dropped `msrest` requirement
+- Dropped `six` requirement
 - Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
 - Added requirement for `typing-extensions>=4.0.1`
 
