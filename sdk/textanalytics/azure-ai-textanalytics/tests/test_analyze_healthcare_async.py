@@ -12,7 +12,7 @@ import itertools
 import datetime
 from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
 from azure.core.credentials import AzureKeyCredential
-from testcase import TextAnalyticsPreparer
+from testcase import TextAnalyticsPreparer, is_public_cloud
 from testcase import TextAnalyticsClientPreparer as _TextAnalyticsClientPreparer
 from devtools_testutils.aio import recorded_by_proxy_async
 from testcase import TextAnalyticsTest
@@ -169,6 +169,7 @@ class TestHealth(TextAnalyticsTest):
             assert not resp.statistics
         assert num_error == 1
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud raise InternalServerError: https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15860714')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer(client_kwargs={"api_version": "v3.1"})
     @recorded_by_proxy_async
