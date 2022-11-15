@@ -172,17 +172,3 @@ class KeyVaultSetting(object):
     @classmethod
     def _from_generated(cls, setting):
         return cls(name=setting.name, value=setting.value, type=SettingType(setting.type))
-
-
-class GetSettingsResult(object):
-    """All settings for an account.
-
-    :ivar list[KeyVaultSetting] settings: A list of an account's setting names and values.
-    """
-
-    def __init__(self, **kwargs):
-        self.settings = kwargs.get("settings")
-
-    @classmethod
-    def _from_generated(cls, settings):
-        return cls(settings=[KeyVaultSetting._from_generated(setting) for setting in settings])

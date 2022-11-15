@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from azure.core.async_paging import AsyncItemPaged
+from azure.core.async_paging import AsyncItemPaged, AsyncList
 from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated_models import UpdateSettingsRequest
@@ -47,7 +47,15 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         :raises: :class:`~azure.core.exceptions.HttpResponseError`
         """
         result = await self._client.get_settings(vault_base_url=self._vault_url, *kwargs)
-        return GetSettingsResult._from_generated(result)
+
+        # We don't actually get a paged response from the generated method, so we mock the typical iteration methods
+        async def get_next(next_link=None):
+            return result.settings
+
+        async def extract_data(pipeline_response):
+            return None, AsyncList(result.settings)
+
+        return AsyncItemPaged(get_next, extract_data)
 
     @distributed_trace_async
     async def update_setting(self, name: str, value: str, **kwargs) -> KeyVaultSetting:

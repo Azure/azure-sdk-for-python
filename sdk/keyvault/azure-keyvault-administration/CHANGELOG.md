@@ -1,6 +1,6 @@
 # Release History
 
-## 4.3.0b1 (2022-11-08)
+## 4.3.0b1 (2022-11-15)
 
 ### Features Added
 - Added sync and async `KeyVaultSettingsClient`s for getting and updating Managed HSM settings.
