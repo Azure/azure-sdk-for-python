@@ -1,6 +1,5 @@
-
 # Cognitive Services Anomaly Detector client library for Python
-[Anomaly Detector](https://learn.microsoft.com/en-us/azure/cognitive-services/Anomaly-Detector/overview) is an AI service with a set of APIs, which enables you to monitor and detect anomalies in your time series data with little machine learning (ML) knowledge, either batch validation or real-time inference.
+[Anomaly Detector](https://learn.microsoft.com/azure/cognitive-services/Anomaly-Detector/overview) is an AI service with a set of APIs, which enables you to monitor and detect anomalies in your time series data with little machine learning (ML) knowledge, either batch validation or real-time inference.
 
 ## Getting started
 
@@ -191,7 +190,7 @@ for i in range(len(data_file.values)):
     print("Anomaly detected at index:      "+ str(i))
 ```
 
-To see how to use Anomaly Detector library to conduct Multivariate Anomaly Detection, see this [sample](samples/sample_multivariate_detect.py). To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
+To see how to use Anomaly Detector library to conduct Multivariate Anomaly Detection, see this [sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_multivariate_detect.py). To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
 
 ## Troubleshooting
 
@@ -206,7 +205,7 @@ Basic information about HTTP sessions (URLs, headers, etc.) is logged at `INFO` 
 Detailed `DEBUG` level logging, including request/response bodies and **unredacted**
 headers, can be enabled on the client or per-operation with the `logging_enable` keyword argument.
 
-See full SDK logging documentation with examples [here](https://learn.microsoft.com/en-us/azure/developer/python/sdk/azure-sdk-logging).
+See full SDK logging documentation with examples [here](https://learn.microsoft.com/azure/developer/python/sdk/azure-sdk-logging).
 
 ### Optional Configuration
 
@@ -217,17 +216,17 @@ The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.
 
 These code samples show common scenario operations with the Azure Anomaly Detector library. More samples can be found under the [samples](samples) directory.
 
-* Univariate Anomaly Detection - Batch Detection: [sample_detect_entire_series_anomaly.py](samples/sample_detect_entire_series_anomaly.py)
+* Univariate Anomaly Detection - Batch Detection: [sample_detect_entire_series_anomaly.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_entire_series_anomaly.py)
 
-* Univariate Anomaly Detection - Streaming Detection: [sample_detect_last_point_anomaly.py](samples/sample_detect_last_point_anomaly.py)
+* Univariate Anomaly Detection - Streaming Detection: [sample_detect_last_point_anomaly.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_last_point_anomaly.py)
 
-* Univariate Anomaly Detection - Change Point Detection: [sample_detect_change_point.py](samples/sample_detect_change_point.py)
-* Multivariate Anomaly Detection: [sample_multivariate_detect.py](samples/sample_multivariate_detect.py)
+* Univariate Anomaly Detection - Change Point Detection: [sample_detect_change_point.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_change_point.py)
+* Multivariate Anomaly Detection: [sample_multivariate_detect.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_multivariate_detect.py)
 
 
 ### Additional documentation
 
-For more extensive documentation on Azure Anomaly Detector, see the [Anomaly Detector documentation](https://learn.microsoft.com/en-us/azure/cognitive-services/anomaly-detector/overview) on docs.microsoft.com.
+For more extensive documentation on Azure Anomaly Detector, see the [Anomaly Detector documentation](https://learn.microsoft.com/azure/cognitive-services/anomaly-detector/overview) on docs.microsoft.com.
 
 
 ## Contributing
