@@ -375,7 +375,7 @@ def filter_tox_environment_string(namespace_argument: str, package_name: str) ->
     each given tox environment should run, given comparison to single unified exclusion file in `environment_exclusions`.
 
     :param namespace_argument: A namespace argument.
-    :param package_name: The name of the package. This takes the form of a comma separated list: "whl,sdist,mindepedency". "whl". "lint,pyright,sphinx".
+    :param package_name: The name of the package. This takes the form of a comma separated list: "whl,sdist,mindependency". "whl". "lint,pyright,sphinx".
     """
     if namespace_argument:
         tox_envs = namespace_argument.strip().split(",")
