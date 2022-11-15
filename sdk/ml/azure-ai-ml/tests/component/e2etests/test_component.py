@@ -1,4 +1,5 @@
 import re
+import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -374,13 +375,15 @@ class TestComponent(AzureRecordedTestCase):
     @pytest.mark.disable_mock_code_hash
     @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_twice_same_code_arm_id(
-        self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
+        self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        component_name = randstr("component_name")
-        # create new component to prevent the issue when same component code got created at the same time
-        component_path = tmp_path / "component.yml"
-        component_path.write_text(
-            f"""
+        with tempfile.TemporaryDirectory() as tmp_path:
+            tmp_path = Path(tmp_path)
+            component_name = randstr("component_name")
+            # create new component to prevent the issue when same component code got created at the same time
+            component_path = tmp_path / "component.yml"
+            component_path.write_text(
+                f"""
 $schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
 name: {component_name}
 version: 1
@@ -389,13 +392,13 @@ name: SampleCommandComponentBasic
 command: echo Hello World
 code: "."
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
-        )
-        # create a component
-        component_resource1 = create_component(client, component_name, path=component_path)
-        # create again
-        component_resource2 = create_component(client, component_name, path=component_path)
-        # the code arm id should be the same
-        assert component_resource1.code == component_resource2.code
+            )
+            # create a component
+            component_resource1 = create_component(client, component_name, path=component_path)
+            # create again
+            component_resource2 = create_component(client, component_name, path=component_path)
+            # the code arm id should be the same
+            assert component_resource1.code == component_resource2.code
 
     @pytest.mark.skipif(condition=not is_live(), reason="non-deterministic upload fails in playback on CI")
     def test_component_update_code(self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path) -> None:
