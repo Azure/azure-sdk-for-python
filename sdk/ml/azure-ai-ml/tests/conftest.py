@@ -427,7 +427,7 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
     def generate_hash(*args, **kwargs):
         return str(uuid.uuid4())
 
-    if is_live_and_not_recording():
+    if "disable_mock_code_hash" not in request.keywords and is_live_and_not_recording():
         mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
     elif not is_live():
         mocker.patch(
