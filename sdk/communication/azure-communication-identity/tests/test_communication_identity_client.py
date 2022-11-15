@@ -10,7 +10,7 @@ from datetime import timedelta
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.identity import CommunicationTokenScope
 from azure.core.credentials import AccessToken
-from devtools_testutils import AzureTestCase, AzureRecordedTestCase, is_live, recorded_by_proxy
+from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
 from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
 from utils import is_token_expiration_within_allowed_deviation
