@@ -27,7 +27,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
 
 
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 def create_component(
@@ -372,7 +372,7 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.display_name == display_name
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="non-deterministic upload fails in playback on CI")
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_twice_same_code_arm_id(
         self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
     ) -> None:
@@ -424,6 +424,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             client.components.create_or_update(command_component)
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_default_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # step2: test component without code
         component_name = randstr("component_name")
@@ -549,6 +550,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         assert next_component_asset._auto_increment_version is False
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_anonymous_component_reuse(self, client: MLClient, variable_recorder) -> None:
         # component without code
         component_name_1 = variable_recorder.get_or_record("component_name_1", str(uuid.uuid4()))
@@ -838,6 +840,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         rest_component = client.components.create_or_update(component)
         assert rest_component.name == name
 
+    @pytest.mark.skipif(condition=not is_live(), reason="registry test, target to verify service-side behavior")
     def test_component_with_default_label(
         self,
         client: MLClient,
@@ -847,6 +850,8 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         component_name = randstr("component_name")
 
         create_component(client, component_name, path=yaml_path)
+
+        sleep_if_live(5)  # sleep 5 seconds to wait for index service update
 
         target_component = client.components.get(component_name, label="latest")
 
