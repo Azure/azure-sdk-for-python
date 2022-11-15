@@ -1,8 +1,10 @@
 # Release History
 
-## 4.8.0b2 (Unreleased)
+## 4.8.0b2 (2022-11-15)
 
 ### Features Added
+- Added `eddsa` to `SignatureAlgorithm` enum to support signing and verifying using an
+  Edwards-Curve Digital Signature Algorithm (EdDSA) on Managed HSM
 
 ### Breaking Changes
 
