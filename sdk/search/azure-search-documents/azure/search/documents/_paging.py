@@ -21,7 +21,9 @@ if TYPE_CHECKING:
 def convert_search_result(result):
     ret = result.additional_properties
     ret["@search.score"] = result.score
+    ret["@search.reranker_score"] = result.reranker_score
     ret["@search.highlights"] = result.highlights
+    ret["@search.captions"] = result.captions
     return ret
 
 
