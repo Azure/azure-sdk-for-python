@@ -275,6 +275,7 @@ VERIFYTYPES_OPT_OUT = [
 # omit package from running type checkers on samples
 # note: if removed from this list, you must enable one or both of mypy or pyright checks.
 TYPE_CHECK_SAMPLES_OPT_OUT = [
+    "azure-ai-metricsadvisor",
     "azure-agrifood-farming",
     "azure-ai-anomalydetector",
     "azure-appconfiguration",
