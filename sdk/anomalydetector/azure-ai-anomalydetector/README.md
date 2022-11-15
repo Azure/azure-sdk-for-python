@@ -214,7 +214,7 @@ The azure-core [reference documentation](https://azuresdkdocs.blob.core.windows.
 
 ## Next steps
 
-These code samples show common scenario operations with the Azure Anomaly Detector library. More samples can be found under the [samples](samples) directory.
+These code samples show common scenario operations with the Azure Anomaly Detector library. More samples can be found under the [samples](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/) directory.
 
 * Univariate Anomaly Detection - Batch Detection: [sample_detect_entire_series_anomaly.py](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_detect_entire_series_anomaly.py)
 
