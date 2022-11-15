@@ -367,6 +367,8 @@ IGNORE_PACKAGES = [
   "azure-template",
 ]
 
+def filter_tox_environment_string(namespace_argument: str) -> str:
+  return namespace_argument
 
 def is_ignored_package(package_name: str) -> bool:
     """

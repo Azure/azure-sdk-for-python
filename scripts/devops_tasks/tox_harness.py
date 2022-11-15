@@ -19,6 +19,7 @@ from common_tasks import (
 from ci_tools.parsing import ParsedSetup
 from ci_tools.build import create_package
 from ci_tools.variables import in_ci
+from ci_tools.environment_exclusions import filter_tox_environment_string
 
 from pkg_resources import parse_requirements, RequirementParseError
 import logging
@@ -262,7 +263,9 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
     :param targeted_packages: The set of targeted packages. These are not just package names, and are instead the full absolute path to the package root directory.
     :param parsed_args: An argparse namespace object from setup_execute_tests.py. Not including it will effectively disable "customizations"
         of the tox invocation.
-    :param options_array: When invoking tox, these additional options will be additionally passed to the invocation.
+    :param options_array: When invoking tox, these additional options will be passed to the underlying tox invocations as arguments.
+        When invoking of "tox -e whl -c ../../../eng/tox/tox.ini -- --suppress-no-test-exit-code", "--suppress-no-test-exit-code" the "--" will be
+        passed directly to the pytest invocation.
     """
     if parsed_args.wheel_dir:
         os.environ["PREBUILT_WHEEL_DIR"] = parsed_args.wheel_dir
@@ -320,7 +323,16 @@ def prep_and_run_tox(targeted_packages: List[str], parsed_args: Namespace, optio
         inject_custom_reqs(destination_dev_req, parsed_args.injected_packages, package_dir)
 
         if parsed_args.tox_env:
-            tox_execution_array.extend(["-e", parsed_args.tox_env])
+            filtered_tox_environment_set = filter_tox_environment_string(parsed_args.tox_env)
+
+            if not filtered_tox_environment_set:
+                logging.info(
+                    f"All requested tox environments for package {package_name} have been excluded by the environment exclusion list."
+                    + " Check file /tools/azure-sdk-tools/ci_tools/environment_exclusions.py"
+                )
+                continue
+
+            tox_execution_array.extend(["-e", filtered_tox_environment_set])
 
         if parsed_args.tenvparallel:
             tox_execution_array.extend(["-p", "all"])
