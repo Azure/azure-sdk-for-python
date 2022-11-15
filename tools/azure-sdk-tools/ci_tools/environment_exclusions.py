@@ -269,6 +269,7 @@ VERIFYTYPES_OPT_OUT = [
     "azure-synapse-spark",
     "azure-data-tables",
     "azure-messaging-webpubsubservice",
+    "azure-ai-textanalytics",
 ]
 
 # omit package from running type checkers on samples
