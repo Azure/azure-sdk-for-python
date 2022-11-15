@@ -44,7 +44,7 @@ def sample_train_project():
     if result["result"]["trainingStatus"]["status"] == "succeeded":
         print("The project is trained successfully")
     else:
-        print("An error has occured")
+        print("An error has occurred")
 
 
 if __name__ == "__main__":

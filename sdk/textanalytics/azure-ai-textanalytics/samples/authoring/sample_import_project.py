@@ -39,7 +39,7 @@ def sample_import_project():
     if result["status"] == "succeeded":
         print("The project is imported successfully")
     else:
-        print("An error has occured")
+        print("An error has occurred")
 
 
 if __name__ == "__main__":

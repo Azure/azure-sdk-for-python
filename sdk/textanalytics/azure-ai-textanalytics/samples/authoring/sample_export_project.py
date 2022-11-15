@@ -32,7 +32,7 @@ def sample_export_project():
         export_url = result["resultUrl"]
         print("The project is exported at: " + export_url)
     else:
-        print("An error has occured")
+        print("An error has occurred")
 
 if __name__ == "__main__":
     sample_export_project()

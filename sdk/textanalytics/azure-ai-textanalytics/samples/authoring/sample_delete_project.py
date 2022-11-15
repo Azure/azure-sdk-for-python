@@ -34,7 +34,7 @@ def sample_delete_project():
         if result["status"] == "succeeded":
             print("The project is deleted successfully")
         else:
-            print("An error has occured")
+            print("An error has occurred")
     except HttpResponseError as ex:
         print(ex)
 
