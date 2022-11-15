@@ -17,7 +17,7 @@ def generate_dsl_pipeline_from_yaml() -> PipelineJob:
         kmeans_cluster.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
 
         command_func = command(
-            inputs=dict(spark_output=Input(type=AssetTypes.URI_FOLDER, mode=InputOutputModes.DIRECT)),
+            inputs=dict(spark_output=Input(type=AssetTypes.URI_FOLDER)),
             command="ls ${{inputs.spark_output}}",
             environment="AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
         )
