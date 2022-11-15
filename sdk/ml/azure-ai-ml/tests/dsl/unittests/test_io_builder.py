@@ -179,24 +179,81 @@ class TestInputOutputBuilder:
         }
         assert rest_pipeline_job["jobs"] == expected_pipeline_job
 
-    def test_pipeline_with_remote_component_node(self):
+    def test_pipeline_with_remote_component_node_reference(self):
         component_yaml = components_dir / "helloworld_component.yml"
         component_func = load_component(source=component_yaml)
 
         @pipeline
         def my_pipeline():
             node1 = Command(
-                component="fake_component_arm_id"
+                component="fake_component_arm_id",
+                _from_component_func=True
             )
+
+            assert node1 == node1.outputs._owner
 
             # when node has remote component, it's output will become a dynamic and can be access with any key
             # validation will be done when pipeline created to remote.
-            component_func(
+            node2 = component_func(
                 component_in_path=node1.outputs.output1
             )
 
-            component_func(
+            node3 = component_func(
                 component_in_path=node1.outputs.output2
             )
+            node3.compute = 'cpu-cluster'
 
-        my_pipeline()
+            node4 = component_func(
+                component_in_path=node2.outputs.component_out_path
+            )
+            node4.compute = 'cpu-cluster'
+
+        pipeline_job = my_pipeline()
+        rest_pipeline_job = omit_with_wildcard(
+            pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        assert rest_pipeline_job["jobs"] == {
+            'node1': {'name': 'node1', 'type': 'command'},
+            'node2': {'inputs': {'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.jobs.node1.outputs.output1}}'}},
+                      'name': 'node2',
+                      'type': 'command'},
+            'node3': {'computeId': 'cpu-cluster',
+                      'inputs': {'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.jobs.node1.outputs.output2}}'}},
+                      'name': 'node3',
+                      'type': 'command'},
+            'node4': {'computeId': 'cpu-cluster',
+                      'inputs': {'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.jobs.node2.outputs.component_out_path}}'}},
+                      'name': 'node4',
+                      'type': 'command'}
+        }
+
+    def test_pipeline_with_remote_component_node_configure(self):
+
+        @pipeline
+        def my_pipeline():
+            node1 = Command(
+                component="fake_component_arm_id",
+                _from_component_func=True
+            )
+
+            # when type not specified, default to uri_folder
+            node1.outputs.output1.mode = "upload"
+            node1.outputs.output1.path = "path/on/datastore"
+
+            node1.outputs.output2.type = "uri_file"
+            node1.outputs.output2.mode = "rw_mount"
+
+        pipeline_job = my_pipeline()
+        rest_pipeline_job = omit_with_wildcard(
+            pipeline_job._to_rest_object().properties.as_dict(), *common_omit_fields)
+        assert rest_pipeline_job["jobs"] == {
+            'node1': {'name': 'node1',
+                      'outputs': {'output1': {'job_output_type': 'uri_folder',
+                                              'mode': 'Upload',
+                                              'uri': 'path/on/datastore'},
+                                  'output2': {'job_output_type': 'uri_file',
+                                              'mode': 'ReadWriteMount'}},
+                      'type': 'command'}
+        }

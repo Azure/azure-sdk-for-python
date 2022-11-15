@@ -7,9 +7,14 @@ from typing import Union
 
 from azure.ai.ml.entities._assets import Data
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
-from azure.ai.ml.entities._job.pipeline._io.base import NodeInput, NodeOutput, PipelineInput
-from azure.ai.ml.exceptions import ValidationException, ErrorTarget, ErrorCategory, UnexpectedAttributeError, \
-    UnexpectedKeywordError
+from azure.ai.ml.entities._job.pipeline._io.base import NodeInput, NodeOutput, PipelineInput, InputOutputBase
+from azure.ai.ml.exceptions import (
+    ErrorTarget,
+    ErrorCategory,
+    ValidationException,
+    UnexpectedKeywordError,
+    UnexpectedAttributeError,
+)
 from azure.ai.ml.entities._job.pipeline._attr_dict import K, V
 
 
@@ -35,9 +40,9 @@ class InputsAttrDict(dict):
             )
 
     def __setattr__(
-        self,
-        key: str,
-        value: Union[int, bool, float, str, NodeOutput, PipelineInput, Input],
+            self,
+            key: str,
+            value: Union[int, bool, float, str, NodeOutput, PipelineInput, Input],
     ):
         # Extract enum value.
         value = value.value if isinstance(value, Enum) else value
@@ -129,7 +134,7 @@ class _GroupAttrDict(InputsAttrDict):
                 v._group_names = [group_name] + v._group_names  # pylint: disable=protected-access
 
 
-class OutputsAttrDict(dict):
+class BaseOutputsAttrDict(dict):
     def __init__(self, outputs: dict, **kwargs):
         for val in outputs.values():
             if not isinstance(val, NodeOutput) or val._owner is None:
@@ -140,7 +145,7 @@ class OutputsAttrDict(dict):
                     target=ErrorTarget.PIPELINE,
                     error_category=ErrorCategory.USER_ERROR,
                 )
-        super(OutputsAttrDict, self).__init__(**outputs, **kwargs)
+        super(BaseOutputsAttrDict, self).__init__(**outputs, **kwargs)
 
     def __getattr__(self, item) -> NodeOutput:
         return self.__getitem__(item)
@@ -152,6 +157,9 @@ class OutputsAttrDict(dict):
             raise UnexpectedAttributeError(keyword=item, keywords=list(self))
         return super().__getitem__(item)
 
+
+class OutputsAttrDict(BaseOutputsAttrDict):
+
     def __setattr__(self, key: str, value: Union[Data, Output]):
         if isinstance(value, Output):
             mode = value.mode
@@ -161,3 +169,44 @@ class OutputsAttrDict(dict):
 
     def __setitem__(self, key: str, value: Output):
         return self.__setattr__(key, value)
+
+
+class DynamicOutputsAttrDict(BaseOutputsAttrDict):
+    """A dynamic output dict which returns output objects when accessing a non-existing key."""
+    RESERVED_KEYS = ["_owner"]
+
+    def __init__(self, owner, outputs: dict, **kwargs):
+        self._owner = owner
+        super(DynamicOutputsAttrDict, self).__init__(outputs=outputs, **kwargs)
+
+    def __setitem__(self, key: str, value: Output):
+        return self.__setattr__(key, value)
+
+    def __setattr__(self, key: str, value: Union[Data, Output, NodeOutput]):
+        # normal setting behavior when setting reserved keys
+        if key in self.RESERVED_KEYS:
+            return super(DynamicOutputsAttrDict, self).__setattr__(key, value)
+
+        if isinstance(value, Output):
+            mode = value.mode
+            value = Output(type=value.type, path=value.path, mode=mode)
+
+        if key not in self:
+            if isinstance(value, InputOutputBase):
+                # if key not exist, only setting NodeOutput is allowed
+                return super(DynamicOutputsAttrDict, self).__setitem__(key, value)
+            # Raise attribute error when setting other types
+            raise UnexpectedAttributeError(keyword=key, keywords=list(self))
+        # otherwise, configure the existing output
+        original_output = self[key]
+        original_output._data = original_output._build_data(value)
+
+    def __getitem__(self, item) -> NodeOutput:
+
+        if item not in self:
+            # When the item is not in the dict, we return a new output without data and meta and add to original dict.
+            # So it can be configured in node level or reference by other nodes.
+            output = self._owner._build_output(name=item, meta=None, data=None)
+            self[item] = output
+            return output
+        return super().__getitem__(item)

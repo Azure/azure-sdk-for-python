@@ -11,7 +11,7 @@ from azure.ai.ml._restclient.v2022_10_01_preview.models import JobOutput as Rest
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.exceptions import ValidationException, ErrorTarget
 
-from .attr_dict import InputsAttrDict, OutputsAttrDict, _GroupAttrDict
+from .attr_dict import InputsAttrDict, OutputsAttrDict, _GroupAttrDict, DynamicOutputsAttrDict
 from .base import NodeInput, NodeOutput, PipelineInput, PipelineOutput
 from .._pipeline_job_helpers import process_sdk_component_job_io, from_dict_to_rest_io
 from ..._input_output_helpers import to_rest_dataset_literal_inputs, to_rest_data_outputs, \
@@ -82,9 +82,11 @@ class NodeIOMixin:
         input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}
         return InputsAttrDict(input_dict)
 
-    def _build_outputs_dict_without_meta(self, outputs: Dict[str, Output]) -> OutputsAttrDict:
+    def _build_outputs_dict_without_meta(self, outputs: Dict[str, Output]) -> DynamicOutputsAttrDict:
+        # When meta not provided, we will build a dynamic output dict which
+        # returns an output object when accessing by any key.
         output_dict = {key: self._build_output(name=key, meta=None, data=val) for key, val in outputs.items()}
-        return OutputsAttrDict(output_dict)
+        return DynamicOutputsAttrDict(owner=self, outputs=output_dict)
 
     def _build_inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:
         """Build inputs of this component to a dict dict which maps output to
