@@ -25,7 +25,7 @@ https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/core/azure-core/samp
 
 ## Refer samples
 
-Instead of copying the code snippet into README which is hard to maintain and validate, we add reference to the sample snippet in README.
+Instead of copying the code snippet into README which is hard to maintain and validate, we add reference to the sample snippet in README. We use the annotation <!-- SNIPPET:file_name.snippet_name--> to refer the code snippet in README file.
 
 It is like:
 
