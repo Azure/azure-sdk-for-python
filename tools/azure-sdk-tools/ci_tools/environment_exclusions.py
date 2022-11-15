@@ -6,7 +6,7 @@
 # --------------------------------------------------------------------------------------------
 import logging
 
-PYLINT_ACCEPTABLE_FAILURES = [
+PYLINT_OPT_OUT = [
     "azure-applicationinsights",
     "azure-batch",
     "azure-cognitiveservices-anomalydetector",
