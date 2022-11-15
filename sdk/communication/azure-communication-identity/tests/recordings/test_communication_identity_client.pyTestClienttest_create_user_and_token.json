@@ -20,7 +20,7 @@
         "createTokenWithScopes": [
           "chat"
         ],
-        "expiresInMinutes": 1440
+        "expiresInMinutes": null
       },
       "StatusCode": 201,
       "ResponseHeaders": {
@@ -34,7 +34,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "108ms"
+        "X-Processing-Time": "133ms"
       },
       "ResponseBody": {
         "identity": {
@@ -42,7 +42,7 @@
         },
         "accessToken": {
           "token": "sanitized",
-          "expiresOn": "2022-11-15T11:17:47.1744179\u002B00:00"
+          "expiresOn": "2022-11-16T09:47:51.8877046\u002B00:00"
         }
       }
     }

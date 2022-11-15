@@ -34,7 +34,7 @@ class FakeTokenCredential(object):
         return self.token
 
 
-class TestCommunicationIdentityClient(AzureRecordedTestCase):
+class TestClient(AzureRecordedTestCase):
     def setUp(self):
         self.communication_environment()             #TODO: TRY to remove this on pipelines
 

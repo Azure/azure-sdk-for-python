@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "62",
+        "Content-Length": "53",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-communication-identity/1.3.2 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
@@ -18,12 +18,11 @@
       },
       "RequestBody": {
         "token": "sanitized",
-        "appId": "sanitized",
+        "appId": "",
         "userId": "sanitized"
       },
       "StatusCode": 400,
       "ResponseHeaders": {
-        "api-supported-versions": "2021-10-31-preview, 2022-06-01, 2022-10-01",
         "Content-Type": "application/json",
         "Date": "sanitized",
         "MS-CV": "sanitized",
@@ -33,13 +32,13 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "132ms"
+        "X-Processing-Time": "127ms"
       },
       "ResponseBody": {
         "error": {
           "code": "ValidationError",
-          "message": "Provided AAD token issued for unexpected user.",
-          "target": "userId"
+          "message": "AppId: The AppId field is required.",
+          "target": "AppId"
         }
       }
     }
