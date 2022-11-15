@@ -11,12 +11,11 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from azure.core.pipeline.transport import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
-from msrest import Deserializer, Serializer
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import MicrosoftResourceHealthConfiguration
 
 if TYPE_CHECKING:
@@ -41,9 +40,9 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call.
+    :param subscription_id: Subscription credentials which uniquely identify Microsoft Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -67,12 +66,10 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
         credential: "AsyncTokenCredential",
         subscription_id: str,
         api_version: Optional[str] = None,
-        base_url: Optional[str] = None,
+        base_url: str = "https://management.azure.com",
         profile: KnownProfiles = KnownProfiles.default,
         **kwargs  # type: Any
     ) -> None:
-        if not base_url:
-            base_url = 'https://management.azure.com'
         self._config = MicrosoftResourceHealthConfiguration(credential, subscription_id, **kwargs)
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
         super(MicrosoftResourceHealth, self).__init__(
@@ -106,6 +103,7 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
             from ..v2015_01_01.aio.operations import AvailabilityStatusesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'availability_statuses'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -119,6 +117,7 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
             from ..v2015_01_01.aio.operations import ChildAvailabilityStatusesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'child_availability_statuses'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -132,6 +131,7 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
             from ..v2015_01_01.aio.operations import ChildResourcesOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'child_resources'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -145,6 +145,7 @@ class MicrosoftResourceHealth(MultiApiClientMixin, _SDKClient):
             from ..v2015_01_01.aio.operations import Operations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'operations'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):
