@@ -431,7 +431,7 @@ class AsyncIterStreamer():
     """
     def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
         self.generator = generator
-        self.iterator = aiter(generator)
+        self.iterator = generator.__aiter__()
         self.leftover = b""
         self.encoding = encoding
 
@@ -442,7 +442,7 @@ class AsyncIterStreamer():
         return self.iterator
 
     async def __anext__(self):
-        return await anext(self.iterator)
+        return await self.iterator.__anext__()
 
     def seekable(self):
         return False
