@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
 import json
 import pytest
 from datetime import datetime, timedelta
@@ -19,10 +20,10 @@ try:
 except ImportError:
     from azure.storage.blob.changefeed import ChangeFeedClient
 
-from devtools_testutils.storage import StorageTestCase, StorageRecordedTestCase
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import ChangeFeedPreparer
 
-# @pytest.mark.playback_test_only
+@pytest.mark.playback_test_only
 class TestStorageChangeFeed(StorageRecordedTestCase):
 
     # --Test cases for change feed -----------------------------------------
@@ -145,6 +146,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         events = list(change_feed)
         assert len(events) == 0
 
+    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_read_change_feed_tail_where_3_shards_have_data(self, **kwargs):
@@ -204,6 +206,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
             events3.append(event)
         assert events2 != 0
 
+    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_read_change_feed_tail_where_only_1_shard_has_data(self, **kwargs):
@@ -245,6 +248,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
         assert len(events2) != 0
 
+    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_read_change_feed_with_3_shards_in_a_time_range(self, **kwargs):
@@ -278,6 +282,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         end_time_str = (end_time + timedelta(hours=1)).isoformat()
         assert events[len(events) - 1]['eventTime'] < end_time_str
 
+    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_read_3_shards_change_feed_during_a_time_range_in_multiple_times_gives_same_result_as_reading_all(self, **kwargs):
@@ -342,6 +347,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         assert len(dict_token3['CurrentSegmentCursor']['ShardCursors']) == 3
         assert len(events)+len(events2)+len(events3) == len(all_events)
 
+    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_list_3_shards_events_works_with_1_shard_cursor(self, **kwargs):
