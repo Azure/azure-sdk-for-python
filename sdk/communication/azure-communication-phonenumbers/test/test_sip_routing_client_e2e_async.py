@@ -4,8 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
-
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.helper import URIReplacerProcessor
 from _shared.utils import async_create_token_credential, get_http_logging_policy
