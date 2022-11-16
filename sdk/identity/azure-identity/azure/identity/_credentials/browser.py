@@ -2,18 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import platform
-import socket
-import subprocess
-import webbrowser
 from typing import Dict
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 
-from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
-from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
+from .._internal import InteractiveCredential, wrap_exceptions
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
@@ -63,7 +58,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
     def _request_token(self, *scopes: str, **kwargs) -> Dict:
         scopes = list(scopes)  # type: ignore
         claims = kwargs.get("claims")
-        app = self._get_app(**kwargs) 
+        app = self._get_app(**kwargs)
         port = self._parsed_url.port if self._parsed_url else None
 
         result = app.acquire_token_interactive(
