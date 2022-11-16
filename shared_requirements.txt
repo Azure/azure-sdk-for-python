@@ -556,6 +556,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-eventhub azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-logic msrest>=0.7.1
 #override azure-mgmt-logic azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-machinelearningservices typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-communication msrest>=0.6.21
 #override azure-mgmt-securitydevops azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-testbase typing-extensions>=4.3.0; python_version<'3.8.0'
