@@ -37,7 +37,7 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestBatchDeployment(AzureRecordedTestCase):
     @pytest.mproduction_experiences_test
     @pytest.mark.skip(reason="TODO (1546262): Test failing constantly, so disabling it")
