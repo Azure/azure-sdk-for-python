@@ -742,7 +742,7 @@ class TestPipelineJobEntity:
         assert isinstance(node, Spark)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
         )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -754,8 +754,8 @@ class TestPipelineJobEntity:
         expected_dict = {
             "_source": "YAML.COMPONENT",
             "args": "--file_input ${{inputs.file_input}}",
-            "componentId": "xxx",
-            "computeId": "xxx",
+            "componentId": "",
+            "computeId": "",
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -769,6 +769,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "add_greeting_column",
             "py_files": ["utils.zip"],
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -778,8 +779,8 @@ class TestPipelineJobEntity:
         expected_dict = {
             "_source": "YAML.COMPONENT",
             "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
-            "componentId": "xxx",
-            "computeId": "xxx",
+            "componentId": "",
+            "computeId": "",
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -794,12 +795,13 @@ class TestPipelineJobEntity:
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
             "type": "spark",
         }
         assert actual_dict == expected_dict
 
     def test_default_user_identity_if_empty_identity_input(self):
-        test_path = "./tests/test_configs/pipeline_jobs/shakespear-sample-and-word-count-using-spark/pipeline.yml"
+        test_path = "./tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml"
         job = load_job(test_path)
         omit_fields = [
             "jobs.sample_word.componentId",
@@ -820,21 +822,21 @@ class TestPipelineJobEntity:
                 "count_word": {
                     "_source": "YAML.JOB",
                     "args": "--input1 ${{inputs.input1}}",
-                    "computeId": "spark31",
                     "conf": {
                         "spark.driver.cores": 1,
                         "spark.driver.memory": "2g",
                         "spark.executor.cores": 2,
                         "spark.executor.instances": 4,
                         "spark.executor.memory": "2g",
-                        "spark.yarn.dist.jars": "https://foobaradrama2.azurefd.net/latest/hadoop-azureml-fs.jar",
                     },
                     "entry": {"file": "wordcount.py", "spark_job_entry_type": "SparkJobPythonEntry"},
-                    "identity": {"identity_type": "Managed"},
+                    "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
                         "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
                     },
                     "name": "count_word",
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 },
                 "sample_word": {
@@ -860,7 +862,8 @@ class TestPipelineJobEntity:
                     },
                     "name": "sample_word",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 },
             },
