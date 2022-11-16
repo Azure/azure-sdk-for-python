@@ -1,0 +1,33 @@
+$schema: https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json
+name: kmeans_spark_component
+type: spark
+version: 1
+display_name: Aml Spark dataset test module
+description: Aml Spark dataset test module
+
+inputs:
+  file_input:
+    type: uri_file
+    mode: direct
+
+outputs:
+  output:
+    type: uri_folder
+    mode: direct
+
+code: ./src
+
+entry:
+  file: kmeans_example.py # file path of the entry file relative to the code root folder
+
+
+args: >-
+  --file_input ${{inputs.file_input}}
+  --output ${{outputs.output}}
+
+conf:
+  spark.driver.cores: 2
+  spark.driver.memory: "1g"
+  spark.executor.cores: 1
+  spark.executor.memory: "1g"
+  spark.executor.instances: 1

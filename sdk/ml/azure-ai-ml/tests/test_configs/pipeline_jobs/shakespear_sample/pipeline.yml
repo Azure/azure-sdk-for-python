@@ -31,9 +31,8 @@ jobs:
       output1: ${{parent.outputs.output1}}
 
     resources:
-      instance_type: Standard_E8S_V3
+      instance_type: standard_e4s_v3
       runtime_version: 3.1.0
-#    compute: azureml:spark31
 
   count_word:
     type: spark
@@ -41,4 +40,6 @@ jobs:
     inputs:
       input1: ${{parent.jobs.sample_word.outputs.output1}}
 
-    compute: azureml:spark31
+    resources:
+      instance_type: standard_e4s_v3
+      runtime_version: 3.1.0

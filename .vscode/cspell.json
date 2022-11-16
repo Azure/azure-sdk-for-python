@@ -28,6 +28,7 @@
     "**/*requirement*.txt",
     "**/assets.json",
 
+    "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
@@ -97,6 +98,8 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "qnamaker",
+    "mindependency",
     "automl",
     "pyyaml",
     "CONLL",
@@ -576,6 +579,12 @@
         "mymodel",
         "heif",
         "racwd"
+      ]
+    },
+    {
+      "filename": "sdk/keyvault/**",
+      "words": [
+        "eddsa"
       ]
     },
     {

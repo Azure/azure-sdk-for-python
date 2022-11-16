@@ -114,15 +114,14 @@ class TestPipelineJob(AzureRecordedTestCase):
             job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
         )
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/wordcount_pipeline.yml",
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_pipeline.yml",
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml",
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job.yml",
-            "./tests/test_configs/pipeline_jobs/shakespear-sample-and-word-count-using-spark/pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/wordcount_pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job.yml",
+            "tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml",
         ],
     )
     def test_pipeline_job_with_spark_job(
