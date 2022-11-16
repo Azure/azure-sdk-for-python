@@ -181,7 +181,8 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, *, user_provided_kwargs=None, non_pipeline_inputs_dict=None, non_pipeline_inputs=None) -> PipelineComponent:
+    def build(self, *, user_provided_kwargs=None,
+              non_pipeline_inputs_dict=None, non_pipeline_inputs=None) -> PipelineComponent:
         """
         Build a pipeline component from current pipeline builder.
 
