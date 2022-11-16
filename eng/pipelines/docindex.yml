@@ -41,6 +41,7 @@ jobs:
           Repositories:
             - Name: $(DocRepoOwner)/$(DocRepoName)
               WorkingDirectory: $(DocRepoLocation)
+              Commitish: 6589a02d523518c99274453906a452e1521d29e2
 
       # Call update docs ci script to onboard packages
       - task: Powershell@2
@@ -78,70 +79,70 @@ jobs:
 
       - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
         parameters:
-          BaseRepoBranch: $(DefaultBranch)
+          BaseRepoBranch: test_service_name
           BaseRepoOwner: $(DocRepoOwner)
           CommitMsg: "Update docs CI configuration"
           TargetRepoName: $(DocRepoName)
           TargetRepoOwner: $(DocRepoOwner)
           WorkingDirectory: $(DocRepoLocation)
 
-      # Prepare daily docs CI
-      - template: /eng/common/pipelines/templates/steps/set-daily-docs-branch-name.yml
-        parameters:
-          DailyBranchVariableName: DailyDocsBranchName
-      - pwsh: |
-          $ErrorActionPreference = "Continue"
-          git checkout "origin/$(DailyDocsBranchName)" 2>&1 | Out-Null
-          $LASTEXITCODE = 0 # This ignores any error from git checkout
-          git status
-        displayName: Checkout daily branch if it exists
-        workingDirectory: $(DocRepoLocation)
+      # # Prepare daily docs CI
+      # - template: /eng/common/pipelines/templates/steps/set-daily-docs-branch-name.yml
+      #   parameters:
+      #     DailyBranchVariableName: DailyDocsBranchName
+      # - pwsh: |
+      #     $ErrorActionPreference = "Continue"
+      #     git checkout "origin/$(DailyDocsBranchName)" 2>&1 | Out-Null
+      #     $LASTEXITCODE = 0 # This ignores any error from git checkout
+      #     git status
+      #   displayName: Checkout daily branch if it exists
+      #   workingDirectory: $(DocRepoLocation)
 
-      - task: Powershell@2
-        inputs:
-          pwsh: true
-          filePath: eng/common/scripts/Update-DocsMsPackages.ps1
-          arguments: >-
-            -DocRepoLocation $(DocRepoLocation)
-            -PackageSourceOverride "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
-        displayName: Update Docs Onboarding for Daily branch
-      - task: Powershell@2
-        inputs:
-          pwsh: true
-          filePath: eng/common/scripts/Service-Level-Readme-Automation.ps1
-          arguments: >-
-            -DocRepoLocation $(DocRepoLocation)
-            -TenantId '$(opensource-aad-tenant-id)'
-            -ClientId '$(opensource-aad-app-id)'
-            -ClientSecret '$(opensource-aad-secret)'
-        displayName: Generate Service Level Readme
-      - task: Powershell@2
-        inputs:
-          pwsh: true
-          filePath: eng/common/scripts/Update-DocsMsToc.ps1
-          arguments: >-
-            -DocRepoLocation $(DocRepoLocation)
-            -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
-        displayName: Generate ToC for Daily Docs
+      # - task: Powershell@2
+      #   inputs:
+      #     pwsh: true
+      #     filePath: eng/common/scripts/Update-DocsMsPackages.ps1
+      #     arguments: >-
+      #       -DocRepoLocation $(DocRepoLocation)
+      #       -PackageSourceOverride "https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi/simple/"
+      #   displayName: Update Docs Onboarding for Daily branch
+      # - task: Powershell@2
+      #   inputs:
+      #     pwsh: true
+      #     filePath: eng/common/scripts/Service-Level-Readme-Automation.ps1
+      #     arguments: >-
+      #       -DocRepoLocation $(DocRepoLocation)
+      #       -TenantId '$(opensource-aad-tenant-id)'
+      #       -ClientId '$(opensource-aad-app-id)'
+      #       -ClientSecret '$(opensource-aad-secret)'
+      #   displayName: Generate Service Level Readme
+      # - task: Powershell@2
+      #   inputs:
+      #     pwsh: true
+      #     filePath: eng/common/scripts/Update-DocsMsToc.ps1
+      #     arguments: >-
+      #       -DocRepoLocation $(DocRepoLocation)
+      #       -OutputLocation $(DocRepoLocation)/docs-ref-mapping/reference-unified.yml
+      #   displayName: Generate ToC for Daily Docs
 
-      - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
-        parameters:
-          BaseRepoBranch: $(DailyDocsBranchName)
-          BaseRepoOwner: $(DocRepoOwner)
-          CommitMsg: "Update targeting packages based on release metadata. (Daily docs)"
-          TargetRepoName: $(DocRepoName)
-          TargetRepoOwner: $(DocRepoOwner)
-          WorkingDirectory: $(DocRepoLocation)
-          ScriptDirectory: $(Build.SourcesDirectory)/eng/common/scripts
+      # - template: /eng/common/pipelines/templates/steps/git-push-changes.yml
+      #   parameters:
+      #     BaseRepoBranch: $(DailyDocsBranchName)
+      #     BaseRepoOwner: $(DocRepoOwner)
+      #     CommitMsg: "Update targeting packages based on release metadata. (Daily docs)"
+      #     TargetRepoName: $(DocRepoName)
+      #     TargetRepoOwner: $(DocRepoOwner)
+      #     WorkingDirectory: $(DocRepoLocation)
+      #     ScriptDirectory: $(Build.SourcesDirectory)/eng/common/scripts
 
-      - task: PowerShell@2
-        displayName: Queue Docs CI build
-        inputs:
-          pwsh: true
-          filePath: eng/common/scripts/Queue-Pipeline.ps1
-          arguments: >
-            -Organization "apidrop"
-            -Project "Content%20CI"
-            -DefinitionId 3453
-            -Base64EncodedAuthToken "$(azuresdk-apidrop-devops-queue-build-pat)"
-            -BuildParametersJson (@{ params = (Get-Content ./eng/dailydocsconfig.json -Raw) -replace '%%DailyDocsBranchName%%', "$(DailyDocsBranchName)" } | ConvertTo-Json)
+      # - task: PowerShell@2
+      #   displayName: Queue Docs CI build
+      #   inputs:
+      #     pwsh: true
+      #     filePath: eng/common/scripts/Queue-Pipeline.ps1
+      #     arguments: >
+      #       -Organization "apidrop"
+      #       -Project "Content%20CI"
+      #       -DefinitionId 3453
+      #       -Base64EncodedAuthToken "$(azuresdk-apidrop-devops-queue-build-pat)"
+      #       -BuildParametersJson (@{ params = (Get-Content ./eng/dailydocsconfig.json -Raw) -replace '%%DailyDocsBranchName%%', "$(DailyDocsBranchName)" } | ConvertTo-Json)
