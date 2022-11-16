@@ -1458,56 +1458,41 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
-
-@pytest.mark.usefixtures(
-    "recorded_test",
-    "mock_code_hash",
-    "enable_pipeline_private_preview_features",
-    "mock_asset_name",
-    "mock_component_hash",
-)
-@pytest.mark.timeout(timeout=_PIPELINE_JOB_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
-@pytest.mark.e2etest
-@pytest.mark.pipeline_test
-class TestPipelineJobReuse(AzureRecordedTestCase):
-    @pytest.mark.skip(reason="flaky test")
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="no need to run in playback mode")
     def test_reused_pipeline_child_job_download(
         self,
         client: MLClient,
         randstr: Callable[[str], str],
         tmp_path: Path,
-        generate_weekly_fixed_job_name: Callable[[str], str],
     ) -> None:
         pipeline_spec_path = "./tests/test_configs/pipeline_jobs/reuse_child_job_download/pipeline.yml"
+
         # ensure previous job exists for reuse
-        job_name = "{}_{}".format(
-            generate_weekly_fixed_job_name(job_name="hello_world_pipeline_job"),
-            "test_reused_pipeline_child_job_download",
+        job_name = randstr("job_name")
+        print(f"previous job name: {job_name}")
+        previous_job = client.jobs.create_or_update(
+            load_job(source=pipeline_spec_path, params_override=[{"name": job_name}])
         )
-        print(f"expected reused job name: {job_name}")
-        try:
-            previous_job = client.jobs.get(job_name)
-        except ResourceNotFoundError:
-            previous_job = client.jobs.create_or_update(
-                load_job(source=pipeline_spec_path, params_override=[{"name": job_name}])
-            )
         wait_until_done(client, previous_job)
+
         # submit a new job that will reuse previous job
         new_job_name = randstr("new_job_name")
+        print(f"new job name: {new_job_name}")
         new_job = client.jobs.create_or_update(
             load_job(pipeline_spec_path, params_override=[{"name": new_job_name}]),
         )
-        print(f"new submitted job name: {new_job_name}")
         wait_until_done(client, new_job)
+
         # ensure reuse behavior, get child job and check
         child_jobs = [
             job
             for job in client.jobs.list(parent_job_name=new_job_name)
             if job.display_name == "hello_world_component_inline"
         ]
-        assert len(child_jobs) == 1  # expected number of child job
         child_job = child_jobs[0]
         assert child_job.properties.get(PipelineConstants.REUSED_FLAG_FIELD) == PipelineConstants.REUSED_FLAG_TRUE
+
         # download and check artifacts and named-outputs existence
         client.jobs.download(name=child_job.name, download_path=tmp_path)
         client.jobs.download(name=child_job.name, download_path=tmp_path, output_name="component_out_path")
