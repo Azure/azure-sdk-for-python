@@ -95,8 +95,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
         # To get the total events number
-        start_time = datetime(2022, 11, 2)
-        end_time = datetime(2022, 11, 9)
+        start_time = datetime(2022, 11, 15)
+        end_time = datetime(2022, 11, 18)
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time)
         all_events = list(change_feed)
         total_events = len(all_events)
@@ -123,8 +123,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        start_time = datetime(2022, 11, 2)
-        end_time = datetime(2022, 11, 9)
+        start_time = datetime(2022, 11, 15)
+        end_time = datetime(2022, 11, 18)
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=2).by_page()
 
         # print first page of events
@@ -140,7 +140,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        start_time = datetime(2022, 11, 2)
+        start_time = datetime(2022, 11, 22)
         change_feed = cf_client.list_changes(start_time=start_time)
 
         events = list(change_feed)
