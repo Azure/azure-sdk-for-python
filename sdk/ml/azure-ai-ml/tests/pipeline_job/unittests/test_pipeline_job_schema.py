@@ -1121,9 +1121,9 @@ class TestPipelineJobSchema:
             "abc": "def",
         }
 
-    @pytest.mark.skip("Pipeline: discuss how to refactor _to_dict in PipelineJob & CommandComponent later.")
     def test_dump_distribution(self):
-        from azure.ai.ml._restclient.v2021_10_01.models import TensorFlow
+        # pipeline level test is in test_pipeline_job_create_with_distribution_component
+        from azure.ai.ml import TensorFlowDistribution
         from azure.ai.ml._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema
 
         distribution_dict = {
@@ -1132,11 +1132,12 @@ class TestPipelineJobSchema:
             "parameter_server_count": 0,
             "worker_count": 5,
         }
-        distribution_obj = TensorFlow.from_dict(distribution_dict)
+        # msrest has been removed from public interface
+        distribution_obj = TensorFlowDistribution(**distribution_dict)
 
-        with pytest.raises(ValidationError, match=r"Value passed is not in set \['pytorch']"):
+        with pytest.raises(ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_dict)
-        with pytest.raises(ValidationError, match=r"Value passed is not in set \['pytorch']"):
+        with pytest.raises(ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
 
         after_dump_correct = TensorFlowDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
