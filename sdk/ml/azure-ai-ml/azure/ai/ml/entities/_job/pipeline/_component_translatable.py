@@ -83,7 +83,7 @@ class ComponentTranslatableMixin:
 
         :return: tuple(type, mode)
         """
-        from azure.ai.ml.entities import CommandJob
+        from azure.ai.ml.entities import CommandJob, Component
         from azure.ai.ml.entities._builders import BaseNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
         from azure.ai.ml.parallel import ParallelJob
@@ -106,6 +106,9 @@ class ComponentTranslatableMixin:
         source_mode = None
         if isinstance(_input_job, BaseNode):
             # If source is base node, get type from io builder
+            if not isinstance(_input_job._component, Component):
+                # When component entity not available, not able to get source type.
+                raise KeyError("Component definition not found in job {}".format(_input_job_name))
             _source = _input_job[_io_type][_name]
             try:
                 source_type = _source.type
