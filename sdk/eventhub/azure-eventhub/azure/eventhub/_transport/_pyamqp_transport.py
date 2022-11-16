@@ -86,7 +86,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: pyamqp.Message
         """
         message_header = None
-        if annotated_message.header and any(annotated_message.header.values()):
+        header_vals = annotated_message.header.values() if annotated_message.header else None
+        # If header and non-None header values, create outgoing header.
+        if annotated_message.header and header_vals.count(None) != len(header_vals):
             message_header = Header(
                 delivery_count=annotated_message.header.delivery_count,
                 ttl=annotated_message.header.time_to_live,
@@ -96,7 +98,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
 
         message_properties = None
-        if annotated_message.properties and any(annotated_message.properties.values()):
+        properties_vals = annotated_message.properties.values() if annotated_message.properties else None
+        # If properties and non-None properties values, create outgoing properties.
+        if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
             message_properties = Properties(
                 message_id=annotated_message.properties.message_id,
                 user_id=annotated_message.properties.user_id,
