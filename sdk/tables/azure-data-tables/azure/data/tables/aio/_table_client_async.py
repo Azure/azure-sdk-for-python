@@ -4,7 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import functools
-from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, TYPE_CHECKING
+from typing import AsyncIterable, List, Union, Any, Optional, Mapping, Iterable, Dict, overload, cast, TYPE_CHECKING
 try:
     from urllib.parse import urlparse, unquote
 except ImportError:
@@ -173,7 +173,7 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
         """
         timeout = kwargs.pop("timeout", None)
         try:
-            identifier = await self._client.table.get_access_policy(
+            _, identifiers = await self._client.table.get_access_policy(
                 table=self.table_name,
                 timeout=timeout,
                 cls=kwargs.pop("cls", None) or _return_headers_and_deserialized,
@@ -182,14 +182,15 @@ class TableClient(AsyncTablesBaseClient): # pylint: disable=client-accepts-api-v
         except HttpResponseError as error:
             _process_table_error(error, table_name=self.table_name)
         output = {}  # type: Dict[str, Optional[TableAccessPolicy]]
-        if identifier.access_policy:
-            output[identifier.id] = TableAccessPolicy(
-                start=deserialize_iso(identifier.access_policy.start),
-                expiry=deserialize_iso(identifier.access_policy.expiry),
-                permission=identifier.access_policy.permission
-            )
-        else:
-            output[identifier.id] = None
+        for identifier in cast(List[SignedIdentifier], identifiers):
+            if identifier.access_policy:
+                output[identifier.id] = TableAccessPolicy(
+                    start=deserialize_iso(identifier.access_policy.start),
+                    expiry=deserialize_iso(identifier.access_policy.expiry),
+                    permission=identifier.access_policy.permission
+                )
+            else:
+                output[identifier.id] = None
         return output
 
     @distributed_trace_async
