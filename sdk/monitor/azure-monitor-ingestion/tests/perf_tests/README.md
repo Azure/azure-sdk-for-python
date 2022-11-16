@@ -45,10 +45,10 @@ These options are available for all ingestion perf tests:
 ### Available tests
 
 The tests currently written for the T2 SDK:
-- `UploadLogsPerfTest` Upload a collection of logs to Azure Monitor
+- `UploadLogsTest` Upload a collection of logs to Azure Monitor
 
 ## Example command
 
 ```cmd
-(env) ~/azure-monitor-ingestion/tests> perfstress UploadLogsPerfTest --num-logs=1000
+(env) ~/azure-monitor-ingestion/tests> perfstress UploadLogsTest --num-logs=1000
 ```

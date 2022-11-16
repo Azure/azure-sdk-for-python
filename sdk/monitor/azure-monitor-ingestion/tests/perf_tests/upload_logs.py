@@ -12,7 +12,7 @@ from azure.monitor.ingestion import LogsIngestionClient
 from azure.monitor.ingestion.aio import LogsIngestionClient as AsyncLogsIngestionClient
 
 
-class UploadLogsPerfTest(PerfStressTest):
+class UploadLogsTest(PerfStressTest):
 
     def __init__(self, arguments):
         super().__init__(arguments)
@@ -32,6 +32,7 @@ class UploadLogsPerfTest(PerfStressTest):
         )
 
         # Create log entries to upload
+        # TODO: Parameterize the size of each log entry
         self.logs = []
         for i in range(self.args.num_logs):
             self.logs.append({
@@ -47,7 +48,7 @@ class UploadLogsPerfTest(PerfStressTest):
 
     @staticmethod
     def add_arguments(parser):
-        super(UploadLogsPerfTest, UploadLogsPerfTest).add_arguments(parser)
+        super(UploadLogsTest, UploadLogsTest).add_arguments(parser)
         parser.add_argument("-n", "--num-logs", nargs="?", type=int, help="Number of logs to be uploaded. Defaults to 100", default=100)
 
     def run_sync(self):
