@@ -24,6 +24,7 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
     :keyword bool verify_challenge_resource: Whether to verify the authentication challenge resource matches the Key
         Vault or Managed HSM domain. Defaults to True.
     """
+    # pylint:disable=protected-access
 
     @distributed_trace_async
     async def get_setting(self, name: str, **kwargs) -> KeyVaultSetting:
@@ -50,10 +51,10 @@ class KeyVaultSettingsClient(AsyncKeyVaultClientBase):
         converted_result = [KeyVaultSetting._from_generated(setting) for setting in result.settings]
 
         # We don't actually get a paged response from the generated method, so we mock the typical iteration methods
-        async def get_next(next_link=None):
+        async def get_next(_=None):
             return converted_result
 
-        async def extract_data(pipeline_response):
+        async def extract_data(_):
             return None, AsyncList(converted_result)
 
         return AsyncItemPaged(get_next, extract_data)
