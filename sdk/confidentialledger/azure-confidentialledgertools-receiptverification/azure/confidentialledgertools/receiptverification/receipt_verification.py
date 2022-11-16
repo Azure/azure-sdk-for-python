@@ -7,7 +7,7 @@ transaction receipts."""
 
 from base64 import b64decode
 from hashlib import sha256
-from typing import List
+from typing import List, cast
 
 from cryptography.x509 import load_pem_x509_certificate, Certificate
 from cryptography.hazmat.primitives import hashes
@@ -94,10 +94,8 @@ def _verify_signature_over_root_node_hash(
         assert sha256(public_key_bytes).digest() == bytes.fromhex(node_id)
 
         # Verify signature over root node hash using node certificate public key
-        return node_cert.public_key().verify(
-            b64decode(signature),
-            root_node_hash,
-            ec.ECDSA(utils.Prehashed(hashes.SHA256())),
+        _verify_ec_signature(
+            node_cert, b64decode(signature), root_node_hash, hashes.SHA256()
         )
 
     except Exception as exception:
@@ -159,6 +157,8 @@ def _compute_root_node_hash(leaf_hash: bytes, proof: List[ProofElement]) -> byte
                     "Invalid proof element in receipt: element must contain either one left or right node hash."
                 )
 
+            parent_node_hash = bytes()
+
             # If the current element contains a left hash, concatenate the left hash and the current node hash
             if element.left is not None:
                 parent_node_hash = bytes.fromhex(element.left) + current_node_hash
@@ -186,22 +186,35 @@ def _verify_certificate_endorsement(
 
     try:
         # Extract TBS certificate hash from endorsee certificate
-        hash_algorithm = endorsee.signature_hash_algorithm
+        hash_algorithm = cast(hashes.HashAlgorithm, endorsee.signature_hash_algorithm)
         digester = hashes.Hash(hash_algorithm)
         digester.update(endorsee.tbs_certificate_bytes)
         cert_digest = digester.finalize()
 
         # Verify endorser signature over endorsee certificate digest
-        endorser.public_key().verify(
-            endorsee.signature,
-            cert_digest,
-            ec.ECDSA(utils.Prehashed(hash_algorithm)),
-        )
+        _verify_ec_signature(endorser, endorsee.signature, cert_digest, hash_algorithm)
 
     except Exception as exception:
         raise EndorsementVerificationException(
             f"Encountered exception when verifying endorsement of certificate {endorsee} by certificate {endorser}."
         ) from exception
+
+
+def _verify_ec_signature(
+    certificate: Certificate,
+    signature: bytes,
+    data: bytes,
+    hash_algorithm: hashes.HashAlgorithm,
+) -> None:
+    """Verify a signature over data using the certificate public key."""
+
+    public_key = cast(ec.EllipticCurvePublicKey, certificate.public_key())
+
+    public_key.verify(
+        signature,
+        data,
+        ec.ECDSA(utils.Prehashed(hash_algorithm)),
+    )
 
 
 def _verify_node_cert_endorsed_by_service_cert(

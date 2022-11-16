@@ -93,7 +93,10 @@ def main():
                 f"Wrote '{entry_contents}' to the ledger at transaction {transaction_id}."
             )
         except HttpResponseError as e:
-            print("Request failed: {}".format(e.response.json()))
+            if e.response != None:
+                print("Request failed: {}".format(e.response.json()))
+            else:
+                print("No response found")
             raise
 
         # Get a receipt for a ledger entry.
@@ -112,7 +115,10 @@ def main():
             get_receipt_result = get_receipt_poller.result()
             print(f"Receipt for transaction id {transaction_id}: {get_receipt_result}")
         except HttpResponseError as e:
-            print("Request failed: {}".format(e.response.json()))
+            if e.response != None:
+                print("Request failed: {}".format(e.response.json()))
+            else:
+                print("No response found")
             raise
 
         # Convert receipt content to a Receipt object.
