@@ -311,7 +311,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     def list_jobs(self, endpoint_name: str) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
-cl
+        
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
         :return: List of jobs
