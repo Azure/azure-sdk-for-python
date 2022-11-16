@@ -656,7 +656,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         client.components.restore(name=name, version=version_archived)
         assert version_archived in get_component_list()
 
-    @pytest.mark.skip(reason="Task 1791832: Inefficient, possibly causing testing pipeline to time out.")
+    @pytest.mark.skipif(condition=not is_live(), reason="target to verify service-side behavior")
     def test_component_archive_restore_container(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         name = randstr("name")
         create_component(client, name)
