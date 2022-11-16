@@ -36,7 +36,7 @@ class MsalCredential(object):
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
         self._client_credential = client_credential
         self._client_id = client_id
-        self._allow_broker = kwargs.pop("allow_broker", False)
+        self._allow_broker = kwargs.pop("allow_broker", None)
 
         self._cache = kwargs.pop("_cache", None)
         if not self._cache:

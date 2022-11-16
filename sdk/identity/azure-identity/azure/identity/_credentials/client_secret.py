@@ -18,8 +18,6 @@ class ClientSecretCredential(ClientCredentialBase):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
-        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
     """
 
     def __init__(
@@ -27,8 +25,6 @@ class ClientSecretCredential(ClientCredentialBase):
             tenant_id: str,
             client_id: str,
             client_secret: str,
-            *,
-            allow_broker: bool = False,
             **kwargs
     ) -> None:
         if not client_id:
@@ -44,6 +40,5 @@ class ClientSecretCredential(ClientCredentialBase):
             client_id=client_id,
             client_credential=client_secret,
             tenant_id=tenant_id,
-            allow_broker=allow_broker,
             **kwargs
         )
