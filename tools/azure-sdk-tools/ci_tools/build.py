@@ -150,6 +150,6 @@ def create_package(
         setup_directory_or_file = os.path.dirname(setup_directory_or_file)
 
     if enable_wheel:
-        run_logged([sys.executable, "setup.py", "bdist_wheel", "-d", dist], prefix="create_wheel", cwd=setup_directory_or_file)
+        run_logged([sys.executable, "-m", "build", "--wheel", "--outdir", dist], prefix="create_wheel", cwd=setup_directory_or_file)
     if enable_sdist:
-        run_logged([sys.executable, "setup.py", "sdist", "--format", "zip", "-d", dist], prefix="create_sdist", cwd=setup_directory_or_file)
+        run_logged([sys.executable, "-m", "build", "--sdist", "--outdir", dist], prefix="create_sdist", cwd=setup_directory_or_file)

@@ -7,6 +7,7 @@ from setuptools import setup, find_packages
 DEPENDENCIES = [
     # Packaging
     "packaging",
+    "build",
     "wheel",
     "Jinja2",
     "MarkupSafe==2.0.1",
