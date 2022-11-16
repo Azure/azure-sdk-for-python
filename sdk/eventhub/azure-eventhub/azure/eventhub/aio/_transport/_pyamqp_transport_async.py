@@ -214,26 +214,45 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         # pylint:disable=protected-access
         consumer._callback_task_run = True
         consumer._last_callback_called_time = time.time()
-        callback_task = asyncio.create_task(
+        callback_task = asyncio.ensure_future(
             PyamqpTransportAsync._callback_task(consumer, batch, max_batch_size, max_wait_time)
         )
-        receive_task = asyncio.create_task(PyamqpTransportAsync._receive_task(consumer))
+        receive_task = asyncio.ensure_future(PyamqpTransportAsync._receive_task(consumer))
 
-        tasks = [callback_task, receive_task]
+        tasks = [callback_task,receive_task]
+        
+
         try:
-            for task in asyncio.as_completed(tasks):
-                try:
-                    await task
-                    await asyncio.sleep(0)
-                except Exception: # pylint: disable=broad-except
-                    consumer._callback_task_run = False
+            await asyncio.gather(*tasks, return_exceptions=False)
             for task in tasks:
-                if task.done() and task.exception():
-                    raise task.exception()
+                try:
+                    #await task
+                    if task.exception():
+                        consumer._callback_task_run = False
+                        raise task.exception()
+                    await asyncio.sleep(0)
+                except Exception:
+                    consumer._callback_task_run = False
         except asyncio.CancelledError:
             consumer._callback_task_run = False
             await asyncio.sleep(0)
             raise
+
+
+        # try:
+        #     for task in asyncio.as_completed(tasks):
+        #         try:
+        #             await task
+        #             #await asyncio.sleep(0)
+        #         except Exception: # pylint: disable=broad-except
+        #             consumer._callback_task_run = False
+        #     for task in tasks:
+        #         if task.done() and task.exception():
+        #             raise task.exception()
+        # except asyncio.CancelledError:
+        #     consumer._callback_task_run = False
+        #     #await asyncio.sleep(0)
+        #     raise
 
     @staticmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
