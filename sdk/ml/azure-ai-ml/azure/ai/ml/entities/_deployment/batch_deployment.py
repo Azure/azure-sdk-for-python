@@ -109,11 +109,11 @@ class BatchDeployment(Deployment):
         code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
         scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
         instance_count: int = None,  # promoted property from resources.instance_count
-        type: str = None,
         **kwargs,
     ) -> None:
 
-        self.job_definiton = kwargs.pop("job_definiton", None)
+        self.deployment_type = kwargs.pop("type", "Model")
+        self.job_definition = kwargs.pop("job_definition", None)
 
         super(BatchDeployment, self).__init__(
             name=name,
@@ -217,9 +217,9 @@ class BatchDeployment(Deployment):
             properties=self.properties,
         )
 
-        if is_private_preview_enabled() and self.job_definiton:
+        if is_private_preview_enabled() and self.job_definition:
             non_flat_data = {}
-            non_flat_data["component_deployment"] = self.job_definiton._to_dict()
+            non_flat_data["component_deployment"] = self.job_definition._to_dict()
             flat_data = flatten(non_flat_data, ".")
             flat_data_keys = flat_data.keys()
             for k in flat_data_keys:

@@ -31,15 +31,18 @@ class JobDefinition:
         component : Union[Component, str] = None,
         type: str = None,
         settings: Dict[str, Any] = None,
+        name: str = None,
+        description: str = None,
+        tags: Dict[str, Any] = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
-        import debugpy
-        debugpy.connect(('localhost', 5678))
-        debugpy.breakpoint()
         self.job = job
         self.component = component
         self.type = type
         self.settings = settings
+        self.name = name 
+        self.tags = tags
+        self.description = description
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member

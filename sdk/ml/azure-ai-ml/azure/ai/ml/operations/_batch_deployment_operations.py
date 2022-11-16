@@ -20,9 +20,10 @@ from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
+from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client, is_private_preview_enabled
+from ._component_operations import ComponentOperations
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
-from azure.ai.ml.entities import BatchDeployment, BatchJob
+from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -56,6 +57,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self._batch_deployment = service_client_05_2022.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
         self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
+        self._component_operations = service_client_05_2022.component_containers
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
@@ -106,6 +108,26 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
             operation_config=self._operation_config,
         )
         upload_dependencies(deployment, orchestrators)
+        if is_private_preview_enabled() and deployment.job_definition:
+            if isinstance(deployment.job_definition.component, PipelineComponent):
+                deployment.job_definition.component = self._component_operations.create_or_update(
+                    name =  deployment.job_definition.component.name,
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    body = deployment.job_definition.component._to_rest_object(),
+                    **self._init_kwargs
+                )
+                deployment.job_definition.component_id = deployment.job_definition.component.component_id
+            elif isinstance(deployment.job_definition.component, str):
+
+                component = self._component_operations.get(
+                    name = deployment.job_definition.component,
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    **self._init_kwargs
+                )
+                deployment.job_definiton.component_id = component.id
+
 
         try:
             location = self._get_workspace_location()

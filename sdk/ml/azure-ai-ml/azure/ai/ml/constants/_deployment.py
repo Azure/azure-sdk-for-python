@@ -12,6 +12,10 @@ class BatchDeploymentOutputAction:
     APPEND_ROW = "append_row"
     SUMMARY_ONLY = "summary_only"
 
+class BatchDeploymentTypes:
+    MODEL = "model"
+    COMPONENT = "component"
+
 
 class EndpointDeploymentLogContainerType(object):
     STORAGE_INITIALIZER_REST = "StorageInitializer"

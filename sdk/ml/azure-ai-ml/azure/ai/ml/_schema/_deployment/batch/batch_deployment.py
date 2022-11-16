@@ -14,7 +14,7 @@ from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefin
 from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum, ExperimentalField
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
+from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction, BatchDeploymentTypes
 
 from .batch_deployment_settings import BatchRetrySettingsSchema
 
@@ -53,7 +53,9 @@ class BatchDeploymentSchema(DeploymentSchema):
         metadata={"description": "Indicates maximum number of parallelism per instance."}
     )
     resources = NestedField(JobResourceConfigurationSchema)
-    type = fields.Str()
+    type = StringTransformedEnum(
+        allowed_values = [BatchDeploymentTypes.COMPONENT, BatchDeploymentTypes.MODEL]
+    )
 
     job_definition =ExperimentalField(NestedField(JobDefinitionSchema))
 

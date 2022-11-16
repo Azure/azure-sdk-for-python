@@ -23,7 +23,7 @@ class JobDefinitionSchema(metaclass=PatchedSchemaMeta):
     component = UnionField([ RegistryStr(azureml_type=AzureMLResourceType.COMPONENT), PipelineComponentFileRefField(),])
     type = StringTransformedEnum(
         required=True,
-        allowed_values=[JobTypes.COMMAND_JOB, JobTypes.PIPELINE_JOB, JobTypes.SWEEP_JOB]
+        allowed_values=[JobTypes.PIPELINE_JOB]
     )
     settings = fields.Dict()
 
