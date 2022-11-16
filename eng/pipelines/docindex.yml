@@ -44,13 +44,13 @@ jobs:
               Commitish: 6589a02d523518c99274453906a452e1521d29e2
 
       # Call update docs ci script to onboard packages
-      - task: Powershell@2
-        inputs:
-          pwsh: true
-          filePath: eng/common/scripts/Update-DocsMsPackages.ps1
-          arguments: -DocRepoLocation $(DocRepoLocation) -ImageId '$(DocValidationImageId)'
-        displayName: Update Docs Onboarding
-        condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
+      # - task: Powershell@2
+      #   inputs:
+      #     pwsh: true
+      #     filePath: eng/common/scripts/Update-DocsMsPackages.ps1
+      #     arguments: -DocRepoLocation $(DocRepoLocation) -ImageId '$(DocValidationImageId)'
+      #   displayName: Update Docs Onboarding
+      #   condition: and(succeeded(), or(eq(variables['Build.Reason'], 'Schedule'), eq(variables['Force.MainUpdate'], 'true')))
 
       - task: Powershell@2
         inputs:
