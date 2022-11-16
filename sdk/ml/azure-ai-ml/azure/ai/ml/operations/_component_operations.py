@@ -570,8 +570,7 @@ def _refine_component(component_func: types.FunctionType) -> Component:
         annotations = getattr(f, "__annotations__", {})
         func_parameters = signature(f).parameters
         defaults_dict = {key: val.default for key, val in func_parameters.items()}
-        variable_inputs = [
-            key for key, val in func_parameters.items() if val.kind in [val.VAR_KEYWORD, val.VAR_POSITIONAL]]
+        variable_inputs = [key for key, val in func_parameters.items() if val.kind == val.VAR_KEYWORD]
         if variable_inputs:
             msg = "Cannot register the component {} with variable inputs {!r}."
             raise ValidationException(

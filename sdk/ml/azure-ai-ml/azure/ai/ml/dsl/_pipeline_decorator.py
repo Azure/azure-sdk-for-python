@@ -164,20 +164,16 @@ def pipeline(
             _dsl_settings_stack.push()  # use this stack to track on_init/on_finalize settings
             try:
                 # Convert args to kwargs
-                provided_positional_args, provided_positional_kwargs = _validate_args(func, args, kwargs,
-                                                                                      non_pipeline_inputs)
-                kwargs = OrderedDict(list(provided_positional_kwargs.items()) + list(provided_positional_args.items()))
+                provided_positional_kwargs = _validate_args(func, args, kwargs, non_pipeline_inputs)
 
-                # When pipeline supports variable parameters, update pipeline component to support
-                # the inputs in *args and **kwargs.
-                pipeline_parameters = {k: v for k, v in kwargs.items() if k not in non_pipeline_inputs}
+                # When pipeline supports variable params, update pipeline component to support the inputs in **kwargs.
+                pipeline_parameters = {k: v for k, v in provided_positional_kwargs.items() if k not in non_pipeline_inputs}
                 pipeline_builder._update_inputs(pipeline_parameters)
 
                 non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
 
                 # TODO: cache built pipeline component
                 pipeline_component = pipeline_builder.build(
-                    user_provided_args=provided_positional_args,
                     user_provided_kwargs=provided_positional_kwargs,
                     non_pipeline_params_dict=non_pipeline_params_dict
                 )
@@ -195,7 +191,7 @@ def pipeline(
             common_init_args = {
                 "experiment_name": experiment_name,
                 "component": pipeline_component,
-                "inputs": kwargs,
+                "inputs": pipeline_parameters,
                 "tags": tags,
             }
             if _is_inside_dsl_pipeline_func():
@@ -240,6 +236,11 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
     # Positional arguments validate
     is_support_variable_params = is_private_preview_enabled()
     all_parameters = signature(func).parameters
+    # Implicit parameter are *args
+    var_positional_arg = next(filter(lambda param: param.kind == param.VAR_POSITIONAL, all_parameters.values()), None)
+    if var_positional_arg:
+        raise UnsupportedParameterKindError(func.__name__, parameter_kind=f"*{var_positional_arg.name}")
+
     non_pipeline_inputs = non_pipeline_inputs or []
     unexpected_non_pipeline_inputs = [param for param in non_pipeline_inputs if param not in all_parameters]
     if unexpected_non_pipeline_inputs:
@@ -259,22 +260,15 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
             raise TooManyPositionalArgsError(func.__name__, min_num, max_num, len(args))
 
     func_args, provided_args = list(args), OrderedDict({})
-    provided_kwargs = OrderedDict({param.name: func_args.pop(0) for param in named_parameters if len(func_args) > 0})
-    for _k in kwargs.keys():
+    provided_args = OrderedDict({param.name: func_args.pop(0) for param in named_parameters if len(func_args) > 0})
+    for _k, _v in kwargs.items():
         if not is_support_variable_params and _k not in all_parameters:
             raise UnexpectedKeywordError(func.__name__, _k, all_parameters.keys())
-        if _k in provided_kwargs.keys():
+        if _k in provided_args.keys():
             raise MultipleValueError(func.__name__, _k)
-        provided_kwargs[_k] = kwargs[_k]
-    variable_args = next(iter(param for param in all_parameters.values() if param.kind == param.VAR_POSITIONAL), None)
-    variable_args_prefix =  variable_args.name if variable_args and func_args else None
-    for index, arg in enumerate(func_args):
-        variable_args_name = f"{variable_args_prefix}_{index}"
-        if variable_args_name in provided_kwargs.keys():
-            raise MultipleValueError(func.__name__, variable_args_name)
-        provided_args[variable_args_name] = arg
+        provided_args[_k] = _v
 
-    missing_keys = empty_parameters.keys() - provided_kwargs.keys()
+    missing_keys = empty_parameters.keys() - provided_args.keys()
     if len(missing_keys) > 0:
         raise MissingPositionalArgsError(func.__name__, missing_keys)
 
@@ -284,8 +278,8 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
             or is_parameter_group(_data)
         )
 
-    for pipeline_input_name in provided_kwargs:
-        data = provided_kwargs[pipeline_input_name]
+    for pipeline_input_name in provided_args:
+        data = provided_args[pipeline_input_name]
         if data is not None and not _is_supported_data_type(data) and \
                 pipeline_input_name not in non_pipeline_inputs:
             msg = (
@@ -297,4 +291,4 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
                 no_personal_data_message=msg.format("[type(pipeline_input_name)]"),
             )
 
-    return provided_args, provided_kwargs
+    return provided_args
