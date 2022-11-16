@@ -11,6 +11,7 @@
 - Key Vault API version `7.4-preview.1` is now the default
 - Updated minimum `azure-core` version to 1.24.0
 - Dropped `msrest` requirement
+- Dropped `six` requirement
 - Added requirement for `isodate>=0.6.1` (`isodate` was required by `msrest`)
 - Added requirement for `typing-extensions>=4.0.1`
 
