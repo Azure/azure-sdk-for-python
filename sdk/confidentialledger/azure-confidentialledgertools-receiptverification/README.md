@@ -40,38 +40,15 @@ Every write to Azure Confidential Ledger generates an immutable ledger entry in 
 
 ### Receipts
 
-State changes to the Confidential Ledger are saved in a data structure called a [Merkle tree][merkle_tree_wiki]. To cryptographically verify that writes were correctly saved, a Merkle proof, or receipt, can be retrieved for any transaction id.
+To enforce transaction integrity guarantees, an Azure Confidential Ledger uses a Merkle tree data structure to record the hash of all transactions blocks that are appended to the immutable ledger. After a write transaction is committed, Azure Confidential Ledger users can get a cryptographic Merkle proof, or receipt, over the entry produced in a Confidential Ledger to verify that the write operation was correctly saved. A write transaction receipt is proof that the system has committed the corresponding transaction and can be used to verify that the entry has been effectively appended to the ledger.
 
-A receipt is a cryptographic proof that a transaction has been committed to the ledger: it can be used to verify that the ledger entry associated to a transaction has been appended to the ledger (thus, it can be used to validate properties such as non-repudiation, integrity, and tamper-proofing). A receipt contains all the information needed to verify transaction inclusion and the verification can be done by applying an ad-hoc algorithm.
-
-Please refer to the following [CCF documentation][ccf_docs] links for more information about transaction receipts:
-
-* [Write Receipts](https://microsoft.github.io/CCF/main/use_apps/verify_tx.html#write-receipts)
-* [Receipts](https://microsoft.github.io/CCF/main/audit/receipts.html)
+Please refer to the following [article](https://learn.microsoft.com/azure/confidential-ledger/write-transaction-receipts) for more information about Azure Confidential Ledger write transaction receipts.
 
 ### Receipt Verification
 
-Azure Confidential Ledger write transaction receipts can be verified by following three sequential steps:
+After getting a receipt for a write transaction, Azure Confidential Ledger users can verify the contents of the fetched receipt following a verification algorithm. The success of the verification is proof that the write operation associated to the receipt was correctly appended into the immutable ledger.
 
-1. Compute the SHA-256 hash of the leaf node in the Merkle Tree corresponding to the committed transaction. A leaf node is composed of the ordered concatenation of the following fields that can be found in an Azure Confidential Ledger receipt:
-   * `write_set_digest`
-   * SHA-256 digest of `commit_evidence`
-   * `claims_digest` fields
-
-2. Re-compute the SHA-256 hash of the root of the Merkle Tree at the time the transaction was committed. This can be accomplished by iteratively hashing and concatenating the leaf node hash (computed in the previous step) with the ordered nodes’ hashes provided in the `proof` field of a receipt. The concatenation needs to be done with respect to the relative order indicated in the objects provided in the `proof` field (either `left` or `right`), and the result of the previous iteration shall be used as input for the next one. This process follows the standard steps to compute the root of a [Merkle Tree][merkle_tree_wiki] data structure given the required nodes for the computation.
-
-3. Verify that the cryptographic signature produced over the root node hash is valid using the signing node certificate in the receipt. The verification process follows the standard steps for digital signature verification for messages signed using the [Elliptic Curve Digital Signature Algorithm (ECDSA)](https://wikipedia.org/wiki/Elliptic_Curve_Digital_Signature_Algorithm).
-
-In addition to the above, it is also required to verify that the signing node certificate is endorsed by the ledger certificate. As the ledger certificate may have been renewed since the transaction was committed, it is possible that the current service identity is different from the one that endorsed the signing node. If this applies, it is required to build a chain of certificates from the signing node certificate (the `cert` field in the receipt) up to a trusted root Certificate Authority (the current service identity certificate) through other previous service identities (the `service_endorsements` list field in the receipt). Certificate endorsement need to be verified for the entire chain and follows a similar signature verification process outlined in the previous point.
-
-Please refer to the [CCF documentation about receipt verification](https://microsoft.github.io/CCF/main/use_apps/verify_tx.html#receipt-verification) for more details about how the algorithm works. Please also see the docstrings under [models.py]<!--(TODO: add link once PR is merged)--> for detailed description of each field in an Azure Confidential Ledger receipt.
-
-The following [CCF documentation][ccf_docs] links could also be useful to better understand some topics related to receipt verification:
-
-* [CCF Glossary](https://microsoft.github.io/CCF/main/overview/glossary.html)
-* [Merkle Tree](https://microsoft.github.io/CCF/main/architecture/merkle_tree.html)
-* [Cryptography](https://microsoft.github.io/CCF/main/architecture/cryptography.html)
-* [Certificates](https://microsoft.github.io/CCF/main/operations/certificates.html)
+Please refer to the following [article](https://learn.microsoft.com/azure/confidential-ledger/verify-write-transaction-receipts) for more information about the verification process for Azure Confidential Ledger write transaction receipts.
 
 ## Examples
 
