@@ -134,7 +134,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
-        :return: a deployment entity
+        :return: A deployment entity
         :rtype: ~azure.ai.ml.entities.BatchDeployment
         """
 
@@ -213,7 +213,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs
-        :rtype: ~azure.core.paging.ItemPaged[BatchJob]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]

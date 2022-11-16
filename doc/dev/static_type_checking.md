@@ -12,6 +12,7 @@ For the TL;DR version, please see the [Static Type Checking Cheat Sheet](https:/
   - [Install and run type checkers on your client library code](#install-and-run-type-checkers-on-your-client-library-code)
     - [Run mypy](#run-mypy)
     - [Run pyright](#run-pyright)
+    - [Run verifytypes](#run-verifytypes)
     - [How to ignore type checking errors](#how-to-ignore-type-checking-errors)
     - [How to opt out of type checking](#how-to-opt-out-of-type-checking)
   - [Typing tips and guidance for the Python SDK](#typing-tips-and-guidance-for-the-python-sdk)
@@ -166,7 +167,8 @@ Some commonly used types imported from `typing-extensions` are Literal, TypedDic
 ## Install and run type checkers on your client library code
 
 Our Python SDK repo CI runs two type checkers on the code - [mypy](https://mypy.readthedocs.io/en/stable/) and [pyright](https://github.com/microsoft/pyright). You may see different errors across type checkers.
-We aim for the Python SDK to provide "type checker clean" client libraries whether using mypy or pyright so that our customers are able to choose either and have a good typing experience.
+We aim for the Python SDK to provide "type checker clean" client libraries whether using mypy or pyright so that our customers are able to choose either and have a good typing experience. The type checkers run
+on the client library code and the sample code found under the `samples` directory for your library.
 
 The versions of mypy and pyright that we run in CI are pinned to specific versions in order to avoid surprise typing errors raised when a new
 version of the type checker ships. All client libraries in the Python SDK repo are automatically opted in to running type checking. If you need to temporarily opt-out of type checking for your client library, see [How to opt out of type checking](#how-to-opt-out-of-type-checking).
@@ -209,9 +211,7 @@ Full documentation on mypy config options found here: https://mypy.readthedocs.i
 
 ### Run pyright
 
-> Note: this is not implemented in our repo yet.
-
-We pin the version of pyright to version (TODO [version](https://github.com/microsoft/pyright)).
+We pin the version of pyright to version [1.1.274](https://github.com/microsoft/pyright).
 
 Note that pyright requires that node is installed. The command-line [wrapper package](https://pypi.org/project/pyright/) for pyright will check if node is in the `PATH`, and if not, will download it at runtime.
 
@@ -221,7 +221,7 @@ To run pyright on your library, run the tox pyright env at the package level:
 
 If you don't want to use `tox` you can also install and run pyright on its own:
 
-`pip install pyright==TODO`
+`pip install pyright==1.1.274`
 
 `.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright azure`
 
@@ -238,6 +238,25 @@ For example, to ignore type checking files under a specific directory, you can u
 ```
 
 Full documentation on pyright config options can be found here: https://github.com/microsoft/pyright/blob/main/docs/configuration.md
+
+### Run verifytypes
+
+[verifytypes](https://github.com/microsoft/pyright/blob/main/docs/typed-libraries.md#verifying-type-completeness) is a feature of pyright which measures the type completeness of
+a py.typed library. It analyzes all the symbols that are part of the public interface and reports whether that symbol is known (fully typed), unknown, or ambiguous.
+The report can be used to view where type hints and docstrings are missing in a library, but differs from mypy/pyright in that it does not judge whether the provided type hints are accurate.
+verifytypes also reports a type completeness score which is the percentage of known types in the library. This score is used in the CI check to fail if the type completeness of the library worsens
+from the code in the PR vs. the latest release on PyPi.
+
+To run verifytypes on your library, run the tox verifytypes env at the package level:
+
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>tox -e verifytypes -c ../../../eng/tox/tox.ini`
+
+If you don't want to use `tox` you can also install and run pyright/verifytypes on its own:
+
+`pip install pyright==1.1.274`
+
+`.../azure-sdk-for-python/sdk/textanalytics/azure-ai-textanalytics>pyright --verifytypes azure.ai.textanalytics --ignoreexternal`
+
 
 ### How to ignore type checking errors
 
@@ -279,7 +298,7 @@ All client libraries in the Python SDK repo are automatically opted in to runnin
 reason why a particular library should not run type checking, it is possible to add that library to a block list to prevent mypy/pyright
 from running checks.
 
-1) Place the package name on this block list: TODO
+1) Place the package name on the appropriate block list: [tools/azure-sdk-tools/ci_tools/environment_exclusions.py](https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/ci_tools/environment_exclusions.py).
 2) Open an issue tracking that "library-name" should be opted in to running type checking
 
 > Note: Blocking your library from type checking is a *temporary* state. It is expected that checks are re-enabled as soon as possible.

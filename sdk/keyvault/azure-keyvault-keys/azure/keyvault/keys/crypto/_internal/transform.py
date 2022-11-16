@@ -4,10 +4,9 @@
 # ------------------------------------
 
 from abc import ABCMeta, abstractmethod
-from six import with_metaclass
 
 
-class CryptoTransform(with_metaclass(ABCMeta, object)):
+class CryptoTransform(object, metaclass=ABCMeta):
     def __init__(self, key):
         self._key = key
 
@@ -36,13 +35,13 @@ class BlockCryptoTransform(CryptoTransform):
         raise NotImplementedError()
 
 
-class AuthenticatedCryptoTransform(with_metaclass(ABCMeta, object)):
+class AuthenticatedCryptoTransform(object, metaclass=ABCMeta):
     @abstractmethod
     def tag(self):
         raise NotImplementedError()
 
 
-class SignatureTransform(with_metaclass(ABCMeta, object)):
+class SignatureTransform(object, metaclass=ABCMeta):
     @abstractmethod
     def sign(self, digest):
         raise NotImplementedError()
@@ -52,7 +51,7 @@ class SignatureTransform(with_metaclass(ABCMeta, object)):
         raise NotImplementedError()
 
 
-class DigestTransform(with_metaclass(ABCMeta, object)):
+class DigestTransform(object, metaclass=ABCMeta):
     @abstractmethod
     def update(self, data):
         raise NotImplementedError()

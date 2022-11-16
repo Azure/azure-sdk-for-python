@@ -204,7 +204,6 @@ class TestPipelineJobEntity:
         pipeline_dict = pipeline._to_dict()
         assert pydash.omit(pipeline_dict["jobs"], *["properties", "hello_python_world_job.properties"]) == {
             "hello_python_world_job": {
-                "environment_variables": {},
                 "inputs": {
                     "sample_input_data": {
                         "type": "uri_folder",
@@ -233,14 +232,8 @@ class TestPipelineJobEntity:
         }
         pipeline_rest_dict["properties"]["jobs"] == {
             "hello_python_world_job": {
-                "resources": None,
-                "distribution": None,
-                "limits": None,
-                "environment_variables": {},
                 "name": "hello_python_world_job",
                 "type": "command",
-                "display_name": None,
-                "tags": {},
                 "computeId": "cpu-cluster",
                 "inputs": {
                     "sample_input_string": {
@@ -328,18 +321,12 @@ class TestPipelineJobEntity:
             "_source": "YAML.JOB",
             "componentId": "xxx",
             "computeId": "xxx",
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
                 "mltable_output": {
                     "job_input_type": "literal",
                     "value": "${{parent.jobs.regression_node.outputs.best_model}}",
                 }
             },
-            "limits": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
             "type": "command",
         }
 
@@ -755,7 +742,7 @@ class TestPipelineJobEntity:
         assert isinstance(node, Spark)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
         )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -766,10 +753,9 @@ class TestPipelineJobEntity:
 
         expected_dict = {
             "_source": "YAML.COMPONENT",
-            "archives": None,
             "args": "--file_input ${{inputs.file_input}}",
-            "componentId": "xxx",
-            "computeId": "xxx",
+            "componentId": "",
+            "computeId": "",
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -777,17 +763,13 @@ class TestPipelineJobEntity:
                 "spark.executor.instances": 1,
                 "spark.executor.memory": "1g",
             },
-            "display_name": None,
             "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "files": ["my_files.txt"],
             "identity": {"identity_type": "Managed"},
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
-            "jars": None,
             "name": "add_greeting_column",
-            "outputs": {},
             "py_files": ["utils.zip"],
-            "resources": None,
-            "tags": {},
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -796,10 +778,9 @@ class TestPipelineJobEntity:
 
         expected_dict = {
             "_source": "YAML.COMPONENT",
-            "archives": None,
             "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
-            "componentId": "xxx",
-            "computeId": "xxx",
+            "componentId": "",
+            "computeId": "",
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -807,7 +788,6 @@ class TestPipelineJobEntity:
                 "spark.executor.instances": 1,
                 "spark.executor.memory": "1g",
             },
-            "display_name": None,
             "entry": {"file": "count_by_row.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "files": ["my_files.txt"],
             "identity": {"identity_type": "Managed"},
@@ -815,15 +795,13 @@ class TestPipelineJobEntity:
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
-            "py_files": None,
-            "resources": None,
-            "tags": {},
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
             "type": "spark",
         }
         assert actual_dict == expected_dict
 
     def test_default_user_identity_if_empty_identity_input(self):
-        test_path = "./tests/test_configs/pipeline_jobs/shakespear-sample-and-word-count-using-spark/pipeline.yml"
+        test_path = "./tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml"
         job = load_job(test_path)
         omit_fields = [
             "jobs.sample_word.componentId",
@@ -843,39 +821,29 @@ class TestPipelineJobEntity:
             "jobs": {
                 "count_word": {
                     "_source": "YAML.JOB",
-                    "archives": None,
                     "args": "--input1 ${{inputs.input1}}",
-                    "computeId": "spark31",
                     "conf": {
                         "spark.driver.cores": 1,
                         "spark.driver.memory": "2g",
                         "spark.executor.cores": 2,
                         "spark.executor.instances": 4,
                         "spark.executor.memory": "2g",
-                        "spark.yarn.dist.jars": "https://foobaradrama2.azurefd.net/latest/hadoop-azureml-fs.jar",
                     },
-                    "display_name": None,
                     "entry": {"file": "wordcount.py", "spark_job_entry_type": "SparkJobPythonEntry"},
-                    "files": None,
-                    "identity": {"identity_type": "Managed"},
+                    "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
                         "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
                     },
-                    "jars": None,
                     "name": "count_word",
-                    "outputs": {},
-                    "py_files": None,
-                    "resources": None,
-                    "tags": {},
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 },
                 "sample_word": {
                     "_source": "YAML.JOB",
-                    "archives": None,
                     "args": "--input1 ${{inputs.input1}} --output2 "
                             "${{outputs.output1}} --my_sample_rate "
                             "${{inputs.sample_rate}}",
-                    "computeId": None,
                     "conf": {
                         "spark.driver.cores": 1,
                         "spark.driver.memory": "2g",
@@ -886,20 +854,16 @@ class TestPipelineJobEntity:
                         "spark.executor.instances": 1,
                         "spark.executor.memory": "2g",
                     },
-                    "display_name": None,
                     "entry": {"file": "sampleword.py", "spark_job_entry_type": "SparkJobPythonEntry"},
-                    "files": None,
                     "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
                         "input1": {"job_input_type": "literal", "value": "${{parent.inputs.input1}}"},
                         "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
                     },
-                    "jars": None,
                     "name": "sample_word",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
-                    "py_files": None,
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
-                    "tags": {},
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 },
             },
@@ -959,7 +923,6 @@ class TestPipelineJobEntity:
                             "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
                             "is_deterministic": True,
                             "outputs": {"score_output": {"type": "uri_folder"}},
-                            "tags": {},
                             "type": "command",
                             "version": "1",
                         },
@@ -976,7 +939,6 @@ class TestPipelineJobEntity:
                             "inputs": {"model_input": {"type": "mltable"}, "test_data": {"type": "uri_folder"}},
                             "is_deterministic": True,
                             "outputs": {"score_output": {"type": "uri_folder"}},
-                            "tags": {},
                             "type": "command",
                             "version": "1",
                         },
@@ -993,7 +955,6 @@ class TestPipelineJobEntity:
                             "inputs": {"model_input": {"type": "uri_folder"}, "test_data": {"type": "uri_folder"}},
                             "is_deterministic": True,
                             "outputs": {"score_output": {"type": "uri_folder"}},
-                            "tags": {},
                             "type": "command",
                             "version": "1",
                         },
@@ -1053,15 +1014,8 @@ class TestPipelineJobEntity:
             "jobs": {
                 "train_job": {
                     "type": "command",
-                    "properties": {},
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
@@ -1111,16 +1065,9 @@ class TestPipelineJobEntity:
             },
             "jobs": {
                 "train_job": {
-                    "properties": {},
                     "type": "command",
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
@@ -1174,13 +1121,7 @@ class TestPipelineJobEntity:
                 "train_job": {
                     "type": "command",
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {
@@ -1242,13 +1183,7 @@ class TestPipelineJobEntity:
                 "train_job": {
                     "type": "command",
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {
@@ -1310,13 +1245,7 @@ class TestPipelineJobEntity:
                 "train_job": {
                     "type": "command",
                     "_source": "YAML.JOB",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_job",
-                    "display_name": None,
-                    "tags": {},
                     "computeId": "xxx",
                     "inputs": {
                         "training_data": {
@@ -1394,14 +1323,6 @@ class TestPipelineJobEntity:
                 "value": "${{parent.inputs.group.number_param}}",
             },
         }
-
-    def test_pipeline_with_init_finalize(self) -> None:
-        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize.yaml")
-        assert pipeline_job.settings.on_init == "a"
-        assert pipeline_job.settings.on_finalize == "c"
-        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
-        assert pipeline_job_dict["properties"]["settings"]["on_init"] == "a"
-        assert pipeline_job_dict["properties"]["settings"]["on_finalize"] == "c"
 
     def test_non_string_pipeline_node_input(self):
         test_path = "./tests/test_configs/pipeline_jobs/rest_non_string_input_pipeline.json"
@@ -1482,53 +1403,29 @@ class TestPipelineJobEntity:
         assert actual_dict["jobs"] == {
             'hello_world_component': {
                 'computeId': 'cpu-cluster',
-                'display_name': None,
-                'distribution': None,
-                'environment_variables': {},
                 'identity': {'type': 'user_identity'},
                 'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                    'value': '${{parent.inputs.job_in_number}}'},
                            'component_in_path': {'job_input_type': 'literal',
                                                  'value': '${{parent.inputs.job_in_path}}'}},
-                'limits': None,
                 'name': 'hello_world_component',
-                'outputs': {},
-                'properties': {},
-                'resources': None,
-                'tags': {},
                 'type': 'command'},
             'hello_world_component_2': {
                 'computeId': 'cpu-cluster',
-                'display_name': None,
-                'distribution': None,
-                'environment_variables': {},
                 'identity': {'type': 'aml_token'},
                 'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                    'value': '${{parent.inputs.job_in_other_number}}'},
                            'component_in_path': {'job_input_type': 'literal',
                                                  'value': '${{parent.inputs.job_in_path}}'}},
-                'limits': None,
                 'name': 'hello_world_component_2',
-                'outputs': {},
-                'properties': {},
-                'resources': None,
-                'tags': {},
                 'type': 'command'},
             'hello_world_component_3': {
                 'computeId': 'cpu-cluster',
-                'display_name': None,
-                'distribution': None,
-                'environment_variables': {},
                 'identity': {'type': 'user_identity'},
                 'inputs': {'component_in_number': {'job_input_type': 'literal',
                                                    'value': '${{parent.inputs.job_in_other_number}}'},
                            'component_in_path': {'job_input_type': 'literal',
                                                  'value': '${{parent.inputs.job_in_path}}'}},
-                'limits': None,
                 'name': 'hello_world_component_3',
-                'outputs': {},
-                'properties': {},
-                'resources': None,
-                'tags': {},
                 'type': 'command'}
         }
