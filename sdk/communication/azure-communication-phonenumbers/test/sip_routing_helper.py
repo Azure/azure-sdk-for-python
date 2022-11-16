@@ -14,7 +14,7 @@ def get_user_domain():
     if(is_live()):
         sip_domain = os.getenv("AZURE_TEST_SIP_DOMAIN")
         assert sip_domain is not None, "Missing AZURE_TEST_SIP_DOMAIN environment variable."
-        return os.getenv("AZURE_TEST_SIP_DOMAIN")
+        return sip_domain
     return "sanitized.com"
 
 def trunks_are_equal(response_trunks, request_trunks):
@@ -40,7 +40,7 @@ def routes_are_equal(response_routes, request_routes):
             assert request_routes[k].trunks[m] == response_routes[k].trunks[m] , "Trunk lists don't match."
 
 class DomainReplacerProcessor(RecordingProcessor):
-    """Sanitize the sensitive info inside request or response bodies"""
+    """Sanitize the domain name in both request and response"""
 
     def __init__(self, replacement="sanitized.com", domain=None):
         self._replacement = replacement
