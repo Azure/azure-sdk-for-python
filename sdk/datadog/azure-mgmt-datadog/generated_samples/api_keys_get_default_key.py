@@ -14,7 +14,7 @@ from azure.mgmt.datadog import MicrosoftDatadogClient
     pip install azure-identity
     pip install azure-mgmt-datadog
 # USAGE
-    python monitors_set_default_key.py
+    python api_keys_get_default_key.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -29,13 +29,13 @@ def main():
         subscription_id="00000000-0000-0000-0000-000000000000",
     )
 
-    response = client.monitors.set_default_key(
+    response = client.monitors.get_default_key(
         resource_group_name="myResourceGroup",
         monitor_name="myMonitor",
     )
     print(response)
 
 
-# x-ms-original-file: specification/datadog/resource-manager/Microsoft.Datadog/stable/2022-06-01/examples/ApiKeys_SetDefaultKey.json
+# x-ms-original-file: specification/datadog/resource-manager/Microsoft.Datadog/stable/2022-06-01/examples/ApiKeys_GetDefaultKey.json
 if __name__ == "__main__":
     main()
