@@ -1,5 +1,4 @@
 import os.path
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict
 
@@ -24,8 +23,7 @@ from azure.ai.ml.entities._builders import Command, Pipeline
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.exceptions import JobException
-from azure.ai.ml.operations._run_history_constants import JobStatus
-from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
+from azure.core.exceptions import HttpResponseError
 
 from .._util import (
     _PIPELINE_JOB_TIMEOUT_SECOND,
@@ -46,19 +44,6 @@ def assert_job_input_output_types(job: PipelineJob):
             assert isinstance(input, NodeInput)
         for _, output in component.outputs.items():
             assert isinstance(output, NodeOutput)
-
-
-@pytest.fixture
-def generate_weekly_fixed_job_name(variable_recorder) -> str:
-    def create_or_record_weekly_fixed_job_name(job_name: str):
-        """Add a week postfix to job name, make it a weekly fixed name."""
-        c = datetime.utcnow().isocalendar()  # follow CI workspace generate rule
-        return variable_recorder.get_or_record(job_name, f"{job_name}_{c[0]}W{c[1]}")
-
-    return create_or_record_weekly_fixed_job_name
-
-
-# previous bodiless_matcher fixture doesn't take effect because of typo, please add it in method level if needed
 
 
 @pytest.mark.usefixtures(
@@ -711,55 +696,33 @@ class TestPipelineJob(AzureRecordedTestCase):
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
 
-    @pytest.mark.skipif(condition=not is_live(), reason="test download behaviour in live test.")
+    @pytest.mark.skipif(condition=not is_live(), reason="no need to run in playback mode")
     def test_pipeline_job_download(
-        self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]
+        self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
     ) -> None:
-        job_name = "{}_{}".format(
-            generate_weekly_fixed_job_name(job_name="helloworld_pipeline_job_quick_with_output"),
-            "test_pipeline_job_download",
-        )
-        try:
-            job = client.jobs.get(job_name)
-        except ResourceNotFoundError:
-            job = client.jobs.create_or_update(
-                load_job(
-                    source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
-                    params_override=[{"name": job_name}],
-                )
+        job = client.jobs.create_or_update(
+            load_job(
+                source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
+                params_override=[{"name": randstr("job_name")}],
             )
-        job_status = wait_until_done(client, job, timeout=60)
+        )
+        wait_until_done(client, job)
         client.jobs.download(name=job.name, download_path=tmp_path)
-        if job_status != JobStatus.CANCELED:
-            artifact_dir = tmp_path / "artifacts"
-            assert artifact_dir.exists()
-            assert next(artifact_dir.iterdir(), None), "No artifacts were downloaded"
-        else:
-            print("Job is canceled, not execute downloaded artifacts assertion.")
+        artifact_dir = tmp_path / "artifacts"
+        assert artifact_dir.exists()
+        assert next(artifact_dir.iterdir(), None), "No artifacts were downloaded"
 
     @pytest.mark.skipif(condition=not is_live(), reason="test download behaviour in live test.")
     def test_pipeline_job_child_run_download(
-        self, client: MLClient, tmp_path: Path, generate_weekly_fixed_job_name: Callable[[str], str]
+        self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
     ) -> None:
-        job_name = "{}_{}".format(
-            generate_weekly_fixed_job_name(job_name="helloworld_pipeline_job_quick_with_output"),
-            "test_pipeline_job_child_run_download",
-        )
-        try:
-            job = client.jobs.get(job_name)
-        except ResourceNotFoundError:
-            job = client.jobs.create_or_update(
-                load_job(
-                    source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
-                    params_override=[{"name": job_name}],
-                )
+        job = client.jobs.create_or_update(
+            load_job(
+                source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
+                params_override=[{"name": randstr("job_name")}],
             )
-
-        job_status = wait_until_done(client, job, timeout=300)
-        if job_status == JobStatus.CANCELED:
-            print("Job is canceled, not execute downloaded artifacts assertion.")
-            return
-
+        )
+        wait_until_done(client, job)
         child_job = next(
             job
             for job in client.jobs.list(parent_job_name=job.name)
