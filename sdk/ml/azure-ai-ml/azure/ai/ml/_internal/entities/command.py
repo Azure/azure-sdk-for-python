@@ -30,6 +30,7 @@ class Command(InternalBaseNode):
         self._resources = kwargs.pop("resources", JobResourceConfiguration())
         self._compute = kwargs.pop("compute", None)
         self._environment = kwargs.pop("environment", None)
+        self.environment_variables = kwargs.pop("environment_variables", None)
         self._limits = kwargs.pop("limits", CommandJobLimits())
         self._init = False
 
@@ -72,7 +73,7 @@ class Command(InternalBaseNode):
 
     @classmethod
     def _picked_fields_from_dict_to_rest_object(cls) -> List[str]:
-        return ["environment", "limits", "resources"]
+        return ["environment", "limits", "resources", "environment_variables"]
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:

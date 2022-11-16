@@ -141,10 +141,10 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
                     self.account_url(storage_account_name, "blob") + "?sig=foo", credential=sas_credential, container_name='foo', blob_name='bar')
 
     @BlobPreparer()
-    def test_create_service_with_token(self, **kwargs):
+    async def test_create_service_with_token(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        token_credential = self.generate_oauth_token()
+        token_credential = self.generate_fake_token()
         for service_type in SERVICES:
             # Act
             service = service_type(
@@ -157,10 +157,10 @@ class TestStorageClientAsync(AsyncStorageRecordedTestCase):
             assert service.account_name == storage_account_name
 
     @BlobPreparer()
-    def test_create_service_with_token_and_http(self, **kwargs):
+    async def test_create_service_with_token_and_http(self, **kwargs):
         storage_account_name = kwargs.pop("storage_account_name")
 
-        token_credential = self.generate_oauth_token()
+        token_credential = self.generate_fake_token()
         for service_type in SERVICES:
             # Act
             with pytest.raises(ValueError):

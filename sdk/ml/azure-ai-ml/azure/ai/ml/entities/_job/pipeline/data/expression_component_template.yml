@@ -13,4 +13,4 @@ code: ./src
 environment: azureml:AzureML-MLDesigner@latest
 
 command: >-
-  mldesigner execute --source expression_component.py --name expression_func --inputs {inputs_placeholder} --outputs output="DatasetOutputConfig:output"
+  {command_placeholder}

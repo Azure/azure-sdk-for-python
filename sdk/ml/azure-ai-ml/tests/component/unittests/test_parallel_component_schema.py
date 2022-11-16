@@ -38,6 +38,7 @@ def load_component_entity_from_yaml(
         data["name"] = None
         data["version"] = None
     internal_representation: ParallelComponent = ParallelComponent(**data)
+    internal_representation._base_path = context[BASE_PATH_CONTEXT_KEY]
 
     def mock_get_asset_arm_id(*args, **kwargs):
         if len(args) > 0:
