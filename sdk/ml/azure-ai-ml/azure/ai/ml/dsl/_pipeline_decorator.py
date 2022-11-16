@@ -165,13 +165,13 @@ def pipeline(
                 provided_positional_args = _validate_args(func, args, kwargs, non_pipeline_inputs)
                 # Convert args to kwargs
                 kwargs.update(provided_positional_args)
-                non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
+                non_pipeline_inputs_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
 
                 # TODO: cache built pipeline component
                 pipeline_component = pipeline_builder.build(
                     user_provided_kwargs=kwargs,
-                    non_pipeline_params_dict=non_pipeline_params_dict,
-                    non_pipeline_parameters=non_pipeline_inputs
+                    non_pipeline_inputs_dict=non_pipeline_inputs_dict,
+                    non_pipeline_inputs=non_pipeline_inputs
                 )
             finally:
                 # use `finally` to ensure pop operation from the stack
