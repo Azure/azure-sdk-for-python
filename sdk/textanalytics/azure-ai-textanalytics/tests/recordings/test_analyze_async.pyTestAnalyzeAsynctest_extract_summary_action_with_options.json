@@ -34,18 +34,19 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "da5d2fe2-90cd-47eb-a3d6-cdc40da8e30a",
+        "apim-request-id": "66a0b4d1-7cf1-46b9-88f8-cbc046994cd9",
         "Content-Length": "0",
-        "Date": "Tue, 11 Oct 2022 22:04:36 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/03fa6d27-bcfd-4393-b1a7-22c5d96cb2bd?api-version=2022-10-01-preview",
+        "Date": "Thu, 10 Nov 2022 23:36:06 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/38423baf-252c-40c0-bf3a-ebc0c846c2f2?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "536"
+        "x-envoy-upstream-service-time": "140",
+        "x-ms-region": "West US 2"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/03fa6d27-bcfd-4393-b1a7-22c5d96cb2bd?api-version=2022-10-01-preview\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/38423baf-252c-40c0-bf3a-ebc0c846c2f2?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
@@ -55,19 +56,20 @@
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "d38d2ebb-453a-4c1d-8a67-0cf8aef1b8a1",
-        "Content-Length": "1673",
+        "apim-request-id": "329c5c98-df12-417d-9a2d-9a4baaf6b155",
+        "Content-Length": "1685",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Tue, 11 Oct 2022 22:04:41 GMT",
+        "Date": "Thu, 10 Nov 2022 23:36:11 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "159"
+        "x-envoy-upstream-service-time": "32",
+        "x-ms-region": "West US 2"
       },
       "ResponseBody": {
-        "jobId": "03fa6d27-bcfd-4393-b1a7-22c5d96cb2bd",
-        "lastUpdateDateTime": "2022-10-11T22:04:37Z",
-        "createdDateTime": "2022-10-11T22:04:36Z",
-        "expirationDateTime": "2022-10-12T22:04:36Z",
+        "jobId": "38423baf-252c-40c0-bf3a-ebc0c846c2f2",
+        "lastUpdateDateTime": "2022-11-10T23:36:07Z",
+        "createdDateTime": "2022-11-10T23:36:07Z",
+        "expirationDateTime": "2022-11-11T23:36:07Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -79,7 +81,7 @@
             {
               "kind": "ExtractiveSummarizationLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-11T22:04:37.7575882Z",
+              "lastUpdateDateTime": "2022-11-10T23:36:07.9329878Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -97,12 +99,6 @@
                     },
                     "sentences": [
                       {
-                        "text": "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation of two senior Cabinet ministers in a deep split over her Brexit strategy.",
-                        "rankScore": 0.31,
-                        "offset": 0,
-                        "length": 176
-                      },
-                      {
                         "text": "The Foreign Secretary Boris Johnson, quit on Monday, hours after the resignation late on Sunday night of the minister in charge of Brexit negotiations, David Davis.",
                         "rankScore": 1.0,
                         "offset": 177,
@@ -113,6 +109,12 @@
                         "rankScore": 0.46,
                         "offset": 342,
                         "length": 172
+                      },
+                      {
+                        "text": "The government of British Prime Minster Theresa May has been plunged into turmoil with the resignation of two senior Cabinet ministers in a deep split over her Brexit strategy.",
+                        "rankScore": 0.31,
+                        "offset": 0,
+                        "length": 176
                       },
                       {
                         "text": "That plan is now in tatters and her political future appears uncertain.",
@@ -131,7 +133,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "latest"
+                "modelVersion": "2022-08-31-preview"
               }
             }
           ]

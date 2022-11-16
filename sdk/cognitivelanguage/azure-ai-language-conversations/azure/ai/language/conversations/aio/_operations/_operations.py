@@ -25,8 +25,11 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
-from ..._operations._operations import build_analyze_conversation_request, build_conversation_analysis_request
-from .._vendor import MixinABC
+from ..._operations._operations import (
+    build_conversation_analysis_analyze_conversation_request,
+    build_conversation_analysis_conversation_analysis_request,
+)
+from .._vendor import ConversationAnalysisClientMixinABC
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -37,13 +40,13 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class ConversationAnalysisClientOperationsMixin(MixinABC):
+class ConversationAnalysisClientOperationsMixin(ConversationAnalysisClientMixinABC):
     @overload
     async def analyze_conversation(self, task: JSON, *, content_type: str = "application/json", **kwargs: Any) -> JSON:
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Required.
@@ -162,7 +165,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Required.
@@ -176,6 +179,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "kind":
 
@@ -239,7 +243,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         """Analyzes the input conversation utterance.
 
         See
-        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis-runtime/analyze-conversation
+        https://learn.microsoft.com/rest/api/language/2022-10-01-preview/conversation-analysis/analyze-conversation
         for more information.
 
         :param task: A single conversational task to execute. Is either a model type or a IO type.
@@ -254,6 +258,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
 
         Example:
             .. code-block:: python
+
                 # The response is polymorphic. The following are possible polymorphic responses based
                   off discriminator "kind":
 
@@ -333,7 +338,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_analyze_conversation_request(
+        request = build_conversation_analysis_analyze_conversation_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
@@ -389,7 +394,7 @@ class ConversationAnalysisClientOperationsMixin(MixinABC):
         else:
             _json = task
 
-        request = build_conversation_analysis_request(
+        request = build_conversation_analysis_conversation_analysis_request(
             content_type=content_type,
             api_version=self._config.api_version,
             json=_json,
