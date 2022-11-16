@@ -1,6 +1,4 @@
-import json
 import os.path
-import re
 from datetime import datetime
 from pathlib import Path
 from typing import Any, Callable, Dict
@@ -9,8 +7,12 @@ from devtools_testutils import AzureRecordedTestCase
 from devtools_testutils import is_live
 import pydash
 import pytest
-from marshmallow import ValidationError
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, wait_until_done, sleep_if_live
+from test_utilities.utils import (
+    assert_job_cancel,
+    sleep_if_live,
+    wait_until_done,
+    _PYTEST_TIMEOUT_METHOD,
+)
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
@@ -19,7 +21,6 @@ from azure.ai.ml.constants import InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Component, Job, PipelineJob
 from azure.ai.ml.entities._builders import Command, Pipeline
-from azure.ai.ml.entities._builders.do_while import DoWhile
 from azure.ai.ml.entities._builders.parallel import Parallel
 from azure.ai.ml.entities._builders.spark import Spark
 from azure.ai.ml.exceptions import JobException
@@ -139,31 +140,20 @@ class TestPipelineJob(AzureRecordedTestCase):
             # The spark job must be translated to component job in the pipeline job.
             assert isinstance(job, Spark)
 
-    @pytest.mark.skip(reason="TODO: 1795498, test will fail if create new job and immediately cancel it.")
-    def test_pipeline_job_get_child_run(self, client: MLClient, generate_weekly_fixed_job_name: Callable[[str], str]):
-        job_name = "{}_{}".format(
-            generate_weekly_fixed_job_name(job_name="helloworld_pipeline_job_quick_with_output"),
-            "test_pipeline_job_get_child_run",
+    @pytest.mark.skipif(condition=not is_live(), reason="no need to run in playback mode")
+    def test_pipeline_job_get_child_run(self, client: MLClient, randstr: Callable[[str], str]):
+        pipeline_job = load_job(
+            source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
+            params_override=[{"name": randstr("name")}],
         )
-        try:
-            job = client.jobs.get(job_name)
-        except ResourceNotFoundError:
-            job = assert_job_cancel(
-                load_job(
-                    source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
-                    params_override=[{"name": job_name}],
-                ),
-                client=client,
-            )
-
+        job = client.jobs.create_or_update(pipeline_job)
+        wait_until_done(client, job)
         child_job = next(
             job
             for job in client.jobs.list(parent_job_name=job.name)
             if job.display_name == "hello_world_inline_commandjob_1"
         )
-
         retrieved_child_run = client.jobs.get(child_job.name)
-
         assert isinstance(retrieved_child_run, Job)
         assert retrieved_child_run.name == child_job.name
 
