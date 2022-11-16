@@ -64,28 +64,8 @@ class DeviceCodeCredential(InteractiveCredential):
         scopes = list(scopes)  # type: ignore
 
         app = self._get_app(**kwargs)
-        flow = app.initiate_device_flow(scopes)
-        if "error" in flow:
-            raise ClientAuthenticationError(
-                message="Couldn't begin authentication: {}".format(flow.get("error_description") or flow.get("error"))
-            )
 
-        if self._prompt_callback:
-            self._prompt_callback(
-                flow["verification_uri"], flow["user_code"], datetime.utcfromtimestamp(flow["expires_at"])
-            )
-        else:
-            print(flow["message"])
-
-        if self._timeout is not None and self._timeout < flow["expires_in"]:
-            # user specified an effective timeout we will observe
-            deadline = int(time.time()) + self._timeout
-            result = app.acquire_token_by_device_flow(
-                flow, exit_condition=lambda flow: time.time() > deadline, claims_challenge=kwargs.get("claims")
-            )
-        else:
-            # MSAL will stop polling when the device code expires
-            result = app.acquire_token_by_device_flow(flow, claims_challenge=kwargs.get("claims"))
+        result = app.acquire_token_interactive(scopes=scopes, claims_challenge=kwargs.get("claims"))
 
         # raise for a timeout here because the error is particular to this class
         if "access_token" not in result and result.get("error") == "authorization_pending":
