@@ -621,23 +621,6 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             sleep_if_live(5)
             assert client.components.get(name, label="latest").version == version
 
-    @pytest.mark.skip(reason="Test fails because MFE index service consistency bug")
-    def test_command_component_delete_latest_label(self, client: MLClient, randstr: Callable[[str], str]) -> None:
-        name = randstr("name")
-        versions = ["foo", "bar", "baz", "foobar"]
-        for version in versions:
-            created_component = create_component(client, name, params_override=[{"version": version}])
-            assert created_component.version == version
-            assert created_component.name == name
-            sleep_if_live(3)
-
-        for version in reversed(versions):
-            assert client.components.get(name, label=version).version == version
-            client.components.delete(name, label="latest")
-            with pytest.raises(ResourceNotFoundError):
-                client.components.get(name=name, version=version)
-            sleep_if_live(10)
-
     def test_anonymous_registration_from_load_component(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         command_component = load_component(source="./tests/test_configs/components/helloworld_component.yml")
         component_resource = client.components.create_or_update(command_component, is_anonymous=True)
