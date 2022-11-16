@@ -16,6 +16,12 @@ $dceEndpoint = $DeploymentOutputs['AZURE_MONITOR_DCE']
 $streamName = $DeploymentOutputs['AZURE_MONITOR_STREAM_NAME']
 
 ##################
+### Step 0: Wait for role assignment to propagate
+##################
+Write-Host "Sleeping for a bit to give role assignments time to propagate."
+Start-Sleep -s 180
+
+##################
 ### Step 1: Obtain a bearer token used later to authenticate against the DCE.
 ##################
 $scope= [System.Web.HttpUtility]::UrlEncode("https://monitor.azure.com//.default")
