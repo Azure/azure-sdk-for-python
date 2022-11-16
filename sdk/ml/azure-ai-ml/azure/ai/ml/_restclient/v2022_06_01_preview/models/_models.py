@@ -13411,7 +13411,7 @@ class SparkJobEntry(msrest.serialization.Model):
     """Spark job entry point definition.
 
     You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SparkJobScalaEntry.
+    sub-classes are: SparkJobPythonEntry, SparkJobScalaEntry.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -13430,7 +13430,7 @@ class SparkJobEntry(msrest.serialization.Model):
     }
 
     _subtype_map = {
-        'spark_job_entry_type': {'SparkJobPythonEntry': 'SparkJobScalaEntry'}
+        'spark_job_entry_type': {'SparkJobPythonEntry': 'SparkJobPythonEntry', 'SparkJobScalaEntry': 'SparkJobScalaEntry'}
     }
 
     def __init__(
@@ -13511,7 +13511,7 @@ class SparkJobScalaEntry(SparkJobEntry):
         :paramtype class_name: str
         """
         super(SparkJobScalaEntry, self).__init__(**kwargs)
-        self.spark_job_entry_type = 'SparkJobPythonEntry'  # type: str
+        self.spark_job_entry_type = 'SparkJobScalaEntry'  # type: str
         self.class_name = kwargs['class_name']
 
 

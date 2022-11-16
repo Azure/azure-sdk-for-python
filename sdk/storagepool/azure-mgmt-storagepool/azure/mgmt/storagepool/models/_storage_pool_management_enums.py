@@ -6,53 +6,36 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DiskPoolTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """SKU of the VM host part of the Disk Pool deployment
-    """
+
+class DiskPoolTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """SKU of the VM host part of the Disk Pool deployment."""
 
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
-class IscsiTargetAclMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """ACL mode for iSCSI Target.
-    """
+
+class IscsiTargetAclMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ACL mode for iSCSI Target."""
 
     DYNAMIC = "Dynamic"
     STATIC = "Static"
 
-class OperationalStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Operational status of the resource.
-    """
+
+class OperationalStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operational status of the resource."""
 
     INVALID = "Invalid"
     UNKNOWN = "Unknown"
@@ -63,9 +46,9 @@ class OperationalStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     STOPPED = "Stopped"
     STOPPED_DEALLOCATED_ = "Stopped (deallocated)"
 
-class ProvisioningStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the iSCSI Target.
-    """
+
+class ProvisioningStates(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the iSCSI Target."""
 
     INVALID = "Invalid"
     SUCCEEDED = "Succeeded"
@@ -76,16 +59,16 @@ class ProvisioningStates(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     UPDATING = "Updating"
     DELETING = "Deleting"
 
-class ResourceSkuRestrictionsReasonCode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The reason for restriction.
-    """
+
+class ResourceSkuRestrictionsReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason for restriction."""
 
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
-class ResourceSkuRestrictionsType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of restrictions.
-    """
+
+class ResourceSkuRestrictionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of restrictions."""
 
     LOCATION = "Location"
     ZONE = "Zone"

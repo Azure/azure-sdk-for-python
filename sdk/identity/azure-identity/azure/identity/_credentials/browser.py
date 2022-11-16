@@ -6,23 +6,14 @@ import platform
 import socket
 import subprocess
 import webbrowser
-
-from six.moves.urllib_parse import urlparse
+from typing import Dict
+from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import AuthCodeRedirectServer, InteractiveCredential, wrap_exceptions
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint:disable=unused-import
-    from typing import Any
 
 
 class InteractiveBrowserCredential(InteractiveCredential):
@@ -56,8 +47,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
     :raises ValueError: invalid **redirect_uri**
     """
 
-    def __init__(self, **kwargs):
-        # type: (**Any) -> None
+    def __init__(self, **kwargs) -> None:
         redirect_uri = kwargs.pop("redirect_uri", None)
         if redirect_uri:
             self._parsed_url = urlparse(redirect_uri)
@@ -73,8 +63,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         super(InteractiveBrowserCredential, self).__init__(client_id=client_id, **kwargs)
 
     @wrap_exceptions
-    def _request_token(self, *scopes, **kwargs):
-        # type: (*str, **Any) -> dict
+    def _request_token(self, *scopes: str, **kwargs) -> Dict:
 
         # start an HTTP server to receive the redirect
         server = None

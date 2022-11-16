@@ -399,7 +399,7 @@ def test_cloud_custom_dict_base64():
     cloud_custom_dict_base64 = {
         "id":"de0fd76c-4ef4-4dfb-ab3a-8f24a307e033",
         "source":"https://egtest.dev/cloudcustomevent",
-        "data_base64":'Y2xvdWRldmVudA==',
+        "data_base64":'Y2xvdWRldmVudA==', # cspell:disable-line
         "type":"Azure.Sdk.Sample",
         "time":"2021-02-23T17:11:13.308772-08:00",
         "specversion":"1.0"

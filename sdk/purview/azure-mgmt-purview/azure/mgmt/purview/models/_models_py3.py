@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,26 +7,27 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._purview_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AccessKeys(msrest.serialization.Model):
+class AccessKeys(_serialization.Model):
     """The Account access keys.
 
-    :param atlas_kafka_primary_endpoint: Gets or sets the primary connection string.
-    :type atlas_kafka_primary_endpoint: str
-    :param atlas_kafka_secondary_endpoint: Gets or sets the secondary connection string.
-    :type atlas_kafka_secondary_endpoint: str
+    :ivar atlas_kafka_primary_endpoint: Gets or sets the primary connection string.
+    :vartype atlas_kafka_primary_endpoint: str
+    :ivar atlas_kafka_secondary_endpoint: Gets or sets the secondary connection string.
+    :vartype atlas_kafka_secondary_endpoint: str
     """
 
     _attribute_map = {
-        'atlas_kafka_primary_endpoint': {'key': 'atlasKafkaPrimaryEndpoint', 'type': 'str'},
-        'atlas_kafka_secondary_endpoint': {'key': 'atlasKafkaSecondaryEndpoint', 'type': 'str'},
+        "atlas_kafka_primary_endpoint": {"key": "atlasKafkaPrimaryEndpoint", "type": "str"},
+        "atlas_kafka_secondary_endpoint": {"key": "atlasKafkaSecondaryEndpoint", "type": "str"},
     }
 
     def __init__(
@@ -35,58 +37,72 @@ class AccessKeys(msrest.serialization.Model):
         atlas_kafka_secondary_endpoint: Optional[str] = None,
         **kwargs
     ):
-        super(AccessKeys, self).__init__(**kwargs)
+        """
+        :keyword atlas_kafka_primary_endpoint: Gets or sets the primary connection string.
+        :paramtype atlas_kafka_primary_endpoint: str
+        :keyword atlas_kafka_secondary_endpoint: Gets or sets the secondary connection string.
+        :paramtype atlas_kafka_secondary_endpoint: str
+        """
+        super().__init__(**kwargs)
         self.atlas_kafka_primary_endpoint = atlas_kafka_primary_endpoint
         self.atlas_kafka_secondary_endpoint = atlas_kafka_secondary_endpoint
 
 
-class TrackedResource(msrest.serialization.Model):
+class TrackedResource(_serialization.Model):
     """Azure ARM Tracked Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Gets or sets the identifier.
     :vartype id: str
-    :param identity: Identity Info on the tracked resource.
-    :type identity: ~azure.mgmt.purview.models.Identity
-    :param location: Gets or sets the location.
-    :type location: str
+    :ivar identity: Identity Info on the tracked resource.
+    :vartype identity: ~azure.mgmt.purview.models.Identity
+    :ivar location: Gets or sets the location.
+    :vartype location: str
     :ivar name: Gets or sets the name.
     :vartype name: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.purview.models.TrackedResourceSystemData
-    :param tags: A set of tags. Tags on the azure resource.
-    :type tags: dict[str, str]
+    :ivar tags: Tags on the azure resource.
+    :vartype tags: dict[str, str]
     :ivar type: Gets or sets the type.
     :vartype type: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'system_data': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "system_data": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'TrackedResourceSystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "TrackedResourceSystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["Identity"] = None,
+        identity: Optional["_models.Identity"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(TrackedResource, self).__init__(**kwargs)
+        """
+        :keyword identity: Identity Info on the tracked resource.
+        :paramtype identity: ~azure.mgmt.purview.models.Identity
+        :keyword location: Gets or sets the location.
+        :paramtype location: str
+        :keyword tags: Tags on the azure resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.identity = identity
         self.location = location
@@ -96,30 +112,30 @@ class TrackedResource(msrest.serialization.Model):
         self.type = None
 
 
-class Account(TrackedResource):
+class Account(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Account resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar id: Gets or sets the identifier.
     :vartype id: str
-    :param identity: Identity Info on the tracked resource.
-    :type identity: ~azure.mgmt.purview.models.Identity
-    :param location: Gets or sets the location.
-    :type location: str
+    :ivar identity: Identity Info on the tracked resource.
+    :vartype identity: ~azure.mgmt.purview.models.Identity
+    :ivar location: Gets or sets the location.
+    :vartype location: str
     :ivar name: Gets or sets the name.
     :vartype name: str
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.purview.models.TrackedResourceSystemData
-    :param tags: A set of tags. Tags on the azure resource.
-    :type tags: dict[str, str]
+    :ivar tags: Tags on the azure resource.
+    :vartype tags: dict[str, str]
     :ivar type: Gets or sets the type.
     :vartype type: str
-    :param sku: Gets or sets the Sku.
-    :type sku: ~azure.mgmt.purview.models.AccountSku
-    :param cloud_connectors: Cloud connectors.
+    :ivar sku: Gets or sets the Sku.
+    :vartype sku: ~azure.mgmt.purview.models.AccountSku
+    :ivar cloud_connectors: Cloud connectors.
      External cloud identifier used as part of scanning configuration.
-    :type cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
+    :vartype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
     :ivar created_at: Gets the time at which the entity was created.
     :vartype created_at: ~datetime.datetime
     :ivar created_by: Gets the creator of the entity.
@@ -130,73 +146,92 @@ class Account(TrackedResource):
     :vartype endpoints: ~azure.mgmt.purview.models.AccountPropertiesEndpoints
     :ivar friendly_name: Gets or sets the friendly name.
     :vartype friendly_name: str
-    :param managed_resource_group_name: Gets or sets the managed resource group name.
-    :type managed_resource_group_name: str
+    :ivar managed_resource_group_name: Gets or sets the managed resource group name.
+    :vartype managed_resource_group_name: str
     :ivar managed_resources: Gets the resource identifiers of the managed resources.
     :vartype managed_resources: ~azure.mgmt.purview.models.AccountPropertiesManagedResources
     :ivar private_endpoint_connections: Gets the private endpoint connections information.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.purview.models.PrivateEndpointConnection]
-    :ivar provisioning_state: Gets or sets the state of the provisioning. Possible values include:
+    :ivar provisioning_state: Gets or sets the state of the provisioning. Known values are:
      "Unknown", "Creating", "Moving", "Deleting", "SoftDeleting", "SoftDeleted", "Failed",
-     "Succeeded", "Canceled".
+     "Succeeded", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.purview.models.ProvisioningState
-    :param public_network_access: Gets or sets the public network access. Possible values include:
-     "NotSpecified", "Enabled", "Disabled". Default value: "Enabled".
-    :type public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
+    :ivar public_network_access: Gets or sets the public network access. Known values are:
+     "NotSpecified", "Enabled", and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'system_data': {'readonly': True},
-        'type': {'readonly': True},
-        'created_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'created_by_object_id': {'readonly': True},
-        'endpoints': {'readonly': True},
-        'friendly_name': {'readonly': True},
-        'managed_resources': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "system_data": {"readonly": True},
+        "type": {"readonly": True},
+        "sku": {"readonly": True},
+        "created_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "created_by_object_id": {"readonly": True},
+        "endpoints": {"readonly": True},
+        "friendly_name": {"readonly": True},
+        "managed_resources": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'location': {'key': 'location', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'TrackedResourceSystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'type': {'key': 'type', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'AccountSku'},
-        'cloud_connectors': {'key': 'properties.cloudConnectors', 'type': 'CloudConnectors'},
-        'created_at': {'key': 'properties.createdAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
-        'created_by_object_id': {'key': 'properties.createdByObjectId', 'type': 'str'},
-        'endpoints': {'key': 'properties.endpoints', 'type': 'AccountPropertiesEndpoints'},
-        'friendly_name': {'key': 'properties.friendlyName', 'type': 'str'},
-        'managed_resource_group_name': {'key': 'properties.managedResourceGroupName', 'type': 'str'},
-        'managed_resources': {'key': 'properties.managedResources', 'type': 'AccountPropertiesManagedResources'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "location": {"key": "location", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "system_data": {"key": "systemData", "type": "TrackedResourceSystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "type": {"key": "type", "type": "str"},
+        "sku": {"key": "sku", "type": "AccountSku"},
+        "cloud_connectors": {"key": "properties.cloudConnectors", "type": "CloudConnectors"},
+        "created_at": {"key": "properties.createdAt", "type": "iso-8601"},
+        "created_by": {"key": "properties.createdBy", "type": "str"},
+        "created_by_object_id": {"key": "properties.createdByObjectId", "type": "str"},
+        "endpoints": {"key": "properties.endpoints", "type": "AccountPropertiesEndpoints"},
+        "friendly_name": {"key": "properties.friendlyName", "type": "str"},
+        "managed_resource_group_name": {"key": "properties.managedResourceGroupName", "type": "str"},
+        "managed_resources": {"key": "properties.managedResources", "type": "AccountPropertiesManagedResources"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        identity: Optional["Identity"] = None,
+        identity: Optional["_models.Identity"] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        sku: Optional["AccountSku"] = None,
-        cloud_connectors: Optional["CloudConnectors"] = None,
+        cloud_connectors: Optional["_models.CloudConnectors"] = None,
         managed_resource_group_name: Optional[str] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = "Enabled",
+        public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
         **kwargs
     ):
-        super(Account, self).__init__(identity=identity, location=location, tags=tags, **kwargs)
-        self.sku = sku
+        """
+        :keyword identity: Identity Info on the tracked resource.
+        :paramtype identity: ~azure.mgmt.purview.models.Identity
+        :keyword location: Gets or sets the location.
+        :paramtype location: str
+        :keyword tags: Tags on the azure resource.
+        :paramtype tags: dict[str, str]
+        :keyword cloud_connectors: Cloud connectors.
+         External cloud identifier used as part of scanning configuration.
+        :paramtype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
+        :keyword managed_resource_group_name: Gets or sets the managed resource group name.
+        :paramtype managed_resource_group_name: str
+        :keyword public_network_access: Gets or sets the public network access. Known values are:
+         "NotSpecified", "Enabled", and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
+        """
+        super().__init__(identity=identity, location=location, tags=tags, **kwargs)
+        self.sku = None
         self.cloud_connectors = cloud_connectors
         self.created_at = None
         self.created_by = None
@@ -210,7 +245,7 @@ class Account(TrackedResource):
         self.public_network_access = public_network_access
 
 
-class AccountEndpoints(msrest.serialization.Model):
+class AccountEndpoints(_serialization.Model):
     """The account endpoints.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -224,72 +259,73 @@ class AccountEndpoints(msrest.serialization.Model):
     """
 
     _validation = {
-        'catalog': {'readonly': True},
-        'guardian': {'readonly': True},
-        'scan': {'readonly': True},
+        "catalog": {"readonly": True},
+        "guardian": {"readonly": True},
+        "scan": {"readonly": True},
     }
 
     _attribute_map = {
-        'catalog': {'key': 'catalog', 'type': 'str'},
-        'guardian': {'key': 'guardian', 'type': 'str'},
-        'scan': {'key': 'scan', 'type': 'str'},
+        "catalog": {"key": "catalog", "type": "str"},
+        "guardian": {"key": "guardian", "type": "str"},
+        "scan": {"key": "scan", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AccountEndpoints, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.catalog = None
         self.guardian = None
         self.scan = None
 
 
-class AccountList(msrest.serialization.Model):
+class AccountList(_serialization.Model):
     """Paged list of account resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param count: Total item count.
-    :type count: long
-    :param next_link: The Url of next result page.
-    :type next_link: str
-    :param value: Required. Collection of items of type results.
-    :type value: list[~azure.mgmt.purview.models.Account]
+    :ivar count: Total item count.
+    :vartype count: int
+    :ivar next_link: The Url of next result page.
+    :vartype next_link: str
+    :ivar value: Collection of items of type results. Required.
+    :vartype value: list[~azure.mgmt.purview.models.Account]
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'long'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Account]'},
+        "count": {"key": "count", "type": "int"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Account]"},
     }
 
     def __init__(
-        self,
-        *,
-        value: List["Account"],
-        count: Optional[int] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: List["_models.Account"], count: Optional[int] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(AccountList, self).__init__(**kwargs)
+        """
+        :keyword count: Total item count.
+        :paramtype count: int
+        :keyword next_link: The Url of next result page.
+        :paramtype next_link: str
+        :keyword value: Collection of items of type results. Required.
+        :paramtype value: list[~azure.mgmt.purview.models.Account]
+        """
+        super().__init__(**kwargs)
         self.count = count
         self.next_link = next_link
         self.value = value
 
 
-class AccountProperties(msrest.serialization.Model):
+class AccountProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """The account properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param cloud_connectors: Cloud connectors.
+    :ivar cloud_connectors: Cloud connectors.
      External cloud identifier used as part of scanning configuration.
-    :type cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
+    :vartype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
     :ivar created_at: Gets the time at which the entity was created.
     :vartype created_at: ~datetime.datetime
     :ivar created_by: Gets the creator of the entity.
@@ -300,56 +336,66 @@ class AccountProperties(msrest.serialization.Model):
     :vartype endpoints: ~azure.mgmt.purview.models.AccountPropertiesEndpoints
     :ivar friendly_name: Gets or sets the friendly name.
     :vartype friendly_name: str
-    :param managed_resource_group_name: Gets or sets the managed resource group name.
-    :type managed_resource_group_name: str
+    :ivar managed_resource_group_name: Gets or sets the managed resource group name.
+    :vartype managed_resource_group_name: str
     :ivar managed_resources: Gets the resource identifiers of the managed resources.
     :vartype managed_resources: ~azure.mgmt.purview.models.AccountPropertiesManagedResources
     :ivar private_endpoint_connections: Gets the private endpoint connections information.
     :vartype private_endpoint_connections:
      list[~azure.mgmt.purview.models.PrivateEndpointConnection]
-    :ivar provisioning_state: Gets or sets the state of the provisioning. Possible values include:
+    :ivar provisioning_state: Gets or sets the state of the provisioning. Known values are:
      "Unknown", "Creating", "Moving", "Deleting", "SoftDeleting", "SoftDeleted", "Failed",
-     "Succeeded", "Canceled".
+     "Succeeded", and "Canceled".
     :vartype provisioning_state: str or ~azure.mgmt.purview.models.ProvisioningState
-    :param public_network_access: Gets or sets the public network access. Possible values include:
-     "NotSpecified", "Enabled", "Disabled". Default value: "Enabled".
-    :type public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
+    :ivar public_network_access: Gets or sets the public network access. Known values are:
+     "NotSpecified", "Enabled", and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'created_by_object_id': {'readonly': True},
-        'endpoints': {'readonly': True},
-        'friendly_name': {'readonly': True},
-        'managed_resources': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "created_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "created_by_object_id": {"readonly": True},
+        "endpoints": {"readonly": True},
+        "friendly_name": {"readonly": True},
+        "managed_resources": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'cloud_connectors': {'key': 'cloudConnectors', 'type': 'CloudConnectors'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_object_id': {'key': 'createdByObjectId', 'type': 'str'},
-        'endpoints': {'key': 'endpoints', 'type': 'AccountPropertiesEndpoints'},
-        'friendly_name': {'key': 'friendlyName', 'type': 'str'},
-        'managed_resource_group_name': {'key': 'managedResourceGroupName', 'type': 'str'},
-        'managed_resources': {'key': 'managedResources', 'type': 'AccountPropertiesManagedResources'},
-        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+        "cloud_connectors": {"key": "cloudConnectors", "type": "CloudConnectors"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_object_id": {"key": "createdByObjectId", "type": "str"},
+        "endpoints": {"key": "endpoints", "type": "AccountPropertiesEndpoints"},
+        "friendly_name": {"key": "friendlyName", "type": "str"},
+        "managed_resource_group_name": {"key": "managedResourceGroupName", "type": "str"},
+        "managed_resources": {"key": "managedResources", "type": "AccountPropertiesManagedResources"},
+        "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        cloud_connectors: Optional["CloudConnectors"] = None,
+        cloud_connectors: Optional["_models.CloudConnectors"] = None,
         managed_resource_group_name: Optional[str] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = "Enabled",
+        public_network_access: Union[str, "_models.PublicNetworkAccess"] = "Enabled",
         **kwargs
     ):
-        super(AccountProperties, self).__init__(**kwargs)
+        """
+        :keyword cloud_connectors: Cloud connectors.
+         External cloud identifier used as part of scanning configuration.
+        :paramtype cloud_connectors: ~azure.mgmt.purview.models.CloudConnectors
+        :keyword managed_resource_group_name: Gets or sets the managed resource group name.
+        :paramtype managed_resource_group_name: str
+        :keyword public_network_access: Gets or sets the public network access. Known values are:
+         "NotSpecified", "Enabled", and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.purview.models.PublicNetworkAccess
+        """
+        super().__init__(**kwargs)
         self.cloud_connectors = cloud_connectors
         self.created_at = None
         self.created_by = None
@@ -377,25 +423,23 @@ class AccountPropertiesEndpoints(AccountEndpoints):
     """
 
     _validation = {
-        'catalog': {'readonly': True},
-        'guardian': {'readonly': True},
-        'scan': {'readonly': True},
+        "catalog": {"readonly": True},
+        "guardian": {"readonly": True},
+        "scan": {"readonly": True},
     }
 
     _attribute_map = {
-        'catalog': {'key': 'catalog', 'type': 'str'},
-        'guardian': {'key': 'guardian', 'type': 'str'},
-        'scan': {'key': 'scan', 'type': 'str'},
+        "catalog": {"key": "catalog", "type": "str"},
+        "guardian": {"key": "guardian", "type": "str"},
+        "scan": {"key": "scan", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AccountPropertiesEndpoints, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class ManagedResources(msrest.serialization.Model):
+class ManagedResources(_serialization.Model):
     """The managed resources in customer subscription.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -410,22 +454,20 @@ class ManagedResources(msrest.serialization.Model):
     """
 
     _validation = {
-        'event_hub_namespace': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'storage_account': {'readonly': True},
+        "event_hub_namespace": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "storage_account": {"readonly": True},
     }
 
     _attribute_map = {
-        'event_hub_namespace': {'key': 'eventHubNamespace', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'storage_account': {'key': 'storageAccount', 'type': 'str'},
+        "event_hub_namespace": {"key": "eventHubNamespace", "type": "str"},
+        "resource_group": {"key": "resourceGroup", "type": "str"},
+        "storage_account": {"key": "storageAccount", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ManagedResources, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.event_hub_namespace = None
         self.resource_group = None
         self.storage_account = None
@@ -446,118 +488,153 @@ class AccountPropertiesManagedResources(ManagedResources):
     """
 
     _validation = {
-        'event_hub_namespace': {'readonly': True},
-        'resource_group': {'readonly': True},
-        'storage_account': {'readonly': True},
+        "event_hub_namespace": {"readonly": True},
+        "resource_group": {"readonly": True},
+        "storage_account": {"readonly": True},
     }
 
     _attribute_map = {
-        'event_hub_namespace': {'key': 'eventHubNamespace', 'type': 'str'},
-        'resource_group': {'key': 'resourceGroup', 'type': 'str'},
-        'storage_account': {'key': 'storageAccount', 'type': 'str'},
+        "event_hub_namespace": {"key": "eventHubNamespace", "type": "str"},
+        "resource_group": {"key": "resourceGroup", "type": "str"},
+        "storage_account": {"key": "storageAccount", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AccountPropertiesManagedResources, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class AccountSku(msrest.serialization.Model):
+class AccountSkuAutoGenerated(_serialization.Model):
     """The Sku.
 
-    :param capacity: Gets or sets the sku capacity. Possible values include: 4, 16.
-    :type capacity: int
-    :param name: Gets or sets the sku name. Possible values include: "Standard".
-    :type name: str or ~azure.mgmt.purview.models.Name
+    :ivar capacity: Gets or sets the sku capacity.
+    :vartype capacity: int
+    :ivar name: Gets or sets the sku name. "Standard"
+    :vartype name: str or ~azure.mgmt.purview.models.Name
     """
 
     _attribute_map = {
-        'capacity': {'key': 'capacity', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
+        "capacity": {"key": "capacity", "type": "int"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        capacity: Optional[int] = None,
-        name: Optional[Union[str, "Name"]] = None,
-        **kwargs
-    ):
-        super(AccountSku, self).__init__(**kwargs)
+    def __init__(self, *, capacity: Optional[int] = None, name: Optional[Union[str, "_models.Name"]] = None, **kwargs):
+        """
+        :keyword capacity: Gets or sets the sku capacity.
+        :paramtype capacity: int
+        :keyword name: Gets or sets the sku name. "Standard"
+        :paramtype name: str or ~azure.mgmt.purview.models.Name
+        """
+        super().__init__(**kwargs)
         self.capacity = capacity
         self.name = name
 
 
-class AccountUpdateParameters(msrest.serialization.Model):
-    """The account update properties.
+class AccountSku(AccountSkuAutoGenerated):
+    """Gets or sets the Sku.
 
-    :param properties: The account properties.
-    :type properties: ~azure.mgmt.purview.models.AccountProperties
-    :param tags: A set of tags. Tags on the azure resource.
-    :type tags: dict[str, str]
+    :ivar capacity: Gets or sets the sku capacity.
+    :vartype capacity: int
+    :ivar name: Gets or sets the sku name. "Standard"
+    :vartype name: str or ~azure.mgmt.purview.models.Name
     """
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'AccountProperties'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "capacity": {"key": "capacity", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+    }
+
+    def __init__(self, *, capacity: Optional[int] = None, name: Optional[Union[str, "_models.Name"]] = None, **kwargs):
+        """
+        :keyword capacity: Gets or sets the sku capacity.
+        :paramtype capacity: int
+        :keyword name: Gets or sets the sku name. "Standard"
+        :paramtype name: str or ~azure.mgmt.purview.models.Name
+        """
+        super().__init__(capacity=capacity, name=name, **kwargs)
+
+
+class AccountUpdateParameters(_serialization.Model):
+    """The account update properties.
+
+    :ivar identity: Identity related info to add/remove userAssignedIdentities.
+    :vartype identity: ~azure.mgmt.purview.models.Identity
+    :ivar properties: The account properties.
+    :vartype properties: ~azure.mgmt.purview.models.AccountProperties
+    :ivar tags: Tags on the azure resource.
+    :vartype tags: dict[str, str]
+    """
+
+    _attribute_map = {
+        "identity": {"key": "identity", "type": "Identity"},
+        "properties": {"key": "properties", "type": "AccountProperties"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        properties: Optional["AccountProperties"] = None,
+        identity: Optional["_models.Identity"] = None,
+        properties: Optional["_models.AccountProperties"] = None,
         tags: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(AccountUpdateParameters, self).__init__(**kwargs)
+        """
+        :keyword identity: Identity related info to add/remove userAssignedIdentities.
+        :paramtype identity: ~azure.mgmt.purview.models.Identity
+        :keyword properties: The account properties.
+        :paramtype properties: ~azure.mgmt.purview.models.AccountProperties
+        :keyword tags: Tags on the azure resource.
+        :paramtype tags: dict[str, str]
+        """
+        super().__init__(**kwargs)
+        self.identity = identity
         self.properties = properties
         self.tags = tags
 
 
-class CheckNameAvailabilityRequest(msrest.serialization.Model):
+class CheckNameAvailabilityRequest(_serialization.Model):
     """The request payload for CheckNameAvailability API.
 
-    :param name: Resource name to verify for availability.
-    :type name: str
-    :param type: Fully qualified resource type which includes provider namespace.
-    :type type: str
+    :ivar name: Resource name to verify for availability.
+    :vartype name: str
+    :ivar type: Fully qualified resource type which includes provider namespace.
+    :vartype type: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+        """
+        :keyword name: Resource name to verify for availability.
+        :paramtype name: str
+        :keyword type: Fully qualified resource type which includes provider namespace.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class CheckNameAvailabilityResult(msrest.serialization.Model):
+class CheckNameAvailabilityResult(_serialization.Model):
     """The response payload for CheckNameAvailability API.
 
-    :param message: Error message.
-    :type message: str
-    :param name_available: Indicates if name is valid and available.
-    :type name_available: bool
-    :param reason: The reason the name is not available. Possible values include: "Invalid",
+    :ivar message: Error message.
+    :vartype message: str
+    :ivar name_available: Indicates if name is valid and available.
+    :vartype name_available: bool
+    :ivar reason: The reason the name is not available. Known values are: "Invalid" and
      "AlreadyExists".
-    :type reason: str or ~azure.mgmt.purview.models.Reason
+    :vartype reason: str or ~azure.mgmt.purview.models.Reason
     """
 
     _attribute_map = {
-        'message': {'key': 'message', 'type': 'str'},
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
+        "message": {"key": "message", "type": "str"},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
     }
 
     def __init__(
@@ -565,17 +642,26 @@ class CheckNameAvailabilityResult(msrest.serialization.Model):
         *,
         message: Optional[str] = None,
         name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "Reason"]] = None,
+        reason: Optional[Union[str, "_models.Reason"]] = None,
         **kwargs
     ):
-        super(CheckNameAvailabilityResult, self).__init__(**kwargs)
+        """
+        :keyword message: Error message.
+        :paramtype message: str
+        :keyword name_available: Indicates if name is valid and available.
+        :paramtype name_available: bool
+        :keyword reason: The reason the name is not available. Known values are: "Invalid" and
+         "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.purview.models.Reason
+        """
+        super().__init__(**kwargs)
         self.message = message
         self.name_available = name_available
         self.reason = reason
 
 
-class CloudConnectors(msrest.serialization.Model):
-    """CloudConnectors.
+class CloudConnectors(_serialization.Model):
+    """External Cloud Service connectors.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -585,67 +671,64 @@ class CloudConnectors(msrest.serialization.Model):
     """
 
     _validation = {
-        'aws_external_id': {'readonly': True},
+        "aws_external_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'aws_external_id': {'key': 'awsExternalId', 'type': 'str'},
+        "aws_external_id": {"key": "awsExternalId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CloudConnectors, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.aws_external_id = None
 
 
-class CollectionAdminUpdate(msrest.serialization.Model):
+class CollectionAdminUpdate(_serialization.Model):
     """Collection administrator update.
 
-    :param object_id: Gets or sets the object identifier of the admin.
-    :type object_id: str
+    :ivar object_id: Gets or sets the object identifier of the admin.
+    :vartype object_id: str
     """
 
     _attribute_map = {
-        'object_id': {'key': 'objectId', 'type': 'str'},
+        "object_id": {"key": "objectId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        object_id: Optional[str] = None,
-        **kwargs
-    ):
-        super(CollectionAdminUpdate, self).__init__(**kwargs)
+    def __init__(self, *, object_id: Optional[str] = None, **kwargs):
+        """
+        :keyword object_id: Gets or sets the object identifier of the admin.
+        :paramtype object_id: str
+        """
+        super().__init__(**kwargs)
         self.object_id = object_id
 
 
-class DefaultAccountPayload(msrest.serialization.Model):
+class DefaultAccountPayload(_serialization.Model):
     """Payload to get and set the default account in the given scope.
 
-    :param account_name: The name of the account that is set as the default.
-    :type account_name: str
-    :param resource_group_name: The resource group name of the account that is set as the default.
-    :type resource_group_name: str
-    :param scope: The scope object ID. For example, sub ID or tenant ID.
-    :type scope: str
-    :param scope_tenant_id: The scope tenant in which the default account is set.
-    :type scope_tenant_id: str
-    :param scope_type: The scope where the default account is set. Possible values include:
-     "Tenant", "Subscription".
-    :type scope_type: str or ~azure.mgmt.purview.models.ScopeType
-    :param subscription_id: The subscription ID of the account that is set as the default.
-    :type subscription_id: str
+    :ivar account_name: The name of the account that is set as the default.
+    :vartype account_name: str
+    :ivar resource_group_name: The resource group name of the account that is set as the default.
+    :vartype resource_group_name: str
+    :ivar scope: The scope object ID. For example, sub ID or tenant ID.
+    :vartype scope: str
+    :ivar scope_tenant_id: The scope tenant in which the default account is set.
+    :vartype scope_tenant_id: str
+    :ivar scope_type: The scope where the default account is set. Known values are: "Tenant" and
+     "Subscription".
+    :vartype scope_type: str or ~azure.mgmt.purview.models.ScopeType
+    :ivar subscription_id: The subscription ID of the account that is set as the default.
+    :vartype subscription_id: str
     """
 
     _attribute_map = {
-        'account_name': {'key': 'accountName', 'type': 'str'},
-        'resource_group_name': {'key': 'resourceGroupName', 'type': 'str'},
-        'scope': {'key': 'scope', 'type': 'str'},
-        'scope_tenant_id': {'key': 'scopeTenantId', 'type': 'str'},
-        'scope_type': {'key': 'scopeType', 'type': 'str'},
-        'subscription_id': {'key': 'subscriptionId', 'type': 'str'},
+        "account_name": {"key": "accountName", "type": "str"},
+        "resource_group_name": {"key": "resourceGroupName", "type": "str"},
+        "scope": {"key": "scope", "type": "str"},
+        "scope_tenant_id": {"key": "scopeTenantId", "type": "str"},
+        "scope_type": {"key": "scopeType", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
     }
 
     def __init__(
@@ -655,11 +738,27 @@ class DefaultAccountPayload(msrest.serialization.Model):
         resource_group_name: Optional[str] = None,
         scope: Optional[str] = None,
         scope_tenant_id: Optional[str] = None,
-        scope_type: Optional[Union[str, "ScopeType"]] = None,
+        scope_type: Optional[Union[str, "_models.ScopeType"]] = None,
         subscription_id: Optional[str] = None,
         **kwargs
     ):
-        super(DefaultAccountPayload, self).__init__(**kwargs)
+        """
+        :keyword account_name: The name of the account that is set as the default.
+        :paramtype account_name: str
+        :keyword resource_group_name: The resource group name of the account that is set as the
+         default.
+        :paramtype resource_group_name: str
+        :keyword scope: The scope object ID. For example, sub ID or tenant ID.
+        :paramtype scope: str
+        :keyword scope_tenant_id: The scope tenant in which the default account is set.
+        :paramtype scope_tenant_id: str
+        :keyword scope_type: The scope where the default account is set. Known values are: "Tenant" and
+         "Subscription".
+        :paramtype scope_type: str or ~azure.mgmt.purview.models.ScopeType
+        :keyword subscription_id: The subscription ID of the account that is set as the default.
+        :paramtype subscription_id: str
+        """
+        super().__init__(**kwargs)
         self.account_name = account_name
         self.resource_group_name = resource_group_name
         self.scope = scope
@@ -668,22 +767,22 @@ class DefaultAccountPayload(msrest.serialization.Model):
         self.subscription_id = subscription_id
 
 
-class DimensionProperties(msrest.serialization.Model):
+class DimensionProperties(_serialization.Model):
     """properties for dimension.
 
-    :param display_name: localized display name of the dimension to customer.
-    :type display_name: str
-    :param name: dimension name.
-    :type name: str
-    :param to_be_exported_for_customer: flag indicating whether this dimension should be included
-     to the customer in Azure Monitor logs (aka Shoebox).
-    :type to_be_exported_for_customer: bool
+    :ivar display_name: localized display name of the dimension to customer.
+    :vartype display_name: str
+    :ivar name: dimension name.
+    :vartype name: str
+    :ivar to_be_exported_for_customer: flag indicating whether this dimension should be included to
+     the customer in Azure Monitor logs (aka Shoebox).
+    :vartype to_be_exported_for_customer: bool
     """
 
     _attribute_map = {
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'to_be_exported_for_customer': {'key': 'toBeExportedForCustomer', 'type': 'bool'},
+        "display_name": {"key": "displayName", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "to_be_exported_for_customer": {"key": "toBeExportedForCustomer", "type": "bool"},
     }
 
     def __init__(
@@ -694,13 +793,22 @@ class DimensionProperties(msrest.serialization.Model):
         to_be_exported_for_customer: Optional[bool] = None,
         **kwargs
     ):
-        super(DimensionProperties, self).__init__(**kwargs)
+        """
+        :keyword display_name: localized display name of the dimension to customer.
+        :paramtype display_name: str
+        :keyword name: dimension name.
+        :paramtype name: str
+        :keyword to_be_exported_for_customer: flag indicating whether this dimension should be included
+         to the customer in Azure Monitor logs (aka Shoebox).
+        :paramtype to_be_exported_for_customer: bool
+        """
+        super().__init__(**kwargs)
         self.display_name = display_name
         self.name = name
         self.to_be_exported_for_customer = to_be_exported_for_customer
 
 
-class ErrorModel(msrest.serialization.Model):
+class ErrorModel(_serialization.Model):
     """Default error model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -716,31 +824,29 @@ class ErrorModel(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'details': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
+        "code": {"readonly": True},
+        "details": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorModel]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorModel]"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorModel, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.details = None
         self.message = None
         self.target = None
 
 
-class ErrorResponseModel(msrest.serialization.Model):
+class ErrorResponseModel(_serialization.Model):
     """Default error response model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -750,18 +856,16 @@ class ErrorResponseModel(msrest.serialization.Model):
     """
 
     _validation = {
-        'error': {'readonly': True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorResponseModelError'},
+        "error": {"key": "error", "type": "ErrorResponseModelError"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponseModel, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.error = None
 
 
@@ -781,27 +885,25 @@ class ErrorResponseModelError(ErrorModel):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'details': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
+        "code": {"readonly": True},
+        "details": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorModel]'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorModel]"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorResponseModelError, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """The Managed Identity of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -810,67 +912,93 @@ class Identity(msrest.serialization.Model):
     :vartype principal_id: str
     :ivar tenant_id: Tenant Id.
     :vartype tenant_id: str
-    :param type: Identity Type. Possible values include: "SystemAssigned".
-    :type type: str or ~azure.mgmt.purview.models.Type
+    :ivar type: Identity Type. Known values are: "None", "SystemAssigned", and "UserAssigned".
+    :vartype type: str or ~azure.mgmt.purview.models.Type
+    :ivar user_assigned_identities: User Assigned Identities.
+    :vartype user_assigned_identities: dict[str, ~azure.mgmt.purview.models.UserAssignedIdentity]
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentity}"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "Type"]] = None,
+        type: Optional[Union[str, "_models.Type"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentity"]] = None,
         **kwargs
     ):
-        super(Identity, self).__init__(**kwargs)
+        """
+        :keyword type: Identity Type. Known values are: "None", "SystemAssigned", and "UserAssigned".
+        :paramtype type: str or ~azure.mgmt.purview.models.Type
+        :keyword user_assigned_identities: User Assigned Identities.
+        :paramtype user_assigned_identities: dict[str, ~azure.mgmt.purview.models.UserAssignedIdentity]
+        """
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
+        self.user_assigned_identities = user_assigned_identities
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Operation resource.
 
-    :param display: Properties on the operation.
-    :type display: ~azure.mgmt.purview.models.OperationDisplay
-    :param is_data_action: Whether operation is a data action.
-    :type is_data_action: bool
-    :param name: Operation name for display purposes.
-    :type name: str
-    :param origin: origin of the operation.
-    :type origin: str
-    :param service_specification: meta service specification.
-    :type service_specification: ~azure.mgmt.purview.models.OperationMetaServiceSpecification
+    :ivar display: Properties on the operation.
+    :vartype display: ~azure.mgmt.purview.models.OperationDisplay
+    :ivar is_data_action: Whether operation is a data action.
+    :vartype is_data_action: bool
+    :ivar name: Operation name for display purposes.
+    :vartype name: str
+    :ivar origin: origin of the operation.
+    :vartype origin: str
+    :ivar service_specification: meta service specification.
+    :vartype service_specification: ~azure.mgmt.purview.models.OperationMetaServiceSpecification
     """
 
     _attribute_map = {
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'name': {'key': 'name', 'type': 'str'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'service_specification': {'key': 'properties.serviceSpecification', 'type': 'OperationMetaServiceSpecification'},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "name": {"key": "name", "type": "str"},
+        "origin": {"key": "origin", "type": "str"},
+        "service_specification": {
+            "key": "properties.serviceSpecification",
+            "type": "OperationMetaServiceSpecification",
+        },
     }
 
     def __init__(
         self,
         *,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         is_data_action: Optional[bool] = None,
         name: Optional[str] = None,
         origin: Optional[str] = None,
-        service_specification: Optional["OperationMetaServiceSpecification"] = None,
+        service_specification: Optional["_models.OperationMetaServiceSpecification"] = None,
         **kwargs
     ):
-        super(Operation, self).__init__(**kwargs)
+        """
+        :keyword display: Properties on the operation.
+        :paramtype display: ~azure.mgmt.purview.models.OperationDisplay
+        :keyword is_data_action: Whether operation is a data action.
+        :paramtype is_data_action: bool
+        :keyword name: Operation name for display purposes.
+        :paramtype name: str
+        :keyword origin: origin of the operation.
+        :paramtype origin: str
+        :keyword service_specification: meta service specification.
+        :paramtype service_specification: ~azure.mgmt.purview.models.OperationMetaServiceSpecification
+        """
+        super().__init__(**kwargs)
         self.display = display
         self.is_data_action = is_data_action
         self.name = name
@@ -878,24 +1006,24 @@ class Operation(msrest.serialization.Model):
         self.service_specification = service_specification
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The response model for get operation properties.
 
-    :param description: Description of the operation for display purposes.
-    :type description: str
-    :param operation: Name of the operation for display purposes.
-    :type operation: str
-    :param provider: Name of the provider for display purposes.
-    :type provider: str
-    :param resource: Name of the resource type for display purposes.
-    :type resource: str
+    :ivar description: Description of the operation for display purposes.
+    :vartype description: str
+    :ivar operation: Name of the operation for display purposes.
+    :vartype operation: str
+    :ivar provider: Name of the provider for display purposes.
+    :vartype provider: str
+    :ivar resource: Name of the resource type for display purposes.
+    :vartype resource: str
     """
 
     _attribute_map = {
-        'description': {'key': 'description', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
+        "description": {"key": "description", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
     }
 
     def __init__(
@@ -907,65 +1035,83 @@ class OperationDisplay(msrest.serialization.Model):
         resource: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword description: Description of the operation for display purposes.
+        :paramtype description: str
+        :keyword operation: Name of the operation for display purposes.
+        :paramtype operation: str
+        :keyword provider: Name of the provider for display purposes.
+        :paramtype provider: str
+        :keyword resource: Name of the resource type for display purposes.
+        :paramtype resource: str
+        """
+        super().__init__(**kwargs)
         self.description = description
         self.operation = operation
         self.provider = provider
         self.resource = resource
 
 
-class OperationList(msrest.serialization.Model):
+class OperationList(_serialization.Model):
     """Paged list of operation resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param count: Total item count.
-    :type count: long
-    :param next_link: The Url of next result page.
-    :type next_link: str
-    :param value: Required. Collection of items of type results.
-    :type value: list[~azure.mgmt.purview.models.Operation]
+    :ivar count: Total item count.
+    :vartype count: int
+    :ivar next_link: The Url of next result page.
+    :vartype next_link: str
+    :ivar value: Collection of items of type results. Required.
+    :vartype value: list[~azure.mgmt.purview.models.Operation]
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'long'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "count": {"key": "count", "type": "int"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
     def __init__(
         self,
         *,
-        value: List["Operation"],
+        value: List["_models.Operation"],
         count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(OperationList, self).__init__(**kwargs)
+        """
+        :keyword count: Total item count.
+        :paramtype count: int
+        :keyword next_link: The Url of next result page.
+        :paramtype next_link: str
+        :keyword value: Collection of items of type results. Required.
+        :paramtype value: list[~azure.mgmt.purview.models.Operation]
+        """
+        super().__init__(**kwargs)
         self.count = count
         self.next_link = next_link
         self.value = value
 
 
-class OperationMetaLogSpecification(msrest.serialization.Model):
+class OperationMetaLogSpecification(_serialization.Model):
     """log specifications for operation api.
 
-    :param blob_duration: blob duration of the log.
-    :type blob_duration: str
-    :param display_name: localized name of the log category.
-    :type display_name: str
-    :param name: name of the log category.
-    :type name: str
+    :ivar blob_duration: blob duration of the log.
+    :vartype blob_duration: str
+    :ivar display_name: localized name of the log category.
+    :vartype display_name: str
+    :ivar name: name of the log category.
+    :vartype name: str
     """
 
     _attribute_map = {
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     def __init__(
@@ -976,64 +1122,72 @@ class OperationMetaLogSpecification(msrest.serialization.Model):
         name: Optional[str] = None,
         **kwargs
     ):
-        super(OperationMetaLogSpecification, self).__init__(**kwargs)
+        """
+        :keyword blob_duration: blob duration of the log.
+        :paramtype blob_duration: str
+        :keyword display_name: localized name of the log category.
+        :paramtype display_name: str
+        :keyword name: name of the log category.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
         self.blob_duration = blob_duration
         self.display_name = display_name
         self.name = name
 
 
-class OperationMetaMetricSpecification(msrest.serialization.Model):
+class OperationMetaMetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """metric specifications for the operation.
 
-    :param aggregation_type: aggregation type of metric.
-    :type aggregation_type: str
-    :param dimensions: properties for dimension.
-    :type dimensions: list[~azure.mgmt.purview.models.DimensionProperties]
-    :param display_description: description of the metric.
-    :type display_description: str
-    :param display_name: localized name of the metric.
-    :type display_name: str
-    :param enable_regional_mdm_account: enable regional mdm account.
-    :type enable_regional_mdm_account: str
-    :param internal_metric_name: internal metric name.
-    :type internal_metric_name: str
-    :param name: name of the metric.
-    :type name: str
-    :param resource_id_dimension_name_override: dimension name use to replace resource id if
+    :ivar aggregation_type: aggregation type of metric.
+    :vartype aggregation_type: str
+    :ivar dimensions: properties for dimension.
+    :vartype dimensions: list[~azure.mgmt.purview.models.DimensionProperties]
+    :ivar display_description: description of the metric.
+    :vartype display_description: str
+    :ivar display_name: localized name of the metric.
+    :vartype display_name: str
+    :ivar enable_regional_mdm_account: enable regional mdm account.
+    :vartype enable_regional_mdm_account: str
+    :ivar internal_metric_name: internal metric name.
+    :vartype internal_metric_name: str
+    :ivar name: name of the metric.
+    :vartype name: str
+    :ivar resource_id_dimension_name_override: dimension name use to replace resource id if
      specified.
-    :type resource_id_dimension_name_override: str
-    :param source_mdm_namespace: Metric namespace.
+    :vartype resource_id_dimension_name_override: str
+    :ivar source_mdm_namespace: Metric namespace.
      Only set the namespace if different from the default value,
      leaving it empty makes it use the value from the ARM manifest.
-    :type source_mdm_namespace: str
-    :param supported_aggregation_types: supported aggregation types.
-    :type supported_aggregation_types: list[str]
-    :param supported_time_grain_types: supported time grain types.
-    :type supported_time_grain_types: list[str]
-    :param unit: units for the metric.
-    :type unit: str
+    :vartype source_mdm_namespace: str
+    :ivar supported_aggregation_types: supported aggregation types.
+    :vartype supported_aggregation_types: list[str]
+    :ivar supported_time_grain_types: supported time grain types.
+    :vartype supported_time_grain_types: list[str]
+    :ivar unit: units for the metric.
+    :vartype unit: str
     """
 
     _attribute_map = {
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'dimensions': {'key': 'dimensions', 'type': '[DimensionProperties]'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'str'},
-        'internal_metric_name': {'key': 'internalMetricName', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'resource_id_dimension_name_override': {'key': 'resourceIdDimensionNameOverride', 'type': 'str'},
-        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
-        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
-        'unit': {'key': 'unit', 'type': 'str'},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[DimensionProperties]"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "enable_regional_mdm_account": {"key": "enableRegionalMdmAccount", "type": "str"},
+        "internal_metric_name": {"key": "internalMetricName", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "resource_id_dimension_name_override": {"key": "resourceIdDimensionNameOverride", "type": "str"},
+        "source_mdm_namespace": {"key": "sourceMdmNamespace", "type": "str"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
+        "supported_time_grain_types": {"key": "supportedTimeGrainTypes", "type": "[str]"},
+        "unit": {"key": "unit", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         aggregation_type: Optional[str] = None,
-        dimensions: Optional[List["DimensionProperties"]] = None,
+        dimensions: Optional[List["_models.DimensionProperties"]] = None,
         display_description: Optional[str] = None,
         display_name: Optional[str] = None,
         enable_regional_mdm_account: Optional[str] = None,
@@ -1046,7 +1200,36 @@ class OperationMetaMetricSpecification(msrest.serialization.Model):
         unit: Optional[str] = None,
         **kwargs
     ):
-        super(OperationMetaMetricSpecification, self).__init__(**kwargs)
+        """
+        :keyword aggregation_type: aggregation type of metric.
+        :paramtype aggregation_type: str
+        :keyword dimensions: properties for dimension.
+        :paramtype dimensions: list[~azure.mgmt.purview.models.DimensionProperties]
+        :keyword display_description: description of the metric.
+        :paramtype display_description: str
+        :keyword display_name: localized name of the metric.
+        :paramtype display_name: str
+        :keyword enable_regional_mdm_account: enable regional mdm account.
+        :paramtype enable_regional_mdm_account: str
+        :keyword internal_metric_name: internal metric name.
+        :paramtype internal_metric_name: str
+        :keyword name: name of the metric.
+        :paramtype name: str
+        :keyword resource_id_dimension_name_override: dimension name use to replace resource id if
+         specified.
+        :paramtype resource_id_dimension_name_override: str
+        :keyword source_mdm_namespace: Metric namespace.
+         Only set the namespace if different from the default value,
+         leaving it empty makes it use the value from the ARM manifest.
+        :paramtype source_mdm_namespace: str
+        :keyword supported_aggregation_types: supported aggregation types.
+        :paramtype supported_aggregation_types: list[str]
+        :keyword supported_time_grain_types: supported time grain types.
+        :paramtype supported_time_grain_types: list[str]
+        :keyword unit: units for the metric.
+        :paramtype unit: str
+        """
+        super().__init__(**kwargs)
         self.aggregation_type = aggregation_type
         self.dimensions = dimensions
         self.display_description = display_description
@@ -1061,54 +1244,61 @@ class OperationMetaMetricSpecification(msrest.serialization.Model):
         self.unit = unit
 
 
-class OperationMetaServiceSpecification(msrest.serialization.Model):
+class OperationMetaServiceSpecification(_serialization.Model):
     """The operation meta service specification.
 
-    :param log_specifications: log specifications for the operation.
-    :type log_specifications: list[~azure.mgmt.purview.models.OperationMetaLogSpecification]
-    :param metric_specifications: metric specifications for the operation.
-    :type metric_specifications: list[~azure.mgmt.purview.models.OperationMetaMetricSpecification]
+    :ivar log_specifications: log specifications for the operation.
+    :vartype log_specifications: list[~azure.mgmt.purview.models.OperationMetaLogSpecification]
+    :ivar metric_specifications: metric specifications for the operation.
+    :vartype metric_specifications:
+     list[~azure.mgmt.purview.models.OperationMetaMetricSpecification]
     """
 
     _attribute_map = {
-        'log_specifications': {'key': 'logSpecifications', 'type': '[OperationMetaLogSpecification]'},
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[OperationMetaMetricSpecification]'},
+        "log_specifications": {"key": "logSpecifications", "type": "[OperationMetaLogSpecification]"},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[OperationMetaMetricSpecification]"},
     }
 
     def __init__(
         self,
         *,
-        log_specifications: Optional[List["OperationMetaLogSpecification"]] = None,
-        metric_specifications: Optional[List["OperationMetaMetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.OperationMetaLogSpecification"]] = None,
+        metric_specifications: Optional[List["_models.OperationMetaMetricSpecification"]] = None,
         **kwargs
     ):
-        super(OperationMetaServiceSpecification, self).__init__(**kwargs)
+        """
+        :keyword log_specifications: log specifications for the operation.
+        :paramtype log_specifications: list[~azure.mgmt.purview.models.OperationMetaLogSpecification]
+        :keyword metric_specifications: metric specifications for the operation.
+        :paramtype metric_specifications:
+         list[~azure.mgmt.purview.models.OperationMetaMetricSpecification]
+        """
+        super().__init__(**kwargs)
         self.log_specifications = log_specifications
         self.metric_specifications = metric_specifications
 
 
-class PrivateEndpoint(msrest.serialization.Model):
+class PrivateEndpoint(_serialization.Model):
     """A private endpoint class.
 
-    :param id: The private endpoint identifier.
-    :type id: str
+    :ivar id: The private endpoint identifier.
+    :vartype id: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
-        super(PrivateEndpoint, self).__init__(**kwargs)
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The private endpoint identifier.
+        :paramtype id: str
+        """
+        super().__init__(**kwargs)
         self.id = id
 
 
-class ProxyResource(msrest.serialization.Model):
+class ProxyResource(_serialization.Model):
     """Proxy Azure Resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1122,22 +1312,20 @@ class ProxyResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1154,82 +1342,100 @@ class PrivateEndpointConnection(ProxyResource):
     :vartype name: str
     :ivar type: Gets or sets the type.
     :vartype type: str
-    :param private_endpoint: The private endpoint information.
-    :type private_endpoint: ~azure.mgmt.purview.models.PrivateEndpoint
-    :param private_link_service_connection_state: The private link service connection state.
-    :type private_link_service_connection_state:
+    :ivar private_endpoint: The private endpoint information.
+    :vartype private_endpoint: ~azure.mgmt.purview.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: The private link service connection state.
+    :vartype private_link_service_connection_state:
      ~azure.mgmt.purview.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state.
     :vartype provisioning_state: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        """
+        :keyword private_endpoint: The private endpoint information.
+        :paramtype private_endpoint: ~azure.mgmt.purview.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: The private link service connection state.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.purview.models.PrivateLinkServiceConnectionState
+        """
+        super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
 
-class PrivateEndpointConnectionList(msrest.serialization.Model):
+class PrivateEndpointConnectionList(_serialization.Model):
     """Paged list of private endpoint connections.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param count: Total item count.
-    :type count: long
-    :param next_link: The Url of next result page.
-    :type next_link: str
-    :param value: Required. Collection of items of type results.
-    :type value: list[~azure.mgmt.purview.models.PrivateEndpointConnection]
+    :ivar count: Total item count.
+    :vartype count: int
+    :ivar next_link: The Url of next result page.
+    :vartype next_link: str
+    :ivar value: Collection of items of type results. Required.
+    :vartype value: list[~azure.mgmt.purview.models.PrivateEndpointConnection]
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'long'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        "count": {"key": "count", "type": "int"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
     def __init__(
         self,
         *,
-        value: List["PrivateEndpointConnection"],
+        value: List["_models.PrivateEndpointConnection"],
         count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(PrivateEndpointConnectionList, self).__init__(**kwargs)
+        """
+        :keyword count: Total item count.
+        :paramtype count: int
+        :keyword next_link: The Url of next result page.
+        :paramtype next_link: str
+        :keyword value: Collection of items of type results. Required.
+        :paramtype value: list[~azure.mgmt.purview.models.PrivateEndpointConnection]
+        """
+        super().__init__(**kwargs)
         self.count = count
         self.next_link = next_link
         self.value = value
 
 
-class PrivateLinkResource(msrest.serialization.Model):
+class PrivateLinkResource(_serialization.Model):
     """A privately linkable resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1245,68 +1451,74 @@ class PrivateLinkResource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'properties': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "properties": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateLinkResourceProperties'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "PrivateLinkResourceProperties"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.properties = None
         self.type = None
 
 
-class PrivateLinkResourceList(msrest.serialization.Model):
+class PrivateLinkResourceList(_serialization.Model):
     """Paged list of private link resources.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param count: Total item count.
-    :type count: long
-    :param next_link: The Url of next result page.
-    :type next_link: str
-    :param value: Required. Collection of items of type results.
-    :type value: list[~azure.mgmt.purview.models.PrivateLinkResource]
+    :ivar count: Total item count.
+    :vartype count: int
+    :ivar next_link: The Url of next result page.
+    :vartype next_link: str
+    :ivar value: Collection of items of type results. Required.
+    :vartype value: list[~azure.mgmt.purview.models.PrivateLinkResource]
     """
 
     _validation = {
-        'value': {'required': True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'long'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        "count": {"key": "count", "type": "int"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
     def __init__(
         self,
         *,
-        value: List["PrivateLinkResource"],
+        value: List["_models.PrivateLinkResource"],
         count: Optional[int] = None,
         next_link: Optional[str] = None,
         **kwargs
     ):
-        super(PrivateLinkResourceList, self).__init__(**kwargs)
+        """
+        :keyword count: Total item count.
+        :paramtype count: int
+        :keyword next_link: The Url of next result page.
+        :paramtype next_link: str
+        :keyword value: Collection of items of type results. Required.
+        :paramtype value: list[~azure.mgmt.purview.models.PrivateLinkResource]
+        """
+        super().__init__(**kwargs)
         self.count = count
         self.next_link = next_link
         self.value = value
 
 
-class PrivateLinkResourceProperties(msrest.serialization.Model):
+class PrivateLinkResourceProperties(_serialization.Model):
     """A privately linkable resource properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1321,43 +1533,41 @@ class PrivateLinkResourceProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
-        'required_zone_names': {'readonly': True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
+        "required_zone_names": {"readonly": True},
     }
 
     _attribute_map = {
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
+        "group_id": {"key": "groupId", "type": "str"},
+        "required_members": {"key": "requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateLinkResourceProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.group_id = None
         self.required_members = None
         self.required_zone_names = None
 
 
-class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+class PrivateLinkServiceConnectionState(_serialization.Model):
     """The private link service connection state.
 
-    :param actions_required: The required actions.
-    :type actions_required: str
-    :param description: The description.
-    :type description: str
-    :param status: The status. Possible values include: "Unknown", "Pending", "Approved",
-     "Rejected", "Disconnected".
-    :type status: str or ~azure.mgmt.purview.models.Status
+    :ivar actions_required: The required actions.
+    :vartype actions_required: str
+    :ivar description: The description.
+    :vartype description: str
+    :ivar status: The status. Known values are: "Unknown", "Pending", "Approved", "Rejected", and
+     "Disconnected".
+    :vartype status: str or ~azure.mgmt.purview.models.Status
     """
 
     _attribute_map = {
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
@@ -1365,16 +1575,25 @@ class PrivateLinkServiceConnectionState(msrest.serialization.Model):
         *,
         actions_required: Optional[str] = None,
         description: Optional[str] = None,
-        status: Optional[Union[str, "Status"]] = None,
+        status: Optional[Union[str, "_models.Status"]] = None,
         **kwargs
     ):
-        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        """
+        :keyword actions_required: The required actions.
+        :paramtype actions_required: str
+        :keyword description: The description.
+        :paramtype description: str
+        :keyword status: The status. Known values are: "Unknown", "Pending", "Approved", "Rejected",
+         and "Disconnected".
+        :paramtype status: str or ~azure.mgmt.purview.models.Status
+        """
+        super().__init__(**kwargs)
         self.actions_required = actions_required
         self.description = description
         self.status = status
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1383,41 +1602,39 @@ class SystemData(msrest.serialization.Model):
     :vartype created_at: ~datetime.datetime
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.purview.models.CreatedByType
     :ivar last_modified_at: The timestamp of the last modification the resource (UTC).
     :vartype last_modified_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.purview.models.LastModifiedByType
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'created_by_type': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'last_modified_by_type': {'readonly': True},
+        "created_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "created_by_type": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+        "last_modified_by": {"readonly": True},
+        "last_modified_by_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(SystemData, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.created_at = None
         self.created_by = None
         self.created_by_type = None
@@ -1435,38 +1652,64 @@ class TrackedResourceSystemData(SystemData):
     :vartype created_at: ~datetime.datetime
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.purview.models.CreatedByType
     :ivar last_modified_at: The timestamp of the last modification the resource (UTC).
     :vartype last_modified_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.purview.models.LastModifiedByType
     """
 
     _validation = {
-        'created_at': {'readonly': True},
-        'created_by': {'readonly': True},
-        'created_by_type': {'readonly': True},
-        'last_modified_at': {'readonly': True},
-        'last_modified_by': {'readonly': True},
-        'last_modified_by_type': {'readonly': True},
+        "created_at": {"readonly": True},
+        "created_by": {"readonly": True},
+        "created_by_type": {"readonly": True},
+        "last_modified_at": {"readonly": True},
+        "last_modified_by": {"readonly": True},
+        "last_modified_by_type": {"readonly": True},
     }
 
     _attribute_map = {
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TrackedResourceSystemData, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+
+
+class UserAssignedIdentity(_serialization.Model):
+    """Uses client ID and Principal ID.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar client_id: Gets or Sets Client ID.
+    :vartype client_id: str
+    :ivar principal_id: Gets or Sets Principal ID.
+    :vartype principal_id: str
+    """
+
+    _validation = {
+        "client_id": {"readonly": True},
+        "principal_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "client_id": {"key": "clientId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.client_id = None
+        self.principal_id = None

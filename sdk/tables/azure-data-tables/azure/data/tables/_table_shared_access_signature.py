@@ -229,22 +229,22 @@ class TableSharedAccessSignature(SharedAccessSignature):
             is https,http. See :class:`~azure.cosmosdb.table.common.models.Protocol` for possible values.
         :param str start_pk:
             The minimum partition key accessible with this shared access
-            signature. startpk must accompany startrk. Key values are inclusive.
+            signature. startpk must accompany start_rk. Key values are inclusive.
             If omitted, there is no lower bound on the table entities that can
             be accessed.
         :param str start_rk:
             The minimum row key accessible with this shared access signature.
-            startpk must accompany startrk. Key values are inclusive. If
+            startpk must accompany start_rk. Key values are inclusive. If
             omitted, there is no lower bound on the table entities that can be
             accessed.
         :param str end_pk:
             The maximum partition key accessible with this shared access
-            signature. endpk must accompany endrk. Key values are inclusive. If
+            signature. end_pk must accompany end_rk. Key values are inclusive. If
             omitted, there is no upper bound on the table entities that can be
             accessed.
         :param str end_rk:
             The maximum row key accessible with this shared access signature.
-            endpk must accompany endrk. Key values are inclusive. If omitted,
+            end_pk must accompany end_rk. Key values are inclusive. If omitted,
             there is no upper bound on the table entities that can be accessed.
         """
         sas = _TableSharedAccessHelper()

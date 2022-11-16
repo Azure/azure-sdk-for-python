@@ -165,7 +165,10 @@ class BufferedProducer:
                             self.partition_id,
                             len(batch),
                         )
-                        self._on_success(batch._internal_events, self.partition_id)
+                        try:
+                            self._on_success(batch._internal_events, self.partition_id)
+                        except AttributeError:
+                            self._on_success(batch, self.partition_id)
                     except Exception as exc:  # pylint: disable=broad-except
                         _LOGGER.info(
                             "Partition %r sending %r events failed due to exception: %r ",
@@ -173,7 +176,10 @@ class BufferedProducer:
                             len(batch),
                             exc,
                         )
-                        self._on_error(batch._internal_events, self.partition_id, exc)
+                        try:
+                            self._on_error(batch._internal_events, self.partition_id, exc)
+                        except AttributeError:
+                            self._on_error(batch, self.partition_id, exc)
                     finally:
                         self._cur_buffered_len -= len(batch)
                 else:

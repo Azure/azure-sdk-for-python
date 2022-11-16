@@ -1,8 +1,7 @@
 from pathlib import Path
 
-from azure.ai.ml import dsl, Input
-from azure.ai.ml.entities import PipelineJob
-from azure.ai.ml.entities import CommandComponent
+from azure.ai.ml import Input, dsl
+from azure.ai.ml.entities import CommandComponent, PipelineJob
 
 parent_dir = str(Path(__file__).parent)
 

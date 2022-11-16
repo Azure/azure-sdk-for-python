@@ -37,6 +37,7 @@ class RandomSamplingAlgorithmSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         from azure.ai.ml.sweep import RandomSamplingAlgorithm
 
+        data.pop("type")
         return RandomSamplingAlgorithm(**data)
 
     @pre_dump
@@ -59,6 +60,7 @@ class GridSamplingAlgorithmSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         from azure.ai.ml.sweep import GridSamplingAlgorithm
 
+        data.pop("type")
         return GridSamplingAlgorithm(**data)
 
     @pre_dump
@@ -81,6 +83,7 @@ class BayesianSamplingAlgorithmSchema(metaclass=PatchedSchemaMeta):
     def make(self, data, **kwargs):
         from azure.ai.ml.sweep import BayesianSamplingAlgorithm
 
+        data.pop("type")
         return BayesianSamplingAlgorithm(**data)
 
     @pre_dump

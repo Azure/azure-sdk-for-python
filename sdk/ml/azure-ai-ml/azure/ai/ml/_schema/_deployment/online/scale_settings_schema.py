@@ -18,7 +18,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class DefaultScaleSettingsSchema(metaclass=PatchedSchemaMeta):
-    scale_type = StringTransformedEnum(
+    type = StringTransformedEnum(
         required=True,
         allowed_values=ScaleType.DEFAULT,
         casing_transform=camel_to_snake,
@@ -33,7 +33,7 @@ class DefaultScaleSettingsSchema(metaclass=PatchedSchemaMeta):
 
 
 class TargetUtilizationScaleSettingsSchema(metaclass=PatchedSchemaMeta):
-    scale_type = StringTransformedEnum(
+    type = StringTransformedEnum(
         required=True,
         allowed_values=ScaleType.TARGET_UTILIZATION,
         casing_transform=camel_to_snake,

@@ -45,7 +45,7 @@ class LoadTestingClientConfiguration(Configuration):  # pylint: disable=too-many
         self.endpoint = endpoint
         self.credential = credential
         self.api_version = api_version
-        self.credential_scopes = kwargs.pop("credential_scopes", ["https://loadtest.azure-dev.com/.default"])
+        self.credential_scopes = kwargs.pop("credential_scopes", ["https://cnt-prod.loadtesting.azure.com/.default"])
         kwargs.setdefault("sdk_moniker", "developer-loadtesting/{}".format(VERSION))
         self._configure(**kwargs)
 

@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added new SIP routing client for handling Direct routing numbers.
+- Added the ability specify the API version by an optional `api_version` keyword parameter.
 
 ### Other Changes
 Python 3.6 is no longer supported. Please use Python version 3.7 or later. For more details, please read our page on [Azure SDK for Python version support policy](https://github.com/Azure/azure-sdk-for-python/wiki/Azure-SDKs-Python-version-support-policy).

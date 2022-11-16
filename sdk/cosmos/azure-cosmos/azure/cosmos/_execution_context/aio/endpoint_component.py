@@ -155,7 +155,7 @@ class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
 class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling aggregate query.
 
-    It returns only aggreated values.
+    It returns only aggregated values.
     """
 
     def __init__(self, execution_context, aggregate_operators):

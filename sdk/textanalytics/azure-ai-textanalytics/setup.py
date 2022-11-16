@@ -53,6 +53,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -63,11 +64,14 @@ setup(
         'azure',
         'azure.ai',
     ]),
+    package_data={
+        'azure.ai.textanalytics': ['py.typed'],
+    },
     python_requires=">=3.7",
     install_requires=[
         "azure-core<2.0.0,>=1.24.0",
-        "msrest>=0.7.0",
         'azure-common~=1.1',
+        "isodate<1.0.0,>=0.6.1",
         "typing-extensions>=4.0.1",
     ],
 )

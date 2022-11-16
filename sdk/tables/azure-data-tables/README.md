@@ -116,6 +116,8 @@ Common uses of the Table service included:
 * Quickly querying data using a clustered index
 * Accessing data using the OData protocol and LINQ filter expressions
 
+[comment]: # ( cspell:ignore LINQ )
+
 The following components make up the Azure Tables Service:
 * The account
 * A table within the account, which contains a set of entities
@@ -210,7 +212,7 @@ Querying entities in the table:
 ```python
 from azure.data.tables import TableClient
 my_filter = "PartitionKey eq 'RedMarker'"
-table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="mytable")
+table_client = TableClient.from_connection_string(conn_str="<connection_string>", table_name="myTable")
 entities = table_client.query_entities(my_filter)
 for entity in entities:
     for key in entity.keys():

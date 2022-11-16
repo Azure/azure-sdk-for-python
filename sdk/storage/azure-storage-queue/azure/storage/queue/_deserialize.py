@@ -30,11 +30,11 @@ def deserialize_queue_creation(response, obj, headers):
     if response.status_code == 204:
         error_code = StorageErrorCode.queue_already_exists
         error = ResourceExistsError(
-            message="Queue already exists\nRequestId:{}\nTime:{}\nErrorCode:{}".format(
-                headers['x-ms-request-id'],
-                headers['Date'],
-                error_code
-            ),
+            message=(
+                "Queue already exists\n"
+                f"RequestId:{headers['x-ms-request-id']}\n"
+                f"Time:{headers['Date']}\n"
+                f"ErrorCode:{error_code}"),
             response=response)
         error.error_code = error_code
         error.additional_info = {}

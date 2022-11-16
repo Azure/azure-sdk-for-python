@@ -9,6 +9,7 @@ from .assets.code_asset import AnonymousCodeAssetSchema, CodeAssetSchema
 from .assets.data import DataSchema
 from .assets.environment import AnonymousEnvironmentSchema, EnvironmentSchema
 from .assets.model import ModelSchema
+from .assets.workspace_model_reference import WorkspaceModelReferenceSchema
 from .component import CommandComponentSchema
 from .core.fields import (
     ArmStr,
@@ -21,15 +22,22 @@ from .core.fields import (
 )
 from .core.schema import PathAwareSchema, YamlFileSchema
 from .core.schema_meta import PatchedSchemaMeta
-from .job import CommandJobSchema, ParallelJobSchema
+from .job import CommandJobSchema, ParallelJobSchema, SparkJobSchema
+
+# TODO: enable in PuP
+# from .job import ImportJobSchema
+# from .component import ImportComponentSchema
 
 __all__ = [
+    # "ImportJobSchema",
+    # "ImportComponentSchema",
     "ArmStr",
     "ArmVersionedStr",
     "DataSchema",
     "StringTransformedEnum",
     "CodeAssetSchema",
     "CommandJobSchema",
+    "SparkJobSchema",
     "ParallelJobSchema",
     "EnvironmentSchema",
     "AnonymousEnvironmentSchema",
@@ -44,4 +52,5 @@ __all__ = [
     "AnonymousCodeAssetSchema",
     "ExperimentalField",
     "RegistryStr",
+    "WorkspaceModelReferenceSchema",
 ]

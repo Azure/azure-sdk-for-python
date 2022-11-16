@@ -31,15 +31,10 @@ from enum import Enum
 import logging
 import os
 import sys
+from typing import Type, Optional, Dict, Callable, cast, Any, Union, TYPE_CHECKING
 from azure.core.tracing import AbstractSpan
 
-try:
-    from typing import Type, Optional, Dict, Callable, cast, TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    from typing import Any, Union
     try:
         # pylint:disable=unused-import
         from azure.core.tracing.ext.opencensus_span import OpenCensusSpan  # pylint:disable=redefined-outer-name
@@ -198,7 +193,7 @@ class PrioritizedSetting(object):
     The optional ``default`` argument specified an implicit default value for
     the setting that is returned if no other methods provide a value.
 
-    A ``convert`` agument may be provided to convert values before they are
+    A ``convert`` argument may be provided to convert values before they are
     returned. For instance to concert log levels in environment variables
     to ``logging`` module values.
 
@@ -332,7 +327,7 @@ class Settings(object):
     * settings.defaults returns the base defaultsvalues , ignoring any environment or system
       or user settings
 
-    * settings.current returns the current computation of settings including prioritizatiom
+    * settings.current returns the current computation of settings including prioritization
       of configuration sources, unless defaults_only is set to True (in which case the result
       is identical to settings.defaults)
 
@@ -422,7 +417,7 @@ class Settings(object):
     )
 
     tracing_enabled = PrioritizedSetting(
-        "tracing_enbled", env_var="AZURE_TRACING_ENABLED", convert=convert_bool, default=False
+        "tracing_enabled", env_var="AZURE_TRACING_ENABLED", convert=convert_bool, default=False
     )
 
     tracing_implementation = PrioritizedSetting(

@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -6,40 +7,48 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import Any, Dict, List, Optional, Union
+import sys
+from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
-from ._container_instance_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class AzureFileVolume(msrest.serialization.Model):
+class AzureFileVolume(_serialization.Model):
     """The properties of the Azure File volume. Azure File shares are mounted as volumes.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar share_name: Required. The name of the Azure File share to be mounted as a volume.
+    :ivar share_name: The name of the Azure File share to be mounted as a volume. Required.
     :vartype share_name: str
     :ivar read_only: The flag indicating whether the Azure File shared mounted as a volume is
      read-only.
     :vartype read_only: bool
-    :ivar storage_account_name: Required. The name of the storage account that contains the Azure
-     File share.
+    :ivar storage_account_name: The name of the storage account that contains the Azure File share.
+     Required.
     :vartype storage_account_name: str
     :ivar storage_account_key: The storage account access key used to access the Azure File share.
     :vartype storage_account_key: str
     """
 
     _validation = {
-        'share_name': {'required': True},
-        'storage_account_name': {'required': True},
+        "share_name": {"required": True},
+        "storage_account_name": {"required": True},
     }
 
     _attribute_map = {
-        'share_name': {'key': 'shareName', 'type': 'str'},
-        'read_only': {'key': 'readOnly', 'type': 'bool'},
-        'storage_account_name': {'key': 'storageAccountName', 'type': 'str'},
-        'storage_account_key': {'key': 'storageAccountKey', 'type': 'str'},
+        "share_name": {"key": "shareName", "type": "str"},
+        "read_only": {"key": "readOnly", "type": "bool"},
+        "storage_account_name": {"key": "storageAccountName", "type": "str"},
+        "storage_account_key": {"key": "storageAccountKey", "type": "str"},
     }
 
     def __init__(
@@ -52,65 +61,59 @@ class AzureFileVolume(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword share_name: Required. The name of the Azure File share to be mounted as a volume.
+        :keyword share_name: The name of the Azure File share to be mounted as a volume. Required.
         :paramtype share_name: str
         :keyword read_only: The flag indicating whether the Azure File shared mounted as a volume is
          read-only.
         :paramtype read_only: bool
-        :keyword storage_account_name: Required. The name of the storage account that contains the
-         Azure File share.
+        :keyword storage_account_name: The name of the storage account that contains the Azure File
+         share. Required.
         :paramtype storage_account_name: str
         :keyword storage_account_key: The storage account access key used to access the Azure File
          share.
         :paramtype storage_account_key: str
         """
-        super(AzureFileVolume, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.share_name = share_name
         self.read_only = read_only
         self.storage_account_name = storage_account_name
         self.storage_account_key = storage_account_key
 
 
-class CachedImages(msrest.serialization.Model):
+class CachedImages(_serialization.Model):
     """The cached image and OS type.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar os_type: Required. The OS type of the cached image.
+    :ivar os_type: The OS type of the cached image. Required.
     :vartype os_type: str
-    :ivar image: Required. The cached image name.
+    :ivar image: The cached image name. Required.
     :vartype image: str
     """
 
     _validation = {
-        'os_type': {'required': True},
-        'image': {'required': True},
+        "os_type": {"required": True},
+        "image": {"required": True},
     }
 
     _attribute_map = {
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'image': {'key': 'image', 'type': 'str'},
+        "os_type": {"key": "osType", "type": "str"},
+        "image": {"key": "image", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        os_type: str,
-        image: str,
-        **kwargs
-    ):
+    def __init__(self, *, os_type: str, image: str, **kwargs):
         """
-        :keyword os_type: Required. The OS type of the cached image.
+        :keyword os_type: The OS type of the cached image. Required.
         :paramtype os_type: str
-        :keyword image: Required. The cached image name.
+        :keyword image: The cached image name. Required.
         :paramtype image: str
         """
-        super(CachedImages, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.os_type = os_type
         self.image = image
 
 
-class CachedImagesListResult(msrest.serialization.Model):
+class CachedImagesListResult(_serialization.Model):
     """The response containing cached images.
 
     :ivar value: The list of cached images.
@@ -120,16 +123,12 @@ class CachedImagesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CachedImages]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[CachedImages]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["CachedImages"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.CachedImages"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of cached images.
@@ -137,12 +136,12 @@ class CachedImagesListResult(msrest.serialization.Model):
         :keyword next_link: The URI to fetch the next page of cached images.
         :paramtype next_link: str
         """
-        super(CachedImagesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Capabilities(msrest.serialization.Model):
+class Capabilities(_serialization.Model):
     """The regional capabilities.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -162,30 +161,26 @@ class Capabilities(msrest.serialization.Model):
     """
 
     _validation = {
-        'resource_type': {'readonly': True},
-        'os_type': {'readonly': True},
-        'location': {'readonly': True},
-        'ip_address_type': {'readonly': True},
-        'gpu': {'readonly': True},
-        'capabilities': {'readonly': True},
+        "resource_type": {"readonly": True},
+        "os_type": {"readonly": True},
+        "location": {"readonly": True},
+        "ip_address_type": {"readonly": True},
+        "gpu": {"readonly": True},
+        "capabilities": {"readonly": True},
     }
 
     _attribute_map = {
-        'resource_type': {'key': 'resourceType', 'type': 'str'},
-        'os_type': {'key': 'osType', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'ip_address_type': {'key': 'ipAddressType', 'type': 'str'},
-        'gpu': {'key': 'gpu', 'type': 'str'},
-        'capabilities': {'key': 'capabilities', 'type': 'CapabilitiesCapabilities'},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "os_type": {"key": "osType", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "ip_address_type": {"key": "ipAddressType", "type": "str"},
+        "gpu": {"key": "gpu", "type": "str"},
+        "capabilities": {"key": "capabilities", "type": "CapabilitiesCapabilities"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Capabilities, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.resource_type = None
         self.os_type = None
         self.location = None
@@ -194,7 +189,7 @@ class Capabilities(msrest.serialization.Model):
         self.capabilities = None
 
 
-class CapabilitiesCapabilities(msrest.serialization.Model):
+class CapabilitiesCapabilities(_serialization.Model):
     """The supported capabilities.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -208,30 +203,26 @@ class CapabilitiesCapabilities(msrest.serialization.Model):
     """
 
     _validation = {
-        'max_memory_in_gb': {'readonly': True},
-        'max_cpu': {'readonly': True},
-        'max_gpu_count': {'readonly': True},
+        "max_memory_in_gb": {"readonly": True},
+        "max_cpu": {"readonly": True},
+        "max_gpu_count": {"readonly": True},
     }
 
     _attribute_map = {
-        'max_memory_in_gb': {'key': 'maxMemoryInGB', 'type': 'float'},
-        'max_cpu': {'key': 'maxCpu', 'type': 'float'},
-        'max_gpu_count': {'key': 'maxGpuCount', 'type': 'float'},
+        "max_memory_in_gb": {"key": "maxMemoryInGB", "type": "float"},
+        "max_cpu": {"key": "maxCpu", "type": "float"},
+        "max_gpu_count": {"key": "maxGpuCount", "type": "float"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(CapabilitiesCapabilities, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.max_memory_in_gb = None
         self.max_cpu = None
         self.max_gpu_count = None
 
 
-class CapabilitiesListResult(msrest.serialization.Model):
+class CapabilitiesListResult(_serialization.Model):
     """The response containing list of capabilities.
 
     :ivar value: The list of capabilities.
@@ -241,16 +232,12 @@ class CapabilitiesListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Capabilities]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Capabilities]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["Capabilities"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.Capabilities"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of capabilities.
@@ -258,12 +245,12 @@ class CapabilitiesListResult(msrest.serialization.Model):
         :keyword next_link: The URI to fetch the next page of capabilities.
         :paramtype next_link: str
         """
-        super(CapabilitiesListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class CloudErrorBody(msrest.serialization.Model):
+class CloudErrorBody(_serialization.Model):
     """An error response from the Container Instance service.
 
     :ivar code: An identifier for the error. Codes are invariant and are intended to be consumed
@@ -280,10 +267,10 @@ class CloudErrorBody(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[CloudErrorBody]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[CloudErrorBody]"},
     }
 
     def __init__(
@@ -292,7 +279,7 @@ class CloudErrorBody(msrest.serialization.Model):
         code: Optional[str] = None,
         message: Optional[str] = None,
         target: Optional[str] = None,
-        details: Optional[List["CloudErrorBody"]] = None,
+        details: Optional[List["_models.CloudErrorBody"]] = None,
         **kwargs
     ):
         """
@@ -308,55 +295,23 @@ class CloudErrorBody(msrest.serialization.Model):
         :keyword details: A list of additional details about the error.
         :paramtype details: list[~azure.mgmt.containerinstance.models.CloudErrorBody]
         """
-        super(CloudErrorBody, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.target = target
         self.details = details
 
 
-class Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
-
-
-class Container(msrest.serialization.Model):
+class Container(_serialization.Model):
     """A container instance.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The user-provided name of the container instance.
+    :ivar name: The user-provided name of the container instance. Required.
     :vartype name: str
-    :ivar image: Required. The name of the image used to create the container instance.
+    :ivar image: The name of the image used to create the container instance. Required.
     :vartype image: str
     :ivar command: The commands to execute within the container instance in exec form.
     :vartype command: list[str]
@@ -366,7 +321,7 @@ class Container(msrest.serialization.Model):
     :vartype environment_variables: list[~azure.mgmt.containerinstance.models.EnvironmentVariable]
     :ivar instance_view: The instance view of the container instance. Only valid in response.
     :vartype instance_view: ~azure.mgmt.containerinstance.models.ContainerPropertiesInstanceView
-    :ivar resources: Required. The resource requirements of the container instance.
+    :ivar resources: The resource requirements of the container instance. Required.
     :vartype resources: ~azure.mgmt.containerinstance.models.ResourceRequirements
     :ivar volume_mounts: The volume mounts available to the container instance.
     :vartype volume_mounts: list[~azure.mgmt.containerinstance.models.VolumeMount]
@@ -377,23 +332,23 @@ class Container(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'image': {'required': True},
-        'instance_view': {'readonly': True},
-        'resources': {'required': True},
+        "name": {"required": True},
+        "image": {"required": True},
+        "instance_view": {"readonly": True},
+        "resources": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'image': {'key': 'properties.image', 'type': 'str'},
-        'command': {'key': 'properties.command', 'type': '[str]'},
-        'ports': {'key': 'properties.ports', 'type': '[ContainerPort]'},
-        'environment_variables': {'key': 'properties.environmentVariables', 'type': '[EnvironmentVariable]'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerPropertiesInstanceView'},
-        'resources': {'key': 'properties.resources', 'type': 'ResourceRequirements'},
-        'volume_mounts': {'key': 'properties.volumeMounts', 'type': '[VolumeMount]'},
-        'liveness_probe': {'key': 'properties.livenessProbe', 'type': 'ContainerProbe'},
-        'readiness_probe': {'key': 'properties.readinessProbe', 'type': 'ContainerProbe'},
+        "name": {"key": "name", "type": "str"},
+        "image": {"key": "properties.image", "type": "str"},
+        "command": {"key": "properties.command", "type": "[str]"},
+        "ports": {"key": "properties.ports", "type": "[ContainerPort]"},
+        "environment_variables": {"key": "properties.environmentVariables", "type": "[EnvironmentVariable]"},
+        "instance_view": {"key": "properties.instanceView", "type": "ContainerPropertiesInstanceView"},
+        "resources": {"key": "properties.resources", "type": "ResourceRequirements"},
+        "volume_mounts": {"key": "properties.volumeMounts", "type": "[VolumeMount]"},
+        "liveness_probe": {"key": "properties.livenessProbe", "type": "ContainerProbe"},
+        "readiness_probe": {"key": "properties.readinessProbe", "type": "ContainerProbe"},
     }
 
     def __init__(
@@ -401,19 +356,19 @@ class Container(msrest.serialization.Model):
         *,
         name: str,
         image: str,
-        resources: "ResourceRequirements",
+        resources: "_models.ResourceRequirements",
         command: Optional[List[str]] = None,
-        ports: Optional[List["ContainerPort"]] = None,
-        environment_variables: Optional[List["EnvironmentVariable"]] = None,
-        volume_mounts: Optional[List["VolumeMount"]] = None,
-        liveness_probe: Optional["ContainerProbe"] = None,
-        readiness_probe: Optional["ContainerProbe"] = None,
+        ports: Optional[List["_models.ContainerPort"]] = None,
+        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
+        volume_mounts: Optional[List["_models.VolumeMount"]] = None,
+        liveness_probe: Optional["_models.ContainerProbe"] = None,
+        readiness_probe: Optional["_models.ContainerProbe"] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The user-provided name of the container instance.
+        :keyword name: The user-provided name of the container instance. Required.
         :paramtype name: str
-        :keyword image: Required. The name of the image used to create the container instance.
+        :keyword image: The name of the image used to create the container instance. Required.
         :paramtype image: str
         :keyword command: The commands to execute within the container instance in exec form.
         :paramtype command: list[str]
@@ -422,7 +377,7 @@ class Container(msrest.serialization.Model):
         :keyword environment_variables: The environment variables to set in the container instance.
         :paramtype environment_variables:
          list[~azure.mgmt.containerinstance.models.EnvironmentVariable]
-        :keyword resources: Required. The resource requirements of the container instance.
+        :keyword resources: The resource requirements of the container instance. Required.
         :paramtype resources: ~azure.mgmt.containerinstance.models.ResourceRequirements
         :keyword volume_mounts: The volume mounts available to the container instance.
         :paramtype volume_mounts: list[~azure.mgmt.containerinstance.models.VolumeMount]
@@ -431,7 +386,7 @@ class Container(msrest.serialization.Model):
         :keyword readiness_probe: The readiness probe.
         :paramtype readiness_probe: ~azure.mgmt.containerinstance.models.ContainerProbe
         """
-        super(Container, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.image = image
         self.command = command
@@ -444,7 +399,7 @@ class Container(msrest.serialization.Model):
         self.readiness_probe = readiness_probe
 
 
-class ContainerAttachResponse(msrest.serialization.Model):
+class ContainerAttachResponse(_serialization.Model):
     """The information for the output stream from container attach.
 
     :ivar web_socket_uri: The uri for the output stream from the attach.
@@ -455,17 +410,11 @@ class ContainerAttachResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'web_socket_uri': {'key': 'webSocketUri', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "web_socket_uri": {"key": "webSocketUri", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        web_socket_uri: Optional[str] = None,
-        password: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, web_socket_uri: Optional[str] = None, password: Optional[str] = None, **kwargs):
         """
         :keyword web_socket_uri: The uri for the output stream from the attach.
         :paramtype web_socket_uri: str
@@ -473,12 +422,12 @@ class ContainerAttachResponse(msrest.serialization.Model):
          header value when connecting to the websocketUri.
         :paramtype password: str
         """
-        super(ContainerAttachResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.web_socket_uri = web_socket_uri
         self.password = password
 
 
-class ContainerExec(msrest.serialization.Model):
+class ContainerExec(_serialization.Model):
     """The container execution command, for liveness or readiness probe.
 
     :ivar command: The commands to execute within the container.
@@ -486,24 +435,19 @@ class ContainerExec(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'command': {'key': 'command', 'type': '[str]'},
+        "command": {"key": "command", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        command: Optional[List[str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, command: Optional[List[str]] = None, **kwargs):
         """
         :keyword command: The commands to execute within the container.
         :paramtype command: list[str]
         """
-        super(ContainerExec, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.command = command
 
 
-class ContainerExecRequest(msrest.serialization.Model):
+class ContainerExecRequest(_serialization.Model):
     """The container exec request.
 
     :ivar command: The command to be executed.
@@ -513,15 +457,15 @@ class ContainerExecRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'command': {'key': 'command', 'type': 'str'},
-        'terminal_size': {'key': 'terminalSize', 'type': 'ContainerExecRequestTerminalSize'},
+        "command": {"key": "command", "type": "str"},
+        "terminal_size": {"key": "terminalSize", "type": "ContainerExecRequestTerminalSize"},
     }
 
     def __init__(
         self,
         *,
         command: Optional[str] = None,
-        terminal_size: Optional["ContainerExecRequestTerminalSize"] = None,
+        terminal_size: Optional["_models.ContainerExecRequestTerminalSize"] = None,
         **kwargs
     ):
         """
@@ -530,12 +474,12 @@ class ContainerExecRequest(msrest.serialization.Model):
         :keyword terminal_size: The size of the terminal.
         :paramtype terminal_size: ~azure.mgmt.containerinstance.models.ContainerExecRequestTerminalSize
         """
-        super(ContainerExecRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.command = command
         self.terminal_size = terminal_size
 
 
-class ContainerExecRequestTerminalSize(msrest.serialization.Model):
+class ContainerExecRequestTerminalSize(_serialization.Model):
     """The size of the terminal.
 
     :ivar rows: The row size of the terminal.
@@ -545,29 +489,23 @@ class ContainerExecRequestTerminalSize(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'rows': {'key': 'rows', 'type': 'int'},
-        'cols': {'key': 'cols', 'type': 'int'},
+        "rows": {"key": "rows", "type": "int"},
+        "cols": {"key": "cols", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        rows: Optional[int] = None,
-        cols: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, rows: Optional[int] = None, cols: Optional[int] = None, **kwargs):
         """
         :keyword rows: The row size of the terminal.
         :paramtype rows: int
         :keyword cols: The column size of the terminal.
         :paramtype cols: int
         """
-        super(ContainerExecRequestTerminalSize, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.rows = rows
         self.cols = cols
 
 
-class ContainerExecResponse(msrest.serialization.Model):
+class ContainerExecResponse(_serialization.Model):
     """The information for the container exec command.
 
     :ivar web_socket_uri: The uri for the exec websocket.
@@ -577,129 +515,52 @@ class ContainerExecResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'web_socket_uri': {'key': 'webSocketUri', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "web_socket_uri": {"key": "webSocketUri", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        web_socket_uri: Optional[str] = None,
-        password: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, web_socket_uri: Optional[str] = None, password: Optional[str] = None, **kwargs):
         """
         :keyword web_socket_uri: The uri for the exec websocket.
         :paramtype web_socket_uri: str
         :keyword password: The password to start the exec command.
         :paramtype password: str
         """
-        super(ContainerExecResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.web_socket_uri = web_socket_uri
         self.password = password
 
 
-class Resource(msrest.serialization.Model):
-    """The Resource model definition.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar id: The resource id.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar location: The resource location.
-    :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
-    :vartype tags: dict[str, str]
-    :ivar zones: The zones for the container group.
-    :vartype zones: list[str]
-    """
-
-    _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-    }
-
-    def __init__(
-        self,
-        *,
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
-        **kwargs
-    ):
-        """
-        :keyword location: The resource location.
-        :paramtype location: str
-        :keyword tags: A set of tags. The resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword zones: The zones for the container group.
-        :paramtype zones: list[str]
-        """
-        super(Resource, self).__init__(**kwargs)
-        self.id = None
-        self.name = None
-        self.type = None
-        self.location = location
-        self.tags = tags
-        self.zones = zones
-
-
-class ContainerGroup(Resource):
-    """A container group.
+class ContainerGroupProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """The container group properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: The resource id.
-    :vartype id: str
-    :ivar name: The resource name.
-    :vartype name: str
-    :ivar type: The resource type.
-    :vartype type: str
-    :ivar location: The resource location.
-    :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
-    :vartype tags: dict[str, str]
-    :ivar zones: The zones for the container group.
-    :vartype zones: list[str]
     :ivar identity: The identity of the container group, if configured.
     :vartype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
     :ivar provisioning_state: The provisioning state of the container group. This only appears in
      the response.
     :vartype provisioning_state: str
-    :ivar containers: Required. The containers within the container group.
+    :ivar containers: The containers within the container group. Required.
     :vartype containers: list[~azure.mgmt.containerinstance.models.Container]
     :ivar image_registry_credentials: The image registry credentials by which the container group
      is created from.
     :vartype image_registry_credentials:
      list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
     :ivar restart_policy: Restart policy for all containers within the container group.
-    
-    
+
+
      * ``Always`` Always restart
      * ``OnFailure`` Restart on failure
-     * ``Never`` Never restart. Possible values include: "Always", "OnFailure", "Never".
+     * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
     :vartype restart_policy: str or
      ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
     :ivar ip_address: The IP address type of the container group.
     :vartype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
-    :ivar os_type: Required. The operating system type required by the containers in the container
-     group. Possible values include: "Windows", "Linux".
+    :ivar os_type: The operating system type required by the containers in the container group.
+     Required. Known values are: "Windows" and "Linux".
     :vartype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
     :ivar volumes: The list of volumes that can be mounted by containers in this container group.
     :vartype volumes: list[~azure.mgmt.containerinstance.models.Volume]
@@ -712,7 +573,7 @@ class ContainerGroup(Resource):
     :vartype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
     :ivar dns_config: The DNS config information for a container group.
     :vartype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
-    :ivar sku: The SKU for a container group. Possible values include: "Standard", "Dedicated".
+    :ivar sku: The SKU for a container group. Known values are: "Standard" and "Dedicated".
     :vartype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
     :ivar encryption_properties: The encryption properties for a container group.
     :vartype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
@@ -721,87 +582,72 @@ class ContainerGroup(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'containers': {'required': True},
-        'os_type': {'required': True},
-        'instance_view': {'readonly': True},
+        "provisioning_state": {"readonly": True},
+        "containers": {"required": True},
+        "os_type": {"required": True},
+        "instance_view": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'zones': {'key': 'zones', 'type': '[str]'},
-        'identity': {'key': 'identity', 'type': 'ContainerGroupIdentity'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'containers': {'key': 'properties.containers', 'type': '[Container]'},
-        'image_registry_credentials': {'key': 'properties.imageRegistryCredentials', 'type': '[ImageRegistryCredential]'},
-        'restart_policy': {'key': 'properties.restartPolicy', 'type': 'str'},
-        'ip_address': {'key': 'properties.ipAddress', 'type': 'IpAddress'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'volumes': {'key': 'properties.volumes', 'type': '[Volume]'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'ContainerGroupPropertiesInstanceView'},
-        'diagnostics': {'key': 'properties.diagnostics', 'type': 'ContainerGroupDiagnostics'},
-        'subnet_ids': {'key': 'properties.subnetIds', 'type': '[ContainerGroupSubnetId]'},
-        'dns_config': {'key': 'properties.dnsConfig', 'type': 'DnsConfiguration'},
-        'sku': {'key': 'properties.sku', 'type': 'str'},
-        'encryption_properties': {'key': 'properties.encryptionProperties', 'type': 'EncryptionProperties'},
-        'init_containers': {'key': 'properties.initContainers', 'type': '[InitContainerDefinition]'},
+        "identity": {"key": "identity", "type": "ContainerGroupIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "containers": {"key": "properties.containers", "type": "[Container]"},
+        "image_registry_credentials": {
+            "key": "properties.imageRegistryCredentials",
+            "type": "[ImageRegistryCredential]",
+        },
+        "restart_policy": {"key": "properties.restartPolicy", "type": "str"},
+        "ip_address": {"key": "properties.ipAddress", "type": "IpAddress"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "volumes": {"key": "properties.volumes", "type": "[Volume]"},
+        "instance_view": {"key": "properties.instanceView", "type": "ContainerGroupPropertiesInstanceView"},
+        "diagnostics": {"key": "properties.diagnostics", "type": "ContainerGroupDiagnostics"},
+        "subnet_ids": {"key": "properties.subnetIds", "type": "[ContainerGroupSubnetId]"},
+        "dns_config": {"key": "properties.dnsConfig", "type": "DnsConfiguration"},
+        "sku": {"key": "properties.sku", "type": "str"},
+        "encryption_properties": {"key": "properties.encryptionProperties", "type": "EncryptionProperties"},
+        "init_containers": {"key": "properties.initContainers", "type": "[InitContainerDefinition]"},
     }
 
     def __init__(
         self,
         *,
-        containers: List["Container"],
-        os_type: Union[str, "OperatingSystemTypes"],
-        location: Optional[str] = None,
-        tags: Optional[Dict[str, str]] = None,
-        zones: Optional[List[str]] = None,
-        identity: Optional["ContainerGroupIdentity"] = None,
-        image_registry_credentials: Optional[List["ImageRegistryCredential"]] = None,
-        restart_policy: Optional[Union[str, "ContainerGroupRestartPolicy"]] = None,
-        ip_address: Optional["IpAddress"] = None,
-        volumes: Optional[List["Volume"]] = None,
-        diagnostics: Optional["ContainerGroupDiagnostics"] = None,
-        subnet_ids: Optional[List["ContainerGroupSubnetId"]] = None,
-        dns_config: Optional["DnsConfiguration"] = None,
-        sku: Optional[Union[str, "ContainerGroupSku"]] = None,
-        encryption_properties: Optional["EncryptionProperties"] = None,
-        init_containers: Optional[List["InitContainerDefinition"]] = None,
+        containers: List["_models.Container"],
+        os_type: Union[str, "_models.OperatingSystemTypes"],
+        identity: Optional["_models.ContainerGroupIdentity"] = None,
+        image_registry_credentials: Optional[List["_models.ImageRegistryCredential"]] = None,
+        restart_policy: Optional[Union[str, "_models.ContainerGroupRestartPolicy"]] = None,
+        ip_address: Optional["_models.IpAddress"] = None,
+        volumes: Optional[List["_models.Volume"]] = None,
+        diagnostics: Optional["_models.ContainerGroupDiagnostics"] = None,
+        subnet_ids: Optional[List["_models.ContainerGroupSubnetId"]] = None,
+        dns_config: Optional["_models.DnsConfiguration"] = None,
+        sku: Optional[Union[str, "_models.ContainerGroupSku"]] = None,
+        encryption_properties: Optional["_models.EncryptionProperties"] = None,
+        init_containers: Optional[List["_models.InitContainerDefinition"]] = None,
         **kwargs
     ):
         """
-        :keyword location: The resource location.
-        :paramtype location: str
-        :keyword tags: A set of tags. The resource tags.
-        :paramtype tags: dict[str, str]
-        :keyword zones: The zones for the container group.
-        :paramtype zones: list[str]
         :keyword identity: The identity of the container group, if configured.
         :paramtype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
-        :keyword containers: Required. The containers within the container group.
+        :keyword containers: The containers within the container group. Required.
         :paramtype containers: list[~azure.mgmt.containerinstance.models.Container]
         :keyword image_registry_credentials: The image registry credentials by which the container
          group is created from.
         :paramtype image_registry_credentials:
          list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
         :keyword restart_policy: Restart policy for all containers within the container group.
-        
-        
+
+
          * ``Always`` Always restart
          * ``OnFailure`` Restart on failure
-         * ``Never`` Never restart. Possible values include: "Always", "OnFailure", "Never".
+         * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
         :paramtype restart_policy: str or
          ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
         :keyword ip_address: The IP address type of the container group.
         :paramtype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
-        :keyword os_type: Required. The operating system type required by the containers in the
-         container group. Possible values include: "Windows", "Linux".
+        :keyword os_type: The operating system type required by the containers in the container group.
+         Required. Known values are: "Windows" and "Linux".
         :paramtype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
         :keyword volumes: The list of volumes that can be mounted by containers in this container
          group.
@@ -812,14 +658,14 @@ class ContainerGroup(Resource):
         :paramtype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
         :keyword dns_config: The DNS config information for a container group.
         :paramtype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
-        :keyword sku: The SKU for a container group. Possible values include: "Standard", "Dedicated".
+        :keyword sku: The SKU for a container group. Known values are: "Standard" and "Dedicated".
         :paramtype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
         :keyword encryption_properties: The encryption properties for a container group.
         :paramtype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
         :keyword init_containers: The init containers for a container group.
         :paramtype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
         """
-        super(ContainerGroup, self).__init__(location=location, tags=tags, zones=zones, **kwargs)
+        super().__init__(**kwargs)
         self.identity = identity
         self.provisioning_state = None
         self.containers = containers
@@ -837,7 +683,272 @@ class ContainerGroup(Resource):
         self.init_containers = init_containers
 
 
-class ContainerGroupDiagnostics(msrest.serialization.Model):
+class Resource(_serialization.Model):
+    """The Resource model definition.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar zones: The zones for the container group.
+    :vartype zones: list[str]
+    """
+
+    _validation = {
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        zones: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword zones: The zones for the container group.
+        :paramtype zones: list[str]
+        """
+        super().__init__(**kwargs)
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags
+        self.zones = zones
+
+
+class ContainerGroup(Resource, ContainerGroupProperties):  # pylint: disable=too-many-instance-attributes
+    """A container group.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar identity: The identity of the container group, if configured.
+    :vartype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
+    :ivar provisioning_state: The provisioning state of the container group. This only appears in
+     the response.
+    :vartype provisioning_state: str
+    :ivar containers: The containers within the container group. Required.
+    :vartype containers: list[~azure.mgmt.containerinstance.models.Container]
+    :ivar image_registry_credentials: The image registry credentials by which the container group
+     is created from.
+    :vartype image_registry_credentials:
+     list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
+    :ivar restart_policy: Restart policy for all containers within the container group.
+
+
+     * ``Always`` Always restart
+     * ``OnFailure`` Restart on failure
+     * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+    :vartype restart_policy: str or
+     ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
+    :ivar ip_address: The IP address type of the container group.
+    :vartype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
+    :ivar os_type: The operating system type required by the containers in the container group.
+     Required. Known values are: "Windows" and "Linux".
+    :vartype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
+    :ivar volumes: The list of volumes that can be mounted by containers in this container group.
+    :vartype volumes: list[~azure.mgmt.containerinstance.models.Volume]
+    :ivar instance_view: The instance view of the container group. Only valid in response.
+    :vartype instance_view:
+     ~azure.mgmt.containerinstance.models.ContainerGroupPropertiesInstanceView
+    :ivar diagnostics: The diagnostic information for a container group.
+    :vartype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+    :ivar subnet_ids: The subnet resource IDs for a container group.
+    :vartype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
+    :ivar dns_config: The DNS config information for a container group.
+    :vartype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
+    :ivar sku: The SKU for a container group. Known values are: "Standard" and "Dedicated".
+    :vartype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
+    :ivar encryption_properties: The encryption properties for a container group.
+    :vartype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
+    :ivar init_containers: The init containers for a container group.
+    :vartype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: The resource name.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar location: The resource location.
+    :vartype location: str
+    :ivar tags: The resource tags.
+    :vartype tags: dict[str, str]
+    :ivar zones: The zones for the container group.
+    :vartype zones: list[str]
+    """
+
+    _validation = {
+        "provisioning_state": {"readonly": True},
+        "containers": {"required": True},
+        "os_type": {"required": True},
+        "instance_view": {"readonly": True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "identity": {"key": "identity", "type": "ContainerGroupIdentity"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "containers": {"key": "properties.containers", "type": "[Container]"},
+        "image_registry_credentials": {
+            "key": "properties.imageRegistryCredentials",
+            "type": "[ImageRegistryCredential]",
+        },
+        "restart_policy": {"key": "properties.restartPolicy", "type": "str"},
+        "ip_address": {"key": "properties.ipAddress", "type": "IpAddress"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "volumes": {"key": "properties.volumes", "type": "[Volume]"},
+        "instance_view": {"key": "properties.instanceView", "type": "ContainerGroupPropertiesInstanceView"},
+        "diagnostics": {"key": "properties.diagnostics", "type": "ContainerGroupDiagnostics"},
+        "subnet_ids": {"key": "properties.subnetIds", "type": "[ContainerGroupSubnetId]"},
+        "dns_config": {"key": "properties.dnsConfig", "type": "DnsConfiguration"},
+        "sku": {"key": "properties.sku", "type": "str"},
+        "encryption_properties": {"key": "properties.encryptionProperties", "type": "EncryptionProperties"},
+        "init_containers": {"key": "properties.initContainers", "type": "[InitContainerDefinition]"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "zones": {"key": "zones", "type": "[str]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        containers: List["_models.Container"],
+        os_type: Union[str, "_models.OperatingSystemTypes"],
+        identity: Optional["_models.ContainerGroupIdentity"] = None,
+        image_registry_credentials: Optional[List["_models.ImageRegistryCredential"]] = None,
+        restart_policy: Optional[Union[str, "_models.ContainerGroupRestartPolicy"]] = None,
+        ip_address: Optional["_models.IpAddress"] = None,
+        volumes: Optional[List["_models.Volume"]] = None,
+        diagnostics: Optional["_models.ContainerGroupDiagnostics"] = None,
+        subnet_ids: Optional[List["_models.ContainerGroupSubnetId"]] = None,
+        dns_config: Optional["_models.DnsConfiguration"] = None,
+        sku: Optional[Union[str, "_models.ContainerGroupSku"]] = None,
+        encryption_properties: Optional["_models.EncryptionProperties"] = None,
+        init_containers: Optional[List["_models.InitContainerDefinition"]] = None,
+        location: Optional[str] = None,
+        tags: Optional[Dict[str, str]] = None,
+        zones: Optional[List[str]] = None,
+        **kwargs
+    ):
+        """
+        :keyword identity: The identity of the container group, if configured.
+        :paramtype identity: ~azure.mgmt.containerinstance.models.ContainerGroupIdentity
+        :keyword containers: The containers within the container group. Required.
+        :paramtype containers: list[~azure.mgmt.containerinstance.models.Container]
+        :keyword image_registry_credentials: The image registry credentials by which the container
+         group is created from.
+        :paramtype image_registry_credentials:
+         list[~azure.mgmt.containerinstance.models.ImageRegistryCredential]
+        :keyword restart_policy: Restart policy for all containers within the container group.
+
+
+         * ``Always`` Always restart
+         * ``OnFailure`` Restart on failure
+         * ``Never`` Never restart. Known values are: "Always", "OnFailure", and "Never".
+        :paramtype restart_policy: str or
+         ~azure.mgmt.containerinstance.models.ContainerGroupRestartPolicy
+        :keyword ip_address: The IP address type of the container group.
+        :paramtype ip_address: ~azure.mgmt.containerinstance.models.IpAddress
+        :keyword os_type: The operating system type required by the containers in the container group.
+         Required. Known values are: "Windows" and "Linux".
+        :paramtype os_type: str or ~azure.mgmt.containerinstance.models.OperatingSystemTypes
+        :keyword volumes: The list of volumes that can be mounted by containers in this container
+         group.
+        :paramtype volumes: list[~azure.mgmt.containerinstance.models.Volume]
+        :keyword diagnostics: The diagnostic information for a container group.
+        :paramtype diagnostics: ~azure.mgmt.containerinstance.models.ContainerGroupDiagnostics
+        :keyword subnet_ids: The subnet resource IDs for a container group.
+        :paramtype subnet_ids: list[~azure.mgmt.containerinstance.models.ContainerGroupSubnetId]
+        :keyword dns_config: The DNS config information for a container group.
+        :paramtype dns_config: ~azure.mgmt.containerinstance.models.DnsConfiguration
+        :keyword sku: The SKU for a container group. Known values are: "Standard" and "Dedicated".
+        :paramtype sku: str or ~azure.mgmt.containerinstance.models.ContainerGroupSku
+        :keyword encryption_properties: The encryption properties for a container group.
+        :paramtype encryption_properties: ~azure.mgmt.containerinstance.models.EncryptionProperties
+        :keyword init_containers: The init containers for a container group.
+        :paramtype init_containers: list[~azure.mgmt.containerinstance.models.InitContainerDefinition]
+        :keyword location: The resource location.
+        :paramtype location: str
+        :keyword tags: The resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword zones: The zones for the container group.
+        :paramtype zones: list[str]
+        """
+        super().__init__(
+            location=location,
+            tags=tags,
+            zones=zones,
+            identity=identity,
+            containers=containers,
+            image_registry_credentials=image_registry_credentials,
+            restart_policy=restart_policy,
+            ip_address=ip_address,
+            os_type=os_type,
+            volumes=volumes,
+            diagnostics=diagnostics,
+            subnet_ids=subnet_ids,
+            dns_config=dns_config,
+            sku=sku,
+            encryption_properties=encryption_properties,
+            init_containers=init_containers,
+            **kwargs
+        )
+        self.identity = identity
+        self.provisioning_state = None
+        self.containers = containers
+        self.image_registry_credentials = image_registry_credentials
+        self.restart_policy = restart_policy
+        self.ip_address = ip_address
+        self.os_type = os_type
+        self.volumes = volumes
+        self.instance_view = None
+        self.diagnostics = diagnostics
+        self.subnet_ids = subnet_ids
+        self.dns_config = dns_config
+        self.sku = sku
+        self.encryption_properties = encryption_properties
+        self.init_containers = init_containers
+        self.id = None
+        self.name = None
+        self.type = None
+        self.location = location
+        self.tags = tags
+        self.zones = zones
+
+
+class ContainerGroupDiagnostics(_serialization.Model):
     """Container group diagnostic information.
 
     :ivar log_analytics: Container group log analytics information.
@@ -845,24 +956,19 @@ class ContainerGroupDiagnostics(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'log_analytics': {'key': 'logAnalytics', 'type': 'LogAnalytics'},
+        "log_analytics": {"key": "logAnalytics", "type": "LogAnalytics"},
     }
 
-    def __init__(
-        self,
-        *,
-        log_analytics: Optional["LogAnalytics"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, log_analytics: Optional["_models.LogAnalytics"] = None, **kwargs):
         """
         :keyword log_analytics: Container group log analytics information.
         :paramtype log_analytics: ~azure.mgmt.containerinstance.models.LogAnalytics
         """
-        super(ContainerGroupDiagnostics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.log_analytics = log_analytics
 
 
-class ContainerGroupIdentity(msrest.serialization.Model):
+class ContainerGroupIdentity(_serialization.Model):
     """Identity for the container group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -875,55 +981,53 @@ class ContainerGroupIdentity(msrest.serialization.Model):
     :vartype tenant_id: str
     :ivar type: The type of identity used for the container group. The type 'SystemAssigned,
      UserAssigned' includes both an implicitly created identity and a set of user assigned
-     identities. The type 'None' will remove any identities from the container group. Possible
-     values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
+     identities. The type 'None' will remove any identities from the container group. Known values
+     are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and "None".
     :vartype type: str or ~azure.mgmt.containerinstance.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the container
-     group. The user identity dictionary key references will be ARM resource ids in the form:
-     '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+     group.
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.containerinstance.models.Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.containerinstance.models.UserAssignedIdentities]
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentities}"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
+        type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentities"]] = None,
         **kwargs
     ):
         """
         :keyword type: The type of identity used for the container group. The type 'SystemAssigned,
          UserAssigned' includes both an implicitly created identity and a set of user assigned
-         identities. The type 'None' will remove any identities from the container group. Possible
-         values include: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", "None".
+         identities. The type 'None' will remove any identities from the container group. Known values
+         are: "SystemAssigned", "UserAssigned", "SystemAssigned, UserAssigned", and "None".
         :paramtype type: str or ~azure.mgmt.containerinstance.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the container
-         group. The user identity dictionary key references will be ARM resource ids in the form:
-         '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+         group.
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.containerinstance.models.Components10Wh5UdSchemasContainergroupidentityPropertiesUserassignedidentitiesAdditionalproperties]
+         ~azure.mgmt.containerinstance.models.UserAssignedIdentities]
         """
-        super(ContainerGroupIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class ContainerGroupListResult(msrest.serialization.Model):
+class ContainerGroupListResult(_serialization.Model):
     """The container group list response that contains the container group properties.
 
     :ivar value: The list of container groups.
@@ -933,16 +1037,12 @@ class ContainerGroupListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ContainerGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ContainerGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["ContainerGroup"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ContainerGroup"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of container groups.
@@ -950,12 +1050,12 @@ class ContainerGroupListResult(msrest.serialization.Model):
         :keyword next_link: The URI to fetch the next page of container groups.
         :paramtype next_link: str
         """
-        super(ContainerGroupListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ContainerGroupPropertiesInstanceView(msrest.serialization.Model):
+class ContainerGroupPropertiesInstanceView(_serialization.Model):
     """The instance view of the container group. Only valid in response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -967,88 +1067,78 @@ class ContainerGroupPropertiesInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'events': {'readonly': True},
-        'state': {'readonly': True},
+        "events": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'events': {'key': 'events', 'type': '[Event]'},
-        'state': {'key': 'state', 'type': 'str'},
+        "events": {"key": "events", "type": "[Event]"},
+        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContainerGroupPropertiesInstanceView, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.events = None
         self.state = None
 
 
-class ContainerGroupSubnetId(msrest.serialization.Model):
+class ContainerGroupSubnetId(_serialization.Model):
     """Container group subnet information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Required. Resource ID of virtual network and subnet.
+    :ivar id: Resource ID of virtual network and subnet. Required.
     :vartype id: str
     :ivar name: Friendly name for the subnet.
     :vartype name: str
     """
 
     _validation = {
-        'id': {'required': True},
+        "id": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: str, name: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
-        :keyword id: Required. Resource ID of virtual network and subnet.
+        :keyword id: Resource ID of virtual network and subnet. Required.
         :paramtype id: str
         :keyword name: Friendly name for the subnet.
         :paramtype name: str
         """
-        super(ContainerGroupSubnetId, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
 
 
-class ContainerHttpGet(msrest.serialization.Model):
+class ContainerHttpGet(_serialization.Model):
     """The container Http Get settings, for liveness or readiness probe.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar path: The path to probe.
     :vartype path: str
-    :ivar port: Required. The port number to probe.
+    :ivar port: The port number to probe. Required.
     :vartype port: int
-    :ivar scheme: The scheme. Possible values include: "http", "https".
+    :ivar scheme: The scheme. Known values are: "http" and "https".
     :vartype scheme: str or ~azure.mgmt.containerinstance.models.Scheme
     :ivar http_headers: The HTTP headers.
     :vartype http_headers: list[~azure.mgmt.containerinstance.models.HttpHeader]
     """
 
     _validation = {
-        'port': {'required': True},
+        "port": {"required": True},
     }
 
     _attribute_map = {
-        'path': {'key': 'path', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
-        'scheme': {'key': 'scheme', 'type': 'str'},
-        'http_headers': {'key': 'httpHeaders', 'type': '[HttpHeader]'},
+        "path": {"key": "path", "type": "str"},
+        "port": {"key": "port", "type": "int"},
+        "scheme": {"key": "scheme", "type": "str"},
+        "http_headers": {"key": "httpHeaders", "type": "[HttpHeader]"},
     }
 
     def __init__(
@@ -1056,67 +1146,62 @@ class ContainerHttpGet(msrest.serialization.Model):
         *,
         port: int,
         path: Optional[str] = None,
-        scheme: Optional[Union[str, "Scheme"]] = None,
-        http_headers: Optional[List["HttpHeader"]] = None,
+        scheme: Optional[Union[str, "_models.Scheme"]] = None,
+        http_headers: Optional[List["_models.HttpHeader"]] = None,
         **kwargs
     ):
         """
         :keyword path: The path to probe.
         :paramtype path: str
-        :keyword port: Required. The port number to probe.
+        :keyword port: The port number to probe. Required.
         :paramtype port: int
-        :keyword scheme: The scheme. Possible values include: "http", "https".
+        :keyword scheme: The scheme. Known values are: "http" and "https".
         :paramtype scheme: str or ~azure.mgmt.containerinstance.models.Scheme
         :keyword http_headers: The HTTP headers.
         :paramtype http_headers: list[~azure.mgmt.containerinstance.models.HttpHeader]
         """
-        super(ContainerHttpGet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.path = path
         self.port = port
         self.scheme = scheme
         self.http_headers = http_headers
 
 
-class ContainerPort(msrest.serialization.Model):
+class ContainerPort(_serialization.Model):
     """The port exposed on the container instance.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protocol: The protocol associated with the port. Possible values include: "TCP", "UDP".
+    :ivar protocol: The protocol associated with the port. Known values are: "TCP" and "UDP".
     :vartype protocol: str or ~azure.mgmt.containerinstance.models.ContainerNetworkProtocol
-    :ivar port: Required. The port number exposed within the container group.
+    :ivar port: The port number exposed within the container group. Required.
     :vartype port: int
     """
 
     _validation = {
-        'port': {'required': True},
+        "port": {"required": True},
     }
 
     _attribute_map = {
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "protocol": {"key": "protocol", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        port: int,
-        protocol: Optional[Union[str, "ContainerNetworkProtocol"]] = None,
-        **kwargs
+        self, *, port: int, protocol: Optional[Union[str, "_models.ContainerNetworkProtocol"]] = None, **kwargs
     ):
         """
-        :keyword protocol: The protocol associated with the port. Possible values include: "TCP",
-         "UDP".
+        :keyword protocol: The protocol associated with the port. Known values are: "TCP" and "UDP".
         :paramtype protocol: str or ~azure.mgmt.containerinstance.models.ContainerNetworkProtocol
-        :keyword port: Required. The port number exposed within the container group.
+        :keyword port: The port number exposed within the container group. Required.
         :paramtype port: int
         """
-        super(ContainerPort, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.protocol = protocol
         self.port = port
 
 
-class ContainerProbe(msrest.serialization.Model):
+class ContainerProbe(_serialization.Model):
     """The container probe, for liveness or readiness.
 
     :ivar exec_property: The execution command to probe.
@@ -1136,20 +1221,20 @@ class ContainerProbe(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'exec_property': {'key': 'exec', 'type': 'ContainerExec'},
-        'http_get': {'key': 'httpGet', 'type': 'ContainerHttpGet'},
-        'initial_delay_seconds': {'key': 'initialDelaySeconds', 'type': 'int'},
-        'period_seconds': {'key': 'periodSeconds', 'type': 'int'},
-        'failure_threshold': {'key': 'failureThreshold', 'type': 'int'},
-        'success_threshold': {'key': 'successThreshold', 'type': 'int'},
-        'timeout_seconds': {'key': 'timeoutSeconds', 'type': 'int'},
+        "exec_property": {"key": "exec", "type": "ContainerExec"},
+        "http_get": {"key": "httpGet", "type": "ContainerHttpGet"},
+        "initial_delay_seconds": {"key": "initialDelaySeconds", "type": "int"},
+        "period_seconds": {"key": "periodSeconds", "type": "int"},
+        "failure_threshold": {"key": "failureThreshold", "type": "int"},
+        "success_threshold": {"key": "successThreshold", "type": "int"},
+        "timeout_seconds": {"key": "timeoutSeconds", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        exec_property: Optional["ContainerExec"] = None,
-        http_get: Optional["ContainerHttpGet"] = None,
+        exec_property: Optional["_models.ContainerExec"] = None,
+        http_get: Optional["_models.ContainerHttpGet"] = None,
         initial_delay_seconds: Optional[int] = None,
         period_seconds: Optional[int] = None,
         failure_threshold: Optional[int] = None,
@@ -1173,7 +1258,7 @@ class ContainerProbe(msrest.serialization.Model):
         :keyword timeout_seconds: The timeout seconds.
         :paramtype timeout_seconds: int
         """
-        super(ContainerProbe, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.exec_property = exec_property
         self.http_get = http_get
         self.initial_delay_seconds = initial_delay_seconds
@@ -1183,7 +1268,7 @@ class ContainerProbe(msrest.serialization.Model):
         self.timeout_seconds = timeout_seconds
 
 
-class ContainerPropertiesInstanceView(msrest.serialization.Model):
+class ContainerPropertiesInstanceView(_serialization.Model):
     """The instance view of the container instance. Only valid in response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1199,33 +1284,29 @@ class ContainerPropertiesInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'restart_count': {'readonly': True},
-        'current_state': {'readonly': True},
-        'previous_state': {'readonly': True},
-        'events': {'readonly': True},
+        "restart_count": {"readonly": True},
+        "current_state": {"readonly": True},
+        "previous_state": {"readonly": True},
+        "events": {"readonly": True},
     }
 
     _attribute_map = {
-        'restart_count': {'key': 'restartCount', 'type': 'int'},
-        'current_state': {'key': 'currentState', 'type': 'ContainerState'},
-        'previous_state': {'key': 'previousState', 'type': 'ContainerState'},
-        'events': {'key': 'events', 'type': '[Event]'},
+        "restart_count": {"key": "restartCount", "type": "int"},
+        "current_state": {"key": "currentState", "type": "ContainerState"},
+        "previous_state": {"key": "previousState", "type": "ContainerState"},
+        "events": {"key": "events", "type": "[Event]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContainerPropertiesInstanceView, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.restart_count = None
         self.current_state = None
         self.previous_state = None
         self.events = None
 
 
-class ContainerState(msrest.serialization.Model):
+class ContainerState(_serialization.Model):
     """The container instance state.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1244,28 +1325,24 @@ class ContainerState(msrest.serialization.Model):
     """
 
     _validation = {
-        'state': {'readonly': True},
-        'start_time': {'readonly': True},
-        'exit_code': {'readonly': True},
-        'finish_time': {'readonly': True},
-        'detail_status': {'readonly': True},
+        "state": {"readonly": True},
+        "start_time": {"readonly": True},
+        "exit_code": {"readonly": True},
+        "finish_time": {"readonly": True},
+        "detail_status": {"readonly": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'exit_code': {'key': 'exitCode', 'type': 'int'},
-        'finish_time': {'key': 'finishTime', 'type': 'iso-8601'},
-        'detail_status': {'key': 'detailStatus', 'type': 'str'},
+        "state": {"key": "state", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "exit_code": {"key": "exitCode", "type": "int"},
+        "finish_time": {"key": "finishTime", "type": "iso-8601"},
+        "detail_status": {"key": "detailStatus", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ContainerState, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.state = None
         self.start_time = None
         self.exit_code = None
@@ -1273,12 +1350,12 @@ class ContainerState(msrest.serialization.Model):
         self.detail_status = None
 
 
-class DnsConfiguration(msrest.serialization.Model):
+class DnsConfiguration(_serialization.Model):
     """DNS configuration for the container group.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name_servers: Required. The DNS servers for the container group.
+    :ivar name_servers: The DNS servers for the container group. Required.
     :vartype name_servers: list[str]
     :ivar search_domains: The DNS search domains for hostname lookup in the container group.
     :vartype search_domains: str
@@ -1287,90 +1364,78 @@ class DnsConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'name_servers': {'required': True},
+        "name_servers": {"required": True},
     }
 
     _attribute_map = {
-        'name_servers': {'key': 'nameServers', 'type': '[str]'},
-        'search_domains': {'key': 'searchDomains', 'type': 'str'},
-        'options': {'key': 'options', 'type': 'str'},
+        "name_servers": {"key": "nameServers", "type": "[str]"},
+        "search_domains": {"key": "searchDomains", "type": "str"},
+        "options": {"key": "options", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name_servers: List[str],
-        search_domains: Optional[str] = None,
-        options: Optional[str] = None,
-        **kwargs
+        self, *, name_servers: List[str], search_domains: Optional[str] = None, options: Optional[str] = None, **kwargs
     ):
         """
-        :keyword name_servers: Required. The DNS servers for the container group.
+        :keyword name_servers: The DNS servers for the container group. Required.
         :paramtype name_servers: list[str]
         :keyword search_domains: The DNS search domains for hostname lookup in the container group.
         :paramtype search_domains: str
         :keyword options: The DNS options for the container group.
         :paramtype options: str
         """
-        super(DnsConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name_servers = name_servers
         self.search_domains = search_domains
         self.options = options
 
 
-class EncryptionProperties(msrest.serialization.Model):
+class EncryptionProperties(_serialization.Model):
     """The container group encryption properties.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar vault_base_url: Required. The keyvault base url.
+    :ivar vault_base_url: The keyvault base url. Required.
     :vartype vault_base_url: str
-    :ivar key_name: Required. The encryption key name.
+    :ivar key_name: The encryption key name. Required.
     :vartype key_name: str
-    :ivar key_version: Required. The encryption key version.
+    :ivar key_version: The encryption key version. Required.
     :vartype key_version: str
     """
 
     _validation = {
-        'vault_base_url': {'required': True},
-        'key_name': {'required': True},
-        'key_version': {'required': True},
+        "vault_base_url": {"required": True},
+        "key_name": {"required": True},
+        "key_version": {"required": True},
     }
 
     _attribute_map = {
-        'vault_base_url': {'key': 'vaultBaseUrl', 'type': 'str'},
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'key_version': {'key': 'keyVersion', 'type': 'str'},
+        "vault_base_url": {"key": "vaultBaseUrl", "type": "str"},
+        "key_name": {"key": "keyName", "type": "str"},
+        "key_version": {"key": "keyVersion", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        vault_base_url: str,
-        key_name: str,
-        key_version: str,
-        **kwargs
-    ):
+    def __init__(self, *, vault_base_url: str, key_name: str, key_version: str, **kwargs):
         """
-        :keyword vault_base_url: Required. The keyvault base url.
+        :keyword vault_base_url: The keyvault base url. Required.
         :paramtype vault_base_url: str
-        :keyword key_name: Required. The encryption key name.
+        :keyword key_name: The encryption key name. Required.
         :paramtype key_name: str
-        :keyword key_version: Required. The encryption key version.
+        :keyword key_version: The encryption key version. Required.
         :paramtype key_version: str
         """
-        super(EncryptionProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.vault_base_url = vault_base_url
         self.key_name = key_name
         self.key_version = key_version
 
 
-class EnvironmentVariable(msrest.serialization.Model):
+class EnvironmentVariable(_serialization.Model):
     """The environment variable to set within the container instance.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the environment variable.
+    :ivar name: The name of the environment variable. Required.
     :vartype name: str
     :ivar value: The value of the environment variable.
     :vartype value: str
@@ -1379,38 +1444,31 @@ class EnvironmentVariable(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'secure_value': {'key': 'secureValue', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "secure_value": {"key": "secureValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: Optional[str] = None,
-        secure_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, value: Optional[str] = None, secure_value: Optional[str] = None, **kwargs):
         """
-        :keyword name: Required. The name of the environment variable.
+        :keyword name: The name of the environment variable. Required.
         :paramtype name: str
         :keyword value: The value of the environment variable.
         :paramtype value: str
         :keyword secure_value: The value of the secure environment variable.
         :paramtype secure_value: str
         """
-        super(EnvironmentVariable, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
         self.secure_value = secure_value
 
 
-class Event(msrest.serialization.Model):
+class Event(_serialization.Model):
     """A container group or container instance event.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1430,30 +1488,26 @@ class Event(msrest.serialization.Model):
     """
 
     _validation = {
-        'count': {'readonly': True},
-        'first_timestamp': {'readonly': True},
-        'last_timestamp': {'readonly': True},
-        'name': {'readonly': True},
-        'message': {'readonly': True},
-        'type': {'readonly': True},
+        "count": {"readonly": True},
+        "first_timestamp": {"readonly": True},
+        "last_timestamp": {"readonly": True},
+        "name": {"readonly": True},
+        "message": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'first_timestamp': {'key': 'firstTimestamp', 'type': 'iso-8601'},
-        'last_timestamp': {'key': 'lastTimestamp', 'type': 'iso-8601'},
-        'name': {'key': 'name', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "count": {"key": "count", "type": "int"},
+        "first_timestamp": {"key": "firstTimestamp", "type": "iso-8601"},
+        "last_timestamp": {"key": "lastTimestamp", "type": "iso-8601"},
+        "name": {"key": "name", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Event, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.count = None
         self.first_timestamp = None
         self.last_timestamp = None
@@ -1462,7 +1516,7 @@ class Event(msrest.serialization.Model):
         self.type = None
 
 
-class GitRepoVolume(msrest.serialization.Model):
+class GitRepoVolume(_serialization.Model):
     """Represents a volume that is populated with the contents of a git repository.
 
     All required parameters must be populated in order to send to Azure.
@@ -1471,88 +1525,74 @@ class GitRepoVolume(msrest.serialization.Model):
      supplied, the volume directory will be the git repository.  Otherwise, if specified, the volume
      will contain the git repository in the subdirectory with the given name.
     :vartype directory: str
-    :ivar repository: Required. Repository URL.
+    :ivar repository: Repository URL. Required.
     :vartype repository: str
     :ivar revision: Commit hash for the specified revision.
     :vartype revision: str
     """
 
     _validation = {
-        'repository': {'required': True},
+        "repository": {"required": True},
     }
 
     _attribute_map = {
-        'directory': {'key': 'directory', 'type': 'str'},
-        'repository': {'key': 'repository', 'type': 'str'},
-        'revision': {'key': 'revision', 'type': 'str'},
+        "directory": {"key": "directory", "type": "str"},
+        "repository": {"key": "repository", "type": "str"},
+        "revision": {"key": "revision", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        repository: str,
-        directory: Optional[str] = None,
-        revision: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, repository: str, directory: Optional[str] = None, revision: Optional[str] = None, **kwargs):
         """
         :keyword directory: Target directory name. Must not contain or start with '..'.  If '.' is
          supplied, the volume directory will be the git repository.  Otherwise, if specified, the volume
          will contain the git repository in the subdirectory with the given name.
         :paramtype directory: str
-        :keyword repository: Required. Repository URL.
+        :keyword repository: Repository URL. Required.
         :paramtype repository: str
         :keyword revision: Commit hash for the specified revision.
         :paramtype revision: str
         """
-        super(GitRepoVolume, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.directory = directory
         self.repository = repository
         self.revision = revision
 
 
-class GpuResource(msrest.serialization.Model):
+class GpuResource(_serialization.Model):
     """The GPU resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar count: Required. The count of the GPU resource.
+    :ivar count: The count of the GPU resource. Required.
     :vartype count: int
-    :ivar sku: Required. The SKU of the GPU resource. Possible values include: "K80", "P100",
-     "V100".
+    :ivar sku: The SKU of the GPU resource. Required. Known values are: "K80", "P100", and "V100".
     :vartype sku: str or ~azure.mgmt.containerinstance.models.GpuSku
     """
 
     _validation = {
-        'count': {'required': True},
-        'sku': {'required': True},
+        "count": {"required": True},
+        "sku": {"required": True},
     }
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
-        'sku': {'key': 'sku', 'type': 'str'},
+        "count": {"key": "count", "type": "int"},
+        "sku": {"key": "sku", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: int,
-        sku: Union[str, "GpuSku"],
-        **kwargs
-    ):
+    def __init__(self, *, count: int, sku: Union[str, "_models.GpuSku"], **kwargs):
         """
-        :keyword count: Required. The count of the GPU resource.
+        :keyword count: The count of the GPU resource. Required.
         :paramtype count: int
-        :keyword sku: Required. The SKU of the GPU resource. Possible values include: "K80", "P100",
+        :keyword sku: The SKU of the GPU resource. Required. Known values are: "K80", "P100", and
          "V100".
         :paramtype sku: str or ~azure.mgmt.containerinstance.models.GpuSku
         """
-        super(GpuResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.count = count
         self.sku = sku
 
 
-class HttpHeader(msrest.serialization.Model):
+class HttpHeader(_serialization.Model):
     """The HTTP header.
 
     :ivar name: The header name.
@@ -1562,37 +1602,31 @@ class HttpHeader(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, value: Optional[str] = None, **kwargs):
         """
         :keyword name: The header name.
         :paramtype name: str
         :keyword value: The header value.
         :paramtype value: str
         """
-        super(HttpHeader, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
 
-class ImageRegistryCredential(msrest.serialization.Model):
+class ImageRegistryCredential(_serialization.Model):
     """Image registry credential.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar server: Required. The Docker image registry server without a protocol such as "http" and
-     "https".
+    :ivar server: The Docker image registry server without a protocol such as "http" and "https".
+     Required.
     :vartype server: str
-    :ivar username: Required. The username for the private registry.
+    :ivar username: The username for the private registry.
     :vartype username: str
     :ivar password: The password for the private registry.
     :vartype password: str
@@ -1603,33 +1637,32 @@ class ImageRegistryCredential(msrest.serialization.Model):
     """
 
     _validation = {
-        'server': {'required': True},
-        'username': {'required': True},
+        "server": {"required": True},
     }
 
     _attribute_map = {
-        'server': {'key': 'server', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'str'},
-        'identity_url': {'key': 'identityUrl', 'type': 'str'},
+        "server": {"key": "server", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "identity": {"key": "identity", "type": "str"},
+        "identity_url": {"key": "identityUrl", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         server: str,
-        username: str,
+        username: Optional[str] = None,
         password: Optional[str] = None,
         identity: Optional[str] = None,
         identity_url: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword server: Required. The Docker image registry server without a protocol such as "http"
-         and "https".
+        :keyword server: The Docker image registry server without a protocol such as "http" and
+         "https". Required.
         :paramtype server: str
-        :keyword username: Required. The username for the private registry.
+        :keyword username: The username for the private registry.
         :paramtype username: str
         :keyword password: The password for the private registry.
         :paramtype password: str
@@ -1638,7 +1671,7 @@ class ImageRegistryCredential(msrest.serialization.Model):
         :keyword identity_url: The identity URL for the private registry.
         :paramtype identity_url: str
         """
-        super(ImageRegistryCredential, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.server = server
         self.username = username
         self.password = password
@@ -1646,14 +1679,14 @@ class ImageRegistryCredential(msrest.serialization.Model):
         self.identity_url = identity_url
 
 
-class InitContainerDefinition(msrest.serialization.Model):
+class InitContainerDefinition(_serialization.Model):
     """The init container definition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name for the init container.
+    :ivar name: The name for the init container. Required.
     :vartype name: str
     :ivar image: The image of the init container.
     :vartype image: str
@@ -1669,17 +1702,17 @@ class InitContainerDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'instance_view': {'readonly': True},
+        "name": {"required": True},
+        "instance_view": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'image': {'key': 'properties.image', 'type': 'str'},
-        'command': {'key': 'properties.command', 'type': '[str]'},
-        'environment_variables': {'key': 'properties.environmentVariables', 'type': '[EnvironmentVariable]'},
-        'instance_view': {'key': 'properties.instanceView', 'type': 'InitContainerPropertiesDefinitionInstanceView'},
-        'volume_mounts': {'key': 'properties.volumeMounts', 'type': '[VolumeMount]'},
+        "name": {"key": "name", "type": "str"},
+        "image": {"key": "properties.image", "type": "str"},
+        "command": {"key": "properties.command", "type": "[str]"},
+        "environment_variables": {"key": "properties.environmentVariables", "type": "[EnvironmentVariable]"},
+        "instance_view": {"key": "properties.instanceView", "type": "InitContainerPropertiesDefinitionInstanceView"},
+        "volume_mounts": {"key": "properties.volumeMounts", "type": "[VolumeMount]"},
     }
 
     def __init__(
@@ -1688,12 +1721,12 @@ class InitContainerDefinition(msrest.serialization.Model):
         name: str,
         image: Optional[str] = None,
         command: Optional[List[str]] = None,
-        environment_variables: Optional[List["EnvironmentVariable"]] = None,
-        volume_mounts: Optional[List["VolumeMount"]] = None,
+        environment_variables: Optional[List["_models.EnvironmentVariable"]] = None,
+        volume_mounts: Optional[List["_models.VolumeMount"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name for the init container.
+        :keyword name: The name for the init container. Required.
         :paramtype name: str
         :keyword image: The image of the init container.
         :paramtype image: str
@@ -1705,7 +1738,7 @@ class InitContainerDefinition(msrest.serialization.Model):
         :keyword volume_mounts: The volume mounts available to the init container.
         :paramtype volume_mounts: list[~azure.mgmt.containerinstance.models.VolumeMount]
         """
-        super(InitContainerDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.image = image
         self.command = command
@@ -1714,7 +1747,7 @@ class InitContainerDefinition(msrest.serialization.Model):
         self.volume_mounts = volume_mounts
 
 
-class InitContainerPropertiesDefinitionInstanceView(msrest.serialization.Model):
+class InitContainerPropertiesDefinitionInstanceView(_serialization.Model):
     """The instance view of the init container. Only valid in response.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1730,115 +1763,125 @@ class InitContainerPropertiesDefinitionInstanceView(msrest.serialization.Model):
     """
 
     _validation = {
-        'restart_count': {'readonly': True},
-        'current_state': {'readonly': True},
-        'previous_state': {'readonly': True},
-        'events': {'readonly': True},
+        "restart_count": {"readonly": True},
+        "current_state": {"readonly": True},
+        "previous_state": {"readonly": True},
+        "events": {"readonly": True},
     }
 
     _attribute_map = {
-        'restart_count': {'key': 'restartCount', 'type': 'int'},
-        'current_state': {'key': 'currentState', 'type': 'ContainerState'},
-        'previous_state': {'key': 'previousState', 'type': 'ContainerState'},
-        'events': {'key': 'events', 'type': '[Event]'},
+        "restart_count": {"key": "restartCount", "type": "int"},
+        "current_state": {"key": "currentState", "type": "ContainerState"},
+        "previous_state": {"key": "previousState", "type": "ContainerState"},
+        "events": {"key": "events", "type": "[Event]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(InitContainerPropertiesDefinitionInstanceView, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.restart_count = None
         self.current_state = None
         self.previous_state = None
         self.events = None
 
 
-class IpAddress(msrest.serialization.Model):
+class IpAddress(_serialization.Model):
     """IP address for the container group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar ports: Required. The list of ports exposed on the container group.
+    :ivar ports: The list of ports exposed on the container group. Required.
     :vartype ports: list[~azure.mgmt.containerinstance.models.Port]
-    :ivar type: Required. Specifies if the IP is exposed to the public internet or private VNET.
-     Possible values include: "Public", "Private".
+    :ivar type: Specifies if the IP is exposed to the public internet or private VNET. Required.
+     Known values are: "Public" and "Private".
     :vartype type: str or ~azure.mgmt.containerinstance.models.ContainerGroupIpAddressType
     :ivar ip: The IP exposed to the public internet.
     :vartype ip: str
     :ivar dns_name_label: The Dns name label for the IP.
     :vartype dns_name_label: str
-    :ivar dns_name_label_reuse_policy: The value representing the security enum. Possible values
-     include: "Unsecure", "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", "Noreuse".
-    :vartype dns_name_label_reuse_policy: str or
-     ~azure.mgmt.containerinstance.models.AutoGeneratedDomainNameLabelScope
+    :ivar auto_generated_domain_name_label_scope: The value representing the security enum. The
+     'Unsecure' value is the default value if not selected and means the object's domain name label
+     is not secured against subdomain takeover. The 'TenantReuse' value is the default value if
+     selected and means the object's domain name label can be reused within the same tenant. The
+     'SubscriptionReuse' value means the object's domain name label can be reused within the same
+     subscription. The 'ResourceGroupReuse' value means the object's domain name label can be reused
+     within the same resource group. The 'NoReuse' value means the object's domain name label cannot
+     be reused within the same resource group, subscription, or tenant. Known values are:
+     "Unsecure", "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and "Noreuse".
+    :vartype auto_generated_domain_name_label_scope: str or
+     ~azure.mgmt.containerinstance.models.DnsNameLabelReusePolicy
     :ivar fqdn: The FQDN for the IP.
     :vartype fqdn: str
     """
 
     _validation = {
-        'ports': {'required': True},
-        'type': {'required': True},
-        'fqdn': {'readonly': True},
+        "ports": {"required": True},
+        "type": {"required": True},
+        "fqdn": {"readonly": True},
     }
 
     _attribute_map = {
-        'ports': {'key': 'ports', 'type': '[Port]'},
-        'type': {'key': 'type', 'type': 'str'},
-        'ip': {'key': 'ip', 'type': 'str'},
-        'dns_name_label': {'key': 'dnsNameLabel', 'type': 'str'},
-        'dns_name_label_reuse_policy': {'key': 'dnsNameLabelReusePolicy', 'type': 'str'},
-        'fqdn': {'key': 'fqdn', 'type': 'str'},
+        "ports": {"key": "ports", "type": "[Port]"},
+        "type": {"key": "type", "type": "str"},
+        "ip": {"key": "ip", "type": "str"},
+        "dns_name_label": {"key": "dnsNameLabel", "type": "str"},
+        "auto_generated_domain_name_label_scope": {"key": "autoGeneratedDomainNameLabelScope", "type": "str"},
+        "fqdn": {"key": "fqdn", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        ports: List["Port"],
-        type: Union[str, "ContainerGroupIpAddressType"],
+        ports: List["_models.Port"],
+        type: Union[str, "_models.ContainerGroupIpAddressType"],
         ip: Optional[str] = None,
         dns_name_label: Optional[str] = None,
-        dns_name_label_reuse_policy: Optional[Union[str, "AutoGeneratedDomainNameLabelScope"]] = None,
+        auto_generated_domain_name_label_scope: Union[str, "_models.DnsNameLabelReusePolicy"] = "Unsecure",
         **kwargs
     ):
         """
-        :keyword ports: Required. The list of ports exposed on the container group.
+        :keyword ports: The list of ports exposed on the container group. Required.
         :paramtype ports: list[~azure.mgmt.containerinstance.models.Port]
-        :keyword type: Required. Specifies if the IP is exposed to the public internet or private VNET.
-         Possible values include: "Public", "Private".
+        :keyword type: Specifies if the IP is exposed to the public internet or private VNET. Required.
+         Known values are: "Public" and "Private".
         :paramtype type: str or ~azure.mgmt.containerinstance.models.ContainerGroupIpAddressType
         :keyword ip: The IP exposed to the public internet.
         :paramtype ip: str
         :keyword dns_name_label: The Dns name label for the IP.
         :paramtype dns_name_label: str
-        :keyword dns_name_label_reuse_policy: The value representing the security enum. Possible values
-         include: "Unsecure", "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", "Noreuse".
-        :paramtype dns_name_label_reuse_policy: str or
-         ~azure.mgmt.containerinstance.models.AutoGeneratedDomainNameLabelScope
+        :keyword auto_generated_domain_name_label_scope: The value representing the security enum. The
+         'Unsecure' value is the default value if not selected and means the object's domain name label
+         is not secured against subdomain takeover. The 'TenantReuse' value is the default value if
+         selected and means the object's domain name label can be reused within the same tenant. The
+         'SubscriptionReuse' value means the object's domain name label can be reused within the same
+         subscription. The 'ResourceGroupReuse' value means the object's domain name label can be reused
+         within the same resource group. The 'NoReuse' value means the object's domain name label cannot
+         be reused within the same resource group, subscription, or tenant. Known values are:
+         "Unsecure", "TenantReuse", "SubscriptionReuse", "ResourceGroupReuse", and "Noreuse".
+        :paramtype auto_generated_domain_name_label_scope: str or
+         ~azure.mgmt.containerinstance.models.DnsNameLabelReusePolicy
         """
-        super(IpAddress, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.ports = ports
         self.type = type
         self.ip = ip
         self.dns_name_label = dns_name_label
-        self.dns_name_label_reuse_policy = dns_name_label_reuse_policy
+        self.auto_generated_domain_name_label_scope = auto_generated_domain_name_label_scope
         self.fqdn = None
 
 
-class LogAnalytics(msrest.serialization.Model):
+class LogAnalytics(_serialization.Model):
     """Container group log analytics information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar workspace_id: Required. The workspace id for log analytics.
+    :ivar workspace_id: The workspace id for log analytics. Required.
     :vartype workspace_id: str
-    :ivar workspace_key: Required. The workspace key for log analytics.
+    :ivar workspace_key: The workspace key for log analytics. Required.
     :vartype workspace_key: str
-    :ivar log_type: The log type to be used. Possible values include: "ContainerInsights",
+    :ivar log_type: The log type to be used. Known values are: "ContainerInsights" and
      "ContainerInstanceLogs".
     :vartype log_type: str or ~azure.mgmt.containerinstance.models.LogAnalyticsLogType
     :ivar metadata: Metadata for log analytics.
@@ -1848,16 +1891,16 @@ class LogAnalytics(msrest.serialization.Model):
     """
 
     _validation = {
-        'workspace_id': {'required': True},
-        'workspace_key': {'required': True},
+        "workspace_id": {"required": True},
+        "workspace_key": {"required": True},
     }
 
     _attribute_map = {
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
-        'workspace_key': {'key': 'workspaceKey', 'type': 'str'},
-        'log_type': {'key': 'logType', 'type': 'str'},
-        'metadata': {'key': 'metadata', 'type': '{str}'},
-        'workspace_resource_id': {'key': 'workspaceResourceId', 'type': 'str'},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
+        "workspace_key": {"key": "workspaceKey", "type": "str"},
+        "log_type": {"key": "logType", "type": "str"},
+        "metadata": {"key": "metadata", "type": "{str}"},
+        "workspace_resource_id": {"key": "workspaceResourceId", "type": "str"},
     }
 
     def __init__(
@@ -1865,17 +1908,17 @@ class LogAnalytics(msrest.serialization.Model):
         *,
         workspace_id: str,
         workspace_key: str,
-        log_type: Optional[Union[str, "LogAnalyticsLogType"]] = None,
+        log_type: Optional[Union[str, "_models.LogAnalyticsLogType"]] = None,
         metadata: Optional[Dict[str, str]] = None,
         workspace_resource_id: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword workspace_id: Required. The workspace id for log analytics.
+        :keyword workspace_id: The workspace id for log analytics. Required.
         :paramtype workspace_id: str
-        :keyword workspace_key: Required. The workspace key for log analytics.
+        :keyword workspace_key: The workspace key for log analytics. Required.
         :paramtype workspace_key: str
-        :keyword log_type: The log type to be used. Possible values include: "ContainerInsights",
+        :keyword log_type: The log type to be used. Known values are: "ContainerInsights" and
          "ContainerInstanceLogs".
         :paramtype log_type: str or ~azure.mgmt.containerinstance.models.LogAnalyticsLogType
         :keyword metadata: Metadata for log analytics.
@@ -1883,7 +1926,7 @@ class LogAnalytics(msrest.serialization.Model):
         :keyword workspace_resource_id: The workspace resource id for log analytics.
         :paramtype workspace_resource_id: str
         """
-        super(LogAnalytics, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.workspace_id = workspace_id
         self.workspace_key = workspace_key
         self.log_type = log_type
@@ -1891,7 +1934,7 @@ class LogAnalytics(msrest.serialization.Model):
         self.workspace_resource_id = workspace_resource_id
 
 
-class Logs(msrest.serialization.Model):
+class Logs(_serialization.Model):
     """The logs.
 
     :ivar content: The content of the log.
@@ -1899,80 +1942,73 @@ class Logs(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'content': {'key': 'content', 'type': 'str'},
+        "content": {"key": "content", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        content: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, content: Optional[str] = None, **kwargs):
         """
         :keyword content: The content of the log.
         :paramtype content: str
         """
-        super(Logs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.content = content
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """An operation for Azure Container Instance service.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the operation.
+    :ivar name: The name of the operation. Required.
     :vartype name: str
-    :ivar display: Required. The display information of the operation.
+    :ivar display: The display information of the operation. Required.
     :vartype display: ~azure.mgmt.containerinstance.models.OperationDisplay
     :ivar properties: The additional properties.
-    :vartype properties: any
-    :ivar origin: The intended executor of the operation. Possible values include: "User",
-     "System".
+    :vartype properties: JSON
+    :ivar origin: The intended executor of the operation. Known values are: "User" and "System".
     :vartype origin: str or ~azure.mgmt.containerinstance.models.ContainerInstanceOperationsOrigin
     """
 
     _validation = {
-        'name': {'required': True},
-        'display': {'required': True},
+        "name": {"required": True},
+        "display": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'properties': {'key': 'properties', 'type': 'object'},
-        'origin': {'key': 'origin', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "properties": {"key": "properties", "type": "object"},
+        "origin": {"key": "origin", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        display: "OperationDisplay",
-        properties: Optional[Any] = None,
-        origin: Optional[Union[str, "ContainerInstanceOperationsOrigin"]] = None,
+        display: "_models.OperationDisplay",
+        properties: Optional[JSON] = None,
+        origin: Optional[Union[str, "_models.ContainerInstanceOperationsOrigin"]] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the operation.
+        :keyword name: The name of the operation. Required.
         :paramtype name: str
-        :keyword display: Required. The display information of the operation.
+        :keyword display: The display information of the operation. Required.
         :paramtype display: ~azure.mgmt.containerinstance.models.OperationDisplay
         :keyword properties: The additional properties.
-        :paramtype properties: any
-        :keyword origin: The intended executor of the operation. Possible values include: "User",
-         "System".
+        :paramtype properties: JSON
+        :keyword origin: The intended executor of the operation. Known values are: "User" and "System".
         :paramtype origin: str or
          ~azure.mgmt.containerinstance.models.ContainerInstanceOperationsOrigin
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.properties = properties
         self.origin = origin
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The display information of the operation.
 
     :ivar provider: The name of the provider of the operation.
@@ -1986,10 +2022,10 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -2011,14 +2047,14 @@ class OperationDisplay(msrest.serialization.Model):
         :keyword description: The description of the operation.
         :paramtype description: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """The operation list response that contains all operations for Azure Container Instance service.
 
     :ivar value: The list of operations.
@@ -2028,68 +2064,57 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: The list of operations.
         :paramtype value: list[~azure.mgmt.containerinstance.models.Operation]
         :keyword next_link: The URI to fetch the next page of operations.
         :paramtype next_link: str
         """
-        super(OperationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Port(msrest.serialization.Model):
+class Port(_serialization.Model):
     """The port exposed on the container group.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar protocol: The protocol associated with the port. Possible values include: "TCP", "UDP".
+    :ivar protocol: The protocol associated with the port. Known values are: "TCP" and "UDP".
     :vartype protocol: str or ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProtocol
-    :ivar port: Required. The port number.
+    :ivar port: The port number. Required.
     :vartype port: int
     """
 
     _validation = {
-        'port': {'required': True},
+        "port": {"required": True},
     }
 
     _attribute_map = {
-        'protocol': {'key': 'protocol', 'type': 'str'},
-        'port': {'key': 'port', 'type': 'int'},
+        "protocol": {"key": "protocol", "type": "str"},
+        "port": {"key": "port", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        port: int,
-        protocol: Optional[Union[str, "ContainerGroupNetworkProtocol"]] = None,
-        **kwargs
+        self, *, port: int, protocol: Optional[Union[str, "_models.ContainerGroupNetworkProtocol"]] = None, **kwargs
     ):
         """
-        :keyword protocol: The protocol associated with the port. Possible values include: "TCP",
-         "UDP".
+        :keyword protocol: The protocol associated with the port. Known values are: "TCP" and "UDP".
         :paramtype protocol: str or ~azure.mgmt.containerinstance.models.ContainerGroupNetworkProtocol
-        :keyword port: Required. The port number.
+        :keyword port: The port number. Required.
         :paramtype port: int
         """
-        super(Port, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.protocol = protocol
         self.port = port
 
 
-class ResourceLimits(msrest.serialization.Model):
+class ResourceLimits(_serialization.Model):
     """The resource limits.
 
     :ivar memory_in_gb: The memory limit in GB of this container instance.
@@ -2101,9 +2126,9 @@ class ResourceLimits(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
-        'cpu': {'key': 'cpu', 'type': 'float'},
-        'gpu': {'key': 'gpu', 'type': 'GpuResource'},
+        "memory_in_gb": {"key": "memoryInGB", "type": "float"},
+        "cpu": {"key": "cpu", "type": "float"},
+        "gpu": {"key": "gpu", "type": "GpuResource"},
     }
 
     def __init__(
@@ -2111,7 +2136,7 @@ class ResourceLimits(msrest.serialization.Model):
         *,
         memory_in_gb: Optional[float] = None,
         cpu: Optional[float] = None,
-        gpu: Optional["GpuResource"] = None,
+        gpu: Optional["_models.GpuResource"] = None,
         **kwargs
     ):
         """
@@ -2122,101 +2147,92 @@ class ResourceLimits(msrest.serialization.Model):
         :keyword gpu: The GPU limit of this container instance.
         :paramtype gpu: ~azure.mgmt.containerinstance.models.GpuResource
         """
-        super(ResourceLimits, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.memory_in_gb = memory_in_gb
         self.cpu = cpu
         self.gpu = gpu
 
 
-class ResourceRequests(msrest.serialization.Model):
+class ResourceRequests(_serialization.Model):
     """The resource requests.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar memory_in_gb: Required. The memory request in GB of this container instance.
+    :ivar memory_in_gb: The memory request in GB of this container instance. Required.
     :vartype memory_in_gb: float
-    :ivar cpu: Required. The CPU request of this container instance.
+    :ivar cpu: The CPU request of this container instance. Required.
     :vartype cpu: float
     :ivar gpu: The GPU request of this container instance.
     :vartype gpu: ~azure.mgmt.containerinstance.models.GpuResource
     """
 
     _validation = {
-        'memory_in_gb': {'required': True},
-        'cpu': {'required': True},
+        "memory_in_gb": {"required": True},
+        "cpu": {"required": True},
     }
 
     _attribute_map = {
-        'memory_in_gb': {'key': 'memoryInGB', 'type': 'float'},
-        'cpu': {'key': 'cpu', 'type': 'float'},
-        'gpu': {'key': 'gpu', 'type': 'GpuResource'},
+        "memory_in_gb": {"key": "memoryInGB", "type": "float"},
+        "cpu": {"key": "cpu", "type": "float"},
+        "gpu": {"key": "gpu", "type": "GpuResource"},
     }
 
-    def __init__(
-        self,
-        *,
-        memory_in_gb: float,
-        cpu: float,
-        gpu: Optional["GpuResource"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, memory_in_gb: float, cpu: float, gpu: Optional["_models.GpuResource"] = None, **kwargs):
         """
-        :keyword memory_in_gb: Required. The memory request in GB of this container instance.
+        :keyword memory_in_gb: The memory request in GB of this container instance. Required.
         :paramtype memory_in_gb: float
-        :keyword cpu: Required. The CPU request of this container instance.
+        :keyword cpu: The CPU request of this container instance. Required.
         :paramtype cpu: float
         :keyword gpu: The GPU request of this container instance.
         :paramtype gpu: ~azure.mgmt.containerinstance.models.GpuResource
         """
-        super(ResourceRequests, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.memory_in_gb = memory_in_gb
         self.cpu = cpu
         self.gpu = gpu
 
 
-class ResourceRequirements(msrest.serialization.Model):
+class ResourceRequirements(_serialization.Model):
     """The resource requirements.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar requests: Required. The resource requests of this container instance.
+    :ivar requests: The resource requests of this container instance. Required.
     :vartype requests: ~azure.mgmt.containerinstance.models.ResourceRequests
     :ivar limits: The resource limits of this container instance.
     :vartype limits: ~azure.mgmt.containerinstance.models.ResourceLimits
     """
 
     _validation = {
-        'requests': {'required': True},
+        "requests": {"required": True},
     }
 
     _attribute_map = {
-        'requests': {'key': 'requests', 'type': 'ResourceRequests'},
-        'limits': {'key': 'limits', 'type': 'ResourceLimits'},
+        "requests": {"key": "requests", "type": "ResourceRequests"},
+        "limits": {"key": "limits", "type": "ResourceLimits"},
     }
 
     def __init__(
-        self,
-        *,
-        requests: "ResourceRequests",
-        limits: Optional["ResourceLimits"] = None,
-        **kwargs
+        self, *, requests: "_models.ResourceRequests", limits: Optional["_models.ResourceLimits"] = None, **kwargs
     ):
         """
-        :keyword requests: Required. The resource requests of this container instance.
+        :keyword requests: The resource requests of this container instance. Required.
         :paramtype requests: ~azure.mgmt.containerinstance.models.ResourceRequests
         :keyword limits: The resource limits of this container instance.
         :paramtype limits: ~azure.mgmt.containerinstance.models.ResourceLimits
         """
-        super(ResourceRequirements, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.requests = requests
         self.limits = limits
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """A single usage result.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
+    :ivar id: Id of the usage result.
+    :vartype id: str
     :ivar unit: Unit of the usage result.
     :vartype unit: str
     :ivar current_value: The current usage of the resource.
@@ -2228,33 +2244,32 @@ class Usage(msrest.serialization.Model):
     """
 
     _validation = {
-        'unit': {'readonly': True},
-        'current_value': {'readonly': True},
-        'limit': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "unit": {"readonly": True},
+        "current_value": {"readonly": True},
+        "limit": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'int'},
-        'limit': {'key': 'limit', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'UsageName'},
+        "id": {"key": "id", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "int"},
+        "limit": {"key": "limit", "type": "int"},
+        "name": {"key": "name", "type": "UsageName"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Usage, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.id = None
         self.unit = None
         self.current_value = None
         self.limit = None
         self.name = None
 
 
-class UsageListResult(msrest.serialization.Model):
+class UsageListResult(_serialization.Model):
     """The response containing the usage data.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2264,24 +2279,20 @@ class UsageListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
+        "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UsageListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
 
 
-class UsageName(msrest.serialization.Model):
+class UsageName(_serialization.Model):
     """The name object of the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2293,37 +2304,61 @@ class UsageName(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'localized_value': {'readonly': True},
+        "value": {"readonly": True},
+        "localized_value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UsageName, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.localized_value = None
 
 
-class Volume(msrest.serialization.Model):
+class UserAssignedIdentities(_serialization.Model):
+    """The list of user identities associated with the container group. The user identity dictionary key references will be ARM resource ids in the form: '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
+
+
+class Volume(_serialization.Model):
     """The properties of the volume.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the volume.
+    :ivar name: The name of the volume. Required.
     :vartype name: str
     :ivar azure_file: The Azure File volume.
     :vartype azure_file: ~azure.mgmt.containerinstance.models.AzureFileVolume
     :ivar empty_dir: The empty directory volume.
-    :vartype empty_dir: any
+    :vartype empty_dir: JSON
     :ivar secret: The secret volume.
     :vartype secret: dict[str, str]
     :ivar git_repo: The git repo volume.
@@ -2331,40 +2366,40 @@ class Volume(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'azure_file': {'key': 'azureFile', 'type': 'AzureFileVolume'},
-        'empty_dir': {'key': 'emptyDir', 'type': 'object'},
-        'secret': {'key': 'secret', 'type': '{str}'},
-        'git_repo': {'key': 'gitRepo', 'type': 'GitRepoVolume'},
+        "name": {"key": "name", "type": "str"},
+        "azure_file": {"key": "azureFile", "type": "AzureFileVolume"},
+        "empty_dir": {"key": "emptyDir", "type": "object"},
+        "secret": {"key": "secret", "type": "{str}"},
+        "git_repo": {"key": "gitRepo", "type": "GitRepoVolume"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        azure_file: Optional["AzureFileVolume"] = None,
-        empty_dir: Optional[Any] = None,
+        azure_file: Optional["_models.AzureFileVolume"] = None,
+        empty_dir: Optional[JSON] = None,
         secret: Optional[Dict[str, str]] = None,
-        git_repo: Optional["GitRepoVolume"] = None,
+        git_repo: Optional["_models.GitRepoVolume"] = None,
         **kwargs
     ):
         """
-        :keyword name: Required. The name of the volume.
+        :keyword name: The name of the volume. Required.
         :paramtype name: str
         :keyword azure_file: The Azure File volume.
         :paramtype azure_file: ~azure.mgmt.containerinstance.models.AzureFileVolume
         :keyword empty_dir: The empty directory volume.
-        :paramtype empty_dir: any
+        :paramtype empty_dir: JSON
         :keyword secret: The secret volume.
         :paramtype secret: dict[str, str]
         :keyword git_repo: The git repo volume.
         :paramtype git_repo: ~azure.mgmt.containerinstance.models.GitRepoVolume
         """
-        super(Volume, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.azure_file = azure_file
         self.empty_dir = empty_dir
@@ -2372,49 +2407,42 @@ class Volume(msrest.serialization.Model):
         self.git_repo = git_repo
 
 
-class VolumeMount(msrest.serialization.Model):
+class VolumeMount(_serialization.Model):
     """The properties of the volume mount.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the volume mount.
+    :ivar name: The name of the volume mount. Required.
     :vartype name: str
-    :ivar mount_path: Required. The path within the container where the volume should be mounted.
-     Must not contain colon (:).
+    :ivar mount_path: The path within the container where the volume should be mounted. Must not
+     contain colon (:). Required.
     :vartype mount_path: str
     :ivar read_only: The flag indicating whether the volume mount is read-only.
     :vartype read_only: bool
     """
 
     _validation = {
-        'name': {'required': True},
-        'mount_path': {'required': True},
+        "name": {"required": True},
+        "mount_path": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'mount_path': {'key': 'mountPath', 'type': 'str'},
-        'read_only': {'key': 'readOnly', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "mount_path": {"key": "mountPath", "type": "str"},
+        "read_only": {"key": "readOnly", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        mount_path: str,
-        read_only: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, mount_path: str, read_only: Optional[bool] = None, **kwargs):
         """
-        :keyword name: Required. The name of the volume mount.
+        :keyword name: The name of the volume mount. Required.
         :paramtype name: str
-        :keyword mount_path: Required. The path within the container where the volume should be
-         mounted. Must not contain colon (:).
+        :keyword mount_path: The path within the container where the volume should be mounted. Must not
+         contain colon (:). Required.
         :paramtype mount_path: str
         :keyword read_only: The flag indicating whether the volume mount is read-only.
         :paramtype read_only: bool
         """
-        super(VolumeMount, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.mount_path = mount_path
         self.read_only = read_only

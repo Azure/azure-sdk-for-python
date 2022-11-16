@@ -4,32 +4,24 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema.core.fields import NestedField
+from azure.ai.ml._schema.core.fields import CodeField, NestedField, DistributionField
 from azure.ai.ml._schema.core.schema import PathAwareSchema
-from azure.ai.ml._schema.resource_configuration import ResourceConfigurationSchema
-from azure.ai.ml.constants import AzureMLResourceType
+from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 from ..assets.environment import AnonymousEnvironmentSchema
-from ..core.fields import ArmVersionedStr, GitStr, LocalPathField, RegistryStr, SerializeValidatedUrl, UnionField
-from .distribution import MPIDistributionSchema, PyTorchDistributionSchema, TensorFlowDistributionSchema
+from ..core.fields import ArmVersionedStr, RegistryStr, UnionField
 
 
 class ParameterizedCommandSchema(PathAwareSchema):
     command = fields.Str(
         metadata={
+            # pylint: disable=line-too-long
             "description": "The command run and the parameters passed. This string may contain place holders of inputs in {}. "
         },
         required=True,
     )
-    code = UnionField(
-        [
-            LocalPathField,
-            SerializeValidatedUrl(),
-            GitStr(),
-            ArmVersionedStr(azureml_type=AzureMLResourceType.CODE),
-        ],
-        metadata={"description": "A local path or http:, https:, azureml: url pointing to a remote location."},
-    )
+    code = CodeField()
     environment = UnionField(
         [
             NestedField(AnonymousEnvironmentSchema),
@@ -39,12 +31,5 @@ class ParameterizedCommandSchema(PathAwareSchema):
         required=True,
     )
     environment_variables = fields.Dict(keys=fields.Str(), values=fields.Str())
-    resources = NestedField(ResourceConfigurationSchema)
-    distribution = UnionField(
-        [
-            NestedField(PyTorchDistributionSchema),
-            NestedField(TensorFlowDistributionSchema),
-            NestedField(MPIDistributionSchema),
-        ],
-        metadata={"description": "Provides the configuration for a distributed run."},
-    )
+    resources = NestedField(JobResourceConfigurationSchema)
+    distribution = DistributionField()

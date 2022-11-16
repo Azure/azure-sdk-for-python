@@ -5,6 +5,7 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import sys
 import pytest
 import datetime
 from azure.ai.formrecognizer import _models
@@ -89,7 +90,7 @@ def page_range():
 
 @pytest.fixture
 def form_page(form_table, form_line):
-    model = _models.FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit=_models.LengthUnit.PIXEL, tables=[form_table[0]], lines=[form_line[0]])
+    model = _models.FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit="pixel", tables=[form_table[0]], lines=[form_line[0]])
     model_repr = "FormPage(page_number=1, text_angle=180, width=5, height=5.5, unit=pixel, tables=[{}], lines=[{}])".format(
             form_table[1], form_line[1]
         )[:1024]
@@ -119,7 +120,7 @@ def form_recognizer_error():
 
 @pytest.fixture
 def training_document_info(form_recognizer_error):
-    model = _models.TrainingDocumentInfo(name="name", status=_models.TrainingStatus.PARTIALLY_SUCCEEDED, page_count=5, errors=[form_recognizer_error[0]], model_id=1)
+    model = _models.TrainingDocumentInfo(name="name", status="partiallySucceeded", page_count=5, errors=[form_recognizer_error[0]], model_id=1)
     model_repr = "TrainingDocumentInfo(name=name, status=partiallySucceeded, page_count=5, errors=[{}], model_id=1)".format(form_recognizer_error[1])[:1024]
     assert repr(model) == model_repr
     return model, model_repr
@@ -170,12 +171,6 @@ def address_value():
     assert repr(model) == model_repr
     return model, model_repr
 
-@pytest.fixture
-def document_element(bounding_box):
-    model = _models.DocumentContentElement(content="content", kind="word", polygon=bounding_box[0])
-    model_repr = "DocumentContentElement(content=content, polygon={}, kind=word)".format(bounding_box[1])
-    assert repr(model) == model_repr
-    return model, model_repr
 
 @pytest.fixture
 def address_document_field(bounding_region, document_span, address_value):
@@ -234,12 +229,11 @@ def document_key_value_pair(document_key_value_element):
 @pytest.fixture
 def document_word(bounding_box, document_span):
     model = _models.DocumentWord(content="word", polygon=bounding_box[0], span=document_span[0], confidence=0.92)
-    model_repr = "DocumentWord(content={}, polygon={}, span={}, confidence={}, kind={})".format(
+    model_repr = "DocumentWord(content={}, polygon={}, span={}, confidence={})".format(
             "word",
             bounding_box[1],
             document_span[1],
             0.92,
-            "word",
         )
     assert repr(model) == model_repr
     return model, model_repr
@@ -280,14 +274,12 @@ def document_language(document_span):
 
 @pytest.fixture
 def document_selection_mark(bounding_box, document_span):
-    model = _models.DocumentSelectionMark(state="selected", content="", polygon=bounding_box[0], span=document_span[0], confidence=0.89)
-    model_repr = "DocumentSelectionMark(state={}, content={}, span={}, confidence={}, polygon={}, kind={})".format(
+    model = _models.DocumentSelectionMark(state="selected", polygon=bounding_box[0], span=document_span[0], confidence=0.89)
+    model_repr = "DocumentSelectionMark(state={}, span={}, confidence={}, polygon={})".format(
             "selected",
-            "",
             document_span[1],
             0.89,
             bounding_box[1],
-            "selectionMark",
         )
     assert repr(model) == model_repr
     return model, model_repr
@@ -460,7 +452,7 @@ class TestRepr():
     def test_custom_form_model(self, custom_form_sub_model, custom_form_model_properties, form_recognizer_error, training_document_info):
         model = _models.CustomFormModel(
             model_id=1,
-            status=_models.CustomFormModelStatus.CREATING,
+            status="creating",
             training_started_on=datetime.datetime(1, 1, 1),
             training_completed_on=datetime.datetime(1, 1, 1),
             submodels=[custom_form_sub_model[0], custom_form_sub_model[0]],
@@ -481,7 +473,7 @@ class TestRepr():
 
     def test_custom_form_model_info(self, custom_form_model_properties):
         model = _models.CustomFormModelInfo(
-            model_id=1, status=_models.CustomFormModelStatus.READY, training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1),
+            model_id=1, status="ready", training_started_on=datetime.datetime(1, 1, 1), training_completed_on=datetime.datetime(1, 1, 1),
             properties=custom_form_model_properties[0], model_name="my model"
         )
         model_repr = "CustomFormModelInfo(model_id=1, status=ready, training_started_on=0001-01-01 00:00:00, training_completed_on=0001-01-01 00:00:00, properties={}, model_name=my model)".format(custom_form_model_properties[1])[:1024]
@@ -509,7 +501,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation(self, document_analysis_error, document_model):
-        model = _models.DocumentModelOperationDetails(
+        model = _models.OperationDetails(
                 api_version="2022-08-31",
                 tags={"awesome": "tag"},
                 operation_id="id",
@@ -522,7 +514,7 @@ class TestRepr():
                 error=document_analysis_error[0],
                 result=document_model[0],
             )
-        model_repr = "DocumentModelOperationDetails(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
+        model_repr = "OperationDetails(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, result={}, error={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     99,
@@ -538,7 +530,7 @@ class TestRepr():
         assert repr(model) == model_repr
 
     def test_model_operation_info(self):
-        model = _models.DocumentModelOperationSummary(
+        model = _models.OperationSummary(
                 operation_id="id",
                 status="succeeded",
                 percent_completed=100,
@@ -549,7 +541,7 @@ class TestRepr():
                 api_version="2022-08-31",
                 tags={"test": "value"},
             )
-        model_repr = "DocumentModelOperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
+        model_repr = "OperationSummary(operation_id={}, status={}, percent_completed={}, created_on={}, last_updated_on={}, kind={}, resource_location={}, api_version={}, tags={})".format(
                     "id",
                     "succeeded",
                     100,

@@ -1,0 +1,18 @@
+type: pipeline
+
+description: The hello world pipeline job
+tags:
+  tag: tagvalue
+  owner: sdkteam
+
+settings:
+  default_compute: azureml:cpu-cluster
+
+inputs:
+  # examples of inputs that take values such as int, string, etc.
+  int_param: 10
+  data_input:
+    path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+    type: uri_file
+
+component: azureml://subscriptions/d511f82f-71ba-49a4-8233-d7be8a3650f4/resourceGroups/RLTesting/providers/Microsoft.MachineLearningServices/workspaces/AnkitWS/jobs/test_617704734544

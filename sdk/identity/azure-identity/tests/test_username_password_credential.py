@@ -78,7 +78,13 @@ def test_tenant_id():
         + [mock_response(json_payload=build_aad_response(access_token="**", id_token=build_id_token()))],
     )
 
-    credential = UsernamePasswordCredential("client-id", "username", "password", transport=transport)
+    credential = UsernamePasswordCredential(
+        "client-id",
+        "username",
+        "password",
+        transport=transport,
+        additionally_allowed_tenants=['*']
+    )
 
     credential.get_token("scope", tenant_id="tenant_id")
 

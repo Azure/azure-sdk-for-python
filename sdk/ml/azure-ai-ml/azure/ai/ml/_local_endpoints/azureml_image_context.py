@@ -6,7 +6,7 @@
 import logging
 from pathlib import Path
 
-from azure.ai.ml.constants import LocalEndpointConstants
+from azure.ai.ml.constants._endpoint import LocalEndpointConstants
 
 module_logger = logging.getLogger(__name__)
 
@@ -31,8 +31,8 @@ class AzureMlImageContext(object):
 
     def __init__(
         self,
-        endpoint_name: str,
-        deployment_name: str,
+        endpoint_name: str,  # pylint: disable=unused-argument
+        deployment_name: str,  # pylint: disable=unused-argument
         yaml_code_directory_path: str,
         yaml_code_scoring_script_file_name: str,
         model_directory_path: str,
@@ -64,7 +64,7 @@ class AzureMlImageContext(object):
             },
         }
         self._environment = {
-            LocalEndpointConstants.ENVVAR_KEY_AZUREML_MODEL_DIR: docker_azureml_model_dir,  # ie. /var/azureml-app/azureml-models/
+            LocalEndpointConstants.ENVVAR_KEY_AZUREML_MODEL_DIR: docker_azureml_model_dir,  # ie. /var/azureml-app/azureml-models/  # pylint: disable=line-too-long
             LocalEndpointConstants.ENVVAR_KEY_AZUREML_INFERENCE_PYTHON_PATH: LocalEndpointConstants.CONDA_ENV_BIN_PATH,
         }
 
@@ -102,7 +102,7 @@ class AzureMlImageContext(object):
 
         :return: str
         """
-        return self._docker_conda_file_name
+        return self._docker_conda_file_name # pylint: disable=no-member
 
     @property
     def volumes(self) -> dict:

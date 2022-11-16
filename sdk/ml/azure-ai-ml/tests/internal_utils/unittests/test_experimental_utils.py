@@ -1,16 +1,18 @@
 import logging
-import pytest
 import unittest
-from azure.ai.ml._utils._experimental import experimental, _warning_cache
-from azure.ai.ml.entities._mixins import RestTranslatableMixin
+
+import pytest
 from marshmallow.schema import Schema
-from azure.ai.ml._schema.core.fields import NestedField, ExperimentalField
-from azure.ai.ml.constants import (
-    EXPERIMENTAL_FIELD_MESSAGE,
+
+from azure.ai.ml._schema.core.fields import ExperimentalField, NestedField
+from azure.ai.ml._utils._experimental import _warning_cache, experimental
+from azure.ai.ml.constants._common import (
     EXPERIMENTAL_CLASS_MESSAGE,
-    EXPERIMENTAL_METHOD_MESSAGE,
+    EXPERIMENTAL_FIELD_MESSAGE,
     EXPERIMENTAL_LINK_MESSAGE,
+    EXPERIMENTAL_METHOD_MESSAGE,
 )
+from azure.ai.ml.entities._mixins import RestTranslatableMixin
 
 
 @experimental
@@ -55,6 +57,7 @@ class BarSchema(Schema):
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestExperimentalUtils(unittest.TestCase):
     def setUp(self):
         _warning_cache.clear()
@@ -111,7 +114,7 @@ class TestExperimentalUtils(unittest.TestCase):
             for x in range(5):
                 experimental_function()
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_METHOD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])
 
@@ -121,7 +124,7 @@ class TestExperimentalUtils(unittest.TestCase):
             for x in range(5):
                 obj.experimental_method()
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_METHOD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])
 
@@ -131,7 +134,7 @@ class TestExperimentalUtils(unittest.TestCase):
             for x in range(5):
                 obj.value = 5
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_METHOD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])
 
@@ -142,7 +145,7 @@ class TestExperimentalUtils(unittest.TestCase):
             logging.getLogger(experimental.__module__).warning("Dummy warning")
             ExperimentalClass._from_rest_object(dict())
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
 
     def test_experimental_decorator_should_show_no_warning_when_load_from_schema(self):
         with self.assertLogs(experimental.__module__, "WARNING") as cm:
@@ -153,7 +156,7 @@ class TestExperimentalUtils(unittest.TestCase):
             input_data = {"mock_field": {}}
             schema.load(input_data)
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
 
     def test_experimental_field(self):
         with self.assertLogs(ExperimentalField.__module__, "WARNING") as cm:
@@ -161,7 +164,7 @@ class TestExperimentalUtils(unittest.TestCase):
             input_data = {"mock_field": {}}
             schema.load(input_data)
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_FIELD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])
 
@@ -174,6 +177,6 @@ class TestExperimentalUtils(unittest.TestCase):
             for x in range(5):
                 schema.load(input_data)
 
-        self.assertEquals(1, len(cm.output))
+        self.assertEqual(1, len(cm.output))
         self.assertTrue(EXPERIMENTAL_FIELD_MESSAGE in cm.output[0])
         self.assertTrue(EXPERIMENTAL_LINK_MESSAGE in cm.output[0])

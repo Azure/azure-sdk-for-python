@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=no-member
+
 from os import PathLike
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -10,7 +12,7 @@ from marshmallow import INCLUDE
 
 from azure.ai.ml._schema._data.mltable_metadata_schema import MLTableMetadataSchema
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._util import load_from_dict
 
 
@@ -47,7 +49,7 @@ class MLTableMetadata:
         paths: List[MLTableMetadataPath],
         transformations: Optional[List[Any]] = None,
         base_path: str,
-        **kwargs,
+        **_kwargs,
     ):
         self.base_path = base_path
         self.paths = paths
