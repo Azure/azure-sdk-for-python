@@ -315,6 +315,28 @@ class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     EDGE_ZONE = "EdgeZone"
 
 
+class FleetMemberProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the last accepted operation."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    JOINING = "Joining"
+    LEAVING = "Leaving"
+    UPDATING = "Updating"
+
+
+class FleetProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state of the last accepted operation."""
+
+    SUCCEEDED = "Succeeded"
+    FAILED = "Failed"
+    CANCELED = "Canceled"
+    CREATING = "Creating"
+    DELETING = "Deleting"
+    UPDATING = "Updating"
+
+
 class Format(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Format."""
 

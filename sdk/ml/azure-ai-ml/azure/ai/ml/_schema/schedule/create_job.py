@@ -5,18 +5,20 @@
 import copy
 
 import yaml
-from marshmallow import INCLUDE, ValidationError, fields, post_load, pre_load
+from marshmallow import INCLUDE, ValidationError, post_load, pre_load
 
+from azure.ai.ml._schema import CommandJobSchema, AnonymousEnvironmentSchema
 from azure.ai.ml._schema.core.fields import (
     ArmStr,
-    ComputeField,
     FileRefField,
     NestedField,
     StringTransformedEnum,
     UnionField,
+    ComputeField,
+    RegistryStr,
+    ArmVersionedStr,
 )
-from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema, ManagedIdentitySchema, UserIdentitySchema
+from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
 from azure.ai.ml._utils.utils import load_file
@@ -32,6 +34,10 @@ class CreateJobFileRefField(FileRefField):
 
         This function is overwrite because we need job can be dumped inside schedule.
         """
+        from azure.ai.ml.entities._builders import BaseNode
+        if isinstance(value, BaseNode):
+            # Dump as Job to avoid missing field.
+            value = value._to_job()
         return value._to_dict()
 
     def _deserialize(self, value, attr, data, **kwargs) -> "Job":
@@ -48,21 +54,8 @@ class CreateJobFileRefField(FileRefField):
         )
 
 
-class BaseCreateJobSchema(metaclass=PatchedSchemaMeta):
+class BaseCreateJobSchema(BaseJobSchema):
     compute = ComputeField()
-    inputs = InputsField()
-    outputs = OutputsField()
-    identity = UnionField(
-        [
-            NestedField(ManagedIdentitySchema),
-            NestedField(AMLTokenIdentitySchema),
-            NestedField(UserIdentitySchema),
-        ]
-    )
-    description = fields.Str(attribute="description")
-    tags = fields.Dict(keys=fields.Str, attribute="tags")
-    experiment_name = fields.Str()
-    properties = fields.Dict(keys=fields.Str(), values=fields.Str(allow_none=True))
     job = UnionField(
         [
             ArmStr(azureml_type=AzureMLResourceType.JOB),
@@ -122,5 +115,23 @@ class BaseCreateJobSchema(metaclass=PatchedSchemaMeta):
 
 
 class PipelineCreateJobSchema(BaseCreateJobSchema):
+    # Note: Here we do not inherit PipelineJobSchema, as we don't need the post_load, pre_load inside.
     type = StringTransformedEnum(allowed_values=[JobType.PIPELINE])
+    inputs = InputsField()
+    outputs = OutputsField()
     settings = NestedField(PipelineJobSettingsSchema, unknown=INCLUDE)
+
+
+class CommandCreateJobSchema(BaseCreateJobSchema, CommandJobSchema):
+    class Meta:
+        # Refer to https://github.com/Azure/azureml_run_specification/blob/master
+        #   /specs/job-endpoint.md#properties-in-difference-job-types
+        # code and command can not be set during runtime
+        exclude = ["code", "command"]
+    environment = UnionField(
+        [
+            NestedField(AnonymousEnvironmentSchema),
+            RegistryStr(azureml_type=AzureMLResourceType.ENVIRONMENT),
+            ArmVersionedStr(azureml_type=AzureMLResourceType.ENVIRONMENT, allow_default_version=True),
+        ],
+    )

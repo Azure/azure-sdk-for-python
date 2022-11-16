@@ -59,8 +59,6 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
         _PROFILE_TAG: {
             None: DEFAULT_API_VERSION,
             'container_services': '2017-07-01',
-            'fleet_members': '2022-07-02-preview',
-            'fleets': '2022-07-02-preview',
             'open_shift_managed_clusters': '2019-04-30',
         }},
         _PROFILE_TAG + " latest"
@@ -432,12 +430,15 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-06-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.FleetMembersOperations>`
            * 2022-07-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservice.v2022_07_02_preview.aio.operations.FleetMembersOperations>`
+           * 2022-09-02-preview: :class:`FleetMembersOperations<azure.mgmt.containerservice.v2022_09_02_preview.aio.operations.FleetMembersOperations>`
         """
         api_version = self._get_api_version('fleet_members')
         if api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import FleetMembersOperations as OperationClass
         elif api_version == '2022-07-02-preview':
             from ..v2022_07_02_preview.aio.operations import FleetMembersOperations as OperationClass
+        elif api_version == '2022-09-02-preview':
+            from ..v2022_09_02_preview.aio.operations import FleetMembersOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'fleet_members'".format(api_version))
         self._config.api_version = api_version
@@ -449,12 +450,15 @@ class ContainerServiceClient(MultiApiClientMixin, _SDKClient):
 
            * 2022-06-02-preview: :class:`FleetsOperations<azure.mgmt.containerservice.v2022_06_02_preview.aio.operations.FleetsOperations>`
            * 2022-07-02-preview: :class:`FleetsOperations<azure.mgmt.containerservice.v2022_07_02_preview.aio.operations.FleetsOperations>`
+           * 2022-09-02-preview: :class:`FleetsOperations<azure.mgmt.containerservice.v2022_09_02_preview.aio.operations.FleetsOperations>`
         """
         api_version = self._get_api_version('fleets')
         if api_version == '2022-06-02-preview':
             from ..v2022_06_02_preview.aio.operations import FleetsOperations as OperationClass
         elif api_version == '2022-07-02-preview':
             from ..v2022_07_02_preview.aio.operations import FleetsOperations as OperationClass
+        elif api_version == '2022-09-02-preview':
+            from ..v2022_09_02_preview.aio.operations import FleetsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'fleets'".format(api_version))
         self._config.api_version = api_version
