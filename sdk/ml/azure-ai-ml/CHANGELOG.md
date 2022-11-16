@@ -1,11 +1,32 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.1.2 (Unreleased)
 
-## Features Added
+### Features Added
+- Restored idle_time_before_shutdown property for Compute Instances. 
+- Deprecated idle_time_before_shutdown property in favor of idle_time_before_shutdown_minutes.
+
+### Breaking Changes
+
+### Bugs Fixed
+- Fixed idle_time_before_shutdown not appearing in GET calls for Compute Instances.
+- Fixed idle_time_before_shutdown_minutes preventing creation of schedules for Compute Instances.
+
+### Other Changes
+
+## 1.1.1 (2022-11-15)
+
+### Features Added
+
+### Breaking Changes
 - Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
 
-## 1.1.0 (Unreleased)
+### Bugs Fixed
+- Fixed idle_time_before_shutdown_minutes not appearing in GET calls for Compute Instances.
+
+### Other Changes
+
+## 1.1.0 (2022-11-07)
 
 ### Features Added
 - Registry list operation now accepts scope value to allow subscription-only based requests.
@@ -28,7 +49,6 @@
 
 ### Other Changes
 - Switched compute operations to go through 2022-10-01-preview API version.
-
 
 ## 1.0.0 (2022-10-10)
 - GA release
