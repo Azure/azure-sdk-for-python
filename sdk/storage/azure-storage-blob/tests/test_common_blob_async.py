@@ -311,9 +311,6 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         result = await (await blob.download_blob()).readall()
         assert result == data*3
 
-        self.bsc._config.max_single_put_size = 1024
-        self.bsc._config.max_block_size = 1024
-
     @BlobPreparer()
     @recorded_by_proxy_async
     async def test_upload_blob_from_async_generator_chunks(self, **kwargs):
