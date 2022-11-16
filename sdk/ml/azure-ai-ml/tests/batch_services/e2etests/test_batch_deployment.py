@@ -39,7 +39,7 @@ def deployEndpointAndDeployment(client: MLClient, endpoint: BatchEndpoint, deplo
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.production_experience_test
 class TestBatchDeployment(AzureRecordedTestCase):
-    @pytest.mark.e2etest
+    @pytest.mproduction_experiences_test
     @pytest.mark.skip(reason="TODO (1546262): Test failing constantly, so disabling it")
     def test_batch_deployment(self, client: MLClient, data_with_2_versions: str) -> None:
         endpoint_yaml = "tests/test_configs/endpoints/batch/batch_endpoint_mlflow_new.yaml"

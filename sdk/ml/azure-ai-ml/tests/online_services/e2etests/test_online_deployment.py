@@ -10,7 +10,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 
 @pytest.mark.e2etest
-@pytest.mark.usefixtures("recorded_test")
+@pytest.mark.production_experiences_test")
 @pytest.mark.production_experience_test
 class TestOnlineDeployment(AzureRecordedTestCase):
     @pytest.mark.skip(
