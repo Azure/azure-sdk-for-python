@@ -41,7 +41,7 @@ from .._utils import (
     PARAMETERS_TO_TEST,
     assert_strong_type_intellisense_enabled,
     extract_non_primitive,
-    set_run_settings,
+    set_run_settings, get_expected_runsettings_items,
 )
 
 
@@ -96,14 +96,7 @@ class TestPipelineJob:
         node_rest_dict = dsl_pipeline._to_rest_object().properties.jobs["node"]
         del node_rest_dict["componentId"]  # delete component spec to make it a pure dict
         mismatched_runsettings = {}
-        dot_key_map = {"compute": "computeId"}
-        for dot_key, expected_value in runsettings_dict.items():
-            if dot_key in dot_key_map:
-                dot_key = dot_key_map[dot_key]
-
-            # hack: timeout will be transformed into str
-            if dot_key == "limits.timeout":
-                expected_value = "PT5M"
+        for dot_key, expected_value in get_expected_runsettings_items(runsettings_dict):
             value = pydash.get(node_rest_dict, dot_key)
             if value != expected_value:
                 mismatched_runsettings[dot_key] = (value, expected_value)

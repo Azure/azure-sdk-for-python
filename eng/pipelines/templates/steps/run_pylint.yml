@@ -29,7 +29,7 @@ steps:
         "$(TargetingString)" 
         --mark_arg="${{ parameters.TestMarkArgument }}" 
         --service="${{ parameters.ServiceDirectory }}" 
-        --toxenv="lint"
+        --toxenv="pylint"
         --disablecov
         --filter-type="Omit_management"
     env: ${{ parameters.EnvVars }}

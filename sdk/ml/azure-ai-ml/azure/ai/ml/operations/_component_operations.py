@@ -629,6 +629,9 @@ def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_ba
             # So isinstance(component.code, Code) will always be true, or an exception will be raised
             # in validation stage.
             component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
+        elif isinstance(component.code, str) and component.code.startswith("git+"):
+            # git also need to be resolved into arm id
+            component.code = get_arm_id_and_fill_back(Code(path=component.code), azureml_type=AzureMLResourceType.CODE)
         else:
             with component._resolve_local_code() as code:
                 component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)
