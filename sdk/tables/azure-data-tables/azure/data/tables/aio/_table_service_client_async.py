@@ -20,7 +20,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from .._base_client import parse_connection_str
 from .._generated.models import TableServiceProperties
 from .._models import service_stats_deserialize, service_properties_deserialize
-from .._error import _process_table_error
+from .._error import _process_table_error, _reprocess_error
 from .._models import TableItem, LocationMode
 from .._serialize import _parameter_filter_substitution
 from ._table_client_async import TableClient
@@ -135,7 +135,11 @@ class TableServiceClient(AsyncTablesBaseClient):
         try:
             service_props = await self._client.service.get_properties(timeout=timeout, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as decoded_error:
+                _reprocess_error(decoded_error)
+                raise
         return service_properties_deserialize(service_props)
 
     @distributed_trace_async
@@ -174,7 +178,11 @@ class TableServiceClient(AsyncTablesBaseClient):
         try:
             await self._client.service.set_properties(props, **kwargs)  # type: ignore
         except HttpResponseError as error:
-            _process_table_error(error)
+            try:
+                _process_table_error(error)
+            except HttpResponseError as decoded_error:
+                _reprocess_error(decoded_error)
+                raise
 
     @distributed_trace_async
     async def create_table(self, table_name: str, **kwargs) -> TableClient:
@@ -189,8 +197,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
-                :start-after: [START create_table]
-                :end-before: [END create_table]
+                :start-after: [START create_table_from_tsc]
+                :end-before: [END create_table_from_tsc]
                 :language: python
                 :dedent: 8
                 :caption: Creating a table from TableServiceClient.
@@ -213,8 +221,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
-                :start-after: [START create_if_not_exists]
-                :end-before: [END create_if_not_exists]
+                :start-after: [START create_table_if_not_exists]
+                :end-before: [END create_table_if_not_exists]
                 :language: python
                 :dedent: 8
                 :caption: Creating a table if it does not already exist
@@ -239,8 +247,8 @@ class TableServiceClient(AsyncTablesBaseClient):
         .. admonition:: Example:
 
             .. literalinclude:: ../samples/async_samples/sample_create_delete_table_async.py
-                :start-after: [START delete_table]
-                :end-before: [END delete_table]
+                :start-after: [START delete_table_from_tc]
+                :end-before: [END delete_table_from_tc]
                 :language: python
                 :dedent: 8
                 :caption: Deleting a table

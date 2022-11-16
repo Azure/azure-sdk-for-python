@@ -1,18 +1,20 @@
-import pytest
 from collections import OrderedDict
 
+import pytest
+
 from azure.ai.ml._utils.utils import (
-    dict_eq,
     _get_mfe_base_url_from_batch_endpoint,
-    map_single_brackets_and_warn,
-    is_data_binding_expression,
+    dict_eq,
     get_all_data_binding_expressions,
+    is_data_binding_expression,
+    map_single_brackets_and_warn,
 )
 from azure.ai.ml.entities import BatchEndpoint
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestUtils:
     def test_dict_eq(self) -> None:
         assert dict_eq(dict1={}, dict2=None)

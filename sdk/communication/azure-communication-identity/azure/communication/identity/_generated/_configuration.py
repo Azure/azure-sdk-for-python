@@ -6,16 +6,13 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from typing import TYPE_CHECKING
+from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.pipeline import policies
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
-
 VERSION = "unknown"
+
 
 class CommunicationIdentityClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
     """Configuration for CommunicationIdentityClient.
@@ -24,21 +21,16 @@ class CommunicationIdentityClientConfiguration(Configuration):  # pylint: disabl
     attributes.
 
     :param endpoint: The communication resource, for example
-     https://my-resource.communication.azure.com.
+     https://my-resource.communication.azure.com. Required.
     :type endpoint: str
-    :keyword api_version: Api Version. Default value is "2022-06-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     """
 
-    def __init__(
-        self,
-        endpoint,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def __init__(self, endpoint: str, **kwargs: Any) -> None:
         super(CommunicationIdentityClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop('api_version', "2022-06-01")  # type: str
+        api_version = kwargs.pop("api_version", "2022-10-01")  # type: str
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")

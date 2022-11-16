@@ -6,12 +6,13 @@ import logging
 from pathlib import Path
 from typing import Dict, Union
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, ValidationException
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData
 from azure.ai.ml._schema.job.parallel_job import ParallelJobSchema
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE, JobType
+from azure.ai.ml.constants import JobType
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._util import load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 from ..job import Job
 from ..job_io_mixin import JobIOMixin
@@ -53,6 +54,8 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
     :type task: ParallelTask
     :param mini_batch_size: The mini batch size.
     :type mini_batch_size: str
+    :param partition_keys: The partition keys.
+    :type partition_keys: list
     :param input_data: The input data.
     :type input_data: str
     :param inputs: Inputs of the job.
@@ -76,7 +79,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         self.outputs = outputs
 
     def _to_dict(self):
-        return ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
+        return ParallelJobSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)  # pylint: disable=no-member
 
     def _to_rest_object(self):
         pass
@@ -106,6 +109,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
         return ParallelComponent(
             base_path=context[BASE_PATH_CONTEXT_KEY],
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
             task=self.task,
             retry_settings=self.retry_settings,
@@ -129,21 +133,23 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
 
         component = self._to_component(context, **kwargs)
 
-        return Parallel(
+        return Parallel(  # pylint: disable=abstract-class-instantiated
             component=component,
             compute=self.compute,
             # Need to supply the inputs with double curly.
             inputs=self.inputs,
             outputs=self.outputs,
             mini_batch_size=self.mini_batch_size,
+            partition_keys=self.partition_keys,
             input_data=self.input_data,
-            task=self.task,
+            # task will be inherited from component & base_path will be set correctly.
             retry_settings=self.retry_settings,
             logging_level=self.logging_level,
             max_concurrency_per_instance=self.max_concurrency_per_instance,
             error_threshold=self.error_threshold,
             mini_batch_error_threshold=self.mini_batch_error_threshold,
             environment_variables=self.environment_variables,
+            properties=self.properties,
         )
 
     def _validate(self) -> None:
@@ -154,6 +160,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         if self.compute is None:
             msg = "compute is required"
@@ -162,6 +169,7 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )
         if self.task is None:
             msg = "task is required"
@@ -170,4 +178,5 @@ class ParallelJob(Job, ParameterizedParallel, JobIOMixin):
                 no_personal_data_message=msg,
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.MISSING_FIELD,
             )

@@ -9,7 +9,7 @@ import os
 from typing import Dict
 
 from azure.ai.ml._utils.utils import _get_mfe_url_override
-from azure.ai.ml.constants import AZUREML_CLOUD_ENV_NAME
+from azure.ai.ml.constants._common import AZUREML_CLOUD_ENV_NAME
 
 module_logger = logging.getLogger(__name__)
 

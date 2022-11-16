@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 
 
 class DeviceUpdateClient:  # pylint: disable=client-accepts-api-version-keyword
-    """Device Update for IoT Hub is an Azure service that enables customers to publish update for
+    """Device Update for IoT Hub is an Azure service that enables customers to publish updates for
     their IoT devices to the cloud, and then deploy that update to their devices (approve updates
     to groups of devices managed and provisioned in IoT Hub). It leverages the proven security and
     reliability of the Windows Update platform, optimized for IoT devices. It works globally and
@@ -35,14 +35,15 @@ class DeviceUpdateClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype device_update: azure.iot.deviceupdate.aio.operations.DeviceUpdateOperations
     :ivar device_management: DeviceManagementOperations operations
     :vartype device_management: azure.iot.deviceupdate.aio.operations.DeviceManagementOperations
-    :param endpoint: Account endpoint. Required.
+    :param endpoint: The Device Update for IoT Hub account endpoint (hostname only, no protocol).
+     Required.
     :type endpoint: str
-    :param instance_id: Account instance identifier. Required.
+    :param instance_id: The Device Update for IoT Hub account instance identifier. Required.
     :type instance_id: str
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :keyword api_version: Api Version. Default value is "2022-07-01-preview". Note that overriding
-     this default value may result in unsupported behavior.
+    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
+     default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.

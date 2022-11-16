@@ -12,14 +12,14 @@ from typing import Optional
 from marshmallow import fields, post_load, pre_load
 from pydash import objects
 
-from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
+from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta, PatchedBaseSchema
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
 
 module_logger = logging.getLogger(__name__)
 
 
-class PathAwareSchema(metaclass=PatchedSchemaMeta):
+class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
     schema_ignored = fields.Str(data_key="$schema", dump_only=True)
 
     def __init__(self, *args, **kwargs):
@@ -65,7 +65,7 @@ class PathAwareSchema(metaclass=PatchedSchemaMeta):
         """
         if isinstance(data, str) or data is None:
             return data
-        for key, value in self.fields.items():
+        for key, value in self.fields.items():  # pylint: disable=no-member
             if value.dump_only:
                 schema_key = value.data_key or key
                 if data.get(schema_key, None) is not None:
@@ -96,8 +96,7 @@ class YamlFileSchema(PathAwareSchema):
                 path = Path(base_path) / path
                 path.resolve()
             return path
-        else:
-            return None
+        return None
 
     @pre_load
     def load_from_file(self, data, **kwargs):

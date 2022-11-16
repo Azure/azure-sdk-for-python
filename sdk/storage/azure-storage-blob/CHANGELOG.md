@@ -1,6 +1,44 @@
 # Release History
 
-## 12.14.0b1 (2022-08-09)
+## 12.14.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-blob[aio]` to install.
+
+## 12.14.1 (2022-10-18)
+
+### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty blobs through Azurite.
+
+## 12.14.0 (2022-10-11)
+
+### Features Added
+- Stable release of features from 12.14.0b1 and 12.14.0b2.
+
+### Bugs Fixed
+- Fixed an issue where calling `download_blob` with an invalid base64-encoded account key would cause an
+`AttributeError` rather than the proper `AzureSigningError`.
+
+### Other Changes
+- Changed the default value for `read_timeout` to 60 seconds for all clients.
+
+## 12.14.0b2 (2022-08-30)
+
+### Features Added
+- Added a new API, `list_blob_names`, to `ContainerClient` that lists only the names of the blobs in the respective
+container. This API is significantly faster than the traditional `list_blobs` and can be used if only the blob names
+are desired. It does not return any additional properties or metadata for the blobs.
+
+## 12.14.0b1 (2022-08-23)
 
 This version and all future versions will require Python 3.7+. Python 3.6 is no longer supported.
 

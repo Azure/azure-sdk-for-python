@@ -82,7 +82,7 @@ def is_retry(response, mode):   # pylint: disable=too-many-return-statements
     """
     status = response.http_response.status_code
     if 300 <= status < 500:
-        # An exception occured, but in most cases it was expected. Examples could
+        # An exception occurred, but in most cases it was expected. Examples could
         # include a 309 Conflict or 412 Precondition Failed.
         if status == 404 and mode == LocationMode.SECONDARY:
             # Response code 404 should be retried if secondary was used.

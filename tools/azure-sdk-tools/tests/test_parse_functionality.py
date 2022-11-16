@@ -4,25 +4,31 @@ import os
 import pdb
 from unittest.mock import patch
 
-package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+
 
 def test_parse_require():
     test_scenarios = [
-        "ConfigArgParse>=0.12.0",
-        "msrest>=0.6.10",
-        "azure-core<2.0.0,>=1.2.2",
-        "msrest==0.6.10",
-        "msrest<0.6.10",
-        "msrest>0.6.9",
-        "azure-core<2.0.0,>=1.2.2"
+        ("ConfigArgParse>=0.12.0", "configargparse", ">=0.12.0"),
+        ("msrest>=0.6.10", "msrest", ">=0.6.10"),
+        ("azure-core<2.0.0,>=1.2.2", "azure-core", "<2.0.0,>=1.2.2"),
+        ("msrest==0.6.10", "msrest", "==0.6.10"),
+        ("msrest<0.6.10", "msrest", "<0.6.10"),
+        ("msrest>0.6.9", "msrest", ">0.6.9"),
+        ("azure-core<2.0.0,>=1.2.2", "azure-core", "<2.0.0,>=1.2.2"),
+        ("azure-core[aio]<2.0.0,>=1.26.0", "azure-core", "<2.0.0,>=1.26.0"),
+        ("azure-core[aio,cool_extra]<2.0.0,>=1.26.0", "azure-core", "<2.0.0,>=1.26.0"),
+        ("azure-core[]", "azure-core", None)
     ]
 
     for scenario in test_scenarios:
-        result = parse_require(scenario)
-
-        assert(result[0] is not None)
-        assert(result[1] is not None)
-        assert(isinstance(result[1], SpecifierSet))
+        result = parse_require(scenario[0])
+        assert result[0] is not None
+        if scenario[2] is not None:
+            assert result[1] is not None
+            assert isinstance(result[1], SpecifierSet)
+        assert result[0] == scenario[1]
+        assert result[1] == scenario[2]
 
 
 def test_parse_require_with_no_spec():
@@ -31,10 +37,11 @@ def test_parse_require_with_no_spec():
     for scenario in spec_scenarios:
         result = parse_require(scenario)
 
-        assert(result[0] == scenario.replace("_", "-"))
-        assert(result[1] is None)
+        assert result[0] == scenario.replace("_", "-")
+        assert result[1] is None
 
-@patch('ci_tools.parsing.parse_functions.read_setup_py_content')
+
+@patch("ci_tools.parsing.parse_functions.read_setup_py_content")
 def test_sdk_sample_setup(test_patch):
     test_patch.return_value = """
 import re
@@ -94,19 +101,15 @@ setup(
     ],
 )
     """
-    
+
     result = ParsedSetup.from_path(package_root)
 
-    assert(result.name == "azure-core")
-    assert(result.version == "1.21.0")
-    assert(result.python_requires == ">=3.7")
-    assert(result.requires == ['requests>=2.18.4', 'six>=1.11.0', 'typing-extensions>=4.0.1'])
-    assert(result.is_new_sdk == True)
-    assert(result.setup_filename == os.path.join(package_root, "setup.py"))
-    assert(result.namespace == "ci_tools")
-    assert("pytyped" in result.package_data)
-    assert(result.include_package_data == True)
-
-    
-    
-    
+    assert result.name == "azure-core"
+    assert result.version == "1.21.0"
+    assert result.python_requires == ">=3.7"
+    assert result.requires == ["requests>=2.18.4", "six>=1.11.0", "typing-extensions>=4.0.1"]
+    assert result.is_new_sdk == True
+    assert result.setup_filename == os.path.join(package_root, "setup.py")
+    assert result.namespace == "ci_tools"
+    assert "pytyped" in result.package_data
+    assert result.include_package_data == True

@@ -9,7 +9,8 @@ from marshmallow.decorators import pre_dump
 
 from azure.ai.ml._schema.core.fields import DumpableIntegerField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
-from azure.ai.ml.constants import TYPE, SearchSpace
+from azure.ai.ml.constants._common import TYPE
+from azure.ai.ml.constants._job.sweep import SearchSpace
 
 
 class NormalSchema(metaclass=PatchedSchemaMeta):
@@ -48,6 +49,12 @@ class QNormalSchema(metaclass=PatchedSchemaMeta):
     def predump(self, data, **kwargs):
         from azure.ai.ml.sweep import QLogNormal, QNormal
 
-        if not (isinstance(data, QNormal) or isinstance(data, QLogNormal)):
+        if not isinstance(data, (QNormal, QLogNormal)):
             raise ValidationError("Cannot dump non-QNormal or non-QLogNormal object into QNormalSchema")
         return data
+
+
+class IntegerQNormalSchema(QNormalSchema):
+    mu = DumpableIntegerField(strict=True, required=True)
+    sigma = DumpableIntegerField(strict=True, required=True)
+    q = DumpableIntegerField(strict=True, required=True)

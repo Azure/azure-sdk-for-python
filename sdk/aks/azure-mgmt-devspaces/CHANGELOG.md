@@ -1,5 +1,30 @@
 # Release History
 
+## 1.0.0b2 (2022-11-02)
+
+### Features Added
+
+  - Model Controller has a new parameter target_container_host_api_server_fqdn
+
+### Breaking Changes
+
+  - Operation ContainerHostMappingsOperations.get_container_host_mapping has a new parameter container_host_mapping
+  - Operation ContainerHostMappingsOperations.get_container_host_mapping has a new parameter kwargs
+  - Operation ContainerHostMappingsOperations.get_container_host_mapping no longer has parameter container_host_resource_id
+  - Operation ControllersOperations.get has a new parameter kwargs
+  - Operation ControllersOperations.list has a new parameter kwargs
+  - Operation ControllersOperations.list_by_resource_group has a new parameter kwargs
+  - Operation ControllersOperations.list_connection_details has a new parameter kwargs
+  - Operation ControllersOperations.list_connection_details has a new parameter list_connection_details_parameters
+  - Operation ControllersOperations.list_connection_details no longer has parameter target_container_host_resource_id
+  - Operation ControllersOperations.update has a new parameter controller_update_parameters
+  - Operation ControllersOperations.update has a new parameter kwargs
+  - Operation ControllersOperations.update no longer has parameter tags
+  - Operation ControllersOperations.update no longer has parameter target_container_host_credentials_base64
+  - Operation Operations.list has a new parameter kwargs
+  - Renamed operation ControllersOperations.create to ControllersOperations.begin_create
+  - Renamed operation ControllersOperations.delete to ControllersOperations.begin_delete
+
 ## 1.0.0b1 (2021-05-26)
 
 This is beta preview version.

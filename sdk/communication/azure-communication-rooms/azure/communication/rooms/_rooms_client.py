@@ -25,11 +25,11 @@ from ._generated.models import (
     RoomJoinPolicy
 )
 
-from ._shared.utils import parse_connection_str
+from ._shared.utils import parse_connection_str, verify_datetime_format
 from ._version import SDK_MONIKER
 from ._api_versions import DEFAULT_VERSION
 
-class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
+class RoomsClient(object):
     """A client to interact with the AzureCommunicationService Rooms gateway.
 
     This client provides operations to manage rooms.
@@ -38,6 +38,9 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         The endpoint url for Azure Communication Service resource.
     :param ~azure.core.credentials.AzureKeyCredential credential:
         The access key we use to authenticate against the service.
+    :keyword api_version: Azure Communication Rooms API version.
+        Default value is "2022-02-01". Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
     def __init__(
             self, endpoint: str,
@@ -64,7 +67,7 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         self._authentication_policy = HMACCredentialsPolicy(endpoint, credential.key)
         self._rooms_service_client = AzureCommunicationRoomsService(
             self._endpoint,
-            api_version = self._api_version,
+            api_version=self._api_version,
             authentication_policy=self._authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs)
@@ -117,23 +120,24 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :rtype: ~azure.communication.rooms.CommunicationRoom
         :raises: ~azure.core.exceptions.HttpResponseError
         """
-        create_room_request = CreateRoomRequest(
-            valid_from=valid_from,
-            valid_until=valid_until,
-            room_join_policy=room_join_policy,
-            # pylint: disable=protected-access
-            participants=[p._to_room_participant_internal() for p in participants] if participants else None
-        )
+        if verify_datetime_format(valid_from) and verify_datetime_format(valid_until):
+            create_room_request = CreateRoomRequest(
+                valid_from=valid_from,
+                valid_until=valid_until,
+                room_join_policy=room_join_policy,
+                # pylint: disable=protected-access
+                participants=[p._to_room_participant_internal() for p in participants] if participants else None
+            )
 
-        repeatability_request_id = uuid.uuid1()
-        repeatability_first_sent = datetime.utcnow()
+            repeatability_request_id = uuid.uuid1()
+            repeatability_first_sent = datetime.utcnow()
 
-        create_room_response = self._rooms_service_client.rooms.create_room(
-            create_room_request=create_room_request,
-            repeatability_request_id=repeatability_request_id,
-            repeatability_first_sent=repeatability_first_sent,
-            **kwargs)
-        return CommunicationRoom._from_room_response(create_room_response) # pylint: disable=protected-access
+            create_room_response = self._rooms_service_client.rooms.create_room(
+                create_room_request=create_room_request,
+                repeatability_request_id=repeatability_request_id,
+                repeatability_first_sent=repeatability_first_sent,
+                **kwargs)
+            return CommunicationRoom._from_room_response(create_room_response) # pylint: disable=protected-access
 
     @distributed_trace
     def delete_room(
@@ -182,18 +186,18 @@ class RoomsClient(object): # pylint: disable=client-accepts-api-version-keyword
         :raises: ~azure.core.exceptions.HttpResponseError, ValueError
 
         """
-
-        update_room_request = UpdateRoomRequest(
-            valid_from=valid_from,
-            valid_until=valid_until,
-            room_join_policy=room_join_policy,
+        if verify_datetime_format(valid_from) and verify_datetime_format(valid_until):
+            update_room_request = UpdateRoomRequest(
+                valid_from=valid_from,
+                valid_until=valid_until,
+                room_join_policy=room_join_policy,
+                # pylint: disable=protected-access
+                participants=[p._to_room_participant_internal() for p in participants] if participants else None
+            )
+            update_room_response = self._rooms_service_client.rooms.update_room(
+                room_id=room_id, patch_room_request=update_room_request, **kwargs)
             # pylint: disable=protected-access
-            participants=[p._to_room_participant_internal() for p in participants] if participants else None
-        )
-        update_room_response = self._rooms_service_client.rooms.update_room(
-            room_id=room_id, patch_room_request=update_room_request, **kwargs)
-        # pylint: disable=protected-access
-        return CommunicationRoom._from_room_response(update_room_response)
+            return CommunicationRoom._from_room_response(update_room_response)
 
     @distributed_trace
     def get_room(

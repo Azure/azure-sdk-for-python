@@ -20,7 +20,8 @@ else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
-class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
+
+class EmailClient(object):
     """A client to interact with the AzureCommunicationService Email gateway.
 
     This client provides operations to send an email and monitor its status.
@@ -29,6 +30,10 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
         The endpoint url for Azure Communication Service resource.
     :param Union[TokenCredential, AzureKeyCredential] credential:
         The credential we use to authenticate against the service.
+    :keyword api_version: Azure Communication Email API version.
+        Default value is "2021-10-01-preview".
+        Note that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
     def __init__(
             self,
@@ -36,6 +41,12 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
             credential: Union[TokenCredential, AzureKeyCredential],
             **kwargs
         ) -> None:
+        try:
+            if not endpoint.lower().startswith('http'):
+                endpoint = "https://" + endpoint
+        except AttributeError:
+            raise ValueError("Account URL must be a string.")
+
         if endpoint.endswith("/"):
             endpoint = endpoint[:-1]
 
@@ -43,6 +54,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
 
         self._generated_client = AzureCommunicationEmailService(
             endpoint,
+            api_version=self._api_version,
             authentication_policy=authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs

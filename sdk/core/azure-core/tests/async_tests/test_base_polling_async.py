@@ -40,8 +40,6 @@ import pytest
 
 from requests import Request, Response
 
-from msrest import Deserializer
-
 from azure.core.polling import async_poller, AsyncLROPoller
 from azure.core.exceptions import DecodeError, HttpResponseError
 from azure.core import AsyncPipelineClient
@@ -95,7 +93,7 @@ CLIENT._pipeline.run = types.MethodType(mock_run, CLIENT)
 
 @pytest.fixture
 def client():
-    # The poller itself don't use it, so we don't need something functionnal
+    # The poller itself don't use it, so we don't need something functional
     return AsyncPipelineClient("https://baseurl")
 
 

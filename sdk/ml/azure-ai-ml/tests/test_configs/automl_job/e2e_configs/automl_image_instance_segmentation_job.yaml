@@ -10,6 +10,8 @@ primary_metric: mean_average_precision
 
 limits:
   timeout_minutes: 60
+  max_trials: 10
+  max_concurrent_trials: 2
 
 target_column_name: label
 training_data:
@@ -20,9 +22,6 @@ validation_data:
   type: mltable
 
 sweep:
-  limits:
-    max_trials: 10
-    max_concurrent_trials: 2
   sampling_algorithm: random
   early_termination:
     type: bandit
@@ -30,12 +29,21 @@ sweep:
     slack_factor: 0.2
     delay_evaluation: 6
 
-image_model:
+training_parameters:
   early_stopping: true
   evaluation_frequency: 1
 
 search_space:
-  - model_name: "maskrcnn_resnet50_fpn"
-    learning_rate: "uniform(0.001,0.01)"
-    optimizer: "choice('sgd','adam','adamw')"
-    min_size: "choice(600,800)"
+  - model_name:
+      type: choice
+      values: [maskrcnn_resnet50_fpn]
+    learning_rate:
+      type: uniform
+      min_value: 0.001
+      max_value: 0.01
+    optimizer:
+      type: choice
+      values: ['sgd', 'adam', 'adamw']
+    min_size:
+      type: choice
+      values: [600, 800]

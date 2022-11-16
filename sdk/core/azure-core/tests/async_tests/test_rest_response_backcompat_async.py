@@ -57,7 +57,7 @@ async def get_new_response_trio(new_request):
 def _test_response_attr_parity(old_response, new_response):
     for attr in dir(old_response):
         if not attr[0] == "_":
-            # if not a private attr, we want partiy
+            # if not a private attr, we want parity
             assert hasattr(new_response, attr)
 
 @pytest.mark.asyncio

@@ -3,24 +3,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-
-import pytest
-
-from azure.core.exceptions import HttpResponseError, ClientAuthenticationError
-from azure.core.credentials import AzureKeyCredential
-from testcase import (
-    ConversationTest,
-    GlobalConversationAccountPreparer
-)
 from azure.ai.language.conversations import ConversationAnalysisClient
+from azure.core.credentials import AzureKeyCredential
+from devtools_testutils import AzureRecordedTestCase
 
 
-class TestConversationalPiiTests(ConversationTest):
+class TestConversationalPii(AzureRecordedTestCase):
 
-    @GlobalConversationAccountPreparer()
-    def test_conversational_pii(self, endpoint, key):
+    def test_conversational_pii(self, recorded_test, conversation_creds):
         # analyze query
-        client = ConversationAnalysisClient(endpoint, AzureKeyCredential(key))
+        client = ConversationAnalysisClient(
+            conversation_creds["endpoint"],
+            AzureKeyCredential(conversation_creds["key"])
+        )
         with client:
             poller = client.begin_conversation_analysis(
                 task={

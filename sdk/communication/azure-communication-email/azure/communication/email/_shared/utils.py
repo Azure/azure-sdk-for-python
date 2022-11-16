@@ -4,16 +4,16 @@
 # license information.
 # -------------------------------------------------------------------------
 
-from typing import (  # pylint: disable=unused-import
-    cast,
-    Tuple,
-)
+import base64
+import json
+import calendar
+from typing import (cast,
+                    Tuple,
+                    Union,
+                    )
 from datetime import datetime
 from azure.core.credentials import AzureKeyCredential
 
-def get_current_utc_time():
-    # type: () -> str
-    return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
@@ -34,6 +34,11 @@ def parse_connection_str(conn_str):
             "Invalid connection string. You can get the connection string from your resource page in the Azure Portal. "
             "The format should be as follows: endpoint=https://<ResourceUrl>/;accesskey=<KeyValue>"
         )
+    left_slash_pos = cast(str, endpoint).find("//")
+    if left_slash_pos != -1:
+        host = cast(str, endpoint)[left_slash_pos + 2:]
+    else:
+        host = str(endpoint)
 
     return str(endpoint), str(shared_access_key)
 

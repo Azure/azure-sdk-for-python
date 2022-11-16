@@ -4,6 +4,7 @@
 
 
 import pytest
+
 from azure.ai.ml._local_endpoints.dockerfile_resolver import DockerfileResolver
 
 

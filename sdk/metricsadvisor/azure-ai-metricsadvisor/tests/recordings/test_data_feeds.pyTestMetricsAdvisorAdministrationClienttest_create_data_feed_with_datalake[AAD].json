@@ -7,7 +7,7 @@
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -17,17 +17,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:06:13 GMT",
+        "Date": "Thu, 29 Sep 2022 23:21:46 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mCQAAAKaHTNkOAAAA; expires=Sat, 15-Jan-2022 01:06:13 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AkO7DjR8Kb1Dlq_xC7xu_NPGLH8mEQAAAF0fyNoOAAAA; expires=Sat, 29-Oct-2022 23:21:47 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12261.15 - WUS2 ProdSlices",
-        "x-ms-request-id": "e9f25c77-9302-4ff7-9d68-530b63de1a00"
+        "x-ms-ests-server": "2.1.13777.6 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
@@ -104,8 +104,8 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mCQAAAKaHTNkOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.7.2 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "Cookie": "fpc=AkO7DjR8Kb1Dlq_xC7xu_NPGLH8mEQAAAF0fyNoOAAAA; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
+        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -115,17 +115,17 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:06:13 GMT",
+        "Date": "Thu, 29 Sep 2022 23:21:47 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=Ag0OyaGPd0pEibyG7M6Pa-LGLH8mCQAAAKaHTNkOAAAA; expires=Sat, 15-Jan-2022 01:06:14 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=AkO7DjR8Kb1Dlq_xC7xu_NPGLH8mEQAAAF0fyNoOAAAA; expires=Sat, 29-Oct-2022 23:21:47 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.12261.14 - NCUS ProdSlices",
-        "x-ms-request-id": "05b083a6-7051-492f-9502-7215af130000"
+        "x-ms-ests-server": "2.1.13777.6 - SCUS ProdSlices",
+        "X-XSS-Protection": "0"
       },
       "ResponseBody": {
         "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
@@ -180,62 +180,96 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "820",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5d45cefa-5e0c-11ec-b8c6-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022dataSourceType\u0022: \u0022AzureDataLakeStorageGen2\u0022, \u0022dataFeedName\u0022: \u0022datalakef5db92be-9688-4148-bf35-0df95ab0c183\u0022, \u0022granularityName\u0022: \u0022Daily\u0022, \u0022metrics\u0022: [{\u0022metricName\u0022: \u0022cost\u0022, \u0022metricDisplayName\u0022: \u0022Cost\u0022}, {\u0022metricName\u0022: \u0022revenue\u0022, \u0022metricDisplayName\u0022: \u0022Revenue\u0022}], \u0022dimension\u0022: [{\u0022dimensionName\u0022: \u0022category\u0022, \u0022dimensionDisplayName\u0022: \u0022Category\u0022}, {\u0022dimensionName\u0022: \u0022city\u0022, \u0022dimensionDisplayName\u0022: \u0022city\u0022}], \u0022dataStartFrom\u0022: \u00222019-01-01T00:00:00.000Z\u0022, \u0022startOffsetInSeconds\u0022: 0, \u0022maxConcurrency\u0022: -1, \u0022minRetryIntervalInSeconds\u0022: -1, \u0022stopRetryAfterInSeconds\u0022: -1, \u0022viewMode\u0022: \u0022Private\u0022, \u0022authenticationType\u0022: \u0022Basic\u0022, \u0022dataSourceParameter\u0022: {\u0022accountName\u0022: \u0022adsampledatalakegen2\u0022, \u0022accountKey\u0022: \u0022azure_datalake_account_key\u0022, \u0022fileSystemName\u0022: \u0022adsample\u0022, \u0022directoryTemplate\u0022: \u0022%Y/%m/%d\u0022, \u0022fileTemplate\u0022: \u0022adsample.json\u0022}}",
+      "RequestBody": {
+        "dataSourceType": "AzureDataLakeStorageGen2",
+        "dataFeedName": "datalakefe12eab7-1fc5-4df9-a511-90bc3ba222fc",
+        "granularityName": "Daily",
+        "metrics": [
+          {
+            "metricName": "cost",
+            "metricDisplayName": "Cost"
+          },
+          {
+            "metricName": "revenue",
+            "metricDisplayName": "Revenue"
+          }
+        ],
+        "dimension": [
+          {
+            "dimensionName": "category",
+            "dimensionDisplayName": "Category"
+          },
+          {
+            "dimensionName": "city",
+            "dimensionDisplayName": "city"
+          }
+        ],
+        "dataStartFrom": "2019-01-01T00:00:00.000Z",
+        "startOffsetInSeconds": 0,
+        "maxConcurrency": -1,
+        "minRetryIntervalInSeconds": -1,
+        "stopRetryAfterInSeconds": -1,
+        "viewMode": "Private",
+        "authenticationType": "Basic",
+        "dataSourceParameter": {
+          "accountName": "adsampledatalakegen2",
+          "accountKey": "azure_datalake_account_key",
+          "fileSystemName": "adsample",
+          "directoryTemplate": "%Y/%m/%d",
+          "fileTemplate": "adsample.json"
+        }
+      },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "1f96b37b-6488-4c78-bb5d-be095ea0638c",
+        "apim-request-id": "1eb88485-14e0-40e5-af87-9abd320d6487",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:06:14 GMT",
-        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/5b5bd19e-6887-4314-ab28-98db787a5ef7",
+        "Date": "Thu, 29 Sep 2022 23:21:47 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/e98b78de-ca51-45a5-b889-c928288bead1",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "440",
-        "X-Request-ID": "1f96b37b-6488-4c78-bb5d-be095ea0638c"
+        "x-envoy-upstream-service-time": "402",
+        "X-Request-ID": "1eb88485-14e0-40e5-af87-9abd320d6487"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/5b5bd19e-6887-4314-ab28-98db787a5ef7",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/e98b78de-ca51-45a5-b889-c928288bead1",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5de24b35-5e0c-11ec-9865-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "8073dc5a-4cdc-4b0d-8e94-a2ac2ede96f6",
+        "apim-request-id": "2456f2f7-62cf-4477-a7b8-28e50a24a55b",
         "Content-Length": "1314",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:06:14 GMT",
+        "Date": "Thu, 29 Sep 2022 23:21:47 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "109",
-        "X-Request-ID": "8073dc5a-4cdc-4b0d-8e94-a2ac2ede96f6"
+        "x-envoy-upstream-service-time": "99",
+        "X-Request-ID": "2456f2f7-62cf-4477-a7b8-28e50a24a55b"
       },
       "ResponseBody": {
-        "dataFeedId": "5b5bd19e-6887-4314-ab28-98db787a5ef7",
-        "dataFeedName": "datalakef5db92be-9688-4148-bf35-0df95ab0c183",
+        "dataFeedId": "e98b78de-ca51-45a5-b889-c928288bead1",
+        "dataFeedName": "datalakefe12eab7-1fc5-4df9-a511-90bc3ba222fc",
         "metrics": [
           {
-            "metricId": "9493c372-4ca8-4903-a56f-a252890a3349",
+            "metricId": "02b8c055-3732-48e8-9e1c-80e1f3adeb1d",
             "metricName": "cost",
             "metricDisplayName": "Cost",
             "metricDescription": ""
           },
           {
-            "metricId": "c0ac7dac-4382-47b3-b1f5-1732023fdf95",
+            "metricId": "c50a7e72-00d7-4740-87b3-bdd36ec654cc",
             "metricName": "revenue",
             "metricDisplayName": "Revenue",
             "metricDescription": ""
@@ -272,7 +306,7 @@
         "viewers": [],
         "creator": "f850650c-1fcf-4489-b46f-71af2e30d360",
         "status": "Active",
-        "createdTime": "2021-12-16T01:06:14Z",
+        "createdTime": "2022-09-29T23:21:48Z",
         "isAdmin": true,
         "actionLinkTemplate": "",
         "dataSourceParameter": {
@@ -285,33 +319,31 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/5b5bd19e-6887-4314-ab28-98db787a5ef7",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/e98b78de-ca51-45a5-b889-c928288bead1",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Authorization": "Sanitized",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5df9721e-5e0c-11ec-b843-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "3b31f962-06db-4dc5-8f56-b7f682b4705e",
+        "apim-request-id": "c53b9ffa-c276-42a1-8a42-50251dd2fc8a",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:06:15 GMT",
+        "Date": "Thu, 29 Sep 2022 23:21:47 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "259",
-        "X-Request-ID": "3b31f962-06db-4dc5-8f56-b7f682b4705e"
+        "x-envoy-upstream-service-time": "222",
+        "X-Request-ID": "c53b9ffa-c276-42a1-8a42-50251dd2fc8a"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "data_feed_id": "5b5bd19e-6887-4314-ab28-98db787a5ef7",
-    "data_feed_name": "datalakef5db92be-9688-4148-bf35-0df95ab0c183"
+    "data_feed_id": "e98b78de-ca51-45a5-b889-c928288bead1",
+    "data_feed_name": "datalakefe12eab7-1fc5-4df9-a511-90bc3ba222fc"
   }
 }

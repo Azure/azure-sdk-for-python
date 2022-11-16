@@ -2,7 +2,7 @@
 Examples to show usage of the azure-core-tracing-opentelemetry
 with the Eventhub SDK.
 
-This example traces calls for senda batch to eventhub.
+This example traces calls for sending a batch to eventhub.
 
 An alternative path to export using AzureMonitor is also mentioned in the sample. Please take
 a look at the commented code.

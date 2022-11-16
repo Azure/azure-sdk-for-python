@@ -1,5 +1,89 @@
 # Release History
 
+## 2.0.0b1 (2022-09-29)
+
+### Features Added
+
+  - Added operation DataConnectorsOperations.connect
+  - Added operation DataConnectorsOperations.disconnect
+  - Added operation IncidentsOperations.create_team
+  - Added operation IncidentsOperations.run_playbook
+  - Added operation group BookmarkOperations
+  - Added operation group BookmarkRelationsOperations
+  - Added operation group DataConnectorsCheckRequirementsOperations
+  - Added operation group DomainWhoisOperations
+  - Added operation group EntitiesGetTimelineOperations
+  - Added operation group EntitiesOperations
+  - Added operation group EntitiesRelationsOperations
+  - Added operation group EntityQueriesOperations
+  - Added operation group EntityQueryTemplatesOperations
+  - Added operation group EntityRelationsOperations
+  - Added operation group FileImportsOperations
+  - Added operation group IPGeodataOperations
+  - Added operation group MetadataOperations
+  - Added operation group OfficeConsentsOperations
+  - Added operation group ProductSettingsOperations
+  - Added operation group SecurityMLAnalyticsSettingsOperations
+  - Added operation group SourceControlOperations
+  - Added operation group SourceControlsOperations
+  - Model Bookmark has a new parameter entity_mappings
+  - Model Bookmark has a new parameter tactics
+  - Model Bookmark has a new parameter techniques
+  - Model FusionAlertRule has a new parameter scenario_exclusion_patterns
+  - Model FusionAlertRule has a new parameter source_settings
+  - Model FusionAlertRule has a new parameter techniques
+  - Model FusionAlertRuleTemplate has a new parameter source_settings
+  - Model FusionAlertRuleTemplate has a new parameter techniques
+  - Model Incident has a new parameter provider_incident_id
+  - Model Incident has a new parameter provider_name
+  - Model Incident has a new parameter team_information
+  - Model IncidentAdditionalData has a new parameter provider_incident_url
+  - Model IncidentAdditionalData has a new parameter techniques
+  - Model IncidentOwnerInfo has a new parameter owner_type
+  - Model IoTDeviceEntity has a new parameter device_sub_type
+  - Model IoTDeviceEntity has a new parameter importance
+  - Model IoTDeviceEntity has a new parameter is_authorized
+  - Model IoTDeviceEntity has a new parameter is_programming
+  - Model IoTDeviceEntity has a new parameter is_scanner
+  - Model IoTDeviceEntity has a new parameter nic_entity_ids
+  - Model IoTDeviceEntity has a new parameter owners
+  - Model IoTDeviceEntity has a new parameter purdue_layer
+  - Model IoTDeviceEntity has a new parameter sensor
+  - Model IoTDeviceEntity has a new parameter site
+  - Model IoTDeviceEntity has a new parameter zone
+  - Model IoTDeviceEntityProperties has a new parameter device_sub_type
+  - Model IoTDeviceEntityProperties has a new parameter importance
+  - Model IoTDeviceEntityProperties has a new parameter is_authorized
+  - Model IoTDeviceEntityProperties has a new parameter is_programming
+  - Model IoTDeviceEntityProperties has a new parameter is_scanner
+  - Model IoTDeviceEntityProperties has a new parameter nic_entity_ids
+  - Model IoTDeviceEntityProperties has a new parameter owners
+  - Model IoTDeviceEntityProperties has a new parameter purdue_layer
+  - Model IoTDeviceEntityProperties has a new parameter sensor
+  - Model IoTDeviceEntityProperties has a new parameter site
+  - Model IoTDeviceEntityProperties has a new parameter zone
+  - Model ScheduledAlertRule has a new parameter techniques
+  - Model ScheduledAlertRuleProperties has a new parameter techniques
+  - Model ScheduledAlertRuleTemplate has a new parameter techniques
+  - Model Watchlist has a new parameter source_type
+
+### Breaking Changes
+
+  - Parameter alerts of model AlertsDataTypeOfDataConnector is now required
+  - Parameter alerts of model MCASDataConnectorDataTypes is now required
+  - Parameter exchange of model OfficeDataConnectorDataTypes is now required
+  - Parameter indicators of model TIDataConnectorDataTypes is now required
+  - Parameter logs of model AwsCloudTrailDataConnectorDataTypes is now required
+  - Parameter share_point of model OfficeDataConnectorDataTypes is now required
+  - Parameter state of model AwsCloudTrailDataConnectorDataTypesLogs is now required
+  - Parameter state of model DataConnectorDataTypeCommon is now required
+  - Parameter state of model OfficeDataConnectorDataTypesExchange is now required
+  - Parameter state of model OfficeDataConnectorDataTypesSharePoint is now required
+  - Parameter state of model OfficeDataConnectorDataTypesTeams is now required
+  - Parameter state of model TIDataConnectorDataTypesIndicators is now required
+  - Parameter teams of model OfficeDataConnectorDataTypes is now required
+  - Parameter tenant_id of model DataConnectorTenantId is now required
+
 ## 1.0.0 (2022-07-26)
 
 **Breaking changes**

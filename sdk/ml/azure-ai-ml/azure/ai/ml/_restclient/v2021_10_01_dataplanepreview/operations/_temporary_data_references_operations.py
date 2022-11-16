@@ -39,9 +39,9 @@ def build_create_or_get_temporary_data_reference_request(
     **kwargs  # type: Any
 ):
     # type: (...) -> HttpRequest
-    api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
     content_type = kwargs.pop('content_type', None)  # type: Optional[str]
 
+    api_version = "2021-10-01-dataplanepreview"
     accept = "application/json"
     # Construct URL
     url = kwargs.pop("template_url", '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/tempdatarefs/{name}/versions/{version}')
@@ -115,13 +115,10 @@ class TemporaryDataReferencesOperations(object):
         :type version: str
         :param resource_group_name: The name of the resource group. The name is case insensitive.
         :type resource_group_name: str
-        :param registry_name:
+        :param registry_name: Name of Azure Machine Learning registry.
         :type registry_name: str
         :param body:
         :type body: ~azure.mgmt.machinelearningservices.models.TemporaryDataReferenceRequestDto
-        :keyword api_version: Api Version. The default value is "2021-10-01-dataplanepreview". Note
-         that overriding this default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :return: TemporaryDataReferenceResponseDto, or the result of cls(response)
         :rtype: ~azure.mgmt.machinelearningservices.models.TemporaryDataReferenceResponseDto
@@ -133,7 +130,6 @@ class TemporaryDataReferencesOperations(object):
         }
         error_map.update(kwargs.pop('error_map', {}))
 
-        api_version = kwargs.pop('api_version', "2021-10-01-dataplanepreview")  # type: str
         content_type = kwargs.pop('content_type', "application/json")  # type: Optional[str]
 
         _json = self._serialize.body(body, 'TemporaryDataReferenceRequestDto')
@@ -144,7 +140,6 @@ class TemporaryDataReferencesOperations(object):
             subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            api_version=api_version,
             content_type=content_type,
             json=_json,
             template_url=self.create_or_get_temporary_data_reference.metadata['url'],
