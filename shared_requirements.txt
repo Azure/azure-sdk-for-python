@@ -142,6 +142,7 @@ yarl<2.0,>=1.0
 #override azure-data-tables azure-core<2.0.0,>=1.24.0
 #override azure-data-tables msrest>=0.7.1
 #override azure-digitaltwins-core azure-core<2.0.0,>=1.20.0
+#override azure-mgmt-compute typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-eventhub azure-core<2.0.0,>=1.14.0
 #override azure-eventhub typing-extensions>=4.0.1
 #override azure-mgmt-costmanagement msrest>=0.7.1
