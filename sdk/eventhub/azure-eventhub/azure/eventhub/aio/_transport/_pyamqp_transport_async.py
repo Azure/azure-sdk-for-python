@@ -223,16 +223,11 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         
 
         try:
-            await asyncio.gather(*tasks, return_exceptions=False)
-            for task in tasks:
-                try:
-                    #await task
-                    if task.exception():
-                        consumer._callback_task_run = False
-                        raise task.exception()
-                    await asyncio.sleep(0)
-                except Exception:
-                    consumer._callback_task_run = False
+            await asyncio.gather(*tasks)
+        except Exception:
+            consumer._callback_task_run = False
+            await asyncio.sleep(0)
+            raise
         except asyncio.CancelledError:
             consumer._callback_task_run = False
             await asyncio.sleep(0)
