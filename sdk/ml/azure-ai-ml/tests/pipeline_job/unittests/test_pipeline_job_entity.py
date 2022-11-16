@@ -742,7 +742,7 @@ class TestPipelineJobEntity:
         assert isinstance(node, Spark)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
         )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -754,8 +754,8 @@ class TestPipelineJobEntity:
         expected_dict = {
             "_source": "YAML.COMPONENT",
             "args": "--file_input ${{inputs.file_input}}",
-            "componentId": "xxx",
-            "computeId": "xxx",
+            "componentId": "",
+            "computeId": "",
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -769,6 +769,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "add_greeting_column",
             "py_files": ["utils.zip"],
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -778,8 +779,8 @@ class TestPipelineJobEntity:
         expected_dict = {
             "_source": "YAML.COMPONENT",
             "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
-            "componentId": "xxx",
-            "computeId": "xxx",
+            "componentId": "",
+            "computeId": "",
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -794,6 +795,7 @@ class TestPipelineJobEntity:
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
             "type": "spark",
         }
         assert actual_dict == expected_dict

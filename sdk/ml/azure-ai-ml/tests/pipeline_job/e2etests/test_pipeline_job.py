@@ -117,11 +117,11 @@ class TestPipelineJob(AzureRecordedTestCase):
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/wordcount_pipeline.yml",
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_pipeline.yml",
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml",
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job.yml",
-            "./tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/wordcount_pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job.yml",
+            "tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml",
         ],
     )
     def test_pipeline_job_with_spark_job(
