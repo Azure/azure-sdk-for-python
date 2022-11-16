@@ -17,10 +17,6 @@ from azure.communication.phonenumbers.siprouting._models import SipTrunk
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 
 class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
-    os.environ["COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING"] = "endpoint=https://jb-sdk-e2e-test.communication.azure.com/;accesskey=hFczbnt24ZdYed5wVNS8vS+Vp13Zj00edAPJ/d6Wo16PZORrypOwIk0B1V+pGgMmzU4+3ypbL4oqLwOG6gfNtg=="
-    os.environ["AZURE_TEST_RUN_LIVE"] = "False"
-    os.environ["AZURE_TEST_SIP_DOMAIN"] = "gfgfgfgfg.net"
-
     user_domain = get_user_domain()
     additionalTrunkFqdn = "sbs3." + user_domain
 
