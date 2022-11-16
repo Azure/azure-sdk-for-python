@@ -822,21 +822,21 @@ class TestPipelineJobEntity:
                 "count_word": {
                     "_source": "YAML.JOB",
                     "args": "--input1 ${{inputs.input1}}",
-                    "computeId": "spark31",
                     "conf": {
                         "spark.driver.cores": 1,
                         "spark.driver.memory": "2g",
                         "spark.executor.cores": 2,
                         "spark.executor.instances": 4,
                         "spark.executor.memory": "2g",
-                        "spark.yarn.dist.jars": "https://foobaradrama2.azurefd.net/latest/hadoop-azureml-fs.jar",
                     },
                     "entry": {"file": "wordcount.py", "spark_job_entry_type": "SparkJobPythonEntry"},
-                    "identity": {"identity_type": "Managed"},
+                    "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
                         "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
                     },
                     "name": "count_word",
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 },
                 "sample_word": {
@@ -862,7 +862,8 @@ class TestPipelineJobEntity:
                     },
                     "name": "sample_word",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 },
             },
