@@ -123,6 +123,10 @@ class ComputeInstance(Compute):
     :type schedules: Optional[ComputeSchedules], optional
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
+    :param idle_time_before_shutdown: Deprecated. Use the 'idle_time_before_shutdown_minutes' property instead. 
+        Stops compute instance after user defined period of inactivity. 
+        Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
+    :type idle_time_before_shutdown: Optional[str], optional
     :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
         inactivity in minutes. Minimum is 15 min, maximum is 3 days.
     :type idle_time_before_shutdown_minutes: Optional[int], optional
@@ -142,6 +146,7 @@ class ComputeInstance(Compute):
         ssh_settings: Optional[ComputeInstanceSshSettings] = None,
         schedules: Optional[ComputeSchedules] = None,
         identity: IdentityConfiguration = None,
+        idle_time_before_shutdown: Optional[str] = None,
         idle_time_before_shutdown_minutes: Optional[int] = None,
         setup_scripts: Optional[SetupScripts] = None,
         **kwargs,
@@ -164,6 +169,7 @@ class ComputeInstance(Compute):
         self.ssh_settings = ssh_settings
         self.schedules = schedules
         self.identity = identity
+        self.idle_time_before_shutdown = idle_time_before_shutdown
         self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
         self.subnet = None
@@ -230,12 +236,18 @@ class ComputeInstance(Compute):
                 )
             )
 
+        idle_time_before_shutdown = None
+        if self.idle_time_before_shutdown_minutes:
+            idle_time_before_shutdown = f"PT{self.idle_time_before_shutdown_minutes}M"
+        elif self.idle_time_before_shutdown:
+            idle_time_before_shutdown = self.idle_time_before_shutdown
+        
         compute_instance_prop = ComputeInstanceProperties(
             vm_size=self.size if self.size else ComputeDefaults.VMSIZE,
             subnet=subnet_resource,
             ssh_settings=ssh_settings,
             personal_compute_instance_settings=personal_compute_instance_settings,
-            idle_time_before_shutdown=f"PT{self.idle_time_before_shutdown_minutes}M",
+            idle_time_before_shutdown=idle_time_before_shutdown,
         )
         compute_instance_prop.schedules = (
             self.schedules._to_rest_object() if self.schedules else None
@@ -309,6 +321,7 @@ class ComputeInstance(Compute):
                 else None,
             )
 
+        idle_time_before_shutdown = None
         idle_time_before_shutdown_minutes = None
         idle_time_before_shutdown_pattern = r"PT([0-9]+)M"
         if prop.properties and prop.properties.idle_time_before_shutdown:
@@ -363,6 +376,7 @@ class ComputeInstance(Compute):
             setup_scripts=SetupScripts._from_rest_object(prop.properties.setup_scripts)
             if prop.properties and prop.properties.setup_scripts
             else None,
+            idle_time_before_shutdown=idle_time_before_shutdown,
             idle_time_before_shutdown_minutes=idle_time_before_shutdown_minutes,
         )
         return response
