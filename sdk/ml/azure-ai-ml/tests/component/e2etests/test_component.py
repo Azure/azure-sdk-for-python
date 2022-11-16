@@ -301,7 +301,6 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.code
         assert is_ARM_id_for_resource(component_resource.code)
 
-    @pytest.mark.skip(reason="TODO: 1976724, will randomly break and need service-side further investigation.")
     def test_component_list(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         component_name = randstr("component name")
 
@@ -312,7 +311,7 @@ class TestComponent(AzureRecordedTestCase):
         component_containers = client.components.list()
         assert isinstance(component_containers.next(), Component)
 
-        # there might be delay so getting latest version immediately after creation might get wrong result
+        # there might be delay so getting the latest version immediately after creation might get wrong result
         sleep_if_live(5)
 
         # list component versions
