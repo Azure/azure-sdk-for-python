@@ -332,7 +332,11 @@ async def test_send_multiple_partition_with_app_prop_async(connstr_receivers, ua
     app_prop_key = "raw_prop"
     app_prop_value = "raw_value"
     app_prop = {app_prop_key: app_prop_value}
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+    client = EventHubProducerClient.from_connection_string(
+        connection_str,
+        uamqp_transport=uamqp_transport,
+        transport_type=TransportType.Amqp
+    )
     async with client:
         ed0 = EventData(b"Message 0")
         ed0.properties = app_prop
@@ -408,7 +412,11 @@ async def test_send_with_create_event_batch_async(connstr_receivers, uamqp_trans
 @pytest.mark.asyncio
 async def test_send_list_async(connstr_receivers, uamqp_transport, timeout_factor):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+    client = EventHubProducerClient.from_connection_string(
+        connection_str,
+        uamqp_transport=uamqp_transport,
+        transport_type=uamqp_TransportType.Amqp
+    )
     payload = "A1"
     async with client:
         await client.send_batch([EventData(payload)])

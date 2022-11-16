@@ -432,8 +432,14 @@ class ClientBase(object):  # pylint:disable=too-many-instance-attributes
                     return response
                 raise self._amqp_transport.get_error(status_code, description)
             except Exception as exception:  # pylint: disable=broad-except
+                # is_consumer=True passed in here, ALTHOUGH this method is shared by the producer and consumer.
+                # is_consumer will only be checked if FileNotFoundError is raised by self.mgmt_client.open() due to
+                # invalid/non-existent connection_verify filepath. The producer will encounter the FileNotFoundError
+                # when opening the SendClient, so is_consumer=True will not be passed to amqp_transport.handle_exception
+                # there. This is for uamqp exception parity, which raises FileNotFoundError in the consumer and
+                # EventHubError in the producer. TODO: Remove `is_consumer` kwarg when resolving issue #27128.
                 last_exception = self._amqp_transport._handle_exception(  # pylint: disable=protected-access
-                    exception, self
+                    exception, self, is_consumer=True
                 )
                 self._backoff(
                     retried_times=retried_times, last_exception=last_exception
@@ -553,10 +559,10 @@ class ConsumerProducerMixin(object):
         self._close_handler()
         self._client._conn_manager.reset_connection_if_broken()  # pylint: disable=protected-access
 
-    def _handle_exception(self, exception):
+    def _handle_exception(self, exception, *, is_consumer=False):
         exception = self._amqp_transport.check_timeout_exception(self, exception)
         return self._amqp_transport._handle_exception(  # pylint: disable=protected-access
-            exception, self
+            exception, self, is_consumer=is_consumer
         )
 
     def _do_retryable_operation(self, operation, timeout=None, **kwargs):
