@@ -220,34 +220,13 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         receive_task = asyncio.ensure_future(PyamqpTransportAsync._receive_task(consumer))
 
         tasks = [callback_task,receive_task]
-        
 
         try:
             await asyncio.gather(*tasks)
-        except Exception:
+        except (asyncio.CancelledError, Exception):
             consumer._callback_task_run = False
             await asyncio.sleep(0)
             raise
-        except asyncio.CancelledError:
-            consumer._callback_task_run = False
-            await asyncio.sleep(0)
-            raise
-
-
-        # try:
-        #     for task in asyncio.as_completed(tasks):
-        #         try:
-        #             await task
-        #             #await asyncio.sleep(0)
-        #         except Exception: # pylint: disable=broad-except
-        #             consumer._callback_task_run = False
-        #     for task in tasks:
-        #         if task.done() and task.exception():
-        #             raise task.exception()
-        # except asyncio.CancelledError:
-        #     consumer._callback_task_run = False
-        #     #await asyncio.sleep(0)
-        #     raise
 
     @staticmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
