@@ -1,5 +1,29 @@
 # Release History
 
+## 7.0.0 (2022-11-16)
+
+### Breaking Changes
+
+  - Operation JobCollectionsOperations.create_or_update has a new parameter kwargs
+  - Operation JobCollectionsOperations.get has a new parameter kwargs
+  - Operation JobCollectionsOperations.list_by_resource_group has a new parameter kwargs
+  - Operation JobCollectionsOperations.list_by_subscription has a new parameter kwargs
+  - Operation JobCollectionsOperations.patch has a new parameter kwargs
+  - Operation JobsOperations.create_or_update has a new parameter job
+  - Operation JobsOperations.create_or_update has a new parameter kwargs
+  - Operation JobsOperations.create_or_update no longer has parameter properties
+  - Operation JobsOperations.delete has a new parameter kwargs
+  - Operation JobsOperations.get has a new parameter kwargs
+  - Operation JobsOperations.list has a new parameter kwargs
+  - Operation JobsOperations.list_job_history has a new parameter kwargs
+  - Operation JobsOperations.patch has a new parameter job
+  - Operation JobsOperations.patch has a new parameter kwargs
+  - Operation JobsOperations.patch no longer has parameter properties
+  - Operation JobsOperations.run has a new parameter kwargs
+  - Renamed operation JobCollectionsOperations.delete to JobCollectionsOperations.begin_delete
+  - Renamed operation JobCollectionsOperations.disable to JobCollectionsOperations.begin_disable
+  - Renamed operation JobCollectionsOperations.enable to JobCollectionsOperations.begin_enable
+
 ## 7.0.0b1 (2020-10-22)
 
 This is beta preview version.

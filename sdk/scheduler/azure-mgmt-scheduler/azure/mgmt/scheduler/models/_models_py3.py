@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,44 +8,48 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-import msrest.serialization
+from .. import _serialization
 
-from ._scheduler_management_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class HttpAuthentication(msrest.serialization.Model):
+class HttpAuthentication(_serialization.Model):
     """HttpAuthentication.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: OAuthAuthentication, BasicAuthentication, ClientCertAuthentication.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    OAuthAuthentication, BasicAuthentication, ClientCertAuthentication
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Gets or sets the HTTP authentication type.Constant filled by server.
-     Possible values include: "NotSpecified", "ClientCertificate", "ActiveDirectoryOAuth", "Basic".
-    :type type: str or ~azure.mgmt.scheduler.models.HttpAuthenticationType
+    :ivar type: Gets or sets the HTTP authentication type. Required. Known values are:
+     "NotSpecified", "ClientCertificate", "ActiveDirectoryOAuth", and "Basic".
+    :vartype type: str or ~azure.mgmt.scheduler.models.HttpAuthenticationType
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'ActiveDirectoryOAuth': 'OAuthAuthentication', 'Basic': 'BasicAuthentication', 'ClientCertificate': 'ClientCertAuthentication'}
+        "type": {
+            "ActiveDirectoryOAuth": "OAuthAuthentication",
+            "Basic": "BasicAuthentication",
+            "ClientCertificate": "ClientCertAuthentication",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(HttpAuthentication, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
 
 
 class BasicAuthentication(HttpAuthentication):
@@ -52,34 +57,34 @@ class BasicAuthentication(HttpAuthentication):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Gets or sets the HTTP authentication type.Constant filled by server.
-     Possible values include: "NotSpecified", "ClientCertificate", "ActiveDirectoryOAuth", "Basic".
-    :type type: str or ~azure.mgmt.scheduler.models.HttpAuthenticationType
-    :param username: Gets or sets the username.
-    :type username: str
-    :param password: Gets or sets the password, return value will always be empty.
-    :type password: str
+    :ivar type: Gets or sets the HTTP authentication type. Required. Known values are:
+     "NotSpecified", "ClientCertificate", "ActiveDirectoryOAuth", and "Basic".
+    :vartype type: str or ~azure.mgmt.scheduler.models.HttpAuthenticationType
+    :ivar username: Gets or sets the username.
+    :vartype username: str
+    :ivar password: Gets or sets the password, return value will always be empty.
+    :vartype password: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        username: Optional[str] = None,
-        password: Optional[str] = None,
-        **kwargs
-    ):
-        super(BasicAuthentication, self).__init__(**kwargs)
-        self.type = 'Basic'  # type: str
+    def __init__(self, *, username: Optional[str] = None, password: Optional[str] = None, **kwargs):
+        """
+        :keyword username: Gets or sets the username.
+        :paramtype username: str
+        :keyword password: Gets or sets the password, return value will always be empty.
+        :paramtype password: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "Basic"
         self.username = username
         self.password = password
 
@@ -89,33 +94,33 @@ class ClientCertAuthentication(HttpAuthentication):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Gets or sets the HTTP authentication type.Constant filled by server.
-     Possible values include: "NotSpecified", "ClientCertificate", "ActiveDirectoryOAuth", "Basic".
-    :type type: str or ~azure.mgmt.scheduler.models.HttpAuthenticationType
-    :param password: Gets or sets the certificate password, return value will always be empty.
-    :type password: str
-    :param pfx: Gets or sets the pfx certificate. Accepts certification in base64 encoding, return
+    :ivar type: Gets or sets the HTTP authentication type. Required. Known values are:
+     "NotSpecified", "ClientCertificate", "ActiveDirectoryOAuth", and "Basic".
+    :vartype type: str or ~azure.mgmt.scheduler.models.HttpAuthenticationType
+    :ivar password: Gets or sets the certificate password, return value will always be empty.
+    :vartype password: str
+    :ivar pfx: Gets or sets the pfx certificate. Accepts certification in base64 encoding, return
      value will always be empty.
-    :type pfx: str
-    :param certificate_thumbprint: Gets or sets the certificate thumbprint.
-    :type certificate_thumbprint: str
-    :param certificate_expiration_date: Gets or sets the certificate expiration date.
-    :type certificate_expiration_date: ~datetime.datetime
-    :param certificate_subject_name: Gets or sets the certificate subject name.
-    :type certificate_subject_name: str
+    :vartype pfx: str
+    :ivar certificate_thumbprint: Gets or sets the certificate thumbprint.
+    :vartype certificate_thumbprint: str
+    :ivar certificate_expiration_date: Gets or sets the certificate expiration date.
+    :vartype certificate_expiration_date: ~datetime.datetime
+    :ivar certificate_subject_name: Gets or sets the certificate subject name.
+    :vartype certificate_subject_name: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
-        'pfx': {'key': 'pfx', 'type': 'str'},
-        'certificate_thumbprint': {'key': 'certificateThumbprint', 'type': 'str'},
-        'certificate_expiration_date': {'key': 'certificateExpirationDate', 'type': 'iso-8601'},
-        'certificate_subject_name': {'key': 'certificateSubjectName', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "password": {"key": "password", "type": "str"},
+        "pfx": {"key": "pfx", "type": "str"},
+        "certificate_thumbprint": {"key": "certificateThumbprint", "type": "str"},
+        "certificate_expiration_date": {"key": "certificateExpirationDate", "type": "iso-8601"},
+        "certificate_subject_name": {"key": "certificateSubjectName", "type": "str"},
     }
 
     def __init__(
@@ -128,8 +133,21 @@ class ClientCertAuthentication(HttpAuthentication):
         certificate_subject_name: Optional[str] = None,
         **kwargs
     ):
-        super(ClientCertAuthentication, self).__init__(**kwargs)
-        self.type = 'ClientCertificate'  # type: str
+        """
+        :keyword password: Gets or sets the certificate password, return value will always be empty.
+        :paramtype password: str
+        :keyword pfx: Gets or sets the pfx certificate. Accepts certification in base64 encoding,
+         return value will always be empty.
+        :paramtype pfx: str
+        :keyword certificate_thumbprint: Gets or sets the certificate thumbprint.
+        :paramtype certificate_thumbprint: str
+        :keyword certificate_expiration_date: Gets or sets the certificate expiration date.
+        :paramtype certificate_expiration_date: ~datetime.datetime
+        :keyword certificate_subject_name: Gets or sets the certificate subject name.
+        :paramtype certificate_subject_name: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "ClientCertificate"
         self.password = password
         self.pfx = pfx
         self.certificate_thumbprint = certificate_thumbprint
@@ -137,40 +155,52 @@ class ClientCertAuthentication(HttpAuthentication):
         self.certificate_subject_name = certificate_subject_name
 
 
-class HttpRequest(msrest.serialization.Model):
+class HttpRequest(_serialization.Model):
     """HttpRequest.
 
-    :param authentication: Gets or sets the authentication method of the request.
-    :type authentication: ~azure.mgmt.scheduler.models.HttpAuthentication
-    :param uri: Gets or sets the URI of the request.
-    :type uri: str
-    :param method: Gets or sets the method of the request.
-    :type method: str
-    :param body: Gets or sets the request body.
-    :type body: str
-    :param headers: Gets or sets the headers.
-    :type headers: dict[str, str]
+    :ivar authentication: Gets or sets the authentication method of the request.
+    :vartype authentication: ~azure.mgmt.scheduler.models.HttpAuthentication
+    :ivar uri: Gets or sets the URI of the request.
+    :vartype uri: str
+    :ivar method: Gets or sets the method of the request.
+    :vartype method: str
+    :ivar body: Gets or sets the request body.
+    :vartype body: str
+    :ivar headers: Gets or sets the headers.
+    :vartype headers: dict[str, str]
     """
 
     _attribute_map = {
-        'authentication': {'key': 'authentication', 'type': 'HttpAuthentication'},
-        'uri': {'key': 'uri', 'type': 'str'},
-        'method': {'key': 'method', 'type': 'str'},
-        'body': {'key': 'body', 'type': 'str'},
-        'headers': {'key': 'headers', 'type': '{str}'},
+        "authentication": {"key": "authentication", "type": "HttpAuthentication"},
+        "uri": {"key": "uri", "type": "str"},
+        "method": {"key": "method", "type": "str"},
+        "body": {"key": "body", "type": "str"},
+        "headers": {"key": "headers", "type": "{str}"},
     }
 
     def __init__(
         self,
         *,
-        authentication: Optional["HttpAuthentication"] = None,
+        authentication: Optional["_models.HttpAuthentication"] = None,
         uri: Optional[str] = None,
         method: Optional[str] = None,
         body: Optional[str] = None,
         headers: Optional[Dict[str, str]] = None,
         **kwargs
     ):
-        super(HttpRequest, self).__init__(**kwargs)
+        """
+        :keyword authentication: Gets or sets the authentication method of the request.
+        :paramtype authentication: ~azure.mgmt.scheduler.models.HttpAuthentication
+        :keyword uri: Gets or sets the URI of the request.
+        :paramtype uri: str
+        :keyword method: Gets or sets the method of the request.
+        :paramtype method: str
+        :keyword body: Gets or sets the request body.
+        :paramtype body: str
+        :keyword headers: Gets or sets the headers.
+        :paramtype headers: dict[str, str]
+        """
+        super().__init__(**kwargs)
         self.authentication = authentication
         self.uri = uri
         self.method = method
@@ -178,49 +208,66 @@ class HttpRequest(msrest.serialization.Model):
         self.headers = headers
 
 
-class JobAction(msrest.serialization.Model):
+class JobAction(_serialization.Model):
     """JobAction.
 
-    :param type: Gets or sets the job action type. Possible values include: "Http", "Https",
-     "StorageQueue", "ServiceBusQueue", "ServiceBusTopic".
-    :type type: str or ~azure.mgmt.scheduler.models.JobActionType
-    :param request: Gets or sets the http requests.
-    :type request: ~azure.mgmt.scheduler.models.HttpRequest
-    :param queue_message: Gets or sets the storage queue message.
-    :type queue_message: ~azure.mgmt.scheduler.models.StorageQueueMessage
-    :param service_bus_queue_message: Gets or sets the service bus queue message.
-    :type service_bus_queue_message: ~azure.mgmt.scheduler.models.ServiceBusQueueMessage
-    :param service_bus_topic_message: Gets or sets the service bus topic message.
-    :type service_bus_topic_message: ~azure.mgmt.scheduler.models.ServiceBusTopicMessage
-    :param retry_policy: Gets or sets the retry policy.
-    :type retry_policy: ~azure.mgmt.scheduler.models.RetryPolicy
-    :param error_action: Gets or sets the error action.
-    :type error_action: ~azure.mgmt.scheduler.models.JobErrorAction
+    :ivar type: Gets or sets the job action type. Known values are: "Http", "Https",
+     "StorageQueue", "ServiceBusQueue", and "ServiceBusTopic".
+    :vartype type: str or ~azure.mgmt.scheduler.models.JobActionType
+    :ivar request: Gets or sets the http requests.
+    :vartype request: ~azure.mgmt.scheduler.models.HttpRequest
+    :ivar queue_message: Gets or sets the storage queue message.
+    :vartype queue_message: ~azure.mgmt.scheduler.models.StorageQueueMessage
+    :ivar service_bus_queue_message: Gets or sets the service bus queue message.
+    :vartype service_bus_queue_message: ~azure.mgmt.scheduler.models.ServiceBusQueueMessage
+    :ivar service_bus_topic_message: Gets or sets the service bus topic message.
+    :vartype service_bus_topic_message: ~azure.mgmt.scheduler.models.ServiceBusTopicMessage
+    :ivar retry_policy: Gets or sets the retry policy.
+    :vartype retry_policy: ~azure.mgmt.scheduler.models.RetryPolicy
+    :ivar error_action: Gets or sets the error action.
+    :vartype error_action: ~azure.mgmt.scheduler.models.JobErrorAction
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'request': {'key': 'request', 'type': 'HttpRequest'},
-        'queue_message': {'key': 'queueMessage', 'type': 'StorageQueueMessage'},
-        'service_bus_queue_message': {'key': 'serviceBusQueueMessage', 'type': 'ServiceBusQueueMessage'},
-        'service_bus_topic_message': {'key': 'serviceBusTopicMessage', 'type': 'ServiceBusTopicMessage'},
-        'retry_policy': {'key': 'retryPolicy', 'type': 'RetryPolicy'},
-        'error_action': {'key': 'errorAction', 'type': 'JobErrorAction'},
+        "type": {"key": "type", "type": "str"},
+        "request": {"key": "request", "type": "HttpRequest"},
+        "queue_message": {"key": "queueMessage", "type": "StorageQueueMessage"},
+        "service_bus_queue_message": {"key": "serviceBusQueueMessage", "type": "ServiceBusQueueMessage"},
+        "service_bus_topic_message": {"key": "serviceBusTopicMessage", "type": "ServiceBusTopicMessage"},
+        "retry_policy": {"key": "retryPolicy", "type": "RetryPolicy"},
+        "error_action": {"key": "errorAction", "type": "JobErrorAction"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "JobActionType"]] = None,
-        request: Optional["HttpRequest"] = None,
-        queue_message: Optional["StorageQueueMessage"] = None,
-        service_bus_queue_message: Optional["ServiceBusQueueMessage"] = None,
-        service_bus_topic_message: Optional["ServiceBusTopicMessage"] = None,
-        retry_policy: Optional["RetryPolicy"] = None,
-        error_action: Optional["JobErrorAction"] = None,
+        type: Optional[Union[str, "_models.JobActionType"]] = None,
+        request: Optional["_models.HttpRequest"] = None,
+        queue_message: Optional["_models.StorageQueueMessage"] = None,
+        service_bus_queue_message: Optional["_models.ServiceBusQueueMessage"] = None,
+        service_bus_topic_message: Optional["_models.ServiceBusTopicMessage"] = None,
+        retry_policy: Optional["_models.RetryPolicy"] = None,
+        error_action: Optional["_models.JobErrorAction"] = None,
         **kwargs
     ):
-        super(JobAction, self).__init__(**kwargs)
+        """
+        :keyword type: Gets or sets the job action type. Known values are: "Http", "Https",
+         "StorageQueue", "ServiceBusQueue", and "ServiceBusTopic".
+        :paramtype type: str or ~azure.mgmt.scheduler.models.JobActionType
+        :keyword request: Gets or sets the http requests.
+        :paramtype request: ~azure.mgmt.scheduler.models.HttpRequest
+        :keyword queue_message: Gets or sets the storage queue message.
+        :paramtype queue_message: ~azure.mgmt.scheduler.models.StorageQueueMessage
+        :keyword service_bus_queue_message: Gets or sets the service bus queue message.
+        :paramtype service_bus_queue_message: ~azure.mgmt.scheduler.models.ServiceBusQueueMessage
+        :keyword service_bus_topic_message: Gets or sets the service bus topic message.
+        :paramtype service_bus_topic_message: ~azure.mgmt.scheduler.models.ServiceBusTopicMessage
+        :keyword retry_policy: Gets or sets the retry policy.
+        :paramtype retry_policy: ~azure.mgmt.scheduler.models.RetryPolicy
+        :keyword error_action: Gets or sets the error action.
+        :paramtype error_action: ~azure.mgmt.scheduler.models.JobErrorAction
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.request = request
         self.queue_message = queue_message
@@ -230,7 +277,7 @@ class JobAction(msrest.serialization.Model):
         self.error_action = error_action
 
 
-class JobCollectionDefinition(msrest.serialization.Model):
+class JobCollectionDefinition(_serialization.Model):
     """JobCollectionDefinition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -239,28 +286,28 @@ class JobCollectionDefinition(msrest.serialization.Model):
     :vartype id: str
     :ivar type: Gets the job collection resource type.
     :vartype type: str
-    :param name: Gets or sets the job collection resource name.
-    :type name: str
-    :param location: Gets or sets the storage account location.
-    :type location: str
-    :param tags: A set of tags. Gets or sets the tags.
-    :type tags: dict[str, str]
-    :param properties: Gets or sets the job collection properties.
-    :type properties: ~azure.mgmt.scheduler.models.JobCollectionProperties
+    :ivar name: Gets or sets the job collection resource name.
+    :vartype name: str
+    :ivar location: Gets or sets the storage account location.
+    :vartype location: str
+    :ivar tags: Gets or sets the tags.
+    :vartype tags: dict[str, str]
+    :ivar properties: Gets or sets the job collection properties.
+    :vartype properties: ~azure.mgmt.scheduler.models.JobCollectionProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'properties': {'key': 'properties', 'type': 'JobCollectionProperties'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "properties": {"key": "properties", "type": "JobCollectionProperties"},
     }
 
     def __init__(
@@ -269,10 +316,20 @@ class JobCollectionDefinition(msrest.serialization.Model):
         name: Optional[str] = None,
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
-        properties: Optional["JobCollectionProperties"] = None,
+        properties: Optional["_models.JobCollectionProperties"] = None,
         **kwargs
     ):
-        super(JobCollectionDefinition, self).__init__(**kwargs)
+        """
+        :keyword name: Gets or sets the job collection resource name.
+        :paramtype name: str
+        :keyword location: Gets or sets the storage account location.
+        :paramtype location: str
+        :keyword tags: Gets or sets the tags.
+        :paramtype tags: dict[str, str]
+        :keyword properties: Gets or sets the job collection properties.
+        :paramtype properties: ~azure.mgmt.scheduler.models.JobCollectionProperties
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = name
@@ -281,84 +338,92 @@ class JobCollectionDefinition(msrest.serialization.Model):
         self.properties = properties
 
 
-class JobCollectionListResult(msrest.serialization.Model):
+class JobCollectionListResult(_serialization.Model):
     """JobCollectionListResult.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar value: Gets the job collections.
     :vartype value: list[~azure.mgmt.scheduler.models.JobCollectionDefinition]
-    :param next_link: Gets or sets the URL to get the next set of job collections.
-    :type next_link: str
+    :ivar next_link: Gets or sets the URL to get the next set of job collections.
+    :vartype next_link: str
     """
 
     _validation = {
-        'value': {'readonly': True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[JobCollectionDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[JobCollectionDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(JobCollectionListResult, self).__init__(**kwargs)
+    def __init__(self, *, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword next_link: Gets or sets the URL to get the next set of job collections.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = next_link
 
 
-class JobCollectionProperties(msrest.serialization.Model):
+class JobCollectionProperties(_serialization.Model):
     """JobCollectionProperties.
 
-    :param sku: Gets or sets the SKU.
-    :type sku: ~azure.mgmt.scheduler.models.Sku
-    :param state: Gets or sets the state. Possible values include: "Enabled", "Disabled",
-     "Suspended", "Deleted".
-    :type state: str or ~azure.mgmt.scheduler.models.JobCollectionState
-    :param quota: Gets or sets the job collection quota.
-    :type quota: ~azure.mgmt.scheduler.models.JobCollectionQuota
+    :ivar sku: Gets or sets the SKU.
+    :vartype sku: ~azure.mgmt.scheduler.models.Sku
+    :ivar state: Gets or sets the state. Known values are: "Enabled", "Disabled", "Suspended", and
+     "Deleted".
+    :vartype state: str or ~azure.mgmt.scheduler.models.JobCollectionState
+    :ivar quota: Gets or sets the job collection quota.
+    :vartype quota: ~azure.mgmt.scheduler.models.JobCollectionQuota
     """
 
     _attribute_map = {
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'state': {'key': 'state', 'type': 'str'},
-        'quota': {'key': 'quota', 'type': 'JobCollectionQuota'},
+        "sku": {"key": "sku", "type": "Sku"},
+        "state": {"key": "state", "type": "str"},
+        "quota": {"key": "quota", "type": "JobCollectionQuota"},
     }
 
     def __init__(
         self,
         *,
-        sku: Optional["Sku"] = None,
-        state: Optional[Union[str, "JobCollectionState"]] = None,
-        quota: Optional["JobCollectionQuota"] = None,
+        sku: Optional["_models.Sku"] = None,
+        state: Optional[Union[str, "_models.JobCollectionState"]] = None,
+        quota: Optional["_models.JobCollectionQuota"] = None,
         **kwargs
     ):
-        super(JobCollectionProperties, self).__init__(**kwargs)
+        """
+        :keyword sku: Gets or sets the SKU.
+        :paramtype sku: ~azure.mgmt.scheduler.models.Sku
+        :keyword state: Gets or sets the state. Known values are: "Enabled", "Disabled", "Suspended",
+         and "Deleted".
+        :paramtype state: str or ~azure.mgmt.scheduler.models.JobCollectionState
+        :keyword quota: Gets or sets the job collection quota.
+        :paramtype quota: ~azure.mgmt.scheduler.models.JobCollectionQuota
+        """
+        super().__init__(**kwargs)
         self.sku = sku
         self.state = state
         self.quota = quota
 
 
-class JobCollectionQuota(msrest.serialization.Model):
+class JobCollectionQuota(_serialization.Model):
     """JobCollectionQuota.
 
-    :param max_job_count: Gets or set the maximum job count.
-    :type max_job_count: int
-    :param max_job_occurrence: Gets or sets the maximum job occurrence.
-    :type max_job_occurrence: int
-    :param max_recurrence: Gets or set the maximum recurrence.
-    :type max_recurrence: ~azure.mgmt.scheduler.models.JobMaxRecurrence
+    :ivar max_job_count: Gets or set the maximum job count.
+    :vartype max_job_count: int
+    :ivar max_job_occurrence: Gets or sets the maximum job occurrence.
+    :vartype max_job_occurrence: int
+    :ivar max_recurrence: Gets or set the maximum recurrence.
+    :vartype max_recurrence: ~azure.mgmt.scheduler.models.JobMaxRecurrence
     """
 
     _attribute_map = {
-        'max_job_count': {'key': 'maxJobCount', 'type': 'int'},
-        'max_job_occurrence': {'key': 'maxJobOccurrence', 'type': 'int'},
-        'max_recurrence': {'key': 'maxRecurrence', 'type': 'JobMaxRecurrence'},
+        "max_job_count": {"key": "maxJobCount", "type": "int"},
+        "max_job_occurrence": {"key": "maxJobOccurrence", "type": "int"},
+        "max_recurrence": {"key": "maxRecurrence", "type": "JobMaxRecurrence"},
     }
 
     def __init__(
@@ -366,16 +431,24 @@ class JobCollectionQuota(msrest.serialization.Model):
         *,
         max_job_count: Optional[int] = None,
         max_job_occurrence: Optional[int] = None,
-        max_recurrence: Optional["JobMaxRecurrence"] = None,
+        max_recurrence: Optional["_models.JobMaxRecurrence"] = None,
         **kwargs
     ):
-        super(JobCollectionQuota, self).__init__(**kwargs)
+        """
+        :keyword max_job_count: Gets or set the maximum job count.
+        :paramtype max_job_count: int
+        :keyword max_job_occurrence: Gets or sets the maximum job occurrence.
+        :paramtype max_job_occurrence: int
+        :keyword max_recurrence: Gets or set the maximum recurrence.
+        :paramtype max_recurrence: ~azure.mgmt.scheduler.models.JobMaxRecurrence
+        """
+        super().__init__(**kwargs)
         self.max_job_count = max_job_count
         self.max_job_occurrence = max_job_occurrence
         self.max_recurrence = max_recurrence
 
 
-class JobDefinition(msrest.serialization.Model):
+class JobDefinition(_serialization.Model):
     """JobDefinition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -386,75 +459,89 @@ class JobDefinition(msrest.serialization.Model):
     :vartype type: str
     :ivar name: Gets the job resource name.
     :vartype name: str
-    :param properties: Gets or sets the job properties.
-    :type properties: ~azure.mgmt.scheduler.models.JobProperties
+    :ivar properties: Gets or sets the job properties.
+    :vartype properties: ~azure.mgmt.scheduler.models.JobProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'JobProperties'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "JobProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["JobProperties"] = None,
-        **kwargs
-    ):
-        super(JobDefinition, self).__init__(**kwargs)
+    def __init__(self, *, properties: Optional["_models.JobProperties"] = None, **kwargs):
+        """
+        :keyword properties: Gets or sets the job properties.
+        :paramtype properties: ~azure.mgmt.scheduler.models.JobProperties
+        """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
         self.properties = properties
 
 
-class JobErrorAction(msrest.serialization.Model):
+class JobErrorAction(_serialization.Model):
     """JobErrorAction.
 
-    :param type: Gets or sets the job error action type. Possible values include: "Http", "Https",
-     "StorageQueue", "ServiceBusQueue", "ServiceBusTopic".
-    :type type: str or ~azure.mgmt.scheduler.models.JobActionType
-    :param request: Gets or sets the http requests.
-    :type request: ~azure.mgmt.scheduler.models.HttpRequest
-    :param queue_message: Gets or sets the storage queue message.
-    :type queue_message: ~azure.mgmt.scheduler.models.StorageQueueMessage
-    :param service_bus_queue_message: Gets or sets the service bus queue message.
-    :type service_bus_queue_message: ~azure.mgmt.scheduler.models.ServiceBusQueueMessage
-    :param service_bus_topic_message: Gets or sets the service bus topic message.
-    :type service_bus_topic_message: ~azure.mgmt.scheduler.models.ServiceBusTopicMessage
-    :param retry_policy: Gets or sets the retry policy.
-    :type retry_policy: ~azure.mgmt.scheduler.models.RetryPolicy
+    :ivar type: Gets or sets the job error action type. Known values are: "Http", "Https",
+     "StorageQueue", "ServiceBusQueue", and "ServiceBusTopic".
+    :vartype type: str or ~azure.mgmt.scheduler.models.JobActionType
+    :ivar request: Gets or sets the http requests.
+    :vartype request: ~azure.mgmt.scheduler.models.HttpRequest
+    :ivar queue_message: Gets or sets the storage queue message.
+    :vartype queue_message: ~azure.mgmt.scheduler.models.StorageQueueMessage
+    :ivar service_bus_queue_message: Gets or sets the service bus queue message.
+    :vartype service_bus_queue_message: ~azure.mgmt.scheduler.models.ServiceBusQueueMessage
+    :ivar service_bus_topic_message: Gets or sets the service bus topic message.
+    :vartype service_bus_topic_message: ~azure.mgmt.scheduler.models.ServiceBusTopicMessage
+    :ivar retry_policy: Gets or sets the retry policy.
+    :vartype retry_policy: ~azure.mgmt.scheduler.models.RetryPolicy
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'request': {'key': 'request', 'type': 'HttpRequest'},
-        'queue_message': {'key': 'queueMessage', 'type': 'StorageQueueMessage'},
-        'service_bus_queue_message': {'key': 'serviceBusQueueMessage', 'type': 'ServiceBusQueueMessage'},
-        'service_bus_topic_message': {'key': 'serviceBusTopicMessage', 'type': 'ServiceBusTopicMessage'},
-        'retry_policy': {'key': 'retryPolicy', 'type': 'RetryPolicy'},
+        "type": {"key": "type", "type": "str"},
+        "request": {"key": "request", "type": "HttpRequest"},
+        "queue_message": {"key": "queueMessage", "type": "StorageQueueMessage"},
+        "service_bus_queue_message": {"key": "serviceBusQueueMessage", "type": "ServiceBusQueueMessage"},
+        "service_bus_topic_message": {"key": "serviceBusTopicMessage", "type": "ServiceBusTopicMessage"},
+        "retry_policy": {"key": "retryPolicy", "type": "RetryPolicy"},
     }
 
     def __init__(
         self,
         *,
-        type: Optional[Union[str, "JobActionType"]] = None,
-        request: Optional["HttpRequest"] = None,
-        queue_message: Optional["StorageQueueMessage"] = None,
-        service_bus_queue_message: Optional["ServiceBusQueueMessage"] = None,
-        service_bus_topic_message: Optional["ServiceBusTopicMessage"] = None,
-        retry_policy: Optional["RetryPolicy"] = None,
+        type: Optional[Union[str, "_models.JobActionType"]] = None,
+        request: Optional["_models.HttpRequest"] = None,
+        queue_message: Optional["_models.StorageQueueMessage"] = None,
+        service_bus_queue_message: Optional["_models.ServiceBusQueueMessage"] = None,
+        service_bus_topic_message: Optional["_models.ServiceBusTopicMessage"] = None,
+        retry_policy: Optional["_models.RetryPolicy"] = None,
         **kwargs
     ):
-        super(JobErrorAction, self).__init__(**kwargs)
+        """
+        :keyword type: Gets or sets the job error action type. Known values are: "Http", "Https",
+         "StorageQueue", "ServiceBusQueue", and "ServiceBusTopic".
+        :paramtype type: str or ~azure.mgmt.scheduler.models.JobActionType
+        :keyword request: Gets or sets the http requests.
+        :paramtype request: ~azure.mgmt.scheduler.models.HttpRequest
+        :keyword queue_message: Gets or sets the storage queue message.
+        :paramtype queue_message: ~azure.mgmt.scheduler.models.StorageQueueMessage
+        :keyword service_bus_queue_message: Gets or sets the service bus queue message.
+        :paramtype service_bus_queue_message: ~azure.mgmt.scheduler.models.ServiceBusQueueMessage
+        :keyword service_bus_topic_message: Gets or sets the service bus topic message.
+        :paramtype service_bus_topic_message: ~azure.mgmt.scheduler.models.ServiceBusTopicMessage
+        :keyword retry_policy: Gets or sets the retry policy.
+        :paramtype retry_policy: ~azure.mgmt.scheduler.models.RetryPolicy
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.request = request
         self.queue_message = queue_message
@@ -463,7 +550,7 @@ class JobErrorAction(msrest.serialization.Model):
         self.retry_policy = retry_policy
 
 
-class JobHistoryDefinition(msrest.serialization.Model):
+class JobHistoryDefinition(_serialization.Model):
     """JobHistoryDefinition.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -479,31 +566,29 @@ class JobHistoryDefinition(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'name': {'readonly': True},
-        'properties': {'readonly': True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "name": {"readonly": True},
+        "properties": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'JobHistoryDefinitionProperties'},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "JobHistoryDefinitionProperties"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(JobHistoryDefinition, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.type = None
         self.name = None
         self.properties = None
 
 
-class JobHistoryDefinitionProperties(msrest.serialization.Model):
+class JobHistoryDefinitionProperties(_serialization.Model):
     """JobHistoryDefinitionProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -514,10 +599,10 @@ class JobHistoryDefinitionProperties(msrest.serialization.Model):
     :vartype end_time: ~datetime.datetime
     :ivar expected_execution_time: Gets the expected execution time for this job.
     :vartype expected_execution_time: ~datetime.datetime
-    :ivar action_name: Gets the job history action name. Possible values include: "MainAction",
+    :ivar action_name: Gets the job history action name. Known values are: "MainAction" and
      "ErrorAction".
     :vartype action_name: str or ~azure.mgmt.scheduler.models.JobHistoryActionName
-    :ivar status: Gets the job history status. Possible values include: "Completed", "Failed",
+    :ivar status: Gets the job history status. Known values are: "Completed", "Failed", and
      "Postponed".
     :vartype status: str or ~azure.mgmt.scheduler.models.JobExecutionStatus
     :ivar message: Gets the message for the job history.
@@ -529,32 +614,30 @@ class JobHistoryDefinitionProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'expected_execution_time': {'readonly': True},
-        'action_name': {'readonly': True},
-        'status': {'readonly': True},
-        'message': {'readonly': True},
-        'retry_count': {'readonly': True},
-        'repeat_count': {'readonly': True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "expected_execution_time": {"readonly": True},
+        "action_name": {"readonly": True},
+        "status": {"readonly": True},
+        "message": {"readonly": True},
+        "retry_count": {"readonly": True},
+        "repeat_count": {"readonly": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'expected_execution_time': {'key': 'expectedExecutionTime', 'type': 'iso-8601'},
-        'action_name': {'key': 'actionName', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'retry_count': {'key': 'retryCount', 'type': 'int'},
-        'repeat_count': {'key': 'repeatCount', 'type': 'int'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "expected_execution_time": {"key": "expectedExecutionTime", "type": "iso-8601"},
+        "action_name": {"key": "actionName", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "retry_count": {"key": "retryCount", "type": "int"},
+        "repeat_count": {"key": "repeatCount", "type": "int"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(JobHistoryDefinitionProperties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.start_time = None
         self.end_time = None
         self.expected_execution_time = None
@@ -565,147 +648,169 @@ class JobHistoryDefinitionProperties(msrest.serialization.Model):
         self.repeat_count = None
 
 
-class JobHistoryFilter(msrest.serialization.Model):
+class JobHistoryFilter(_serialization.Model):
     """JobHistoryFilter.
 
-    :param status: Gets or sets the job execution status. Possible values include: "Completed",
-     "Failed", "Postponed".
-    :type status: str or ~azure.mgmt.scheduler.models.JobExecutionStatus
+    :ivar status: Gets or sets the job execution status. Known values are: "Completed", "Failed",
+     and "Postponed".
+    :vartype status: str or ~azure.mgmt.scheduler.models.JobExecutionStatus
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: Optional[Union[str, "JobExecutionStatus"]] = None,
-        **kwargs
-    ):
-        super(JobHistoryFilter, self).__init__(**kwargs)
+    def __init__(self, *, status: Optional[Union[str, "_models.JobExecutionStatus"]] = None, **kwargs):
+        """
+        :keyword status: Gets or sets the job execution status. Known values are: "Completed",
+         "Failed", and "Postponed".
+        :paramtype status: str or ~azure.mgmt.scheduler.models.JobExecutionStatus
+        """
+        super().__init__(**kwargs)
         self.status = status
 
 
-class JobHistoryListResult(msrest.serialization.Model):
+class JobHistoryListResult(_serialization.Model):
     """JobHistoryListResult.
 
-    :param value: Gets or sets the job histories under job.
-    :type value: list[~azure.mgmt.scheduler.models.JobHistoryDefinition]
-    :param next_link: Gets or sets the URL to get the next set of job histories.
-    :type next_link: str
+    :ivar value: Gets or sets the job histories under job.
+    :vartype value: list[~azure.mgmt.scheduler.models.JobHistoryDefinition]
+    :ivar next_link: Gets or sets the URL to get the next set of job histories.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[JobHistoryDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[JobHistoryDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["JobHistoryDefinition"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.JobHistoryDefinition"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(JobHistoryListResult, self).__init__(**kwargs)
+        """
+        :keyword value: Gets or sets the job histories under job.
+        :paramtype value: list[~azure.mgmt.scheduler.models.JobHistoryDefinition]
+        :keyword next_link: Gets or sets the URL to get the next set of job histories.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class JobListResult(msrest.serialization.Model):
+class JobListResult(_serialization.Model):
     """JobListResult.
 
-    :param value: Gets or sets all jobs under job collection.
-    :type value: list[~azure.mgmt.scheduler.models.JobDefinition]
-    :param next_link: Gets or sets the URL to get the next set of jobs.
-    :type next_link: str
+    :ivar value: Gets or sets all jobs under job collection.
+    :vartype value: list[~azure.mgmt.scheduler.models.JobDefinition]
+    :ivar next_link: Gets or sets the URL to get the next set of jobs.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[JobDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[JobDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["JobDefinition"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.JobDefinition"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(JobListResult, self).__init__(**kwargs)
+        """
+        :keyword value: Gets or sets all jobs under job collection.
+        :paramtype value: list[~azure.mgmt.scheduler.models.JobDefinition]
+        :keyword next_link: Gets or sets the URL to get the next set of jobs.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class JobMaxRecurrence(msrest.serialization.Model):
+class JobMaxRecurrence(_serialization.Model):
     """JobMaxRecurrence.
 
-    :param frequency: Gets or sets the frequency of recurrence (second, minute, hour, day, week,
-     month). Possible values include: "Minute", "Hour", "Day", "Week", "Month".
-    :type frequency: str or ~azure.mgmt.scheduler.models.RecurrenceFrequency
-    :param interval: Gets or sets the interval between retries.
-    :type interval: int
+    :ivar frequency: Gets or sets the frequency of recurrence (second, minute, hour, day, week,
+     month). Known values are: "Minute", "Hour", "Day", "Week", and "Month".
+    :vartype frequency: str or ~azure.mgmt.scheduler.models.RecurrenceFrequency
+    :ivar interval: Gets or sets the interval between retries.
+    :vartype interval: int
     """
 
     _attribute_map = {
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'interval': {'key': 'interval', 'type': 'int'},
+        "frequency": {"key": "frequency", "type": "str"},
+        "interval": {"key": "interval", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        frequency: Optional[Union[str, "RecurrenceFrequency"]] = None,
+        frequency: Optional[Union[str, "_models.RecurrenceFrequency"]] = None,
         interval: Optional[int] = None,
         **kwargs
     ):
-        super(JobMaxRecurrence, self).__init__(**kwargs)
+        """
+        :keyword frequency: Gets or sets the frequency of recurrence (second, minute, hour, day, week,
+         month). Known values are: "Minute", "Hour", "Day", "Week", and "Month".
+        :paramtype frequency: str or ~azure.mgmt.scheduler.models.RecurrenceFrequency
+        :keyword interval: Gets or sets the interval between retries.
+        :paramtype interval: int
+        """
+        super().__init__(**kwargs)
         self.frequency = frequency
         self.interval = interval
 
 
-class JobProperties(msrest.serialization.Model):
+class JobProperties(_serialization.Model):
     """JobProperties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param start_time: Gets or sets the job start time.
-    :type start_time: ~datetime.datetime
-    :param action: Gets or sets the job action.
-    :type action: ~azure.mgmt.scheduler.models.JobAction
-    :param recurrence: Gets or sets the job recurrence.
-    :type recurrence: ~azure.mgmt.scheduler.models.JobRecurrence
-    :param state: Gets or set the job state. Possible values include: "Enabled", "Disabled",
-     "Faulted", "Completed".
-    :type state: str or ~azure.mgmt.scheduler.models.JobState
+    :ivar start_time: Gets or sets the job start time.
+    :vartype start_time: ~datetime.datetime
+    :ivar action: Gets or sets the job action.
+    :vartype action: ~azure.mgmt.scheduler.models.JobAction
+    :ivar recurrence: Gets or sets the job recurrence.
+    :vartype recurrence: ~azure.mgmt.scheduler.models.JobRecurrence
+    :ivar state: Gets or set the job state. Known values are: "Enabled", "Disabled", "Faulted", and
+     "Completed".
+    :vartype state: str or ~azure.mgmt.scheduler.models.JobState
     :ivar status: Gets the job status.
     :vartype status: ~azure.mgmt.scheduler.models.JobStatus
     """
 
     _validation = {
-        'status': {'readonly': True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'action': {'key': 'action', 'type': 'JobAction'},
-        'recurrence': {'key': 'recurrence', 'type': 'JobRecurrence'},
-        'state': {'key': 'state', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'JobStatus'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "action": {"key": "action", "type": "JobAction"},
+        "recurrence": {"key": "recurrence", "type": "JobRecurrence"},
+        "state": {"key": "state", "type": "str"},
+        "status": {"key": "status", "type": "JobStatus"},
     }
 
     def __init__(
         self,
         *,
         start_time: Optional[datetime.datetime] = None,
-        action: Optional["JobAction"] = None,
-        recurrence: Optional["JobRecurrence"] = None,
-        state: Optional[Union[str, "JobState"]] = None,
+        action: Optional["_models.JobAction"] = None,
+        recurrence: Optional["_models.JobRecurrence"] = None,
+        state: Optional[Union[str, "_models.JobState"]] = None,
         **kwargs
     ):
-        super(JobProperties, self).__init__(**kwargs)
+        """
+        :keyword start_time: Gets or sets the job start time.
+        :paramtype start_time: ~datetime.datetime
+        :keyword action: Gets or sets the job action.
+        :paramtype action: ~azure.mgmt.scheduler.models.JobAction
+        :keyword recurrence: Gets or sets the job recurrence.
+        :paramtype recurrence: ~azure.mgmt.scheduler.models.JobRecurrence
+        :keyword state: Gets or set the job state. Known values are: "Enabled", "Disabled", "Faulted",
+         and "Completed".
+        :paramtype state: str or ~azure.mgmt.scheduler.models.JobState
+        """
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.action = action
         self.recurrence = recurrence
@@ -713,41 +818,54 @@ class JobProperties(msrest.serialization.Model):
         self.status = None
 
 
-class JobRecurrence(msrest.serialization.Model):
+class JobRecurrence(_serialization.Model):
     """JobRecurrence.
 
-    :param frequency: Gets or sets the frequency of recurrence (second, minute, hour, day, week,
-     month). Possible values include: "Minute", "Hour", "Day", "Week", "Month".
-    :type frequency: str or ~azure.mgmt.scheduler.models.RecurrenceFrequency
-    :param interval: Gets or sets the interval between retries.
-    :type interval: int
-    :param count: Gets or sets the maximum number of times that the job should run.
-    :type count: int
-    :param end_time: Gets or sets the time at which the job will complete.
-    :type end_time: ~datetime.datetime
-    :param schedule:
-    :type schedule: ~azure.mgmt.scheduler.models.JobRecurrenceSchedule
+    :ivar frequency: Gets or sets the frequency of recurrence (second, minute, hour, day, week,
+     month). Known values are: "Minute", "Hour", "Day", "Week", and "Month".
+    :vartype frequency: str or ~azure.mgmt.scheduler.models.RecurrenceFrequency
+    :ivar interval: Gets or sets the interval between retries.
+    :vartype interval: int
+    :ivar count: Gets or sets the maximum number of times that the job should run.
+    :vartype count: int
+    :ivar end_time: Gets or sets the time at which the job will complete.
+    :vartype end_time: ~datetime.datetime
+    :ivar schedule:
+    :vartype schedule: ~azure.mgmt.scheduler.models.JobRecurrenceSchedule
     """
 
     _attribute_map = {
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'interval': {'key': 'interval', 'type': 'int'},
-        'count': {'key': 'count', 'type': 'int'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'schedule': {'key': 'schedule', 'type': 'JobRecurrenceSchedule'},
+        "frequency": {"key": "frequency", "type": "str"},
+        "interval": {"key": "interval", "type": "int"},
+        "count": {"key": "count", "type": "int"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "schedule": {"key": "schedule", "type": "JobRecurrenceSchedule"},
     }
 
     def __init__(
         self,
         *,
-        frequency: Optional[Union[str, "RecurrenceFrequency"]] = None,
+        frequency: Optional[Union[str, "_models.RecurrenceFrequency"]] = None,
         interval: Optional[int] = None,
         count: Optional[int] = None,
         end_time: Optional[datetime.datetime] = None,
-        schedule: Optional["JobRecurrenceSchedule"] = None,
+        schedule: Optional["_models.JobRecurrenceSchedule"] = None,
         **kwargs
     ):
-        super(JobRecurrence, self).__init__(**kwargs)
+        """
+        :keyword frequency: Gets or sets the frequency of recurrence (second, minute, hour, day, week,
+         month). Known values are: "Minute", "Hour", "Day", "Week", and "Month".
+        :paramtype frequency: str or ~azure.mgmt.scheduler.models.RecurrenceFrequency
+        :keyword interval: Gets or sets the interval between retries.
+        :paramtype interval: int
+        :keyword count: Gets or sets the maximum number of times that the job should run.
+        :paramtype count: int
+        :keyword end_time: Gets or sets the time at which the job will complete.
+        :paramtype end_time: ~datetime.datetime
+        :keyword schedule:
+        :paramtype schedule: ~azure.mgmt.scheduler.models.JobRecurrenceSchedule
+        """
+        super().__init__(**kwargs)
         self.frequency = frequency
         self.interval = interval
         self.count = count
@@ -755,42 +873,56 @@ class JobRecurrence(msrest.serialization.Model):
         self.schedule = schedule
 
 
-class JobRecurrenceSchedule(msrest.serialization.Model):
+class JobRecurrenceSchedule(_serialization.Model):
     """JobRecurrenceSchedule.
 
-    :param week_days: Gets or sets the days of the week that the job should execute on.
-    :type week_days: list[str or ~azure.mgmt.scheduler.models.DayOfWeek]
-    :param hours: Gets or sets the hours of the day that the job should execute at.
-    :type hours: list[int]
-    :param minutes: Gets or sets the minutes of the hour that the job should execute at.
-    :type minutes: list[int]
-    :param month_days: Gets or sets the days of the month that the job should execute on. Must be
+    :ivar week_days: Gets or sets the days of the week that the job should execute on.
+    :vartype week_days: list[str or ~azure.mgmt.scheduler.models.DayOfWeek]
+    :ivar hours: Gets or sets the hours of the day that the job should execute at.
+    :vartype hours: list[int]
+    :ivar minutes: Gets or sets the minutes of the hour that the job should execute at.
+    :vartype minutes: list[int]
+    :ivar month_days: Gets or sets the days of the month that the job should execute on. Must be
      between 1 and 31.
-    :type month_days: list[int]
-    :param monthly_occurrences: Gets or sets the occurrences of days within a month.
-    :type monthly_occurrences:
+    :vartype month_days: list[int]
+    :ivar monthly_occurrences: Gets or sets the occurrences of days within a month.
+    :vartype monthly_occurrences:
      list[~azure.mgmt.scheduler.models.JobRecurrenceScheduleMonthlyOccurrence]
     """
 
     _attribute_map = {
-        'week_days': {'key': 'weekDays', 'type': '[str]'},
-        'hours': {'key': 'hours', 'type': '[int]'},
-        'minutes': {'key': 'minutes', 'type': '[int]'},
-        'month_days': {'key': 'monthDays', 'type': '[int]'},
-        'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[JobRecurrenceScheduleMonthlyOccurrence]'},
+        "week_days": {"key": "weekDays", "type": "[str]"},
+        "hours": {"key": "hours", "type": "[int]"},
+        "minutes": {"key": "minutes", "type": "[int]"},
+        "month_days": {"key": "monthDays", "type": "[int]"},
+        "monthly_occurrences": {"key": "monthlyOccurrences", "type": "[JobRecurrenceScheduleMonthlyOccurrence]"},
     }
 
     def __init__(
         self,
         *,
-        week_days: Optional[List[Union[str, "DayOfWeek"]]] = None,
+        week_days: Optional[List[Union[str, "_models.DayOfWeek"]]] = None,
         hours: Optional[List[int]] = None,
         minutes: Optional[List[int]] = None,
         month_days: Optional[List[int]] = None,
-        monthly_occurrences: Optional[List["JobRecurrenceScheduleMonthlyOccurrence"]] = None,
+        monthly_occurrences: Optional[List["_models.JobRecurrenceScheduleMonthlyOccurrence"]] = None,
         **kwargs
     ):
-        super(JobRecurrenceSchedule, self).__init__(**kwargs)
+        """
+        :keyword week_days: Gets or sets the days of the week that the job should execute on.
+        :paramtype week_days: list[str or ~azure.mgmt.scheduler.models.DayOfWeek]
+        :keyword hours: Gets or sets the hours of the day that the job should execute at.
+        :paramtype hours: list[int]
+        :keyword minutes: Gets or sets the minutes of the hour that the job should execute at.
+        :paramtype minutes: list[int]
+        :keyword month_days: Gets or sets the days of the month that the job should execute on. Must be
+         between 1 and 31.
+        :paramtype month_days: list[int]
+        :keyword monthly_occurrences: Gets or sets the occurrences of days within a month.
+        :paramtype monthly_occurrences:
+         list[~azure.mgmt.scheduler.models.JobRecurrenceScheduleMonthlyOccurrence]
+        """
+        super().__init__(**kwargs)
         self.week_days = week_days
         self.hours = hours
         self.minutes = minutes
@@ -798,57 +930,61 @@ class JobRecurrenceSchedule(msrest.serialization.Model):
         self.monthly_occurrences = monthly_occurrences
 
 
-class JobRecurrenceScheduleMonthlyOccurrence(msrest.serialization.Model):
+class JobRecurrenceScheduleMonthlyOccurrence(_serialization.Model):
     """JobRecurrenceScheduleMonthlyOccurrence.
 
-    :param day: Gets or sets the day. Must be one of monday, tuesday, wednesday, thursday, friday,
-     saturday, sunday. Possible values include: "Monday", "Tuesday", "Wednesday", "Thursday",
-     "Friday", "Saturday", "Sunday".
-    :type day: str or ~azure.mgmt.scheduler.models.JobScheduleDay
-    :param occurrence: Gets or sets the occurrence. Must be between -5 and 5.
-    :type occurrence: int
+    :ivar day: Gets or sets the day. Must be one of monday, tuesday, wednesday, thursday, friday,
+     saturday, sunday. Known values are: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
+     "Saturday", and "Sunday".
+    :vartype day: str or ~azure.mgmt.scheduler.models.JobScheduleDay
+    :ivar occurrence: Gets or sets the occurrence. Must be between -5 and 5.
+    :vartype occurrence: int
     """
 
     _attribute_map = {
-        'day': {'key': 'day', 'type': 'str'},
-        'occurrence': {'key': 'Occurrence', 'type': 'int'},
+        "day": {"key": "day", "type": "str"},
+        "occurrence": {"key": "Occurrence", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        day: Optional[Union[str, "JobScheduleDay"]] = None,
-        occurrence: Optional[int] = None,
-        **kwargs
+        self, *, day: Optional[Union[str, "_models.JobScheduleDay"]] = None, occurrence: Optional[int] = None, **kwargs
     ):
-        super(JobRecurrenceScheduleMonthlyOccurrence, self).__init__(**kwargs)
+        """
+        :keyword day: Gets or sets the day. Must be one of monday, tuesday, wednesday, thursday,
+         friday, saturday, sunday. Known values are: "Monday", "Tuesday", "Wednesday", "Thursday",
+         "Friday", "Saturday", and "Sunday".
+        :paramtype day: str or ~azure.mgmt.scheduler.models.JobScheduleDay
+        :keyword occurrence: Gets or sets the occurrence. Must be between -5 and 5.
+        :paramtype occurrence: int
+        """
+        super().__init__(**kwargs)
         self.day = day
         self.occurrence = occurrence
 
 
-class JobStateFilter(msrest.serialization.Model):
+class JobStateFilter(_serialization.Model):
     """JobStateFilter.
 
-    :param state: Gets or sets the job state. Possible values include: "Enabled", "Disabled",
-     "Faulted", "Completed".
-    :type state: str or ~azure.mgmt.scheduler.models.JobState
+    :ivar state: Gets or sets the job state. Known values are: "Enabled", "Disabled", "Faulted",
+     and "Completed".
+    :vartype state: str or ~azure.mgmt.scheduler.models.JobState
     """
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
+        "state": {"key": "state", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        state: Optional[Union[str, "JobState"]] = None,
-        **kwargs
-    ):
-        super(JobStateFilter, self).__init__(**kwargs)
+    def __init__(self, *, state: Optional[Union[str, "_models.JobState"]] = None, **kwargs):
+        """
+        :keyword state: Gets or sets the job state. Known values are: "Enabled", "Disabled", "Faulted",
+         and "Completed".
+        :paramtype state: str or ~azure.mgmt.scheduler.models.JobState
+        """
+        super().__init__(**kwargs)
         self.state = state
 
 
-class JobStatus(msrest.serialization.Model):
+class JobStatus(_serialization.Model):
     """JobStatus.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -869,26 +1005,24 @@ class JobStatus(msrest.serialization.Model):
     """
 
     _validation = {
-        'execution_count': {'readonly': True},
-        'failure_count': {'readonly': True},
-        'faulted_count': {'readonly': True},
-        'last_execution_time': {'readonly': True},
-        'next_execution_time': {'readonly': True},
+        "execution_count": {"readonly": True},
+        "failure_count": {"readonly": True},
+        "faulted_count": {"readonly": True},
+        "last_execution_time": {"readonly": True},
+        "next_execution_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'execution_count': {'key': 'executionCount', 'type': 'int'},
-        'failure_count': {'key': 'failureCount', 'type': 'int'},
-        'faulted_count': {'key': 'faultedCount', 'type': 'int'},
-        'last_execution_time': {'key': 'lastExecutionTime', 'type': 'iso-8601'},
-        'next_execution_time': {'key': 'nextExecutionTime', 'type': 'iso-8601'},
+        "execution_count": {"key": "executionCount", "type": "int"},
+        "failure_count": {"key": "failureCount", "type": "int"},
+        "faulted_count": {"key": "faultedCount", "type": "int"},
+        "last_execution_time": {"key": "lastExecutionTime", "type": "iso-8601"},
+        "next_execution_time": {"key": "nextExecutionTime", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(JobStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.execution_count = None
         self.failure_count = None
         self.faulted_count = None
@@ -901,29 +1035,29 @@ class OAuthAuthentication(HttpAuthentication):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. Gets or sets the HTTP authentication type.Constant filled by server.
-     Possible values include: "NotSpecified", "ClientCertificate", "ActiveDirectoryOAuth", "Basic".
-    :type type: str or ~azure.mgmt.scheduler.models.HttpAuthenticationType
-    :param secret: Gets or sets the secret, return value will always be empty.
-    :type secret: str
-    :param tenant: Gets or sets the tenant.
-    :type tenant: str
-    :param audience: Gets or sets the audience.
-    :type audience: str
-    :param client_id: Gets or sets the client identifier.
-    :type client_id: str
+    :ivar type: Gets or sets the HTTP authentication type. Required. Known values are:
+     "NotSpecified", "ClientCertificate", "ActiveDirectoryOAuth", and "Basic".
+    :vartype type: str or ~azure.mgmt.scheduler.models.HttpAuthenticationType
+    :ivar secret: Gets or sets the secret, return value will always be empty.
+    :vartype secret: str
+    :ivar tenant: Gets or sets the tenant.
+    :vartype tenant: str
+    :ivar audience: Gets or sets the audience.
+    :vartype audience: str
+    :ivar client_id: Gets or sets the client identifier.
+    :vartype client_id: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'secret': {'key': 'secret', 'type': 'str'},
-        'tenant': {'key': 'tenant', 'type': 'str'},
-        'audience': {'key': 'audience', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "secret": {"key": "secret", "type": "str"},
+        "tenant": {"key": "tenant", "type": "str"},
+        "audience": {"key": "audience", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
     }
 
     def __init__(
@@ -935,63 +1069,83 @@ class OAuthAuthentication(HttpAuthentication):
         client_id: Optional[str] = None,
         **kwargs
     ):
-        super(OAuthAuthentication, self).__init__(**kwargs)
-        self.type = 'ActiveDirectoryOAuth'  # type: str
+        """
+        :keyword secret: Gets or sets the secret, return value will always be empty.
+        :paramtype secret: str
+        :keyword tenant: Gets or sets the tenant.
+        :paramtype tenant: str
+        :keyword audience: Gets or sets the audience.
+        :paramtype audience: str
+        :keyword client_id: Gets or sets the client identifier.
+        :paramtype client_id: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "ActiveDirectoryOAuth"
         self.secret = secret
         self.tenant = tenant
         self.audience = audience
         self.client_id = client_id
 
 
-class RetryPolicy(msrest.serialization.Model):
+class RetryPolicy(_serialization.Model):
     """RetryPolicy.
 
-    :param retry_type: Gets or sets the retry strategy to be used. Possible values include: "None",
+    :ivar retry_type: Gets or sets the retry strategy to be used. Known values are: "None" and
      "Fixed".
-    :type retry_type: str or ~azure.mgmt.scheduler.models.RetryType
-    :param retry_interval: Gets or sets the retry interval between retries, specify duration in ISO
+    :vartype retry_type: str or ~azure.mgmt.scheduler.models.RetryType
+    :ivar retry_interval: Gets or sets the retry interval between retries, specify duration in ISO
      8601 format.
-    :type retry_interval: ~datetime.timedelta
-    :param retry_count: Gets or sets the number of times a retry should be attempted.
-    :type retry_count: int
+    :vartype retry_interval: ~datetime.timedelta
+    :ivar retry_count: Gets or sets the number of times a retry should be attempted.
+    :vartype retry_count: int
     """
 
     _attribute_map = {
-        'retry_type': {'key': 'retryType', 'type': 'str'},
-        'retry_interval': {'key': 'retryInterval', 'type': 'duration'},
-        'retry_count': {'key': 'retryCount', 'type': 'int'},
+        "retry_type": {"key": "retryType", "type": "str"},
+        "retry_interval": {"key": "retryInterval", "type": "duration"},
+        "retry_count": {"key": "retryCount", "type": "int"},
     }
 
     def __init__(
         self,
         *,
-        retry_type: Optional[Union[str, "RetryType"]] = None,
+        retry_type: Optional[Union[str, "_models.RetryType"]] = None,
         retry_interval: Optional[datetime.timedelta] = None,
         retry_count: Optional[int] = None,
         **kwargs
     ):
-        super(RetryPolicy, self).__init__(**kwargs)
+        """
+        :keyword retry_type: Gets or sets the retry strategy to be used. Known values are: "None" and
+         "Fixed".
+        :paramtype retry_type: str or ~azure.mgmt.scheduler.models.RetryType
+        :keyword retry_interval: Gets or sets the retry interval between retries, specify duration in
+         ISO 8601 format.
+        :paramtype retry_interval: ~datetime.timedelta
+        :keyword retry_count: Gets or sets the number of times a retry should be attempted.
+        :paramtype retry_count: int
+        """
+        super().__init__(**kwargs)
         self.retry_type = retry_type
         self.retry_interval = retry_interval
         self.retry_count = retry_count
 
 
-class ServiceBusAuthentication(msrest.serialization.Model):
+class ServiceBusAuthentication(_serialization.Model):
     """ServiceBusAuthentication.
 
-    :param sas_key: Gets or sets the SAS key.
-    :type sas_key: str
-    :param sas_key_name: Gets or sets the SAS key name.
-    :type sas_key_name: str
-    :param type: Gets or sets the authentication type. Possible values include: "NotSpecified",
+    :ivar sas_key: Gets or sets the SAS key.
+    :vartype sas_key: str
+    :ivar sas_key_name: Gets or sets the SAS key name.
+    :vartype sas_key_name: str
+    :ivar type: Gets or sets the authentication type. Known values are: "NotSpecified" and
      "SharedAccessKey".
-    :type type: str or ~azure.mgmt.scheduler.models.ServiceBusAuthenticationType
+    :vartype type: str or ~azure.mgmt.scheduler.models.ServiceBusAuthenticationType
     """
 
     _attribute_map = {
-        'sas_key': {'key': 'sasKey', 'type': 'str'},
-        'sas_key_name': {'key': 'sasKeyName', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "sas_key": {"key": "sasKey", "type": "str"},
+        "sas_key_name": {"key": "sasKeyName", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
@@ -999,60 +1153,69 @@ class ServiceBusAuthentication(msrest.serialization.Model):
         *,
         sas_key: Optional[str] = None,
         sas_key_name: Optional[str] = None,
-        type: Optional[Union[str, "ServiceBusAuthenticationType"]] = None,
+        type: Optional[Union[str, "_models.ServiceBusAuthenticationType"]] = None,
         **kwargs
     ):
-        super(ServiceBusAuthentication, self).__init__(**kwargs)
+        """
+        :keyword sas_key: Gets or sets the SAS key.
+        :paramtype sas_key: str
+        :keyword sas_key_name: Gets or sets the SAS key name.
+        :paramtype sas_key_name: str
+        :keyword type: Gets or sets the authentication type. Known values are: "NotSpecified" and
+         "SharedAccessKey".
+        :paramtype type: str or ~azure.mgmt.scheduler.models.ServiceBusAuthenticationType
+        """
+        super().__init__(**kwargs)
         self.sas_key = sas_key
         self.sas_key_name = sas_key_name
         self.type = type
 
 
-class ServiceBusBrokeredMessageProperties(msrest.serialization.Model):
+class ServiceBusBrokeredMessageProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """ServiceBusBrokeredMessageProperties.
 
-    :param content_type: Gets or sets the content type.
-    :type content_type: str
-    :param correlation_id: Gets or sets the correlation ID.
-    :type correlation_id: str
-    :param force_persistence: Gets or sets the force persistence.
-    :type force_persistence: bool
-    :param label: Gets or sets the label.
-    :type label: str
-    :param message_id: Gets or sets the message ID.
-    :type message_id: str
-    :param partition_key: Gets or sets the partition key.
-    :type partition_key: str
-    :param reply_to: Gets or sets the reply to.
-    :type reply_to: str
-    :param reply_to_session_id: Gets or sets the reply to session ID.
-    :type reply_to_session_id: str
-    :param scheduled_enqueue_time_utc: Gets or sets the scheduled enqueue time UTC.
-    :type scheduled_enqueue_time_utc: ~datetime.datetime
-    :param session_id: Gets or sets the session ID.
-    :type session_id: str
-    :param time_to_live: Gets or sets the time to live.
-    :type time_to_live: ~datetime.timedelta
-    :param to: Gets or sets the to.
-    :type to: str
-    :param via_partition_key: Gets or sets the via partition key.
-    :type via_partition_key: str
+    :ivar content_type: Gets or sets the content type.
+    :vartype content_type: str
+    :ivar correlation_id: Gets or sets the correlation ID.
+    :vartype correlation_id: str
+    :ivar force_persistence: Gets or sets the force persistence.
+    :vartype force_persistence: bool
+    :ivar label: Gets or sets the label.
+    :vartype label: str
+    :ivar message_id: Gets or sets the message ID.
+    :vartype message_id: str
+    :ivar partition_key: Gets or sets the partition key.
+    :vartype partition_key: str
+    :ivar reply_to: Gets or sets the reply to.
+    :vartype reply_to: str
+    :ivar reply_to_session_id: Gets or sets the reply to session ID.
+    :vartype reply_to_session_id: str
+    :ivar scheduled_enqueue_time_utc: Gets or sets the scheduled enqueue time UTC.
+    :vartype scheduled_enqueue_time_utc: ~datetime.datetime
+    :ivar session_id: Gets or sets the session ID.
+    :vartype session_id: str
+    :ivar time_to_live: Gets or sets the time to live.
+    :vartype time_to_live: ~datetime.timedelta
+    :ivar to: Gets or sets the to.
+    :vartype to: str
+    :ivar via_partition_key: Gets or sets the via partition key.
+    :vartype via_partition_key: str
     """
 
     _attribute_map = {
-        'content_type': {'key': 'contentType', 'type': 'str'},
-        'correlation_id': {'key': 'correlationId', 'type': 'str'},
-        'force_persistence': {'key': 'forcePersistence', 'type': 'bool'},
-        'label': {'key': 'label', 'type': 'str'},
-        'message_id': {'key': 'messageId', 'type': 'str'},
-        'partition_key': {'key': 'partitionKey', 'type': 'str'},
-        'reply_to': {'key': 'replyTo', 'type': 'str'},
-        'reply_to_session_id': {'key': 'replyToSessionId', 'type': 'str'},
-        'scheduled_enqueue_time_utc': {'key': 'scheduledEnqueueTimeUtc', 'type': 'iso-8601'},
-        'session_id': {'key': 'sessionId', 'type': 'str'},
-        'time_to_live': {'key': 'timeToLive', 'type': 'duration'},
-        'to': {'key': 'to', 'type': 'str'},
-        'via_partition_key': {'key': 'viaPartitionKey', 'type': 'str'},
+        "content_type": {"key": "contentType", "type": "str"},
+        "correlation_id": {"key": "correlationId", "type": "str"},
+        "force_persistence": {"key": "forcePersistence", "type": "bool"},
+        "label": {"key": "label", "type": "str"},
+        "message_id": {"key": "messageId", "type": "str"},
+        "partition_key": {"key": "partitionKey", "type": "str"},
+        "reply_to": {"key": "replyTo", "type": "str"},
+        "reply_to_session_id": {"key": "replyToSessionId", "type": "str"},
+        "scheduled_enqueue_time_utc": {"key": "scheduledEnqueueTimeUtc", "type": "iso-8601"},
+        "session_id": {"key": "sessionId", "type": "str"},
+        "time_to_live": {"key": "timeToLive", "type": "duration"},
+        "to": {"key": "to", "type": "str"},
+        "via_partition_key": {"key": "viaPartitionKey", "type": "str"},
     }
 
     def __init__(
@@ -1073,7 +1236,35 @@ class ServiceBusBrokeredMessageProperties(msrest.serialization.Model):
         via_partition_key: Optional[str] = None,
         **kwargs
     ):
-        super(ServiceBusBrokeredMessageProperties, self).__init__(**kwargs)
+        """
+        :keyword content_type: Gets or sets the content type.
+        :paramtype content_type: str
+        :keyword correlation_id: Gets or sets the correlation ID.
+        :paramtype correlation_id: str
+        :keyword force_persistence: Gets or sets the force persistence.
+        :paramtype force_persistence: bool
+        :keyword label: Gets or sets the label.
+        :paramtype label: str
+        :keyword message_id: Gets or sets the message ID.
+        :paramtype message_id: str
+        :keyword partition_key: Gets or sets the partition key.
+        :paramtype partition_key: str
+        :keyword reply_to: Gets or sets the reply to.
+        :paramtype reply_to: str
+        :keyword reply_to_session_id: Gets or sets the reply to session ID.
+        :paramtype reply_to_session_id: str
+        :keyword scheduled_enqueue_time_utc: Gets or sets the scheduled enqueue time UTC.
+        :paramtype scheduled_enqueue_time_utc: ~datetime.datetime
+        :keyword session_id: Gets or sets the session ID.
+        :paramtype session_id: str
+        :keyword time_to_live: Gets or sets the time to live.
+        :paramtype time_to_live: ~datetime.timedelta
+        :keyword to: Gets or sets the to.
+        :paramtype to: str
+        :keyword via_partition_key: Gets or sets the via partition key.
+        :paramtype via_partition_key: str
+        """
+        super().__init__(**kwargs)
         self.content_type = content_type
         self.correlation_id = correlation_id
         self.force_persistence = force_persistence
@@ -1089,46 +1280,65 @@ class ServiceBusBrokeredMessageProperties(msrest.serialization.Model):
         self.via_partition_key = via_partition_key
 
 
-class ServiceBusMessage(msrest.serialization.Model):
+class ServiceBusMessage(_serialization.Model):
     """ServiceBusMessage.
 
-    :param authentication: Gets or sets the Service Bus authentication.
-    :type authentication: ~azure.mgmt.scheduler.models.ServiceBusAuthentication
-    :param brokered_message_properties: Gets or sets the brokered message properties.
-    :type brokered_message_properties:
+    :ivar authentication: Gets or sets the Service Bus authentication.
+    :vartype authentication: ~azure.mgmt.scheduler.models.ServiceBusAuthentication
+    :ivar brokered_message_properties: Gets or sets the brokered message properties.
+    :vartype brokered_message_properties:
      ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
-    :param custom_message_properties: Gets or sets the custom message properties.
-    :type custom_message_properties: dict[str, str]
-    :param message: Gets or sets the message.
-    :type message: str
-    :param namespace: Gets or sets the namespace.
-    :type namespace: str
-    :param transport_type: Gets or sets the transport type. Possible values include:
-     "NotSpecified", "NetMessaging", "AMQP".
-    :type transport_type: str or ~azure.mgmt.scheduler.models.ServiceBusTransportType
+    :ivar custom_message_properties: Gets or sets the custom message properties.
+    :vartype custom_message_properties: dict[str, str]
+    :ivar message: Gets or sets the message.
+    :vartype message: str
+    :ivar namespace: Gets or sets the namespace.
+    :vartype namespace: str
+    :ivar transport_type: Gets or sets the transport type. Known values are: "NotSpecified",
+     "NetMessaging", and "AMQP".
+    :vartype transport_type: str or ~azure.mgmt.scheduler.models.ServiceBusTransportType
     """
 
     _attribute_map = {
-        'authentication': {'key': 'authentication', 'type': 'ServiceBusAuthentication'},
-        'brokered_message_properties': {'key': 'brokeredMessageProperties', 'type': 'ServiceBusBrokeredMessageProperties'},
-        'custom_message_properties': {'key': 'customMessageProperties', 'type': '{str}'},
-        'message': {'key': 'message', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'transport_type': {'key': 'transportType', 'type': 'str'},
+        "authentication": {"key": "authentication", "type": "ServiceBusAuthentication"},
+        "brokered_message_properties": {
+            "key": "brokeredMessageProperties",
+            "type": "ServiceBusBrokeredMessageProperties",
+        },
+        "custom_message_properties": {"key": "customMessageProperties", "type": "{str}"},
+        "message": {"key": "message", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "transport_type": {"key": "transportType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        authentication: Optional["ServiceBusAuthentication"] = None,
-        brokered_message_properties: Optional["ServiceBusBrokeredMessageProperties"] = None,
+        authentication: Optional["_models.ServiceBusAuthentication"] = None,
+        brokered_message_properties: Optional["_models.ServiceBusBrokeredMessageProperties"] = None,
         custom_message_properties: Optional[Dict[str, str]] = None,
         message: Optional[str] = None,
         namespace: Optional[str] = None,
-        transport_type: Optional[Union[str, "ServiceBusTransportType"]] = None,
+        transport_type: Optional[Union[str, "_models.ServiceBusTransportType"]] = None,
         **kwargs
     ):
-        super(ServiceBusMessage, self).__init__(**kwargs)
+        """
+        :keyword authentication: Gets or sets the Service Bus authentication.
+        :paramtype authentication: ~azure.mgmt.scheduler.models.ServiceBusAuthentication
+        :keyword brokered_message_properties: Gets or sets the brokered message properties.
+        :paramtype brokered_message_properties:
+         ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
+        :keyword custom_message_properties: Gets or sets the custom message properties.
+        :paramtype custom_message_properties: dict[str, str]
+        :keyword message: Gets or sets the message.
+        :paramtype message: str
+        :keyword namespace: Gets or sets the namespace.
+        :paramtype namespace: str
+        :keyword transport_type: Gets or sets the transport type. Known values are: "NotSpecified",
+         "NetMessaging", and "AMQP".
+        :paramtype transport_type: str or ~azure.mgmt.scheduler.models.ServiceBusTransportType
+        """
+        super().__init__(**kwargs)
         self.authentication = authentication
         self.brokered_message_properties = brokered_message_properties
         self.custom_message_properties = custom_message_properties
@@ -1140,137 +1350,195 @@ class ServiceBusMessage(msrest.serialization.Model):
 class ServiceBusQueueMessage(ServiceBusMessage):
     """ServiceBusQueueMessage.
 
-    :param authentication: Gets or sets the Service Bus authentication.
-    :type authentication: ~azure.mgmt.scheduler.models.ServiceBusAuthentication
-    :param brokered_message_properties: Gets or sets the brokered message properties.
-    :type brokered_message_properties:
+    :ivar authentication: Gets or sets the Service Bus authentication.
+    :vartype authentication: ~azure.mgmt.scheduler.models.ServiceBusAuthentication
+    :ivar brokered_message_properties: Gets or sets the brokered message properties.
+    :vartype brokered_message_properties:
      ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
-    :param custom_message_properties: Gets or sets the custom message properties.
-    :type custom_message_properties: dict[str, str]
-    :param message: Gets or sets the message.
-    :type message: str
-    :param namespace: Gets or sets the namespace.
-    :type namespace: str
-    :param transport_type: Gets or sets the transport type. Possible values include:
-     "NotSpecified", "NetMessaging", "AMQP".
-    :type transport_type: str or ~azure.mgmt.scheduler.models.ServiceBusTransportType
-    :param queue_name: Gets or sets the queue name.
-    :type queue_name: str
+    :ivar custom_message_properties: Gets or sets the custom message properties.
+    :vartype custom_message_properties: dict[str, str]
+    :ivar message: Gets or sets the message.
+    :vartype message: str
+    :ivar namespace: Gets or sets the namespace.
+    :vartype namespace: str
+    :ivar transport_type: Gets or sets the transport type. Known values are: "NotSpecified",
+     "NetMessaging", and "AMQP".
+    :vartype transport_type: str or ~azure.mgmt.scheduler.models.ServiceBusTransportType
+    :ivar queue_name: Gets or sets the queue name.
+    :vartype queue_name: str
     """
 
     _attribute_map = {
-        'authentication': {'key': 'authentication', 'type': 'ServiceBusAuthentication'},
-        'brokered_message_properties': {'key': 'brokeredMessageProperties', 'type': 'ServiceBusBrokeredMessageProperties'},
-        'custom_message_properties': {'key': 'customMessageProperties', 'type': '{str}'},
-        'message': {'key': 'message', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'transport_type': {'key': 'transportType', 'type': 'str'},
-        'queue_name': {'key': 'queueName', 'type': 'str'},
+        "authentication": {"key": "authentication", "type": "ServiceBusAuthentication"},
+        "brokered_message_properties": {
+            "key": "brokeredMessageProperties",
+            "type": "ServiceBusBrokeredMessageProperties",
+        },
+        "custom_message_properties": {"key": "customMessageProperties", "type": "{str}"},
+        "message": {"key": "message", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "transport_type": {"key": "transportType", "type": "str"},
+        "queue_name": {"key": "queueName", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        authentication: Optional["ServiceBusAuthentication"] = None,
-        brokered_message_properties: Optional["ServiceBusBrokeredMessageProperties"] = None,
+        authentication: Optional["_models.ServiceBusAuthentication"] = None,
+        brokered_message_properties: Optional["_models.ServiceBusBrokeredMessageProperties"] = None,
         custom_message_properties: Optional[Dict[str, str]] = None,
         message: Optional[str] = None,
         namespace: Optional[str] = None,
-        transport_type: Optional[Union[str, "ServiceBusTransportType"]] = None,
+        transport_type: Optional[Union[str, "_models.ServiceBusTransportType"]] = None,
         queue_name: Optional[str] = None,
         **kwargs
     ):
-        super(ServiceBusQueueMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type, **kwargs)
+        """
+        :keyword authentication: Gets or sets the Service Bus authentication.
+        :paramtype authentication: ~azure.mgmt.scheduler.models.ServiceBusAuthentication
+        :keyword brokered_message_properties: Gets or sets the brokered message properties.
+        :paramtype brokered_message_properties:
+         ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
+        :keyword custom_message_properties: Gets or sets the custom message properties.
+        :paramtype custom_message_properties: dict[str, str]
+        :keyword message: Gets or sets the message.
+        :paramtype message: str
+        :keyword namespace: Gets or sets the namespace.
+        :paramtype namespace: str
+        :keyword transport_type: Gets or sets the transport type. Known values are: "NotSpecified",
+         "NetMessaging", and "AMQP".
+        :paramtype transport_type: str or ~azure.mgmt.scheduler.models.ServiceBusTransportType
+        :keyword queue_name: Gets or sets the queue name.
+        :paramtype queue_name: str
+        """
+        super().__init__(
+            authentication=authentication,
+            brokered_message_properties=brokered_message_properties,
+            custom_message_properties=custom_message_properties,
+            message=message,
+            namespace=namespace,
+            transport_type=transport_type,
+            **kwargs
+        )
         self.queue_name = queue_name
 
 
 class ServiceBusTopicMessage(ServiceBusMessage):
     """ServiceBusTopicMessage.
 
-    :param authentication: Gets or sets the Service Bus authentication.
-    :type authentication: ~azure.mgmt.scheduler.models.ServiceBusAuthentication
-    :param brokered_message_properties: Gets or sets the brokered message properties.
-    :type brokered_message_properties:
+    :ivar authentication: Gets or sets the Service Bus authentication.
+    :vartype authentication: ~azure.mgmt.scheduler.models.ServiceBusAuthentication
+    :ivar brokered_message_properties: Gets or sets the brokered message properties.
+    :vartype brokered_message_properties:
      ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
-    :param custom_message_properties: Gets or sets the custom message properties.
-    :type custom_message_properties: dict[str, str]
-    :param message: Gets or sets the message.
-    :type message: str
-    :param namespace: Gets or sets the namespace.
-    :type namespace: str
-    :param transport_type: Gets or sets the transport type. Possible values include:
-     "NotSpecified", "NetMessaging", "AMQP".
-    :type transport_type: str or ~azure.mgmt.scheduler.models.ServiceBusTransportType
-    :param topic_path: Gets or sets the topic path.
-    :type topic_path: str
+    :ivar custom_message_properties: Gets or sets the custom message properties.
+    :vartype custom_message_properties: dict[str, str]
+    :ivar message: Gets or sets the message.
+    :vartype message: str
+    :ivar namespace: Gets or sets the namespace.
+    :vartype namespace: str
+    :ivar transport_type: Gets or sets the transport type. Known values are: "NotSpecified",
+     "NetMessaging", and "AMQP".
+    :vartype transport_type: str or ~azure.mgmt.scheduler.models.ServiceBusTransportType
+    :ivar topic_path: Gets or sets the topic path.
+    :vartype topic_path: str
     """
 
     _attribute_map = {
-        'authentication': {'key': 'authentication', 'type': 'ServiceBusAuthentication'},
-        'brokered_message_properties': {'key': 'brokeredMessageProperties', 'type': 'ServiceBusBrokeredMessageProperties'},
-        'custom_message_properties': {'key': 'customMessageProperties', 'type': '{str}'},
-        'message': {'key': 'message', 'type': 'str'},
-        'namespace': {'key': 'namespace', 'type': 'str'},
-        'transport_type': {'key': 'transportType', 'type': 'str'},
-        'topic_path': {'key': 'topicPath', 'type': 'str'},
+        "authentication": {"key": "authentication", "type": "ServiceBusAuthentication"},
+        "brokered_message_properties": {
+            "key": "brokeredMessageProperties",
+            "type": "ServiceBusBrokeredMessageProperties",
+        },
+        "custom_message_properties": {"key": "customMessageProperties", "type": "{str}"},
+        "message": {"key": "message", "type": "str"},
+        "namespace": {"key": "namespace", "type": "str"},
+        "transport_type": {"key": "transportType", "type": "str"},
+        "topic_path": {"key": "topicPath", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        authentication: Optional["ServiceBusAuthentication"] = None,
-        brokered_message_properties: Optional["ServiceBusBrokeredMessageProperties"] = None,
+        authentication: Optional["_models.ServiceBusAuthentication"] = None,
+        brokered_message_properties: Optional["_models.ServiceBusBrokeredMessageProperties"] = None,
         custom_message_properties: Optional[Dict[str, str]] = None,
         message: Optional[str] = None,
         namespace: Optional[str] = None,
-        transport_type: Optional[Union[str, "ServiceBusTransportType"]] = None,
+        transport_type: Optional[Union[str, "_models.ServiceBusTransportType"]] = None,
         topic_path: Optional[str] = None,
         **kwargs
     ):
-        super(ServiceBusTopicMessage, self).__init__(authentication=authentication, brokered_message_properties=brokered_message_properties, custom_message_properties=custom_message_properties, message=message, namespace=namespace, transport_type=transport_type, **kwargs)
+        """
+        :keyword authentication: Gets or sets the Service Bus authentication.
+        :paramtype authentication: ~azure.mgmt.scheduler.models.ServiceBusAuthentication
+        :keyword brokered_message_properties: Gets or sets the brokered message properties.
+        :paramtype brokered_message_properties:
+         ~azure.mgmt.scheduler.models.ServiceBusBrokeredMessageProperties
+        :keyword custom_message_properties: Gets or sets the custom message properties.
+        :paramtype custom_message_properties: dict[str, str]
+        :keyword message: Gets or sets the message.
+        :paramtype message: str
+        :keyword namespace: Gets or sets the namespace.
+        :paramtype namespace: str
+        :keyword transport_type: Gets or sets the transport type. Known values are: "NotSpecified",
+         "NetMessaging", and "AMQP".
+        :paramtype transport_type: str or ~azure.mgmt.scheduler.models.ServiceBusTransportType
+        :keyword topic_path: Gets or sets the topic path.
+        :paramtype topic_path: str
+        """
+        super().__init__(
+            authentication=authentication,
+            brokered_message_properties=brokered_message_properties,
+            custom_message_properties=custom_message_properties,
+            message=message,
+            namespace=namespace,
+            transport_type=transport_type,
+            **kwargs
+        )
         self.topic_path = topic_path
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """Sku.
 
-    :param name: Gets or set the SKU. Possible values include: "Standard", "Free", "P10Premium",
+    :ivar name: Gets or set the SKU. Known values are: "Standard", "Free", "P10Premium", and
      "P20Premium".
-    :type name: str or ~azure.mgmt.scheduler.models.SkuDefinition
+    :vartype name: str or ~azure.mgmt.scheduler.models.SkuDefinition
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "SkuDefinition"]] = None,
-        **kwargs
-    ):
-        super(Sku, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[Union[str, "_models.SkuDefinition"]] = None, **kwargs):
+        """
+        :keyword name: Gets or set the SKU. Known values are: "Standard", "Free", "P10Premium", and
+         "P20Premium".
+        :paramtype name: str or ~azure.mgmt.scheduler.models.SkuDefinition
+        """
+        super().__init__(**kwargs)
         self.name = name
 
 
-class StorageQueueMessage(msrest.serialization.Model):
+class StorageQueueMessage(_serialization.Model):
     """StorageQueueMessage.
 
-    :param storage_account: Gets or sets the storage account name.
-    :type storage_account: str
-    :param queue_name: Gets or sets the queue name.
-    :type queue_name: str
-    :param sas_token: Gets or sets the SAS key.
-    :type sas_token: str
-    :param message: Gets or sets the message.
-    :type message: str
+    :ivar storage_account: Gets or sets the storage account name.
+    :vartype storage_account: str
+    :ivar queue_name: Gets or sets the queue name.
+    :vartype queue_name: str
+    :ivar sas_token: Gets or sets the SAS key.
+    :vartype sas_token: str
+    :ivar message: Gets or sets the message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'storage_account': {'key': 'storageAccount', 'type': 'str'},
-        'queue_name': {'key': 'queueName', 'type': 'str'},
-        'sas_token': {'key': 'sasToken', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "storage_account": {"key": "storageAccount", "type": "str"},
+        "queue_name": {"key": "queueName", "type": "str"},
+        "sas_token": {"key": "sasToken", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
@@ -1282,7 +1550,17 @@ class StorageQueueMessage(msrest.serialization.Model):
         message: Optional[str] = None,
         **kwargs
     ):
-        super(StorageQueueMessage, self).__init__(**kwargs)
+        """
+        :keyword storage_account: Gets or sets the storage account name.
+        :paramtype storage_account: str
+        :keyword queue_name: Gets or sets the queue name.
+        :paramtype queue_name: str
+        :keyword sas_token: Gets or sets the SAS key.
+        :paramtype sas_token: str
+        :keyword message: Gets or sets the message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.storage_account = storage_account
         self.queue_name = queue_name
         self.sas_token = sas_token
