@@ -179,7 +179,7 @@ class ActiveBaseSecurityAdminRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ActiveConfigurationParameter(_serialization.Model):
@@ -589,7 +589,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.description = None
         self.flag = flag
         self.protocol = None
@@ -762,7 +762,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.description = description
         self.protocol = protocol
         self.sources = sources
@@ -950,7 +950,7 @@ class BaseAdminRule(ChildResource):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.system_data = None
 
 
@@ -1077,7 +1077,7 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
          ~azure.mgmt.network.v2022_05_01.models.SecurityConfigurationRuleDirection
         """
         super().__init__(**kwargs)
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.description = description
         self.protocol = protocol
         self.sources = sources
@@ -5799,7 +5799,7 @@ class FirewallPolicyRule(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.description = description
-        self.rule_type = None  # type: Optional[str]
+        self.rule_type: Optional[str] = None
 
 
 class ApplicationRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-attributes
@@ -5896,7 +5896,7 @@ class ApplicationRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-
         :paramtype web_categories: list[str]
         """
         super().__init__(name=name, description=description, **kwargs)
-        self.rule_type = "ApplicationRule"  # type: str
+        self.rule_type: str = "ApplicationRule"
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
         self.protocols = protocols
@@ -11708,7 +11708,7 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
         :paramtype flag: str
         """
         super().__init__(**kwargs)
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.description = None
         self.flag = flag
         self.protocol = None
@@ -12182,7 +12182,7 @@ class EffectiveBaseSecurityAdminRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
@@ -12309,7 +12309,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.description = None
         self.flag = flag
         self.protocol = None
@@ -12897,7 +12897,7 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.description = description
         self.protocol = protocol
         self.sources = sources
@@ -13067,17 +13067,17 @@ class ErrorResponse(_serialization.Model):
     """The error object.
 
     :ivar error: The error details object.
-    :vartype error: ~azure.mgmt.network.v2022_05_01.models.ErrorDetails
+    :vartype error: ~azure.mgmt.network.v2022_05_01.models.Error
     """
 
     _attribute_map = {
-        "error": {"key": "error", "type": "ErrorDetails"},
+        "error": {"key": "error", "type": "Error"},
     }
 
-    def __init__(self, *, error: Optional["_models.ErrorDetails"] = None, **kwargs):
+    def __init__(self, *, error: Optional["_models.Error"] = None, **kwargs):
         """
         :keyword error: The error details object.
-        :paramtype error: ~azure.mgmt.network.v2022_05_01.models.ErrorDetails
+        :paramtype error: ~azure.mgmt.network.v2022_05_01.models.Error
         """
         super().__init__(**kwargs)
         self.error = error
@@ -16342,7 +16342,7 @@ class FirewallPolicyRuleCollection(_serialization.Model):
         :paramtype priority: int
         """
         super().__init__(**kwargs)
-        self.rule_collection_type = None  # type: Optional[str]
+        self.rule_collection_type: Optional[str] = None
         self.name = name
         self.priority = priority
 
@@ -16401,7 +16401,7 @@ class FirewallPolicyFilterRuleCollection(FirewallPolicyRuleCollection):
         :paramtype rules: list[~azure.mgmt.network.v2022_05_01.models.FirewallPolicyRule]
         """
         super().__init__(name=name, priority=priority, **kwargs)
-        self.rule_collection_type = "FirewallPolicyFilterRuleCollection"  # type: str
+        self.rule_collection_type: str = "FirewallPolicyFilterRuleCollection"
         self.action = action
         self.rules = rules
 
@@ -16814,7 +16814,7 @@ class FirewallPolicyNatRuleCollection(FirewallPolicyRuleCollection):
         :paramtype rules: list[~azure.mgmt.network.v2022_05_01.models.FirewallPolicyRule]
         """
         super().__init__(name=name, priority=priority, **kwargs)
-        self.rule_collection_type = "FirewallPolicyNatRuleCollection"  # type: str
+        self.rule_collection_type: str = "FirewallPolicyNatRuleCollection"
         self.action = action
         self.rules = rules
 
@@ -21747,7 +21747,7 @@ class NatRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-attribut
         :paramtype translated_fqdn: str
         """
         super().__init__(name=name, description=description, **kwargs)
-        self.rule_type = "NatRule"  # type: str
+        self.rule_type: str = "NatRule"
         self.ip_protocols = ip_protocols
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
@@ -23582,7 +23582,7 @@ class NetworkRule(FirewallPolicyRule):
         :paramtype destination_fqdns: list[str]
         """
         super().__init__(name=name, description=description, **kwargs)
-        self.rule_type = "NetworkRule"  # type: str
+        self.rule_type: str = "NetworkRule"
         self.ip_protocols = ip_protocols
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
@@ -24175,6 +24175,8 @@ class NetworkWatcher(Resource):
     :ivar provisioning_state: The provisioning state of the network watcher resource. Known values
      are: "Succeeded", "Updating", "Deleting", and "Failed".
     :vartype provisioning_state: str or ~azure.mgmt.network.v2022_05_01.models.ProvisioningState
+    :ivar running_operation_ids: List of running operation IDs.
+    :vartype running_operation_ids: list[int]
     """
 
     _validation = {
@@ -24192,6 +24194,7 @@ class NetworkWatcher(Resource):
         "tags": {"key": "tags", "type": "{str}"},
         "etag": {"key": "etag", "type": "str"},
         "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "running_operation_ids": {"key": "properties.runningOperationIds", "type": "[int]"},
     }
 
     def __init__(
@@ -24200,6 +24203,7 @@ class NetworkWatcher(Resource):
         id: Optional[str] = None,  # pylint: disable=redefined-builtin
         location: Optional[str] = None,
         tags: Optional[Dict[str, str]] = None,
+        running_operation_ids: Optional[List[int]] = None,
         **kwargs
     ):
         """
@@ -24209,10 +24213,13 @@ class NetworkWatcher(Resource):
         :paramtype location: str
         :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
+        :keyword running_operation_ids: List of running operation IDs.
+        :paramtype running_operation_ids: list[int]
         """
         super().__init__(id=id, location=location, tags=tags, **kwargs)
         self.etag = None
         self.provisioning_state = None
+        self.running_operation_ids = running_operation_ids
 
 
 class NetworkWatcherListResult(_serialization.Model):

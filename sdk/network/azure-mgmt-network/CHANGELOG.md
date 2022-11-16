@@ -1,5 +1,11 @@
 # Release History
 
+## 22.2.0 (2022-11-16)
+
+### Features Added
+
+  - Model NetworkWatcher has a new parameter running_operation_ids
+
 ## 22.1.0 (2022-10-24)
 
 ### Features Added
