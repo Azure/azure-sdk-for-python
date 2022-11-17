@@ -223,8 +223,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Whether the connection is in a state where it is legal to read for incoming frames."""
         return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
 
-    async def _read_frame(self, wait=True, **kwargs):  # type: ignore # TODO: missing return
-        # type: (bool, Any) -> Tuple[int, Optional[Tuple[int, NamedTuple]]]
+    async def _read_frame(self, wait: Union[bool, int, float] = True, **kwargs) -> bool:
         """Read an incoming frame from the transport.
 
         :param Union[bool, float] wait: Whether to block on the socket while waiting for an incoming frame.
