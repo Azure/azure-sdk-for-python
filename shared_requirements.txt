@@ -164,6 +164,7 @@ yarl<2.0,>=1.0
 #override azure-mgmt-managementpartner typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-peering azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datashare msrest>=0.7.1
+#override azure-mgmt-resourcehealth typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-billing msrest>=0.7.1
 #override azure-identity cryptography>=2.5
 #override azure-ai-textanalytics azure-core<2.0.0,>=1.24.0
@@ -176,6 +177,7 @@ yarl<2.0,>=1.0
 #override azure-mgmt-portal msrest>=0.7.1
 #override azure-search-documents azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-managementgroups typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-quota azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.23.0
 #override azure-ai-formrecognizer typing-extensions>=4.0.1
 #override azure-mgmt-healthbot msrest>=0.7.1
@@ -212,7 +214,9 @@ opencensus>=0.6.0
 opencensus-ext-threading
 opencensus-ext-azure>=0.3.1
 opentelemetry-api<2.0.0,>=1.5.0,!=1.10a0
+#override azure-mgmt-maintenance azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-managementgroups msrest>=0.7.1
+#override azure-mgmt-sql typing-extensions>=4.3.0; python_version<'3.8.0'
 opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-powerbidedicated typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-deploymentmanager msrest>=0.7.1
@@ -225,6 +229,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-eventhub-checkpointstoretable azure-core<2.0.0,>=1.14.0
 #override azure-eventhub uamqp>=1.6.0,<2.0.0
 #override azure-appconfiguration azure-core<2.0.0,>=1.24.0
+#override azure-mgmt-maintenance msrest>=0.7.1
 #override azure-appconfiguration-provider azure-appconfiguration<2.0.0,>=1.3.0
 #override azure-appconfiguration-provider azure-keyvault-secrets<5.0.0,>=4.3.0
 #override azure-mgmt-purview typing-extensions>=4.3.0; python_version<'3.8.0'
@@ -232,8 +237,10 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-servicefabric azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-attestation typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-servicebus uamqp>=1.6.3,<2.0.0
+#override azure-mgmt-baremetalinfrastructure msrest>=0.7.1
 #override azure-mgmt-privatedns typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-logz msrest>=0.7.1
+#override azure-mgmt-maintenance typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-servicebus msrest>=0.6.17,<2.0.0
 #override azure-mgmt-deploymentmanager azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-servicebus azure-core<2.0.0,>=1.14.0
@@ -258,6 +265,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-support azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-communication-phonenumbers msrest>=0.7.1
 #override azure-mgmt-portal typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-storagepool msrest>=0.7.1
 #override azure-communication-chat msrest>=0.7.1
 #override azure-mgmt-storagesync msrest>=0.7.1
 #override azure-mgmt-storageimportexport typing-extensions>=4.3.0; python_version<'3.8.0'
@@ -292,7 +300,6 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-support msrest>=0.7.1
 #override azure-core-tracing-opentelemetry opentelemetry-api<2.0.0,>=1.0.0
 #override azure-identity six>=1.12.0
-#override azure-keyvault-keys six>=1.12.0
 #override azure-mgmt-managedservices typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-messaging-webpubsubservice azure-core<2.0.0,>=1.23.0
 #override azure-messaging-webpubsubservice pyjwt>=1.7.1
@@ -305,6 +312,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-iot-deviceupdate isodate<1.0.0,>=0.6.1
 #override azure-template azure-core<2.0.0,>=1.10.0
 #override azure-purview-catalog azure-core<2.0.0,>=1.23.0
+#override azure-mgmt-storage typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-purview-scanning azure-core<2.0.0,>=1.18.0
 #override azure-mgmt-logic typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-purview-account azure-core<2.0.0,>=1.16.0
@@ -316,6 +324,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-serialconsole msrest>=0.7.1
 #override azure-mgmt-quantum azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mixedreality-remoterendering azure-mixedreality-authentication>=1.0.0b1
+#override azure-mgmt-appcomplianceautomation msrest>=0.7.1
 #override azure-ai-language-conversations azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-containerservice typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-elasticsan msrest>=0.7.1
@@ -323,6 +332,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-managementpartner azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-eventgrid msrest>=0.7.1
 #override azure-mgmt-maps azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-apimanagement typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-ai-language-conversations isodate<1.0.0,>=0.6.1
 #override azure-ai-personalizer azure-core<2.0.0,>=1.24.0
 #override azure-ai-personalizer isodate<1.0.0,>=0.6.1
@@ -338,11 +348,12 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-chaos msrest>=0.6.21
 #override azure-mgmt-workloadmonitor msrest>=0.7.1
 #override azure-mgmt-resourceconnector msrest>=0.6.21
-#override azure-mgmt-desktopvirtualization msrest>=0.6.21
+#override azure-mgmt-desktopvirtualization msrest>=0.7.1
 #override azure-mgmt-netapp msrest>=0.7.1
 #override azure-mgmt-monitor msrest>=0.7.1
 #override azure-mgmt-applicationinsights msrest>=0.6.21
 #override azure-mgmt-notificationhubs msrest>=0.7.1
+#override azure-mgmt-desktopvirtualization typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-redis msrest>=0.7.1
 #override azure-mgmt-recoveryservicesbackup msrest>=0.7.1
 #override azure-mgmt-datafactory msrest>=0.7.1
@@ -367,9 +378,9 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-compute msrest>=0.7.1
 #override azure-mgmt-customproviders msrest>=0.7.1
 #override azure-mgmt-servicefabric msrest>=0.7.1
-#override azure-mgmt-streamanalytics msrest>=0.6.21
+#override azure-mgmt-streamanalytics msrest>=0.7.1
 #override azure-mgmt-consumption msrest>=0.7.1
-#override azure-mgmt-oep msrest>=0.6.21
+#override azure-mgmt-oep msrest>=0.7.1
 #override azure-mgmt-loganalytics msrest>=0.7.1
 #override azure-mgmt-labservices msrest>=0.7.1
 #override azure-mgmt-synapse msrest>=0.6.21
@@ -383,6 +394,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-subscription azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-iothubprovisioningservices msrest>=0.7.1
 #override azure-mgmt-iothubprovisioningservices azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-streamanalytics typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-iothub msrest>=0.7.1
 #override azure-mgmt-resource msrest>=0.7.1
 #override azure-mgmt-containerservice msrest>=0.7.1
@@ -403,6 +415,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-servicelinker msrest>=0.7.1
 #override azure-mgmt-servicelinker azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-purview azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-quota typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-azurestackhci msrest>=0.6.21
 #override azure-mgmt-azurestackhci azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-sqlvirtualmachine msrest>=0.7.1
@@ -413,7 +426,9 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-cognitiveservices-language-luis azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-language-spellcheck azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-language-textanalytics azure-mgmt-core>=1.2.0,<2.0.0
+#override azure-mgmt-baremetalinfrastructure azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datadog msrest>=0.7.1
+#override azure-mgmt-streamanalytics azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-cognitiveservices-personalizer azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-cognitiveservices-search-autosuggest azure-mgmt-core>=1.2.0,<2.0.0
 #override azure-mgmt-peering typing-extensions>=4.3.0; python_version<'3.8.0'
@@ -442,7 +457,10 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-storagecache azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-monitor azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-hanaonazure azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-storagepool azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-oep typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-labservices azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-notificationhubs typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-securityinsight msrest>=0.7.1
 #override azure-mgmt-securityinsight azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-msi msrest>=0.6.21
@@ -476,8 +494,8 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-eventgrid azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-frontdoor msrest>=0.6.21
 #override azure-mgmt-frontdoor azure-mgmt-core>=1.3.0,<2.0.0
-#override azure-mgmt-signalr msrest>=0.6.21
-#override azure-mgmt-signalr azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-signalr msrest>=0.7.1
+#override azure-mgmt-signalr azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-machinelearningcompute typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-iotcentral msrest>=0.6.21
 #override azure-mgmt-iotcentral azure-mgmt-core>=1.3.0,<2.0.0
@@ -534,6 +552,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-managedservices msrest>=0.7.1
 #override azure-mgmt-workloads msrest>=0.6.21
 #override azure-mgmt-workloads azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-appcomplianceautomation typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-eventhub msrest>=0.6.21
 #override azure-mgmt-eventhub azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-logic msrest>=0.7.1
@@ -543,6 +562,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-testbase typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-resourcemover typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-communication azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-storagepool typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-marketplaceordering msrest>=0.7.1
 #override azure-mgmt-resourcemover msrest>=0.7.1
 #override azure-mgmt-marketplaceordering azure-mgmt-core>=1.3.2,<2.0.0
@@ -557,7 +577,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-costmanagement azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-search msrest>=0.7.1
 #override azure-mgmt-search azure-mgmt-core>=1.3.2,<2.0.0
-#override azure-mgmt-notificationhubs azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-notificationhubs azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-commerce msrest>=0.6.21
 #override azure-mgmt-commerce azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-scheduler msrest>=0.6.21
@@ -583,6 +603,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-logic msrest>=0.7.1
 #override azure-mgmt-logic azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datadog typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-oep azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-communication msrest>=0.7.1
 #override azure-mgmt-communication azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-marketplaceordering msrest>=0.7.1
@@ -601,7 +622,9 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-search azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-elastic msrest>=0.7.1
 #override azure-mgmt-notificationhubs azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-baremetalinfrastructure typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-commerce msrest>=0.7.1
+#override azure-mgmt-hybridkubernetes typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-commerce azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-logz azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-avs msrest>=0.7.1
@@ -630,6 +653,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-education msrest>=0.6.21
 #override azure-mgmt-hanaonazure msrest>=0.7.1
 #override azure-mgmt-education azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-hybridkubernetes azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-web azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourceconnector azure-mgmt-core>=1.3.1,<2.0.0
 #override azure-mgmt-automation msrest>=0.6.21
@@ -639,17 +663,23 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-agrifood azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-rdbms azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-devcenter msrest>=0.7.1
+#override azure-mgmt-hybridkubernetes msrest>=0.7.1
 #override azure-mgmt-devcenter azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-fluidrelay msrest>=0.6.21
 #override azure-mgmt-datashare azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-elastic typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-fluidrelay azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-appcomplianceautomation azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-developer-loadtesting azure-core<2.0.0,>=1.24.0
 #override azure-developer-loadtesting isodate<1.0.0,>=0.6.1
 #override azure-mgmt-datalake-analytics msrest>=0.6.21
+#override azure-mgmt-iothubprovisioningservices typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-datalake-analytics azure-mgmt-core>=1.3.1,<2.0.0
+#override azure-mgmt-security typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-datalake-store msrest>=0.7.1
 #override azure-mgmt-operationsmanagement msrest>=0.7.1
+#override azure-mgmt-compute typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-quota msrest>=0.7.1
 #override azure-mgmt-customproviders azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datalake-store azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-recoveryservices msrest>=0.7.1
@@ -663,10 +693,16 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-testbase msrest>=0.7.1
 #override azure-mgmt-redis azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourcegraph azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-desktopvirtualization azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-resourcegraph msrest>=0.7.1
 #override azure-core-experimental azure-core<2.0.0,>=1.25.0
 #override azure-developer-devcenter isodate<1.0.0,>=0.6.1
 #override azure-developer-devcenter azure-core<2.0.0,>=1.24.0
+#override azure-mgmt-signalr typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-developer-devcenter azure-core<2.0.0,>=1.24.0
+#override azure-ai-anomalydetector isodate<1.0.0,>=0.6.1
+#override azure-ai-anomalydetector azure-core<2.0.0,>=1.24.0
+#override azure-ai-anomalydetector typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-vmwarecloudsimple msrest>=0.7.1
 #override azure-developer-devcenter azure-core<2.0.0,>=1.24.0
 
