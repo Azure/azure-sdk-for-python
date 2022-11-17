@@ -167,7 +167,8 @@ def pipeline(
                 provided_positional_kwargs = _validate_args(func, args, kwargs, non_pipeline_inputs)
 
                 # When pipeline supports variable params, update pipeline component to support the inputs in **kwargs.
-                pipeline_parameters = {k: v for k, v in provided_positional_kwargs.items() if k not in non_pipeline_inputs}
+                pipeline_parameters = {k: v for k, v in provided_positional_kwargs.items() if
+                                       k not in non_pipeline_inputs}
                 pipeline_builder._update_inputs(pipeline_parameters)
 
                 non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
