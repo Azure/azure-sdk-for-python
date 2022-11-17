@@ -1466,76 +1466,76 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
             if error:
                 errors.append(error)
 
-        #receiver = MockReceiver()
-        #auto_lock_renew = AutoLockRenewer()
-        #with pytest.raises(TypeError):
-        #    auto_lock_renew.register(receiver, renewable=Exception())  # an arbitrary invalid type.
+        receiver = MockReceiver()
+        auto_lock_renew = AutoLockRenewer()
+        with pytest.raises(TypeError):
+            auto_lock_renew.register(receiver, renewable=Exception())  # an arbitrary invalid type.
 
-        #auto_lock_renew = AutoLockRenewer()
-        #auto_lock_renew._renew_period = 1  # So we can run the test fast.
-        #async with auto_lock_renew:  # Check that it is called when the object expires for any reason (silent renew failure)
-        #    message = MockReceivedMessage(prevent_renew_lock=True)
-        #    auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
-        #    await asyncio.sleep(3)
-        #    assert len(results) == 1 and results[-1]._lock_expired == True
-        #    assert not errors
+        auto_lock_renew = AutoLockRenewer()
+        auto_lock_renew._renew_period = 1  # So we can run the test fast.
+        async with auto_lock_renew:  # Check that it is called when the object expires for any reason (silent renew failure)
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
+            await asyncio.sleep(3)
+            assert len(results) == 1 and results[-1]._lock_expired == True
+            assert not errors
 
-        #del results[:]
-        #del errors[:]
-        #auto_lock_renew = AutoLockRenewer()
-        #auto_lock_renew._renew_period = 1
-        #async with auto_lock_renew:  # Check that in normal operation it does not get called
-        #    auto_lock_renew.register(receiver, renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
-        #    await asyncio.sleep(3)
-        #    assert not results
-        #    assert not errors
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenewer()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew:  # Check that in normal operation it does not get called
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage(), on_lock_renew_failure=callback_mock)
+            await asyncio.sleep(3)
+            assert not results
+            assert not errors
 
-        #del results[:]
-        #del errors[:]
-        #auto_lock_renew = AutoLockRenewer()
-        #auto_lock_renew._renew_period = 1
-        #async with auto_lock_renew:  # Check that when a message is settled, it will not get called even after expiry
-        #    message = MockReceivedMessage(prevent_renew_lock=True)
-        #    auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
-        #    message._settled = True
-        #    await asyncio.sleep(3)
-        #    assert not results
-        #    assert not errors
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenewer()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew:  # Check that when a message is settled, it will not get called even after expiry
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
+            message._settled = True
+            await asyncio.sleep(3)
+            assert not results
+            assert not errors
 
-        #del results[:]
-        #del errors[:]
-        #auto_lock_renew = AutoLockRenewer()
-        #auto_lock_renew._renew_period = 1
-        #async with auto_lock_renew: # Check that it is called when there is an overt renew failure
-        #    message = MockReceivedMessage(exception_on_renew_lock=True)
-        #    auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
-        #    await asyncio.sleep(3)
-        #    assert len(results) == 1 and results[-1]._lock_expired == True
-        #    assert errors[-1]
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenewer()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew: # Check that it is called when there is an overt renew failure
+            message = MockReceivedMessage(exception_on_renew_lock=True)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
+            await asyncio.sleep(3)
+            assert len(results) == 1 and results[-1]._lock_expired == True
+            assert errors[-1]
 
-        #del results[:]
-        #del errors[:]
-        #auto_lock_renew = AutoLockRenewer()
-        #auto_lock_renew._renew_period = 1
-        #async with auto_lock_renew:  # Check that it is not called when the renewer is shutdown
-        #    message = MockReceivedMessage(prevent_renew_lock=True)
-        #    auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
-        #    await auto_lock_renew.close()
-        #    await asyncio.sleep(3)
-        #    assert not results
-        #    assert not errors
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenewer()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew:  # Check that it is not called when the renewer is shutdown
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
+            await auto_lock_renew.close()
+            await asyncio.sleep(3)
+            assert not results
+            assert not errors
 
-        #del results[:]
-        #del errors[:]
-        #auto_lock_renew = AutoLockRenewer()
-        #auto_lock_renew._renew_period = 1
-        #async with auto_lock_renew:  # Check that it is not called when the receiver is shutdown
-        #    message = MockReceivedMessage(prevent_renew_lock=True)
-        #    auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
-        #    message._receiver._running = False
-        #    await asyncio.sleep(3)
-        #    assert not results
-        #    assert not errors
+        del results[:]
+        del errors[:]
+        auto_lock_renew = AutoLockRenewer()
+        auto_lock_renew._renew_period = 1
+        async with auto_lock_renew:  # Check that it is not called when the receiver is shutdown
+            message = MockReceivedMessage(prevent_renew_lock=True)
+            auto_lock_renew.register(receiver, renewable=message, on_lock_renew_failure=callback_mock)
+            message._receiver._running = False
+            await asyncio.sleep(3)
+            assert not results
+            assert not errors
 
     @pytest.mark.mocksb
     @AzureTestCase.await_prepared_test
