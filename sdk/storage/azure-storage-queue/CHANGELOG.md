@@ -2,12 +2,6 @@
 
 ## 12.6.0b1 (Unreleased)
 
-### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
-
 ### Other Changes
 - Removed `msrest` dependency.
 - Added `typing-extensions>=4.0.1` as a dependency.

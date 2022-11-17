@@ -3,10 +3,8 @@
 ## 12.15.0b1 (Unreleased)
 
 ### Features Added
-
-### Breaking Changes
-
-### Bugs Fixed
+- Added support for service version 2021-12-02.
+- Added support for new blob tier, `Cold`.
 
 ### Other Changes
 - Removed `msrest` dependency.
