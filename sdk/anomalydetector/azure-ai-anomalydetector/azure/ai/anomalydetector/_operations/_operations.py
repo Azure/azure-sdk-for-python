@@ -9,7 +9,6 @@
 import json
 import sys
 from typing import Any, Callable, Dict, IO, Iterable, Optional, TypeVar, Union, overload
-import urllib.parse
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -46,7 +45,7 @@ _SERIALIZER.client_side_validation = False
 def build_anomaly_detector_detect_univariate_entire_series_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -63,7 +62,7 @@ def build_anomaly_detector_detect_univariate_entire_series_request(**kwargs: Any
 def build_anomaly_detector_detect_univariate_last_point_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -80,7 +79,7 @@ def build_anomaly_detector_detect_univariate_last_point_request(**kwargs: Any) -
 def build_anomaly_detector_detect_univariate_change_point_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -94,7 +93,9 @@ def build_anomaly_detector_detect_univariate_change_point_request(**kwargs: Any)
     return HttpRequest(method="POST", url=_url, headers=_headers, **kwargs)
 
 
-def build_anomaly_detector_get_batch_detection_result_request(result_id: str, **kwargs: Any) -> HttpRequest:
+def build_anomaly_detector_get_multivariate_batch_detection_result_request(
+    result_id: str, **kwargs: Any
+) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
     accept = _headers.pop("Accept", "application/json")
@@ -105,7 +106,7 @@ def build_anomaly_detector_get_batch_detection_result_request(result_id: str, **
         "resultId": _SERIALIZER.url("result_id", result_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -116,7 +117,7 @@ def build_anomaly_detector_get_batch_detection_result_request(result_id: str, **
 def build_anomaly_detector_create_and_train_multivariate_model_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -164,7 +165,7 @@ def build_anomaly_detector_delete_multivariate_model_request(model_id: str, **kw
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -183,7 +184,7 @@ def build_anomaly_detector_get_multivariate_model_request(model_id: str, **kwarg
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -194,7 +195,7 @@ def build_anomaly_detector_get_multivariate_model_request(model_id: str, **kwarg
 def build_anomaly_detector_detect_multivariate_batch_anomaly_request(model_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -203,7 +204,7 @@ def build_anomaly_detector_detect_multivariate_batch_anomaly_request(model_id: s
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -216,7 +217,7 @@ def build_anomaly_detector_detect_multivariate_batch_anomaly_request(model_id: s
 def build_anomaly_detector_detect_multivariate_last_anomaly_request(model_id: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -225,7 +226,7 @@ def build_anomaly_detector_detect_multivariate_last_anomaly_request(model_id: st
         "modelId": _SERIALIZER.url("model_id", model_id, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
@@ -309,8 +310,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.EntireDetectResponse]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.EntireDetectResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -326,13 +327,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            # FIXME: this is handwritten
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -346,9 +348,9 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         deserialized = _deserialize(_models.EntireDetectResponse, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def detect_univariate_last_point(
@@ -417,8 +419,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LastDetectResponse]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LastDetectResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -434,13 +436,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            # FIXME: this is handwritten
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -454,9 +457,9 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         deserialized = _deserialize(_models.LastDetectResponse, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def detect_univariate_change_point(
@@ -529,8 +532,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ChangePointDetectResponse]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.ChangePointDetectResponse] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -546,13 +549,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            # FIXME: this is handwritten
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -566,12 +570,12 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         deserialized = _deserialize(_models.ChangePointDetectResponse, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
-    def get_batch_detection_result(self, result_id: str, **kwargs: Any) -> _models.DetectionResult:
+    def get_multivariate_batch_detection_result(self, result_id: str, **kwargs: Any) -> _models.DetectionResult:
         """Get Multivariate Anomaly Detection Result.
 
         For asynchronous inference, get multivariate anomaly detection result based on
@@ -594,21 +598,22 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DetectionResult]
+        cls: ClsType[_models.DetectionResult] = kwargs.pop("cls", None)
 
-        request = build_anomaly_detector_get_batch_detection_result_request(
+        request = build_anomaly_detector_get_multivariate_batch_detection_result_request(
             result_id=result_id,
             headers=_headers,
             params=_params,
         )
         path_format_arguments = {
-            # FIXME: this is handwritten
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -622,9 +627,9 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         deserialized = _deserialize(_models.DetectionResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def create_and_train_multivariate_model(
@@ -708,8 +713,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Model]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.Model] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -725,13 +730,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            # FIXME: this is handwritten
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -748,9 +754,9 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         deserialized = _deserialize(_models.Model, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @distributed_trace
     def list_multivariate_models(
@@ -771,7 +777,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.ModelList]
+        cls: ClsType[_models._models.ModelList] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -791,31 +797,26 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
                     params=_params,
                 )
                 path_format_arguments = {
-                    # FIXME: this is handwritten
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-                    "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                    "ApiVersion": self._serialize.url(
+                        "self._config.api_version", self._config.api_version, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
+                request = HttpRequest("GET", next_link)
                 path_format_arguments = {
-                    # FIXME: this is handwritten
-                    "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-                    "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+                    "Endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                    "ApiVersion": self._serialize.url(
+                        "self._config.api_version", self._config.api_version, "str", skip_quote=True
+                    ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -823,13 +824,13 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             deserialized = _deserialize(_models._models.ModelList, pipeline_response)
             list_of_elem = deserialized.models
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, iter(list_of_elem)
 
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -868,7 +869,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_anomaly_detector_delete_multivariate_model_request(
             model_id=model_id,
@@ -876,13 +877,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            # FIXME: this is handwritten
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -920,7 +922,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.Model]
+        cls: ClsType[_models.Model] = kwargs.pop("cls", None)
 
         request = build_anomaly_detector_get_multivariate_model_request(
             model_id=model_id,
@@ -928,13 +930,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            # FIXME: this is handwritten
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -948,9 +951,9 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         deserialized = _deserialize(_models.Model, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def detect_multivariate_batch_anomaly(
@@ -1042,8 +1045,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DetectionResult]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DetectionResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1060,13 +1063,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            # FIXME: this is handwritten
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1084,9 +1088,9 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         deserialized = _deserialize(_models.DetectionResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, response_headers)
+            return cls(pipeline_response, deserialized, response_headers)  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore
 
     @overload
     def detect_multivariate_last_anomaly(
@@ -1172,8 +1176,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.LastDetectionResult]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.LastDetectionResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
@@ -1190,13 +1194,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             params=_params,
         )
         path_format_arguments = {
-            # FIXME: this is handwritten
             "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1210,6 +1215,6 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         deserialized = _deserialize(_models.LastDetectionResult, response.json())
 
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, {})  # type: ignore
 
-        return deserialized
+        return deserialized  # type: ignore

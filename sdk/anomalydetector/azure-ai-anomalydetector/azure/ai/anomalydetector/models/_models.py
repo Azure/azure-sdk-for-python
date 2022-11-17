@@ -325,7 +325,7 @@ be accepted. """
 class ChangePointDetectResponse(_model_base.Model):
     """The response of change point detection.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar period: Frequency extracted from the series, zero means no recurrent pattern has been
      found.
@@ -405,25 +405,25 @@ class DetectionRequest(_model_base.Model):
     """Detection request for batch inference. This is an asynchronous inference which
     will need another API to get detection results.
 
-        All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to Azure.
 
-        :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
-         either pointed to an Azure blob storage folder, or pointed to a CSV file in
-         Azure blob storage based on you data schema selection. The data schema should
-         be exactly the same with those used in the training phase. Required.
-        :vartype data_source: str
-        :ivar top_contributor_count: An optional field, which is used to specify the number of top
-         contributed
-         variables for one anomalous timestamp in the response. The default number is
-         10. Required.
-        :vartype top_contributor_count: int
-        :ivar start_time: A required field, indicating the start time of data for detection, which
-         should
-         be date-time of ISO 8601 format. Required.
-        :vartype start_time: ~datetime.datetime
-        :ivar end_time: A required field, indicating the end time of data for detection, which should
-         be date-time of ISO 8601 format. Required.
-        :vartype end_time: ~datetime.datetime
+    :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
+     either pointed to an Azure blob storage folder, or pointed to a CSV file in
+     Azure blob storage based on you data schema selection. The data schema should
+     be exactly the same with those used in the training phase. Required.
+    :vartype data_source: str
+    :ivar top_contributor_count: An optional field, which is used to specify the number of top
+     contributed
+     variables for one anomalous timestamp in the response. The default number is
+     10. Required.
+    :vartype top_contributor_count: int
+    :ivar start_time: A required field, indicating the start time of data for detection, which
+     should
+     be date-time of ISO 8601 format. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: A required field, indicating the end time of data for detection, which should
+     be date-time of ISO 8601 format. Required.
+    :vartype end_time: ~datetime.datetime
     """
 
     data_source: str = rest_field(name="dataSource")
@@ -468,6 +468,8 @@ be date-time of ISO 8601 format. Required. """
 class DetectionResult(_model_base.Model):
     """Detection results for the given resultId.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar result_id: Result identifier, which is used to fetch the results of an inference call.
@@ -479,7 +481,7 @@ class DetectionResult(_model_base.Model):
     :vartype results: list[~anomalydetector.models.AnomalyState]
     """
 
-    result_id: str = rest_field(name="resultId")
+    result_id: str = rest_field(name="resultId", readonly=True)
     """Result identifier, which is used to fetch the results of an inference call. Required. """
     summary: "_models.DetectionResultSummary" = rest_field()
     """Multivariate anomaly detection status. Required. """
@@ -490,7 +492,6 @@ class DetectionResult(_model_base.Model):
     def __init__(
         self,
         *,
-        result_id: str,
         summary: "_models.DetectionResultSummary",
         results: List["_models.AnomalyState"],
     ):
@@ -1015,6 +1016,8 @@ sever the anomaly is. For normal points, the \"severity\" is always 0. """
 class Model(_model_base.Model):
     """Response of getting a model.
 
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
     All required parameters must be populated in order to send to Azure.
 
     :ivar model_id: Model identifier. Required.
@@ -1028,7 +1031,7 @@ class Model(_model_base.Model):
     :vartype model_info: ~anomalydetector.models.ModelInfo
     """
 
-    model_id: str = rest_field(name="modelId")
+    model_id: str = rest_field(name="modelId", readonly=True)
     """Model identifier. Required. """
     created_time: datetime.datetime = rest_field(name="createdTime")
     """Date and time (UTC) when the model was created. Required. """
@@ -1042,7 +1045,6 @@ information. """
     def __init__(
         self,
         *,
-        model_id: str,
         created_time: datetime.datetime,
         last_updated_time: datetime.datetime,
         model_info: Optional["_models.ModelInfo"] = None,
@@ -1065,38 +1067,38 @@ class ModelInfo(_model_base.Model):
     """Training result of a model including its status, errors and diagnostics
     information.
 
-        All required parameters must be populated in order to send to Azure.
+    All required parameters must be populated in order to send to Azure.
 
-        :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
-         either pointed to an Azure blob storage folder, or pointed to a CSV file in
-         Azure blob storage based on you data schema selection. Required.
-        :vartype data_source: str
-        :ivar data_schema: Data schema of input data source: OneTable or MultiTable. The default
-         DataSchema is OneTable. Known values are: "OneTable" and "MultiTable".
-        :vartype data_schema: str or ~anomalydetector.models.DataSchema
-        :ivar start_time: A required field, indicating the start time of training data, which should be
-         date-time of ISO 8601 format. Required.
-        :vartype start_time: ~datetime.datetime
-        :ivar end_time: A required field, indicating the end time of training data, which should be
-         date-time of ISO 8601 format. Required.
-        :vartype end_time: ~datetime.datetime
-        :ivar display_name: An optional field. The display name of the model whose maximum length is 24
-         characters.
-        :vartype display_name: str
-        :ivar sliding_window: An optional field, indicating how many previous timestamps will be used
-         to
-         detect whether the timestamp is anomaly or not.
-        :vartype sliding_window: int
-        :ivar align_policy: An optional field, indicating the manner to align multiple variables.
-        :vartype align_policy: ~anomalydetector.models.AlignPolicy
-        :ivar status: Model status. One of CREATED, RUNNING, READY, and FAILED. Known values are:
-         "CREATED", "RUNNING", "READY", and "FAILED".
-        :vartype status: str or ~anomalydetector.models.ModelStatus
-        :ivar errors: Error messages when failed to create a model.
-        :vartype errors: list[~anomalydetector.models.ErrorResponse]
-        :ivar diagnostics_info: Diagnostics information to help inspect the states of model or
-         variable.
-        :vartype diagnostics_info: ~anomalydetector.models.DiagnosticsInfo
+    :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
+     either pointed to an Azure blob storage folder, or pointed to a CSV file in
+     Azure blob storage based on you data schema selection. Required.
+    :vartype data_source: str
+    :ivar data_schema: Data schema of input data source: OneTable or MultiTable. The default
+     DataSchema is OneTable. Known values are: "OneTable" and "MultiTable".
+    :vartype data_schema: str or ~anomalydetector.models.DataSchema
+    :ivar start_time: A required field, indicating the start time of training data, which should be
+     date-time of ISO 8601 format. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: A required field, indicating the end time of training data, which should be
+     date-time of ISO 8601 format. Required.
+    :vartype end_time: ~datetime.datetime
+    :ivar display_name: An optional field. The display name of the model whose maximum length is 24
+     characters.
+    :vartype display_name: str
+    :ivar sliding_window: An optional field, indicating how many previous timestamps will be used
+     to
+     detect whether the timestamp is anomaly or not.
+    :vartype sliding_window: int
+    :ivar align_policy: An optional field, indicating the manner to align multiple variables.
+    :vartype align_policy: ~anomalydetector.models.AlignPolicy
+    :ivar status: Model status. One of CREATED, RUNNING, READY, and FAILED. Known values are:
+     "CREATED", "RUNNING", "READY", and "FAILED".
+    :vartype status: str or ~anomalydetector.models.ModelStatus
+    :ivar errors: Error messages when failed to create a model.
+    :vartype errors: list[~anomalydetector.models.ErrorResponse]
+    :ivar diagnostics_info: Diagnostics information to help inspect the states of model or
+     variable.
+    :vartype diagnostics_info: ~anomalydetector.models.DiagnosticsInfo
     """
 
     data_source: str = rest_field(name="dataSource")

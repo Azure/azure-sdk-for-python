@@ -7,13 +7,11 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Union
+from typing import Any
 
 from azure.core.configuration import Configuration
 from azure.core.credentials import AzureKeyCredential
 from azure.core.pipeline import policies
-# FIXME: this is handwritten
-from . import models as _models
 
 from ._version import VERSION
 
@@ -32,8 +30,6 @@ class AnomalyDetectorClientConfiguration(Configuration):  # pylint: disable=too-
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://westus2.api.cognitive.microsoft.com). Required.
     :type endpoint: str
-    :param api_version: Api Version. "v1.1" Required.
-    :type api_version: str or ~anomalydetector.models.APIVersion
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Api Version. Default value is "v1.1". Note that overriding this default
@@ -41,30 +37,22 @@ class AnomalyDetectorClientConfiguration(Configuration):  # pylint: disable=too-
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, api_version: Union[str, _models.APIVersion], credential: AzureKeyCredential, **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         super(AnomalyDetectorClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "v1.1")  # type: Literal["v1.1"]
+        api_version: Literal["v1.1"] = kwargs.pop("api_version", "v1.1")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
-        if api_version is None:
-            raise ValueError("Parameter 'api_version' must not be None.")
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
 
         self.endpoint = endpoint
-        self.api_version = api_version
         self.credential = credential
         self.api_version = api_version
         kwargs.setdefault("sdk_moniker", "ai-anomalydetector/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Union
+from typing import Any
 
 from azure.core import PipelineClient
 from azure.core.credentials import AzureKeyCredential
@@ -16,8 +16,7 @@ from azure.core.rest import HttpRequest, HttpResponse
 from ._configuration import AnomalyDetectorClientConfiguration
 from ._operations import AnomalyDetectorClientOperationsMixin
 from ._serialization import Deserializer, Serializer
-# FIXME: this is handwritten
-from . import models as _models
+
 
 class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: disable=client-accepts-api-version-keyword
     """The Anomaly Detector API detects anomalies automatically in time series data.
@@ -40,8 +39,6 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
     :param endpoint: Supported Cognitive Services endpoints (protocol and hostname, for example:
      https://westus2.api.cognitive.microsoft.com). Required.
     :type endpoint: str
-    :param api_version: Api Version. "v1.1" Required.
-    :type api_version: str or ~anomalydetector.models.APIVersion
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.AzureKeyCredential
     :keyword api_version: Api Version. Default value is "v1.1". Note that overriding this default
@@ -49,13 +46,9 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
     :paramtype api_version: str
     """
 
-    def __init__(
-        self, endpoint: str, api_version: Union[str, _models.APIVersion], credential: AzureKeyCredential, **kwargs: Any
-    ) -> None:
+    def __init__(self, endpoint: str, credential: AzureKeyCredential, **kwargs: Any) -> None:
         _endpoint = "{Endpoint}/anomalydetector/{ApiVersion}"
-        self._config = AnomalyDetectorClientConfiguration(
-            endpoint=endpoint, api_version=api_version, credential=credential, **kwargs
-        )
+        self._config = AnomalyDetectorClientConfiguration(endpoint=endpoint, credential=credential, **kwargs)
         self._client = PipelineClient(base_url=_endpoint, config=self._config, **kwargs)
 
         self._serialize = Serializer()
@@ -82,22 +75,21 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin):  # pylint: di
 
         request_copy = deepcopy(request)
         path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str"),
-            "ApiVersion": self._serialize.url("self._config.api_version", self._config.api_version, "str"),
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+            "ApiVersion": self._serialize.url(
+                "self._config.api_version", self._config.api_version, "str", skip_quote=True
+            ),
         }
 
         request_copy.url = self._client.format_url(request_copy.url, **path_format_arguments)
         return self._client.send_request(request_copy, **kwargs)
 
-    def close(self):
-        # type: () -> None
+    def close(self) -> None:
         self._client.close()
 
-    def __enter__(self):
-        # type: () -> AnomalyDetectorClient
+    def __enter__(self) -> "AnomalyDetectorClient":
         self._client.__enter__()
         return self
 
-    def __exit__(self, *exc_details):
-        # type: (Any) -> None
+    def __exit__(self, *exc_details) -> None:
         self._client.__exit__(*exc_details)
