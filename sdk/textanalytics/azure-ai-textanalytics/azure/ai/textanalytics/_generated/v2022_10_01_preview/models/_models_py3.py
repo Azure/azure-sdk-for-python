@@ -1917,7 +1917,7 @@ class CurrencyResolution(BaseResolution, QuantityResolution):
     _attribute_map = {
         "value": {"key": "value", "type": "float"},
         "resolution_kind": {"key": "resolutionKind", "type": "str"},
-        "iso4217": {"key": "ISO4217", "type": "str"},
+        "iso4217": {"key": "iso4217", "type": "str"},
         "unit": {"key": "unit", "type": "str"},
     }
 
@@ -6607,7 +6607,7 @@ class NumberResolution(BaseResolution):
      "Integer", "Decimal", "Power", "Fraction", "Percent", and "Unspecified".
     :vartype number_kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.NumberKind
     :ivar value: A numeric representation of what the extracted text denotes. Required.
-    :vartype value: str
+    :vartype value: float
     """
 
     _validation = {
@@ -6619,14 +6619,14 @@ class NumberResolution(BaseResolution):
     _attribute_map = {
         "resolution_kind": {"key": "resolutionKind", "type": "str"},
         "number_kind": {"key": "numberKind", "type": "str"},
-        "value": {"key": "value", "type": "str"},
+        "value": {"key": "value", "type": "float"},
     }
 
     def __init__(
         self,
         *,
         number_kind: Union[str, "_models.NumberKind"],
-        value: str,
+        value: float,
         **kwargs
     ):
         """
@@ -6634,7 +6634,7 @@ class NumberResolution(BaseResolution):
          "Integer", "Decimal", "Power", "Fraction", "Percent", and "Unspecified".
         :paramtype number_kind: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.NumberKind
         :keyword value: A numeric representation of what the extracted text denotes. Required.
-        :paramtype value: str
+        :paramtype value: float
         """
         super().__init__(**kwargs)
         self.resolution_kind = 'NumberResolution'  # type: str
@@ -7937,9 +7937,9 @@ class SpeedResolution(BaseResolution, QuantityResolution):
     :vartype resolution_kind: str or
      ~azure.ai.textanalytics.v2022_10_01_preview.models.ResolutionKind
     :ivar unit: The speed Unit of measurement. Required. Known values are: "Unspecified",
-     "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
-     "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
-     "MetersPerMillisecond", "CentimetersPerMillisecond", and "KilometersPerMillisecond".
+     "MeterPerSecond", "KilometerPerHour", "KilometerPerMinute", "KilometerPerSecond",
+     "MilePerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardPerMinute", "YardPerSecond",
+     "MeterPerMillisecond", "CentimeterPerMillisecond", and "KilometerPerMillisecond".
     :vartype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.SpeedUnit
     """
 
@@ -7966,9 +7966,9 @@ class SpeedResolution(BaseResolution, QuantityResolution):
         :keyword value: The numeric value that the extracted text denotes. Required.
         :paramtype value: float
         :keyword unit: The speed Unit of measurement. Required. Known values are: "Unspecified",
-         "MetersPerSecond", "KilometersPerHour", "KilometersPerMinute", "KilometersPerSecond",
-         "MilesPerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardsPerMinute", "YardsPerSecond",
-         "MetersPerMillisecond", "CentimetersPerMillisecond", and "KilometersPerMillisecond".
+         "MeterPerSecond", "KilometerPerHour", "KilometerPerMinute", "KilometerPerSecond",
+         "MilePerHour", "Knot", "FootPerSecond", "FootPerMinute", "YardPerMinute", "YardPerSecond",
+         "MeterPerMillisecond", "CentimeterPerMillisecond", and "KilometerPerMillisecond".
         :paramtype unit: str or ~azure.ai.textanalytics.v2022_10_01_preview.models.SpeedUnit
         """
         super().__init__(value=value, **kwargs)
