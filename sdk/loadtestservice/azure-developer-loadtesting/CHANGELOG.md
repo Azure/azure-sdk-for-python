@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0 
+## 1.0.0 (2023-01-01)
 
 ### Features Added 
 - Method added `azure.developer.loadtesting.LoadTestingClient.load_test_run.list_metric_namespaces`
