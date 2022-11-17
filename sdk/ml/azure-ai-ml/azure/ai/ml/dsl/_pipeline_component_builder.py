@@ -438,20 +438,26 @@ def _build_pipeline_parameter(
             }
         )
 
+    def all_params(parameters):
+        for value in parameters.values():
+            yield value
+
     if func is None:
         return transformed_kwargs
 
-    parameters = signature(func).parameters
+    parameters = all_params(signature(func).parameters)
     # transform default values
+    for left_args in parameters:
+        if left_args.name not in transformed_kwargs.keys() and left_args.kind != Parameter.VAR_KEYWORD:
+            default_value = left_args.default if left_args.default is not Parameter.empty else None
+            actual_value = user_provided_kwargs.get(left_args.name)
+            transformed_kwargs[left_args.name] = _wrap_pipeline_parameter(
+                key=left_args.name, default_value=default_value, actual_value=actual_value
+            )
+    # Add variable kwargs to transformed_kwargs.
     for key, value in user_provided_kwargs.items():
         if key not in transformed_kwargs:
-            if key in parameters and parameters[key].kind != Parameter.VAR_KEYWORD:
-                default_value = parameters[key].default if parameters[key].default is not Parameter.empty else None
-            else:
-                default_value = None
-            transformed_kwargs[key] = _wrap_pipeline_parameter(
-                key=key, default_value=default_value, actual_value=value
-            )
+            transformed_kwargs[key] = _wrap_pipeline_parameter(key=key, default_value=None, actual_value=value)
     return transformed_kwargs
 
 
