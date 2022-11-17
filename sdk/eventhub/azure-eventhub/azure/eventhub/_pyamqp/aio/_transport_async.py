@@ -414,7 +414,7 @@ class AsyncTransport(
                         await asyncio.sleep(0)
                         self.writer.transport.abort()
                     await self.writer.wait_closed()
-            except Exception as e:
+            except Exception as e:  # pylint: disable=broad-except
                 # Sometimes SSL raises APPLICATION_DATA_AFTER_CLOSE_NOTIFY here on close.
                 _LOGGER.debug("Error shutting down socket: %r", e)
             self.writer, self.reader = None, None
@@ -422,26 +422,15 @@ class AsyncTransport(
         self.connected = False
 
     async def write(self, s):
-        try:
-            await self._write(s)
-        except socket.timeout:
-            raise
-        except (OSError, IOError, socket.error) as exc:
-            if get_errno(exc) not in _UNAVAIL:
-                self.connected = False
-            raise
-
-    async def receive_frame_with_lock(self, **kwargs):
-        try:
-            async with self.socket_lock:
-                header, channel, payload = await self.read(**kwargs)
-            if not payload:
-                decoded = decode_empty_frame(header)
-            else:
-                decoded = decode_frame(payload)
-            return channel, decoded
-        except (socket.timeout, TimeoutError):
-            return None, None
+        async with self.socket_lock:
+            try:
+                await self._write(s)
+            except socket.timeout:
+                raise
+            except (OSError, IOError, socket.error) as exc:
+                if get_errno(exc) not in _UNAVAIL:
+                    self.connected = False
+                raise
 
     async def negotiate(self):
         if not self.sslopts:
@@ -582,10 +571,11 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        try:
-            await self.ws.send_bytes(s)
-        except asyncio.TimeoutError as te:
-            raise ConnectionError('send timed out (%s)' % te)
-        except OSError as e:
-            await self.session.close()
-            raise ConnectionError('Websocket connection closed: %r' % e) from e
+        async with self.socket_lock:
+            try:
+                await self.ws.send_bytes(s)
+            except asyncio.TimeoutError as te:
+                raise ConnectionError('Send timed out (%s)' % te)
+            except OSError as e:
+                await self.session.close()
+                raise ConnectionError('Websocket connection closed: %r' % e) from e

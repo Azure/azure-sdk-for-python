@@ -173,14 +173,15 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def _receive_task(consumer):
-        max_retries = consumer._client._config.max_retries  # pylint:disable=protected-access
+        # pylint:disable=protected-access
+        max_retries = consumer._client._config.max_retries
         retried_times = 0
         running = True
         try:
-            while retried_times <= max_retries and running and consumer._callback_task_run: # pylint: disable=protected-access
+            while retried_times <= max_retries and running and consumer._callback_task_run:
                 try:
                     await consumer._open() # pylint: disable=protected-access
-                    running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch) # pylint: disable=protected-access
+                    running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch)
                 except asyncio.CancelledError:  # pylint: disable=try-except-raise
                     raise
                 except Exception as exception:  # pylint: disable=broad-except
@@ -188,17 +189,17 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                         isinstance(exception, errors.AMQPLinkError)
                         and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
                     ):
-                        raise await consumer._handle_exception(exception) # pylint: disable=protected-access
+                        raise await consumer._handle_exception(exception)
                     if not consumer.running:  # exit by close
                         return
-                    if consumer._last_received_event: # pylint: disable=protected-access
-                        consumer._offset = consumer._last_received_event.offset # pylint: disable=protected-access
-                    last_exception = await consumer._handle_exception(exception) # pylint: disable=protected-access
+                    if consumer._last_received_event:
+                        consumer._offset = consumer._last_received_event.offset
+                    last_exception = await consumer._handle_exception(exception)
                     retried_times += 1
                     if retried_times > max_retries:
                         _LOGGER.info(
                             "%r operation has exhausted retry. Last exception: %r.",
-                            consumer._name, # pylint: disable=protected-access
+                            consumer._name,
                             last_exception,
                         )
                         raise last_exception
