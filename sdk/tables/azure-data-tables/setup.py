@@ -68,6 +68,6 @@ setup(
         "azure-core<2.0.0,>=1.24.0",
         "yarl<2.0,>=1.0",
         "isodate>=0.6.0",
-        "typing-extensions>=4.0.1"
+        "typing-extensions>=4.3.0"
     ],
 )
