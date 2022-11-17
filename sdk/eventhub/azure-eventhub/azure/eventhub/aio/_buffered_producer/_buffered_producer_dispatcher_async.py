@@ -95,7 +95,9 @@ class BufferedProducerDispatcher:
             for pid, producer in self._buffered_producers.items():
                 # call each producer's flush method
                 try:
-                    tasks.append(asyncio.create_task(producer.flush(timeout_time=timeout_time)))
+                    task = asyncio.create_task(producer.flush(timeout_time=timeout_time))
+                    task.partition_id = pid
+                    tasks.append(task)
                 except Exception as exc:  # pylint: disable=broad-except
                     exc_results[pid] = exc
 
@@ -106,7 +108,7 @@ class BufferedProducerDispatcher:
                     if not task.done():
                         await task
                     await asyncio.sleep(0)
-                raise
+                    exc_results[task.partition_id] = exc
 
             if not exc_results:
                 _LOGGER.info("Flushing all partitions succeeded")
@@ -128,7 +130,9 @@ class BufferedProducerDispatcher:
             # stop all buffered producers
             for pid, producer in self._buffered_producers.items():
                 try:
-                    tasks.append(asyncio.create_task(producer.stop(flush=flush, timeout_time=timeout_time, raise_error=raise_error,)))
+                    task = asyncio.create_task(producer.stop(flush=flush, timeout_time=timeout_time, raise_error=raise_error,))
+                    task.partition_id = pid
+                    tasks.append(task)
                 except Exception as exc:  # pylint: disable=broad-except
                     exc_results[pid] = exc
             
@@ -139,7 +143,7 @@ class BufferedProducerDispatcher:
                     if not task.done():
                         await task
                     await asyncio.sleep(0)
-                raise
+                    exc_results[task.partition_id] = exc
 
             if exc_results:
                 _LOGGER.warning(
