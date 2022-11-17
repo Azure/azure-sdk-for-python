@@ -28,15 +28,15 @@
 import pytest
 import os
 from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_header_regex_sanitizer, \
-    set_default_session_settings, add_uri_regex_sanitizer, add_body_key_sanitizer, add_oauth_response_sanitizer
+    set_default_session_settings, add_body_key_sanitizer, add_oauth_response_sanitizer
 from azure.communication.identity._shared.utils import parse_connection_str
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     set_default_session_settings()
+    add_oauth_response_sanitizer()
 
-    connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING') or \
-                          os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
+    connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
     if connection_str is not None:
         endpoint, _ = parse_connection_str(connection_str)
         resource_name = endpoint.split(".")[0]

@@ -4,19 +4,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-import os
 import pytest
 from datetime import timedelta
 from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.identity import CommunicationTokenScope
-from azure.core.credentials import AccessToken
 from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
 from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
-from utils import is_token_expiration_within_allowed_deviation
+from _shared.fake_token_credential import FakeTokenCredential
+from utils import is_token_expiration_within_allowed_deviation, generate_teams_user_aad_token, \
+    skip_get_token_for_teams_user_test
 from azure.identity import DefaultAzureCredential
 from azure.communication.identity._shared.utils import parse_connection_str
-from msal import PublicClientApplication
 from acs_identity_decorator import acs_identity_decorator
 
 
@@ -25,15 +24,6 @@ class ArgumentPasser:
         def _wrapper(test_class, _, value, **kwargs):
             fn(test_class, _, value, **kwargs)
         return _wrapper
-
-
-class FakeTokenCredential(object):
-    def __init__(self):
-        self.token = AccessToken("Fake Token", 0)
-
-    def get_token(self, *args):
-        return self.token
-
 
 class TestClient(AzureRecordedTestCase):
     @CommunicationPreparer()
@@ -329,7 +319,7 @@ class TestClient(AzureRecordedTestCase):
     @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
-        if self.skip_get_token_for_teams_user_test():
+        if skip_get_token_for_teams_user_test(self):
             return
         endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
         if not is_live():
@@ -341,7 +331,7 @@ class TestClient(AzureRecordedTestCase):
             credential,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_object_id = self.generate_teams_user_aad_token()
+        aad_token, user_object_id = generate_teams_user_aad_token(self)
         token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, user_object_id)
         assert token_response.token is not None
 
@@ -349,13 +339,13 @@ class TestClient(AzureRecordedTestCase):
     @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_valid_params(self, communication_livetest_dynamic_connection_string):
-        if self.skip_get_token_for_teams_user_test():
+        if skip_get_token_for_teams_user_test(self):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_object_id = self.generate_teams_user_aad_token()
+        aad_token, user_object_id = generate_teams_user_aad_token(self)
         token_response = identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, user_object_id)
         assert token_response.token is not None
 
@@ -365,7 +355,7 @@ class TestClient(AzureRecordedTestCase):
     @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_invalid_token(self, _, value):
-        if self.skip_get_token_for_teams_user_test():
+        if skip_get_token_for_teams_user_test(self):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
@@ -380,13 +370,13 @@ class TestClient(AzureRecordedTestCase):
     @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_expired_token(self, communication_livetest_dynamic_connection_string):
-        if self.skip_get_token_for_teams_user_test():
+        if skip_get_token_for_teams_user_test(self):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
-        _, user_object_id = self.generate_teams_user_aad_token()
+        _, user_object_id = generate_teams_user_aad_token(self)
         with pytest.raises(Exception) as ex:
             identity_client.get_token_for_teams_user(self.expired_teams_token, self.m365_client_id,
                                                                       user_object_id)
@@ -399,13 +389,13 @@ class TestClient(AzureRecordedTestCase):
     @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_invalid_client_id(self, _, value):
-        if self.skip_get_token_for_teams_user_test():
+        if skip_get_token_for_teams_user_test(self):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_object_id = self.generate_teams_user_aad_token()
+        aad_token, user_object_id = generate_teams_user_aad_token(self)
         with pytest.raises(Exception) as ex:
             identity_client.get_token_for_teams_user(aad_token, value, user_object_id)
         assert str(ex.value.status_code) == "400"
@@ -415,13 +405,13 @@ class TestClient(AzureRecordedTestCase):
     @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_wrong_client_id(self, communication_livetest_dynamic_connection_string):
-        if self.skip_get_token_for_teams_user_test():
+        if skip_get_token_for_teams_user_test(self):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             communication_livetest_dynamic_connection_string,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_object_id = self.generate_teams_user_aad_token()
+        aad_token, user_object_id = generate_teams_user_aad_token(self)
         with pytest.raises(Exception) as ex:
             identity_client.get_token_for_teams_user(aad_token, user_object_id, user_object_id)
         assert str(ex.value.status_code) == "400"
@@ -433,13 +423,13 @@ class TestClient(AzureRecordedTestCase):
     @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_invalid_user_object_id(self, _, value):
-        if self.skip_get_token_for_teams_user_test():
+        if skip_get_token_for_teams_user_test(self):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, _ = self.generate_teams_user_aad_token()
+        aad_token, _ = generate_teams_user_aad_token(self)
         with pytest.raises(Exception) as ex:
             identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, value)
         assert str(ex.value.status_code) == "400"
@@ -449,34 +439,14 @@ class TestClient(AzureRecordedTestCase):
     @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_wrong_user_object_id(self):
-        if self.skip_get_token_for_teams_user_test():
+        if skip_get_token_for_teams_user_test(self):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, _ = self.generate_teams_user_aad_token()
+        aad_token, _ = generate_teams_user_aad_token(self)
         with pytest.raises(Exception) as ex:
             identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, self.m365_client_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
-
-    def generate_teams_user_aad_token(self):
-        if self.is_playback():
-            teams_user_aad_token = "sanitized"
-            teams_user_oid = "sanitized"
-        else:
-            msal_app = PublicClientApplication(
-                client_id=self.m365_client_id,
-                authority="{}/{}".format(self.m365_aad_authority, self.m365_aad_tenant))
-            scopes = [
-                "https://auth.msft.communication.azure.com/Teams.ManageCalls",
-                "https://auth.msft.communication.azure.com/Teams.ManageChats"
-            ]
-            result = msal_app.acquire_token_by_username_password(username=self.msal_username, password=self.msal_password, scopes=scopes)
-            teams_user_aad_token = result["access_token"]
-            teams_user_oid = result["id_token_claims"]["oid"]
-        return teams_user_aad_token, teams_user_oid
-
-    def skip_get_token_for_teams_user_test(self):
-        return str(self.skip_get_token_for_teams_user_tests).lower() == 'true'
