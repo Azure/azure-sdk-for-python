@@ -21,6 +21,7 @@
 - Method added `azure.developer.loadtesting.aio.LoadTestingClient.load_test_run.get_server_metrics_config`
 - Method added `azure.developer.loadtesting.aio.LoadTestingClient.load_test_administration.check_test_file_validation_status`
 - Method added `azure.developer.loadtesting.aio.LoadTestingClient.load_test_run.check_test_run_completed`
+- Method added `azure.developer.loadtesting.aio.LoadTestingClient.load_test_run.get_metric_dimension_values`
 
 ### Breaking Changes
 - renamed subclient from `load_test_runs` to `load_test_run`
