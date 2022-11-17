@@ -36,7 +36,7 @@ class AzureTableConfiguration(Configuration):  # pylint: disable=too-many-instan
 
     def __init__(self, url: str, **kwargs: Any) -> None:
         super(AzureTableConfiguration, self).__init__(**kwargs)
-        version = kwargs.pop("version", "2019-02-02")  # type: Literal["2019-02-02"]
+        version: Literal["2019-02-02"] = kwargs.pop("version", "2019-02-02")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")

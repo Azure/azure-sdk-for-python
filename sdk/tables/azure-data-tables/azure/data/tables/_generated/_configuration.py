@@ -36,7 +36,7 @@ class AzureTableConfiguration(Configuration):  # pylint: disable=too-many-instan
 
     def __init__(self, url: str, **kwargs: Any) -> None:
         super(AzureTableConfiguration, self).__init__(**kwargs)
-        version = kwargs.pop("version", "2019-02-02")  # type: Literal["2019-02-02"]
+        version: Literal["2019-02-02"] = kwargs.pop("version", "2019-02-02")
 
         if url is None:
             raise ValueError("Parameter 'url' must not be None.")
@@ -46,10 +46,7 @@ class AzureTableConfiguration(Configuration):  # pylint: disable=too-many-instan
         kwargs.setdefault("sdk_moniker", "table/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

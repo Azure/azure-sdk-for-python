@@ -59,7 +59,10 @@ class AccessPolicy(_serialization.Model):
 
 
 class CorsRule(_serialization.Model):
-    """CORS is an HTTP feature that enables a web application running under one domain to access resources in another domain. Web browsers implement a security restriction known as same-origin policy that prevents a web page from calling APIs in a different domain; CORS provides a secure way to allow one domain (the origin domain) to call APIs in another domain.
+    """CORS is an HTTP feature that enables a web application running under one domain to access
+    resources in another domain. Web browsers implement a security restriction known as same-origin
+    policy that prevents a web page from calling APIs in a different domain; CORS provides a secure
+    way to allow one domain (the origin domain) to call APIs in another domain.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -601,7 +604,7 @@ class TableServiceProperties(_serialization.Model):
         logging: Optional["_models.Logging"] = None,
         hour_metrics: Optional["_models.Metrics"] = None,
         minute_metrics: Optional["_models.Metrics"] = None,
-        cors: Optional["_models.CorsRule"] = None,
+        cors: Optional[List["_models.CorsRule"]] = None,
         **kwargs
     ):
         """

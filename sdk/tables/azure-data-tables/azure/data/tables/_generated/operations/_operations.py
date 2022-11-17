@@ -7,7 +7,7 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, Optional, TypeVar, Union, overload
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, overload
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -51,10 +51,8 @@ def build_table_query_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    data_service_version = kwargs.pop(
-        "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-    )  # type: Literal["3.0"]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -93,11 +91,9 @@ def build_table_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    data_service_version = kwargs.pop(
-        "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-    )  # type: Literal["3.0"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -124,7 +120,7 @@ def build_table_create_request(
 def build_table_delete_request(table: str, *, request_id_parameter: Optional[str] = None, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
 
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -133,7 +129,7 @@ def build_table_delete_request(table: str, *, request_id_parameter: Optional[str
         "table": _SERIALIZER.url("table", table, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct headers
     _headers["x-ms-version"] = _SERIALIZER.header("version", version, "str")
@@ -160,10 +156,8 @@ def build_table_query_entities_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    data_service_version = kwargs.pop(
-        "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-    )  # type: Literal["3.0"]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -172,7 +166,7 @@ def build_table_query_entities_request(
         "table": _SERIALIZER.url("table", table, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -215,10 +209,8 @@ def build_table_query_entity_with_partition_and_row_key_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    data_service_version = kwargs.pop(
-        "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-    )  # type: Literal["3.0"]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -229,7 +221,7 @@ def build_table_query_entity_with_partition_and_row_key_request(
         "rowKey": _SERIALIZER.url("row_key", row_key, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -265,11 +257,9 @@ def build_table_update_entity_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    data_service_version = kwargs.pop(
-        "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-    )  # type: Literal["3.0"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -280,7 +270,7 @@ def build_table_update_entity_request(
         "rowKey": _SERIALIZER.url("row_key", row_key, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -316,11 +306,9 @@ def build_table_merge_entity_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    data_service_version = kwargs.pop(
-        "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-    )  # type: Literal["3.0"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -331,7 +319,7 @@ def build_table_merge_entity_request(
         "rowKey": _SERIALIZER.url("row_key", row_key, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -367,10 +355,8 @@ def build_table_delete_entity_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    data_service_version = kwargs.pop(
-        "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-    )  # type: Literal["3.0"]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -381,7 +367,7 @@ def build_table_delete_entity_request(
         "rowKey": _SERIALIZER.url("row_key", row_key, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -413,11 +399,9 @@ def build_table_insert_entity_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    data_service_version = kwargs.pop(
-        "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-    )  # type: Literal["3.0"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    data_service_version: Literal["3.0"] = kwargs.pop("data_service_version", _headers.pop("DataServiceVersion", "3.0"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/json;odata=minimalmetadata")
 
     # Construct URL
@@ -426,7 +410,7 @@ def build_table_insert_entity_request(
         "table": _SERIALIZER.url("table", table, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -454,8 +438,8 @@ def build_table_get_access_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: Literal["acl"]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -464,7 +448,7 @@ def build_table_get_access_policy_request(
         "table": _SERIALIZER.url("table", table, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -491,9 +475,9 @@ def build_table_set_access_policy_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: Literal["acl"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -502,7 +486,7 @@ def build_table_set_access_policy_request(
         "table": _SERIALIZER.url("table", table, "str"),
     }
 
-    _url = _format_url_section(_url, **path_format_arguments)
+    _url: str = _format_url_section(_url, **path_format_arguments)  # type: ignore
 
     # Construct parameters
     if timeout is not None:
@@ -526,10 +510,10 @@ def build_service_set_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: Literal["service"]
-    comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: Literal["properties"]
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+    comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+    content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -558,9 +542,9 @@ def build_service_get_properties_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: Literal["service"]
-    comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: Literal["properties"]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+    comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -587,9 +571,9 @@ def build_service_get_statistics_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: Literal["service"]
-    comp = kwargs.pop("comp", _params.pop("comp", "stats"))  # type: Literal["stats"]
-    version = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))  # type: Literal["2019-02-02"]
+    restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+    comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
+    version: Literal["2019-02-02"] = kwargs.pop("version", _headers.pop("x-ms-version", "2019-02-02"))
     accept = _headers.pop("Accept", "application/xml")
 
     # Construct URL
@@ -679,10 +663,10 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        data_service_version = kwargs.pop(
+        data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )  # type: Literal["3.0"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TableQueryResponse]
+        )
+        cls: ClsType[_models.TableQueryResponse] = kwargs.pop("cls", None)
 
         request = build_table_query_request(
             request_id_parameter=request_id_parameter,
@@ -699,9 +683,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -773,13 +757,13 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        data_service_version = kwargs.pop(
+        data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )  # type: Literal["3.0"]
-        content_type = kwargs.pop(
+        )
+        content_type: str = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json;odata=nometadata")
-        )  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.TableResponse]]
+        )
+        cls: ClsType[Optional[_models.TableResponse]] = kwargs.pop("cls", None)
 
         _json = self._serialize.body(table_properties, "TableProperties")
 
@@ -797,9 +781,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -868,7 +852,7 @@ class TableOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_table_delete_request(
             table=table,
@@ -880,9 +864,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -964,10 +948,10 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        data_service_version = kwargs.pop(
+        data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )  # type: Literal["3.0"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TableEntityQueryResponse]
+        )
+        cls: ClsType[_models.TableEntityQueryResponse] = kwargs.pop("cls", None)
 
         request = build_table_query_entities_request(
             table=table,
@@ -987,9 +971,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1076,10 +1060,10 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        data_service_version = kwargs.pop(
+        data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )  # type: Literal["3.0"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[Dict[str, Any]]
+        )
+        cls: ClsType[Dict[str, Any]] = kwargs.pop("cls", None)
 
         request = build_table_query_entity_with_partition_and_row_key_request(
             table=table,
@@ -1098,9 +1082,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1299,11 +1283,11 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        data_service_version = kwargs.pop(
+        data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )  # type: Literal["3.0"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1335,9 +1319,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1526,11 +1510,11 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        data_service_version = kwargs.pop(
+        data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )  # type: Literal["3.0"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -1562,9 +1546,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1640,10 +1624,10 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        data_service_version = kwargs.pop(
+        data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )  # type: Literal["3.0"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        )
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_table_delete_entity_request(
             table=table,
@@ -1661,9 +1645,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1735,13 +1719,13 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        data_service_version = kwargs.pop(
+        data_service_version: Literal["3.0"] = kwargs.pop(
             "data_service_version", _headers.pop("DataServiceVersion", "3.0")
-        )  # type: Literal["3.0"]
-        content_type = kwargs.pop(
+        )
+        content_type: str = kwargs.pop(
             "content_type", _headers.pop("Content-Type", "application/json;odata=nometadata")
-        )  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[Dict[str, Any]]]
+        )
+        cls: ClsType[Optional[Dict[str, Any]]] = kwargs.pop("cls", None)
 
         if table_entity_properties is not None:
             _json = self._serialize.body(table_entity_properties, "{object}")
@@ -1764,9 +1748,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1815,7 +1799,7 @@ class TableOperations:
     @distributed_trace
     def get_access_policy(
         self, table: str, *, timeout: Optional[int] = None, request_id_parameter: Optional[str] = None, **kwargs: Any
-    ) -> _models.SignedIdentifier:
+    ) -> List[_models.SignedIdentifier]:
         """Retrieves details about any stored access policies specified on the table that may be used with
         Shared Access Signatures.
 
@@ -1846,8 +1830,8 @@ class TableOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: Literal["acl"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SignedIdentifier]
+        comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
+        cls: ClsType[List[_models.SignedIdentifier]] = kwargs.pop("cls", None)
 
         request = build_table_get_access_policy_request(
             table=table,
@@ -1861,9 +1845,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1893,7 +1877,7 @@ class TableOperations:
     def set_access_policy(  # pylint: disable=inconsistent-return-statements
         self,
         table: str,
-        table_acl: Optional[_models.SignedIdentifier] = None,
+        table_acl: Optional[List[_models.SignedIdentifier]] = None,
         *,
         timeout: Optional[int] = None,
         request_id_parameter: Optional[str] = None,
@@ -1930,9 +1914,9 @@ class TableOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        comp = kwargs.pop("comp", _params.pop("comp", "acl"))  # type: Literal["acl"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        comp: Literal["acl"] = kwargs.pop("comp", _params.pop("comp", "acl"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         serialization_ctxt = {"xml": {"name": "SignedIdentifiers", "wrapped": True, "itemsName": "SignedIdentifier"}}
         if table_acl is not None:
@@ -1956,9 +1940,9 @@ class TableOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2041,10 +2025,10 @@ class ServiceOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: Literal["service"]
-        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: Literal["properties"]
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+        content_type: str = kwargs.pop("content_type", _headers.pop("Content-Type", "application/xml"))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         _content = self._serialize.body(table_service_properties, "TableServiceProperties", is_xml=True)
 
@@ -2062,9 +2046,9 @@ class ServiceOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2119,9 +2103,9 @@ class ServiceOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: Literal["service"]
-        comp = kwargs.pop("comp", _params.pop("comp", "properties"))  # type: Literal["properties"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TableServiceProperties]
+        restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+        comp: Literal["properties"] = kwargs.pop("comp", _params.pop("comp", "properties"))
+        cls: ClsType[_models.TableServiceProperties] = kwargs.pop("cls", None)
 
         request = build_service_get_properties_request(
             timeout=timeout,
@@ -2135,9 +2119,9 @@ class ServiceOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -2197,9 +2181,9 @@ class ServiceOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        restype = kwargs.pop("restype", _params.pop("restype", "service"))  # type: Literal["service"]
-        comp = kwargs.pop("comp", _params.pop("comp", "stats"))  # type: Literal["stats"]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.TableServiceStats]
+        restype: Literal["service"] = kwargs.pop("restype", _params.pop("restype", "service"))
+        comp: Literal["stats"] = kwargs.pop("comp", _params.pop("comp", "stats"))
+        cls: ClsType[_models.TableServiceStats] = kwargs.pop("cls", None)
 
         request = build_service_get_statistics_request(
             timeout=timeout,
@@ -2213,9 +2197,9 @@ class ServiceOperations:
         path_format_arguments = {
             "url": self._serialize.url("self._config.url", self._config.url, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
