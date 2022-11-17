@@ -494,8 +494,8 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         information see https://www.hl7.org/fhir/overview.html.
     :vartype fhir_bundle: Optional[dict[str, any]]
     :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
+        field will contain the detected language for the document.
+    :vartype detected_language: Optional[str]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeHealthcareEntitiesResult.
     :ivar str kind: The text analysis kind - "Healthcare".
@@ -560,7 +560,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
                 repr(self.warnings),
                 repr(self.statistics),
                 self.fhir_bundle,
-                repr(self.detected_language),
+                self.detected_language,
                 self.is_error,
             )[:1024]
         )
