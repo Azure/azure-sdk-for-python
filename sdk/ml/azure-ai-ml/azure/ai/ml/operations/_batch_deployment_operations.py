@@ -21,7 +21,6 @@ from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_sco
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client, is_private_preview_enabled
-from ._component_operations import ComponentOperations
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
 from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
 from azure.core.credentials import TokenCredential
@@ -120,9 +119,12 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 )
                 deployment.job_definition.component = None
                 deployment.job_definition.component_id = component.id
-                if not deployment.job_definition.name: deployment.job_definition.name = component.name 
-                if not deployment.job_definition.description: deployment.job_definition.description = component.properties.description
-                if not deployment.job_definition.tags: deployment.job_definition.tags = component.properties.tags  
+                if not deployment.job_definition.name:
+                    deployment.job_definition.name = component.name
+                if not deployment.job_definition.description:
+                    deployment.job_definition.description = component.properties.description
+                if not deployment.job_definition.tags:
+                    deployment.job_definition.tags = component.properties.tags
             elif isinstance(deployment.job_definition.component, str):
 
                 split_name = deployment.job_definition.component.split(':')
@@ -135,11 +137,11 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 )
                 deployment.job_definition.component = None
                 deployment.job_definition.component_id = component.id
-                if not deployment.job_definition.name: 
+                if not deployment.job_definition.name:
                     deployment.job_definition.name = component.properties.component_spec.get('name')
-                if not deployment.job_definition.description: 
+                if not deployment.job_definition.description:
                     deployment.job_definition.description = component.properties.description
-                if not deployment.job_definition.tags and component.properties.tags: 
+                if not deployment.job_definition.tags and component.properties.tags:
                     deployment.job_definition.tags = component.properties.tags 
 
 

@@ -24,7 +24,7 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from ..._vendor.azure_resources.flatten_json import flatten, unflatten
+from ..._vendor.azure_resources.flatten_json import flatten
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
@@ -32,7 +32,7 @@ from .deployment import Deployment
 module_logger = logging.getLogger(__name__)
 
 
-class BatchDeployment(Deployment):
+class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attributes
     """Batch endpoint deployment entity.
 
     :param name: the name of the batch deployment
