@@ -37,7 +37,7 @@ client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTES
 # ID to be assigned to test
 TEST_ID = "my-new-sdk-test-id"
 
-result = client.load_test_administration.create_or_update_load_test(
+result = client.load_test_administration.create_or_update_test(
     TEST_ID,
     {
         "description": "",
