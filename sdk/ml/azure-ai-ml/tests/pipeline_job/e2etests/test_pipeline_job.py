@@ -26,6 +26,7 @@ from azure.ai.ml.exceptions import JobException
 from azure.core.exceptions import HttpResponseError
 
 from .._util import (
+    _PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND,
     _PIPELINE_JOB_TIMEOUT_SECOND,
     DATABINDING_EXPRESSION_TEST_CASES,
     DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
@@ -124,23 +125,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         for job in created_job.jobs.values():
             # The spark job must be translated to component job in the pipeline job.
             assert isinstance(job, Spark)
-
-    @pytest.mark.skipif(condition=not is_live(), reason="no need to run in playback mode")
-    def test_pipeline_job_get_child_run(self, client: MLClient, randstr: Callable[[str], str]):
-        pipeline_job = load_job(
-            source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
-            params_override=[{"name": randstr("name")}],
-        )
-        job = client.jobs.create_or_update(pipeline_job)
-        wait_until_done(client, job)
-        child_job = next(
-            job
-            for job in client.jobs.list(parent_job_name=job.name)
-            if job.display_name == "hello_world_inline_commandjob_1"
-        )
-        retrieved_child_run = client.jobs.get(child_job.name)
-        assert isinstance(retrieved_child_run, Job)
-        assert retrieved_child_run.name == child_job.name
 
     @pytest.mark.parametrize(
         "pipeline_job_path",
@@ -537,9 +521,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         actual_dict = pydash.omit(pipeline_dict["properties"], *fields_to_omit)
         assert actual_dict == expected_dict
 
-    @pytest.mark.skipif(
-        condition=not is_live(), reason="need further investigation for these cases unreliability under none live mode"
-    )
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
@@ -695,51 +676,6 @@ class TestPipelineJob(AzureRecordedTestCase):
         sleep_if_live(10)
         created_job = client.jobs.create_or_update(pipeline_job)
         assert created_job.jobs[job_key].component == f"{component_name}:{component_versions[-1]}"
-
-    @pytest.mark.skipif(condition=not is_live(), reason="no need to run in playback mode")
-    def test_pipeline_job_download(
-        self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
-    ) -> None:
-        job = client.jobs.create_or_update(
-            load_job(
-                source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
-                params_override=[{"name": randstr("job_name")}],
-            )
-        )
-        wait_until_done(client, job)
-        client.jobs.download(name=job.name, download_path=tmp_path)
-        artifact_dir = tmp_path / "artifacts"
-        assert artifact_dir.exists()
-        assert next(artifact_dir.iterdir(), None), "No artifacts were downloaded"
-
-    @pytest.mark.skipif(condition=not is_live(), reason="test download behaviour in live test.")
-    def test_pipeline_job_child_run_download(
-        self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
-    ) -> None:
-        job = client.jobs.create_or_update(
-            load_job(
-                source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
-                params_override=[{"name": randstr("job_name")}],
-            )
-        )
-        wait_until_done(client, job)
-        child_job = next(
-            job
-            for job in client.jobs.list(parent_job_name=job.name)
-            if job.display_name == "hello_world_inline_commandjob_1"
-        )
-        client.jobs.download(name=child_job.name, download_path=tmp_path)
-        client.jobs.download(
-            name=child_job.name,
-            download_path=tmp_path,
-            output_name="component_out_path_1",
-        )
-        artifact_dir = tmp_path / "artifacts"
-        output_dir = tmp_path / "named-outputs" / "component_out_path_1"
-        assert artifact_dir.exists()
-        assert next(artifact_dir.iterdir(), None), "No artifacts were downloaded"
-        assert output_dir.exists()
-        assert next(output_dir.iterdir(), None), "No artifacts were downloaded"
 
     def test_sample_job_dump(self, client: MLClient, randstr: Callable[[str], str]):
         job = client.jobs.create_or_update(
@@ -1421,8 +1357,81 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
+
+@pytest.mark.usefixtures(
+    "recorded_test",
+    "mock_code_hash",
+    "enable_pipeline_private_preview_features",
+    "mock_asset_name",
+    "mock_component_hash",
+    "enable_environment_id_arm_expansion",
+)
+@pytest.mark.timeout(timeout=_PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
+@pytest.mark.e2etest
+@pytest.mark.pipeline_test
+@pytest.mark.skipif(condition=not is_live(), reason="no need to run in playback mode")
+class TestPipelineJobLongRunning(AzureRecordedTestCase):
+    """Long-running tests that require pipeline job completed."""
+    def test_pipeline_job_get_child_run(self, client: MLClient, randstr: Callable[[str], str]):
+        pipeline_job = load_job(
+            source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
+            params_override=[{"name": randstr("name")}],
+        )
+        job = client.jobs.create_or_update(pipeline_job)
+        wait_until_done(client, job)
+        child_job = next(
+            job
+            for job in client.jobs.list(parent_job_name=job.name)
+            if job.display_name == "hello_world_inline_commandjob_1"
+        )
+        retrieved_child_run = client.jobs.get(child_job.name)
+        assert isinstance(retrieved_child_run, Job)
+        assert retrieved_child_run.name == child_job.name
+
+    def test_pipeline_job_download(
+        self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
+    ) -> None:
+        job = client.jobs.create_or_update(
+            load_job(
+                source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
+                params_override=[{"name": randstr("job_name")}],
+            )
+        )
+        wait_until_done(client, job)
+        client.jobs.download(name=job.name, download_path=tmp_path)
+        artifact_dir = tmp_path / "artifacts"
+        assert artifact_dir.exists()
+        assert next(artifact_dir.iterdir(), None), "No artifacts were downloaded"
+
+    def test_pipeline_job_child_run_download(
+        self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
+    ) -> None:
+        job = client.jobs.create_or_update(
+            load_job(
+                source="./tests/test_configs/pipeline_jobs/helloworld_pipeline_job_quick_with_output.yml",
+                params_override=[{"name": randstr("job_name")}],
+            )
+        )
+        wait_until_done(client, job)
+        child_job = next(
+            job
+            for job in client.jobs.list(parent_job_name=job.name)
+            if job.display_name == "hello_world_inline_commandjob_1"
+        )
+        client.jobs.download(name=child_job.name, download_path=tmp_path)
+        client.jobs.download(
+            name=child_job.name,
+            download_path=tmp_path,
+            output_name="component_out_path_1",
+        )
+        artifact_dir = tmp_path / "artifacts"
+        output_dir = tmp_path / "named-outputs" / "component_out_path_1"
+        assert artifact_dir.exists()
+        assert next(artifact_dir.iterdir(), None), "No artifacts were downloaded"
+        assert output_dir.exists()
+        assert next(output_dir.iterdir(), None), "No artifacts were downloaded"
+
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="no need to run in playback mode")
     def test_reused_pipeline_child_job_download(
         self,
         client: MLClient,
