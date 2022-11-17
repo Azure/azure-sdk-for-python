@@ -18,7 +18,7 @@ JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 class EmailOperations(EmailOperationsGenerated):
 
-    def __return_message_id(self, pipeline_response, _, response_headers):
+    def _return_message_id(self, pipeline_response, _, response_headers):
         return response_headers['x-ms-request-id']
 
     async def send(  # pylint: disable=inconsistent-return-statements
@@ -62,7 +62,7 @@ class EmailOperations(EmailOperationsGenerated):
             repeatability_request_id=repeatability_request_id,
             repeatability_first_sent=repeatability_first_sent,
             content_type=content_type,
-            cls=self.__return_message_id,
+            cls=self._return_message_id,
             **kwargs
         )
 

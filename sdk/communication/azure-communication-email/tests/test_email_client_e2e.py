@@ -119,3 +119,33 @@ class TestEmailClient(AzureRecordedTestCase):
             assert message_status_response['status'] is not None
         else:
             assert False
+
+    @email_decorator
+    @recorded_by_proxy
+    def test_send_email_empty_to_recipients(self):
+        email_client = EmailClient.from_connection_string(self.communication_connection_string)
+
+        message = {
+            "content": {
+                "subject": "This is the subject",
+                "plainText": "This is the body",
+            },
+            "recipients": {
+                "cc": [
+                    {
+                        "email": self.recipient_address,
+                        "displayName": "Customer Name"
+                    }
+                ],
+                "bcc": [
+                    {
+                        "email": self.recipient_address,
+                        "displayName": "Customer Name"
+                    }
+                ],
+            },
+            "sender": self.sender_address
+        }
+
+        response = email_client.send(message)
+        assert response['messageId'] is not None

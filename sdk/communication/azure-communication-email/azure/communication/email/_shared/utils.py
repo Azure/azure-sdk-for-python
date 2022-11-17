@@ -26,6 +26,9 @@ def _convert_datetime_to_utc_int(input_datetime):
     """
     return int(calendar.timegm(input_datetime.utctimetuple()))
 
+def get_current_utc_time():
+    # type: () -> str
+    return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]

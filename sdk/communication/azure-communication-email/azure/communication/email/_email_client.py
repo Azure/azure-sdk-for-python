@@ -57,7 +57,6 @@ class EmailClient(object):
 
         self._generated_client = AzureCommunicationEmailService(
             endpoint,
-            api_version=self._api_version,
             authentication_policy=authentication_policy,
             sdk_moniker=SDK_MONIKER,
             **kwargs
@@ -112,13 +111,13 @@ class EmailClient(object):
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
-                        "CC": [
+                        "cc": [
                             {
                                 "email": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.
                             }
                         ],
-                        "bCC": [
+                        "bcc": [
                             {
                                 "email": "str",  # Email address. Required.
                                 "displayName": "str"  # Optional. Email display name.

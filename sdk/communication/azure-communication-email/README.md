@@ -42,7 +42,7 @@ client = EmailClient.from_connection_string(connection_string);
 Alternatively, you can also use Active Directory authentication using DefaultAzureCredential.
 
 ```python
-from azure.communication.email import Email
+from azure.communication.email import EmailClient
 from azure.identity import DefaultAzureCredential
 
 # To use Azure Active Directory Authentication (DefaultAzureCredential) make sure to have AZURE_TENANT_ID, AZURE_CLIENT_ID and AZURE_CLIENT_SECRET as env variables.
@@ -158,7 +158,7 @@ response = client.send(message)
 
 ### Get Email Message Status
 
-The result from the `send` call contains a `message_id` which can be used to query the status of the email.
+The result from the `send` call contains a `messageId` which can be used to query the status of the email.
 
 ```python
 response = client.send(message)

@@ -11,10 +11,10 @@
         "Content-Type": "application/json",
         "repeatability-first-sent": "sanitized",
         "repeatability-request-id": "sanitized",
-        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25179-SP0)",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25236-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Wed, 17 Aug 2022 00:03:08 GMT",
+        "x-ms-date": "Thu, 17 Nov 2022 17:37:44 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -37,7 +37,7 @@
         "api-supported-versions": "2021-10-01-preview",
         "Content-Length": "0",
         "Date": "sanitized",
-        "mise-correlation-id": "14fecbcd-dc66-4a58-89fc-0f31e2e85644",
+        "mise-correlation-id": "522b2c9b-6592-4015-9fae-26e5f7f2d537",
         "Operation-Location": "https://someEndpoint/emails/someMessageId/status",
         "Repeatability-Result": "accepted",
         "X-Azure-Ref": "sanitized",
