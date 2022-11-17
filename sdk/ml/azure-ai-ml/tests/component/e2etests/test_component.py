@@ -700,6 +700,10 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
         }
 
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="registry test, may fail in playback mode during retrieving registry client",
+    )
     def test_component_create_get_list_from_registry(
         self, pipelines_registry_client: MLClient, randstr: Callable[[str], str]
     ) -> None:
