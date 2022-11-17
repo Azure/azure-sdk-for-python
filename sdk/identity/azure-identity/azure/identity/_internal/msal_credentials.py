@@ -22,6 +22,7 @@ class MsalCredential(object):
             client_credential: Union[str, Dict] = None,
             *,
             additionally_allowed_tenants: List[str] = None,
+            allow_broker: bool = None,
             **kwargs
     ) -> None:
         authority = kwargs.pop("authority", None)
@@ -34,7 +35,7 @@ class MsalCredential(object):
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
         self._client_credential = client_credential
         self._client_id = client_id
-        self._allow_broker = kwargs.pop("allow_broker", None)
+        self._allow_broker = allow_broker
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._cache = kwargs.pop("_cache", None)

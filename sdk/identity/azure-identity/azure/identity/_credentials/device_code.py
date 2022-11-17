@@ -47,8 +47,6 @@ class DeviceCodeCredential(InteractiveCredential):
     :keyword cache_persistence_options: configuration for persistent token caching. If unspecified, the credential
         will cache tokens in memory.
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
-    :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
-        verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
     """
 
     def __init__(
