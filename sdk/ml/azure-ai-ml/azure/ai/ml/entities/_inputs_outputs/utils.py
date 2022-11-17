@@ -211,6 +211,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
     inherited_fields = _get_inherited_fields()
     # From annotations get field with type
     annotations = getattr(cls_or_func, "__annotations__", {})
+    annotations = {k: v for k, v in annotations.items() if k not in skip_params}
     annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
     # Update fields use class field with defaults from class dict or signature(func).paramters
