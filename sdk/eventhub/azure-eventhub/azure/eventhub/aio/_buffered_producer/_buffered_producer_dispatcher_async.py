@@ -130,13 +130,13 @@ class BufferedProducerDispatcher:
             # stop all buffered producers
             for pid, producer in self._buffered_producers.items():
                 try:
-                    task = asyncio.create_task(producer.stop(flush=flush, 
+                    task = asyncio.create_task(producer.stop(flush=flush,
                         timeout_time=timeout_time, raise_error=raise_error,))
                     task.partition_id = pid
                     tasks.append(task)
                 except Exception as exc:  # pylint: disable=broad-except
                     exc_results[pid] = exc
-            
+           
             try:
                 await asyncio.shield(asyncio.gather(*tasks))
             except (asyncio.CancelledError, Exception) as exc: # pylint:disable=broad-except
