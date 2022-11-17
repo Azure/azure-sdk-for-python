@@ -1,8 +1,21 @@
 # Release History
 
-## 1.1.1 (Unreleased)
+## 1.1.2 (Unreleased)
 
-## Features Added
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+- Removed erroneous experimental warning from Compute Schedules.
+
+### Other Changes
+
+## 1.1.1 (2022-11-15)
+
+### Features Added
+
+### Breaking Changes
 - Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
 
 ## 1.1.0 (Unreleased)
