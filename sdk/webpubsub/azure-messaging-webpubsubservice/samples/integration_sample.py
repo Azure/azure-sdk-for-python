@@ -10,10 +10,8 @@ import websocket
 import time
 import os
 import json
-
 from azure.messaging.webpubsubservice import WebPubSubServiceClient
-from azure.core.exceptions import HttpResponseError
-from azure.identity import DefaultAzureCredential
+
 
 LOG = logging.getLogger()
 WEBSOCKET_N = 3
@@ -30,7 +28,7 @@ service = WebPubSubServiceClient.from_connection_string(connection_string, hub='
 recv_messages = []
 connection_ids = []
 
-def on_message(wsapp, message): 
+def on_message(websocket_app, message): 
     message = json.loads(message)
 
     if message["type"] == "message":
@@ -41,7 +39,7 @@ def on_message(wsapp, message):
 
     print(message)
 
-def on_open(wsapp): print("connected")
+def on_open(websocket_app): print("connected")
 
 # Build multiple websockets
 for i in range(WEBSOCKET_N):
@@ -66,12 +64,12 @@ service.send_to_all("Message_Not_For_User0", filter="userId ne 'User0'", content
 group_names = ["Group%d" % i for i in range(3)]
 for group in group_names:
     service.add_connection_to_group(group, connection_ids[0])
-    service.send_to_group(group, "Message_For_RCFAG", content_type='text/plain')  
+    service.send_to_group(group, "Message_For_RemoveFromAll", content_type='text/plain')  
 
 service.remove_connection_from_all_groups(connection_ids[0])
 
 for group in group_names:
-    service.send_to_group(group, "Message_For_RCFAG", content_type='text/plain')
+    service.send_to_group(group, "Message_For_RemoveFromAll", content_type='text/plain')
 
 # other tests
 service.send_to_user("User0", message='Message_For_User0', content_type='text/plain') # 1 messages
@@ -84,4 +82,4 @@ assert recv_messages.count("Message_For_All") == WEBSOCKET_N
 assert recv_messages.count("Message_For_InitGroup") == WEBSOCKET_N
 assert recv_messages.count("Message_Not_For_User0") == WEBSOCKET_N - 1
 assert recv_messages.count("Message_For_User0") == 1
-assert recv_messages.count("Message_For_RCFAG") == 3
+assert recv_messages.count("Message_For_RemoveFromAll") == 3
