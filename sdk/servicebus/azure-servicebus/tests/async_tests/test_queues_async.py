@@ -1543,32 +1543,32 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         auto_lock_renew = AutoLockRenewer()
         auto_lock_renew._renew_period = 1
 
-        #receiver = MockReceiver()
-        #async with auto_lock_renew:
-        #    auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
-        #    await asyncio.sleep(3)
+        receiver = MockReceiver()
+        async with auto_lock_renew:
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
+            await asyncio.sleep(3)
 
-        #with pytest.raises(ServiceBusError):
-        #    async with auto_lock_renew:
-        #        pass
+        with pytest.raises(ServiceBusError):
+            async with auto_lock_renew:
+                pass
 
-        #with pytest.raises(ServiceBusError):
-        #    auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
+        with pytest.raises(ServiceBusError):
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
 
-        #auto_lock_renew = AutoLockRenewer()
-        #auto_lock_renew._renew_period = 1
+        auto_lock_renew = AutoLockRenewer()
+        auto_lock_renew._renew_period = 1
 
-        #auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
-        #time.sleep(3)
+        auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
+        time.sleep(3)
 
-        #await auto_lock_renew.close()
+        await auto_lock_renew.close()
 
-        #with pytest.raises(ServiceBusError):
-        #    async with auto_lock_renew:
-        #        pass
+        with pytest.raises(ServiceBusError):
+            async with auto_lock_renew:
+                pass
 
-        #with pytest.raises(ServiceBusError):
-        #    auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
+        with pytest.raises(ServiceBusError):
+            auto_lock_renew.register(receiver, renewable=MockReceivedMessage())
 
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
