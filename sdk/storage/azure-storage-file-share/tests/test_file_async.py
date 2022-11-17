@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+
+import asyncio
 import base64
 import os
 import uuid
@@ -2198,6 +2200,35 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             self.fsc._config.max_range_size,
             progress, unknown_size=False)
         self._teardown(INPUT_FILE_PATH)
+
+    @FileSharePreparer()
+    @recorded_by_proxy_async
+    async def test_create_file_from_async_generator(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        await self._setup_share(storage_account_name, storage_account_key)
+        file_name = self._get_file_reference()
+        data = b'Hello Async World!'
+
+        async def data_generator():
+            for _ in range(3):
+                yield data
+                await asyncio.sleep(0.1)
+
+        file_client = ShareFileClient(
+            self.account_url(storage_account_name, "file"),
+            share_name=self.share_name,
+            file_path=file_name,
+            credential=storage_account_key)
+
+        # Act
+        file_size = len(data*3)
+        await file_client.upload_file(data_generator(), length=file_size)
+
+        # Assert
+        await self.assertFileEqual(file_client, data*3)
 
     @FileSharePreparer()
     @recorded_by_proxy_async
