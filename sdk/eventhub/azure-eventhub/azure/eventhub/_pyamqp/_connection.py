@@ -181,7 +181,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self._set_state(ConnectionState.HDR_SENT)
             if not self._allow_pipelined_open:
                 # TODO: List/tuple expected as variable args
-                await self._read_frame(wait=True)  # type: ignore
+                self._read_frame(wait=True)  # type: ignore
                 if self.state != ConnectionState.HDR_EXCH:
                     self._disconnect()
                     raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
