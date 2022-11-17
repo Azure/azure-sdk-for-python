@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import sys
+import io
 import wrapt
 from typing import (
     Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
