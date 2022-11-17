@@ -5,6 +5,7 @@
 # pylint: disable=protected-access,too-many-instance-attributes
 
 import re
+import warnings
 from typing import Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
@@ -125,7 +126,7 @@ class ComputeInstance(Compute):
     :type schedules: Optional[ComputeSchedules], optional
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
-    :param idle_time_before_shutdown: Deprecated. Use the 'idle_time_before_shutdown_minutes' property instead.
+    :param idle_time_before_shutdown: Deprecated. Use :param: `idle_time_before_shutdown_minutes` instead.
         Stops compute instance after user defined period of inactivity.
         Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
     :type idle_time_before_shutdown: Optional[str], optional
@@ -175,6 +176,13 @@ class ComputeInstance(Compute):
         self.idle_time_before_shutdown_minutes = idle_time_before_shutdown_minutes
         self.setup_scripts = setup_scripts
         self.subnet = None
+
+        # Check for deprecated idle_time_before_shutdown property
+        if idle_time_before_shutdown is not None:
+            warnings.warn(
+                "The 'idle_time_before_shutdown' property for compute instances is deprecated. Please use 'idle_time_before_shutdown_minutes' instead.",
+                DeprecationWarning,
+            )
 
     @property
     def services(self) -> List[Dict[str, str]]:
