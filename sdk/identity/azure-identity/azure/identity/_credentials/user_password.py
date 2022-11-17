@@ -36,7 +36,7 @@ class UsernamePasswordCredential(InteractiveCredential):
     :paramtype cache_persistence_options: ~azure.identity.TokenCachePersistenceOptions
     :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
         verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
-        Check https://learn.microsoft.com/en-us/azure/active-directory/develop/scenario-desktop-acquire-token-wam 
+        Check https://learn.microsoft.com/en-us/azure/active-directory/develop/scenario-desktop-acquire-token-wam
         for more WAM information.
     :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
         for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
