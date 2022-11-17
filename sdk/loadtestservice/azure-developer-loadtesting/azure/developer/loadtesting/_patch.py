@@ -11,30 +11,30 @@ from enum import Enum
 
 
 class TestFileValidationStatus(Enum):
-    ValidationInitiated = 0
-    ValidationSuccess = 1
-    ValidationFailed = 2
-    ValidationCheckTimeout = 3
+    ValidationInitiated = 10
+    ValidationSuccess = 20
+    ValidationFailed = 30
+    ValidationCheckTimeout = 40
 
 
 class TestRunStatus(Enum):
-    Accepted = 0
-    NotStarted = 1
-    Provisioning = 2
-    Provisioned = 3
-    Configuring = 4
-    Configured = 5
-    Executing = 6
-    Executed = 7
-    Deprovisioning = 8
-    Deprovisioned = 9
-    Done = 10
-    Cancelling = 11
-    Cancelled = 12
-    Failed = 13
-    ValidationSuccess = 14
-    ValidationFailed = 15
-    CheckTimeout = 16
+    Accepted = 10
+    NotStarted = 20
+    Provisioning = 30
+    Provisioned = 40
+    Configuring = 50
+    Configured = 60
+    Executing = 70
+    Executed = 80
+    Deprovisioning = 90
+    Deprovisioned = 100
+    Done = 110
+    Cancelling = 120
+    Cancelled = 130
+    Failed = 140
+    ValidationSuccess = 150
+    ValidationFailed = 160
+    CheckTimeout = 170
 
 
 __all__: List[str] = [
