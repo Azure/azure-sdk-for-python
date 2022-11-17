@@ -876,7 +876,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -1144,7 +1144,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -1367,7 +1367,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
@@ -1493,7 +1493,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
@@ -1613,7 +1613,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
