@@ -2,6 +2,8 @@
 
 ## 5.3.0b1 (Unreleased)
 
+This version of the client library defaults to the service API version `2022-10-01-preview`.
+
 ### Features Added
 - Added the Extractive Summarization feature and related models: `ExtractSummaryAction`, `ExtractSummaryResult`, and `SummarySentence`.
   Access the feature through the `begin_analyze_actions` API.
@@ -25,10 +27,6 @@
   `ClassifyDocumentResult`, `ExtractSummaryResult`, and `AbstractSummaryResult` to indicate the language detected by automatic language detection.
 - Added property `script` to `DetectedLanguage` to indicate the script of the input document.
 - Added the `dynamic_classification` client method to perform dynamic classification on documents without needing to train a model.
-
-### Breaking Changes
-
-### Bugs Fixed
 
 ### Other Changes
 - Removed dependency on `msrest`.
