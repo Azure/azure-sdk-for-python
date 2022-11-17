@@ -13,7 +13,6 @@ from sb_env_loader import ServiceBusPreparer
 
 
 class TestServiceBusManagementClientNamespaceAsync(AzureMgmtRecordedTestCase):
-    @pytest.mark.mocksb
     @ServiceBusPreparer()
     @recorded_by_proxy_async
     async def test_async_mgmt_namespace_get_properties(self, servicebus_connection_str,
