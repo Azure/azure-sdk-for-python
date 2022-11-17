@@ -102,6 +102,7 @@ class ComputeStartStopSchedule(RestTranslatableMixin):
         return schedule
 
 
+@experimental
 class ComputeSchedules(RestTranslatableMixin):
     """Compute schedules.
 
