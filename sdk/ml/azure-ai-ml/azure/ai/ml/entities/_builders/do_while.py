@@ -142,8 +142,7 @@ class DoWhile(LoopNode):
             **loaded_data,
         )
         do_while_instance.set_limits(**limits)
-        # Update referenced control flow node instance id.
-        body._set_referenced_control_flow_node_instance_id(do_while_instance._instance_id)
+
         return do_while_instance
 
     @classmethod

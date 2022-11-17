@@ -8,7 +8,6 @@ from devtools_testutils import is_live
 import pydash
 import pytest
 
-from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, assert_job_cancel, wait_until_done, sleep_if_live
 
 from azure.ai.ml import Input, MLClient, load_component, load_data, load_job
@@ -28,7 +27,6 @@ from .._util import (
     _PIPELINE_JOB_TIMEOUT_SECOND,
     DATABINDING_EXPRESSION_TEST_CASES,
     DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE,
-    include_private_preview_nodes_in_pipeline
 )
 
 
@@ -1467,18 +1465,6 @@ class TestPipelineJob(AzureRecordedTestCase):
             == "microsoftsamples_command_component_basic@default"
         )
 
-    def test_parallel_for_pipeline_job(self, client: MLClient, randstr: Callable):
-        params_override = [{"name": randstr("job_name")}]
-        with include_private_preview_nodes_in_pipeline():
-            pipeline_job = load_job(
-                "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml",
-                params_override=params_override,
-            )
-
-            created_pipeline_job = client.jobs.create_or_update(pipeline_job)
-        assert isinstance(created_pipeline_job.jobs["hello_world_component"], ParallelFor)
-        rest_job_dict = pipeline_job._to_rest_object().as_dict()
-        assert rest_job_dict["properties"]["jobs"]["parallel_for"] == {}
 
 
 @pytest.mark.usefixtures(

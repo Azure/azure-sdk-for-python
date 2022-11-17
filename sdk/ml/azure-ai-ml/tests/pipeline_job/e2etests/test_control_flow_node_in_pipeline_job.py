@@ -1,6 +1,8 @@
 import pytest
 from typing import Callable
 from devtools_testutils import AzureRecordedTestCase
+
+from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD
 
 from azure.ai.ml import MLClient, load_job
@@ -17,7 +19,13 @@ from .test_pipeline_job import assert_job_cancel
 def update_pipeline_schema():
     # Update the job type that the pipeline is supported.
     schema = pipeline_job.PipelineJobSchema
-    schema._declared_fields['jobs'] = pipeline_job.PipelineJobsField()
+    original_jobs = schema._declared_fields["jobs"]
+    schema._declared_fields["jobs"] = pipeline_job.PipelineJobsField()
+
+    try:
+        yield
+    finally:
+        schema._declared_fields["jobs"] = original_jobs
 
 
 @pytest.mark.usefixtures(
@@ -32,6 +40,10 @@ def update_pipeline_schema():
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 class TestConditionalNodeInPipeline(AzureRecordedTestCase):
+    pass
+
+
+class TestDoWhile(TestConditionalNodeInPipeline):
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]
         pipeline_job = load_job(
@@ -59,3 +71,21 @@ class TestConditionalNodeInPipeline(AzureRecordedTestCase):
         assert isinstance(created_pipeline.jobs["do_while_job_with_command_component"], DoWhile)
         assert isinstance(created_pipeline.jobs["command_component_body_node"], Command)
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
+
+
+class TestParallelFor(TestConditionalNodeInPipeline):
+    def test_parallel_for_pipeline_job(self, client: MLClient, randstr: Callable):
+        params_override = [{"name": randstr("job_name")}]
+        pipeline_job = load_job(
+            "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml",
+            params_override=params_override,
+        )
+
+        created_pipeline_job = client.jobs.create_or_update(pipeline_job)
+        assert isinstance(created_pipeline_job.jobs["parallel_node"], ParallelFor)
+        rest_job_dict = pipeline_job._to_rest_object().as_dict()
+        assert rest_job_dict["properties"]["jobs"]["parallel_node"] == {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
+            'type': 'parallel_for'
+        }

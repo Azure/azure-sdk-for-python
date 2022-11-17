@@ -78,6 +78,8 @@ class LoopNode(ControlFlowNode, ABC):
     def __init__(self, *, body: Union[BaseNode], **kwargs):
         self._body = body
         super(LoopNode, self).__init__(**kwargs)
+        # always set the referenced control flow node instance id to the body.
+        self.body._set_referenced_control_flow_node_instance_id(self._instance_id)
 
     @property
     def body(self):
@@ -109,12 +111,6 @@ class LoopNode(ControlFlowNode, ABC):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
         return pipeline_jobs[body_name]
-
-    def _register_in_current_pipeline_component_builder(self):
-        """Register this node in current pipeline component builder by adding self to a global stack."""
-        # pylint: disable=protected-access
-        super(LoopNode, self)._register_in_current_pipeline_component_builder()
-        self.body._set_referenced_control_flow_node_instance_id(self._instance_id)
 
     def _validate_body(self, raise_error=True):
         # pylint: disable=protected-access

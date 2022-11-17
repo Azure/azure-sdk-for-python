@@ -6,7 +6,7 @@ jobs:
     inputs:
       component_in_path:
         type: uri_file
-        path: azureml:https://dprepdata.blob.core.windows.net/demo/Titanic.csv
+        path: https://dprepdata.blob.core.windows.net/demo/Titanic.csv
     component: ../components/helloworld_component.yml
   parallel_node:
     type: parallel_for
@@ -18,6 +18,5 @@ jobs:
       component_in_path:
         path: ${{parent.jobs.parallel_node.outputs.component_out_path}}
     component: ../components/helloworld_component.yml
-    compute: azureml:cpu-cluster
 settings:
   default_compute: azureml:cpu-cluster

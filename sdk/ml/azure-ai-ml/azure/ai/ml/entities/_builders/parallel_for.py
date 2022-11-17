@@ -96,11 +96,15 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # pylint: disable=protected-access
 
         obj = BaseNode._from_rest_object_to_init_params(obj)
-        body_name = cls._get_data_binding_expression_value(obj.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
+        return cls._create_instance_from_schema_dict(pipeline_jobs=pipeline_jobs, loaded_data=obj)
 
-        obj["body"] = cls._get_body_from_pipeline_jobs(pipeline_jobs=pipeline_jobs, body_name=body_name)
+    @classmethod
+    def _create_instance_from_schema_dict(cls, pipeline_jobs, loaded_data):
+        body_name = cls._get_data_binding_expression_value(loaded_data.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
+
+        loaded_data["body"] = cls._get_body_from_pipeline_jobs(pipeline_jobs=pipeline_jobs, body_name=body_name)
         return cls(
-            **obj
+            **loaded_data
         )
 
     def _validate_items(self, raise_error=True):

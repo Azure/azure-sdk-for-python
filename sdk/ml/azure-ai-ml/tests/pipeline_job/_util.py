@@ -1,10 +1,7 @@
-import contextlib
 from pathlib import Path
 
 from azure.ai.ml.exceptions import JobException
 from azure.core.exceptions import HttpResponseError
-from azure.ai.ml._schema.pipeline import PipelineJobSchema
-from azure.ai.ml._schema.pipeline.pipeline_component import PipelineJobsField
 
 _PIPELINE_JOB_TIMEOUT_SECOND = 20 * 60  # timeout for pipeline job's tests, unit in second.
 
@@ -58,14 +55,3 @@ DATABINDING_EXPRESSION_TEST_CASE_ENUMERATE = list(enumerate(map(
     lambda params: Path(params[0]).name,
     DATABINDING_EXPRESSION_TEST_CASES,
 )))
-
-
-@contextlib.contextmanager
-def include_private_preview_nodes_in_pipeline():
-    original_jobs = PipelineJobSchema._declared_fields["jobs"]
-    PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
-
-    try:
-        yield
-    finally:
-        PipelineJobSchema._declared_fields["jobs"] = original_jobs
