@@ -251,7 +251,6 @@ class EventProcessor(
             await self._ownership_manager.release_ownership(partition_id)
         finally:
             if partition_id in self._tasks:
-                self._tasks[partition_id].cancel()
                 del self._tasks[partition_id]
 
     async def _receive(
