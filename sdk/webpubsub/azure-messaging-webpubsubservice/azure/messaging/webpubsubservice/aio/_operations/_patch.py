@@ -15,7 +15,7 @@ from ._operations import (
     build_send_to_all_request,
     build_send_to_connection_request,
     build_send_to_user_request,
-    build_send_to_group_request
+    build_send_to_group_request,
 )
 from ..._operations._patch import get_token_by_key
 from azure.core.exceptions import (

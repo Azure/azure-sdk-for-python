@@ -18,7 +18,7 @@ from ._operations import (
     build_send_to_all_request,
     build_send_to_connection_request,
     build_send_to_user_request,
-    build_send_to_group_request
+    build_send_to_group_request,
 )
 from azure.core.exceptions import (
     ClientAuthenticationError,
@@ -358,7 +358,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         if cls:
             return cls(pipeline_response, None, {})
-        
+
     @distributed_trace
     def send_to_connection(  # pylint: disable=inconsistent-return-statements
         self, connection_id: str, message: IO, **kwargs: Any
@@ -429,6 +429,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
         if cls:
             return cls(pipeline_response, None, {})
+
 
 __all__: List[str] = [
     "WebPubSubServiceClientOperationsMixin"

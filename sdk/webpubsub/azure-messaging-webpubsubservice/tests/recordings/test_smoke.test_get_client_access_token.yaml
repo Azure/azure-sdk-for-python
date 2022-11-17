@@ -16,7 +16,7 @@ interactions:
     uri: https://myservice.webpubsub.azure.com/api/hubs/hub/:generateToken?minutesToExpire=60&api-version=2022-11-01
   response:
     body:
-      string: '{"token":"eyJhbGciOiJIUzI1NiIsImtpZCI6InMtM2MwZWUyZWUtNDcyOC00YTllLWI0MzItZjBmZWE5ZGQ1OGE1IiwidHlwIjoiSldUIiwiY3R5IjoiSldUIn0.eyJuYmYiOjE2Njg2NjU0MDgsImV4cCI6MTY2ODY2OTAwOCwiaWF0IjoxNjY4NjY1NDA4LCJhdWQiOiJodHRwczovL3NpeXVhbi13cHMtZG9nZm9vZC0xLndlYnB1YnN1Yi5henVyZS5jb20vY2xpZW50L2h1YnMvaHViIn0.wHR862aSdlF5bj8yIbYhqtCpebDrnN_GHLmSqBS0VOA"}'
+      string: '{"token":"eyJhbGciOiJIUzI1NiIsImtpZCI6InMtM2MwZWUyZWUtNDcyOC00YTllLWI0MzItZjBmZWE5ZGQ1OGE1IiwidHlwIjoiSldUIiwiY3R5IjoiSldUIn0.eyJuYmYiOjE2Njg2NzYzMTgsImV4cCI6MTY2ODY3OTkxOCwiaWF0IjoxNjY4Njc2MzE4LCJhdWQiOiJodHRwczovL3NpeXVhbi13cHMtZG9nZm9vZC0xLndlYnB1YnN1Yi5henVyZS5jb20vY2xpZW50L2h1YnMvaHViIn0.J5vfavL6hbbmQqf6RtdDJqGk-Z3AY8p7kQceEjkEpvs"}'
     headers:
       api-supported-versions:
       - '2022-11-01'
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Nov 2022 06:10:08 GMT
+      - Thu, 17 Nov 2022 09:11:58 GMT
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       transfer-encoding:
