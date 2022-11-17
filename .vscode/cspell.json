@@ -582,6 +582,12 @@
       ]
     },
     {
+      "filename": "sdk/keyvault/**",
+      "words": [
+        "eddsa"
+      ]
+    },
+    {
       "filename": "sdk/monitor/test-resources.json",
       "words": [
         "azconfig",
