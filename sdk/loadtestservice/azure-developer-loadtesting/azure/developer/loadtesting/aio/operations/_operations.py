@@ -28,9 +28,9 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.utils import case_insensitive_dict
 
 from ...operations._operations import (
-    build_load_test_administration_create_or_update_app_component_request,
-    build_load_test_administration_create_or_update_load_test_request,
+    build_load_test_administration_create_or_update_app_components_request,
     build_load_test_administration_create_or_update_server_metrics_config_request,
+    build_load_test_administration_create_or_update_test_request,
     build_load_test_administration_delete_file_request,
     build_load_test_administration_delete_load_test_request,
     build_load_test_administration_get_app_components_request,
@@ -40,17 +40,17 @@ from ...operations._operations import (
     build_load_test_administration_list_load_tests_request,
     build_load_test_administration_list_test_files_request,
     build_load_test_administration_upload_file_request,
-    build_load_test_run_create_or_update_app_component_request,
+    build_load_test_run_create_or_update_app_components_request,
     build_load_test_run_create_or_update_server_metrics_config_request,
     build_load_test_run_create_or_update_test_run_request,
     build_load_test_run_delete_test_run_request,
     build_load_test_run_get_app_components_request,
     build_load_test_run_get_file_request,
-    build_load_test_run_get_metric_dimension_values_request,
     build_load_test_run_get_metrics_request,
     build_load_test_run_get_server_metrics_config_request,
     build_load_test_run_get_test_run_request,
     build_load_test_run_list_metric_definitions_request,
+    build_load_test_run_list_metric_dimension_values_request,
     build_load_test_run_list_metric_namespaces_request,
     build_load_test_run_list_test_runs_request,
     build_load_test_run_stop_test_run_request,
@@ -83,7 +83,7 @@ class LoadTestAdministrationOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @overload
-    async def create_or_update_load_test(
+    async def create_or_update_test(
         self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Create a new test or update an existing test.
@@ -419,7 +419,7 @@ class LoadTestAdministrationOperations:
         """
 
     @overload
-    async def create_or_update_load_test(
+    async def create_or_update_test(
         self, test_id: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Create a new test or update an existing test.
@@ -599,7 +599,7 @@ class LoadTestAdministrationOperations:
         """
 
     @distributed_trace_async
-    async def create_or_update_load_test(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def create_or_update_test(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Create a new test or update an existing test.
 
         Create a new test or update an existing test.
@@ -797,7 +797,7 @@ class LoadTestAdministrationOperations:
         else:
             _json = body
 
-        request = build_load_test_administration_create_or_update_load_test_request(
+        request = build_load_test_administration_create_or_update_test_request(
             test_id=test_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -1713,7 +1713,7 @@ class LoadTestAdministrationOperations:
         return AsyncItemPaged(get_next, extract_data)
 
     @overload
-    async def create_or_update_app_component(
+    async def create_or_update_app_components(
         self, test_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an app component (collection of azure resources) to a test.
@@ -1795,7 +1795,7 @@ class LoadTestAdministrationOperations:
         """
 
     @overload
-    async def create_or_update_app_component(
+    async def create_or_update_app_components(
         self, test_id: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an app component (collection of azure resources) to a test.
@@ -1848,7 +1848,7 @@ class LoadTestAdministrationOperations:
         """
 
     @distributed_trace_async
-    async def create_or_update_app_component(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def create_or_update_app_components(self, test_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Associate an app component (collection of azure resources) to a test.
 
         Associate an app component (collection of azure resources) to a test.
@@ -1919,7 +1919,7 @@ class LoadTestAdministrationOperations:
         else:
             _json = body
 
-        request = build_load_test_administration_create_or_update_app_component_request(
+        request = build_load_test_administration_create_or_update_app_components_request(
             test_id=test_id,
             content_type=content_type,
             api_version=self._config.api_version,
@@ -4983,7 +4983,7 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def get_metric_dimension_values(
+    async def list_metric_dimension_values(
         self,
         test_run_id: str,
         name: str,
@@ -5042,7 +5042,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_metric_dimension_values_request(
+        request = build_load_test_run_list_metric_dimension_values_request(
             test_run_id=test_run_id,
             name=name,
             metricname=metricname,
@@ -5079,7 +5079,7 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @overload
-    async def create_or_update_app_component(
+    async def create_or_update_app_components(
         self, test_run_id: str, body: JSON, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an app component (collection of azure resources) to a test run.
@@ -5161,7 +5161,7 @@ class LoadTestRunOperations:
         """
 
     @overload
-    async def create_or_update_app_component(
+    async def create_or_update_app_components(
         self, test_run_id: str, body: IO, *, content_type: str = "application/merge-patch+json", **kwargs: Any
     ) -> JSON:
         """Associate an app component (collection of azure resources) to a test run.
@@ -5214,7 +5214,7 @@ class LoadTestRunOperations:
         """
 
     @distributed_trace_async
-    async def create_or_update_app_component(self, test_run_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
+    async def create_or_update_app_components(self, test_run_id: str, body: Union[JSON, IO], **kwargs: Any) -> JSON:
         """Associate an app component (collection of azure resources) to a test run.
 
         Associate an app component (collection of azure resources) to a test run.
@@ -5285,7 +5285,7 @@ class LoadTestRunOperations:
         else:
             _json = body
 
-        request = build_load_test_run_create_or_update_app_component_request(
+        request = build_load_test_run_create_or_update_app_components_request(
             test_run_id=test_run_id,
             content_type=content_type,
             api_version=self._config.api_version,

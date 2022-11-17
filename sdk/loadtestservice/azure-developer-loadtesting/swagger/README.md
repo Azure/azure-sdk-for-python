@@ -15,7 +15,25 @@ security-scopes: https://cnt-prod.loadtesting.azure.com/.default
 directive:
     - from: swagger-document 
       where: $["paths"]["/tests/{testId}"].patch
-      transform: $["operationId"] = "Test_CreateOrUpdateLoadTest";
+      transform: $["operationId"] = "Test_CreateOrUpdateTest";
+    - from: swagger-document 
+      where: $["paths"]["/tests/{testId}"].delete
+      transform: $["operationId"] = "Test_DeleteTest";
+    - from: swagger-document 
+      where: $["paths"]["/tests/{testId}"].get
+      transform: $["operationId"] = "Test_GetTest";
+    - from: swagger-document 
+      where: $["paths"]["/tests"].get
+      transform: $["operationId"] = "Test_ListTests";
+    - from: swagger-document 
+      where: $["paths"]["/tests/{testId}/app-components"].patch
+      transform: $["operationId"] = "Test_CreateOrUpdateAppComponents";
+    - from: swagger-document 
+      where: $["paths"]["/test-runs/{testRunId}/app-components"].patch
+      transform: $["operationId"] = "TestRun_CreateOrUpdateAppComponents";
+    - from: swagger-document 
+      where: $["paths"]["/test-runs/{testRunId}/metric-dimension/{name}/values"].get
+      transform: $["operationId"] = "TestRun_ListMetricDimensionValues";
     - from: swagger-document 
       where: $["paths"]["/tests/{testId}"].delete
       transform: $["operationId"] = "Test_DeleteLoadTest";
