@@ -10,6 +10,7 @@ from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants._component import ControlFlowType
 from azure.ai.ml.entities import Component
+from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
@@ -51,12 +52,13 @@ class ParallelFor(LoopNode, NodeIOMixin):
         self.body._validate_required_input_not_provided = False
 
         # parallel for node shares output meta with body
-        # TODO: handle when body don't have component or component.outputs
         try:
             outputs = self.body._component.outputs
-            self._outputs = self._build_outputs_dict_without_meta(outputs or {})
         except AttributeError:
-            pass
+            outputs = {}
+
+        # TODO: handle when body don't have component or component.outputs
+        self._outputs = self._build_outputs_dict_without_meta(outputs)
 
         self._items = items
         self._validate_items(raise_error=True)
@@ -86,10 +88,20 @@ class ParallelFor(LoopNode, NodeIOMixin):
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
-        # if rest_node.get("items"):
-        #     # serialize items to string
-        #     rest_node["items"] = json.dumps(rest_node["items"])
+
         return rest_node
+
+    @classmethod
+    def _from_rest_object(cls, obj: dict, pipeline_jobs: dict) -> "ParallelFor":
+        # pylint: disable=protected-access
+
+        obj = BaseNode._from_rest_object_to_init_params(obj)
+        body_name = cls._get_data_binding_expression_value(obj.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
+
+        obj["body"] = cls._get_body_from_pipeline_jobs(pipeline_jobs=pipeline_jobs, body_name=body_name)
+        return cls(
+            **obj
+        )
 
     def _validate_items(self, raise_error=True):
         validation_result = self._create_empty_validation_result()

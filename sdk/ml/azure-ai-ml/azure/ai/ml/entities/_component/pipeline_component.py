@@ -325,16 +325,20 @@ class PipelineComponent(Component):
 
     @classmethod
     def _resolve_sub_nodes(cls, rest_jobs):
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
         sub_nodes = {}
         if rest_jobs is None:
             return sub_nodes
         for node_name, node in rest_jobs.items():
-            if LoopNode._is_loop_node_dict(node):
-                sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
-            else:
+            if not LoopNode._is_loop_node_dict(node):
+                # skip resolve LoopNode first since it may reference other nodes
                 # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode
-                from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
                 sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node)
+        for node_name, node in rest_jobs.items():
+            if LoopNode._is_loop_node_dict(node):
+                # resolve LoopNode after all other nodes are resolved
+                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node, pipeline_jobs=sub_nodes)
         return sub_nodes
 
     @classmethod

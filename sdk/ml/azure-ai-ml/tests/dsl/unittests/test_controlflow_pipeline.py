@@ -236,18 +236,3 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         rest_job = my_job._to_rest_object().as_dict()
         rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
         assert rest_items == '[{"component_in_number": 1}, {"component_in_number": 2}]'
-
-    def test_dsl_parallel_for_pipeline_with_string_component(self):
-        # no validation on items if body's component is a string
-
-        @pipeline
-        def my_pipeline():
-            body = Command(
-                component="component_id",
-            )
-            parallel_for(
-                body=body,
-                items='[{"not_exist": 1}, {"not_exist": 2}]'
-            )
-
-        my_pipeline()

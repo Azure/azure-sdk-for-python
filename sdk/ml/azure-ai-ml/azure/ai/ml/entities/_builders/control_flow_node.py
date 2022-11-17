@@ -7,12 +7,14 @@ import uuid
 from abc import ABC
 from typing import Dict, Union
 
+from marshmallow import ValidationError
+
 from azure.ai.ml._utils.utils import is_data_binding_expression, is_internal_components_enabled
 from azure.ai.ml.constants._common import CommonYamlFields
 from azure.ai.ml.constants._component import ControlFlowType
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._validation import SchemaValidatableMixin
-from azure.ai.ml.exceptions import ErrorTarget
+from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, ValidationErrorType
 
 from .._util import convert_ordered_dict_to_dict
 from .base_node import BaseNode
@@ -96,6 +98,18 @@ class LoopNode(ControlFlowNode, ABC):
             "body": enable_body_type,
         }
 
+    @classmethod
+    def _get_body_from_pipeline_jobs(cls, pipeline_jobs: dict, body_name: str):
+        # Get body object from pipeline job list.
+        if body_name not in pipeline_jobs:
+            raise ValidationError(
+                message=f'Cannot find the do-while loop body "{body_name}" in the pipeline.',
+                target=cls._get_validation_error_target(),
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+        return pipeline_jobs[body_name]
+
     def _register_in_current_pipeline_component_builder(self):
         """Register this node in current pipeline component builder by adding self to a global stack."""
         # pylint: disable=protected-access
@@ -127,12 +141,12 @@ class LoopNode(ControlFlowNode, ABC):
 
     @staticmethod
     def _is_loop_node_dict(obj):
-        return obj.get(CommonYamlFields.TYPE, None) in [ControlFlowType.DO_WHILE]
+        return obj.get(CommonYamlFields.TYPE, None) in [ControlFlowType.DO_WHILE, ControlFlowType.PARALLEL_FOR]
 
     @classmethod
-    def _from_rest_object(cls, obj: dict, reference_node_list: list) -> "ControlFlowNode":
+    def _from_rest_object(cls, obj: dict, pipeline_jobs: dict) -> "LoopNode":
         from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
 
         node_type = obj.get(CommonYamlFields.TYPE, None)
         load_from_rest_obj_func = pipeline_node_factory.get_load_from_rest_object_func(_type=node_type)
-        return load_from_rest_obj_func(obj, reference_node_list)
+        return load_from_rest_obj_func(obj, pipeline_jobs)

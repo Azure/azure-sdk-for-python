@@ -116,14 +116,7 @@ class DoWhile(LoopNode):
 
         # Get body object from pipeline job list.
         body_name = cls._get_data_binding_expression_value(loaded_data.pop("body"), regex=r"\{\{.*\.jobs\.(.*)\}\}")
-        if body_name not in pipeline_jobs:
-            raise ValidationError(
-                message=f'Cannot find the do-while loop body "{body_name}" in the pipeline.',
-                target=cls._get_validation_error_target(),
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
-        body = pipeline_jobs[body_name]
+        body = cls._get_body_from_pipeline_jobs(pipeline_jobs, body_name)
 
         # Convert mapping key-vault to input/output object
         mapping = {}
@@ -158,11 +151,11 @@ class DoWhile(LoopNode):
         return DoWhileSchema(context=context)
 
     @classmethod
-    def _from_rest_object(cls, obj: dict, reference_node_list: List) -> "DoWhile":
+    def _from_rest_object(cls, obj: dict, pipeline_jobs: dict) -> "DoWhile":
         # pylint: disable=protected-access
 
         obj = BaseNode._from_rest_object_to_init_params(obj)
-        return cls._create_instance_from_schema_dict(reference_node_list, obj, validate_port=False)
+        return cls._create_instance_from_schema_dict(pipeline_jobs, obj, validate_port=False)
 
     def set_limits(
         self,
