@@ -234,7 +234,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 with self._transport.block_with_timeout(timeout=wait):
                     return self._transport.receive_frame(**kwargs)
         _LOGGER.warning("Cannot read frame in current state: %r", self.state)
-        
+
     def _can_write(self):
         # type: () -> bool
         """Whether the connection is in a state where it is legal to write outgoing frames."""
@@ -465,7 +465,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             _LOGGER.error(
                 "Connection error: %r", frame[0]
             )
-
 
     def _incoming_begin(self, channel, frame):
         # type: (int, Tuple[Any, ...]) -> None
@@ -777,7 +776,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
             )
 
-
     def close(self, error=None, wait=False):
         # type: (Optional[AMQPError], bool) -> None
         """Close the connection and disconnect the transport.
@@ -790,10 +788,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         try:
             if self.state in [
-            ConnectionState.END,
-            ConnectionState.CLOSE_SENT,
-            ConnectionState.DISCARDING,
-        ]:
+                ConnectionState.END,
+                ConnectionState.CLOSE_SENT,
+                ConnectionState.DISCARDING,
+            ]:
                 return
             self._outgoing_close(error=error)
             if error:
