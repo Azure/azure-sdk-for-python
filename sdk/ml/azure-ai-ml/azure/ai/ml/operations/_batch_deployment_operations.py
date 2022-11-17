@@ -20,7 +20,11 @@ from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client, is_private_preview_enabled
+from azure.ai.ml._utils.utils import (
+    _get_mfe_base_url_from_discovery_service,
+    modified_operation_client,
+    is_private_preview_enabled
+)
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
 from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
 from azure.core.credentials import TokenCredential
@@ -142,8 +146,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 if not deployment.job_definition.description:
                     deployment.job_definition.description = component.properties.description
                 if not deployment.job_definition.tags and component.properties.tags:
-                    deployment.job_definition.tags = component.properties.tags 
-
+                    deployment.job_definition.tags = component.properties.tags
 
         try:
             location = self._get_workspace_location()

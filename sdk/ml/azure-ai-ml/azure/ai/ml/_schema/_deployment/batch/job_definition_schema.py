@@ -10,10 +10,10 @@ from typing import Any
 from marshmallow import fields, post_load
 
 from azure.ai.ml._schema import (
-    PatchedSchemaMeta, 
-    StringTransformedEnum, 
-    UnionField, 
-    RegistryStr, 
+    PatchedSchemaMeta,
+    StringTransformedEnum,
+    UnionField,
+    RegistryStr,
     ArmVersionedStr,
 )
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
