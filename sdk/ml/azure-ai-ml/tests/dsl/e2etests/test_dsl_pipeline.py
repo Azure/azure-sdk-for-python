@@ -491,7 +491,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 }
             },
             "settings": {},
-            'services': default_pipeline_job_service_dict,
+            "services": default_pipeline_job_service_dict,
         }
         assert expected_job == actual_job
 
@@ -595,11 +595,16 @@ class TestDSLPipeline(AzureRecordedTestCase):
             },
             "outputs": {"pipeline_output": {"mode": "ReadWriteMount", "job_output_type": "uri_folder"}},
             "settings": {},
-            'services': default_pipeline_job_service_dict,
+            "services": default_pipeline_job_service_dict,
         }
         assert expected_job == actual_job
 
-    def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
+    def test_spark_with_optional_inputs(
+            self, 
+            randstr: Callable[[str], str], 
+            client: MLClient,
+            default_pipeline_job_service_dict,
+    ):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
 
@@ -668,6 +673,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             },
             "outputs": {"pipeline_output": {"mode": "Direct", "job_output_type": "uri_folder"}},
             "settings": {},
+            "services": default_pipeline_job_service_dict,
         }
         assert expected_job == actual_job
 
@@ -743,7 +749,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 "force_rerun": False,
                 "default_compute": "cpu-cluster",
             },
-            'services': default_pipeline_job_service_dict,
+            "services": default_pipeline_job_service_dict,
         }
         assert expected_job == actual_job
 
@@ -1691,7 +1697,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 }
             },
             "settings": {"default_compute": "cpu-cluster"},
-            'services': default_pipeline_job_service_dict,
+            "services": default_pipeline_job_service_dict,
         }
         assert expected_job == actual_job
 
@@ -1911,7 +1917,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             },
             "outputs": {"job_out_data": {"mode": "Upload", "job_output_type": "uri_folder"}},
             "settings": {"default_compute": "cpu-cluster"},
-            'services': default_pipeline_job_service_dict,
+            "services": default_pipeline_job_service_dict,
         }
         assert expected_job == actual_job
 
