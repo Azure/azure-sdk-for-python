@@ -153,7 +153,8 @@ def test_receive_connection_idle_timeout_and_reconnect_sync(connstr_senders, uam
     with client:
         consumer = client._create_consumer("$default", "0", "-1", on_event_received)
         with consumer:
-            consumer._open()
+            while not consumer.handler_ready:
+                consumer._open()
             time.sleep(11)
 
             ed = EventData("Event")
