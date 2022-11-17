@@ -244,7 +244,6 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
 
     mldesigner_pkg = "mldesigner"
     param_name = "_Param"
-    enum_input_name = "EnumInput"
     return_annotation_key = "return"
 
     def _is_primitive_type(io: type):
@@ -278,10 +277,11 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
                     # mldesigner.Output() -> entities.Output()
                     io = Output(**io._to_io_entity_args_dict())
                 elif _is_primitive_type(type(io)):
-                    io = Output(**io._to_io_entity_args_dict()) if key == return_annotation_key \
-                        else Input(**io._to_io_entity_args_dict())
-                elif type(io).__module__.startswith(mldesigner_pkg) and type(io).__name__ == enum_input_name:
-                    io = EnumInput(**io._to_io_entity_args_dict())
+                    if io._is_enum():
+                        io = EnumInput(**io._to_io_entity_args_dict())
+                    else:
+                        io = Output(**io._to_io_entity_args_dict()) if key == return_annotation_key \
+                            else Input(**io._to_io_entity_args_dict())
             except BaseException as e:
                 raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
         result[key] = io
