@@ -9,6 +9,8 @@ from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.core.exceptions import ResourceNotFoundError
 
+from devtools_testutils import AzureRecordedTestCase
+
 
 @pytest.fixture
 def mir_endpoint_name() -> str:
@@ -42,190 +44,183 @@ def request_file() -> str:
 
 @pytest.mark.e2etest
 @pytest.mark.local_endpoint_local_assets
-def test_local_endpoint_mir_e2e(
-    endpoint_mir_yaml: str,
-    mir_endpoint_name: str,
-    request_file: str,
-    client: MLClient,
-) -> None:
-    endpoint = load_online_endpoint(endpoint_mir_yaml)
-    endpoint.name = mir_endpoint_name
-    client.online_endpoints.begin_create_or_update(endpoint=endpoint, local=True).result()
+class TestLocalEndpoint(AzureRecordedTestCase):
+    def test_local_endpoint_mir_e2e(
+        self,
+        endpoint_mir_yaml: str,
+        mir_endpoint_name: str,
+        request_file: str,
+        client: MLClient,
+    ) -> None:
+        endpoint = load_online_endpoint(endpoint_mir_yaml)
+        endpoint.name = mir_endpoint_name
+        client.online_endpoints.begin_create_or_update(endpoint=endpoint, local=True).result()
 
-    get_obj = client.online_endpoints.get(name=mir_endpoint_name, local=True)
-    assert get_obj is not None
+        get_obj = client.online_endpoints.get(name=mir_endpoint_name, local=True)
+        assert get_obj is not None
 
-    list_obj = client.online_endpoints.list(local=True)
-    assert list_obj is not None
-    assert len(list(list_obj)) > 0
+        list_obj = client.online_endpoints.list(local=True)
+        assert list_obj is not None
+        assert len(list(list_obj)) > 0
 
-    response = client.online_endpoints.invoke(endpoint_name=mir_endpoint_name, request_file=request_file, local=True)
-    assert "az ml online-deployment" in response
+        response = client.online_endpoints.invoke(endpoint_name=mir_endpoint_name, request_file=request_file, local=True)
+        assert "az ml online-deployment" in response
 
-    client.online_endpoints.begin_delete(name=mir_endpoint_name, local=True)
+        client.online_endpoints.begin_delete(name=mir_endpoint_name, local=True)
 
-
-@pytest.mark.e2etest
-@pytest.mark.local_endpoint_local_assets
-def test_local_deployment_mir_e2e(
-    deployment_create_yaml: str,
-    deployment_update_file: str,
-    mir_endpoint_name: str,
-    request_file: str,
-    client: MLClient,
-) -> None:
-    run_local_endpoint_tests_e2e_create(
-        deployment_yaml=deployment_create_yaml,
-        update_file=deployment_update_file,
-        deployment_name="dep",
-        endpoint_name=mir_endpoint_name,
-        request_file=request_file,
-        client=client,
-    )
-
-
-@pytest.mark.e2etest
-@pytest.mark.local_endpoint_local_assets
-def test_local_deployment_mir_model_code_overlap_e2e(
-    mir_endpoint_name: str,
-    request_file: str,
-    client: MLClient,
-) -> None:
-    run_local_endpoint_tests_e2e_create(
-        deployment_yaml="tests/test_configs/deployments/online/online_deployment_model_code_overlap.yaml",
-        update_file=None,
-        deployment_name="dep",
-        endpoint_name=mir_endpoint_name,
-        request_file=request_file,
-        client=client,
-    )
-
-
-@pytest.mark.e2etest
-@pytest.mark.local_endpoint_byoc
-@pytest.mark.local_endpoint_local_assets
-def test_local_deployment_mir_e2e_byoc(
-    mir_endpoint_name: str,
-    client: MLClient,
-) -> None:
-    run_local_endpoint_tests_e2e_create(
-        deployment_yaml="tests/test_configs/deployments/byoc/tfserving/online_deployment_tfserving.yaml",
-        update_file=None,
-        deployment_name="dep",
-        endpoint_name=mir_endpoint_name,
-        request_file="tests/test_configs/deployments/byoc/tfserving/sample_request.json",
-        client=client,
-        is_sklearn=False,
-    )
-
-
-@pytest.mark.e2etest
-@pytest.mark.local_endpoint_byoc
-@pytest.mark.skip("Requires building docker image and specific ACR info we don't have from pipelines.")
-def test_local_deployment_mir_e2e_byoc_sklearn(
-    mir_endpoint_name: str,
-    request_file: str,
-    client: MLClient,
-) -> None:
-    ## Uncomment for helping with running BYOC for sklearn scenario
-    # register_env(
-    #     name="sklearn-env",
-    #     version="1",
-    #     image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
-    #     conda_file="tests/test_configs/deployments/model-1/environment/conda.yml",
-    #     client=client,
-    # )
-    # workspace = client.workspaces.get(name=client.workspace_name)
-    # acr_name = workspace.container_registry.split("/")[-1]
-    # # Get acr_image_name from AML Studio for environment after built
-    # acr_image_name = "azureml/azureml_0d501feced865646087d1b823b8c3c35"
-    # image_name = f"{acr_name}.azurecr.io/{acr_image_name}"
-    ## Update deployment yaml with image name
-    run_local_endpoint_tests_e2e_create(
-        deployment_yaml="tests/test_configs/deployments/byoc/sklearn/online_deployment_byoc_sklearn.yaml",
-        update_file=None,
-        deployment_name="dep",
-        endpoint_name=mir_endpoint_name,
-        request_file=request_file,
-        client=client,
-        is_sklearn=True,
-    )
-
-
-@pytest.mark.e2etest
-@pytest.mark.local_endpoint_registered_assets
-@pytest.mark.parametrize(
-    """deployment_create_yaml,model_to_register,code_to_register,conda_env_to_register""",
-    [
-        pytest.param(
-            "tests/test_configs/deployments/online/online_deployment_registered_model.yaml",
-            "tests/test_configs/deployments/model-1/model/sklearn_regression_model.pkl",
-            None,
-            None,
-            marks=pytest.mark.skip(reason="Registered model covered in full registered assets test."),
-        ),
-        pytest.param(
-            "tests/test_configs/deployments/online/online_deployment_registered_code.yaml",
-            None,
-            "tests/test_configs/deployments/model-1/onlinescoring/",
-            None,
-            marks=pytest.mark.skip(reason="Registered code covered in full registered assets test."),
-        ),
-        pytest.param(
-            "tests/test_configs/deployments/online/online_deployment_registered_env.yaml",
-            None,
-            None,
-            "tests/test_configs/deployments/model-1/environment/conda.yml",
-            marks=pytest.mark.skip(reason="Registered env covered in full registered assets test."),
-        ),
-        pytest.param(
-            "tests/test_configs/deployments/online/online_deployment_registered_artifacts.yaml",
-            "tests/test_configs/deployments/model-1/model/sklearn_regression_model.pkl",
-            "tests/test_configs/deployments/model-1/onlinescoring/",
-            "tests/test_configs/deployments/model-1/environment/conda.yml",
-        ),
-    ],
-)
-@pytest.mark.skip()
-def test_local_deployment_mir_e2e_registered_artifacts(
-    mir_endpoint_name: str,
-    request_file: str,
-    client: MLClient,
-    deployment_create_yaml: str,
-    model_to_register: str,
-    code_to_register: str,
-    conda_env_to_register: str,
-) -> None:
-    if model_to_register:
-        register_model(
-            name="sklearn-model",
-            version="1",
-            path=model_to_register,
+    def test_local_deployment_mir_e2e(
+        self,
+        deployment_create_yaml: str,
+        deployment_update_file: str,
+        mir_endpoint_name: str,
+        request_file: str,
+        client: MLClient,
+    ) -> None:
+        run_local_endpoint_tests_e2e_create(
+            deployment_yaml=deployment_create_yaml,
+            update_file=deployment_update_file,
+            deployment_name="dep",
+            endpoint_name=mir_endpoint_name,
+            request_file=request_file,
             client=client,
         )
-    if code_to_register:
-        register_code(
-            name="code-1",
-            version="1",
-            path=code_to_register,
+
+    def test_local_deployment_mir_model_code_overlap_e2e(
+        self,
+        mir_endpoint_name: str,
+        request_file: str,
+        client: MLClient,
+    ) -> None:
+        run_local_endpoint_tests_e2e_create(
+            deployment_yaml="tests/test_configs/deployments/online/online_deployment_model_code_overlap.yaml",
+            update_file=None,
+            deployment_name="dep",
+            endpoint_name=mir_endpoint_name,
+            request_file=request_file,
             client=client,
         )
-    if conda_env_to_register:
-        register_env(
-            name="sklearn-env",
-            version="1",
-            image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
-            conda_file=conda_env_to_register,
+
+    @pytest.mark.local_endpoint_byoc
+    def test_local_deployment_mir_e2e_byoc(
+        self,
+        mir_endpoint_name: str,
+        client: MLClient,
+    ) -> None:
+        run_local_endpoint_tests_e2e_create(
+            deployment_yaml="tests/test_configs/deployments/byoc/tfserving/online_deployment_tfserving.yaml",
+            update_file=None,
+            deployment_name="dep",
+            endpoint_name=mir_endpoint_name,
+            request_file="tests/test_configs/deployments/byoc/tfserving/sample_request.json",
             client=client,
+            is_sklearn=False,
         )
-    run_local_endpoint_tests_e2e_create(
-        deployment_yaml=deployment_create_yaml,
-        update_file=None,
-        deployment_name="dep",
-        endpoint_name=mir_endpoint_name,
-        request_file=request_file,
-        client=client,
+
+    @pytest.mark.local_endpoint_byoc
+    @pytest.mark.skip("Requires building docker image and specific ACR info we don't have from pipelines.")
+    def test_local_deployment_mir_e2e_byoc_sklearn(
+        self,
+        mir_endpoint_name: str,
+        request_file: str,
+        client: MLClient,
+    ) -> None:
+        ## Uncomment for helping with running BYOC for sklearn scenario
+        # register_env(
+        #     name="sklearn-env",
+        #     version="1",
+        #     image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+        #     conda_file="tests/test_configs/deployments/model-1/environment/conda.yml",
+        #     client=client,
+        # )
+        # workspace = client.workspaces.get(name=client.workspace_name)
+        # acr_name = workspace.container_registry.split("/")[-1]
+        # # Get acr_image_name from AML Studio for environment after built
+        # acr_image_name = "azureml/azureml_0d501feced865646087d1b823b8c3c35"
+        # image_name = f"{acr_name}.azurecr.io/{acr_image_name}"
+        ## Update deployment yaml with image name
+        run_local_endpoint_tests_e2e_create(
+            deployment_yaml="tests/test_configs/deployments/byoc/sklearn/online_deployment_byoc_sklearn.yaml",
+            update_file=None,
+            deployment_name="dep",
+            endpoint_name=mir_endpoint_name,
+            request_file=request_file,
+            client=client,
+            is_sklearn=True,
+        )
+
+    @pytest.mark.parametrize(
+        """deployment_create_yaml,model_to_register,code_to_register,conda_env_to_register""",
+        [
+            pytest.param(
+                "tests/test_configs/deployments/online/online_deployment_registered_model.yaml",
+                "tests/test_configs/deployments/model-1/model/sklearn_regression_model.pkl",
+                None,
+                None,
+                marks=pytest.mark.skip(reason="Registered model covered in full registered assets test."),
+            ),
+            pytest.param(
+                "tests/test_configs/deployments/online/online_deployment_registered_code.yaml",
+                None,
+                "tests/test_configs/deployments/model-1/onlinescoring/",
+                None,
+                marks=pytest.mark.skip(reason="Registered code covered in full registered assets test."),
+            ),
+            pytest.param(
+                "tests/test_configs/deployments/online/online_deployment_registered_env.yaml",
+                None,
+                None,
+                "tests/test_configs/deployments/model-1/environment/conda.yml",
+                marks=pytest.mark.skip(reason="Registered env covered in full registered assets test."),
+            ),
+            pytest.param(
+                "tests/test_configs/deployments/online/online_deployment_registered_artifacts.yaml",
+                "tests/test_configs/deployments/model-1/model/sklearn_regression_model.pkl",
+                "tests/test_configs/deployments/model-1/onlinescoring/",
+                "tests/test_configs/deployments/model-1/environment/conda.yml",
+            ),
+        ],
     )
+    @pytest.mark.skip()
+    def test_local_deployment_mir_e2e_registered_artifacts(
+        self,
+        mir_endpoint_name: str,
+        request_file: str,
+        client: MLClient,
+        deployment_create_yaml: str,
+        model_to_register: str,
+        code_to_register: str,
+        conda_env_to_register: str,
+    ) -> None:
+        if model_to_register:
+            register_model(
+                name="sklearn-model",
+                version="1",
+                path=model_to_register,
+                client=client,
+            )
+        if code_to_register:
+            register_code(
+                name="code-1",
+                version="1",
+                path=code_to_register,
+                client=client,
+            )
+        if conda_env_to_register:
+            register_env(
+                name="sklearn-env",
+                version="1",
+                image="mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04",
+                conda_file=conda_env_to_register,
+                client=client,
+            )
+        run_local_endpoint_tests_e2e_create(
+            deployment_yaml=deployment_create_yaml,
+            update_file=None,
+            deployment_name="dep",
+            endpoint_name=mir_endpoint_name,
+            request_file=request_file,
+            client=client,
+        )
 
 
 def register_model(
