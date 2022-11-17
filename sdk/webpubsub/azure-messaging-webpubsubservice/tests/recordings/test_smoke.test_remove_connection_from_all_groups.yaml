@@ -1,6 +1,6 @@
 interactions:
 - request:
-    body: '{"Hello": "reverse_proxy_endpoint!"}'
+    body: null
     headers:
       Accept:
       - application/json
@@ -9,13 +9,11 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '36'
-      Content-Type:
-      - application/json
+      - '0'
       User-Agent:
       - azsdk-python-messaging-webpubsubservice/1.0.1b Python/3.11.0 (Windows-10-10.0.19045-SP0)
-    method: POST
-    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/:send?api-version=2022-11-01
+    method: DELETE
+    uri: https://myservice.webpubsub.azure.com/api/hubs/hub/connections/fake%20connection%20id/groups?api-version=2022-11-01
   response:
     body:
       string: ''
@@ -24,13 +22,11 @@ interactions:
       - '2022-11-01'
       connection:
       - keep-alive
-      content-length:
-      - '0'
       date:
-      - Thu, 17 Nov 2022 06:10:06 GMT
+      - Thu, 17 Nov 2022 06:10:10 GMT
       strict-transport-security:
       - max-age=15724800; includeSubDomains
     status:
-      code: 202
-      message: Accepted
+      code: 204
+      message: No Content
 version: 1
