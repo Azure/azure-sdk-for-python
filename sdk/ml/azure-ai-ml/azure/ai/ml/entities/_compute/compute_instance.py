@@ -6,6 +6,7 @@
 
 import re
 import warnings
+import logging
 from typing import Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
@@ -31,6 +32,8 @@ from azure.ai.ml.entities._credentials import IdentityConfiguration
 
 from ._schedule import ComputeSchedules
 from ._setup_scripts import SetupScripts
+
+module_logger = logging.getLogger(__name__)
 
 
 class ComputeInstanceSshSettings:
@@ -177,13 +180,6 @@ class ComputeInstance(Compute):
         self.setup_scripts = setup_scripts
         self.subnet = None
 
-        # Check for deprecated idle_time_before_shutdown property
-        if idle_time_before_shutdown is not None:
-            warnings.warn(
-                "The 'idle_time_before_shutdown' property for compute instances is deprecated. Please use 'idle_time_before_shutdown_minutes' instead.",
-                DeprecationWarning,
-            )
-
     @property
     def services(self) -> List[Dict[str, str]]:
         """
@@ -250,6 +246,9 @@ class ComputeInstance(Compute):
         if self.idle_time_before_shutdown_minutes:
             idle_time_before_shutdown = f"PT{self.idle_time_before_shutdown_minutes}M"
         elif self.idle_time_before_shutdown:
+            module_logger.warning(
+                "Property 'idle_time_before_shutdown': This property is deprecated. Please use 'idle_time_before_shutdown_minutes' instead."
+            )
             idle_time_before_shutdown = self.idle_time_before_shutdown
 
         compute_instance_prop = ComputeInstanceProperties(
