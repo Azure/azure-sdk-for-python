@@ -14,6 +14,9 @@ from typing import (cast,
 from datetime import datetime
 from azure.core.credentials import AzureKeyCredential
 
+def get_current_utc_time():
+    # type: () -> str
+    return str(datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S ")) + "GMT"
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]

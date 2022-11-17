@@ -11,10 +11,10 @@
         "Content-Type": "application/json",
         "repeatability-first-sent": "sanitized",
         "repeatability-request-id": "sanitized",
-        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25179-SP0)",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25236-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Wed, 17 Aug 2022 00:03:10 GMT",
+        "x-ms-date": "Thu, 17 Nov 2022 17:37:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -37,7 +37,7 @@
         "api-supported-versions": "2021-10-01-preview",
         "Content-Length": "0",
         "Date": "sanitized",
-        "mise-correlation-id": "d9edb1eb-e0b2-4a6f-9df0-06c641731672",
+        "mise-correlation-id": "ba914d8e-af51-4535-89f0-7a9f452a240a",
         "Operation-Location": "https://someEndpoint/emails/someMessageId/status",
         "Repeatability-Result": "accepted",
         "X-Azure-Ref": "sanitized",
@@ -54,10 +54,10 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25179-SP0)",
+        "User-Agent": "azsdk-python-communication-email/1.0.0b2 Python/3.10.4 (Windows-10-10.0.25236-SP0)",
         "x-ms-client-request-id": "sanitized",
         "x-ms-content-sha256": "sanitized",
-        "x-ms-date": "Wed, 17 Aug 2022 00:03:10 GMT",
+        "x-ms-date": "Thu, 17 Nov 2022 17:37:46 GMT",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": null,
@@ -67,7 +67,7 @@
         "Content-Length": "48",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
-        "mise-correlation-id": "9d1093d3-cb87-439b-90a0-9ec8e5229d51",
+        "mise-correlation-id": "1498a885-da92-4bdd-bc4a-b45df7647770",
         "Retry-After": "60",
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE"
