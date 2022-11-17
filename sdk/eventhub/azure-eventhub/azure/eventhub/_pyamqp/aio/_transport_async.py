@@ -399,8 +399,9 @@ class AsyncTransport(
 
     async def _write(self, s):
         """Write a string out to the SSL socket fully."""
-        self.writer.write(s)
-        await self.writer.drain()
+        async with self.socket_lock:
+            self.writer.write(s)
+            await self.writer.drain()
 
     async def close(self):
         async with self.socket_lock:

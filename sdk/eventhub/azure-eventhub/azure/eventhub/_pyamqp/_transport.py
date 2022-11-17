@@ -449,14 +449,15 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         return frame_header, channel, payload[offset:]
 
     def write(self, s):
-        try:
-            self._write(s)
-        except socket.timeout:
-            raise
-        except (OSError, IOError, socket.error) as exc:
-            if get_errno(exc) not in _UNAVAIL:
-                self.connected = False
-            raise
+        with self.socket_lock:
+            try:
+                self._write(s)
+            except socket.timeout:
+                raise
+            except (OSError, IOError, socket.error) as exc:
+                if get_errno(exc) not in _UNAVAIL:
+                    self.connected = False
+                raise
 
     def receive_frame(self, **kwargs):
         try:
