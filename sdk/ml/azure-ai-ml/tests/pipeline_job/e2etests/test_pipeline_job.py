@@ -93,6 +93,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         assert new_tag_name in updated_job.tags
         assert updated_job.tags[new_tag_name] == new_tag_value
 
+    @pytest.mark.skip("skip as registries not work in canary region for now")
     def test_pipeline_job_create_with_registries(
         self,
         client: MLClient,
@@ -113,15 +114,14 @@ class TestPipelineJob(AzureRecordedTestCase):
             job.jobs.get("a").component == "azureml://registries/testFeed/components/my_hello_world_asset_2/versions/1"
         )
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     @pytest.mark.parametrize(
         "pipeline_job_path",
         [
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/wordcount_pipeline.yml",
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_pipeline.yml",
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml",
-            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job.yml",
-            "./tests/test_configs/pipeline_jobs/shakespear-sample-and-word-count-using-spark/pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/wordcount_pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/sample_pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline.yml",
+            "tests/test_configs/dsl_pipeline/spark_job_in_pipeline/pipeline_inline_job.yml",
+            "tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml",
         ],
     )
     def test_pipeline_job_with_spark_job(
@@ -660,6 +660,7 @@ class TestPipelineJob(AzureRecordedTestCase):
             )
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_pipeline_job_anonymous_component_reuse(
         self,
         client: MLClient,
