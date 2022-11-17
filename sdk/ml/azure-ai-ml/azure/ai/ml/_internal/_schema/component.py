@@ -42,7 +42,7 @@ class NodeType:
         return all_values
 
 
-class InternalBaseComponentSchema(ComponentSchema):
+class InternalComponentSchema(ComponentSchema):
     class Meta:
         unknown = INCLUDE
     # override name as 1p components allow . in name, which is not allowed in v2 components
@@ -96,8 +96,8 @@ class InternalBaseComponentSchema(ComponentSchema):
     def _serialize(self, obj, *, many: bool = False):
         # pylint: disable=no-member
         if many and obj is not None:
-            return super(InternalBaseComponentSchema, self)._serialize(obj, many=many)
-        ret = super(InternalBaseComponentSchema, self)._serialize(obj)
+            return super(InternalComponentSchema, self)._serialize(obj, many=many)
+        ret = super(InternalComponentSchema, self)._serialize(obj)
         for attr_name in obj.__dict__.keys():
             if (
                 not attr_name.startswith("_")

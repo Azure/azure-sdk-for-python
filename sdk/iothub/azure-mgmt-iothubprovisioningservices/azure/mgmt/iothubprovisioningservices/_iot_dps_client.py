@@ -7,21 +7,22 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import IotDpsClientConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import DpsCertificateOperations, IotDpsResourceOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class IotDpsClient:
+
+class IotDpsClient:  # pylint: disable=client-accepts-api-version-keyword
     """API for using the Azure IoT Hub Device Provisioning Service features.
 
     :ivar operations: Operations operations
@@ -32,12 +33,15 @@ class IotDpsClient:
     :ivar iot_dps_resource: IotDpsResourceOperations operations
     :vartype iot_dps_resource:
      azure.mgmt.iothubprovisioningservices.operations.IotDpsResourceOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The subscription identifier.
+    :param subscription_id: The subscription identifier. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2022-02-05". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -60,12 +64,7 @@ class IotDpsClient:
         self.dps_certificate = DpsCertificateOperations(self._client, self._config, self._serialize, self._deserialize)
         self.iot_dps_resource = IotDpsResourceOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -74,7 +73,7 @@ class IotDpsClient:
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

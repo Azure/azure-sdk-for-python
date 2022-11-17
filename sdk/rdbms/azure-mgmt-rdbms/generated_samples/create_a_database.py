@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.rdbms import PostgreSQLManagementClient
+from azure.mgmt.rdbms import MySQLManagementClient
 
 """
 # PREREQUISITES
@@ -24,20 +24,20 @@ from azure.mgmt.rdbms import PostgreSQLManagementClient
 
 
 def main():
-    client = PostgreSQLManagementClient(
+    client = MySQLManagementClient(
         credential=DefaultAzureCredential(),
         subscription_id="ffffffff-ffff-ffff-ffff-ffffffffffff",
     )
 
-    response = client.databases.begin_create(
+    response = client.databases.begin_create_or_update(
         resource_group_name="TestGroup",
         server_name="testserver",
         database_name="db1",
-        parameters={"properties": {"charset": "utf8", "collation": "en_US.utf8"}},
+        parameters={"properties": {"charset": "utf8", "collation": "utf8_general_ci"}},
     ).result()
     print(response)
 
 
-# x-ms-original-file: specification/postgresql/resource-manager/Microsoft.DBforPostgreSQL/preview/2022-03-08-preview/examples/DatabaseCreate.json
+# x-ms-original-file: specification/mysql/resource-manager/Microsoft.DBforMySQL/preview/2021-12-01-preview/examples/DatabaseCreate.json
 if __name__ == "__main__":
     main()
