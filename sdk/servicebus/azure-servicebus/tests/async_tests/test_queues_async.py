@@ -1433,6 +1433,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         assert receiver._config.http_proxy == http_proxy
         assert receiver._config.transport_type == TransportType.AmqpOverWebsocket
 
+    @pytest.mark.mocksb
     @pytest.mark.liveTest
     @pytest.mark.live_test_only
     @CachedResourceGroupPreparer(name_prefix='servicebustest')
