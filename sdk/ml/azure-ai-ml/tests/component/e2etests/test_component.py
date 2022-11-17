@@ -700,23 +700,22 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             "command": "Invalid data binding expression: inputs.non_existent, outputs.non_existent",
         }
 
-    @pytest.mark.skip(reason="flaky test")
     def test_component_create_get_list_from_registry(
-        self, only_registry_client: MLClient, randstr: Callable[[str], str]
+        self, pipelines_registry_client: MLClient, randstr: Callable[[str], str]
     ) -> None:
         component_name = randstr("component_name")
 
-        component_resource = create_component(only_registry_client, component_name)
+        component_resource = create_component(pipelines_registry_client, component_name)
         assert component_resource.name == component_name
         assert component_resource.code
         assert component_resource.creation_context
 
-        component_get = only_registry_client.components.get(component_name, component_resource.version)
+        component_get = pipelines_registry_client.components.get(component_name, component_resource.version)
         assert component_resource._to_dict() == component_get._to_dict()
         assert component_resource.creation_context
         assert component_resource._source == "REMOTE.REGISTRY"
 
-        components = only_registry_client.components.list(name=component_name)
+        components = pipelines_registry_client.components.list(name=component_name)
         assert isinstance(components, ItemPaged)
         test_component = next(iter(components), None)
         assert isinstance(test_component, Component)
