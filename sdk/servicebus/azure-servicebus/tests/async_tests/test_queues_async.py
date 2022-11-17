@@ -1411,6 +1411,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 messages = await receiver.receive_messages(max_wait_time=5)
                 assert len(messages) == 1
 
+    @pytest.mark.mocksb
     async def test_queue_message_http_proxy_setting(self):
         mock_conn_str = "Endpoint=sb://mock.servicebus.windows.net/;SharedAccessKeyName=mock;SharedAccessKey=mock"
         http_proxy = {
@@ -1452,6 +1453,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
                 assert len(messages) == 1
                 await receiver.complete_message(messages[0])
 
+    @pytest.mark.mocksb
     @AzureTestCase.await_prepared_test
     async def test_async_queue_mock_auto_lock_renew_callback(self):
         # A warning to future devs: If the renew period override heuristic in registration
@@ -1535,6 +1537,7 @@ class ServiceBusQueueAsyncTests(AzureMgmtTestCase):
         #    assert not results
         #    assert not errors
 
+    @pytest.mark.mocksb
     @AzureTestCase.await_prepared_test
     async def test_async_queue_mock_no_reusing_auto_lock_renew(self):
         auto_lock_renew = AutoLockRenewer()
