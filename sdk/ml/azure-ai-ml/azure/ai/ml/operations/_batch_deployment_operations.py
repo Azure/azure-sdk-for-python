@@ -57,7 +57,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         self._batch_deployment = service_client_05_2022.batch_deployments
         self._batch_job_deployment = kwargs.pop("service_client_09_2020_dataplanepreview").batch_job_deployment
         self._batch_endpoint_operations = service_client_05_2022.batch_endpoints
-        self._component_operations = service_client_05_2022.component_containers
+        self._component_operations = service_client_05_2022.component_versions
         self._all_operations = all_operations
         self._credentials = credentials
         self._init_kwargs = kwargs
@@ -110,23 +110,37 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         upload_dependencies(deployment, orchestrators)
         if is_private_preview_enabled() and deployment.job_definition:
             if isinstance(deployment.job_definition.component, PipelineComponent):
-                deployment.job_definition.component = self._component_operations.create_or_update(
+                component = self._component_operations.create_or_update(
                     name =  deployment.job_definition.component.name,
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
                     body = deployment.job_definition.component._to_rest_object(),
+                    version=deployment.job_definition.component.version,
                     **self._init_kwargs
                 )
-                deployment.job_definition.component_id = deployment.job_definition.component.component_id
+                deployment.job_definition.component = None
+                deployment.job_definition.component_id = component.id
+                if not deployment.job_definition.name: deployment.job_definition.name = component.name 
+                if not deployment.job_definition.description: deployment.job_definition.description = component.properties.description
+                if not deployment.job_definition.tags: deployment.job_definition.tags = component.properties.tags  
             elif isinstance(deployment.job_definition.component, str):
 
+                split_name = deployment.job_definition.component.split(':')
                 component = self._component_operations.get(
-                    name = deployment.job_definition.component,
+                    name = split_name[0],
                     resource_group_name=self._resource_group_name,
                     workspace_name=self._workspace_name,
+                    version= split_name[1],
                     **self._init_kwargs
                 )
-                deployment.job_definiton.component_id = component.id
+                deployment.job_definition.component = None
+                deployment.job_definition.component_id = component.id
+                if not deployment.job_definition.name: 
+                    deployment.job_definition.name = component.properties.component_spec.get('name')
+                if not deployment.job_definition.description: 
+                    deployment.job_definition.description = component.properties.description
+                if not deployment.job_definition.tags and component.properties.tags: 
+                    deployment.job_definition.tags = component.properties.tags 
 
 
         try:
