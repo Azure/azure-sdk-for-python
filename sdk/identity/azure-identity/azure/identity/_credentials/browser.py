@@ -2,11 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
+import socket
 from typing import Dict
 from urllib.parse import urlparse
 
 from azure.core.exceptions import ClientAuthenticationError
 
+from .. import CredentialUnavailableError
 from .._constants import DEVELOPER_SIGN_ON_CLIENT_ID
 from .._internal import InteractiveCredential, wrap_exceptions
 
@@ -61,13 +63,18 @@ class InteractiveBrowserCredential(InteractiveCredential):
         app = self._get_app(**kwargs)
         port = self._parsed_url.port if self._parsed_url else None
 
-        result = app.acquire_token_interactive(
-            scopes=scopes,
-            login_hint=self._login_hint,
-            claims_challenge=claims,
-            prompt="select_account",
-            port=port
+        try:
+            result = app.acquire_token_interactive(
+                scopes=scopes,
+                login_hint=self._login_hint,
+                claims_challenge=claims,
+                prompt="select_account",
+                port=port
             )
+        except socket.error:
+            raise CredentialUnavailableError(message="Couldn't start an HTTP server.")
+        if "access_token" not in result and "error_description" in result:
+            raise ClientAuthenticationError(message=result.get("error_description"))
         if "access_token" not in result:
             raise ClientAuthenticationError(message="Failed for user to authenticate")
 
