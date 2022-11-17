@@ -3276,6 +3276,61 @@ class DocumentWarning(_serialization.Model):
         self.target_ref = target_ref
 
 
+class DynamicClassificationDocumentResult(DocumentResult):
+    """DynamicClassificationDocumentResult.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar id: Unique, non-empty document identifier. Required.
+    :vartype id: str
+    :ivar warnings: Warnings encountered while processing document. Required.
+    :vartype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
+    :ivar statistics: if showStats=true was specified in the request this field will contain
+     information about the document payload.
+    :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
+    :ivar classifications: Required.
+    :vartype classifications:
+     list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
+    """
+
+    _validation = {
+        'id': {'required': True},
+        'warnings': {'required': True},
+        'classifications': {'required': True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
+        "statistics": {"key": "statistics", "type": "DocumentStatistics"},
+        "classifications": {"key": "classifications", "type": "[ClassificationResult]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        warnings: List["_models.DocumentWarning"],
+        classifications: List["_models.ClassificationResult"],
+        statistics: Optional["_models.DocumentStatistics"] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: Unique, non-empty document identifier. Required.
+        :paramtype id: str
+        :keyword warnings: Warnings encountered while processing document. Required.
+        :paramtype warnings: list[~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentWarning]
+        :keyword statistics: if showStats=true was specified in the request this field will contain
+         information about the document payload.
+        :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
+        :keyword classifications: Required.
+        :paramtype classifications:
+         list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
+        """
+        super().__init__(id=id, warnings=warnings, statistics=statistics, **kwargs)
+        self.classifications = classifications
+
+
 class DynamicClassificationResult(PreBuiltResult):
     """DynamicClassificationResult.
 
@@ -3331,7 +3386,7 @@ class DynamicClassificationResult(PreBuiltResult):
         self.documents = documents
 
 
-class DynamicClassificationResultDocumentsItem(ClassificationDocumentResult):
+class DynamicClassificationResultDocumentsItem(DynamicClassificationDocumentResult):
     """DynamicClassificationResultDocumentsItem.
 
     All required parameters must be populated in order to send to Azure.
@@ -3343,22 +3398,22 @@ class DynamicClassificationResultDocumentsItem(ClassificationDocumentResult):
     :ivar statistics: if showStats=true was specified in the request this field will contain
      information about the document payload.
     :vartype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-    :ivar class_property: Required.
-    :vartype class_property:
+    :ivar classifications: Required.
+    :vartype classifications:
      list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
     """
 
     _validation = {
         'id': {'required': True},
         'warnings': {'required': True},
-        'class_property': {'required': True},
+        'classifications': {'required': True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "warnings": {"key": "warnings", "type": "[DocumentWarning]"},
         "statistics": {"key": "statistics", "type": "DocumentStatistics"},
-        "class_property": {"key": "class", "type": "[ClassificationResult]"},
+        "classifications": {"key": "classifications", "type": "[ClassificationResult]"},
     }
 
     def __init__(
@@ -3366,7 +3421,7 @@ class DynamicClassificationResultDocumentsItem(ClassificationDocumentResult):
         *,
         id: str,  # pylint: disable=redefined-builtin
         warnings: List["_models.DocumentWarning"],
-        class_property: List["_models.ClassificationResult"],
+        classifications: List["_models.ClassificationResult"],
         statistics: Optional["_models.DocumentStatistics"] = None,
         **kwargs
     ):
@@ -3378,11 +3433,11 @@ class DynamicClassificationResultDocumentsItem(ClassificationDocumentResult):
         :keyword statistics: if showStats=true was specified in the request this field will contain
          information about the document payload.
         :paramtype statistics: ~azure.ai.textanalytics.v2022_10_01_preview.models.DocumentStatistics
-        :keyword class_property: Required.
-        :paramtype class_property:
+        :keyword classifications: Required.
+        :paramtype classifications:
          list[~azure.ai.textanalytics.v2022_10_01_preview.models.ClassificationResult]
         """
-        super().__init__(id=id, warnings=warnings, statistics=statistics, class_property=class_property, **kwargs)
+        super().__init__(id=id, warnings=warnings, statistics=statistics, classifications=classifications, **kwargs)
 
 
 class DynamicClassificationTaskParameters(PreBuiltTaskParameters):

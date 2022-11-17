@@ -60,6 +60,7 @@ from ._models_py3 import DocumentRequestStatistics
 from ._models_py3 import DocumentResult
 from ._models_py3 import DocumentStatistics
 from ._models_py3 import DocumentWarning
+from ._models_py3 import DynamicClassificationDocumentResult
 from ._models_py3 import DynamicClassificationResult
 from ._models_py3 import DynamicClassificationResultDocumentsItem
 from ._models_py3 import DynamicClassificationTaskParameters
@@ -260,6 +261,7 @@ __all__ = [
     'DocumentResult',
     'DocumentStatistics',
     'DocumentWarning',
+    'DynamicClassificationDocumentResult',
     'DynamicClassificationResult',
     'DynamicClassificationResultDocumentsItem',
     'DynamicClassificationTaskParameters',

@@ -3124,13 +3124,11 @@ class DynamicClassificationResult(DictMixin):
 
     @classmethod
     def _from_generated(cls, result):
-        # FIXME: https://github.com/Azure/azure-sdk-for-python/issues/27089
-        classes = result.class_property or result.additional_properties.get("classifications", None)
         return cls(
             id=result.id,
             classifications=[
                 ClassificationCategory._from_generated(c)  # pylint: disable=protected-access
-                for c in classes
+                for c in result.classifications
             ],
             warnings=[
                 TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access
