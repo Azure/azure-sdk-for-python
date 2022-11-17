@@ -24,6 +24,7 @@
 #
 # --------------------------------------------------------------------------
 import sys
+import wrapt
 from typing import (
     Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
 )
@@ -218,6 +219,9 @@ class AioHttpTransport(AsyncHttpTransport):
         if not request.data and not request.files:
             config['skip_auto_headers'] = ['Content-Type']
         try:
+            data = request.data
+            if isinstance(data, io.IOBase):
+                data = _IOBaseWrapper(data)
             stream_response = config.pop("stream", False)
             timeout = config.pop('connection_timeout', self.connection_config.timeout)
             read_timeout = config.pop('read_timeout', self.connection_config.read_timeout)
@@ -414,3 +418,12 @@ class AioHttpTransportResponse(AsyncHttpResponse):
         state['internal_response'] = None  # aiohttp response are not pickable (see headers comments)
         state['headers'] = CIMultiDict(self.headers)  # MultiDictProxy is not pickable
         return state
+
+
+# Unfortunately aiohttp changed the behavior of streams:
+#   github.com/aio-libs/aiohttp/issues/1907
+# We need this wrapper until we have a final resolution
+class _IOBaseWrapper(wrapt.ObjectProxy):
+    def close(self):
+        # this stream should not be closed by aiohttp, like 1.x
+        pass
