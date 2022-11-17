@@ -578,21 +578,18 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
-        synapse_compute_name = "spark31"
 
         @dsl.pipeline(
             name=f"test_optional_input_component_pipeline_" + randstr("pipeline_name"),
             description="The spark node with optional inputs",
             tags={"owner": "sdkteam", "tag": "tagvalue"},
-            compute=synapse_compute_name,
         )
         def sample_pipeline(job_in_file, sample_rate):
             node1 = spark_with_optional_inputs_component_func(input1=job_in_file, sample_rate=sample_rate)
-            node1.compute = synapse_compute_name
+            node1.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
             return {"pipeline_output": node1.outputs.output1}
 
         pipeline = sample_pipeline(
@@ -610,7 +607,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         expected_job = {
             "description": "The spark node with optional inputs",
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
-            "compute_id": "spark31",
             "is_archived": False,
             "job_type": "Pipeline",
             "inputs": {
@@ -619,12 +615,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             },
             "jobs": {
                 "node1": {
-                    "archives": None,
                     "args": "--input1 ${{inputs.input1}} --output2 "
                     "${{outputs.output1}} --my_sample_rate "
                     "${{inputs.sample_rate}} $[[--input_optional "
                     "${{inputs.input_optional}}]]",
-                    "computeId": "spark31",
                     "conf": {
                         "spark.driver.cores": 1,
                         "spark.driver.memory": "2g",
@@ -635,23 +629,19 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         "spark.executor.instances": 1,
                         "spark.executor.memory": "2g",
                     },
-                    "display_name": None,
                     "entry": {
                         "file": "sampleword_with_optional_input.py",
                         "spark_job_entry_type": "SparkJobPythonEntry",
                     },
-                    "files": None,
-                    "identity": {"identity_type": "Managed"},
+                    "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
                         "input1": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_file}}"},
                         "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
                     },
-                    "jars": None,
                     "name": "node1",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                    "py_files": None,
-                    "resources": None,
-                    "tags": {},
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 }
             },
@@ -1285,6 +1275,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # assert "optional_param_with_default" not in pipeline_job.inputs
         # assert "optional_param_with_default" not in next(pipeline_job.jobs.values().__iter__()).inputs
 
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_reuse(self, client: MLClient) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func1 = load_component(source=path)
@@ -1312,10 +1304,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         assert len(component_ids) == 1, f"Got multiple component id: {component_ids} for same anon component."
 
-    @pytest.mark.skipif(
-        condition=not is_live(),
-        reason="this test targets to verify service-side behaviour, only enable it in live test.",
-    )
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_pipeline_reuse(self, client: MLClient, randstr: Callable[[str], str], randint: Callable) -> None:
         component_yaml = components_dir / "helloworld_component.yml"
         component_func1 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
@@ -2186,20 +2176,18 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
-        synapse_compute_name = "spark31"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
         count_by_row = load_component(str(components_dir / "count_by_row_component.yml"))
 
         # Construct pipeline
-        @dsl.pipeline(compute=synapse_compute_name)
+        @dsl.pipeline()
         def spark_pipeline_from_yaml(iris_data):
             add_greeting_column_node = add_greeting_column(file_input=iris_data)
-            add_greeting_column_node.compute = synapse_compute_name
+            add_greeting_column_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
             count_by_row_node = count_by_row(file_input=iris_data)
-            count_by_row_node.compute = synapse_compute_name
+            count_by_row_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
             return {"output": count_by_row_node.outputs.output}
 
         pipeline = spark_pipeline_from_yaml(
@@ -2216,13 +2204,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = assert_job_cancel(pipeline, client, experiment_name="spark_in_pipeline")
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
-        expected_keys = ["status", "properties", "tags", "creation_context"]
+        expected_keys = ["status", "properties", "creation_context"]
         for k in expected_keys:
             assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
 
         # original job did not change
         assert_job_input_output_types(pipeline_job)
-        assert pipeline_job.compute == synapse_compute_name
 
     def test_pipeline_with_group(self, client: MLClient):
         from enum import Enum

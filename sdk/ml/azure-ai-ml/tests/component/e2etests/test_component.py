@@ -1,4 +1,5 @@
 import re
+import tempfile
 import uuid
 from itertools import tee
 from pathlib import Path
@@ -27,7 +28,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 from ..unittests.test_component_schema import load_component_entity_from_rest_json
 
 
-from devtools_testutils import AzureRecordedTestCase, is_live, set_bodiless_matcher
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 def create_component(
@@ -230,34 +231,28 @@ class TestComponent(AzureRecordedTestCase):
             recorded_component_name="registry_component_name",
         )
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     def test_spark_component(self, client: MLClient, randstr: Callable[[], str]) -> None:
         expected_dict = {
-            "entry": {"file": "add_greeting_column.py"},
-            "py_files": ["utils.zip"],
-            "files": ["my_files.txt"],
-            "conf": {
-                "spark.driver.cores": 2,
-                "spark.driver.memory": "1g",
-                "spark.executor.cores": 1,
-                "spark.executor.instances": 1,
-                "spark.executor.memory": "1g",
-            },
-            "args": "--file_input ${{inputs.file_input}}",
-            "description": "Aml Spark add greeting column test module",
-            "tags": {},
-            "version": "1",
-            "$schema": "https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json",
-            "display_name": "Aml Spark add greeting column test module",
-            "is_deterministic": True,
-            "inputs": {"file_input": {"type": "uri_file"}},
-            "outputs": {},
-            "type": "spark",
+            '$schema': 'https://azuremlschemas.azureedge.net/latest/sparkComponent.schema.json',
+             'args': '--file_input ${{inputs.file_input}} --output ${{outputs.output}}',
+             'conf': {'spark.driver.cores': 2,
+                      'spark.driver.memory': '1g',
+                      'spark.executor.cores': 1,
+                      'spark.executor.instances': 1,
+                      'spark.executor.memory': '1g'},
+             'description': 'Aml Spark dataset test module',
+             'display_name': 'Aml Spark dataset test module',
+             'entry': {'file': 'kmeans_example.py'},
+             'inputs': {'file_input': {'type': 'uri_file'}},
+             'is_deterministic': True,
+             'outputs': {'output': {'type': 'uri_folder'}},
+             'type': 'spark',
+             'version': '1'
         }
         assert_component_basic_workflow(
             client=client,
             randstr=randstr,
-            path="./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml",
+            path="./tests/test_configs/spark_component/component.yml",
             expected_dict=expected_dict,
             omit_fields=["name", "creation_context", "id", "code", "environment"],
             recorded_component_name="spark_component_name",
@@ -372,15 +367,17 @@ class TestComponent(AzureRecordedTestCase):
         assert component_resource.display_name == display_name
 
     @pytest.mark.disable_mock_code_hash
-    @pytest.mark.skipif(condition=not is_live(), reason="non-deterministic upload fails in playback on CI")
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_twice_same_code_arm_id(
-        self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path
+        self, client: MLClient, randstr: Callable[[str], str]
     ) -> None:
-        component_name = randstr("component_name")
-        # create new component to prevent the issue when same component code got created at the same time
-        component_path = tmp_path / "component.yml"
-        component_path.write_text(
-            f"""
+        with tempfile.TemporaryDirectory() as tmp_path:
+            tmp_path = Path(tmp_path)
+            component_name = randstr("component_name")
+            # create new component to prevent the issue when same component code got created at the same time
+            component_path = tmp_path / "component.yml"
+            component_path.write_text(
+                f"""
 $schema: https://azuremlschemas.azureedge.net/development/commandComponent.schema.json
 name: {component_name}
 version: 1
@@ -389,13 +386,13 @@ name: SampleCommandComponentBasic
 command: echo Hello World
 code: "."
 environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
-        )
-        # create a component
-        component_resource1 = create_component(client, component_name, path=component_path)
-        # create again
-        component_resource2 = create_component(client, component_name, path=component_path)
-        # the code arm id should be the same
-        assert component_resource1.code == component_resource2.code
+            )
+            # create a component
+            component_resource1 = create_component(client, component_name, path=component_path)
+            # create again
+            component_resource2 = create_component(client, component_name, path=component_path)
+            # the code arm id should be the same
+            assert component_resource1.code == component_resource2.code
 
     @pytest.mark.skipif(condition=not is_live(), reason="non-deterministic upload fails in playback on CI")
     def test_component_update_code(self, client: MLClient, randstr: Callable[[str], str], tmp_path: Path) -> None:
@@ -424,6 +421,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
             client.components.create_or_update(command_component)
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_create_default_code(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         # step2: test component without code
         component_name = randstr("component_name")
@@ -549,6 +547,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         assert next_component_asset._auto_increment_version is False
 
     @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_anonymous_component_reuse(self, client: MLClient, variable_recorder) -> None:
         # component without code
         component_name_1 = variable_recorder.get_or_record("component_name_1", str(uuid.uuid4()))
@@ -620,7 +619,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
 
         for version in versions:
             create_component(client, name, params_override=[{"version": version}])
-            sleep_if_live(1)
+            sleep_if_live(5)
             assert client.components.get(name, label="latest").version == version
 
     @pytest.mark.skip(reason="Test fails because MFE index service consistency bug")
@@ -838,6 +837,7 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         rest_component = client.components.create_or_update(component)
         assert rest_component.name == name
 
+    @pytest.mark.skipif(condition=not is_live(), reason="registry test, target to verify service-side behavior")
     def test_component_with_default_label(
         self,
         client: MLClient,
@@ -847,6 +847,8 @@ environment: azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"""
         component_name = randstr("component_name")
 
         create_component(client, component_name, path=yaml_path)
+
+        sleep_if_live(5)  # sleep 5 seconds to wait for index service update
 
         target_component = client.components.get(component_name, label="latest")
 
