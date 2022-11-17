@@ -4,3 +4,7 @@ extends:
   template: ./tests.yml
   parameters:
     TestMarkArgument: "automl_test"
+    CloudConfig:
+      Public:
+        SubscriptionConfiguration: $(python-ml-automl-sub-scope)
+        Location: eastus

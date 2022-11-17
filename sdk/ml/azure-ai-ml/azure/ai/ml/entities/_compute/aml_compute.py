@@ -6,8 +6,8 @@
 
 from typing import Dict
 
-from azure.ai.ml._restclient.v2022_01_01_preview.models import AmlCompute as AmlComputeRest
-from azure.ai.ml._restclient.v2022_01_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import AmlCompute as AmlComputeRest
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     AmlComputeProperties,
     ComputeResource,
     ResourceId,

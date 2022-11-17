@@ -74,37 +74,44 @@ async def sample_conv_summarization_async():
                 },
                 "tasks": [
                     {
-                        "taskName": "analyze 1",
+                        "taskName": "Issue task",
                         "kind": "ConversationalSummarizationTask",
                         "parameters": {
-                            "summaryAspects": ["issue", "resolution"]
+                            "summaryAspects": ["issue"]
                         }
-                    }
+                    },
+                    {
+                        "taskName": "Resolution task",
+                        "kind": "ConversationalSummarizationTask",
+                        "parameters": {
+                            "summaryAspects": ["resolution"]
+                        }
+                    },
                 ]
             }
         )
 
         # view result
         result = await poller.result()
-        task_result = result["tasks"]["items"][0]
-        print("... view task status ...")
-        print(f"status: {task_result['status']}")
-        resolution_result = task_result["results"]
-        if resolution_result["errors"]:
-            print("... errors occurred ...")
-            for error in resolution_result["errors"]:
-                print(error)
-        else:
-            conversation_result = resolution_result["conversations"][0]
-            if conversation_result["warnings"]:
-                print("... view warnings ...")
-                for warning in conversation_result["warnings"]:
-                    print(warning)
+        task_results = result["tasks"]["items"]
+        for task in task_results:
+            print(f"\n{task['taskName']} status: {task['status']}")
+            task_result = task["results"]
+            if task_result["errors"]:
+                print("... errors occurred ...")
+                for error in task_result["errors"]:
+                    print(error)
             else:
-                summaries = conversation_result["summaries"]
-                print("... view task result ...")
-                print(f"issue: {summaries[0]['text']}")
-                print(f"resolution: {summaries[1]['text']}")
+                conversation_result = task_result["conversations"][0]
+                if conversation_result["warnings"]:
+                    print("... view warnings ...")
+                    for warning in conversation_result["warnings"]:
+                        print(warning)
+                else:
+                    summaries = conversation_result["summaries"]
+                    print("... view task result ...")
+                    for summary in summaries:
+                        print(f"{summary['aspect']}: {summary['text']}")
 
     # [END analyze_conversation_app]
 

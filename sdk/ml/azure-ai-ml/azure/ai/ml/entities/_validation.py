@@ -363,7 +363,7 @@ class SchemaValidatableMixin:
     @classmethod
     def _create_schema_for_validation(
         cls, context
-    ) -> typing.Union[PathAwareSchema, Schema]:
+    ) -> PathAwareSchema:
         """Create a schema of the resource with specific context. Should be
         overridden by subclass.
 
@@ -396,7 +396,7 @@ class SchemaValidatableMixin:
         raise NotImplementedError()
 
     @property
-    def _schema_for_validation(self) -> typing.Union[PathAwareSchema, Schema]:
+    def _schema_for_validation(self) -> PathAwareSchema:
         """Return the schema of this Resource with self._base_path as base_path
         of Schema. Do not override this method. Override _get_schema instead.
 

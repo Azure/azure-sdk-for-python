@@ -23,11 +23,7 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-try:
-    import collections.abc as collections
-except ImportError:
-    import collections  # type: ignore
-
+import collections.abc as collections
 from requests.structures import CaseInsensitiveDict
 
 from ._http_response_impl import _HttpResponseBaseImpl, HttpResponseImpl, _HttpResponseBackcompatMixinBase

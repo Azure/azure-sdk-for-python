@@ -26,7 +26,9 @@
     "sdk/**/azure-cognitiveservices**",
     "sdk/**/_generated/**",
     "**/*requirement*.txt",
+    "**/assets.json",
 
+    "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
@@ -60,6 +62,7 @@
     "sdk/graphrbac/azure-graphrbac/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/samples/sample_forms/**",
     "sdk/formrecognizer/azure-ai-formrecognizer/tests/sample_forms/**",
+    "sdk/personalizer/azure-ai-personalizer/azure/ai/personalizer/**",
     "sdk/identity/azure-identity/images/**",
     "sdk/identity/azure-identity/tests/pod-identity/**",
     "sdk/identity/azure-identity/tests/managed-identity-live/service-fabric/**",
@@ -95,6 +98,8 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "qnamaker",
+    "mindependency",
     "automl",
     "pyyaml",
     "CONLL",
@@ -201,6 +206,7 @@
     "iscsi",
     "iterrows",
     "ivar",
+    "ivars",
     "jwks",
     "keybak",
     "kube",
@@ -275,6 +281,8 @@
     "pyfuncitem",
     "pygobject",
     "pyodide",
+    "pyright",
+    "pyrightconfig",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -410,6 +418,12 @@
       ]
     },
     {
+      "filename": "sdk/tables/test-resources.json",
+      "words": [
+        "mmspecial"
+      ]
+    },
+    {
       "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
       "words": [
         "essai"
@@ -457,7 +471,9 @@
         "verfasst",
         "engelska",
         "fhir",
-        "FHIR"
+        "FHIR",
+        "naam",
+        "aenter"
       ]
     },
     {
@@ -466,7 +482,7 @@
     },
     {
       "filename": "sdk/cognitivelanguage/azure-ai-language-conversations/**",
-      "words": ["conv"],
+      "words": ["conv", "summ"],
       "caseSensitive": false
     },
     {
@@ -563,6 +579,12 @@
         "mymodel",
         "heif",
         "racwd"
+      ]
+    },
+    {
+      "filename": "sdk/keyvault/**",
+      "words": [
+        "eddsa"
       ]
     },
     {
@@ -681,7 +703,7 @@
       ]
     },
     {
-      "filename": "sdk/ml/tests.yml",
+      "filename": "sdk/ml/*tests.yml",
       "words": [
         "euap"
       ]
@@ -808,7 +830,8 @@
         "fnmatch",
         "posixpath",
         "SEPS",
-        "wargs"
+        "wargs",
+        "pycache"
       ]
     },
     {
@@ -1000,7 +1023,8 @@
         "mybytes",
         "myid",
         "jsonify",
-        "ints"
+        "ints",
+        "inirudebwoy"
       ]
     },
     {
@@ -1133,6 +1157,12 @@
       "filename": "sdk/appconfiguration/test-resources.json",
       "words": [
         "azconfig"
+      ]
+    },
+    {
+      "filename": "sdk/personalizer/test-resources.json",
+      "words": [
+        "euap"
       ]
     }
   ],
