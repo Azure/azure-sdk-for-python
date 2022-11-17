@@ -220,7 +220,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
                 target=ErrorTarget.JOB,
                 error_category=ErrorCategory.SYSTEM_ERROR,
             )
-        if camel_to_snake(action.job_definition.job_type) not in [JobType.PIPELINE, JobType.COMMAND]:
+        if camel_to_snake(action.job_definition.job_type) not in [JobType.PIPELINE, JobType.COMMAND, JobType.SPARK]:
             msg = f"Unsupported job type {action.job_definition.job_type} for schedule '{{}}'."
             raise ScheduleException(
                 message=msg.format(obj.name),
