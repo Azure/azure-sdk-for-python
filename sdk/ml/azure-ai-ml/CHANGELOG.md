@@ -10,7 +10,7 @@
 
 ### Bugs Fixed
 - Fixed idle_time_before_shutdown appearing as None for Compute Instances returned by `show` or `list`.
-- Fixed idle_time_before_shutdown_minutes preventing creation of schedules for Compute Instances.
+- Fixed idle_time_before_shutdown_minutes preventing creation of Compute Instances when set to None.
 
 ### Other Changes
 
