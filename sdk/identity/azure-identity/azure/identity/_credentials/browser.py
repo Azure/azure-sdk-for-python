@@ -44,7 +44,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
     :keyword int timeout: seconds to wait for the user to complete authentication. Defaults to 300 (5 minutes).
     :keyword bool allow_broker: Brokers provide single sign-on, device identification, and application identification
         verification. If this parameter is set to True, the broker will be used when possible. Defaults to False.
-        Check https://learn.microsoft.com/en-us/azure/active-directory/develop/scenario-desktop-acquire-token-wam
+        Check https://learn.microsoft.com/azure/active-directory/develop/scenario-desktop-acquire-token-wam
         for more WAM information.
     :raises ValueError: invalid **redirect_uri**
     """
