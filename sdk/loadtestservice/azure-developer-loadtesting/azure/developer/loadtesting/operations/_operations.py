@@ -27,7 +27,7 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .._serialization import Serializer
-from .._vendor import _format_url_section, raise_if_not_implemented
+from .._vendor import _format_url_section
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
@@ -157,7 +157,39 @@ def build_load_test_administration_list_load_tests_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_get_test_file_request(test_id: str, file_id: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_administration_upload_file_request(
+    test_id: str, file_name: str, *, content: IO, file_type: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/tests/{testId}/files/{fileName}"
+    path_format_arguments = {
+        "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if file_type is not None:
+        _params["fileType"] = _SERIALIZER.query("file_type", file_type, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    if content_type is not None:
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
+
+
+def build_load_test_administration_get_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -165,10 +197,10 @@ def build_load_test_administration_get_test_file_request(test_id: str, file_id: 
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/tests/{testId}/files/{fileId}"
+    _url = "/tests/{testId}/files/{fileName}"
     path_format_arguments = {
         "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
-        "fileId": _SERIALIZER.url("file_id", file_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -182,7 +214,7 @@ def build_load_test_administration_get_test_file_request(test_id: str, file_id: 
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_delete_test_file_request(test_id: str, file_id: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_administration_delete_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -190,10 +222,10 @@ def build_load_test_administration_delete_test_file_request(test_id: str, file_i
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/tests/{testId}/files/{fileId}"
+    _url = "/tests/{testId}/files/{fileName}"
     path_format_arguments = {
         "testId": _SERIALIZER.url("test_id", test_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
-        "fileId": _SERIALIZER.url("file_id", file_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -426,7 +458,7 @@ def build_load_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) ->
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_get_test_run_file_request(test_run_id: str, file_id: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_run_get_file_request(test_run_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -434,12 +466,12 @@ def build_load_test_run_get_test_run_file_request(test_run_id: str, file_id: str
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/test-runs/{testRunId}/files/{fileId}"
+    _url = "/test-runs/{testRunId}/files/{fileName}"
     path_format_arguments = {
         "testRunId": _SERIALIZER.url(
             "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
         ),
-        "fileId": _SERIALIZER.url("file_id", file_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"),
+        "fileName": _SERIALIZER.url("file_name", file_name, "str"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -584,7 +616,6 @@ def build_load_test_run_get_metrics_request(
     *,
     metricname: str,
     metric_namespace: str,
-    result_type: str,
     timespan: str,
     aggregation: Optional[str] = None,
     interval: Optional[str] = None,
@@ -614,7 +645,6 @@ def build_load_test_run_get_metrics_request(
         _params["interval"] = _SERIALIZER.query("interval", interval, "str")
     _params["metricname"] = _SERIALIZER.query("metricname", metricname, "str")
     _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
-    _params["resultType"] = _SERIALIZER.query("result_type", result_type, "str")
     _params["timespan"] = _SERIALIZER.query("timespan", timespan, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
@@ -624,6 +654,47 @@ def build_load_test_run_get_metrics_request(
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_load_test_run_get_metric_dimension_values_request(
+    test_run_id: str,
+    name: str,
+    *,
+    metricname: str,
+    metric_namespace: str,
+    timespan: str,
+    interval: Optional[str] = None,
+    **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/test-runs/{testRunId}/metric-dimension/{name}/values"
+    path_format_arguments = {
+        "testRunId": _SERIALIZER.url(
+            "test_run_id", test_run_id, "str", max_length=50, min_length=2, pattern=r"^[a-z0-9_-]*$"
+        ),
+        "name": _SERIALIZER.url("name", name, "str"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if interval is not None:
+        _params["interval"] = _SERIALIZER.query("interval", interval, "str")
+    _params["metricname"] = _SERIALIZER.query("metricname", metricname, "str")
+    _params["metricNamespace"] = _SERIALIZER.query("metric_namespace", metric_namespace, "str")
+    _params["timespan"] = _SERIALIZER.query("timespan", timespan, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_load_test_run_create_or_update_app_component_request(test_run_id: str, **kwargs: Any) -> HttpRequest:
@@ -752,12 +823,6 @@ class LoadTestAdministrationOperations:
         self._config = input_args.pop(0) if input_args else kwargs.pop("config")
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
-        raise_if_not_implemented(
-            self.__class__,
-            [
-                "upload_test_file",
-            ],
-        )
 
     @overload
     def create_or_update_load_test(
@@ -804,8 +869,6 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -820,7 +883,6 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -833,7 +895,6 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -846,7 +907,6 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -859,7 +919,6 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -887,7 +946,8 @@ class LoadTestAdministrationOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -914,7 +974,7 @@ class LoadTestAdministrationOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -965,8 +1025,6 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -981,7 +1039,6 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -994,7 +1051,6 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1007,7 +1063,6 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1020,7 +1075,6 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1048,7 +1102,8 @@ class LoadTestAdministrationOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -1075,7 +1130,7 @@ class LoadTestAdministrationOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -1150,8 +1205,6 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -1166,7 +1219,6 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1179,7 +1231,6 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1192,7 +1243,6 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1205,7 +1255,6 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1233,7 +1282,8 @@ class LoadTestAdministrationOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -1260,7 +1310,7 @@ class LoadTestAdministrationOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -1333,8 +1383,6 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -1349,7 +1397,6 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1362,7 +1409,6 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1375,7 +1421,6 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1388,7 +1433,6 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1416,7 +1460,8 @@ class LoadTestAdministrationOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -1443,7 +1488,7 @@ class LoadTestAdministrationOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -1623,8 +1668,6 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -1639,7 +1682,6 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1652,7 +1694,6 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1665,7 +1706,6 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1678,7 +1718,6 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1706,7 +1745,8 @@ class LoadTestAdministrationOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -1733,7 +1773,7 @@ class LoadTestAdministrationOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -1823,11 +1863,11 @@ class LoadTestAdministrationOperations:
         Get all load tests by the fully qualified resource Id e.g
         subscriptions/{subId}/resourceGroups/{rg}/providers/Microsoft.LoadTestService/loadtests/{resName}.
 
-        :keyword orderby: Sort on one of the field - lastModifiedDateTime, displayName, createdBy in
-         (field asc/desc) format. eg: displayName asc. Default value is None.
+        :keyword orderby: Sort on the supported fields in (field asc/desc) format. eg:
+         lastModifiedDateTime asc. Supported fields - lastModifiedDateTime. Default value is None.
         :paramtype orderby: str
-        :keyword search: Filter search based on searchable fields - testId, createdBy. Default value is
-         None.
+        :keyword search: Prefix based, case sensitive search on searchable fields - testId, createdBy.
+         Default value is None.
         :paramtype search: str
         :keyword last_modified_start_time: Start DateTime(ISO 8601 literal format) of the last updated
          time range to filter tests. Default value is None.
@@ -1867,8 +1907,6 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -1883,7 +1921,6 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1896,7 +1933,6 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1909,7 +1945,6 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1922,7 +1957,6 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
-                            "fileId": "str",  # Optional. Unique name for test file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                             "filename": "str",  # Optional. Name of the file.
@@ -1950,7 +1984,8 @@ class LoadTestAdministrationOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -1977,7 +2012,7 @@ class LoadTestAdministrationOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -2085,7 +2120,100 @@ class LoadTestAdministrationOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def get_test_file(self, test_id: str, file_id: str, **kwargs: Any) -> JSON:
+    def upload_file(
+        self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
+    ) -> JSON:
+        """Upload input file for a given test name. File size can't be more than 50 MB. Existing file with
+        same name for the given test will be overwritten. File should be provided in the request body
+        as application/octet-stream.
+
+        Upload input file for a given test name. File size can't be more than 50 MB. Existing file with
+        same name for the given test will be overwritten. File should be provided in the request body
+        as application/octet-stream.
+
+        :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
+         numeric, underscore or hyphen characters. Required.
+        :type test_id: str
+        :param file_name: Unique name for test file with file extension like : App.jmx. Required.
+        :type file_name: str
+        :param body: The file content as application/octet-stream. Required.
+        :type body: IO
+        :keyword file_type: File type. Known values are: "JMX_FILE", "USER_PROPERTIES", and
+         "ADDITIONAL_ARTIFACTS". Default value is None.
+        :paramtype file_type: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 201
+                response == {
+                    "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
+                      (ISO 8601 literal format).
+                    "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
+                      "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
+                    "filename": "str",  # Optional. Name of the file.
+                    "url": "str",  # Optional. File URL.
+                    "validationStatus": "str"  # Optional. Validation status of the file. Known
+                      values are: "NOT_VALIDATED", "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
+                      "VALIDATION_INITIATED", and "VALIDATION_NOT_REQUIRED".
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/octet-stream"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        _content = body
+
+        request = build_load_test_administration_upload_file_request(
+            test_id=test_id,
+            file_name=file_name,
+            file_type=file_type,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [201]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace
+    def get_file(self, test_id: str, file_name: str, **kwargs: Any) -> JSON:
         """Get test file by the file name.
 
         Get test file by the file name.
@@ -2093,9 +2221,8 @@ class LoadTestAdministrationOperations:
         :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
-        :param file_id: Unique name for test file, must contain only lower-case alphabetic, numeric,
-         underscore or hyphen characters. Required.
-        :type file_id: str
+        :param file_name: File name with file extension like app.jmx. Required.
+        :type file_name: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2107,7 +2234,6 @@ class LoadTestAdministrationOperations:
                 response == {
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (ISO 8601 literal format).
-                    "fileId": "str",  # Optional. Unique name for test file.
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
                       "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                     "filename": "str",  # Optional. Name of the file.
@@ -2130,9 +2256,9 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_test_file_request(
+        request = build_load_test_administration_get_file_request(
             test_id=test_id,
-            file_id=file_id,
+            file_name=file_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2163,8 +2289,8 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def delete_test_file(  # pylint: disable=inconsistent-return-statements
-        self, test_id: str, file_id: str, **kwargs: Any
+    def delete_file(  # pylint: disable=inconsistent-return-statements
+        self, test_id: str, file_name: str, **kwargs: Any
     ) -> None:
         """Delete file by the file name for a test.
 
@@ -2173,9 +2299,8 @@ class LoadTestAdministrationOperations:
         :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_id: str
-        :param file_id: Unique name for test file, must contain only lower-case alphabetic, numeric,
-         underscore or hyphen characters. Required.
-        :type file_id: str
+        :param file_name: File name with file extension like app.jmx. Required.
+        :type file_name: str
         :return: None
         :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -2193,9 +2318,9 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_load_test_administration_delete_test_file_request(
+        request = build_load_test_administration_delete_file_request(
             test_id=test_id,
-            file_id=file_id,
+            file_name=file_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -2243,7 +2368,6 @@ class LoadTestAdministrationOperations:
                 response == {
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (ISO 8601 literal format).
-                    "fileId": "str",  # Optional. Unique name for test file.
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
                       "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                     "filename": "str",  # Optional. Name of the file.
@@ -2700,11 +2824,8 @@ class LoadTestAdministrationOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.
@@ -2727,11 +2848,8 @@ class LoadTestAdministrationOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.
@@ -2778,11 +2896,8 @@ class LoadTestAdministrationOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.
@@ -2827,11 +2942,8 @@ class LoadTestAdministrationOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.
@@ -2933,11 +3045,8 @@ class LoadTestAdministrationOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.
@@ -3137,7 +3246,8 @@ class LoadTestRunOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -3164,7 +3274,7 @@ class LoadTestRunOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -3204,8 +3314,6 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
-                                    "fileId": "str",  # Optional. Unique name for
-                                      test file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
@@ -3221,8 +3329,6 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3236,8 +3342,6 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3251,8 +3355,6 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3266,8 +3368,6 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3283,8 +3383,6 @@ class LoadTestRunOperations:
                             "logsUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3298,8 +3396,6 @@ class LoadTestRunOperations:
                             "resultUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3335,11 +3431,11 @@ class LoadTestRunOperations:
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
-                    "vusers": 0  # Optional. Number of virtual users, for which test has been
-                      run.
+                    "virtualUsers": 0  # Optional. Number of virtual users, for which test has
+                      been run.
                 }
 
-                # response body for status code(s): 200
+                # response body for status code(s): 200, 201
                 response == {
                     "certificate": {
                         "name": "str",  # Optional. Name of the certificate.
@@ -3380,7 +3476,8 @@ class LoadTestRunOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -3407,7 +3504,7 @@ class LoadTestRunOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -3447,8 +3544,6 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
-                                    "fileId": "str",  # Optional. Unique name for
-                                      test file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
@@ -3464,8 +3559,6 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3479,8 +3572,6 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3494,8 +3585,6 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3509,8 +3598,6 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3526,8 +3613,6 @@ class LoadTestRunOperations:
                             "logsUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3541,8 +3626,6 @@ class LoadTestRunOperations:
                             "resultUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3578,8 +3661,8 @@ class LoadTestRunOperations:
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
-                    "vusers": 0  # Optional. Number of virtual users, for which test has been
-                      run.
+                    "virtualUsers": 0  # Optional. Number of virtual users, for which test has
+                      been run.
                 }
         """
 
@@ -3617,7 +3700,7 @@ class LoadTestRunOperations:
         Example:
             .. code-block:: python
 
-                # response body for status code(s): 200
+                # response body for status code(s): 200, 201
                 response == {
                     "certificate": {
                         "name": "str",  # Optional. Name of the certificate.
@@ -3658,7 +3741,8 @@ class LoadTestRunOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -3685,7 +3769,7 @@ class LoadTestRunOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -3725,8 +3809,6 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
-                                    "fileId": "str",  # Optional. Unique name for
-                                      test file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
@@ -3742,8 +3824,6 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3757,8 +3837,6 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3772,8 +3850,6 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3787,8 +3863,6 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3804,8 +3878,6 @@ class LoadTestRunOperations:
                             "logsUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3819,8 +3891,6 @@ class LoadTestRunOperations:
                             "resultUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -3856,8 +3926,8 @@ class LoadTestRunOperations:
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
-                    "vusers": 0  # Optional. Number of virtual users, for which test has been
-                      run.
+                    "virtualUsers": 0  # Optional. Number of virtual users, for which test has
+                      been run.
                 }
         """
 
@@ -3889,7 +3959,7 @@ class LoadTestRunOperations:
         Example:
             .. code-block:: python
 
-                # response body for status code(s): 200
+                # response body for status code(s): 200, 201
                 response == {
                     "certificate": {
                         "name": "str",  # Optional. Name of the certificate.
@@ -3930,7 +4000,8 @@ class LoadTestRunOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -3957,7 +4028,7 @@ class LoadTestRunOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -3997,8 +4068,6 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
-                                    "fileId": "str",  # Optional. Unique name for
-                                      test file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
@@ -4014,8 +4083,6 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4029,8 +4096,6 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4044,8 +4109,6 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4059,8 +4122,6 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4076,8 +4137,6 @@ class LoadTestRunOperations:
                             "logsUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4091,8 +4150,6 @@ class LoadTestRunOperations:
                             "resultUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4128,8 +4185,8 @@ class LoadTestRunOperations:
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
-                    "vusers": 0  # Optional. Number of virtual users, for which test has been
-                      run.
+                    "virtualUsers": 0  # Optional. Number of virtual users, for which test has
+                      been run.
                 }
         """
         error_map = {
@@ -4175,14 +4232,21 @@ class LoadTestRunOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 201]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
-        if response.content:
-            deserialized = response.json()
-        else:
-            deserialized = None
+        if response.status_code == 200:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
+
+        if response.status_code == 201:
+            if response.content:
+                deserialized = response.json()
+            else:
+                deserialized = None
 
         if cls:
             return cls(pipeline_response, cast(JSON, deserialized), {})
@@ -4246,7 +4310,8 @@ class LoadTestRunOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -4273,7 +4338,7 @@ class LoadTestRunOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -4313,8 +4378,6 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
-                                    "fileId": "str",  # Optional. Unique name for
-                                      test file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
@@ -4330,8 +4393,6 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4345,8 +4406,6 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4360,8 +4419,6 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4375,8 +4432,6 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4392,8 +4447,6 @@ class LoadTestRunOperations:
                             "logsUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4407,8 +4460,6 @@ class LoadTestRunOperations:
                             "resultUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4444,8 +4495,8 @@ class LoadTestRunOperations:
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
-                    "vusers": 0  # Optional. Number of virtual users, for which test has been
-                      run.
+                    "virtualUsers": 0  # Optional. Number of virtual users, for which test has
+                      been run.
                 }
         """
         error_map = {
@@ -4493,7 +4544,7 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def get_test_run_file(self, test_run_id: str, file_id: str, **kwargs: Any) -> JSON:
+    def get_file(self, test_run_id: str, file_name: str, **kwargs: Any) -> JSON:
         """Get test run file by file name.
 
         Get test run file by file name.
@@ -4501,9 +4552,8 @@ class LoadTestRunOperations:
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :param file_id: Unique name for test run file, must contain only lower-case alphabetic,
-         numeric, underscore or hyphen characters. Required.
-        :type file_id: str
+        :param file_name: Test run file name with file extension. Required.
+        :type file_name: str
         :return: JSON object
         :rtype: JSON
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -4515,7 +4565,6 @@ class LoadTestRunOperations:
                 response == {
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (ISO 8601 literal format).
-                    "fileId": "str",  # Optional. Unique name for test file.
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
                       "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
                     "filename": "str",  # Optional. Name of the file.
@@ -4538,9 +4587,9 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_test_run_file_request(
+        request = build_load_test_run_get_file_request(
             test_run_id=test_run_id,
-            file_id=file_id,
+            file_name=file_name,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -4587,14 +4636,14 @@ class LoadTestRunOperations:
 
         Get all test runs with given filters.
 
-        :keyword orderby: Sort on one of the field - status, displayName, executedDateTime in (field
-         asc/desc) format. eg: displayName asc. Default value is None.
+        :keyword orderby: Sort on the supported fields in (field asc/desc) format. eg: executedDateTime
+         asc. Supported fields - executedDateTime. Default value is None.
         :paramtype orderby: str
         :keyword continuation_token_parameter: Continuation token to get the next page of response.
          Default value is None.
         :paramtype continuation_token_parameter: str
-        :keyword search: Filter search based on searchable fields - description, executedUser. Default
-         value is None.
+        :keyword search: Prefix based, case sensitive search on searchable fields - description,
+         executedUser. Default value is None.
         :paramtype search: str
         :keyword test_id: Unique name of an existing load test. Default value is None.
         :paramtype test_id: str
@@ -4654,7 +4703,8 @@ class LoadTestRunOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -4681,7 +4731,7 @@ class LoadTestRunOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -4721,8 +4771,6 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
-                                    "fileId": "str",  # Optional. Unique name for
-                                      test file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
@@ -4738,8 +4786,6 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4753,8 +4799,6 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4768,8 +4812,6 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4783,8 +4825,6 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4800,8 +4840,6 @@ class LoadTestRunOperations:
                             "logsUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4815,8 +4853,6 @@ class LoadTestRunOperations:
                             "resultUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -4852,8 +4888,8 @@ class LoadTestRunOperations:
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
-                    "vusers": 0  # Optional. Number of virtual users, for which test has been
-                      run.
+                    "virtualUsers": 0  # Optional. Number of virtual users, for which test has
+                      been run.
                 }
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -4993,7 +5029,8 @@ class LoadTestRunOperations:
                               complete HTTP URL. For example,
                               http://contoso-app.azurewebsites.net/login.
                             "rampUpTime": 0,  # Optional. Ramp up time.
-                            "vusers": 0  # Optional. No of concurrent virtual users.
+                            "virtualUsers": 0  # Optional. No of concurrent virtual
+                              users.
                         },
                         "quickStartTest": False,  # Optional. Default value is False. If
                           true, optionalLoadTestConfig is required and JMX script for the load test is
@@ -5020,7 +5057,7 @@ class LoadTestRunOperations:
                                   metric, "u2018avg"u2019 - for requests_per_sec, "u2018count"u2019 -
                                   for requests. Known values are: "count", "percentage", "avg", "p50",
                                   "p90", "p95", "p99", "min", and "max".
-                                "clientmetric": "str",  # Optional. The client metric
+                                "clientMetric": "str",  # Optional. The client metric
                                   on which the criteria should be applied. Known values are:
                                   "response_time_ms", "latency", "error", "requests", and
                                   "requests_per_sec".
@@ -5060,8 +5097,6 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
-                                    "fileId": "str",  # Optional. Unique name for
-                                      test file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
@@ -5077,8 +5112,6 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -5092,8 +5125,6 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -5107,8 +5138,6 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -5122,8 +5151,6 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -5139,8 +5166,6 @@ class LoadTestRunOperations:
                             "logsUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -5154,8 +5179,6 @@ class LoadTestRunOperations:
                             "resultUrl": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
-                                "fileId": "str",  # Optional. Unique name for test
-                                  file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
@@ -5191,8 +5214,8 @@ class LoadTestRunOperations:
                             "transaction": "str"  # Optional. Transaction name.
                         }
                     },
-                    "vusers": 0  # Optional. Number of virtual users, for which test has been
-                      run.
+                    "virtualUsers": 0  # Optional. Number of virtual users, for which test has
+                      been run.
                 }
         """
         error_map = {
@@ -5259,9 +5282,8 @@ class LoadTestRunOperations:
                 response == {
                     "value": [
                         {
-                            "metricNamespaceName": "str",  # Optional. The fully
-                              qualified metric namespace name.
-                            "name": "str"  # Optional. The escaped name of the namespace.
+                            "description": "str",  # Optional. The namespace description.
+                            "name": "str"  # Optional. The metric namespace name.
                         }
                     ]
                 }
@@ -5332,16 +5354,14 @@ class LoadTestRunOperations:
                 response == {
                     "value": [
                         {
+                            "description": "str",  # Optional. The metric description.
                             "dimensions": [
                                 {
-                                    "localizedValue": "str",  # Optional. The
-                                      locale specific value.
-                                    "value": "str"  # Optional. The invariant
-                                      value.
+                                    "description": "str",  # Optional. The
+                                      description.
+                                    "name": "str"  # Optional. The name.
                                 }
                             ],
-                            "displayDescription": "str",  # Optional. Detailed
-                              description of this metric.
                             "metricAvailabilities": [
                                 {
                                     "timeGrain": "str"  # Optional. The time
@@ -5350,20 +5370,16 @@ class LoadTestRunOperations:
                                       "PT5S", "PT10S", "PT1M", "PT5M", and "PT1H".
                                 }
                             ],
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # Optional. The metric name.
                             "namespace": "str",  # Optional. The namespace the metric
                               belongs to.
-                            "primaryAggregationType": "str",  # Optional. the primary
+                            "primaryAggregationType": "str",  # Optional. The primary
                               aggregation type value defining how to use the values for display. Known
-                              values are: "Average", "Count", "Minimum", "Maximum", "None", "Total",
-                              "Percentile90", "Percentile95", and "Percentile99".
+                              values are: "Average", "Count", "None", "Total", "Percentile90",
+                              "Percentile95", and "Percentile99".
                             "supportedAggregationTypes": [
-                                "str"  # Optional. the collection of what aggregation
-                                  types are supported.
+                                "str"  # Optional. The collection of what all
+                                  aggregation types are supported.
                             ],
                             "unit": "str"  # Optional. The unit of the metric. Known
                               values are: "NotSpecified", "Percent", "Count", "Seconds",
@@ -5425,7 +5441,6 @@ class LoadTestRunOperations:
         *,
         metricname: str,
         metric_namespace: str,
-        result_type: str,
         timespan: str,
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
@@ -5439,21 +5454,16 @@ class LoadTestRunOperations:
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :param body: Metric metadata filter to fetch the set of metric. Default value is None.
+        :param body: Metric dimension filter. Default value is None.
         :type body: JSON
         :keyword metricname: Metric name. Required.
         :paramtype metricname: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details. Known values are: "Data" and
-         "Metadata". Required.
-        :paramtype result_type: str
         :keyword timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
         :paramtype timespan: str
-        :keyword aggregation: The list of aggregation types (comma separated) to retrieve. Default
-         value is None.
+        :keyword aggregation: The aggregation. Default value is None.
         :paramtype aggregation: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
          "PT10S", "PT1M", "PT5M", and "PT1H". Default value is None.
@@ -5472,9 +5482,9 @@ class LoadTestRunOperations:
                 body = {
                     "filters": [
                         {
-                            "name": "str",  # Optional. The invariant metadata name.
+                            "name": "str",  # Optional. The dimension name.
                             "values": [
-                                "str"  # Optional. The metadata values. Maximum
+                                "str"  # Optional. The dimension values. Maximum
                                   values can be 20.
                             ]
                         }
@@ -5483,65 +5493,27 @@ class LoadTestRunOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "interval": "str",  # Optional. The interval (window size) for which the
-                      metric data was returned in. This may be adjusted in the future and returned back
-                      from what was originally requested. This is not present if a metadata request was
-                      made.
-                    "namespace": "str",  # Optional. The namespace of the metrics being queried.
-                    "testRunId": "str",  # Optional. Test run identifier.
-                    "timespan": "str",  # Optional. The timespan for which the data was
-                      retrieved. Its value consists of two datetimes concatenated, separated by '/'.
-                      This may be adjusted in the future and returned back from what was originally
-                      requested.
-                    "value": {
-                        "name": {
-                            "localizedValue": "str",  # Optional. The locale specific
-                              value.
-                            "value": "str"  # Optional. The invariant value.
-                        },
-                        "timeseries": [
-                            {
-                                "data": [
-                                    {
-                                        "average": 0.0,  # Optional. The
-                                          average value in the time range.
-                                        "count": 0.0,  # Optional. The number
-                                          of samples in the time range. Can be used to determine the
-                                          number of values that contributed to the average value.
-                                        "maximum": 0.0,  # Optional. The
-                                          greatest value in the time range.
-                                        "minimum": 0.0,  # Optional. The
-                                          least value in the time range.
-                                        "percentile90": 0.0,  # Optional.
-                                          90th percentile value in the time range.
-                                        "percentile95": 0.0,  # Optional.
-                                          95th percentile value in the time range.
-                                        "percentile99": 0.0,  # Optional.
-                                          99th percentile value in the time range.
-                                        "timeStamp": "str",  # Optional. The
-                                          timestamp for the metric value in ISO 8601 format.
-                                        "total": 0.0  # Optional. The sum of
-                                          all of the values in the time range.
-                                    }
-                                ],
-                                "metadatavalues": [
-                                    {
-                                        "name": {
-                                            "localizedValue": "str",  #
-                                              Optional. The locale specific value.
-                                            "value": "str"  # Optional.
-                                              The invariant value.
-                                        },
-                                        "value": "str"  # Optional. The value
-                                          of the metadata.
-                                    }
-                                ]
-                            }
-                        ],
-                        "unit": "str"  # Optional. The unit of the metric. Known values are:
-                          "NotSpecified", "Percent", "Count", "Seconds", "Milliseconds", "Bytes",
-                          "BytesPerSecond", and "CountPerSecond".
-                    }
+                    "nextLink": "str",  # Optional. Link for the next set of timeseries in case
+                      of paginated results, if applicable.
+                    "timeseries": [
+                        {
+                            "data": [
+                                {
+                                    "timestamp": "str",  # Optional. The
+                                      timestamp for the metric value in ISO 8601 format.
+                                    "value": 0.0  # Optional. The metric value.
+                                }
+                            ],
+                            "dimensionValues": [
+                                {
+                                    "name": "str",  # Optional. The name of the
+                                      dimension.
+                                    "value": "str"  # Optional. The value of the
+                                      dimension.
+                                }
+                            ]
+                        }
+                    ]
                 }
         """
 
@@ -5553,7 +5525,6 @@ class LoadTestRunOperations:
         *,
         metricname: str,
         metric_namespace: str,
-        result_type: str,
         timespan: str,
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
@@ -5567,21 +5538,16 @@ class LoadTestRunOperations:
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :param body: Metric metadata filter to fetch the set of metric. Default value is None.
+        :param body: Metric dimension filter. Default value is None.
         :type body: IO
         :keyword metricname: Metric name. Required.
         :paramtype metricname: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details. Known values are: "Data" and
-         "Metadata". Required.
-        :paramtype result_type: str
         :keyword timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
         :paramtype timespan: str
-        :keyword aggregation: The list of aggregation types (comma separated) to retrieve. Default
-         value is None.
+        :keyword aggregation: The aggregation. Default value is None.
         :paramtype aggregation: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
          "PT10S", "PT1M", "PT5M", and "PT1H". Default value is None.
@@ -5598,65 +5564,27 @@ class LoadTestRunOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "interval": "str",  # Optional. The interval (window size) for which the
-                      metric data was returned in. This may be adjusted in the future and returned back
-                      from what was originally requested. This is not present if a metadata request was
-                      made.
-                    "namespace": "str",  # Optional. The namespace of the metrics being queried.
-                    "testRunId": "str",  # Optional. Test run identifier.
-                    "timespan": "str",  # Optional. The timespan for which the data was
-                      retrieved. Its value consists of two datetimes concatenated, separated by '/'.
-                      This may be adjusted in the future and returned back from what was originally
-                      requested.
-                    "value": {
-                        "name": {
-                            "localizedValue": "str",  # Optional. The locale specific
-                              value.
-                            "value": "str"  # Optional. The invariant value.
-                        },
-                        "timeseries": [
-                            {
-                                "data": [
-                                    {
-                                        "average": 0.0,  # Optional. The
-                                          average value in the time range.
-                                        "count": 0.0,  # Optional. The number
-                                          of samples in the time range. Can be used to determine the
-                                          number of values that contributed to the average value.
-                                        "maximum": 0.0,  # Optional. The
-                                          greatest value in the time range.
-                                        "minimum": 0.0,  # Optional. The
-                                          least value in the time range.
-                                        "percentile90": 0.0,  # Optional.
-                                          90th percentile value in the time range.
-                                        "percentile95": 0.0,  # Optional.
-                                          95th percentile value in the time range.
-                                        "percentile99": 0.0,  # Optional.
-                                          99th percentile value in the time range.
-                                        "timeStamp": "str",  # Optional. The
-                                          timestamp for the metric value in ISO 8601 format.
-                                        "total": 0.0  # Optional. The sum of
-                                          all of the values in the time range.
-                                    }
-                                ],
-                                "metadatavalues": [
-                                    {
-                                        "name": {
-                                            "localizedValue": "str",  #
-                                              Optional. The locale specific value.
-                                            "value": "str"  # Optional.
-                                              The invariant value.
-                                        },
-                                        "value": "str"  # Optional. The value
-                                          of the metadata.
-                                    }
-                                ]
-                            }
-                        ],
-                        "unit": "str"  # Optional. The unit of the metric. Known values are:
-                          "NotSpecified", "Percent", "Count", "Seconds", "Milliseconds", "Bytes",
-                          "BytesPerSecond", and "CountPerSecond".
-                    }
+                    "nextLink": "str",  # Optional. Link for the next set of timeseries in case
+                      of paginated results, if applicable.
+                    "timeseries": [
+                        {
+                            "data": [
+                                {
+                                    "timestamp": "str",  # Optional. The
+                                      timestamp for the metric value in ISO 8601 format.
+                                    "value": 0.0  # Optional. The metric value.
+                                }
+                            ],
+                            "dimensionValues": [
+                                {
+                                    "name": "str",  # Optional. The name of the
+                                      dimension.
+                                    "value": "str"  # Optional. The value of the
+                                      dimension.
+                                }
+                            ]
+                        }
+                    ]
                 }
         """
 
@@ -5668,7 +5596,6 @@ class LoadTestRunOperations:
         *,
         metricname: str,
         metric_namespace: str,
-        result_type: str,
         timespan: str,
         aggregation: Optional[str] = None,
         interval: Optional[str] = None,
@@ -5681,22 +5608,17 @@ class LoadTestRunOperations:
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
         :type test_run_id: str
-        :param body: Metric metadata filter to fetch the set of metric. Is either a model type or a IO
-         type. Default value is None.
+        :param body: Metric dimension filter. Is either a model type or a IO type. Default value is
+         None.
         :type body: JSON or IO
         :keyword metricname: Metric name. Required.
         :paramtype metricname: str
         :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
         :paramtype metric_namespace: str
-        :keyword result_type: Reduces the set of data collected. The syntax allowed depends on the
-         operation. See the operation's description for details. Known values are: "Data" and
-         "Metadata". Required.
-        :paramtype result_type: str
         :keyword timespan: The timespan of the query. It is a string with the following format
          'startDateTime_ISO/endDateTime_ISO'. Required.
         :paramtype timespan: str
-        :keyword aggregation: The list of aggregation types (comma separated) to retrieve. Default
-         value is None.
+        :keyword aggregation: The aggregation. Default value is None.
         :paramtype aggregation: str
         :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
          "PT10S", "PT1M", "PT5M", and "PT1H". Default value is None.
@@ -5713,65 +5635,27 @@ class LoadTestRunOperations:
 
                 # response body for status code(s): 200
                 response == {
-                    "interval": "str",  # Optional. The interval (window size) for which the
-                      metric data was returned in. This may be adjusted in the future and returned back
-                      from what was originally requested. This is not present if a metadata request was
-                      made.
-                    "namespace": "str",  # Optional. The namespace of the metrics being queried.
-                    "testRunId": "str",  # Optional. Test run identifier.
-                    "timespan": "str",  # Optional. The timespan for which the data was
-                      retrieved. Its value consists of two datetimes concatenated, separated by '/'.
-                      This may be adjusted in the future and returned back from what was originally
-                      requested.
-                    "value": {
-                        "name": {
-                            "localizedValue": "str",  # Optional. The locale specific
-                              value.
-                            "value": "str"  # Optional. The invariant value.
-                        },
-                        "timeseries": [
-                            {
-                                "data": [
-                                    {
-                                        "average": 0.0,  # Optional. The
-                                          average value in the time range.
-                                        "count": 0.0,  # Optional. The number
-                                          of samples in the time range. Can be used to determine the
-                                          number of values that contributed to the average value.
-                                        "maximum": 0.0,  # Optional. The
-                                          greatest value in the time range.
-                                        "minimum": 0.0,  # Optional. The
-                                          least value in the time range.
-                                        "percentile90": 0.0,  # Optional.
-                                          90th percentile value in the time range.
-                                        "percentile95": 0.0,  # Optional.
-                                          95th percentile value in the time range.
-                                        "percentile99": 0.0,  # Optional.
-                                          99th percentile value in the time range.
-                                        "timeStamp": "str",  # Optional. The
-                                          timestamp for the metric value in ISO 8601 format.
-                                        "total": 0.0  # Optional. The sum of
-                                          all of the values in the time range.
-                                    }
-                                ],
-                                "metadatavalues": [
-                                    {
-                                        "name": {
-                                            "localizedValue": "str",  #
-                                              Optional. The locale specific value.
-                                            "value": "str"  # Optional.
-                                              The invariant value.
-                                        },
-                                        "value": "str"  # Optional. The value
-                                          of the metadata.
-                                    }
-                                ]
-                            }
-                        ],
-                        "unit": "str"  # Optional. The unit of the metric. Known values are:
-                          "NotSpecified", "Percent", "Count", "Seconds", "Milliseconds", "Bytes",
-                          "BytesPerSecond", and "CountPerSecond".
-                    }
+                    "nextLink": "str",  # Optional. Link for the next set of timeseries in case
+                      of paginated results, if applicable.
+                    "timeseries": [
+                        {
+                            "data": [
+                                {
+                                    "timestamp": "str",  # Optional. The
+                                      timestamp for the metric value in ISO 8601 format.
+                                    "value": 0.0  # Optional. The metric value.
+                                }
+                            ],
+                            "dimensionValues": [
+                                {
+                                    "name": "str",  # Optional. The name of the
+                                      dimension.
+                                    "value": "str"  # Optional. The value of the
+                                      dimension.
+                                }
+                            ]
+                        }
+                    ]
                 }
         """
         error_map = {
@@ -5803,7 +5687,6 @@ class LoadTestRunOperations:
             test_run_id=test_run_id,
             metricname=metricname,
             metric_namespace=metric_namespace,
-            result_type=result_type,
             timespan=timespan,
             aggregation=aggregation,
             interval=interval,
@@ -5811,6 +5694,102 @@ class LoadTestRunOperations:
             api_version=self._config.api_version,
             json=_json,
             content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if response.content:
+            deserialized = response.json()
+        else:
+            deserialized = None
+
+        if cls:
+            return cls(pipeline_response, cast(JSON, deserialized), {})
+
+        return cast(JSON, deserialized)
+
+    @distributed_trace
+    def get_metric_dimension_values(
+        self,
+        test_run_id: str,
+        name: str,
+        *,
+        metricname: str,
+        metric_namespace: str,
+        timespan: str,
+        interval: Optional[str] = None,
+        **kwargs: Any
+    ) -> JSON:
+        """Lists the dimension values for the given metric dimension name.
+
+        Lists the dimension values for the given metric dimension name.
+
+        :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
+         numeric, underscore or hyphen characters. Required.
+        :type test_run_id: str
+        :param name: Dimension name. Required.
+        :type name: str
+        :keyword metricname: Metric name. Required.
+        :paramtype metricname: str
+        :keyword metric_namespace: Metric namespace to query metric definitions for. Required.
+        :paramtype metric_namespace: str
+        :keyword timespan: The timespan of the query. It is a string with the following format
+         'startDateTime_ISO/endDateTime_ISO'. Required.
+        :paramtype timespan: str
+        :keyword interval: The interval (i.e. timegrain) of the query. Known values are: "PT5S",
+         "PT10S", "PT1M", "PT5M", and "PT1H". Default value is None.
+        :paramtype interval: str
+        :return: JSON object
+        :rtype: JSON
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        Example:
+            .. code-block:: python
+
+                # response body for status code(s): 200
+                response == {
+                    "nextLink": "str",  # Optional. Link for the next set of values in case of
+                      paginated results, if applicable.
+                    "value": [
+                        "str"  # Optional. The dimension values.
+                    ]
+                }
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
+
+        request = build_load_test_run_get_metric_dimension_values_request(
+            test_run_id=test_run_id,
+            name=name,
+            metricname=metricname,
+            metric_namespace=metric_namespace,
+            timespan=timespan,
+            interval=interval,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -6211,11 +6190,8 @@ class LoadTestRunOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.
@@ -6238,11 +6214,8 @@ class LoadTestRunOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.
@@ -6289,11 +6262,8 @@ class LoadTestRunOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.
@@ -6338,11 +6308,8 @@ class LoadTestRunOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.
@@ -6444,11 +6411,8 @@ class LoadTestRunOperations:
                         "str": {
                             "aggregation": "str",  # Metric aggregation. Required.
                             "metricNamespace": "str",  # Metric name space. Required.
-                            "name": {
-                                "localizedValue": "str",  # Optional. The locale
-                                  specific value.
-                                "value": "str"  # Optional. The invariant value.
-                            },
+                            "name": "str",  # The invariant value of metric name.
+                              Required.
                             "resourceId": "str",  # Azure resource id. Required.
                             "resourceType": "str",  # Azure resource type. Required.
                             "displayDescription": "str",  # Optional. Metric description.

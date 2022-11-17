@@ -46,7 +46,7 @@ class LoadTestingClient:  # pylint: disable=client-accepts-api-version-keyword
         self._serialize = Serializer()
         self._deserialize = Deserializer()
         self._serialize.client_side_validation = False
-        self.load_test_administration = LoadTestAdministrationOperations(  # type: ignore  # pylint: disable=abstract-class-instantiated
+        self.load_test_administration = LoadTestAdministrationOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
         self.load_test_run = LoadTestRunOperations(self._client, self._config, self._serialize, self._deserialize)
