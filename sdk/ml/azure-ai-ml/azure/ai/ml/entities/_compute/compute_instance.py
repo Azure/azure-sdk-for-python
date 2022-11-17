@@ -9,7 +9,9 @@ from typing import Dict, List, Optional
 
 from azure.ai.ml._restclient.v2022_10_01_preview.models import AssignedUser
 from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstance as CIRest
-from azure.ai.ml._restclient.v2022_10_01_preview.models import ComputeInstanceSshSettings as CiSShSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    ComputeInstanceSshSettings as CiSShSettings,
+)
 from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     ComputeResource,
     PersonalComputeInstanceSettings,
@@ -123,8 +125,8 @@ class ComputeInstance(Compute):
     :type schedules: Optional[ComputeSchedules], optional
     :param identity:  The identity configuration, identities that are associated with the compute cluster.
     :type identity: IdentityConfiguration, optional
-    :param idle_time_before_shutdown: Deprecated. Use the 'idle_time_before_shutdown_minutes' property instead. 
-        Stops compute instance after user defined period of inactivity. 
+    :param idle_time_before_shutdown: Deprecated. Use the 'idle_time_before_shutdown_minutes' property instead.
+        Stops compute instance after user defined period of inactivity.
         Time is defined in ISO8601 format. Minimum is 15 min, maximum is 3 days.
     :type idle_time_before_shutdown: Optional[str], optional
     :param idle_time_before_shutdown_minutes: Stops compute instance after a user defined period of
@@ -241,7 +243,7 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown = f"PT{self.idle_time_before_shutdown_minutes}M"
         elif self.idle_time_before_shutdown:
             idle_time_before_shutdown = self.idle_time_before_shutdown
-        
+
         compute_instance_prop = ComputeInstanceProperties(
             vm_size=self.size if self.size else ComputeDefaults.VMSIZE,
             subnet=subnet_resource,
