@@ -4,7 +4,7 @@
 from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 
 
-def parallel_for(*, body, items):
+def parallel_for(*, body, items, **kwargs):
     """Build a parallel for loop by specifying the loop body and input items.
 
     .. remarks::
@@ -20,14 +20,17 @@ def parallel_for(*, body, items):
                 pass
 
             @pipeline
-            def pipeline_with_parallel_for_node(loop_config):
+            def pipeline_with_parallel_for_node():
                 # specify fixed inputs and leave loop config inputs unprovided
-                loop_body = your_loop_body(input=input)
+                loop_body = your_loop_body()
 
                 # link loop body & loop config to loop node
                 loop_node = parallel_for(
                     body=loop_body,
-                    items=loop_config
+                    items=[
+                        {"loop_body_input": 1},
+                        {"loop_body_input": 2},
+                    ]
                 )
 
                 # collect aggregated output from loop body
@@ -44,5 +47,6 @@ def parallel_for(*, body, items):
         body=body,
         items=items,
         _from_component_func=True,
+        **kwargs,
     )
     return parallel_for_node

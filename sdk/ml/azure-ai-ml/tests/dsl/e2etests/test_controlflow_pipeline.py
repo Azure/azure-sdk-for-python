@@ -1,6 +1,6 @@
 import pytest
 
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel
 from devtools_testutils import AzureRecordedTestCase
 
 from azure.ai.ml.dsl._parallel_for import parallel_for
@@ -66,7 +66,7 @@ class TestIfElse(TestControlFlowPipeline):
 
         # include private preview nodes
         with include_private_preview_nodes_in_pipeline():
-            pipeline_job = client.jobs.create_or_update(pipeline_job)
+            pipeline_job = assert_job_cancel(pipeline_job, client)
 
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
@@ -115,7 +115,7 @@ class TestIfElse(TestControlFlowPipeline):
 
         pipeline_job = condition_pipeline()
         with include_private_preview_nodes_in_pipeline():
-            rest_job = client.jobs.create_or_update(pipeline_job)
+            rest_job = assert_job_cancel(pipeline_job, client)
 
         dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
@@ -149,7 +149,7 @@ class TestIfElse(TestControlFlowPipeline):
 
         pipeline_job = condition_pipeline()
         with include_private_preview_nodes_in_pipeline():
-            rest_job = client.jobs.create_or_update(pipeline_job)
+            rest_job = assert_job_cancel(pipeline_job, client)
 
         dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
@@ -208,7 +208,7 @@ class TestIfElse(TestControlFlowPipeline):
                                      str_param="string_param_no_space")
 
         with include_private_preview_nodes_in_pipeline():
-            rest_job = client.jobs.create_or_update(pipeline_job)
+            rest_job = assert_job_cancel(pipeline_job, client)
 
         dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
@@ -282,7 +282,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         pipeline_job.settings.default_compute = "cpu-cluster"
 
         with include_private_preview_nodes_in_pipeline():
-            pipeline_job = client.jobs.create_or_update(pipeline_job)
+            pipeline_job = assert_job_cancel(pipeline_job, client)
 
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
@@ -330,7 +330,7 @@ class TestParallelForPipeline(TestControlFlowPipeline):
         pipeline_job.settings.default_compute = "cpu-cluster"
 
         with include_private_preview_nodes_in_pipeline():
-            pipeline_job = client.jobs.create_or_update(pipeline_job)
+            pipeline_job = assert_job_cancel(pipeline_job, client)
 
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {

@@ -72,14 +72,12 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
             ),
             (
                     # items with empty dict as content
-
                     [],
                     "Items is an empty list/dict"
 
             ),
             (
                     # items with empty dict as content
-
                     [{}],
                     "but got <class \'dict\'> for {}"
             ),
@@ -89,7 +87,7 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
                         {"component_in_path": "test_path1"},
                         {"component_in_path": "test_path2", "component_in_number": 1}
                     ],
-                    "Items should to have same keys, but got "
+                    "Items should to have same keys with body inputs, but got "
             ),
             (
                     # item inputs not exist in body
