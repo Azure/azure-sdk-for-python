@@ -76,7 +76,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
         if "access_token" not in result and "error_description" in result:
             raise ClientAuthenticationError(message=result.get("error_description"))
         if "access_token" not in result:
-            raise ClientAuthenticationError(message="Failed for user to authenticate")
+            raise ClientAuthenticationError(message="Failed to authenticate user")
 
         # base class will raise for other errors
         return result
