@@ -15,6 +15,7 @@ from ._models_py3 import AgentPoolUpgradeProfile
 from ._models_py3 import AgentPoolUpgradeProfilePropertiesUpgradesItem
 from ._models_py3 import AgentPoolUpgradeSettings
 from ._models_py3 import AgentPoolWindowsProfile
+from ._models_py3 import AzureEntityResource
 from ._models_py3 import AzureKeyVaultKms
 from ._models_py3 import CloudErrorBody
 from ._models_py3 import ContainerServiceDiagnosticsProfile
@@ -31,7 +32,18 @@ from ._models_py3 import CredentialResult
 from ._models_py3 import CredentialResults
 from ._models_py3 import EndpointDependency
 from ._models_py3 import EndpointDetail
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import ExtendedLocation
+from ._models_py3 import Fleet
+from ._models_py3 import FleetCredentialResult
+from ._models_py3 import FleetCredentialResults
+from ._models_py3 import FleetHubProfile
+from ._models_py3 import FleetListResult
+from ._models_py3 import FleetMember
+from ._models_py3 import FleetMembersListResult
+from ._models_py3 import FleetPatch
 from ._models_py3 import GuardrailsProfile
 from ._models_py3 import IPTag
 from ._models_py3 import KubeletConfig
@@ -142,6 +154,8 @@ from ._container_service_client_enums import CreatedByType
 from ._container_service_client_enums import EbpfDataplane
 from ._container_service_client_enums import Expander
 from ._container_service_client_enums import ExtendedLocationTypes
+from ._container_service_client_enums import FleetMemberProvisioningState
+from ._container_service_client_enums import FleetProvisioningState
 from ._container_service_client_enums import Format
 from ._container_service_client_enums import GPUInstanceProfile
 from ._container_service_client_enums import IpFamily
@@ -190,6 +204,7 @@ __all__ = [
     "AgentPoolUpgradeProfilePropertiesUpgradesItem",
     "AgentPoolUpgradeSettings",
     "AgentPoolWindowsProfile",
+    "AzureEntityResource",
     "AzureKeyVaultKms",
     "CloudErrorBody",
     "ContainerServiceDiagnosticsProfile",
@@ -206,7 +221,18 @@ __all__ = [
     "CredentialResults",
     "EndpointDependency",
     "EndpointDetail",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
     "ExtendedLocation",
+    "Fleet",
+    "FleetCredentialResult",
+    "FleetCredentialResults",
+    "FleetHubProfile",
+    "FleetListResult",
+    "FleetMember",
+    "FleetMembersListResult",
+    "FleetPatch",
     "GuardrailsProfile",
     "IPTag",
     "KubeletConfig",
@@ -316,6 +342,8 @@ __all__ = [
     "EbpfDataplane",
     "Expander",
     "ExtendedLocationTypes",
+    "FleetMemberProvisioningState",
+    "FleetProvisioningState",
     "Format",
     "GPUInstanceProfile",
     "IpFamily",

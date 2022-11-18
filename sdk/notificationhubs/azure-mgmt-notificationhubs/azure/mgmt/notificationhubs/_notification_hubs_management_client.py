@@ -7,21 +7,22 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Optional, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from . import models
 from ._configuration import NotificationHubsManagementClientConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import NamespacesOperations, NotificationHubsOperations, Operations
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class NotificationHubsManagementClient:
+
+class NotificationHubsManagementClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure NotificationHub client.
 
     :ivar operations: Operations operations
@@ -30,13 +31,16 @@ class NotificationHubsManagementClient:
     :vartype namespaces: azure.mgmt.notificationhubs.operations.NamespacesOperations
     :ivar notification_hubs: NotificationHubsOperations operations
     :vartype notification_hubs: azure.mgmt.notificationhubs.operations.NotificationHubsOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Gets subscription credentials which uniquely identify Microsoft Azure
-     subscription. The subscription ID forms part of the URI for every service call.
+     subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is 'https://management.azure.com'.
+    :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
+    :keyword api_version: Api Version. Default value is "2017-04-01". Note that overriding this
+     default value may result in unsupported behavior.
+    :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
      Retry-After header is present.
     """
@@ -48,7 +52,9 @@ class NotificationHubsManagementClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = NotificationHubsManagementClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = NotificationHubsManagementClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
@@ -57,14 +63,11 @@ class NotificationHubsManagementClient:
         self._serialize.client_side_validation = False
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
         self.namespaces = NamespacesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.notification_hubs = NotificationHubsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.notification_hubs = NotificationHubsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request,  # type: HttpRequest
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -73,7 +76,7 @@ class NotificationHubsManagementClient:
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

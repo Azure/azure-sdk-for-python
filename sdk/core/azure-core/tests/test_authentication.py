@@ -19,11 +19,7 @@ from utils import HTTP_REQUESTS
 
 import pytest
 
-try:
-    from unittest.mock import Mock
-except ImportError:
-    # python < 3.3
-    from mock import Mock
+from unittest.mock import Mock
 
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)

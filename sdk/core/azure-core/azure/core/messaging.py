@@ -7,17 +7,10 @@
 import uuid
 from base64 import b64decode
 from datetime import datetime
+from typing import cast, Union, Any, Optional, Dict
 from .utils._utils import _convert_to_isoformat, TZ_UTC
 from .utils._messaging_shared import _get_json_content
 from .serialization import NULL
-
-try:
-    from typing import TYPE_CHECKING, cast, Union
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    from typing import Any, Optional, Dict
 
 
 __all__ = ["CloudEvent"]

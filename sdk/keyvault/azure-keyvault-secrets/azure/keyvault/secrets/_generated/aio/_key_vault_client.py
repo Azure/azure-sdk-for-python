@@ -11,12 +11,11 @@
 
 from typing import Any, Optional
 
-from msrest import Deserializer, Serializer
-
 from azure.core import AsyncPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import KeyVaultClientConfiguration
 from ._operations_mixin import KeyVaultClientOperationsMixin
 

@@ -20,6 +20,7 @@ class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
     PREMIUM = "Premium"
 
+
 class AccountImmutabilityPolicyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The ImmutabilityPolicy state defines the mode of the policy. Disabled state disables the
     policy, Unlocked state allows increase and decrease of immutability retention time and also
@@ -33,6 +34,7 @@ class AccountImmutabilityPolicyState(str, Enum, metaclass=CaseInsensitiveEnumMet
     LOCKED = "Locked"
     DISABLED = "Disabled"
 
+
 class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status indicating whether the primary location of the storage account is available or
     unavailable.
@@ -41,12 +43,13 @@ class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AVAILABLE = "available"
     UNAVAILABLE = "unavailable"
 
+
 class ActiveDirectoryPropertiesAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the Active Directory account type for Azure Storage.
-    """
+    """Specifies the Active Directory account type for Azure Storage."""
 
     USER = "User"
     COMPUTER = "Computer"
+
 
 class AllowedCopyScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Restrict copy to and from Storage Accounts within an AAD tenant or with Private Links to the
@@ -56,9 +59,12 @@ class AllowedCopyScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRIVATE_LINK = "PrivateLink"
     AAD = "AAD"
 
+
 class BlobInventoryPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """BlobInventoryPolicyName."""
 
     DEFAULT = "default"
+
 
 class BlobRestoreProgressStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of blob restore progress. Possible values are: - InProgress: Indicates that blob
@@ -69,6 +75,7 @@ class BlobRestoreProgressStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     IN_PROGRESS = "InProgress"
     COMPLETE = "Complete"
     FAILED = "Failed"
+
 
 class Bypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Possible values are
@@ -81,7 +88,9 @@ class Bypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     METRICS = "Metrics"
     AZURE_SERVICES = "AzureServices"
 
+
 class CorsRuleAllowedMethodsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """CorsRuleAllowedMethodsItem."""
 
     DELETE = "DELETE"
     GET = "GET"
@@ -92,38 +101,39 @@ class CorsRuleAllowedMethodsItem(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PUT = "PUT"
     PATCH = "PATCH"
 
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the default action of allow or deny when no other rules match.
-    """
+    """Specifies the default action of allow or deny when no other rules match."""
 
     ALLOW = "Allow"
     DENY = "Deny"
 
+
 class DefaultSharePermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Default share permission for users using Kerberos authentication if RBAC role is not assigned.
-    """
+    """Default share permission for users using Kerberos authentication if RBAC role is not assigned."""
 
     NONE = "None"
     STORAGE_FILE_DATA_SMB_SHARE_READER = "StorageFileDataSmbShareReader"
     STORAGE_FILE_DATA_SMB_SHARE_CONTRIBUTOR = "StorageFileDataSmbShareContributor"
     STORAGE_FILE_DATA_SMB_SHARE_ELEVATED_CONTRIBUTOR = "StorageFileDataSmbShareElevatedContributor"
 
+
 class DirectoryServiceOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the directory service used.
-    """
+    """Indicates the directory service used."""
 
     NONE = "None"
     AADDS = "AADDS"
     AD = "AD"
+
 
 class DnsEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allows you to specify the type of endpoint. Set this to AzureDNSZone to create a large number
@@ -134,6 +144,7 @@ class DnsEndpointType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD = "Standard"
     AZURE_DNS_ZONE = "AzureDnsZone"
 
+
 class EnabledProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The authentication protocol that is used for the file share. Can only be specified when
     creating a share.
@@ -141,6 +152,7 @@ class EnabledProtocols(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     SMB = "SMB"
     NFS = "NFS"
+
 
 class EncryptionScopeSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The provider for the encryption scope. Possible values (case-insensitive):  Microsoft.Storage,
@@ -150,31 +162,32 @@ class EncryptionScopeSource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MICROSOFT_STORAGE = "Microsoft.Storage"
     MICROSOFT_KEY_VAULT = "Microsoft.KeyVault"
 
+
 class EncryptionScopeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The state of the encryption scope. Possible values (case-insensitive):  Enabled, Disabled.
-    """
+    """The state of the encryption scope. Possible values (case-insensitive):  Enabled, Disabled."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class ExpirationAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The SAS expiration action. Can only be Log.
-    """
+    """The SAS expiration action. Can only be Log."""
 
     LOG = "Log"
 
+
 class ExtendedLocationTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of extendedLocation.
-    """
+    """The type of extendedLocation."""
 
     EDGE_ZONE = "EdgeZone"
 
+
 class Format(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This is a required field, it specifies the format for the inventory files.
-    """
+    """This is a required field, it specifies the format for the inventory files."""
 
     CSV = "Csv"
     PARQUET = "Parquet"
+
 
 class GeoReplicationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The status of the secondary location. Possible values are: - Live: Indicates that the secondary
@@ -188,28 +201,29 @@ class GeoReplicationStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BOOTSTRAP = "Bootstrap"
     UNAVAILABLE = "Unavailable"
 
+
 class HttpProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The protocol permitted for a request made with the account SAS.
-    """
+    """The protocol permitted for a request made with the account SAS."""
 
     HTTPS_HTTP = "https,http"
     HTTPS = "https"
 
+
 class IdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The identity type.
-    """
+    """The identity type."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned,UserAssigned"
 
+
 class ImmutabilityPolicyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The ImmutabilityPolicy state of a blob container, possible values include: Locked and Unlocked.
-    """
+    """The ImmutabilityPolicy state of a blob container, possible values include: Locked and Unlocked."""
 
     LOCKED = "Locked"
     UNLOCKED = "Unlocked"
+
 
 class ImmutabilityPolicyUpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The ImmutabilityPolicy update type of a blob container, possible values include: put, lock and
@@ -220,26 +234,28 @@ class ImmutabilityPolicyUpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     LOCK = "lock"
     EXTEND = "extend"
 
+
 class InventoryRuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The valid value is Inventory
-    """
+    """The valid value is Inventory."""
 
     INVENTORY = "Inventory"
 
+
 class KeyPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Permissions for the key -- read-only or full permissions.
-    """
+    """Permissions for the key -- read-only or full permissions."""
 
     READ = "Read"
     FULL = "Full"
 
+
 class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The encryption keySource (provider). Possible values (case-insensitive):  Microsoft.Storage,
-    Microsoft.Keyvault
+    Microsoft.Keyvault.
     """
 
     MICROSOFT_STORAGE = "Microsoft.Storage"
     MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
+
 
 class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Encryption key type to be used for the encryption service. 'Account' key type implies that an
@@ -250,9 +266,9 @@ class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SERVICE = "Service"
     ACCOUNT = "Account"
 
+
 class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the type of storage account.
-    """
+    """Indicates the type of storage account."""
 
     STORAGE = "Storage"
     STORAGE_V2 = "StorageV2"
@@ -260,22 +276,23 @@ class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FILE_STORAGE = "FileStorage"
     BLOCK_BLOB_STORAGE = "BlockBlobStorage"
 
+
 class LargeFileSharesState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Allow large file shares if sets to Enabled. It cannot be disabled once it is enabled.
-    """
+    """Allow large file shares if sets to Enabled. It cannot be disabled once it is enabled."""
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
+
 class LeaseContainerRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the lease action. Can be one of the available actions.
-    """
+    """Specifies the lease action. Can be one of the available actions."""
 
     ACQUIRE = "Acquire"
     RENEW = "Renew"
     CHANGE = "Change"
     RELEASE = "Release"
-    BREAK_ENUM = "Break"
+    BREAK = "Break"
+
 
 class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies whether the lease on a container is of infinite or fixed duration, only when the
@@ -285,19 +302,19 @@ class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INFINITE = "Infinite"
     FIXED = "Fixed"
 
+
 class LeaseShareAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the lease action. Can be one of the available actions.
-    """
+    """Specifies the lease action. Can be one of the available actions."""
 
     ACQUIRE = "Acquire"
     RENEW = "Renew"
     CHANGE = "Change"
     RELEASE = "Release"
-    BREAK_ENUM = "Break"
+    BREAK = "Break"
+
 
 class LeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Lease state of the container.
-    """
+    """Lease state of the container."""
 
     AVAILABLE = "Available"
     LEASED = "Leased"
@@ -305,20 +322,25 @@ class LeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BREAKING = "Breaking"
     BROKEN = "Broken"
 
+
 class LeaseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The lease status of the container.
-    """
+    """The lease status of the container."""
 
     LOCKED = "Locked"
     UNLOCKED = "Unlocked"
 
+
 class ListContainersInclude(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ListContainersInclude."""
 
     DELETED = "deleted"
 
+
 class ManagementPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ManagementPolicyName."""
 
     DEFAULT = "default"
+
 
 class MigrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This property denotes the container level immutability to object level immutability migration
@@ -327,6 +349,7 @@ class MigrationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     IN_PROGRESS = "InProgress"
     COMPLETED = "Completed"
+
 
 class MinimumTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Set the minimum TLS version to be permitted on requests to storage. The default interpretation
@@ -337,11 +360,12 @@ class MinimumTlsVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     TLS1_1 = "TLS1_1"
     TLS1_2 = "TLS1_2"
 
+
 class Name(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of the policy. The valid value is AccessTimeTracking. This field is currently read only
-    """
+    """Name of the policy. The valid value is AccessTimeTracking. This field is currently read only."""
 
     ACCESS_TIME_TRACKING = "AccessTimeTracking"
+
 
 class ObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """This is a required field. This field specifies the scope of the inventory created either at the
@@ -350,6 +374,7 @@ class ObjectType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     BLOB = "Blob"
     CONTAINER = "Container"
+
 
 class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed permissions for the account SAS. Possible values include: Read (r), Write (w),
@@ -365,38 +390,39 @@ class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     U = "u"
     P = "p"
 
+
 class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The current provisioning state.
-    """
+    """The current provisioning state."""
 
     SUCCEEDED = "Succeeded"
     CREATING = "Creating"
     DELETING = "Deleting"
     FAILED = "Failed"
 
+
 class PrivateEndpointServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The private endpoint connection status.
-    """
+    """The private endpoint connection status."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
     REJECTED = "Rejected"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the status of the storage account at the time the operation was called.
-    """
+    """Gets the status of the storage account at the time the operation was called."""
 
     CREATING = "Creating"
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
 
+
 class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies whether data in the container may be accessed publicly and the level of access.
-    """
+    """Specifies whether data in the container may be accessed publicly and the level of access."""
 
     CONTAINER = "Container"
     BLOB = "Blob"
     NONE = "None"
+
 
 class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Allow or disallow public network access to Storage Account. Value is optional but if passed in,
@@ -406,6 +432,7 @@ class PublicNetworkAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the reason that a storage account name could not be used. The Reason element is only
     returned if NameAvailable is false.
@@ -413,6 +440,7 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
+
 
 class ReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason for the restriction. As of now this can be "QuotaId" or
@@ -424,33 +452,34 @@ class ReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
+
 class RootSquashType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The property is for NFS share only. The default is NoRootSquash.
-    """
+    """The property is for NFS share only. The default is NoRootSquash."""
 
     NO_ROOT_SQUASH = "NoRootSquash"
     ROOT_SQUASH = "RootSquash"
     ALL_SQUASH = "AllSquash"
 
+
 class RoutingChoice(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Routing Choice defines the kind of network routing opted by the user.
-    """
+    """Routing Choice defines the kind of network routing opted by the user."""
 
     MICROSOFT_ROUTING = "MicrosoftRouting"
     INTERNET_ROUTING = "InternetRouting"
 
+
 class RuleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The valid value is Lifecycle
-    """
+    """The valid value is Lifecycle."""
 
     LIFECYCLE = "Lifecycle"
 
+
 class Schedule(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This is a required field. This field is used to schedule an inventory formation.
-    """
+    """This is a required field. This field is used to schedule an inventory formation."""
 
     DAILY = "Daily"
     WEEKLY = "Weekly"
+
 
 class Services(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed services accessible with the account SAS. Possible values include: Blob (b), Queue
@@ -462,6 +491,7 @@ class Services(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     T = "t"
     F = "f"
 
+
 class ShareAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Access tier for specific share. GpV2 account can choose between TransactionOptimized (default),
     Hot, and Cool. FileStorage account can choose Premium.
@@ -471,6 +501,7 @@ class ShareAccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HOT = "Hot"
     COOL = "Cool"
     PREMIUM = "Premium"
+
 
 class SignedResource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed services accessible with the service SAS. Possible values include: Blob (b),
@@ -482,6 +513,7 @@ class SignedResource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     F = "f"
     S = "s"
 
+
 class SignedResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed resource types that are accessible with the account SAS. Service (s): Access to
     service-level APIs; Container (c): Access to container-level APIs; Object (o): Access to
@@ -492,13 +524,14 @@ class SignedResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     C = "c"
     O = "o"
 
+
 class SkuConversionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """This property indicates the current sku conversion status.
-    """
+    """This property indicates the current sku conversion status."""
 
     IN_PROGRESS = "InProgress"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
+
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The SKU name. Required for account creation; optional for update. Note that in older versions,
@@ -514,16 +547,16 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_GZRS = "Standard_GZRS"
     STANDARD_RAGZRS = "Standard_RAGZRS"
 
+
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The SKU tier. This is based on the SKU name.
-    """
+    """The SKU tier. This is based on the SKU name."""
 
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
+
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the state of virtual network rule.
-    """
+    """Gets the state of virtual network rule."""
 
     PROVISIONING = "Provisioning"
     DEPROVISIONING = "Deprovisioning"
@@ -531,14 +564,16 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "Failed"
     NETWORK_SOURCE_DELETED = "NetworkSourceDeleted"
 
+
 class StorageAccountExpand(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """StorageAccountExpand."""
 
     GEO_REPLICATION_STATS = "geoReplicationStats"
     BLOB_RESTORE_STATUS = "blobRestoreStatus"
 
+
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the unit of measurement.
-    """
+    """Gets the unit of measurement."""
 
     COUNT = "Count"
     BYTES = "Bytes"

@@ -2,18 +2,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import TYPE_CHECKING
+from typing import Any, Mapping
 
-from six.moves.urllib_parse import parse_qs
-
-try:
-    from http.server import HTTPServer, BaseHTTPRequestHandler
-except ImportError:
-    from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler  # type: ignore
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports
-    from typing import Any, Mapping
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from urllib.parse import parse_qs
 
 
 class AuthCodeRedirectHandler(BaseHTTPRequestHandler):

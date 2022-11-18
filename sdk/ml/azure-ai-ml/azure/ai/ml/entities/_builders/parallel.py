@@ -7,6 +7,7 @@
 import copy
 import logging
 import re
+import json
 from enum import Enum
 from typing import Dict, List, Union
 
@@ -24,7 +25,6 @@ from azure.ai.ml.entities._job.parallel.parallel_task import ParallelTask
 from azure.ai.ml.entities._job.parallel.retry_settings import RetrySettings
 
 from ..._schema import PathAwareSchema
-from .._job.distribution import DistributionConfiguration
 from .._job.pipeline._io import NodeOutput
 from .._util import convert_ordered_dict_to_dict, get_rest_dict_for_node_attrs, validate_attribute_type
 from .base_node import BaseNode
@@ -69,6 +69,12 @@ class Parallel(BaseNode):
         (optional, default value is 10 files for FileDataset and 1MB for TabularDataset.) This value could be set
         through PipelineParameter
     :type mini_batch_size: str
+    :param partition_keys: The keys used to partition dataset into mini-batches.
+        If specified, the data with the same key will be partitioned into the same mini-batch.
+        If both partition_keys and mini_batch_size are specified, the partition keys will take effect.
+        The input(s) must be partitioned dataset(s),
+        and the partition_keys must be a subset of the keys of every input dataset for this to work.
+    :type partition_keys: List
     :param input_data: The input data.
     :type input_data: str
     :param inputs: Inputs of the component/job.
@@ -104,6 +110,7 @@ class Parallel(BaseNode):
         mini_batch_error_threshold: int = None,
         input_data: str = None,
         task: Dict[str, Union[ParallelTask, str]] = None,
+        partition_keys: List = None,
         mini_batch_size: int = None,
         resources: JobResourceConfiguration = None,
         environment_variables: Dict = None,
@@ -147,6 +154,7 @@ class Parallel(BaseNode):
                     raise ValueError("mini_batch_size unit must be kb, mb or gb")
 
         self.mini_batch_size = mini_batch_size
+        self.partition_keys = partition_keys
         self.input_data = input_data
         self._retry_settings = retry_settings
         self.logging_level = logging_level
@@ -166,6 +174,8 @@ class Parallel(BaseNode):
                 self.mini_batch_error_threshold or self.component.mini_batch_error_threshold
             )
             self.mini_batch_size = self.mini_batch_size or self.component.mini_batch_size
+            self.partition_keys = self.partition_keys or self.component.partition_keys
+
             if not self.task:
                 self.task = self.component.task
                 # task.code is based on self.component.base_path
@@ -270,6 +280,7 @@ class Parallel(BaseNode):
             properties=self.properties,
             compute=self.compute,
             resources=self.resources,
+            partition_keys=self.partition_keys,
             mini_batch_size=self.mini_batch_size,
             task=self.task,
             retry_settings=self.retry_settings,
@@ -318,6 +329,8 @@ class Parallel(BaseNode):
                     retry_settings=get_rest_dict_for_node_attrs(self.retry_settings),
                     logging_level=self.logging_level,
                     mini_batch_size=self.mini_batch_size,
+                    partition_keys=json.dumps(self.partition_keys)
+                        if self.partition_keys is not None else self.partition_keys,
                     resources=get_rest_dict_for_node_attrs(self.resources),
                 )
             )
@@ -325,8 +338,8 @@ class Parallel(BaseNode):
         return rest_obj
 
     @classmethod
-    def _from_rest_object(cls, obj: dict) -> "Parallel":
-        obj = BaseNode._rest_object_to_init_params(obj)
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
+        obj = super()._from_rest_object_to_init_params(obj)
         # retry_settings
         if "retry_settings" in obj and obj["retry_settings"]:
             obj["retry_settings"] = RetrySettings._from_dict(obj["retry_settings"])
@@ -341,20 +354,13 @@ class Parallel(BaseNode):
             if task_env and isinstance(task_env, str) and task_env.startswith(ARM_ID_PREFIX):
                 obj["task"].environment = task_env[len(ARM_ID_PREFIX) :]
 
-        # resources, sweep won't have resources
         if "resources" in obj and obj["resources"]:
             resources = RestJobResourceConfiguration.from_dict(obj["resources"])
             obj["resources"] = JobResourceConfiguration._from_rest_object(resources)
 
-        # Change componentId -> component
-        component_id = obj.pop("componentId", None)
-        obj["component"] = component_id
-
-        # distribution, sweep won't have distribution
-        if "distribution" in obj and obj["distribution"]:
-            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
-
-        return Parallel(**obj)
+        if "partition_keys" in obj and obj["partition_keys"]:
+            obj["partition_keys"] = json.dumps(obj["partition_keys"])
+        return obj
 
     def _build_inputs(self):
         inputs = super(Parallel, self)._build_inputs()
@@ -392,6 +398,7 @@ class Parallel(BaseNode):
             node.tags = self.tags
             node.display_name = self.display_name
             node.mini_batch_size = self.mini_batch_size
+            node.partition_keys = self.partition_keys
             node.logging_level = self.logging_level
             node.max_concurrency_per_instance = self.max_concurrency_per_instance
             node.error_threshold = self.error_threshold
