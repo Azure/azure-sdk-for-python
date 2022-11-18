@@ -26,7 +26,9 @@ from azure.ai.ml._utils.utils import (
     is_private_preview_enabled
 )
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
-from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
+from azure.ai.ml.entities import BatchDeployment, BatchJob, Component, PipelineComponent
+from azure.ai.ml.entities._deployment.deployment import Deployment
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -90,7 +92,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchDeployment]
         """
 
-
         if (
             not skip_script_validation
             and deployment
@@ -112,42 +113,15 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         )
         upload_dependencies(deployment, orchestrators)
         if is_private_preview_enabled() and deployment.job_definition:
-            if isinstance(deployment.job_definition.component, PipelineComponent):
-                component = self._component_operations.create_or_update(
-                    name =  deployment.job_definition.component.name,
-                    resource_group_name=self._resource_group_name,
-                    workspace_name=self._workspace_name,
-                    body = deployment.job_definition.component._to_rest_object(),
-                    version=deployment.job_definition.component.version,
-                    **self._init_kwargs
-                )
-                deployment.job_definition.component = None
-                deployment.job_definition.component_id = component.id
-                if not deployment.job_definition.name:
-                    deployment.job_definition.name = component.name
-                if not deployment.job_definition.description:
-                    deployment.job_definition.description = component.properties.description
-                if not deployment.job_definition.tags:
-                    deployment.job_definition.tags = component.properties.tags
-            elif isinstance(deployment.job_definition.component, str):
-
-                split_name = deployment.job_definition.component.split(':')
-                component = self._component_operations.get(
-                    name = split_name[0],
-                    resource_group_name=self._resource_group_name,
-                    workspace_name=self._workspace_name,
-                    version= split_name[1],
-                    **self._init_kwargs
-                )
-                deployment.job_definition.component = None
-                deployment.job_definition.component_id = component.id
-                if not deployment.job_definition.name:
-                    deployment.job_definition.name = component.properties.component_spec.get('name')
-                if not deployment.job_definition.description:
-                    deployment.job_definition.description = component.properties.description
-                if not deployment.job_definition.tags and component.properties.tags:
-                    deployment.job_definition.tags = component.properties.tags
-
+            component = self._validate_component(deployment)
+            deployment.job_definition.component = None
+            deployment.job_definition.component_id = component.id
+            if not deployment.job_definition.name and component.name:
+                deployment.job_definition.name = component.name
+            if not deployment.job_definition.description and component.description:
+                deployment.job_definition.description = component.description
+            if not deployment.job_definition.tags and component.tags:
+                deployment.job_definition.tags = component.tags
         try:
             location = self._get_workspace_location()
             deployment_rest = deployment._to_rest_object(location=location)
@@ -278,3 +252,46 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         """Get the workspace location TODO[TASK 1260265]: can we cache this
         information and only refresh when the operation_scope is changed?"""
         return self._all_operations.all_operations[AzureMLResourceType.WORKSPACE].get(self._workspace_name).location
+
+    def _validate_component(self, deployment: Deployment) -> Component:
+        """Validates that the value provided is associated to an existing component
+        or otherwise we will try to create an anonymous component that will be use
+        for batch deployment
+        :param deployment: Batch deployment
+        :type deployment: ~azure.ai.ml.entities._deployment.deployment.Deployment
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be
+            successfully validated. Details will be provided in the error message.
+        :return: Component entity associated to the values provided in yaml file
+        :rtype: ~azure.ai.ml.entities.Component
+        """
+        component = None
+        if isinstance(deployment.job_definition.component, PipelineComponent):
+            component = self._component_operations.create_or_update(
+                name =  deployment.job_definition.component.name,
+                resource_group_name=self._resource_group_name,
+                workspace_name=self._workspace_name,
+                body = deployment.job_definition.component._to_rest_object(),
+                version=deployment.job_definition.component.version,
+                **self._init_kwargs
+            )
+        elif isinstance(deployment.job_definition.component, str):
+            split_name = deployment.job_definition.component.split(':')
+            if len(split_name) == 2:
+                component = self._component_operations.get(
+                    name = split_name[0],
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    version= split_name[1],
+                    **self._init_kwargs
+                )
+            else:
+                msg = "Invalid format to specify existing component. Use following format: azureml:<name>:<version>"
+                raise ValidationException(
+                    message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                    target=ErrorTarget.BATCH_DEPLOYMENT,
+                    no_personal_data_message=msg,
+                )
+        component = Component._from_rest_object(component)
+        return component
