@@ -70,7 +70,6 @@ setup(
         'requests>=2.18.4',
         'six>=1.11.0',
         "typing-extensions>=4.0.1",
-        'wrapt>=1.10.10',
     ],
     extras_require={
         "aio": [
