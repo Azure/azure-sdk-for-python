@@ -40,15 +40,17 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
 )
+
 # from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
-    _BaseJobIdentityConfiguration
+    _BaseJobIdentityConfiguration,
 )
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
+from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
@@ -109,10 +111,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         experiment_name: str = None,
         jobs: Dict[str, BaseNode] = None,
         settings: PipelineJobSettings = None,
-        identity: Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+        identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
         compute: str = None,
         tags: Dict[str, str] = None,
         **kwargs,
@@ -270,7 +269,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             itertools.chain(
                 *[
                     self.component._get_input_binding_dict(node if not isinstance(node, LoopNode) else node.body)[0]
-                    for node in self.jobs.values() if not isinstance(node, ConditionNode)
+                    for node in self.jobs.values()
+                    if not isinstance(node, ConditionNode)
                     # condition node has no inputs
                 ]
             )
@@ -329,21 +329,26 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             validation_result.append_error(yaml_path="jobs", message="No other job except for on_init/on_finalize job.")
 
         def _is_isolated_job(_validate_job_name: str) -> bool:
+            def _try_get_data_binding(_input_output_data) -> Union[str, None]:
+                """Try to get data binding from input/output data, return None if not found."""
+                if isinstance(_input_output_data, str):
+                    return _input_output_data
+                if not hasattr(_input_output_data, "_data_binding"):
+                    return None
+                return _input_output_data._data_binding()
+
             _validate_job = self.jobs[_validate_job_name]
             # no input to validate job
             for _input_name in _validate_job.inputs:
-                if not hasattr(_validate_job.inputs[_input_name]._data, "_data_binding"):
-                    continue
-                _data_binding = _validate_job.inputs[_input_name]._data._data_binding()
-                if is_data_binding_expression(_data_binding, ["parent", "jobs"]):
+                _data_binding = _try_get_data_binding(_validate_job.inputs[_input_name]._data)
+                if _data_binding is not None and is_data_binding_expression(_data_binding, ["parent", "jobs"]):
                     return False
             # no output from validate job
             for _job_name, _job in self.jobs.items():
                 for _input_name in _job.inputs:
-                    if not hasattr(_job.inputs[_input_name]._data, "_data_binding"):
-                        continue
-                    _data_binding = _job.inputs[_input_name]._data._data_binding()
-                    if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
+                    _data_binding = _try_get_data_binding(_job.inputs[_input_name]._data)
+                    if _data_binding is not None \
+                            and is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
                         return False
             return True
 
@@ -477,6 +482,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             inputs=to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
             outputs=to_rest_data_outputs(built_outputs),
             settings=settings_dict,
+            services={k: v._to_rest_object() for k, v in self.services.items()} if self.services else None,
             identity=self.identity._to_job_rest_object() if self.identity else None,
         )
         rest_job = JobBase(properties=pipeline_job)
@@ -526,11 +532,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             experiment_name=properties.experiment_name,
             status=properties.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
-            services=properties.services,
+            services=JobService._from_rest_job_services(properties.services) if properties.services else None,
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
         )
 
         return job

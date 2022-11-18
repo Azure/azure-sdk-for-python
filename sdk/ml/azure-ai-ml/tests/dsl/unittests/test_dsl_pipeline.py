@@ -1,6 +1,7 @@
 import os
 from io import StringIO
 from pathlib import Path
+from typing import Dict
 from unittest import mock
 from unittest.mock import patch
 
@@ -15,6 +16,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, C
 from azure.ai.ml.constants._common import (
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
     AZUREML_RESOURCE_PROVIDER,
+    InputOutputModes,
     NAMED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     AssetTypes,
@@ -26,7 +28,7 @@ from azure.ai.ml.entities import (
     JobResourceConfiguration,
     PipelineJob,
 )
-from azure.ai.ml.entities._builders import Command
+from azure.ai.ml.entities._builders import Command, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError
@@ -1929,20 +1931,24 @@ class TestDSLPipeline:
         component_func1 = load_component(source=component_yaml, params_override=[{"name": "component_name_1"}])
         component_func2 = load_component(source=component_yaml, params_override=[{"name": "component_name_2"}])
 
-        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component"])
-        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component):
+        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component",
+                                           "param_with_annotation", "param_with_default"])
+        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component,
+                          param_with_annotation: Dict[str, str], param_with_default: int = 1):
+            assert param_with_default == 1
+            assert param_with_annotation == {"mock": "dict"}
             component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
             component_func2(component_in_number=other_params, component_in_path=job_in_path)
             if is_add_component:
                 component_func2(component_in_number=other_params, component_in_path=job_in_path)
 
-        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, False)
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, False, {"mock": "dict"})
         assert len(pipeline.jobs) == 2
         assert "other_params" not in pipeline.inputs
         assert isinstance(pipeline.jobs[component_func1.name].inputs["component_in_number"]._data, PipelineInput)
         assert pipeline.jobs[component_func2.name].inputs["component_in_number"]._data == 15
 
-        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True)
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True, {"mock": "dict"})
         assert len(pipeline.jobs) == 3
 
         @dsl.pipeline(non_pipeline_parameters=["other_params", "is_add_component"])
@@ -2023,3 +2029,110 @@ class TestDSLPipeline:
         with pytest.raises(UserErrorException) as e:
             pipeline_func_consume_invalid_component()
         assert str(e.value) == "Exactly one output is expected for condition node, 0 outputs found."
+
+    def test_dsl_pipeline_with_spark_hobo(self) -> None:
+        add_greeting_column_func = load_component(
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
+        )
+        count_by_row_func = load_component(
+            "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/count_by_row_component.yml"
+        )
+
+        @dsl.pipeline(description="submit a pipeline with spark job")
+        def spark_pipeline_from_yaml(iris_data):
+            add_greeting_column = add_greeting_column_func(file_input=iris_data)
+            add_greeting_column.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            count_by_row = count_by_row_func(file_input=iris_data)
+            count_by_row.resources = {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+            count_by_row.identity = {"type": "managed"}
+
+            return {"output": count_by_row.outputs.output}
+
+        dsl_pipeline: PipelineJob = spark_pipeline_from_yaml(
+            iris_data=Input(
+                path="https://azuremlexamples.blob.core.windows.net/datasets/iris.csv",
+                type=AssetTypes.URI_FILE,
+                mode=InputOutputModes.DIRECT,
+            ),
+        )
+        dsl_pipeline.outputs.output.mode = "Direct"
+
+        spark_node = dsl_pipeline.jobs["add_greeting_column"]
+        job_data_path_input = spark_node.inputs["file_input"]._meta
+        assert job_data_path_input
+        # spark_node.component._id = "azureml:test_component:1"
+        spark_node_dict = spark_node._to_dict()
+
+        spark_node_rest_obj = spark_node._to_rest_object()
+        regenerated_spark_node = Spark._from_rest_object(spark_node_rest_obj)
+
+        spark_node_dict_from_rest = regenerated_spark_node._to_dict()
+        omit_fields = []
+        assert pydash.omit(spark_node_dict, *omit_fields) == pydash.omit(spark_node_dict_from_rest, *omit_fields)
+        omit_fields = [
+            "jobs.add_greeting_column.componentId",
+            "jobs.count_by_row.componentId",
+            "jobs.add_greeting_column.properties",
+            "jobs.count_by_row.properties",
+        ]
+        actual_job = pydash.omit(dsl_pipeline._to_rest_object().properties.as_dict(), *omit_fields)
+        assert actual_job == {
+            "description": "submit a pipeline with spark job",
+            "properties": {},
+            "tags": {},
+            "display_name": "spark_pipeline_from_yaml",
+            "is_archived": False,
+            "job_type": "Pipeline",
+            "inputs": {
+                "iris_data": {
+                    "mode": "Direct",
+                    "uri": "https://azuremlexamples.blob.core.windows.net/datasets/iris.csv",
+                    "job_input_type": "uri_file",
+                }
+            },
+            "jobs": {
+                "add_greeting_column": {
+                    "type": "spark",
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "py_files": ["utils.zip"],
+                    "files": ["my_files.txt"],
+                    "identity": {"identity_type": "UserIdentity"},
+                    "conf": {
+                        "spark.driver.cores": 2,
+                        "spark.driver.memory": "1g",
+                        "spark.executor.cores": 1,
+                        "spark.executor.memory": "1g",
+                        "spark.executor.instances": 1,
+                    },
+                    "args": "--file_input ${{inputs.file_input}}",
+                    "name": "add_greeting_column",
+                    "inputs": {
+                        "file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"},
+                    },
+                    "_source": "YAML.COMPONENT",
+                },
+                "count_by_row": {
+                    "_source": "YAML.COMPONENT",
+                    "args": "--file_input ${{inputs.file_input}} " "--output ${{outputs.output}}",
+                    "conf": {
+                        "spark.driver.cores": 2,
+                        "spark.driver.memory": "1g",
+                        "spark.executor.cores": 1,
+                        "spark.executor.instances": 1,
+                        "spark.executor.memory": "1g",
+                    },
+                    "entry": {"file": "count_by_row.py", "spark_job_entry_type": "SparkJobPythonEntry"},
+                    "files": ["my_files.txt"],
+                    "identity": {"identity_type": "Managed"},
+                    "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
+                    "jars": ["scalaproj.jar"],
+                    "name": "count_by_row",
+                    "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    "type": "spark",
+                },
+            },
+            "outputs": {"output": {"job_output_type": "uri_folder", "mode": "Direct"}},
+            "settings": {"_source": "DSL"},
+        }

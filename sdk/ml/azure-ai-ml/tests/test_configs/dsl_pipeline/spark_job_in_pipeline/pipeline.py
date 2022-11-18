@@ -5,7 +5,6 @@ from azure.ai.ml.constants import AssetTypes, InputOutputModes
 from azure.ai.ml.entities import PipelineJob
 
 parent_dir = str(Path(__file__).parent)
-synapse_compute_name = "spark31"
 
 
 def generate_dsl_pipeline_from_yaml() -> PipelineJob:
@@ -15,9 +14,9 @@ def generate_dsl_pipeline_from_yaml() -> PipelineJob:
     @dsl.pipeline(description="submit a pipeline with spark job")
     def spark_pipeline_from_yaml(iris_data):
         add_greeting_column = add_greeting_column_func(file_input=iris_data)
-        add_greeting_column.compute = synapse_compute_name
+        add_greeting_column.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
         count_by_row = count_by_row_func(file_input=iris_data)
-        count_by_row.compute = synapse_compute_name
+        count_by_row.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
         return {"output": count_by_row.outputs.output}
 
     pipeline = spark_pipeline_from_yaml(
@@ -43,9 +42,7 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
         executor_instances=1,
         inputs=dict(file_input=iris_data),
         args="--file_input ${{inputs.file_input}}",
-        compute=synapse_compute_name,
-        # For HOBO spark, provide 'resources', not provide compute
-        # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+        resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
     )
 
     count_by_row_func = spark(
@@ -61,9 +58,7 @@ def generate_dsl_pipeline_from_builder() -> PipelineJob:
         inputs=dict(file_input=iris_data),
         outputs=dict(output=Output(type="uri_folder", mode=InputOutputModes.DIRECT)),
         args="--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
-        compute=synapse_compute_name,
-        # For HOBO spark, provide 'resources', not provide compute
-        # resources={"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"}
+        resources={"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"},
     )
 
     # Define pipeline
