@@ -9,7 +9,7 @@
     },
     {
       "file": "sdk/ml/azure-ai-ml/azure/ai/ml/entities/__init__.py",
-      "description": "Before jumping in, you know that entity classes are one of the publicized features of the AML SDK. As such, new entity classes should usually be added to the entity \\_\\_init\\_\\_.py file to publisize them.",
+      "description": "Before jumping in, you know that entity classes are one of the publicized features of the AML SDK. As such, new entity classes should usually be added to the entity \\_\\_init\\_\\_.py file to publicize them.",
       "line": 109,
       "title": "Entity Publicity"
     },
@@ -21,7 +21,7 @@
     },
     {
       "file": "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/schedule.py",
-      "description": "One of the most important features of entity classes is their ability to convert themselves to and from their corresponding autorest representations. Take a look at the function called '_from_rest_object'. Notice the 'RestSchedule' typehint for the input? That class is the autorest equivalent of a JobSchedule, which this function consumes in order to produce a JobSchedule entity class.\n\nAt a glance, this might seem like a tedious level of redirection - after all, why can we not just use the Autorest classes directly? There are multiple reasons for that:\n\n - Implementing our own entity classes gives us much a more stable user-facing API, once which isn't liable to shift if other teams modify the API's we're leveraging.\n - Sometimes, we explicitly want to deviate from the API representation of a resource to achieve various user-friendly tradeoffs. Examples include hiding in-development faetures that we don't want users easily playing with, simplifying the representation of features to prevent users from easily mis-configuring resources, or simply hiding the awkward structure of the API object.\n \n For more information about the underlying API respresentation. Check out the code tour titled \"TODO WRITE AUTOREST TOUR\"",
+      "description": "One of the most important features of entity classes is their ability to convert themselves to and from their corresponding autorest representations. Take a look at the function called '_from_rest_object'. Notice the 'RestSchedule' typehint for the input? That class is the autorest equivalent of a JobSchedule, which this function consumes in order to produce a JobSchedule entity class.\n\nAt a glance, this might seem like a tedious level of redirection - after all, why can we not just use the Autorest classes directly? There are multiple reasons for that:\n\n - Implementing our own entity classes gives us much a more stable user-facing API, once which isn't liable to shift if other teams modify the API's we're leveraging.\n - Sometimes, we explicitly want to deviate from the API representation of a resource to achieve various user-friendly tradeoffs. Examples include hiding in-development features that we don't want users easily playing with, simplifying the representation of features to prevent users from easily mis-configuring resources, or simply hiding the awkward structure of the API object.\n \n For more information about the underlying API respresentation. Check out the code tour titled \"TODO WRITE AUTOREST TOUR\"",
       "line": 210,
       "title": "Common Function: _from_rest_object"
     },
