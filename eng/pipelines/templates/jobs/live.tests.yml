@@ -71,6 +71,8 @@ jobs:
         value: true
       - name: ArmTemplateParameters
         value: '@{}'
+      - name: AZURE_SKIP_LIVE_RECORDING
+        value: true
 
     timeoutInMinutes: ${{ parameters.TestTimeoutInMinutes }}
     continueOnError: false

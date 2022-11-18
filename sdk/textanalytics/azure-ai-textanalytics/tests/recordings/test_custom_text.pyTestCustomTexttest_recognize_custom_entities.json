@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,7 +9,7 @@
         "Connection": "keep-alive",
         "Content-Length": "954",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -45,41 +45,41 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "c2bf393b-5f47-403c-b2c6-0be2ce2e9712",
+        "apim-request-id": "c1ca2263-be61-4f82-b29f-111add6ef577",
         "Content-Length": "0",
-        "Date": "Thu, 23 Jun 2022 01:22:30 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b563471a-57b2-499e-99f8-bf7e820ef016?api-version=2022-05-01",
+        "Date": "Mon, 17 Oct 2022 19:01:07 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/487c5832-bfda-4304-a41e-b4b136d053fe?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "199"
+        "x-envoy-upstream-service-time": "368"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/b563471a-57b2-499e-99f8-bf7e820ef016?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/487c5832-bfda-4304-a41e-b4b136d053fe?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "e874005a-a33e-43a0-a9cf-45acb22bb32e",
-        "Content-Length": "3488",
+        "apim-request-id": "c8139314-fb49-4b2f-8052-8812370af395",
+        "Content-Length": "3487",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 23 Jun 2022 01:22:35 GMT",
+        "Date": "Mon, 17 Oct 2022 19:01:12 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "46"
+        "x-envoy-upstream-service-time": "60"
       },
       "ResponseBody": {
-        "jobId": "b563471a-57b2-499e-99f8-bf7e820ef016",
-        "lastUpdatedDateTime": "2022-06-23T01:22:31Z",
-        "createdDateTime": "2022-06-23T01:22:30Z",
-        "expirationDateTime": "2022-06-24T01:22:30Z",
+        "jobId": "487c5832-bfda-4304-a41e-b4b136d053fe",
+        "lastUpdateDateTime": "2022-10-17T19:01:08Z",
+        "createdDateTime": "2022-10-17T19:01:07Z",
+        "expirationDateTime": "2022-10-18T19:01:07Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -91,7 +91,7 @@
             {
               "kind": "CustomEntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-23T01:22:31.6498194Z",
+              "lastUpdateDateTime": "2022-10-17T19:01:08.7198099Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -116,6 +116,13 @@
                         "confidenceScore": 0.05
                       },
                       {
+                        "text": "Accountability",
+                        "category": "geographic_poi",
+                        "offset": 34,
+                        "length": 14,
+                        "confidenceScore": 0.07
+                      },
+                      {
                         "text": "Office",
                         "category": "restaurant_name",
                         "offset": 49,
@@ -127,20 +134,6 @@
                         "category": "restaurant_name",
                         "offset": 57,
                         "length": 3,
-                        "confidenceScore": 0.04
-                      },
-                      {
-                        "text": "Accountability",
-                        "category": "geographic_poi",
-                        "offset": 34,
-                        "length": 14,
-                        "confidenceScore": 0.07
-                      },
-                      {
-                        "text": "natural",
-                        "category": "geographic_poi",
-                        "offset": 106,
-                        "length": 7,
                         "confidenceScore": 0.04
                       },
                       {
@@ -158,18 +151,25 @@
                         "confidenceScore": 0.03
                       },
                       {
-                        "text": "gas",
-                        "category": "restaurant_type",
-                        "offset": 114,
-                        "length": 3,
-                        "confidenceScore": 0.09
-                      },
-                      {
                         "text": "and",
                         "category": "served_dish",
                         "offset": 102,
                         "length": 3,
                         "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "natural",
+                        "category": "geographic_poi",
+                        "offset": 106,
+                        "length": 7,
+                        "confidenceScore": 0.04
+                      },
+                      {
+                        "text": "gas",
+                        "category": "restaurant_type",
+                        "offset": 114,
+                        "length": 3,
+                        "confidenceScore": 0.09
                       },
                       {
                         "text": "development",
@@ -186,25 +186,11 @@
                         "confidenceScore": 0.07
                       },
                       {
-                        "text": "protection",
-                        "category": "state",
-                        "offset": 267,
-                        "length": 10,
-                        "confidenceScore": 0.05
-                      },
-                      {
                         "text": "lands",
                         "category": "poi",
                         "offset": 141,
                         "length": 5,
                         "confidenceScore": 0.04
-                      },
-                      {
-                        "text": "BLM",
-                        "category": "poi",
-                        "offset": 202,
-                        "length": 3,
-                        "confidenceScore": 0.07
                       },
                       {
                         "text": "the",
@@ -219,6 +205,20 @@
                         "offset": 156,
                         "length": 14,
                         "confidenceScore": 0.54
+                      },
+                      {
+                        "text": "BLM",
+                        "category": "poi",
+                        "offset": 202,
+                        "length": 3,
+                        "confidenceScore": 0.07
+                      },
+                      {
+                        "text": "protection",
+                        "category": "state",
+                        "offset": 267,
+                        "length": 10,
+                        "confidenceScore": 0.05
                       }
                     ],
                     "warnings": []
@@ -259,18 +259,18 @@
                         "confidenceScore": 0.07
                       },
                       {
-                        "text": "IFIC",
-                        "category": "geographic_poi",
-                        "offset": 91,
-                        "length": 4,
-                        "confidenceScore": 0.05
-                      },
-                      {
                         "text": "Information Council",
                         "category": "restaurant_name",
                         "offset": 70,
                         "length": 19,
                         "confidenceScore": 0.1
+                      },
+                      {
+                        "text": "IFIC",
+                        "category": "geographic_poi",
+                        "offset": 91,
+                        "length": 4,
+                        "confidenceScore": 0.05
                       },
                       {
                         "text": "Washington, D.C.",

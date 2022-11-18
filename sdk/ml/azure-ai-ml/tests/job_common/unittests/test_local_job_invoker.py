@@ -1,4 +1,5 @@
 import os
+import tempfile
 from pathlib import Path
 
 import pytest
@@ -13,16 +14,12 @@ from azure.ai.ml.operations._local_job_invoker import (
 @pytest.mark.training_experiences_test
 class TestLocalJobInvoker:
     def test_serialize_patch(self):
-        dummy_file = Path("./dummy_file1.txt").resolve()
-        dummy_file.write_text(
-            """unread strings
+        in_text = """unread strings
         everythng before are ignored
         continue to ignore --snapshots '"""
-            + '[{"Id": "abc-123"}]'
-            + """' Everything after is ignored"""
-        )
+        in_text += '[{"Id": "abc-123"}]'
+        in_text += """' Everything after is ignored"""
 
-        patch_invocation_script_serialization(dummy_file)
         expected_out = (
             """unread strings
         everythng before are ignored
@@ -30,8 +27,13 @@ class TestLocalJobInvoker:
             + ' "[{\\"Id\\": \\"abc-123\\"}]" '
             + """Everything after is ignored"""
         )
-        assert dummy_file.read_text() == expected_out
-        dummy_file.unlink()
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with tempfile.NamedTemporaryFile(mode="w", delete=False, dir=temp_dir) as f:
+                f.write(in_text)
+                f.flush()
+                patch_invocation_script_serialization(Path(f.name).resolve())
+            assert Path(f.name).read_text() == expected_out
 
     def test_serialize_patch_no_op(self):
         # Validate that the previously escaped string does not modify if funciton is run

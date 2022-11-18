@@ -6,88 +6,86 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import Creator
-    from ._models_py3 import CreatorList
-    from ._models_py3 import CreatorProperties
-    from ._models_py3 import CreatorUpdateParameters
-    from ._models_py3 import Dimension
-    from ._models_py3 import ErrorAdditionalInfo
-    from ._models_py3 import ErrorDetail
-    from ._models_py3 import ErrorResponse
-    from ._models_py3 import MapsAccount
-    from ._models_py3 import MapsAccountKeys
-    from ._models_py3 import MapsAccountProperties
-    from ._models_py3 import MapsAccountUpdateParameters
-    from ._models_py3 import MapsAccounts
-    from ._models_py3 import MapsKeySpecification
-    from ._models_py3 import MapsOperations
-    from ._models_py3 import MetricSpecification
-    from ._models_py3 import OperationDetail
-    from ._models_py3 import OperationDisplay
-    from ._models_py3 import Resource
-    from ._models_py3 import ServiceSpecification
-    from ._models_py3 import Sku
-    from ._models_py3 import SystemData
-    from ._models_py3 import TrackedResource
-except (SyntaxError, ImportError):
-    from ._models import Creator  # type: ignore
-    from ._models import CreatorList  # type: ignore
-    from ._models import CreatorProperties  # type: ignore
-    from ._models import CreatorUpdateParameters  # type: ignore
-    from ._models import Dimension  # type: ignore
-    from ._models import ErrorAdditionalInfo  # type: ignore
-    from ._models import ErrorDetail  # type: ignore
-    from ._models import ErrorResponse  # type: ignore
-    from ._models import MapsAccount  # type: ignore
-    from ._models import MapsAccountKeys  # type: ignore
-    from ._models import MapsAccountProperties  # type: ignore
-    from ._models import MapsAccountUpdateParameters  # type: ignore
-    from ._models import MapsAccounts  # type: ignore
-    from ._models import MapsKeySpecification  # type: ignore
-    from ._models import MapsOperations  # type: ignore
-    from ._models import MetricSpecification  # type: ignore
-    from ._models import OperationDetail  # type: ignore
-    from ._models import OperationDisplay  # type: ignore
-    from ._models import Resource  # type: ignore
-    from ._models import ServiceSpecification  # type: ignore
-    from ._models import Sku  # type: ignore
-    from ._models import SystemData  # type: ignore
-    from ._models import TrackedResource  # type: ignore
-
-from ._azure_maps_management_client_enums import (
-    CreatedByType,
-    KeyType,
-    Kind,
-    Name,
+from ._models_py3 import AccountSasParameters
+from ._models_py3 import (
+    Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties,
 )
+from ._models_py3 import CorsRule
+from ._models_py3 import CorsRules
+from ._models_py3 import Creator
+from ._models_py3 import CreatorList
+from ._models_py3 import CreatorProperties
+from ._models_py3 import CreatorUpdateParameters
+from ._models_py3 import Dimension
+from ._models_py3 import ErrorAdditionalInfo
+from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
+from ._models_py3 import LinkedResource
+from ._models_py3 import ManagedServiceIdentity
+from ._models_py3 import MapsAccount
+from ._models_py3 import MapsAccountKeys
+from ._models_py3 import MapsAccountProperties
+from ._models_py3 import MapsAccountSasToken
+from ._models_py3 import MapsAccountUpdateParameters
+from ._models_py3 import MapsAccounts
+from ._models_py3 import MapsKeySpecification
+from ._models_py3 import MapsOperations
+from ._models_py3 import MetricSpecification
+from ._models_py3 import OperationDetail
+from ._models_py3 import OperationDisplay
+from ._models_py3 import Resource
+from ._models_py3 import ServiceSpecification
+from ._models_py3 import Sku
+from ._models_py3 import SystemData
+from ._models_py3 import TrackedResource
+
+from ._azure_maps_management_client_enums import CreatedByType
+from ._azure_maps_management_client_enums import KeyType
+from ._azure_maps_management_client_enums import Kind
+from ._azure_maps_management_client_enums import Name
+from ._azure_maps_management_client_enums import ResourceIdentityType
+from ._azure_maps_management_client_enums import SigningKey
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'Creator',
-    'CreatorList',
-    'CreatorProperties',
-    'CreatorUpdateParameters',
-    'Dimension',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'MapsAccount',
-    'MapsAccountKeys',
-    'MapsAccountProperties',
-    'MapsAccountUpdateParameters',
-    'MapsAccounts',
-    'MapsKeySpecification',
-    'MapsOperations',
-    'MetricSpecification',
-    'OperationDetail',
-    'OperationDisplay',
-    'Resource',
-    'ServiceSpecification',
-    'Sku',
-    'SystemData',
-    'TrackedResource',
-    'CreatedByType',
-    'KeyType',
-    'Kind',
-    'Name',
+    "AccountSasParameters",
+    "Components1Jq1T4ISchemasManagedserviceidentityPropertiesUserassignedidentitiesAdditionalproperties",
+    "CorsRule",
+    "CorsRules",
+    "Creator",
+    "CreatorList",
+    "CreatorProperties",
+    "CreatorUpdateParameters",
+    "Dimension",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "LinkedResource",
+    "ManagedServiceIdentity",
+    "MapsAccount",
+    "MapsAccountKeys",
+    "MapsAccountProperties",
+    "MapsAccountSasToken",
+    "MapsAccountUpdateParameters",
+    "MapsAccounts",
+    "MapsKeySpecification",
+    "MapsOperations",
+    "MetricSpecification",
+    "OperationDetail",
+    "OperationDisplay",
+    "Resource",
+    "ServiceSpecification",
+    "Sku",
+    "SystemData",
+    "TrackedResource",
+    "CreatedByType",
+    "KeyType",
+    "Kind",
+    "Name",
+    "ResourceIdentityType",
+    "SigningKey",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

@@ -18,6 +18,7 @@ class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     AVAILABLE = "Available"
     UNAVAILABLE = "Unavailable"
 
+
 class AccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The sku name. Required for account creation; optional for update. Note that in older versions,
     sku name was called accountType.
@@ -29,13 +30,14 @@ class AccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_RAGRS = "Standard_RAGRS"
     PREMIUM_LRS = "Premium_LRS"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the storage account at the time the operation was called.
-    """
+    """The status of the storage account at the time the operation was called."""
 
     CREATING = "Creating"
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
+
 
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason that a storage account name could not be used. The Reason element is only returned
@@ -45,9 +47,9 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
 
+
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The unit of measurement.
-    """
+    """The unit of measurement."""
 
     COUNT = "Count"
     BYTES = "Bytes"

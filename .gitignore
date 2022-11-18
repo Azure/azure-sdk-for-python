@@ -137,3 +137,7 @@ sdk/cosmos/azure-cosmos/test/test_config.py
 
 # local SSL certificate folder
 .certificate
+
+# ignore pre-commit config to avoid adding hooks in this repo as
+# package specific hooks will bring delay and in some cases errors to all developers
+.pre-commit-config.yaml

@@ -32,30 +32,36 @@ from ._virtual_machines_operations import VirtualMachinesOperations
 from ._virtual_machine_schedules_operations import VirtualMachineSchedulesOperations
 from ._virtual_networks_operations import VirtualNetworksOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ProviderOperationsOperations',
-    'LabsOperations',
-    'Operations',
-    'GlobalSchedulesOperations',
-    'ArtifactSourcesOperations',
-    'ArmTemplatesOperations',
-    'ArtifactsOperations',
-    'CostsOperations',
-    'CustomImagesOperations',
-    'FormulasOperations',
-    'GalleryImagesOperations',
-    'NotificationChannelsOperations',
-    'PolicySetsOperations',
-    'PoliciesOperations',
-    'SchedulesOperations',
-    'ServiceRunnersOperations',
-    'UsersOperations',
-    'DisksOperations',
-    'EnvironmentsOperations',
-    'SecretsOperations',
-    'ServiceFabricsOperations',
-    'ServiceFabricSchedulesOperations',
-    'VirtualMachinesOperations',
-    'VirtualMachineSchedulesOperations',
-    'VirtualNetworksOperations',
+    "ProviderOperationsOperations",
+    "LabsOperations",
+    "Operations",
+    "GlobalSchedulesOperations",
+    "ArtifactSourcesOperations",
+    "ArmTemplatesOperations",
+    "ArtifactsOperations",
+    "CostsOperations",
+    "CustomImagesOperations",
+    "FormulasOperations",
+    "GalleryImagesOperations",
+    "NotificationChannelsOperations",
+    "PolicySetsOperations",
+    "PoliciesOperations",
+    "SchedulesOperations",
+    "ServiceRunnersOperations",
+    "UsersOperations",
+    "DisksOperations",
+    "EnvironmentsOperations",
+    "SecretsOperations",
+    "ServiceFabricsOperations",
+    "ServiceFabricSchedulesOperations",
+    "VirtualMachinesOperations",
+    "VirtualMachineSchedulesOperations",
+    "VirtualNetworksOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

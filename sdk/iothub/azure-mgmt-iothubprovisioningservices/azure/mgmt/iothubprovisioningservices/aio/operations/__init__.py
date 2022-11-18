@@ -10,8 +10,14 @@ from ._operations import Operations
 from ._dps_certificate_operations import DpsCertificateOperations
 from ._iot_dps_resource_operations import IotDpsResourceOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Operations',
-    'DpsCertificateOperations',
-    'IotDpsResourceOperations',
+    "Operations",
+    "DpsCertificateOperations",
+    "IotDpsResourceOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
