@@ -161,7 +161,7 @@ def build_load_test_administration_list_load_tests_request(
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_upload_file_request(
+def build_load_test_administration_upload_test_file_request(
     test_id: str, file_name: str, *, content: IO, file_type: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -193,7 +193,7 @@ def build_load_test_administration_upload_file_request(
     return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_load_test_administration_get_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_administration_get_test_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -218,7 +218,7 @@ def build_load_test_administration_get_file_request(test_id: str, file_name: str
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_administration_delete_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_administration_delete_test_file_request(test_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -462,7 +462,7 @@ def build_load_test_run_get_test_run_request(test_run_id: str, **kwargs: Any) ->
     return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_load_test_run_get_file_request(test_run_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
+def build_load_test_run_get_test_run_file_request(test_run_id: str, file_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
@@ -2124,7 +2124,7 @@ class LoadTestAdministrationOperations:
         return ItemPaged(get_next, extract_data)
 
     @distributed_trace
-    def upload_file(
+    def upload_test_file(
         self, test_id: str, file_name: str, body: IO, *, file_type: Optional[str] = None, **kwargs: Any
     ) -> JSON:
         """Upload input file for a given test name. File size can't be more than 50 MB. Existing file with
@@ -2181,7 +2181,7 @@ class LoadTestAdministrationOperations:
 
         _content = body
 
-        request = build_load_test_administration_upload_file_request(
+        request = build_load_test_administration_upload_test_file_request(
             test_id=test_id,
             file_name=file_name,
             file_type=file_type,
@@ -2217,7 +2217,7 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def get_file(self, test_id: str, file_name: str, **kwargs: Any) -> JSON:
+    def get_test_file(self, test_id: str, file_name: str, **kwargs: Any) -> JSON:
         """Get test file by the file name.
 
         Get test file by the file name.
@@ -2260,7 +2260,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_file_request(
+        request = build_load_test_administration_get_test_file_request(
             test_id=test_id,
             file_name=file_name,
             api_version=self._config.api_version,
@@ -2293,7 +2293,7 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def delete_file(  # pylint: disable=inconsistent-return-statements
+    def delete_test_file(  # pylint: disable=inconsistent-return-statements
         self, test_id: str, file_name: str, **kwargs: Any
     ) -> None:
         """Delete file by the file name for a test.
@@ -2322,7 +2322,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_load_test_administration_delete_file_request(
+        request = build_load_test_administration_delete_test_file_request(
             test_id=test_id,
             file_name=file_name,
             api_version=self._config.api_version,
@@ -4548,7 +4548,7 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def get_file(self, test_run_id: str, file_name: str, **kwargs: Any) -> JSON:
+    def get_test_run_file(self, test_run_id: str, file_name: str, **kwargs: Any) -> JSON:
         """Get test run file by file name.
 
         Get test run file by file name.
@@ -4591,7 +4591,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_file_request(
+        request = build_load_test_run_get_test_run_file_request(
             test_run_id=test_run_id,
             file_name=file_name,
             api_version=self._config.api_version,

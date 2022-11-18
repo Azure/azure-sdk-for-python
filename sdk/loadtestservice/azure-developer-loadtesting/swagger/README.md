@@ -44,13 +44,13 @@ directive:
       where: $["paths"]["/tests"].get
       transform: $["operationId"] = "Test_ListLoadTests";
     - from: swagger-document 
-      where: $["paths"]["/tests/{testId}/files/{fileId}"].put
+      where: $["paths"]["/tests/{testId}/files/{fileName}"].put
       transform: $["operationId"] = "Test_UploadTestFile";
     - from: swagger-document 
-      where: $["paths"]["/tests/{testId}/files/{fileId}"].get
+      where: $["paths"]["/tests/{testId}/files/{fileName}"].get
       transform: $["operationId"] = "Test_GetTestFile";
     - from: swagger-document 
-      where: $["paths"]["/tests/{testId}/files/{fileId}"].delete
+      where: $["paths"]["/tests/{testId}/files/{fileName}"].delete
       transform: $["operationId"] = "Test_DeleteTestFile";
     - from: swagger-document 
       where: $["paths"]["/tests/{testId}/files"].get
@@ -65,7 +65,7 @@ directive:
       where: $["paths"]["/test-runs/{testRunId}"].get
       transform: $["operationId"] = "TestRun_GetTestRun";
     - from: swagger-document 
-      where: $["paths"]["/test-runs/{testRunId}/files/{fileId}"].get
+      where: $["paths"]["/test-runs/{testRunId}/files/{fileName}"].get
       transform: $["operationId"] = "TestRun_GetTestRunFile";
     - from: swagger-document 
       where: $["paths"]["/test-runs"].get
