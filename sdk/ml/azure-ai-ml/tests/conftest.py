@@ -59,7 +59,7 @@ def fake_datastore_key() -> str:
 
 @pytest.fixture(autouse=True)
 def add_sanitizers(test_proxy, fake_datastore_key):
-    add_remove_header_sanitizer(headers="x-azureml-token,Log-URL")
+    add_remove_header_sanitizer(headers="x-azureml-token,Log-URL,Authorization")
     set_custom_default_matcher(
         excluded_headers="x-ms-meta-name,x-ms-meta-version", ignored_query_parameters="api-version"
     )
@@ -71,6 +71,7 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     add_body_key_sanitizer(json_path="$.properties.properties.hash_sha256", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.hash_version", value="0000000000000")
     add_body_key_sanitizer(json_path="$.properties.properties.['azureml.git.dirty']", value="fake_git_dirty_value")
+    add_body_key_sanitizer(json_path="$.accessToken", value="Sanitized")
     add_general_regex_sanitizer(value="", regex=f"\\u0026tid={os.environ.get('ML_TENANT_ID')}")
     add_general_string_sanitizer(value="", target=f"&tid={os.environ.get('ML_TENANT_ID')}")
     add_general_regex_sanitizer(
@@ -81,10 +82,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     )
     # for internal code whose upload_hash is of length 36
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s]{36})\\/?", group_for_replace="1"
+        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s\"]{36})\\/?", group_for_replace="1"
     )
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s]{36})\\/",
+        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s\"]{36})\\/",
         group_for_replace="1"
     )
 
@@ -205,6 +206,45 @@ def randstr(variable_recorder: VariableRecorder) -> Callable[[str], str]:
 
     return generate_random_string
 
+@pytest.fixture
+def rand_batch_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random batch endpoint name string  e.g. batch-ept-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"batch-ept-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
+
+@pytest.fixture
+def rand_batch_deployment_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random batch deployment name string  e.g. batch-dpm-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"batch-dpm-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
+
+@pytest.fixture
+def rand_online_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random online endpoint name string  e.g. online-ept-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"online-ept-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
+
+@pytest.fixture
+def rand_online_deployment_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
+    """return a random online deployment name string  e.g. online-dpm-xxx"""
+
+    def generate_random_string(variable_name: str):
+        random_string = f"online-dpm-{uuid.uuid4().hex[:15]}"
+        return variable_recorder.get_or_record(variable_name, random_string)
+
+    return generate_random_string
 
 @pytest.fixture
 def rand_compute_name(variable_recorder: VariableRecorder) -> Callable[[str], str]:
@@ -280,6 +320,16 @@ def crud_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredent
 
 
 @pytest.fixture
+def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using in Pipelines end-to-end tests."""
+    return MLClient(
+        credential=auth,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="sdk-canary",
+    )
+
+
+@pytest.fixture
 def resource_group_name(location: str) -> str:
     return f"test-rg-{location}-v2-{_get_week_format()}"
 
@@ -321,8 +371,8 @@ def batch_endpoint_model(client: MLClient) -> Model:
 
 
 @pytest.fixture
-def light_gbm_model(client: MLClient) -> Model:
-    job_name = "light_gbm_job_" + uuid.uuid4().hex
+def light_gbm_model(client: MLClient, variable_recorder: VariableRecorder) -> Model:
+    job_name = variable_recorder.get_or_record("job_name", "light_gbm_job_" + uuid.uuid4().hex)
     model_name = "lightgbm_predict"  # specified in the mlflow training script
 
     try:
@@ -387,7 +437,7 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
     def generate_hash(*args, **kwargs):
         return str(uuid.uuid4())
 
-    if is_live_and_not_recording():
+    if "disable_mock_code_hash" not in request.keywords and is_live_and_not_recording():
         mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
     elif not is_live():
         mocker.patch(
@@ -536,6 +586,7 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml.entities._schedule.schedule.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()

@@ -1,5 +1,4 @@
 {
-  "tags": {},
   "version": "0.0.1",
   "$schema": "https://componentsdk.azureedge.net/jsonschema/DistributedComponent.json",
   "display_name": "MPI Example",

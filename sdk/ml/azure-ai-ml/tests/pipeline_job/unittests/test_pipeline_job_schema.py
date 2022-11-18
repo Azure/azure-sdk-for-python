@@ -377,7 +377,6 @@ class TestPipelineJobSchema:
                 else:
                     assert isinstance(job_input, Input)
 
-    @pytest.mark.skip(reason="Component Job is going away")
     def test_pipeline_component_job_with_outputs(
         self, mock_machinelearning_client: MLClient, mocker: MockFixture
     ) -> None:
@@ -388,7 +387,7 @@ class TestPipelineJobSchema:
         # Check that all outputs are present and are of type Input
         for output_name in yaml_obj["outputs"].keys():
             job_obj_output = job.outputs.get(output_name, None)
-            assert job_obj_output
+            assert job_obj_output is not None
             assert isinstance(job_obj_output, PipelineOutput)
             job_obj_output = job_obj_output._to_job_output()
             assert isinstance(job_obj_output, Output)
@@ -399,13 +398,13 @@ class TestPipelineJobSchema:
             assert component_job is not None
             for output_name, output_value in job_value["outputs"].items():
                 component_job_output = component_job.outputs.get(output_name, None)
-                assert component_job_output
+                assert component_job_output is not None
                 if isinstance(output_value, dict):
                     # case where user specifies inline output
                     assert output_value["mode"] == component_job_output.mode
                 else:
                     # case where user specifies an input binding
-                    assert output_value == component_job_output._to_job_output()
+                    assert output_value == component_job_output._data
 
         # Convert to REST object and check that all outputs were correctly turned into REST format
         mocker.patch(
@@ -537,12 +536,10 @@ class TestPipelineJobSchema:
         # Check that outputs were properly converted from REST format to SDK format
         for output_name, output_value in rest_job.properties.outputs.items():
             from_rest_output = from_rest_job.outputs.get(output_name, None)
-            assert from_rest_output
+            assert from_rest_output is not None
             assert isinstance(from_rest_output, PipelineOutput)
             from_rest_output = from_rest_output._to_job_output()
             assert isinstance(from_rest_output, Output)
-            # TODO https://msdata.visualstudio.com/Vienna/_workitems/edit/1318153: Put this check back once outputs work again
-            # self._check_data_output_from_rest_formatting(output_value.data, from_rest_output)
 
         # Check that outputs were properly converted from REST format to SDK format for each ComponentJob
         from_rest_component_job = from_rest_job.jobs.get("multiple_data_component", None)
@@ -1121,9 +1118,9 @@ class TestPipelineJobSchema:
             "abc": "def",
         }
 
-    @pytest.mark.skip("Pipeline: discuss how to refactor _to_dict in PipelineJob & CommandComponent later.")
     def test_dump_distribution(self):
-        from azure.ai.ml._restclient.v2021_10_01.models import TensorFlow
+        # pipeline level test is in test_pipeline_job_create_with_distribution_component
+        from azure.ai.ml import TensorFlowDistribution
         from azure.ai.ml._schema.job.distribution import PyTorchDistributionSchema, TensorFlowDistributionSchema
 
         distribution_dict = {
@@ -1132,11 +1129,12 @@ class TestPipelineJobSchema:
             "parameter_server_count": 0,
             "worker_count": 5,
         }
-        distribution_obj = TensorFlow.from_dict(distribution_dict)
+        # msrest has been removed from public interface
+        distribution_obj = TensorFlowDistribution(**distribution_dict)
 
-        with pytest.raises(ValidationError, match=r"Value passed is not in set \['pytorch']"):
+        with pytest.raises(ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_dict)
-        with pytest.raises(ValidationError, match=r"Value passed is not in set \['pytorch']"):
+        with pytest.raises(ValidationError, match=r"Cannot dump non-PyTorchDistribution object into PyTorchDistributionSchema"):
             _ = PyTorchDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
 
         after_dump_correct = TensorFlowDistributionSchema(context={"base_path": "./"}).dump(distribution_obj)
@@ -1176,7 +1174,6 @@ class TestPipelineJobSchema:
                         },
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_file"}},
-                        "tags": {},
                         "type": "command",
                         "version": "1",
                     },
@@ -1191,8 +1188,6 @@ class TestPipelineJobSchema:
                             "test3": {"type": "uri_folder"},
                         },
                         "is_deterministic": True,
-                        "outputs": {},
-                        "tags": {},
                         "type": "command",
                         "version": "1",
                     },
@@ -1205,7 +1200,6 @@ class TestPipelineJobSchema:
                         "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_folder"}},
-                        "tags": {},
                         "type": "command",
                         "version": "1",
                     },
@@ -1227,7 +1221,6 @@ class TestPipelineJobSchema:
                         },
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_file"}},
-                        "tags": {},
                         "type": "command",
                         "version": "1",
                     },
@@ -1242,8 +1235,6 @@ class TestPipelineJobSchema:
                             "test3": {"type": "uri_folder"},
                         },
                         "is_deterministic": True,
-                        "outputs": {},
-                        "tags": {},
                         "type": "command",
                         "version": "1",
                     },
@@ -1256,7 +1247,6 @@ class TestPipelineJobSchema:
                         "inputs": {"test1": {"type": "uri_file", "mode": "ro_mount"}},
                         "is_deterministic": True,
                         "outputs": {"test1": {"type": "uri_folder", "mode": "mount"}},
-                        "tags": {},
                         "type": "command",
                         "version": "1",
                     },
@@ -1293,7 +1283,6 @@ class TestPipelineJobSchema:
                 },
                 "is_deterministic": True,
                 "outputs": {"test1": {"type": "uri_folder", "mode": "mount"}},
-                "tags": {},
                 "type": "command",
                 "version": "1",
             },
@@ -1307,8 +1296,6 @@ class TestPipelineJobSchema:
                     "test3": {"type": "uri_file"},
                 },
                 "is_deterministic": True,
-                "outputs": {},
-                "tags": {},
                 "type": "command",
                 "version": "1",
             },
@@ -1323,7 +1310,6 @@ class TestPipelineJobSchema:
                 },
                 "is_deterministic": True,
                 "outputs": {"test1": {"type": "uri_file"}},
-                "tags": {},
                 "type": "command",
                 "version": "1",
             },
@@ -1773,9 +1759,6 @@ class TestPipelineJobSchema:
                 },
                 "int_param": 10,
             },
-            "jobs": {},
-            "outputs": {},
-            "properties": {},
             "settings": {"default_compute": "azureml:cpu-cluster"},
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
             "type": "pipeline",

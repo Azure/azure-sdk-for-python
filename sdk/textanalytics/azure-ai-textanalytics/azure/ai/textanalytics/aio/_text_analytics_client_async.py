@@ -16,7 +16,6 @@ from .._request_handlers import (
     _determine_action_type,
 )
 from .._validate import validate_multiapi_args, check_for_unsupported_actions_types
-from .._version import DEFAULT_API_VERSION
 from .._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -139,7 +138,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         super().__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
-        self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
+
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = (
@@ -877,7 +876,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
@@ -1116,6 +1115,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         combine multiple text analysis actions into one call. Otherwise, we recommend you use
         the action specific endpoints, for example :func:`analyze_sentiment`.
 
+        .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
+            https://aka.ms/applyforgatedsummarizationfeatures
+
         .. note:: See the service documentation for regional support of custom action features:
             https://aka.ms/azsdk/textanalytics/customfunctionalities
 
@@ -1142,7 +1144,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
@@ -1365,7 +1367,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
@@ -1491,7 +1493,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
@@ -1611,7 +1613,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             2022-10-01-preview and newer). If not set, uses "en" for English as default.
             Per-document language will take precedence over whole batch language.
             See https://aka.ms/talangs for supported languages in Language API.
-        :keyword autodetect_default_language: Default/fallback language to use for documents requesting
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
             automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
@@ -1712,6 +1714,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         On the fly classification of the input documents into one or multiple categories.
         Assigns either one or multiple categories per document. This type of classification
         doesn't require model training.
+
+        .. note:: The dynamic classification feature is part of a gated preview. Request access here:
+            https://aka.ms/applyforgatedlanguagefeature
 
         See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 
