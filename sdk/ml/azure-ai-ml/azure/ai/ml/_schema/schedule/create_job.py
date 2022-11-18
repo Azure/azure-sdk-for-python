@@ -96,6 +96,15 @@ class BaseCreateJobSchema(BaseJobSchema):
     def make(self, data: dict, **kwargs) -> "Job":
         from azure.ai.ml.entities import Job
 
+        def _update_data_to_job_dict(job_dict, data):
+            for key, val in data.items():
+                job_val = job_dict.get(key)
+                # Merge data dict with original job data dict
+                if isinstance(job_val, dict) and isinstance(val, dict):
+                    _update_data_to_job_dict(job_val, val)
+                    continue
+                job_dict[key] = val
+
         # Get the loaded job
         job = data.pop("job")
         # Get the raw dict data before load
@@ -106,8 +115,9 @@ class BaseCreateJobSchema(BaseJobSchema):
                 raise ValidationError("Could not load job for schedule without '_source_path' set.")
             # Load local job again with updated values
             job_dict = yaml.safe_load(load_file(job._source_path))
+            _update_data_to_job_dict(job_dict, raw_data)
             return Job._load(  # pylint: disable=no-member
-                data={**job_dict, **raw_data},
+                data=job_dict,
                 yaml_path=job._source_path,
                 **kwargs,
             )
