@@ -1,6 +1,6 @@
 {
   "$schema": "https://aka.ms/codetour-schema",
-  "title": "entity_classes_purpose_and_examples",
+  "title": "AML Entity Classes - The Basics",
   "steps": [
     {
       "directory": "sdk/ml/azure-ai-ml/azure/ai/ml/entities",
