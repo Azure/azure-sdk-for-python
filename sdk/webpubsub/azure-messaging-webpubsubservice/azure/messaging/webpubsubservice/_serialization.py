@@ -339,8 +339,8 @@ class Model(object):
         serializer = Serializer(self._infer_class_models())
         return serializer._serialize(self, keep_readonly=keep_readonly, **kwargs)
 
-    def as_dict(self, keep_readonly=True, key_transformer=attribute_transformer, **kwargs): # cspell:disable-next-line
-        """Return a dict that can be JSONify using json.dump. 
+    def as_dict(self, keep_readonly=True, key_transformer=attribute_transformer, **kwargs):
+        """Return a dict that can be JSONify using json.dump.
 
         Advanced usage might optionally use a callback as parameter:
 
@@ -594,7 +594,7 @@ class Serializer(object):
                         keys, orig_attr = key_transformer(attr, attr_desc.copy(), orig_attr)
                         keys = keys if isinstance(keys, list) else [keys]
 
-                    kwargs["serialization_ctxt"] = attr_desc # cspell:disable-line
+                    kwargs["serialization_ctxt"] = attr_desc
                     new_attr = self.serialize_data(orig_attr, attr_desc["type"], **kwargs)
 
                     if is_xml_model_serialization:
@@ -629,8 +629,8 @@ class Serializer(object):
                             serialized.append(local_node)
                     else:  # JSON
                         for k in reversed(keys):
-                            unflattened = {k: new_attr} # cspell:disable-line
-                            new_attr = unflattened  # cspell:disable-line
+                            unflattened = {k: new_attr}
+                            new_attr = unflattened
 
                         _new_attr = new_attr
                         _serialized = serialized
@@ -855,9 +855,9 @@ class Serializer(object):
     def serialize_iter(self, data, iter_type, div=None, **kwargs):
         """Serialize iterable.
 
-        Supported kwargs:   
-        - serialization_ctxt dict : The current entry of _attribute_map, or same format.    # cspell:disable-line
-          serialization_ctxt['type'] should be same as data_type.   # cspell:disable-line
+        Supported kwargs:
+        - serialization_ctxt dict : The current entry of _attribute_map, or same format.
+          serialization_ctxt['type'] should be same as data_type.
         - is_xml bool : If set, serialize as XML
 
         :param list attr: Object to be serialized.
@@ -871,7 +871,7 @@ class Serializer(object):
         if isinstance(data, str):
             raise SerializationError("Refuse str type as a valid iter type.")
 
-        serialization_ctxt = kwargs.get("serialization_ctxt", {})   # cspell:disable-line
+        serialization_ctxt = kwargs.get("serialization_ctxt", {})
         is_xml = kwargs.get("is_xml", False)
 
         serialized = []
@@ -885,12 +885,12 @@ class Serializer(object):
             serialized = ["" if s is None else str(s) for s in serialized]
             serialized = div.join(serialized)
 
-        if "xml" in serialization_ctxt or is_xml:   # cspell:disable-line
+        if "xml" in serialization_ctxt or is_xml:
             # XML serialization is more complicated
-            xml_desc = serialization_ctxt.get("xml", {})    # cspell:disable-line
+            xml_desc = serialization_ctxt.get("xml", {})
             xml_name = xml_desc.get("name")
             if not xml_name:
-                xml_name = serialization_ctxt["key"]    # cspell:disable-line
+                xml_name = serialization_ctxt["key"]
 
             # Create a wrap node if necessary (use the fact that Element and list have "append")
             is_wrapped = xml_desc.get("wrapped", False)
@@ -920,7 +920,7 @@ class Serializer(object):
          not be None or empty.
         :rtype: dict
         """
-        serialization_ctxt = kwargs.get("serialization_ctxt", {})   # cspell:disable-line
+        serialization_ctxt = kwargs.get("serialization_ctxt", {})
         serialized = {}
         for key, value in attr.items():
             try:
@@ -928,9 +928,9 @@ class Serializer(object):
             except ValueError:
                 serialized[self.serialize_unicode(key)] = None
 
-        if "xml" in serialization_ctxt: # cspell:disable-line
+        if "xml" in serialization_ctxt:
             # XML serialization is more complicated
-            xml_desc = serialization_ctxt["xml"]    # cspell:disable-line
+            xml_desc = serialization_ctxt["xml"]
             xml_name = xml_desc["name"]
 
             final_result = _create_xml_node(xml_name, xml_desc.get("prefix", None), xml_desc.get("ns", None))
@@ -1100,7 +1100,7 @@ class Serializer(object):
             raise TypeError("RFC1123 object must be valid Datetime object.")
 
         return "{}, {:02} {} {:04} {:02}:{:02}:{:02} GMT".format(
-            Serializer.days[utc.tm_wday],   # cspell:disable-line
+            Serializer.days[utc.tm_wday],
             utc.tm_mday,
             Serializer.months[utc.tm_mon],
             utc.tm_year,
@@ -1474,7 +1474,7 @@ class Deserializer(object):
         Once classification has been determined, initialize object.
 
         :param str target: The target object type to deserialize to.
-        :param str/dict data: The response data to deseralize.  # cspell:disable-line
+        :param str/dict data: The response data to deseralize.
         """
         if target is None:
             return None, None
@@ -1499,7 +1499,7 @@ class Deserializer(object):
         a deserialization error.
 
         :param str target_obj: The target object type to deserialize to.
-        :param str/dict data: The response data to deseralize.  # cspell:disable-line
+        :param str/dict data: The response data to deseralize.
         :param str content_type: Swagger "produces" if available.
         """
         try:
