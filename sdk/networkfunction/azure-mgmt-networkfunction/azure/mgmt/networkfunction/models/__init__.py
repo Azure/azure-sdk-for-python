@@ -25,13 +25,13 @@ from ._models_py3 import TagsObject
 from ._models_py3 import TrackedResource
 from ._models_py3 import TrackedResourceSystemData
 
-from ._azure_traffic_collector_enums import ApiVersionParameter
-from ._azure_traffic_collector_enums import CreatedByType
-from ._azure_traffic_collector_enums import DestinationType
-from ._azure_traffic_collector_enums import EmissionType
-from ._azure_traffic_collector_enums import IngestionType
-from ._azure_traffic_collector_enums import ProvisioningState
-from ._azure_traffic_collector_enums import SourceType
+from ._traffic_collector_mgmt_client_enums import ApiVersionParameter
+from ._traffic_collector_mgmt_client_enums import CreatedByType
+from ._traffic_collector_mgmt_client_enums import DestinationType
+from ._traffic_collector_mgmt_client_enums import EmissionType
+from ._traffic_collector_mgmt_client_enums import IngestionType
+from ._traffic_collector_mgmt_client_enums import ProvisioningState
+from ._traffic_collector_mgmt_client_enums import SourceType
 from ._patch import __all__ as _patch_all
 from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk

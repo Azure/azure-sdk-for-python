@@ -25,8 +25,8 @@ if TYPE_CHECKING:
     from azure.core.credentials_async import AsyncTokenCredential
 
 
-class AzureTrafficCollectorConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for AzureTrafficCollector.
+class TrafficCollectorMgmtClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for TrafficCollectorMgmtClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
@@ -41,7 +41,7 @@ class AzureTrafficCollectorConfiguration(Configuration):  # pylint: disable=too-
     """
 
     def __init__(self, credential: "AsyncTokenCredential", subscription_id: str, **kwargs: Any) -> None:
-        super(AzureTrafficCollectorConfiguration, self).__init__(**kwargs)
+        super(TrafficCollectorMgmtClientConfiguration, self).__init__(**kwargs)
         api_version: Literal["2022-11-01"] = kwargs.pop("api_version", "2022-11-01")
 
         if credential is None:
