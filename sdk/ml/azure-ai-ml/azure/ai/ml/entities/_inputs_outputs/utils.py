@@ -247,7 +247,7 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
     return_annotation_key = "return"
 
     def _is_primitive_type(io: type):
-        """Return ture if type is subclass of mldesigner._input_output._Param"""
+        """Return true if type is subclass of mldesigner._input_output._Param"""
         return any([io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io)])
 
     def _is_input_or_output_type(io: type, type_str: str):
