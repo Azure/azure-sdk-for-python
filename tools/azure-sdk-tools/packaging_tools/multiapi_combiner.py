@@ -30,12 +30,11 @@ class VersionedObject:
         name: str,
         *,
         added_on: Optional[str] = None,
-        removed_on: Optional[str] = None,
     ) -> None:
         self.code_model = code_model
         self.name = name
         self.added_on = added_on or ""
-        self.removed_on = removed_on or ""
+        self.removed_on = ""
 
 
 T = TypeVar("T", bound=VersionedObject)
@@ -63,17 +62,16 @@ def _combine_helper(
         curr_counter = 0
         while prev_counter < len(objs) and curr_counter < len(curr_names):
             if objs[prev_counter].name < curr_names[curr_counter]:
-                raise ValueError(
-                    "Can not run multiapi combiner because "
-                    f"{objs[prev_counter].name} was removed in {curr_api_version}"
-                )
+                while prev_counter < len(objs) and objs[prev_counter].name < curr_names[curr_counter]:
+                    objs[prev_counter].removed_on = curr_api_version
+                    prev_counter += 1
             elif objs[prev_counter].name > curr_names[curr_counter]:
                 while objs[prev_counter].name > curr_names[curr_counter]:
                     new_objs.append(
                         get_cls(
                             code_model,
                             curr_names[curr_counter],
-                            curr_api_version,
+                            curr_api_version, # added on
                         )
                     )
                     curr_counter += 1
@@ -97,9 +95,8 @@ class Parameter(VersionedObject):
         operation: "Operation",
         *,
         added_on: Optional[str] = None,
-        removed_on: Optional[str] = None,
     ) -> None:
-        super().__init__(code_model, name, added_on=added_on, removed_on=removed_on)
+        super().__init__(code_model, name, added_on=added_on)
         self.operation = operation
 
 
@@ -111,11 +108,10 @@ class Operation(VersionedObject):
         operation_group: "OperationGroup",
         *,
         added_on: Optional[str] = None,
-        removed_on: Optional[str] = None,
     ) -> None:
-        super().__init__(code_model, name, added_on=added_on, removed_on=removed_on)
+        super().__init__(code_model, name, added_on=added_on)
         self.operation_group = operation_group
-        self.parameters: List[Parameter] = self._combine_parameters()
+        self.parameters: List[Parameter] = []
 
     def source_code(self, async_mode: bool) -> str:
         return inspect.getsource(self._get_op(self.code_model.default_api_version, async_mode))
@@ -139,28 +135,33 @@ class Operation(VersionedObject):
         operation_group = getattr(module.operations, self.operation_group.name)
         return getattr(operation_group, self.name)
 
-    def _combine_parameters(self) -> List[Parameter]:
+    def combine_parameters(self) -> None:
         # don't want api versions if my operation group isn't in them
         api_versions = [
-            v for v in self.code_model.sorted_api_versions if v >= self.operation_group.added_on and v >= self.added_on
+            v for v in self.code_model.sorted_api_versions
+            if v >= self.operation_group.added_on and
+            v >= self.added_on
         ]
+        if self.operation_group.removed_on:
+            api_versions = [a for a in api_versions if a < self.operation_group.removed_on]
+        if self.removed_on:
+            api_versions = [a for a in api_versions if a < self.removed_on]
 
         def _get_names_by_api_version(api_version: str):
             op = self._get_op(api_version)
             # return retvals beside kwargs and the response
             return list(op.__annotations__.keys())[: len(op.__annotations__.keys()) - 2]
 
-        def _get_parameter(code_model: "CodeModel", name: str, added_on: Optional[str] = None, removed_on: Optional[str] = None) -> Parameter:
-            return Parameter(code_model, name, operation=self, added_on=added_on, removed_on=removed_on)
+        def _get_parameter(code_model: "CodeModel", name: str, added_on: Optional[str] = None) -> Parameter:
+            return Parameter(code_model, name, operation=self, added_on=added_on)
 
-        params = _combine_helper(
+        self.parameters = _combine_helper(
             code_model=self.code_model,
             sorted_api_versions=api_versions,
             get_cls=_get_parameter,
             get_names_by_api_version=_get_names_by_api_version,
             sort=False,
         )
-        return params
 
 
 class OperationGroup(VersionedObject):
@@ -170,29 +171,30 @@ class OperationGroup(VersionedObject):
         name: str,
         *,
         added_on: Optional[str] = None,
-        removed_on: Optional[str] = None,
     ):
-        super().__init__(code_model, name=name, added_on=added_on, removed_on=removed_on)
-        self.operations: List[Operation] = self._combine_operations()
-        self.generated_class = self._get_og(self.code_model.default_api_version)
+        super().__init__(code_model, name=name, added_on=added_on)
+        self.operations: List[Operation] = []
+        # self.generated_class = self._get_og(self.code_model.default_api_version)
         self.is_mixin = self.name.endswith("OperationsMixin")
 
     def _get_og(self, api_version: str):
         module = importlib.import_module(f"{self.code_model.module_name}.{api_version}")
         return getattr(module.operations, self.name)
 
-    def _combine_operations(self) -> List[Operation]:
+    def combine_operations(self) -> None:
         # chose api versions greater than when I was added
         api_versions = [v for v in self.code_model.sorted_api_versions if v >= self.added_on]
+        if self.removed_on:
+            api_versions = [a for a in api_versions if a < self.removed_on]
 
         def _get_names_by_api_version(api_version: str):
             operation_group = self._get_og(api_version)
             return [d for d in dir(operation_group) if callable(getattr(operation_group, d)) and d[:2] != "__"]
 
-        def _get_operation(code_model: "CodeModel", name: str, added_on: Optional[str] = None, removed_on: Optional[str] = None) -> Operation:
-            return Operation(code_model, name, operation_group=self, added_on=added_on, removed_on=removed_on)
+        def _get_operation(code_model: "CodeModel", name: str, added_on: Optional[str] = None) -> Operation:
+            return Operation(code_model, name, operation_group=self, added_on=added_on)
 
-        return _combine_helper(
+        self.operations = _combine_helper(
             code_model=self.code_model,
             sorted_api_versions=api_versions,
             get_cls=_get_operation,
@@ -224,8 +226,8 @@ class CodeModel:
             curr_metadata = self.api_version_to_metadata[api_version]
             return sorted(curr_metadata["operation_groups"].values())
 
-        def _get_operation_group(code_model: "CodeModel", name: str, added_on: Optional[str] = None, removed_on: Optional[str] = None):
-            return OperationGroup(code_model, name, added_on=added_on, removed_on=removed_on)
+        def _get_operation_group(code_model: "CodeModel", name: str, added_on: Optional[str] = None):
+            return OperationGroup(code_model, name, added_on=added_on)
 
         ogs = _combine_helper(
             code_model=self,
@@ -241,6 +243,26 @@ class CodeModel:
                     name=f"{initial_metadata['client']['name']}OperationsMixin",
                 )
             )
+        # for operation_group in [og for og in ogs if not og.removed_on]:
+        #     operation_group.combine_operations()
+        #     for operation in [o for o in operation_group.operations if not o.removed_on]:
+        #         operation.combine_parameters()
+
+        for operation_group in ogs:
+            if operation_group.removed_on:
+                with open("errors.txt", "a") as fd:
+                    fd.write(f"{operation_group.name} was added on {operation_group.added_on} and removed on {operation_group.removed_on}\n")
+                continue
+            for operation in operation_group.operations:
+                if operation.removed_on:
+                    with open("errors.txt", "a") as fd:
+                        fd.write(f"{operation_group.name}.{operation.name} removed on {operation.removed_on}\n")
+                    continue
+                for parameter in operation.parameters:
+                    if parameter.removed_on:
+                        with open("errors.txt", "a") as fd:
+                            fd.write(f"{operation_group.name}.{operation.name}.{parameter.name} removed on {parameter.removed_on}\n")
+                        continue
         return ogs
 
 
