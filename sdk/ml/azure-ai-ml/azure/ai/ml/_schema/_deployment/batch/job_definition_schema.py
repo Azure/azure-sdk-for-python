@@ -17,7 +17,8 @@ from azure.ai.ml._schema import (
     ArmVersionedStr,
 )
 from azure.ai.ml._schema.pipeline.pipeline_component import PipelineComponentFileRefField
-from azure.ai.ml.constants._common import JobTypes, AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._job.job import JobType
 
 module_logger = logging.getLogger(__name__)
 
@@ -38,7 +39,7 @@ class JobDefinitionSchema(metaclass=PatchedSchemaMeta):
     )
     type = StringTransformedEnum(
         required=True,
-        allowed_values=[JobTypes.PIPELINE_JOB]
+        allowed_values=[JobType.PIPELINE]
     )
     settings = fields.Dict()
     name = fields.Str()

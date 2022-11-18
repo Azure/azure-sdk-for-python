@@ -14,7 +14,7 @@ from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefin
 from azure.ai.ml._schema.core.fields import ComputeField, NestedField, StringTransformedEnum, ExperimentalField
 from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
-from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction, BatchDeploymentTypes
+from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction, BatchDeploymentType
 
 from .batch_deployment_settings import BatchRetrySettingsSchema
 
@@ -54,10 +54,10 @@ class BatchDeploymentSchema(DeploymentSchema):
     )
     resources = NestedField(JobResourceConfigurationSchema)
     type = StringTransformedEnum(
-        allowed_values = [BatchDeploymentTypes.COMPONENT, BatchDeploymentTypes.MODEL]
+        allowed_values = [BatchDeploymentType.COMPONENT, BatchDeploymentType.MODEL]
     )
 
-    job_definition =ExperimentalField(NestedField(JobDefinitionSchema))
+    job_definition = ExperimentalField(NestedField(JobDefinitionSchema))
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:
