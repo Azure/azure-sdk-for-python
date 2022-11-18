@@ -485,7 +485,7 @@ class WebSocketTransportAsync(
             password = self._http_proxy.get("password", None)
 
         try:
-            from aiohttp import ClientSession, ClientConnectorError, ClientOSError
+            from aiohttp import ClientSession, ClientConnectionError
             from urllib.parse import urlsplit
 
             if username or password:
@@ -520,16 +520,16 @@ class WebSocketTransportAsync(
                     ssl=self.sslopts,
                     heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
                 )
-            except ClientConnectorError as exc:
+            except ClientConnectionError as exc:
                 if self._custom_endpoint:
                     raise AuthenticationException(
                         ErrorCondition.ClientError,
                         description="Failed to authenticate the connection due to exception: " + str(exc),
                         error=exc,
                     )
-            except ClientOSError as e:
-                await self.session.close()
-                raise ConnectionError('Websocket connection closed: %r' % e) from e
+                else:
+                    await self.session.close()
+                    raise ConnectionError('Websocket connection closed: %r' % exc) from exc
             self.connected = True
         except ImportError:
             raise ValueError(
@@ -538,7 +538,7 @@ class WebSocketTransportAsync(
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
-        from aiohttp import ClientOSError
+        from aiohttp import ClientConnectionError
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
@@ -558,7 +558,7 @@ class WebSocketTransportAsync(
             return view
         except asyncio.TimeoutError as te:
             raise ConnectionError('Receive timed out (%s)' % te)
-        except ClientOSError as e:
+        except ClientConnectionError as e:
             await self.session.close()
             raise ConnectionError('Websocket connection closed: %r' % e) from e
 
@@ -574,11 +574,11 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        from aiohttp import ClientOSError
+        from aiohttp import ClientConnectionError
         try:
             await self.ws.send_bytes(s)
         except asyncio.TimeoutError as te:
             raise ConnectionError('Send timed out (%s)' % te)
-        except ClientOSError as e:
+        except ClientConnectionError as e:
             await self.session.close()
             raise ConnectionError('Websocket connection closed: %r' % e) from e
