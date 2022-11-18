@@ -7,7 +7,7 @@
 """Contains functionality for sending telemetry to Application Insights via OpenCensus Azure Monitor Exporter."""
 
 import logging
-import platform
+# import platform
 from os import getenv
 
 # from opencensus.ext.azure.log_exporter import AzureLogHandler
