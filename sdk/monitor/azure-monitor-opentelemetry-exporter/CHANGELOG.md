@@ -11,6 +11,9 @@
 
 ### Bugs Fixed
 
+- Refactor ApplicationInsightsSampler to ensure whole number `itemCount`
+    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+
 ### Other Changes
 
 ## 1.0.0b10 (2022-11-10)
