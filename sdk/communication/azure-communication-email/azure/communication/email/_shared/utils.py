@@ -9,7 +9,6 @@ import json
 import calendar
 from typing import (cast,
                     Tuple,
-                    Union,
                     )
 from datetime import datetime
 from msrest.serialization import TZ_UTC
