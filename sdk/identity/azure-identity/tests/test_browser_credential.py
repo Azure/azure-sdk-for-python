@@ -2,33 +2,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-import platform
-import random
-import socket
-import threading
-import time
-
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
 from azure.core.pipeline.transport import RequestsTransport
 from azure.identity import InteractiveBrowserCredential
 from azure.identity._internal.user_agent import USER_AGENT
 import pytest
-
-from helpers import (
-    build_aad_response,
-    build_id_token,
-    get_discovery_response,
-    id_token_claims,
-    mock_response,
-    Request,
-    validating_transport,
-)
-
-try:
-    from unittest.mock import ANY, Mock, patch
-except ImportError:  # python < 3.3
-    from mock import ANY, Mock, patch  # type: ignore
+from unittest.mock import ANY, Mock, patch
 
 
 WEBBROWSER_OPEN = InteractiveBrowserCredential.__module__ + ".webbrowser.open"
