@@ -10,7 +10,7 @@
 - Fixed idle_time_before_shutdown appearing as None for Compute Instances returned by `show` or `list`.
 - Fixed idle_time_before_shutdown_minutes preventing creation of Compute Instances when set to None.
 
-## 1.1.1 (2022-11-15)
+## 1.1.1 (Unreleased)
 
 ### Breaking Changes
 - Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
@@ -18,7 +18,7 @@
 ### Bugs Fixed
 - Fixed idle_time_before_shutdown_minutes not appearing in GET calls for Compute Instances.
 
-## 1.1.0 (2022-11-07)
+## 1.1.0 (Unreleased)
 
 ### Features Added
 - Registry list operation now accepts scope value to allow subscription-only based requests.
