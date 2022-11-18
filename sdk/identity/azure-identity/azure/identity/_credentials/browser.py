@@ -68,6 +68,7 @@ class InteractiveBrowserCredential(InteractiveCredential):
                 scopes=scopes,
                 login_hint=self._login_hint,
                 claims_challenge=claims,
+                timeout=self._timeout,
                 prompt="select_account",
                 port=port
             )
