@@ -481,15 +481,14 @@ class WebSocketTransportAsync(
             password = self._http_proxy.get("password", None)
 
         try:
-            from aiohttp import ClientSession, ClientConnectorError, ClientOSError
+            from aiohttp import ClientSession, ClientConnectionError
             from urllib.parse import urlsplit
 
             if username or password:
                 from aiohttp import BasicAuth
 
                 http_proxy_auth = BasicAuth(login=username, password=password)
-
-            
+           
             try:
                 # Enabling heartbeat that sends a ping message every n seconds and waits for pong response.
                 # if pong response is not received then close connection. This raises an error when trying
@@ -507,7 +506,6 @@ class WebSocketTransportAsync(
                     parsed_url = urlsplit(url)
                     url = f"{parsed_url.scheme}://{parsed_url.netloc}:{self.port}{parsed_url.path}"
 
-
                 self.ws = await self.session.ws_connect(
                     url=url,
                     timeout=self._connect_timeout,
@@ -518,23 +516,25 @@ class WebSocketTransportAsync(
                     ssl=self.sslopts,
                     heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
                 )
-            except (ClientConnectorError, ClientOSError) as exc:
+            except ClientConnectionError as exc:
                 if self._custom_endpoint:
                     raise AuthenticationException(
                         ErrorCondition.ClientError,
                         description="Failed to authenticate the connection due to exception: " + str(exc),
                         error=exc,
                     )
+                else:
+                    await self.session.close()
+                    raise ConnectionError('Websocket connection closed: %r' % exc) from exc
             self.connected = True
         except ImportError:
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
 
-
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
-        from aiohttp import ClientOSError
+        from aiohttp import ClientConnectionError
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
@@ -554,7 +554,7 @@ class WebSocketTransportAsync(
             return view
         except asyncio.TimeoutError as te:
             raise ConnectionError('Receive timed out (%s)' % te)
-        except ClientOSError as e:
+        except ClientConnectionError as e:
             await self.session.close()
             raise ConnectionError('Websocket connection closed: %r' % e) from e
 
@@ -570,12 +570,11 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        from aiohttp import ClientOSError
-        async with self.socket_lock:
-            try:
-                await self.ws.send_bytes(s)
-            except asyncio.TimeoutError as te:
-                raise ConnectionError('Send timed out (%s)' % te)
-            except ClientOSError as e:
-                await self.session.close()
-                raise ConnectionError('Websocket connection closed: %r' % e) from e
+        from aiohttp import ClientConnectionError
+        try:
+            await self.ws.send_bytes(s)
+        except asyncio.TimeoutError as te:
+            raise ConnectionError('Send timed out (%s)' % te)
+        except ClientConnectionError as e:
+            await self.session.close()
+            raise ConnectionError('Websocket connection closed: %r' % e) from e
