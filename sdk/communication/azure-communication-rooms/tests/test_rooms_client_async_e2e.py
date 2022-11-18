@@ -241,8 +241,10 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
             
                 get_response = await self.rooms_client.get_room(room_id=create_response.id)
                 # Resource not found
-                assert str(ex.value.status_code) == "404"
-                assert ex.value.message is not None
+            assert str(ex.value.status_code) == "404"
+            assert ex.value.message is not None
+            await self.rooms_client.delete_room(room_id=create_response.id)
+
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_only_ValidFrom_async(self):

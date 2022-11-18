@@ -13,9 +13,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.3.2 Python/3.9.6 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 16 Nov 2022 06:00:35 GMT
+      - Fri, 18 Nov 2022 19:11:05 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -32,9 +32,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Nov 2022 06:00:38 GMT
+      - Fri, 18 Nov 2022 19:11:08 GMT
       ms-cv:
-      - jyWht3eDrUCGKJXF+hKc6g.2.0
+      - /lrZddDKgEuMf+CMiD+9Kg.2.0
       request-context:
       - appId=
       strict-transport-security:
@@ -42,7 +42,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 39ms
+      - 45ms
     status:
       code: 201
       message: Created
@@ -60,9 +60,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.3.2 Python/3.9.6 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 16 Nov 2022 06:00:36 GMT
+      - Fri, 18 Nov 2022 19:11:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -79,9 +79,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Nov 2022 06:00:39 GMT
+      - Fri, 18 Nov 2022 19:11:08 GMT
       ms-cv:
-      - AoXY/wD5l0WxgD/cT7tprA.2.0
+      - I4o06GHaP0uFEFqNqChKVg.2.0
       request-context:
       - appId=
       strict-transport-security:
@@ -107,9 +107,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-identity/1.3.2 Python/3.9.6 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 16 Nov 2022 06:00:37 GMT
+      - Fri, 18 Nov 2022 19:11:06 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
@@ -126,9 +126,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 16 Nov 2022 06:00:39 GMT
+      - Fri, 18 Nov 2022 19:11:09 GMT
       ms-cv:
-      - sSfm2GIGcUChZxNN1dzw/Q.2.0
+      - zBAKY+9hoUuDJcNkHLmQhw.2.0
       request-context:
       - appId=
       strict-transport-security:
@@ -136,7 +136,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 41ms
+      - 49ms
     status:
       code: 201
       message: Created
@@ -150,9 +150,9 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-rooms/1.0.0b3 Python/3.9.6 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-rooms/1.0.0b3 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 16 Nov 2022 06:00:37 GMT
+      - Fri, 18 Nov 2022 19:11:07 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -163,8 +163,8 @@ interactions:
     headers:
       api-supported-versions: 2021-04-07, 2022-02-01
       content-type: application/json; charset=utf-8
-      date: Wed, 16 Nov 2022 06:00:40 GMT
-      ms-cv: XATP7Xye/06Q8MP/1U+6Xg.0
+      date: Fri, 18 Nov 2022 19:11:10 GMT
+      ms-cv: vEH2pWAWxEy+ODJSOrC6fw.0
       transfer-encoding: chunked
       x-cache: CONFIG_NOCACHE
       x-ms-error-code: ResourceNotFound
@@ -184,9 +184,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.3.2 Python/3.9.6 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 16 Nov 2022 06:00:38 GMT
+      - Fri, 18 Nov 2022 19:11:08 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -199,9 +199,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Wed, 16 Nov 2022 06:00:40 GMT
+      - Fri, 18 Nov 2022 19:11:11 GMT
       ms-cv:
-      - IuPGkjcXzki7oIGbdIbEyQ.2.0
+      - WJtsLCj4YkemZ01Wk/xWjg.2.0
       request-context:
       - appId=
       strict-transport-security:
@@ -209,7 +209,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 153ms
+      - 125ms
     status:
       code: 204
       message: No Content
@@ -225,9 +225,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.3.2 Python/3.9.6 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 16 Nov 2022 06:00:39 GMT
+      - Fri, 18 Nov 2022 19:11:09 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -240,9 +240,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Wed, 16 Nov 2022 06:00:41 GMT
+      - Fri, 18 Nov 2022 19:11:12 GMT
       ms-cv:
-      - kArbC3SjYkaP6mbqy7+OqQ.2.0
+      - /uRPejK6sEWbQCm5LIC4Dg.2.0
       request-context:
       - appId=
       strict-transport-security:
@@ -250,7 +250,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 149ms
+      - 104ms
     status:
       code: 204
       message: No Content
@@ -266,9 +266,9 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-communication-identity/1.3.2 Python/3.9.6 (Windows-10-10.0.22621-SP0)
+      - azsdk-python-communication-identity/1.3.2 Python/3.9.7 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 16 Nov 2022 06:00:39 GMT
+      - Fri, 18 Nov 2022 19:11:10 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: DELETE
@@ -281,9 +281,9 @@ interactions:
       - 2020-07-20-preview2, 2021-02-22-preview1, 2021-03-07, 2021-10-31-preview,
         2021-11-01, 2022-06-01, 2022-10-01
       date:
-      - Wed, 16 Nov 2022 06:00:42 GMT
+      - Fri, 18 Nov 2022 19:11:13 GMT
       ms-cv:
-      - SqjoKb/Z1EySLk1aDP4U5A.2.0
+      - u+nN2VsKWEO4Rs3Q0HLB6A.2.0
       request-context:
       - appId=
       strict-transport-security:
@@ -291,7 +291,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 150ms
+      - 115ms
     status:
       code: 204
       message: No Content

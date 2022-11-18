@@ -217,7 +217,8 @@ class RoomsClientTest(CommunicationTestCase):
         # Resource not found
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
-
+        self.rooms_client.delete_room(room_id=create_response.id)
+            
     def test_update_room_only_ValidFrom(self):
         # room with no attributes
         create_response = self.rooms_client.create_room()
