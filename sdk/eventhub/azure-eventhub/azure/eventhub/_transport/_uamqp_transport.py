@@ -124,7 +124,9 @@ if uamqp_installed:
             :rtype: uamqp.Message
             """
             message_header = None
-            if annotated_message.header and any(annotated_message.header.values()):
+            header_vals = annotated_message.header.values() if annotated_message.header else None
+            # If header and non-None header values, create outgoing header.
+            if annotated_message.header and header_vals.count(None) != len(header_vals):
                 message_header = MessageHeader()
                 message_header.delivery_count = annotated_message.header.delivery_count
                 message_header.time_to_live = annotated_message.header.time_to_live
@@ -133,7 +135,9 @@ if uamqp_installed:
                 message_header.priority = annotated_message.header.priority
 
             message_properties = None
-            if annotated_message.properties and any(annotated_message.properties.values()):
+            properties_vals = annotated_message.properties.values() if annotated_message.properties else None
+            # If properties and non-None properties values, create outgoing properties.
+            if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
                 message_properties = MessageProperties(
                     message_id=annotated_message.properties.message_id,
                     user_id=annotated_message.properties.user_id,
@@ -507,6 +511,15 @@ if uamqp_installed:
             )
 
         @staticmethod
+        def open_mgmt_client(mgmt_client, conn):
+            """
+            Opens the mgmt AMQP client.
+            :param AMQPClient mgmt_client: uamqp AMQPClient.
+            :param conn: Connection.
+            """
+            mgmt_client.open(connection=conn)
+
+        @staticmethod
         def get_updated_token(mgmt_auth):
             """
             Return updated auth token.
@@ -600,7 +613,7 @@ if uamqp_installed:
 
         @staticmethod
         def _handle_exception(
-            exception, closable
+            exception, closable, *, is_consumer=False   # pylint:disable=unused-argument
         ):  # pylint:disable=too-many-branches, too-many-statements
             try:  # closable is a producer/consumer object
                 name = closable._name  # pylint: disable=protected-access

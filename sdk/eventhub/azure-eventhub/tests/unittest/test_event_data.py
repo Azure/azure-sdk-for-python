@@ -173,6 +173,38 @@ def test_amqp_message_str_repr():
     assert str(message) == 'A'
     assert 'AmqpAnnotatedMessage(body=A, body_type=data' in repr(message)
 
+def test_outgoing_amqp_message_header_properties(uamqp_transport):
+    if uamqp_transport:
+        amqp_transport = UamqpTransport
+    else:
+        amqp_transport = PyamqpTransport
+    ann_message = AmqpAnnotatedMessage(data_body=b'A')
+    ann_message.header = AmqpMessageHeader()
+    ann_message.properties = AmqpMessageProperties()
+    amqp_message = amqp_transport.to_outgoing_amqp_message(ann_message)
+
+    assert not amqp_message.header
+    assert not amqp_message.properties
+
+    ann_message = AmqpAnnotatedMessage(data_body=b'A')
+    ann_message.header = AmqpMessageHeader()
+    ann_message.properties = AmqpMessageProperties()
+    ann_message.header.first_acquirer = False
+    ann_message.properties.creation_time = 0
+    amqp_message = amqp_transport.to_outgoing_amqp_message(ann_message)
+
+    assert amqp_message.header
+    assert amqp_message.properties
+
+    ann_message = AmqpAnnotatedMessage(data_body=b'A')
+    ann_message.header = AmqpMessageHeader()
+    ann_message.properties = AmqpMessageProperties()
+    ann_message.properties.message_id = ""
+    amqp_message = amqp_transport.to_outgoing_amqp_message(ann_message)
+
+    assert not amqp_message.header
+    assert amqp_message.properties
+
 
 def test_amqp_message_from_message(uamqp_transport):
     if uamqp_transport:
