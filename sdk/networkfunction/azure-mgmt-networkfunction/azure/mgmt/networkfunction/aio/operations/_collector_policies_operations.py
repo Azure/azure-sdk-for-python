@@ -53,7 +53,7 @@ class CollectorPoliciesOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkfunction.aio.AzureTrafficCollector`'s
+        :class:`~azure.mgmt.networkfunction.aio.TrafficCollectorMgmtClient`'s
         :attr:`collector_policies` attribute.
     """
 

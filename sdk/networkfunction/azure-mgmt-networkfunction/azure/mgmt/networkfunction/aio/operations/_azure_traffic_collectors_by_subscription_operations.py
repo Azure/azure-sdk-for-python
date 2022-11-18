@@ -44,7 +44,7 @@ class AzureTrafficCollectorsBySubscriptionOperations:
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
-        :class:`~azure.mgmt.networkfunction.aio.AzureTrafficCollector`'s
+        :class:`~azure.mgmt.networkfunction.aio.TrafficCollectorMgmtClient`'s
         :attr:`azure_traffic_collectors_by_subscription` attribute.
     """
 
