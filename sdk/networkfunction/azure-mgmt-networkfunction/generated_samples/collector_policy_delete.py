@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 from azure.identity import DefaultAzureCredential
-from azure.mgmt.networkfunction import AzureTrafficCollector
+from azure.mgmt.networkfunction import TrafficCollectorMgmtClient
 
 """
 # PREREQUISITES
@@ -24,7 +24,7 @@ from azure.mgmt.networkfunction import AzureTrafficCollector
 
 
 def main():
-    client = AzureTrafficCollector(
+    client = TrafficCollectorMgmtClient(
         credential=DefaultAzureCredential(),
         subscription_id="subid",
     )

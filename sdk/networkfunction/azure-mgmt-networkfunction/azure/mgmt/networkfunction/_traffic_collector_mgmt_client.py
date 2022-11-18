@@ -7,14 +7,14 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, TYPE_CHECKING
+from typing import Any, TYPE_CHECKING
 
-from azure.core.rest import AsyncHttpResponse, HttpRequest
-from azure.mgmt.core import AsyncARMPipelineClient
+from azure.core.rest import HttpRequest, HttpResponse
+from azure.mgmt.core import ARMPipelineClient
 
-from .. import models as _models
-from .._serialization import Deserializer, Serializer
-from ._configuration import AzureTrafficCollectorConfiguration
+from . import models as _models
+from ._configuration import TrafficCollectorMgmtClientConfiguration
+from ._serialization import Deserializer, Serializer
 from .operations import (
     AzureTrafficCollectorsByResourceGroupOperations,
     AzureTrafficCollectorsBySubscriptionOperations,
@@ -25,30 +25,29 @@ from .operations import (
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials_async import AsyncTokenCredential
+    from azure.core.credentials import TokenCredential
 
 
-class AzureTrafficCollector:  # pylint: disable=client-accepts-api-version-keyword
+class TrafficCollectorMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     """Azure Traffic Collector service.
 
     :ivar network_function: NetworkFunctionOperations operations
-    :vartype network_function: azure.mgmt.networkfunction.aio.operations.NetworkFunctionOperations
+    :vartype network_function: azure.mgmt.networkfunction.operations.NetworkFunctionOperations
     :ivar azure_traffic_collectors_by_subscription: AzureTrafficCollectorsBySubscriptionOperations
      operations
     :vartype azure_traffic_collectors_by_subscription:
-     azure.mgmt.networkfunction.aio.operations.AzureTrafficCollectorsBySubscriptionOperations
+     azure.mgmt.networkfunction.operations.AzureTrafficCollectorsBySubscriptionOperations
     :ivar azure_traffic_collectors_by_resource_group:
      AzureTrafficCollectorsByResourceGroupOperations operations
     :vartype azure_traffic_collectors_by_resource_group:
-     azure.mgmt.networkfunction.aio.operations.AzureTrafficCollectorsByResourceGroupOperations
+     azure.mgmt.networkfunction.operations.AzureTrafficCollectorsByResourceGroupOperations
     :ivar azure_traffic_collectors: AzureTrafficCollectorsOperations operations
     :vartype azure_traffic_collectors:
-     azure.mgmt.networkfunction.aio.operations.AzureTrafficCollectorsOperations
+     azure.mgmt.networkfunction.operations.AzureTrafficCollectorsOperations
     :ivar collector_policies: CollectorPoliciesOperations operations
-    :vartype collector_policies:
-     azure.mgmt.networkfunction.aio.operations.CollectorPoliciesOperations
+    :vartype collector_policies: azure.mgmt.networkfunction.operations.CollectorPoliciesOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: Azure Subscription ID. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
@@ -62,15 +61,15 @@ class AzureTrafficCollector:  # pylint: disable=client-accepts-api-version-keywo
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
+        credential: "TokenCredential",
         subscription_id: str,
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = AzureTrafficCollectorConfiguration(
+        self._config = TrafficCollectorMgmtClientConfiguration(
             credential=credential, subscription_id=subscription_id, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
@@ -92,14 +91,14 @@ class AzureTrafficCollector:  # pylint: disable=client-accepts-api-version-keywo
             self._client, self._config, self._serialize, self._deserialize
         )
 
-    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
         >>> request = HttpRequest("GET", "https://www.example.org/")
         <HttpRequest [GET], url: 'https://www.example.org/'>
-        >>> response = await client._send_request(request)
-        <AsyncHttpResponse: 200 OK>
+        >>> response = client._send_request(request)
+        <HttpResponse: 200 OK>
 
         For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
@@ -107,19 +106,19 @@ class AzureTrafficCollector:  # pylint: disable=client-accepts-api-version-keywo
         :type request: ~azure.core.rest.HttpRequest
         :keyword bool stream: Whether the response payload will be streamed. Defaults to False.
         :return: The response of your network call. Does not do error handling on your response.
-        :rtype: ~azure.core.rest.AsyncHttpResponse
+        :rtype: ~azure.core.rest.HttpResponse
         """
 
         request_copy = deepcopy(request)
         request_copy.url = self._client.format_url(request_copy.url)
         return self._client.send_request(request_copy, **kwargs)
 
-    async def close(self) -> None:
-        await self._client.close()
+    def close(self) -> None:
+        self._client.close()
 
-    async def __aenter__(self) -> "AzureTrafficCollector":
-        await self._client.__aenter__()
+    def __enter__(self) -> "TrafficCollectorMgmtClient":
+        self._client.__enter__()
         return self
 
-    async def __aexit__(self, *exc_details) -> None:
-        await self._client.__aexit__(*exc_details)
+    def __exit__(self, *exc_details) -> None:
+        self._client.__exit__(*exc_details)
