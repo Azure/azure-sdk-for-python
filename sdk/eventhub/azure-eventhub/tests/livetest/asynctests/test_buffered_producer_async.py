@@ -69,6 +69,30 @@ async def test_producer_client_constructor(connection_str, uamqp_transport):
             uamqp_transport=uamqp_transport
         )
 
+    def on_success_missing_params(events):
+        on_success_missing_params.events = events
+    
+    def on_error_missing_params(events, pid):
+        on_error_missing_params.events = events
+
+    producer = EventHubProducerClient.from_connection_string(
+        connection_str,
+        buffered_mode=True,
+        buffer_concurrency=2,
+        on_success=on_success_missing_params,
+        on_error=on_error_missing_params,
+        uamqp_transport=uamqp_transport,
+    )
+    
+    on_success_missing_params.events = None
+    on_error_missing_params.events = None
+
+    # successfully send, but don't enter invalid callback
+    async with producer:
+        await producer.send_event(EventData('Single data'))
+    
+    assert not on_success_missing_params.events
+    assert not on_error_missing_params.events
 
 @pytest.mark.liveTest
 @pytest.mark.asyncio

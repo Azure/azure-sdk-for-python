@@ -181,20 +181,22 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self._set_state(ConnectionState.HDR_SENT)
             if not self._allow_pipelined_open:
                 # TODO: List/tuple expected as variable args
-                self._process_incoming_frame(*self._read_frame(wait=True))  # type: ignore
+                self._read_frame(wait=True)  # type: ignore
                 if self.state != ConnectionState.HDR_EXCH:
                     self._disconnect()
                     raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
             else:
                 self._set_state(ConnectionState.HDR_SENT)
         except (OSError, IOError, SSLError, socket.error) as exc:
+            # FileNotFoundError is being raised for exception parity with uamqp when invalid
+            # `connection_verify` file path is passed in. Remove later when resolving issue #27128.
+            if isinstance(exc, FileNotFoundError) and exc.filename and "ca_certs" in exc.filename:
+                raise
             raise AMQPConnectionError(
                 ErrorCondition.SocketError,
                 description="Failed to initiate the connection due to exception: " + str(exc),
                 error=exc,
             )
-        except Exception:  # pylint:disable=try-except-raise
-            raise
 
     def _disconnect(self):
         # type: () -> None
@@ -392,13 +394,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             # If any of the values in the received open frame are invalid then the connection shall be closed.
             # The error amqp:invalid-field shall be set in the error.condition field of the CLOSE frame.
             self.close(
-                error=cast(
-                    AMQPError,
-                    AMQPConnectionError(
-                        condition=ErrorCondition.InvalidField,
-                        description="Failed parsing OPEN frame: Max frame size is less than supported minimum.",
-                    ),
-                )
+                error=AMQPError(
+                    condition=ErrorCondition.InvalidField,
+                    description="Failed parsing OPEN frame: Max frame size is less than supported minimum.",
+                ),
             )
             _LOGGER.error(
                 "Failed parsing OPEN frame: Max frame size is less than supported minimum."
@@ -448,7 +447,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         ]
         if self.state in disconnect_states:
             self._disconnect()
-            self._set_state(ConnectionState.END)
             return
 
         close_error = None
@@ -459,7 +457,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._set_state(ConnectionState.CLOSE_RCVD)
         self._outgoing_close(error=close_error)
         self._disconnect()
-        self._set_state(ConnectionState.END)
 
         if frame[0]:
             self._error = AMQPConnectionError(
@@ -468,7 +465,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             _LOGGER.error(
                 "Connection error: %r", frame[0]
             )
-
 
     def _incoming_begin(self, channel, frame):
         # type: (int, Tuple[Any, ...]) -> None
@@ -780,7 +776,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 "Connection has been configured to not allow piplined-open. Please set 'wait' parameter."
             )
 
-
     def close(self, error=None, wait=False):
         # type: (Optional[AMQPError], bool) -> None
         """Close the connection and disconnect the transport.
@@ -791,13 +786,13 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """
-        if self.state in [
-            ConnectionState.END,
-            ConnectionState.CLOSE_SENT,
-            ConnectionState.DISCARDING,
-        ]:
-            return
         try:
+            if self.state in [
+                ConnectionState.END,
+                ConnectionState.CLOSE_SENT,
+                ConnectionState.DISCARDING,
+            ]:
+                return
             self._outgoing_close(error=error)
             if error:
                 self._error = AMQPConnectionError(
