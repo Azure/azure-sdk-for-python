@@ -769,7 +769,7 @@ class JobOperations(_ScopeDependentOperations):
             try:
                 job = self.get(job_name)
                 artifact_store_uri = job.outputs[DEFAULT_ARTIFACT_STORE_OUTPUT_NAME]
-                if artifact_store_uri and artifact_store_uri.path:
+                if artifact_store_uri is not None and artifact_store_uri.path:
                     outputs[DEFAULT_ARTIFACT_STORE_OUTPUT_NAME] = artifact_store_uri.path
             except (AttributeError, KeyError):
                 outputs[DEFAULT_ARTIFACT_STORE_OUTPUT_NAME] = SHORT_URI_FORMAT.format(
