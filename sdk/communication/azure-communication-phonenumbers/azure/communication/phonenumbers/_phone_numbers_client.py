@@ -166,9 +166,11 @@ class PhoneNumbersClient(object):
             quantity=kwargs.pop('quantity', None),
             area_code=kwargs.pop('area_code', None)
         )
+        polling_interval = kwargs.pop('polling_interval', 2)
         return self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
             search_request,
+            polling_interval = polling_interval,
             **kwargs
         )
     @distributed_trace
