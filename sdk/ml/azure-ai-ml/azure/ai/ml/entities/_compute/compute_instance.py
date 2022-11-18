@@ -247,7 +247,7 @@ class ComputeInstance(Compute):
             idle_time_before_shutdown = f"PT{self.idle_time_before_shutdown_minutes}M"
         elif self.idle_time_before_shutdown:
             warnings.warn(
-                "This property is deprecated",
+                "This property 'idle_time_before_shutdown' is deprecated. Please use 'idle_time_before_shutdown_minutes' instead.",
                 DeprecationWarning
             )
             idle_time_before_shutdown = self.idle_time_before_shutdown
