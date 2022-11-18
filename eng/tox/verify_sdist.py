@@ -42,7 +42,7 @@ def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     """
     # find sdist zip file
     # extract sdist and find list of directories in sdist
-    path_to_zip = glob.glob(os.path.join(dist_dir, "*{}*.zip".format(version)))[0]
+    path_to_zip = glob.glob(os.path.join(dist_dir, "*{}*.tar.gz".format(version)))[0]
     extract_location = os.path.join(dist_dir, "unzipped")
     # Cleanup any files in unzipped
     cleanup(extract_location)
