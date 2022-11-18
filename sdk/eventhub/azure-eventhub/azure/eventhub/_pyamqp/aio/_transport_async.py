@@ -492,7 +492,7 @@ class WebSocketTransportAsync(
                 from aiohttp import BasicAuth
 
                 http_proxy_auth = BasicAuth(login=username, password=password)
-           
+
             try:
                 # Enabling heartbeat that sends a ping message every n seconds and waits for pong response.
                 # if pong response is not received then close connection. This raises an error when trying
@@ -527,9 +527,8 @@ class WebSocketTransportAsync(
                         description="Failed to authenticate the connection due to exception: " + str(exc),
                         error=exc,
                     )
-                else:
-                    await self.session.close()
-                    raise ConnectionError('Websocket connection closed: %r' % exc) from exc
+                await self.session.close()
+                raise ConnectionError('Websocket connection closed: %r' % exc) from exc
             self.connected = True
         except ImportError:
             raise ValueError(
