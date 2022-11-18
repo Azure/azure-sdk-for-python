@@ -52,6 +52,7 @@ common_omit_fields = [
     "jobs.*.properties",
     "settings._source",
     "source_job_id",
+    "services",
 ]
 
 
@@ -1793,8 +1794,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert expected_job == actual_job
 
     def test_multi_parallel_components_with_file_input_pipeline_output(
-        self, client: MLClient, randstr: Callable[[str], str]
-    ) -> None:
+        self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
@@ -1962,7 +1962,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    def test_dsl_pipeline_with_only_setting_pipeline_level(self, client: MLClient) -> None:
+    def test_dsl_pipeline_with_only_setting_pipeline_level(self, client: MLClient):
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_only_setting_pipeline_level,
         )
@@ -2007,7 +2007,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    def test_dsl_pipeline_with_only_setting_binding_node(self, client: MLClient) -> None:
+    def test_dsl_pipeline_with_only_setting_binding_node(self, client: MLClient):
         # Todo: checkout run priority when backend is ready
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_only_setting_binding_node,
@@ -2338,3 +2338,31 @@ class TestDSLPipeline(AzureRecordedTestCase):
                       'name': 'node3',
                       'type': 'command'}
         }
+
+    def test_default_pipeline_job_services(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
+        component_func2 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
+
+        @dsl.pipeline(
+            name=randstr("pipeline_name"),
+            description="The hello world pipeline job",
+            tags={"owner": "sdkteam", "tag": "tagvalue"},
+            compute="cpu-cluster",
+            experiment_name=experiment_name,
+            continue_on_step_failure=True,
+        )
+        def pipeline(job_in_number, job_in_other_number, job_in_path):
+            component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
+            component_func2(component_in_number=job_in_other_number, component_in_path=job_in_path)
+
+        pipeline = pipeline(10, 15, job_input)
+        job = client.jobs.create_or_update(pipeline)
+        # check required fields in job dict
+        default_services = job._to_dict()["services"]
+        assert "Studio" in default_services
+        assert "Tracking" in default_services
+        assert default_services["Studio"]["endpoint"].startswith("https://ml.azure.com/runs/")
+        assert default_services["Studio"]["job_service_type"] == "Studio"
+        assert default_services["Tracking"]["endpoint"].startswith("azureml://")
+        assert default_services["Tracking"]["job_service_type"] == "Tracking"
