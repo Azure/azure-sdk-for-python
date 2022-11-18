@@ -1,30 +1,22 @@
 # Release History
 
-## 1.1.2 (Unreleased)
+## 1.1.2 (2022-11-21)
 
 ### Features Added
 - Restored idle_time_before_shutdown property for Compute Instances. 
 - Deprecated idle_time_before_shutdown property in favor of idle_time_before_shutdown_minutes.
 
-### Breaking Changes
-
 ### Bugs Fixed
 - Fixed idle_time_before_shutdown appearing as None for Compute Instances returned by `show` or `list`.
 - Fixed idle_time_before_shutdown_minutes preventing creation of Compute Instances when set to None.
 
-### Other Changes
-
 ## 1.1.1 (2022-11-15)
-
-### Features Added
 
 ### Breaking Changes
 - Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
 
 ### Bugs Fixed
 - Fixed idle_time_before_shutdown_minutes not appearing in GET calls for Compute Instances.
-
-### Other Changes
 
 ## 1.1.0 (2022-11-07)
 
@@ -34,8 +26,6 @@
 - Add registry delete operation.
 - The values of JobService.job_service_type are now using the snake case. e.g jupyter_lab, ssh, tensor_board, vs_code.
 - Command function now accepts services param of type Dict[str, JobService] instead of dict.
-
-### Breaking Changes
 
 ### Bugs Fixed
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
@@ -63,7 +53,6 @@
 - Endpoint and Job use unified identity classes.
 - Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
 
-### Bugs Fixed
 
 ### Other Changes
  - Switched Compute operations to use Oct preview API version.
@@ -138,9 +127,6 @@
 - Fixed mismatch errors when updating scale_settings for KubernetesOnlineDeployment.
 - Removed az CLI command that was printed when deleting OnlineEndpoint
 
-### Other Changes
-
-
 ## 0.1.0b5 (2022-07-15)
 
 ### Features Added
@@ -153,7 +139,6 @@
 - Added end_time to job schedule.
 - MIR and pipeline job now support registry assets.
 
-### Breaking Changes
 
 ### Bugs Fixed
 
