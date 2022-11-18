@@ -1,5 +1,10 @@
 # Release History
 
+## 1.2.0 (Unreleased)
+
+### Bugs Fixed
+- Fix sweep job optional input cannot be None.
+
 ## 1.1.1 (Unreleased)
 
 ## Features Added
