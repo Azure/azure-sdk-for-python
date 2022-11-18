@@ -9,7 +9,7 @@ import copy
 from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
-from inspect import Parameter, signature
+from inspect import Parameter, signature, getmro
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions  import UserErrorException
@@ -241,7 +241,15 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
     to IO entities.
     """
     from azure.ai.ml import Input, Output
+    from .enum_input import EnumInput
+
     mldesigner_pkg = "mldesigner"
+    param_name = "_Param"
+    return_annotation_key = "return"
+
+    def _is_primitive_type(io: type):
+        """Return true if type is subclass of mldesigner._input_output._Param"""
+        return any([io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io)])
 
     def _is_input_or_output_type(io: type, type_str: str):
         """Return true if type name contains type_str"""
@@ -259,6 +267,8 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
             elif _is_input_or_output_type(io, "Output"):
                 # mldesigner.Output -> entities.Output
                 io = Output
+            elif _is_primitive_type(io):
+                io = Output(type=io.TYPE_NAME) if key == return_annotation_key else Input(type=io.TYPE_NAME)
         elif hasattr(io, "_to_io_entity_args_dict"):
             try:
                 if _is_input_or_output_type(type(io), "Input"):
@@ -267,6 +277,12 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
                 elif _is_input_or_output_type(type(io), "Output"):
                     # mldesigner.Output() -> entities.Output()
                     io = Output(**io._to_io_entity_args_dict())
+                elif _is_primitive_type(type(io)):
+                    if io._is_enum():
+                        io = EnumInput(**io._to_io_entity_args_dict())
+                    else:
+                        io = Output(**io._to_io_entity_args_dict()) if key == return_annotation_key \
+                            else Input(**io._to_io_entity_args_dict())
             except BaseException as e:
                 raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
         result[key] = io
