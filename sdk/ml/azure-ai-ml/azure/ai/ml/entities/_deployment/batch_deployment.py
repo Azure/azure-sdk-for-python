@@ -24,7 +24,7 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._util import load_from_dict
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from ..._vendor.azure_resources.flatten_json import flatten
+from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 
 from .code_configuration import CodeConfiguration
 from .deployment import Deployment
@@ -236,7 +236,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             if deployment.properties.code_configuration
             else None
         )
-        return BatchDeployment(
+        deployment =  BatchDeployment(
             name=deployment.name,
             description=deployment.properties.description,
             id=deployment.id,
@@ -261,6 +261,21 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             properties=deployment.properties.properties,
         )
 
+        # Job definition is in private preview. If private preview environment is
+        # not enable we need to remove job definition from properties.
+        if not is_private_preview_enabled():
+            del_key = []
+            for k in deployment.properties:
+                if k.startswith("component_deployment"):
+                    del_key.append(k)
+            if len(del_key) > 0:
+                for k in del_key:
+                    del deployment.properties[k]
+        else:
+            unflat_data = unflatten(deployment.properties, ".")
+            if unflat_data.get("component_deployment", None):
+                deployment.job_definition = unflat_data.get("component_deployment")
+        return deployment
     @classmethod
     def _load(
         cls,
