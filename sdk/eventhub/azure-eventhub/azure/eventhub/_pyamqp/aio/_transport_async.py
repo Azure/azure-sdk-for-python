@@ -528,9 +528,9 @@ class WebSocketTransportAsync(
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
-        except OSError:
+        except OSError as e:
             await self.session.close()
-            raise ConnectionError('Client Session Closed')
+            raise ConnectionError('Websocket connection closed: %r' % e) from e
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
@@ -554,6 +554,9 @@ class WebSocketTransportAsync(
             return view
         except asyncio.TimeoutError as te:
             raise ConnectionError('Receive timed out (%s)' % te)
+        except OSError as e:
+            await self.session.close()
+            raise ConnectionError('Websocket connection closed: %r' % e) from e
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -572,3 +575,6 @@ class WebSocketTransportAsync(
                 await self.ws.send_bytes(s)
             except asyncio.TimeoutError as te:
                 raise ConnectionError('Send timed out (%s)' % te)
+            except OSError as e:
+                await self.session.close()
+                raise ConnectionError('Websocket connection closed: %r' % e) from e
