@@ -30,10 +30,12 @@ class VersionedObject:
         name: str,
         *,
         added_on: Optional[str] = None,
+        removed_on: Optional[str] = None,
     ) -> None:
         self.code_model = code_model
         self.name = name
         self.added_on = added_on or ""
+        self.removed_on = removed_on or ""
 
 
 T = TypeVar("T", bound=VersionedObject)
@@ -59,7 +61,6 @@ def _combine_helper(
 
         prev_counter = 0
         curr_counter = 0
-
         while prev_counter < len(objs) and curr_counter < len(curr_names):
             if objs[prev_counter].name < curr_names[curr_counter]:
                 raise ValueError(
@@ -96,8 +97,9 @@ class Parameter(VersionedObject):
         operation: "Operation",
         *,
         added_on: Optional[str] = None,
+        removed_on: Optional[str] = None,
     ) -> None:
-        super().__init__(code_model, name, added_on=added_on)
+        super().__init__(code_model, name, added_on=added_on, removed_on=removed_on)
         self.operation = operation
 
 
@@ -109,8 +111,9 @@ class Operation(VersionedObject):
         operation_group: "OperationGroup",
         *,
         added_on: Optional[str] = None,
+        removed_on: Optional[str] = None,
     ) -> None:
-        super().__init__(code_model, name, added_on=added_on)
+        super().__init__(code_model, name, added_on=added_on, removed_on=removed_on)
         self.operation_group = operation_group
         self.parameters: List[Parameter] = self._combine_parameters()
 
@@ -147,8 +150,8 @@ class Operation(VersionedObject):
             # return retvals beside kwargs and the response
             return list(op.__annotations__.keys())[: len(op.__annotations__.keys()) - 2]
 
-        def _get_parameter(code_model: "CodeModel", name: str, added_on: Optional[str] = None) -> Parameter:
-            return Parameter(code_model, name, operation=self, added_on=added_on)
+        def _get_parameter(code_model: "CodeModel", name: str, added_on: Optional[str] = None, removed_on: Optional[str] = None) -> Parameter:
+            return Parameter(code_model, name, operation=self, added_on=added_on, removed_on=removed_on)
 
         params = _combine_helper(
             code_model=self.code_model,
@@ -167,8 +170,9 @@ class OperationGroup(VersionedObject):
         name: str,
         *,
         added_on: Optional[str] = None,
+        removed_on: Optional[str] = None,
     ):
-        super().__init__(code_model, name=name, added_on=added_on)
+        super().__init__(code_model, name=name, added_on=added_on, removed_on=removed_on)
         self.operations: List[Operation] = self._combine_operations()
         self.generated_class = self._get_og(self.code_model.default_api_version)
         self.is_mixin = self.name.endswith("OperationsMixin")
@@ -185,8 +189,8 @@ class OperationGroup(VersionedObject):
             operation_group = self._get_og(api_version)
             return [d for d in dir(operation_group) if callable(getattr(operation_group, d)) and d[:2] != "__"]
 
-        def _get_operation(code_model: "CodeModel", name: str, added_on: Optional[str] = None) -> Operation:
-            return Operation(code_model, name, operation_group=self, added_on=added_on)
+        def _get_operation(code_model: "CodeModel", name: str, added_on: Optional[str] = None, removed_on: Optional[str] = None) -> Operation:
+            return Operation(code_model, name, operation_group=self, added_on=added_on, removed_on=removed_on)
 
         return _combine_helper(
             code_model=self.code_model,
@@ -204,7 +208,7 @@ class CodeModel:
         self.api_version_to_metadata: Dict[str, Dict[str, Any]] = {
             dir.stem: _get_metadata(dir)
             for dir in self.root_of_code.iterdir()
-            if dir.stem.startswith("v") and dir.stem >= "v2020_11_01" and "preview" not in dir.stem
+            if dir.stem.startswith("v") and "preview" not in dir.stem
         }
         self.sorted_api_versions = sorted(self.api_version_to_metadata.keys())
         self.default_api_version = self.sorted_api_versions[-1]
@@ -220,8 +224,8 @@ class CodeModel:
             curr_metadata = self.api_version_to_metadata[api_version]
             return sorted(curr_metadata["operation_groups"].values())
 
-        def _get_operation_group(code_model: "CodeModel", name: str, added_on: Optional[str] = None):
-            return OperationGroup(code_model, name, added_on=added_on)
+        def _get_operation_group(code_model: "CodeModel", name: str, added_on: Optional[str] = None, removed_on: Optional[str] = None):
+            return OperationGroup(code_model, name, added_on=added_on, removed_on=removed_on)
 
         ogs = _combine_helper(
             code_model=self,
