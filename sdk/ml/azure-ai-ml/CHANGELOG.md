@@ -1,6 +1,6 @@
 # Release History
 
-## 1.1.2 (2022-11-21)
+## 1.1.2 (Unreleased)
 
 ### Features Added
 - Restored idle_time_before_shutdown property for Compute Instances. 
