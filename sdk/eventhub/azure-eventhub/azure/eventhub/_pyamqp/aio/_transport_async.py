@@ -538,7 +538,7 @@ class WebSocketTransportAsync(
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
-        from aiohttp import ClientError
+        from aiohttp import ClientOSError
         length = 0
         view = buffer or memoryview(bytearray(n))
         nbytes = self._read_buffer.readinto(view)
