@@ -16,7 +16,7 @@ from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.core.exceptions import HttpResponseError
 
-from test_utilities.utils import assert_job_cancel
+from test_utilities.utils import assert_job_cancel, sleep_if_live
 from .._utils import DATA_VERSION, PARAMETERS_TO_TEST, set_run_settings, TEST_CASE_NAME_ENUMERATE, \
     get_expected_runsettings_items
 
@@ -105,7 +105,6 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         self._test_component(node_func, inputs, runsettings_dict, pipeline_runsettings_dict, client)
 
-    @pytest.mark.skip(reason="TODO: can't find newly registered component?")
     @pytest.mark.parametrize(
         "test_case_i,test_case_name",
         TEST_CASE_NAME_ENUMERATE,
@@ -122,7 +121,7 @@ class TestPipelineJob(AzureRecordedTestCase):
 
         component_to_register = load_component(yaml_path, params_override=[{"name": component_name}])
         component_resource = client.components.create_or_update(component_to_register)
-
+        sleep_if_live(5)
         created_component = client.components.get(component_name, component_resource.version)
 
         self._test_component(created_component, inputs, runsettings_dict, pipeline_runsettings_dict, client)
