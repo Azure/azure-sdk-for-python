@@ -1,11 +1,11 @@
 # ---------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
+
 import re
 from enum import Enum
 
 from azure.core import CaseInsensitiveEnumMeta
-
 
 class StorageAccountType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_LRS = "Standard_LRS".lower()

@@ -5,21 +5,23 @@
 # pylint: disable=protected-access,redefined-builtin
 
 from abc import ABC
-from typing import List
+from typing import List, Dict, Union
 
 from azure.ai.ml._azure_environments import _get_active_directory_url_from_metadata
 from azure.ai.ml._utils.utils import camel_to_snake, snake_to_pascal
-from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin
+from azure.ai.ml.constants._common import CommonYamlFields, IdentityType
+from azure.ai.ml.entities._mixins import RestTranslatableMixin, DictMixin, YamlTranslatableMixin
 from azure.ai.ml._restclient.v2022_05_01.models import (
     AccountKeyDatastoreCredentials as RestAccountKeyDatastoreCredentials,
     AccountKeyDatastoreSecrets as RestAccountKeyDatastoreSecrets,
-    CertificateDatastoreCredentials,
+    CertificateDatastoreCredentials as RestCertificateDatastoreCredentials,
     CertificateDatastoreSecrets,
     CredentialsType,
     SasDatastoreCredentials as RestSasDatastoreCredentials,
     SasDatastoreSecrets as RestSasDatastoreSecrets,
     ServicePrincipalDatastoreCredentials as RestServicePrincipalDatastoreCredentials,
     ServicePrincipalDatastoreSecrets as RestServicePrincipalDatastoreSecrets,
+    NoneDatastoreCredentials as RestNoneDatastoreCredentials,
 )
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
@@ -31,34 +33,49 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     UsernamePassword as RestWorkspaceConnectionUsernamePassword,
 )
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     IdentityConfigurationType,
     ManagedIdentity as RestJobManagedIdentity,
     UserIdentity as RestUserIdentity,
-    AmlToken as RestAmlToken
+    AmlToken as RestAmlToken,
 )
 
 from azure.ai.ml._restclient.v2022_01_01_preview.models import (
     UserAssignedIdentity as RestUserAssignedIdentity,
-    Identity as RestIdentityConfiguration
+    Identity as RestIdentityConfiguration,
 )
 
+from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration as RestJobIdentityConfiguration
 
-class AccountKeyConfiguration(RestTranslatableMixin, ABC):
+from azure.ai.ml.exceptions import ErrorTarget, ErrorCategory, JobException, ValidationErrorType, ValidationException
+
+from azure.ai.ml._restclient.v2022_05_01.models import (
+    ManagedServiceIdentity as RestManagedServiceIdentityConfiguration,
+    UserAssignedIdentity as RestUserAssignedIdentityConfiguration,
+)
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedServiceIdentity as RestRegistryManagedIdentity
+
+
+class _BaseIdentityConfiguration(ABC, DictMixin, RestTranslatableMixin):
+    def __init__(self):
+        self.type = None
+
+
+class AccountKeyConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
-            self,
-            *,
-            account_key: str,
+        self,
+        *,
+        account_key: str,
     ):
         self.type = camel_to_snake(CredentialsType.ACCOUNT_KEY)
         self.account_key = account_key
 
-    def _to_rest_object(self) -> RestAccountKeyDatastoreCredentials:
+    def _to_datastore_rest_object(self) -> RestAccountKeyDatastoreCredentials:
         secrets = RestAccountKeyDatastoreSecrets(key=self.account_key)
         return RestAccountKeyDatastoreCredentials(secrets=secrets)
 
     @classmethod
-    def _from_rest_object(cls, obj: RestAccountKeyDatastoreCredentials) -> "AccountKeyConfiguration":
+    def _from_datastore_rest_object(cls, obj: RestAccountKeyDatastoreCredentials) -> "AccountKeyConfiguration":
         return cls(account_key=obj.secrets.key if obj.secrets else None)
 
     def __eq__(self, other: object) -> bool:
@@ -70,17 +87,17 @@ class AccountKeyConfiguration(RestTranslatableMixin, ABC):
         return not self.__eq__(other)
 
 
-class SasTokenConfiguration(RestTranslatableMixin, ABC):
+class SasTokenConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
-            self,
-            *,
-            sas_token: str,
+        self,
+        *,
+        sas_token: str,
     ):
         super().__init__()
         self.type = camel_to_snake(CredentialsType.SAS)
         self.sas_token = sas_token
 
-    def _to_rest_datastore_object(self) -> RestSasDatastoreCredentials:
+    def _to_datastore_rest_object(self) -> RestSasDatastoreCredentials:
         secrets = RestSasDatastoreSecrets(sas_token=self.sas_token)
         return RestSasDatastoreCredentials(secrets=secrets)
 
@@ -93,8 +110,7 @@ class SasTokenConfiguration(RestTranslatableMixin, ABC):
 
     @classmethod
     def _from_workspace_connection_rest_object(
-        cls,
-        obj: RestWorkspaceConnectionSharedAccessSignature
+        cls, obj: RestWorkspaceConnectionSharedAccessSignature
     ) -> "SasTokenConfiguration":
         return cls(sas_token=obj.sas if obj.sas else None)
 
@@ -123,8 +139,9 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
         return RestWorkspaceConnectionPersonalAccessToken(pat=self.pat)
 
     @classmethod
-    def _from_workspace_connection_rest_object(cls, obj: RestWorkspaceConnectionPersonalAccessToken) \
-            -> "PatTokenConfiguration":
+    def _from_workspace_connection_rest_object(
+        cls, obj: RestWorkspaceConnectionPersonalAccessToken
+    ) -> "PatTokenConfiguration":
         return cls(pat=obj.pat if obj and obj.pat else None)
 
     def __eq__(self, other: object) -> bool:
@@ -133,7 +150,7 @@ class PatTokenConfiguration(RestTranslatableMixin, DictMixin):
         return self.pat == other.pat
 
 
-class UsernamePasswordConfiguration(RestTranslatableMixin, ABC):
+class UsernamePasswordConfiguration(RestTranslatableMixin, DictMixin):
     """Username Password Credentials.
 
     :param username: username
@@ -143,10 +160,10 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, ABC):
     """
 
     def __init__(
-            self,
-            *,
-            username: str,
-            password: str,
+        self,
+        *,
+        username: str,
+        password: str,
     ):
         super().__init__()
         self.type = camel_to_snake(ConnectionAuthType.USERNAME_PASSWORD)
@@ -157,8 +174,9 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, ABC):
         return RestWorkspaceConnectionUsernamePassword(username=self.username, password=self.password)
 
     @classmethod
-    def _from_workspace_connection_rest_object(cls, obj: RestWorkspaceConnectionUsernamePassword) \
-            -> "UsernamePasswordConfiguration":
+    def _from_workspace_connection_rest_object(
+        cls, obj: RestWorkspaceConnectionUsernamePassword
+    ) -> "UsernamePasswordConfiguration":
         return cls(
             username=obj.username if obj and obj.username else None,
             password=obj.password if obj and obj.password else None,
@@ -170,13 +188,13 @@ class UsernamePasswordConfiguration(RestTranslatableMixin, ABC):
         return self.username == other.username and self.password == other.password
 
 
-class BaseTenantCredentials(RestTranslatableMixin, ABC):
+class BaseTenantCredentials(RestTranslatableMixin, DictMixin, ABC):
     def __init__(
-            self,
-            authority_url: str = _get_active_directory_url_from_metadata(),
-            resource_url: str = None,
-            tenant_id: str = None,
-            client_id: str = None,
+        self,
+        authority_url: str = _get_active_directory_url_from_metadata(),
+        resource_url: str = None,
+        tenant_id: str = None,
+        client_id: str = None,
     ):
         super().__init__()
         self.authority_url = authority_url
@@ -187,10 +205,10 @@ class BaseTenantCredentials(RestTranslatableMixin, ABC):
 
 class ServicePrincipalConfiguration(BaseTenantCredentials):
     def __init__(
-            self,
-            *,
-            client_secret: str,
-            **kwargs,
+        self,
+        *,
+        client_secret: str,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.type = camel_to_snake(CredentialsType.SERVICE_PRINCIPAL)
@@ -207,8 +225,9 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
         )
 
     @classmethod
-    def _from_datastore_rest_object(cls, obj: RestServicePrincipalDatastoreCredentials) \
-            -> "ServicePrincipalConfiguration":
+    def _from_datastore_rest_object(
+        cls, obj: RestServicePrincipalDatastoreCredentials
+    ) -> "ServicePrincipalConfiguration":
         return cls(
             authority_url=obj.authority_url,
             resource_url=obj.resource_url,
@@ -225,8 +244,9 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
         )
 
     @classmethod
-    def _from_workspace_connection_rest_object(cls, obj: RestWorkspaceConnectionServicePrincipal) \
-            -> "ServicePrincipalConfiguration":
+    def _from_workspace_connection_rest_object(
+        cls, obj: RestWorkspaceConnectionServicePrincipal
+    ) -> "ServicePrincipalConfiguration":
         return cls(
             client_id=obj.client_id if obj.client_id else None,
             client_secret=obj.client_secret if obj.client_secret else None,
@@ -238,11 +258,11 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
         if not isinstance(other, ServicePrincipalConfiguration):
             return NotImplemented
         return (
-                self.authority_url == other.authority_url
-                and self.resource_url == other.resource_url
-                and self.tenant_id == other.tenant_id
-                and self.client_id == other.client_id
-                and self.client_secret == other.client_secret
+            self.authority_url == other.authority_url
+            and self.resource_url == other.resource_url
+            and self.tenant_id == other.tenant_id
+            and self.client_id == other.client_id
+            and self.client_secret == other.client_secret
         )
 
     def __ne__(self, other: object) -> bool:
@@ -251,19 +271,19 @@ class ServicePrincipalConfiguration(BaseTenantCredentials):
 
 class CertificateConfiguration(BaseTenantCredentials):
     def __init__(
-            self,
-            certificate: str = None,
-            thumbprint: str = None,
-            **kwargs,
+        self,
+        certificate: str = None,
+        thumbprint: str = None,
+        **kwargs,
     ):
         super().__init__(**kwargs)
         self.type = CredentialsType.CERTIFICATE
         self.certificate = certificate
         self.thumbprint = thumbprint
 
-    def _to_rest_object(self) -> CertificateDatastoreCredentials:
+    def _to_datastore_rest_object(self) -> RestCertificateDatastoreCredentials:
         secrets = CertificateDatastoreSecrets(certificate=self.certificate)
-        return CertificateDatastoreCredentials(
+        return RestCertificateDatastoreCredentials(
             authority_url=self.authority_url,
             resource_uri=self.resource_url,
             tenant_id=self.tenant_id,
@@ -273,7 +293,7 @@ class CertificateConfiguration(BaseTenantCredentials):
         )
 
     @classmethod
-    def _from_rest_object(cls, obj: CertificateDatastoreCredentials) -> "CertificateConfiguration":
+    def _from_datastore_rest_object(cls, obj: RestCertificateDatastoreCredentials) -> "CertificateConfiguration":
         return cls(
             authority_url=obj.authority_url,
             resource_url=obj.resource_uri,
@@ -287,19 +307,67 @@ class CertificateConfiguration(BaseTenantCredentials):
         if not isinstance(other, CertificateConfiguration):
             return NotImplemented
         return (
-                self.authority_url == other.authority_url
-                and self.resource_url == other.resource_url
-                and self.tenant_id == other.tenant_id
-                and self.client_id == other.client_id
-                and self.thumbprint == other.thumbprint
-                and self.certificate == other.certificate
+            self.authority_url == other.authority_url
+            and self.resource_url == other.resource_url
+            and self.tenant_id == other.tenant_id
+            and self.client_id == other.client_id
+            and self.thumbprint == other.thumbprint
+            and self.certificate == other.certificate
         )
 
     def __ne__(self, other: object) -> bool:
         return not self.__eq__(other)
 
 
-class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
+class _BaseJobIdentityConfiguration(ABC, RestTranslatableMixin, DictMixin, YamlTranslatableMixin):
+    def __init__(self):
+        self.type = None
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestJobIdentityConfiguration) -> "Identity":
+        mapping = {
+            IdentityConfigurationType.AML_TOKEN: AmlTokenConfiguration,
+            IdentityConfigurationType.MANAGED: ManagedIdentityConfiguration,
+            IdentityConfigurationType.USER_IDENTITY: UserIdentityConfiguration,
+        }
+
+        identity_class = mapping.get(obj.identity_type, None)
+        if identity_class:
+            # pylint: disable=protected-access
+            return identity_class._from_job_rest_object(obj)
+        msg = f"Unknown identity type: {obj.identity_type}"
+        raise JobException(
+            message=msg,
+            no_personal_data_message=msg,
+            target=ErrorTarget.IDENTITY,
+            error_category=ErrorCategory.SYSTEM_ERROR,
+        )
+
+    @classmethod
+    def _load(
+        cls,
+        data: Dict = None,
+    ) -> Union["ManagedIdentityConfiguration", "UserIdentityConfiguration", "AmlTokenConfiguration"]:
+        type_str = data.get(CommonYamlFields.TYPE)
+        if type_str == IdentityType.MANAGED_IDENTITY:
+            identity_cls = ManagedIdentityConfiguration
+        elif type_str == IdentityType.USER_IDENTITY:
+            identity_cls = UserIdentityConfiguration
+        elif type_str == IdentityType.AML_TOKEN:
+            identity_cls = AmlTokenConfiguration
+        else:
+            msg = f"Unsupported identity type: {type_str}."
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.IDENTITY,
+                error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
+            )
+        return identity_cls._load_from_dict(data)
+
+
+class ManagedIdentityConfiguration(_BaseIdentityConfiguration):
     """Managed Identity Credentials.
 
     :param client_id: client id, should be guid
@@ -309,24 +377,23 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
     """
 
     def __init__(
-            self,
-            *,
-            client_id: str = None,
-            resource_id: str = None,
-            object_id: str = None,
+        self, *, client_id: str = None, resource_id: str = None, object_id: str = None, principal_id: str = None
     ):
-        self.type = camel_to_snake(ConnectionAuthType.MANAGED_IDENTITY)
+        super().__init__()
+        self.type = IdentityType.MANAGED_IDENTITY
         self.client_id = client_id
         # TODO: Check if both client_id and resource_id are required
         self.resource_id = resource_id
         self.object_id = object_id
+        self.principal_id = principal_id
 
     def _to_workspace_connection_rest_object(self) -> RestWorkspaceConnectionManagedIdentity:
         return RestWorkspaceConnectionManagedIdentity(client_id=self.client_id, resource_id=self.resource_id)
 
     @classmethod
-    def _from_workspace_connection_rest_object(cls,
-            obj: RestWorkspaceConnectionManagedIdentity) -> "ManagedIdentityConfiguration":
+    def _from_workspace_connection_rest_object(
+        cls, obj: RestWorkspaceConnectionManagedIdentity
+    ) -> "ManagedIdentityConfiguration":
         return cls(
             client_id=obj.client_id if obj else None,
             resource_id=obj.resource_id if obj else None,
@@ -352,11 +419,41 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
         return RestUserAssignedIdentity()
 
     @classmethod
-    def _from_identity_configuration_rest_object(cls, rest_obj: RestUserAssignedIdentity,
-                                                 **kwargs) -> "ManagedIdentityConfiguration":
+    def _from_identity_configuration_rest_object(
+        cls, rest_obj: RestUserAssignedIdentity, **kwargs
+    ) -> "ManagedIdentityConfiguration":
         result = cls(resource_id=kwargs["resource_id"])
         result.__dict__.update(rest_obj.as_dict())
         return result
+
+    def _to_online_endpoint_rest_object(self) -> RestUserAssignedIdentityConfiguration:
+        return RestUserAssignedIdentityConfiguration()
+
+    def _to_workspace_rest_object(self) -> RestUserAssignedIdentityConfiguration:
+        return RestUserAssignedIdentityConfiguration(
+            principal_id=self.principal_id,
+            client_id=self.client_id,
+        )
+
+    @classmethod
+    def _from_workspace_rest_object(cls, obj: RestUserAssignedIdentityConfiguration) -> "ManagedIdentityConfiguration":
+        return cls(
+            principal_id=obj.principal_id,
+            client_id=obj.client_id,
+        )
+
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        from azure.ai.ml._schema.job.identity import ManagedIdentitySchema
+
+        return ManagedIdentitySchema().dump(self)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict) -> "ManagedIdentityConfiguration":
+        # pylint: disable=no-member
+        from azure.ai.ml._schema.job.identity import ManagedIdentitySchema
+
+        return ManagedIdentitySchema().load(data)
 
     def __eq__(self, other: object) -> bool:
         if not isinstance(other, ManagedIdentityConfiguration):
@@ -364,11 +461,12 @@ class ManagedIdentityConfiguration(RestTranslatableMixin, DictMixin):
         return self.client_id == other.client_id and self.resource_id == other.resource_id
 
 
-class UserIdentityConfiguration(ABC, RestTranslatableMixin):
+class UserIdentityConfiguration(_BaseIdentityConfiguration):
     """User identity configuration."""
 
     def __init__(self):
-        self.type = camel_to_snake(IdentityConfigurationType.USER_IDENTITY)
+        super().__init__()
+        self.type = IdentityType.USER_IDENTITY
 
     # pylint: disable=no-self-use
     def _to_job_rest_object(self) -> RestUserIdentity:
@@ -379,16 +477,48 @@ class UserIdentityConfiguration(ABC, RestTranslatableMixin):
     def _from_job_rest_object(cls, obj: RestUserIdentity) -> "UserIdentity":
         return cls()
 
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        from azure.ai.ml._schema.job.identity import UserIdentitySchema
 
-class AmlTokenConfiguration(ABC, RestTranslatableMixin):
+        return UserIdentitySchema().dump(self)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict) -> "UserIdentityConfiguration":
+        # pylint: disable=no-member
+        from azure.ai.ml._schema.job.identity import UserIdentitySchema
+
+        return UserIdentitySchema().load(data)
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, UserIdentityConfiguration):
+            return NotImplemented
+        return self._to_job_rest_object() == other._to_job_rest_object()
+
+
+class AmlTokenConfiguration(_BaseIdentityConfiguration):
     """AML Token identity configuration."""
 
     def __init__(self):
-        self.type = camel_to_snake(IdentityConfigurationType.AML_TOKEN)
+        super().__init__()
+        self.type = IdentityType.AML_TOKEN
 
     # pylint: disable=no-self-use
     def _to_job_rest_object(self) -> RestAmlToken:
         return RestAmlToken()
+
+    def _to_dict(self) -> Dict:
+        # pylint: disable=no-member
+        from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
+
+        return AMLTokenIdentitySchema().dump(self)
+
+    @classmethod
+    def _load_from_dict(cls, data: Dict) -> "AMLTokenIdentitySchema":
+        # pylint: disable=no-member
+        from azure.ai.ml._schema.job.identity import AMLTokenIdentitySchema
+
+        return AMLTokenIdentitySchema().load(data)
 
     @classmethod
     # pylint: disable=unused-argument
@@ -396,11 +526,11 @@ class AmlTokenConfiguration(ABC, RestTranslatableMixin):
         return cls()
 
 
-# This class will be used to represent Identity property on compute and endpoint
+# This class will be used to represent Identity property on compute, endpoint, and registry
 class IdentityConfiguration(RestTranslatableMixin):
     """Managed identity specification."""
 
-    def __init__(self, *, type: str, user_assigned_identities: List[ManagedIdentityConfiguration] = None):
+    def __init__(self, *, type: str, user_assigned_identities: List[ManagedIdentityConfiguration] = None, **kwargs):
         """Managed identity specification.
 
         :param type: Managed identity type, defaults to None
@@ -411,8 +541,8 @@ class IdentityConfiguration(RestTranslatableMixin):
 
         self.type = type
         self.user_assigned_identities = user_assigned_identities
-        self.principal_id = None
-        self.tenant_id = None
+        self.principal_id = kwargs.pop("principal_id", None)
+        self.tenant_id = kwargs.pop("tenant_id", None)
 
     def _to_compute_rest_object(self) -> RestIdentityConfiguration:
         rest_user_assigned_identities = (
@@ -420,8 +550,9 @@ class IdentityConfiguration(RestTranslatableMixin):
             if self.user_assigned_identities
             else None
         )
-        return RestIdentityConfiguration(type=snake_to_pascal(self.type),
-                                         user_assigned_identities=rest_user_assigned_identities)
+        return RestIdentityConfiguration(
+            type=snake_to_pascal(self.type), user_assigned_identities=rest_user_assigned_identities
+        )
 
     @classmethod
     def _from_compute_rest_object(cls, obj: RestIdentityConfiguration) -> "IdentityConfiguration":
@@ -440,3 +571,104 @@ class IdentityConfiguration(RestTranslatableMixin):
         result.principal_id = obj.principal_id
         result.tenant_id = obj.tenant_id
         return result
+
+    def _to_online_endpoint_rest_object(self) -> RestManagedServiceIdentityConfiguration:
+        rest_user_assigned_identities = (
+            {uai.resource_id: uai._to_online_endpoint_rest_object() for uai in self.user_assigned_identities}
+            if self.user_assigned_identities
+            else None
+        )
+
+        return RestManagedServiceIdentityConfiguration(
+            type=snake_to_pascal(self.type),
+            principal_id=self.principal_id,
+            tenant_id=self.tenant_id,
+            user_assigned_identities=rest_user_assigned_identities,
+        )
+
+    @classmethod
+    def _from_online_endpoint_rest_object(cls, obj: RestManagedServiceIdentityConfiguration) -> "IdentityConfiguration":
+        from_rest_user_assigned_identities = (
+            [
+                ManagedIdentityConfiguration._from_identity_configuration_rest_object(uai, resource_id=resource_id)
+                for (resource_id, uai) in obj.user_assigned_identities.items()
+            ]
+            if obj.user_assigned_identities
+            else None
+        )
+        result = cls(
+            type=camel_to_snake(obj.type),
+            user_assigned_identities=from_rest_user_assigned_identities,
+        )
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
+        return result
+
+    @classmethod
+    def _from_workspace_rest_object(cls, obj: RestManagedServiceIdentityConfiguration) -> "IdentityConfiguration":
+        from_rest_user_assigned_identities = (
+            [
+                ManagedIdentityConfiguration._from_identity_configuration_rest_object(uai, resource_id=resource_id)
+                for (resource_id, uai) in obj.user_assigned_identities.items()
+            ]
+            if obj.user_assigned_identities
+            else None
+        )
+        result = cls(
+            type=camel_to_snake(obj.type),
+            user_assigned_identities=from_rest_user_assigned_identities,
+        )
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
+        return result
+
+    def _to_workspace_rest_object(self) -> RestManagedServiceIdentityConfiguration:
+        rest_user_assigned_identities = (
+            {uai.resource_id: uai._to_workspace_rest_object() for uai in self.user_assigned_identities}
+            if self.user_assigned_identities
+            else None
+        )
+        return RestManagedServiceIdentityConfiguration(
+            type=snake_to_pascal(self.type), user_assigned_identities=rest_user_assigned_identities
+        )
+
+    def _to_rest_object(self) -> RestRegistryManagedIdentity:
+        return RestRegistryManagedIdentity(
+            type=self.type,
+            principal_id=self.principal_id,
+            tenant_id=self.tenant_id,
+        )
+
+    @classmethod
+    def _from_rest_object(cls, obj: RestRegistryManagedIdentity) -> "IdentityConfiguration":
+        result = cls(
+            type=obj.type,
+            user_assigned_identities=None,
+        )
+        result.principal_id = obj.principal_id
+        result.tenant_id = obj.tenant_id
+        return result
+
+
+class NoneCredentialConfiguration(RestTranslatableMixin):
+    """None Credential Configuration."""
+
+    def __init__(self):
+        self.type = CredentialsType.NONE
+
+    # pylint: disable=no-self-use
+    def _to_datastore_rest_object(self) -> RestNoneDatastoreCredentials:
+        return RestNoneDatastoreCredentials()
+
+    @classmethod
+    # pylint: disable=unused-argument
+    def _from_datastore_rest_object(cls, obj: RestNoneDatastoreCredentials) -> "NoneCredentialConfiguration":
+        return cls()
+
+    def __eq__(self, other: object) -> bool:
+        if isinstance(other, NoneCredentialConfiguration):
+            return True
+        return False
+
+    def __ne__(self, other: object) -> bool:
+        return not self.__eq__(other)

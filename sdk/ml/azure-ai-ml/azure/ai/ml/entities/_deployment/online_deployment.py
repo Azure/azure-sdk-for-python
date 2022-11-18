@@ -40,7 +40,13 @@ from azure.ai.ml.entities._deployment.scale_settings import (
 )
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import (
+    DeploymentException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment
@@ -93,6 +99,7 @@ class OnlineDeployment(Deployment):
     def __init__(
         self,
         name: str,
+        *,
         endpoint_name: str = None,
         tags: Dict[str, Any] = None,
         properties: Dict[str, Any] = None,
@@ -233,6 +240,7 @@ class OnlineDeployment(Deployment):
                     target=ErrorTarget.ONLINE_DEPLOYMENT,
                     no_personal_data_message=msg.format("[name1]", "[name2]"),
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             super()._merge_with(other)
             self.app_insights_enabled = other.app_insights_enabled or self.app_insights_enabled
@@ -516,7 +524,7 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :type scoring_script: Union[str, PathLike], optional
     :param egress_public_network_access: Whether to restrict communication between a deployment
         and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
-    :param egress_public_network_access: str
+    :type egress_public_network_access: str
     """
 
     def __init__(
@@ -705,4 +713,5 @@ class ManagedOnlineDeployment(OnlineDeployment):
                     target=ErrorTarget.ONLINE_DEPLOYMENT,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )

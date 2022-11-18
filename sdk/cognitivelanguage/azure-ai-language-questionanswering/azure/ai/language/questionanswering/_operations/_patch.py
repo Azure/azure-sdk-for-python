@@ -6,7 +6,7 @@
 
 Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python/customize
 """
-from typing import Any, List, overload, Optional, Union, Tuple
+from typing import Any, List, overload, Optional, Union, Tuple, cast, MutableMapping
 import copy
 from azure.core.tracing.decorator import distributed_trace
 
@@ -21,6 +21,7 @@ from ..models import (
     ShortAnswerOptions,
     TextDocument,
 )
+JSON = MutableMapping[str, Any]
 
 
 def _validate_text_records(records):
@@ -113,21 +114,24 @@ def _get_answers_prepare_options(*args: AnswersOptions, **kwargs: Any) -> Tuple[
 def _get_answers_from_text_prepare_options(
     *args: AnswersFromTextOptions, **kwargs: Any
 ) -> Tuple[AnswersFromTextOptions, Any]:
+    default_language = kwargs.pop("language", None)
     options = _get_positional_body(*args, **kwargs) or AnswersFromTextOptions(
         question=kwargs.pop("question"),
         text_documents=kwargs.pop("text_documents"),
-        language=kwargs.pop("language"),
+        language=default_language,
     )
     try:
+        options = cast(JSON, options)
         options["records"] = _validate_text_records(options["records"])
+        options["language"] = options.get("language", None) or default_language  # pylint: disable=no-member
     except TypeError:
         options.text_documents = _validate_text_records(options.text_documents)
-    kwargs.pop("language", None)
+        options.language = options.language or default_language
     return options, kwargs
 
 
 class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMixinGenerated):
-    @overload
+    @overload  # type: ignore # https://github.com/Azure/azure-sdk-for-python/issues/26621
     def get_answers(
         self, options: AnswersOptions, *, project_name: str, deployment_name: str, **kwargs: Any
     ) -> AnswersResult:
@@ -159,7 +163,7 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
 
         :param options: Positional only. POST body of the request. Provide either `options`, OR
          individual keyword arguments. If both are provided, only the options object will be used.
-        :type options: ~azure.ai.language.questionanswering.AnswersOptions
+        :type options: ~azure.ai.language.questionanswering.models.AnswersOptions
         :keyword project_name: The name of the knowledge base project to use.
         :paramtype project_name: str
         :keyword deployment_name: The name of the specific deployment of the project to use.
@@ -176,25 +180,34 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :keyword confidence_threshold: Minimum threshold score for answers, value ranges from 0 to 1.
         :paramtype confidence_threshold: float
         :keyword answer_context: Context object with previous QnA's information.
-        :paramtype answer_context: ~azure.ai.language.questionanswering.KnowledgeBaseAnswerContext
+        :paramtype answer_context: ~azure.ai.language.questionanswering.models.KnowledgeBaseAnswerContext
         :keyword ranker_kind: Type of ranker to be used. Possible
          values include: "Default", "QuestionOnly".
         :paramtype ranker_kind: str
         :keyword filters: Filter QnAs based on given metadata list and knowledge base sources.
-        :paramtype filters: ~azure.ai.language.questionanswering.QueryFilters
+        :paramtype filters: ~azure.ai.language.questionanswering.models.QueryFilters
         :keyword short_answer_options: To configure Answer span prediction feature.
-        :paramtype short_answer_options: ~azure.ai.language.questionanswering.ShortAnswerOptions
+        :paramtype short_answer_options: ~azure.ai.language.questionanswering.models.ShortAnswerOptions
         :keyword include_unstructured_sources: (Optional) Flag to enable Query over Unstructured
          Sources.
         :paramtype include_unstructured_sources: bool
         :return: AnswersResult
-        :rtype: ~azure.ai.language.questionanswering.AnswersResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.ai.language.questionanswering.models.AnswersResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_knowledgebase.py
+                :start-after: [START query_knowledgebase]
+                :end-before: [END query_knowledgebase]
+                :language: python
+                :dedent: 4
+                :caption: Answer the specified question using your knowledge base.
         """
         options, kwargs = _get_answers_prepare_options(*args, **kwargs)
         return super().get_answers(options, **kwargs)
 
-    @overload
+    @overload  # type: ignore
     def get_answers_from_text(self, options: AnswersFromTextOptions, **kwargs: Any) -> AnswersFromTextResult:
         pass
 
@@ -226,10 +239,19 @@ class QuestionAnsweringClientOperationsMixin(QuestionAnsweringClientOperationsMi
         :paramtype language: str
         :return: AnswersFromTextResult
         :rtype: ~azure.ai.language.questionanswering.models.AnswersFromTextResult
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/sample_query_text.py
+                :start-after: [START query_text]
+                :end-before: [END query_text]
+                :language: python
+                :dedent: 4
+                :caption: Answers the specified question using the provided text.
         """
         options, kwargs = _get_answers_from_text_prepare_options(
-            *args, language=kwargs.pop("language", self._default_language), **kwargs
+            *args, language=kwargs.pop("language", self._default_language), **kwargs  # type: ignore
         )
         return super().get_answers_from_text(options, **kwargs)
 

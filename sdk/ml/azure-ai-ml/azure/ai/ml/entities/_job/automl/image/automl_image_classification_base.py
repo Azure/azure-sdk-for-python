@@ -6,8 +6,7 @@
 
 from typing import Dict, List, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
-    ImageModelSettingsClassification,
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     LearningRateScheduler,
     StochasticOptimizer,
 )
@@ -15,6 +14,7 @@ from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._job.automl.image.automl_image import AutoMLImage
 from azure.ai.ml.entities._job.automl.image.image_classification_search_space import ImageClassificationSearchSpace
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
+from azure.ai.ml.entities._job.automl.image.image_model_settings import ImageModelSettingsClassification
 from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
 from azure.ai.ml.entities._job.automl.search_space import SearchSpace
 from azure.ai.ml.entities._job.automl.utils import cast_to_specific_search_space

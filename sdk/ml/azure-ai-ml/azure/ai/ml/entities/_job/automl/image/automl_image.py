@@ -5,13 +5,17 @@
 from abc import ABC
 from typing import Dict, Union
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import LogVerbosity, SamplingAlgorithmType
+from azure.ai.ml._restclient.v2022_10_01_preview.models import LogVerbosity, SamplingAlgorithmType
 from azure.ai.ml._utils.utils import camel_to_snake
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_vertical import AutoMLVertical
 from azure.ai.ml.entities._job.automl.image.image_limit_settings import ImageLimitSettings
 from azure.ai.ml.entities._job.automl.image.image_sweep_settings import ImageSweepSettings
-from azure.ai.ml.entities._job.sweep.early_termination_policy import EarlyTerminationPolicy
+from azure.ai.ml.entities._job.sweep.early_termination_policy import (
+    BanditPolicy,
+    MedianStoppingPolicy,
+    TruncationSelectionPolicy,
+)
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
@@ -120,16 +124,23 @@ class AutoMLImage(AutoMLVertical, ABC):
     def set_sweep(
         self,
         *,
-        sampling_algorithm: Union[str, SamplingAlgorithmType],
-        early_termination: EarlyTerminationPolicy = None,
+        sampling_algorithm: Union[
+            str, SamplingAlgorithmType.RANDOM, SamplingAlgorithmType.GRID, SamplingAlgorithmType.BAYESIAN
+        ],
+        early_termination: Union[BanditPolicy, MedianStoppingPolicy, TruncationSelectionPolicy] = None,
     ) -> None:
         """Sweep settings for all AutoML Image Verticals.
 
         :param sampling_algorithm: Required. [Required] Type of the hyperparameter sampling
          algorithms. Possible values include: "Grid", "Random", "Bayesian".
-        :type sampling_algorithm: str or ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType
+        :type sampling_algorithm: Union[str, ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.RANDOM,
+        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.GRID,
+        ~azure.mgmt.machinelearningservices.models.SamplingAlgorithmType.BAYESIAN]
         :param early_termination: Type of early termination policy.
-        :type early_termination: ~azure.mgmt.machinelearningservices.models.EarlyTerminationPolicy
+        :type early_termination: Union[
+        ~azure.mgmt.machinelearningservices.models.BanditPolicy,
+        ~azure.mgmt.machinelearningservices.models.MedianStoppingPolicy,
+        ~azure.mgmt.machinelearningservices.models.TruncationSelectionPolicy]
         """
         if self._sweep:
             self._sweep.sampling_algorithm = sampling_algorithm

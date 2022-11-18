@@ -4,7 +4,7 @@
 
 from typing import Optional
 
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     SparkResourceConfiguration as RestSparkResourceConfiguration,
 )
 from azure.ai.ml.entities._mixins import DictMixin, RestTranslatableMixin
@@ -17,7 +17,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
         "standard_e8s_v3",
         "standard_e16s_v3",
         "standard_e32s_v3",
-        "standard_e64s_v3"
+        "standard_e64s_v3",
     ]
 
     def __init__(self, *, instance_type: str = None, runtime_version: str = None):
@@ -62,7 +62,7 @@ class SparkResourceConfiguration(RestTranslatableMixin, DictMixin):
                     error_category=ErrorCategory.USER_ERROR,
                 )
         elif isinstance(self.runtime_version, str):
-            runtime_arr = self.runtime_version.split('.')
+            runtime_arr = self.runtime_version.split(".")
             try:
                 for runtime in runtime_arr:
                     int(runtime)

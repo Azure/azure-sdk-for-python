@@ -10,20 +10,20 @@
         "azure_arm": true,
         "has_lro_operations": true,
         "client_side_validation": false,
-        "sync_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"ARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ResourceManagementClientConfiguration\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}",
-        "async_imports": "{\"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"], \"azure.core.credentials\": [\"TokenCredential\"]}}, \"regular\": {\"azurecore\": {\"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"], \"azure.mgmt.core\": [\"AsyncARMPipelineClient\"]}, \"local\": {\"._configuration\": [\"ResourceManagementClientConfiguration\"]}, \"thirdparty\": {\"msrest\": [\"Deserializer\", \"Serializer\"]}}, \"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}}"
+        "sync_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"ARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"ResourceManagementClientConfiguration\"], \".._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials\": [\"TokenCredential\"]}}}",
+        "async_imports": "{\"conditional\": {\"stdlib\": {\"typing\": [\"Any\", \"Optional\"]}}, \"regular\": {\"azurecore\": {\"azure.mgmt.core\": [\"AsyncARMPipelineClient\"], \"azure.profiles\": [\"KnownProfiles\", \"ProfileDefinition\"], \"azure.profiles.multiapiclient\": [\"MultiApiClientMixin\"]}, \"local\": {\"._configuration\": [\"ResourceManagementClientConfiguration\"], \"..._serialization\": [\"Deserializer\", \"Serializer\"]}}, \"typing\": {\"azurecore\": {\"azure.core.credentials_async\": [\"AsyncTokenCredential\"]}}}"
     },
     "global_parameters": {
         "sync": {
             "credential": {
-                "signature": "credential,  # type: \"TokenCredential\"",
-                "description": "Credential needed for the client to connect to Azure.",
+                "signature": "credential: \"TokenCredential\",",
+                "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials.TokenCredential",
                 "required": true
             },
             "subscription_id": {
-                "signature": "subscription_id,  # type: str",
-                "description": "The ID of the target subscription.",
+                "signature": "subscription_id: str,",
+                "description": "The ID of the target subscription. Required.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -31,13 +31,13 @@
         "async": {
             "credential": {
                 "signature": "credential: \"AsyncTokenCredential\",",
-                "description": "Credential needed for the client to connect to Azure.",
+                "description": "Credential needed for the client to connect to Azure. Required.",
                 "docstring_type": "~azure.core.credentials_async.AsyncTokenCredential",
                 "required": true
             },
             "subscription_id": {
                 "signature": "subscription_id: str,",
-                "description": "The ID of the target subscription.",
+                "description": "The ID of the target subscription. Required.",
                 "docstring_type": "str",
                 "required": true
             }
@@ -54,7 +54,7 @@
                     "required": false
                 },
                 "base_url": {
-                    "signature": "base_url=\"https://management.azure.com\",  # type: str",
+                    "signature": "base_url: str = \"https://management.azure.com\",",
                     "description": "Service URL",
                     "docstring_type": "str",
                     "required": false

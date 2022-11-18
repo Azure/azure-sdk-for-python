@@ -44,7 +44,7 @@ from ._local_deployment_helper import _LocalDeploymentHelper
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class OnlineDeploymentOperations(_ScopeDependentOperations):
@@ -127,6 +127,8 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
                 )
             if (
                 not skip_script_validation
+                and deployment
+                and deployment.code_configuration
                 and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
                 and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
             ):
@@ -213,7 +215,7 @@ class OnlineDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "OnlineDeployment.Delete", ActivityType.PUBLICAPI)
-    def delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
+    def begin_delete(self, name: str, endpoint_name: str, *, local: Optional[bool] = False) -> LROPoller[None]:
         """Delete a deployment.
 
         :param name: The name of the deployment

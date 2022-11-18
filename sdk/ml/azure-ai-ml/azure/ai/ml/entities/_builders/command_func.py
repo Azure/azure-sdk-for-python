@@ -13,7 +13,12 @@ from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.distribution import MpiDistribution, PyTorchDistribution, TensorFlowDistribution
-from azure.ai.ml.entities._job.identity import AmlToken, ManagedIdentity, UserIdentity
+from azure.ai.ml.entities._credentials import (
+    AmlTokenConfiguration,
+    ManagedIdentityConfiguration,
+    UserIdentityConfiguration,
+)
+from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
@@ -117,9 +122,9 @@ def command(
     shm_size: str = None,
     timeout: int = None,
     code: Union[str, os.PathLike] = None,
-    identity: Union[ManagedIdentity, AmlToken, UserIdentity] = None,
+    identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
     is_deterministic: bool = True,
-    services: dict = None,
+    services: Dict[str, JobService] = None,
     **kwargs,
 ) -> Command:
     """Create a Command object which can be used inside dsl.pipeline as a
@@ -171,15 +176,18 @@ def command(
     :param code: the code folder to run -- typically a local folder that will be uploaded as the job is submitted
     :type code: Union[str, os.PathLike]
     :param identity: Identity that training job will use while running on compute.
-    :type identity: Union[azure.ai.ml.ManagedIdentity, azure.ai.ml.AmlToken]
+    :type identity: Union[
+        azure.ai.ml.ManagedIdentityConfiguration,
+        azure.ai.ml.AmlTokenConfiguration]
     :param is_deterministic: Specify whether the command will return same output given same input.
         If a command (component) is deterministic, when use it as a node/step in a pipeline,
         it will reuse results from a previous submitted job in current workspace which has same inputs and settings.
         In this case, this step will not use any compute resource.
         Default to be True, specify is_deterministic=False if you would like to avoid such reuse behavior.
     :type is_deterministic: bool
-    :param services: Interactive services for the node.
-    :type services: dict
+    :param services: Interactive services for the node. This is an experimental parameter, and may change at any time.
+        Please see https://aka.ms/azuremlexperimental for more information.
+    :type services: Dict[str, JobService]
     """
     # pylint: disable=too-many-locals
     inputs = inputs or {}
@@ -190,7 +198,6 @@ def command(
     component_outputs, job_outputs = _parse_inputs_outputs(outputs, parse_func=_parse_output)
 
     component = kwargs.pop("component", None)
-
     if component is None:
         component = CommandComponent(
             name=name,

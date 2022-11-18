@@ -19,7 +19,6 @@ USAGE:
 import asyncio
 import os
 
-
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 

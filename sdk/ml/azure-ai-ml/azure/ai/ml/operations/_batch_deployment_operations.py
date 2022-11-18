@@ -4,10 +4,9 @@
 
 # pylint: disable=protected-access
 
-from typing import Dict, List
+from typing import Dict
 import re
 
-from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._scope_dependent_operations import (
     OperationConfig,
@@ -23,7 +22,7 @@ from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
-from azure.ai.ml.entities import BatchDeployment
+from azure.ai.ml.entities import BatchDeployment, BatchJob
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
 from azure.core.polling import LROPoller
@@ -32,7 +31,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._operation_orchestrator import OperationOrchestrator
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.logger, ops_logger.module_logger
+logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
 
 
 class BatchDeploymentOperations(_ScopeDependentOperations):
@@ -75,12 +74,12 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param deployment: The deployment entity.
         :type deployment: ~azure.ai.ml.entities.BatchDeployment
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot be
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be
             successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchDeployment assets
             (e.g. Data, Code, Model, Environment) cannot be successfully validated.
             Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if BatchDeployment model
             cannot be successfully validated. Details will be provided in the error message.
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchDeployment]
@@ -89,6 +88,8 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         if (
             not skip_script_validation
+            and deployment
+            and deployment.code_configuration
             and not deployment.code_configuration.code.startswith(ARM_ID_PREFIX)
             and not re.match(AMLVersionedArmId.REGEX_PATTERN, deployment.code_configuration.code)
         ):
@@ -133,7 +134,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
-        :return: a deployment entity
+        :return: A deployment entity
         :rtype: ~azure.ai.ml.entities.BatchDeployment
         """
 
@@ -202,7 +203,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
     @distributed_trace
     @monitor_with_activity(logger, "BatchDeployment.ListJobs", ActivityType.PUBLICAPI)
-    def list_jobs(self, endpoint_name: str, *, name: str = None) -> List[BatchJobResource]:
+    def list_jobs(self, endpoint_name: str, *, name: str = None) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
 
@@ -212,7 +213,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs
-        :rtype: List[BatchJobResource]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]

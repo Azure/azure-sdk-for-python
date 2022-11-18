@@ -13,7 +13,7 @@ from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationSc
 from azure.ai.ml.constants._common import AZUREML_RESOURCE_PROVIDER, NAMED_RESOURCE_ID_FORMAT, AzureMLResourceType
 from azure.ai.ml.entities._job.base_job import _BaseJob
 from azure.ai.ml.entities._job.job import Job
-from azure.ai.ml.entities.job_errors import JobParsingError
+from azure.ai.ml.exceptions import JobParsingError
 
 module_logger = logging.getLogger(__name__)
 

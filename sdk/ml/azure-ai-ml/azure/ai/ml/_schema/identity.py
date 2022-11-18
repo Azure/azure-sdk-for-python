@@ -6,7 +6,7 @@
 
 from marshmallow import ValidationError, fields, post_load, pre_dump, validates
 
-from azure.ai.ml._restclient.v2022_05_01.models import ManagedServiceIdentity
+from azure.ai.ml.entities._credentials import IdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._schema.core.fields import StringTransformedEnum
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta
 from azure.ai.ml._utils.utils import camel_to_snake
@@ -35,7 +35,17 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
 
     @post_load
     def make(self, data, **kwargs):
-        return ManagedServiceIdentity(**data)
+        user_assigned_identities_list = []
+        user_assigned_identities = data.pop("user_assigned_identities", None)
+        if user_assigned_identities:
+            for identity in user_assigned_identities:
+                user_assigned_identities_list.append(ManagedIdentityConfiguration(
+                    resource_id=identity.get("resource_id", None),
+                    client_id=identity.get("client_id", None),
+                    object_id=identity.get("object_id", None)
+                ))
+            data["user_assigned_identities"] = user_assigned_identities_list
+        return IdentityConfiguration(**data)
 
     @pre_dump
     def predump(self, data, **kwargs):
@@ -43,9 +53,9 @@ class IdentitySchema(metaclass=PatchedSchemaMeta):
             ids = []
             for _id in data.user_assigned_identities:
                 item = {}
-                item["resource_id"] = _id
-                item["principal_id"] = data.user_assigned_identities[_id].principal_id
-                item["client_id"] = data.user_assigned_identities[_id].client_id
+                item["resource_id"] = _id.resource_id
+                item["principal_id"] = _id.principal_id
+                item["client_id"] = _id.client_id
                 ids.append(item)
             data.user_assigned_identities = ids
         return data

@@ -112,21 +112,26 @@ class LocalPathField(fields.Str):
         return super(LocalPathField, self)._serialize(value, attr, obj, **kwargs)
 
     def _validate(self, value):
+        base_path_err_msg = ""
         try:
             path = Path(value)
             base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             if not path.is_absolute():
                 path = base_path / path
                 path.resolve()
+                base_path_err_msg = f" Resolved absolute path: {path.absolute()}"
             if (self._allow_dir and path.is_dir()) or (self._allow_file and path.is_file()):
                 return super(LocalPathField, self)._validate(value)
         except OSError:
             pass
         if self._allow_dir and self._allow_file:
-            raise ValidationError(f"{value} is not a valid path")
-        if self._allow_dir:
-            raise ValidationError(f"{value} is not a valid directory")
-        raise ValidationError(f"{value} is not a valid file")
+            allow_type = "directory or file"
+        elif self._allow_dir:
+            allow_type = "directory"
+        else:
+            allow_type = "file"
+        raise ValidationError(f"Value {value!r} passed is not a valid "
+                              f"{allow_type} path.{base_path_err_msg}")
 
 
 class SerializeValidatedUrl(fields.Url):
@@ -652,6 +657,28 @@ def DistributionField(**kwargs):
     )
 
 
+def PrimitiveValueField(**kwargs):
+    return UnionField(
+        [
+            # Note: order matters here - to make sure value parsed correctly.
+            # By default when strict is false, marshmallow downcasts float to int.
+            # Setting it to true will throw a validation error when loading a float to int.
+            # https://github.com/marshmallow-code/marshmallow/pull/755
+            # Use DumpableIntegerField to make sure there will be validation error when
+            # loading/dumping a float to int.
+            # note that this field can serialize bool instance but cannot deserialize bool instance.
+            DumpableIntegerField(strict=True),
+            # Use DumpableFloatField with strict of True to avoid '1'(str) serialized to 1.0(float)
+            DumpableFloatField(strict=True),
+            # put string schema after Int and Float to make sure they won't dump to string
+            fields.Str(),
+            # fields.Bool comes last since it'll parse anything non-falsy to True
+            fields.Bool(),
+        ],
+        **kwargs,
+    )
+
+
 class VersionField(Field):
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
@@ -675,15 +702,23 @@ class VersionField(Field):
 class DumpableIntegerField(fields.Integer):
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
         if self.strict and not isinstance(value, int):
-            raise ValidationError("Given value is not an integer")
+            # this implementation can serialize bool to bool
+            raise self.make_error("invalid", input=value)
         return super()._serialize(value, attr, obj, **kwargs)
 
 
 class DumpableFloatField(fields.Float):
+    def __init__(self, *, strict: bool = False, allow_nan: bool = False, as_string: bool = False, **kwargs):
+        self.strict = strict
+        super().__init__(allow_nan=allow_nan, as_string=as_string, **kwargs)
+
+    def _validated(self, value):
+        if self.strict and not isinstance(value, float):
+            raise self.make_error("invalid", input=value)
+        return super()._validated(value)
+
     def _serialize(self, value, attr, obj, **kwargs) -> typing.Optional[typing.Union[str, _T]]:
-        if not isinstance(value, float):
-            raise ValidationError("Given value is not a float")
-        return super()._serialize(value, attr, obj, **kwargs)
+        return super()._serialize(self._validated(value), attr, obj, **kwargs)
 
 
 class DumpableStringField(fields.String):

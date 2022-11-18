@@ -1,4 +1,8 @@
+import os
+import shutil
+import sys
 from io import StringIO
+from pathlib import Path
 from unittest.mock import patch
 
 import pydash
@@ -7,7 +11,9 @@ from test_utilities.utils import verify_entity_load_and_dump
 
 from azure.ai.ml import Input, MpiDistribution, Output, TensorFlowDistribution, command, load_component
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.entities import CommandComponent, CommandJobLimits, Component, JobResourceConfiguration
+from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.entities import CommandComponent, CommandJobLimits, JobResourceConfiguration
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._builders import Command, Sweep
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
@@ -18,6 +24,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestCommandComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
@@ -47,7 +54,6 @@ class TestCommandComponentEntity:
         assert command_component._other_parameter.get("mock_option_param") == yaml_dict["mock_option_param"]
 
         yaml_dict["version"] = str(yaml_dict["version"])
-        yaml_dict["inputs"] = {}
         component_dict = command_component._to_dict()
         component_dict.pop("is_deterministic")
         assert yaml_dict == component_dict
@@ -181,20 +187,38 @@ class TestCommandComponentEntity:
         yaml_component = load_component(source=yaml_path)
         assert component.code == yaml_component.code
 
+    def test_command_component_code_with_current_folder(self):
+        old_cwd = os.getcwd()
+        os.chdir("./tests/test_configs/components")
+        try:
+            yaml_path = "./basic_component_code_current_folder.yml"
+            component = load_component(yaml_path)
+            with component._resolve_local_code() as code:
+                Path(code.path).resolve().name == "components"
+        finally:
+            os.chdir(old_cwd)
+
+    def test_command_component_code_git_path(self):
+        from azure.ai.ml.operations._component_operations import _try_resolve_code_for_component
+
+        yaml_path = "./tests/test_configs/components/component_git_path.yml"
+        yaml_dict = load_yaml(yaml_path)
+        component = load_component(yaml_path)
+
+        def mock_get_arm_id_and_fill_back(asset: Code, azureml_type: str) -> None:
+            assert isinstance(asset, Code)
+            assert azureml_type == AzureMLResourceType.CODE
+            assert asset.path == yaml_dict["code"]
+
+        _try_resolve_code_for_component(component, mock_get_arm_id_and_fill_back)
+
+    @pytest.mark.skipif(
+        sys.version_info[1] == 11,
+        reason=f"This test is not compatible with Python 3.11, skip in CI.",
+    )
     def test_command_component_version_as_a_function(self):
         expected_rest_component = {
             "componentId": "fake_component",
-            "computeId": None,
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
-            "inputs": {},
-            "properties": {},
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
             "type": "command",
             "_source": "YAML.COMPONENT",
         }
@@ -223,20 +247,10 @@ class TestCommandComponentEntity:
     def test_command_component_version_as_a_function_with_inputs(self):
         expected_rest_component = {
             "componentId": "fake_component",
-            "computeId": None,
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "10"},
                 "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": None,
-            "tags": {},
-            "properties": {},
             "type": "command",
             "_source": "YAML.COMPONENT",
         }
@@ -362,14 +376,14 @@ class TestCommandComponentEntity:
                 {"inputs": {"component_in_number": {"description": "1", "type": "number"}}},
             ],
         )
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert validation_result.passed
 
         # user can still overwrite input name to illegal
         component.inputs["COMPONENT_IN_NUMBER"] = Input(description="1", type="number")
-        validation_result = component._customized_validate()
+        validation_result = component._validate()
         assert not validation_result.passed
-        assert validation_result.invalid_fields[0] == "inputs.COMPONENT_IN_NUMBER"
+        assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
     def test_primitive_output(self):
         expected_rest_component = {
@@ -377,7 +391,6 @@ class TestCommandComponentEntity:
             "description": "This is the basic command component",
             "display_name": "CommandComponentBasic",
             "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
-            "inputs": {},
             "is_deterministic": True,
             "name": "sample_command_component_basic",
             "outputs": {
@@ -422,3 +435,26 @@ class TestCommandComponentEntity:
             component2._to_rest_object().as_dict()["properties"]["component_spec"], *omits
         )
         assert actual_component_dict2 == expected_rest_component
+
+    def test_component_code_asset_ignoring_pycache(self) -> None:
+        component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
+        component = load_component(component_yaml)
+        # create some files/folders expected to ignore
+        pycache = Path("./tests/test_configs/components/helloworld_components_with_env/__pycache__")
+        try:
+            if not pycache.is_dir():
+                pycache.mkdir()
+            expected_exclude = pycache / "a.pyc"
+            expected_exclude.touch()
+            # resolve and test for ignore_file's is_file_excluded
+            with component._resolve_local_code() as code:
+                excluded = []
+                for root, _, files in os.walk(code.path):
+                    for name in files:
+                        path = os.path.join(root, name)
+                        if code._ignore_file.is_file_excluded(path):
+                            excluded.append(path)
+                assert excluded == [str(expected_exclude.absolute())]
+        finally:
+            if pycache.is_dir():
+                shutil.rmtree(pycache)

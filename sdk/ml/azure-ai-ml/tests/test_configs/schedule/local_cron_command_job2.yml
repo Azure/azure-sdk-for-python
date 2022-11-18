@@ -1,0 +1,21 @@
+$schema:  http://azureml/sdk-2-0/Schedule.json
+name: local_command_cron2
+display_name: weekly retrain schedule
+description: a weekly retrain schedule
+
+trigger:
+  type: cron
+  expression: "15 10 * * 1"
+  start_time: "2022-03-10T10:15:00" # optional - default will be start immediately
+
+create_job:
+  job: ../command_job/command_job_test.yml
+  limits:
+    timeout: 3000
+  resources:
+    shm_size: 1g
+  environment_variables:
+    key: val
+  distribution:
+    type: pytorch
+    process_count_per_instance: 1

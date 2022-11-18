@@ -5,7 +5,6 @@ import hashlib
 import json
 import os
 import shutil
-from collections import OrderedDict
 from typing import Any, Dict, List, Optional, Union
 from unittest import mock
 
@@ -13,7 +12,7 @@ import msrest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml._restclient.v2022_02_01_preview.models import JobInputType as JobInputType02
-from azure.ai.ml._restclient.v2022_06_01_preview.models import JobInputType as JobInputType06
+from azure.ai.ml._restclient.v2022_10_01_preview.models import JobInputType as JobInputType10
 from azure.ai.ml._schema._datastore import (
     AzureBlobSchema,
     AzureDataLakeGen1Schema,
@@ -165,7 +164,7 @@ def decorate_validation_error(schema: Any, pretty_error: str, additional_message
 
 def get_md5_string(text):
     try:
-        return hashlib.md5(text.encode("utf8")).hexdigest() # nosec
+        return hashlib.md5(text.encode("utf8")).hexdigest()  # nosec
     except Exception as ex:
         raise ex
 
@@ -191,21 +190,34 @@ def validate_attribute_type(attrs_to_check: dict, attr_type_map: dict):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
+def is_empty_target(obj):
+    """Determines if it's empty target"""
+    return (obj is None
+            # some objs have overloaded "==" and will cause error. e.g CommandComponent obj
+            or (isinstance(obj, dict) and len(obj) == 0)
+        )
 
-def convert_ordered_dict_to_dict(target_object: Union[Dict, List]) -> Union[Dict, List]:
-    """Convert ordered dict to dict.
+def convert_ordered_dict_to_dict(target_object: Union[Dict, List], remove_empty=True) -> Union[Dict, List]:
+    """Convert ordered dict to dict. Remove keys with None value.
 
     This is a workaround for rest request must be in dict instead of
     ordered dict.
     """
     # OrderedDict can appear nested in a list
     if isinstance(target_object, list):
-        target_object = [convert_ordered_dict_to_dict(obj) for obj in target_object]
+        new_list = []
+        for item in target_object:
+            item = convert_ordered_dict_to_dict(item)
+            if not is_empty_target(item) or not remove_empty:
+                new_list.append(item)
+        return new_list
     if isinstance(target_object, dict):
-        for key, dict_candidate in target_object.items():
-            target_object[key] = convert_ordered_dict_to_dict(dict_candidate)
-    if isinstance(target_object, OrderedDict):
-        return dict(**target_object)
+        new_dict = {}
+        for key, value in target_object.items():
+            value = convert_ordered_dict_to_dict(value)
+            if not is_empty_target(value) or not remove_empty:
+                new_dict[key] = value
+        return new_dict
     return target_object
 
 
@@ -227,6 +239,7 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.
     """
+    # pylint: disable=too-many-return-statements
     if target_obj is None:
         return None
     if isinstance(target_obj, dict):
@@ -247,6 +260,9 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
         # note that the rest object may be invalid as data binding expression may not fit
         # rest object structure
         # pylint: disable=protected-access
+        from azure.ai.ml.entities._credentials import _BaseIdentityConfiguration
+        if isinstance(target_obj, _BaseIdentityConfiguration):
+            return get_rest_dict_for_node_attrs(target_obj._to_job_rest_object(), clear_empty_value=clear_empty_value)
         return get_rest_dict_for_node_attrs(target_obj._to_rest_object(), clear_empty_value=clear_empty_value)
 
     if isinstance(target_obj, msrest.serialization.Model):
@@ -355,19 +371,19 @@ def resolve_pipeline_parameter(data):
 
 def normalize_job_input_output_type(input_output_value):
     """
-    We have change api to v2022_06_01_preview version and there are some api interface changes, which will result in
-    pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block az ml job list/show.
-    So we convert the input/output type of camel to snake to be compatible with the Jun api.
+    We have changed the api starting v2022_06_01_preview version and there are some api interface changes, which will
+    result in pipeline submitted by v2022_02_01_preview can't be parsed correctly. And this will block
+    az ml job list/show. So we convert the input/output type of camel to snake to be compatible with the Jun/Oct api.
     """
 
     FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING = {
-        JobInputType02.CUSTOM_MODEL: JobInputType06.CUSTOM_MODEL,
-        JobInputType02.LITERAL: JobInputType06.LITERAL,
-        JobInputType02.ML_FLOW_MODEL: JobInputType06.MLFLOW_MODEL,
-        JobInputType02.ML_TABLE: JobInputType06.MLTABLE,
-        JobInputType02.TRITON_MODEL: JobInputType06.TRITON_MODEL,
-        JobInputType02.URI_FILE: JobInputType06.URI_FILE,
-        JobInputType02.URI_FOLDER: JobInputType06.URI_FOLDER,
+        JobInputType02.CUSTOM_MODEL: JobInputType10.CUSTOM_MODEL,
+        JobInputType02.LITERAL: JobInputType10.LITERAL,
+        JobInputType02.ML_FLOW_MODEL: JobInputType10.MLFLOW_MODEL,
+        JobInputType02.ML_TABLE: JobInputType10.MLTABLE,
+        JobInputType02.TRITON_MODEL: JobInputType10.TRITON_MODEL,
+        JobInputType02.URI_FILE: JobInputType10.URI_FILE,
+        JobInputType02.URI_FOLDER: JobInputType10.URI_FOLDER,
     }
     if (
         hasattr(input_output_value, "job_input_type")

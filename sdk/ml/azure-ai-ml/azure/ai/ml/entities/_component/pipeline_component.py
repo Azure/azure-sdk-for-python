@@ -21,7 +21,7 @@ from azure.ai.ml.constants._common import COMPONENT_TYPE
 from azure.ai.ml.constants._component import ComponentSource, NodeType
 from azure.ai.ml.constants._job.pipeline import ValidationErrorCode
 from azure.ai.ml.entities._builders import BaseNode, Command
-from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
+from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode, LoopNode
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Input, Output
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -30,7 +30,7 @@ from azure.ai.ml.entities._job.pipeline._attr_dict import (
     try_get_non_arbitrary_attr_for_potential_attr_dict,
 )
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
-from azure.ai.ml.entities._validation import ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -118,7 +118,7 @@ class PipelineComponent(Component):
                 )
         return jobs
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         """Validate pipeline component structure."""
         validation_result = super(PipelineComponent, self)._customized_validate()
 
@@ -224,7 +224,7 @@ class PipelineComponent(Component):
                             optional_binding_in_expression_dict[pipeline_input_name].append(pipeline_input_name)
         return binding_dict, optional_binding_in_expression_dict
 
-    def _validate_binding_inputs(self, node: BaseNode) -> ValidationResult:
+    def _validate_binding_inputs(self, node: BaseNode) -> MutableValidationResult:
         """Validate pipeline binding inputs and return all used pipeline input
         names.
 
@@ -232,7 +232,13 @@ class PipelineComponent(Component):
         not set. Raise error if pipeline input is optional but link to
         required inputs.
         """
-        component_definition_inputs = node.component.inputs
+        component_definition_inputs = {}
+        # Add flattened group input into definition inputs.
+        # e.g. Add {'group_name.item': PipelineInput} for {'group_name': GroupInput}
+        for name, val in node.component.inputs.items():
+            if isinstance(val, GroupInput):
+                component_definition_inputs.update(val.flatten(group_parameter_name=name))
+            component_definition_inputs[name] = val
         # Collect binding relation dict {'pipeline_input': ['node_input']}
         validation_result = self._create_empty_validation_result()
         binding_dict, optional_binding_in_expression_dict = self._get_input_binding_dict(node)
@@ -318,10 +324,25 @@ class PipelineComponent(Component):
         )
 
     @classmethod
+    def _resolve_sub_nodes(cls, rest_jobs):
+        sub_nodes = {}
+        if rest_jobs is None:
+            return sub_nodes
+        for node_name, node in rest_jobs.items():
+            if LoopNode._is_loop_node_dict(node):
+                sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
+            else:
+                # use node factory instead of BaseNode._from_rest_object here as AutoMLJob is not a BaseNode
+                from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+                sub_nodes[node_name] = pipeline_node_factory.load_from_rest_object(obj=node)
+        return sub_nodes
+
+    @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         return PipelineComponentSchema(context=context)
 
-    def _get_skip_fields_in_schema_validation(self) -> typing.List[str]:
+    @classmethod
+    def _get_skip_fields_in_schema_validation(cls) -> typing.List[str]:
         # jobs validations are done in _customized_validate()
         return ["jobs"]
 
@@ -351,6 +372,20 @@ class PipelineComponent(Component):
             }
         )
         return telemetry_values
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
+        # Pop jobs to avoid it goes with schema load
+        jobs = obj.properties.component_spec.pop("jobs", None)
+        init_params_dict = super()._from_rest_object_to_init_params(obj)
+        if jobs:
+            try:
+                init_params_dict["jobs"] = PipelineComponent._resolve_sub_nodes(jobs)
+            except Exception as e:  # pylint: disable=broad-except
+                # Skip parse jobs if error exists.
+                # TODO: https://msdata.visualstudio.com/Vienna/_workitems/edit/2052262
+                module_logger.debug("Parse pipeline component jobs failed with: %s", e)
+        return init_params_dict
 
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""

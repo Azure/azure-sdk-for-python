@@ -33,6 +33,7 @@ from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces a
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
+from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._registry_utils import RegistryDiscovery
 from azure.ai.ml._utils.utils import _is_https_url, _validate_missing_sub_or_rg_and_raise
@@ -156,6 +157,14 @@ class MLClient(object):
 
         if credential is None:
             raise ValueError("credential can not be None")
+
+        if registry_name and workspace_name:
+            raise ValidationException(
+            message="Both workspace_name and registry_name cannot be used together, for the ml_client.",
+            no_personal_data_message="Both workspace_name and registry_name are used for ml_client.",
+            target=ErrorTarget.GENERAL,
+            error_category=ErrorCategory.USER_ERROR,
+        )
         if not registry_name:
             _validate_missing_sub_or_rg_and_raise(subscription_id, resource_group_name)
         self._credential = credential
@@ -198,7 +207,6 @@ class MLClient(object):
         kwargs.pop("base_url", None)
         _add_user_agent(kwargs)
 
-        user_agent = None
         properties = {
             "subscription_id": subscription_id,
             "resource_group_name": resource_group_name,
@@ -207,8 +215,11 @@ class MLClient(object):
             properties.update({"workspace_name": workspace_name})
         if registry_name:
             properties.update({"registry_name": registry_name})
+
+        user_agent = None
         if "user_agent" in kwargs:
             user_agent = kwargs.get("user_agent")
+
         app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
         app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
 
@@ -226,7 +237,7 @@ class MLClient(object):
             **kwargs,
         )
 
-        self._rp_service_client = ServiceClient052022(
+        self._rp_service_client = ServiceClient102022Preview(
             subscription_id=self._operation_scope._subscription_id,
             credential=self._credential,
             base_url=base_url,
@@ -320,7 +331,7 @@ class MLClient(object):
         self._compute = ComputeOperations(
             self._operation_scope,
             self._operation_config,
-            self._rp_service_client_2022_01_01_preview,
+            self._service_client_10_2022_preview,
             **app_insights_handler_kwargs,
         )
         self._operation_container.add(AzureMLResourceType.COMPUTE, self._compute)
@@ -420,7 +431,7 @@ class MLClient(object):
         self._jobs = JobOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_06_2022_preview,
+            self._service_client_10_2022_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
@@ -504,7 +515,7 @@ class MLClient(object):
                     path=path,
                     file_name=curr_file,
                     directory_name=curr_dir,
-                    num_levels=5,
+                    num_levels=20,
                 )
                 if found_path:
                     break
@@ -553,6 +564,7 @@ class MLClient(object):
         return self._workspaces
 
     @property
+    @experimental
     def registries(self) -> RegistryOperations:
         """A collection of registry-related operations.
 
