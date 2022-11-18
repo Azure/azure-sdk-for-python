@@ -29,7 +29,7 @@ python: true
 title: WebPubSubServiceClient
 version-tolerant: true
 head-as-boolean: true
-package-version: 1.0.1b1
+package-version: 1.1.0b1
 add-credential: true
 credential-scopes: https://webpubsub.azure.com/.default
 package-mode: dataplane
