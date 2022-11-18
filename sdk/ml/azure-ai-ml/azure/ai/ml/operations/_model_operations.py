@@ -66,7 +66,7 @@ class ModelOperations(_ScopeDependentOperations):
     attaches it as an attribute.
     """
 
-    # pylint disable=unused-argument
+    # pylint: disable=unused-argument
     def __init__(
         self,
         operation_scope: OperationScope,

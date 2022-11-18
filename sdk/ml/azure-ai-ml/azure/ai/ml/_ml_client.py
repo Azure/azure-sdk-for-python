@@ -222,6 +222,7 @@ class MLClient(object):
 
         # app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
         # app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
+        app_insights_handler_kwargs = {}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url

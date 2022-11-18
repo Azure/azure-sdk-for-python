@@ -147,7 +147,7 @@ class RegistryOperations:
         return poller
 
 
-    @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Registry.BeginDelete", ActivityType.PUBLICAPI)
     @experimental
     def begin_delete(self, *, name: str, **kwargs: Dict) -> LROPoller[None]:
         """Delete a registry if it exists. Returns nothing on a successful operation.
