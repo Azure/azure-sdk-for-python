@@ -12,6 +12,8 @@ from azure.ai.ml.entities._component.component import Component
 class JobDefinition:
     """Job Definition entity
 
+    :param name: Job name
+    :type name: str
     :param job: Job definition
     :type job: Union[Component, str]
     :param component: Component definition
@@ -20,8 +22,6 @@ class JobDefinition:
     :type type: str
     :param settings: Job settings
     :type settings: Dict[str, Any]
-    :param name: Job name
-    :type name: str
     :param description: Job description
     :type description: str
     :param tags: Job tags
@@ -30,20 +30,20 @@ class JobDefinition:
 
     def __init__(
         self,
+        name: str = None,
         job: Union[Component, str] = None,
         component : Union[Component, str] = None,
         type: str = None, # pylint: disable=redefined-builtin
         settings: Dict[str, Any] = None,
-        name: str = None,
         description: str = None,
         tags: Dict[str, Any] = None,
         **kwargs, # pylint: disable=unused-argument
     ):
+        self.name = name
         self.job = job
         self.component = component
         self.type = type
         self.settings = settings
-        self.name = name
         self.tags = tags
         self.description = description
 
