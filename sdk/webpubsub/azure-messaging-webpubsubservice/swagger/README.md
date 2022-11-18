@@ -27,7 +27,6 @@ package-name: azure-messaging-webpubsubservice
 license-header: MICROSOFT_MIT_NO_VERSION
 python: true
 title: WebPubSubServiceClient
-version-tolerant: true
 head-as-boolean: true
 package-version: 1.1.0b1
 add-credential: true
