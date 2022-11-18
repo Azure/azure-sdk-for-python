@@ -24,7 +24,6 @@
 #
 # --------------------------------------------------------------------------
 import sys
-import io
 from typing import (
     Any, Optional, AsyncIterator as AsyncIteratorType, TYPE_CHECKING, overload
 )
