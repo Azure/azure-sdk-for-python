@@ -352,7 +352,15 @@ class ClientBaseAsync(ClientBase):
             except asyncio.CancelledError:  # pylint: disable=try-except-raise
                 raise
             except Exception as exception:  # pylint:disable=broad-except
-                last_exception = await self._amqp_transport._handle_exception_async(exception, self)  # pylint: disable=protected-access
+                # is_consumer=True passed in here, ALTHOUGH this method is shared by the producer and consumer.
+                # is_consumer will only be checked if FileNotFoundError is raised by self.mgmt_client.open() due to
+                # invalid/non-existent connection_verify filepath. The producer will encounter the FileNotFoundError
+                # when opening the SendClient, so is_consumer=True will not be passed to amqp_transport.handle_exception
+                # there. This is for uamqp exception parity, which raises FileNotFoundError in the consumer and
+                # EventHubError in the producer. TODO: Remove `is_consumer` kwarg when resolving issue #27128.
+                last_exception = await self._amqp_transport._handle_exception_async(  # pylint: disable=protected-access
+                    exception, self, is_consumer=True
+                )
                 await self._backoff_async(
                     retried_times=retried_times, last_exception=last_exception
                 )
@@ -474,11 +482,11 @@ class ConsumerProducerMixin(_MIXIN_BASE):
         await self._close_handler_async()
         await self._client._conn_manager_async.reset_connection_if_broken()  # pylint:disable=protected-access
 
-    async def _handle_exception(self, exception: Exception) -> Exception:
+    async def _handle_exception(self, exception: Exception, *, is_consumer: bool = False) -> Exception:
         # pylint: disable=protected-access
         exception = self._client._amqp_transport.check_timeout_exception(self, exception)
         return await self._client._amqp_transport._handle_exception_async(
-            exception, self
+            exception, self, is_consumer=is_consumer
         )
 
     async def _do_retryable_operation(

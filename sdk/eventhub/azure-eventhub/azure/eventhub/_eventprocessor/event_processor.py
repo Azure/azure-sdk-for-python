@@ -348,6 +348,8 @@ class EventProcessor(
                 error,
             )
             self._process_error(self._partition_contexts[partition_id], error)
+            # TODO: close consumer if non-retryable. issue #27137
+            # Does OWNERSHIP_LOST make sense for all errors?
             self._close_consumer(partition_id, consumer, CloseReason.OWNERSHIP_LOST)
 
     def start(self):

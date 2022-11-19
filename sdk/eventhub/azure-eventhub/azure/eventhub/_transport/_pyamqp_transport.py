@@ -33,6 +33,7 @@ from ..exceptions import (
     AuthenticationError,
     ConnectionLostError,
     EventDataSendError,
+    OperationTimeoutError
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -59,6 +60,8 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
     USER_AGENT_SYMBOL = "user-agent"
     PROP_PARTITION_KEY_AMQP_SYMBOL = PROP_PARTITION_KEY
 
+    ERROR_CONDITIONS = [condition.value for condition in errors.ErrorCondition]
+
     @staticmethod
     def build_message(**kwargs):
         """
@@ -83,7 +86,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :rtype: pyamqp.Message
         """
         message_header = None
-        if annotated_message.header and any(annotated_message.header.values()):
+        header_vals = annotated_message.header.values() if annotated_message.header else None
+        # If header and non-None header values, create outgoing header.
+        if annotated_message.header and header_vals.count(None) != len(header_vals):
             message_header = Header(
                 delivery_count=annotated_message.header.delivery_count,
                 ttl=annotated_message.header.time_to_live,
@@ -93,7 +98,9 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             )
 
         message_properties = None
-        if annotated_message.properties and any(annotated_message.properties.values()):
+        properties_vals = annotated_message.properties.values() if annotated_message.properties else None
+        # If properties and non-None properties values, create outgoing properties.
+        if annotated_message.properties and properties_vals.count(None) != len(properties_vals):
             message_properties = Properties(
                 message_id=annotated_message.properties.message_id,
                 user_id=annotated_message.properties.user_id,
@@ -266,22 +273,18 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         :param logger: Logger.
         """
         # pylint: disable=protected-access
-        producer._open()
-        timeout = timeout_time - time.time() if timeout_time else 0
-        producer._handler.send_message(producer._unsent_events[0], timeout=timeout)
-        # The unsent_events list will always be <= 1. Even for a batch, it gets the underlying singular BatchMessage.
-        # May want to refactor in the future so that this isn't a list.
-        producer._unsent_events = None
-        # TODO: figure out if we want to use below, and see if it affects error story
-        # try:
-        #    producer._open()
-        #    producer._handler.send_message(
-        #        producer._unsent_events[0], timeout=timeout_time
-        #    )
-        # except TimeoutError as exc:
-        #    raise OperationTimeoutError(message=str(exc), details=exc)
-        # except Exception as exc:
-        #    raise producer._handle_exception(exc)
+        try:
+            producer._open()
+            timeout = timeout_time - time.time() if timeout_time else 0
+            producer._handler.send_message(
+                producer._unsent_events[0], timeout=timeout
+            )
+            # TODO: The unsent_events list will always be <= 1. Even for a batch,
+            # it gets the underlying singular BatchMessage.
+            # May want to refactor in the future so that this isn't a list.
+            producer._unsent_events = None
+        except TimeoutError as exc:
+            raise OperationTimeoutError(message=str(exc), details=exc)
 
     @staticmethod
     def set_message_partition_key(message, partition_key, **kwargs):
@@ -528,12 +531,17 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         return exception
 
     @staticmethod
-    def _create_eventhub_exception(exception):
+    def _create_eventhub_exception(exception, *, is_consumer=False):
         if isinstance(exception, errors.AuthenticationException):
             error = AuthenticationError(str(exception), exception)
         elif isinstance(exception, errors.AMQPLinkError):
-            error = ConnectError(str(exception), exception)
-        # TODO: do we need MessageHanlderError in amqp any more
+            # For uamqp exception parity, raising ConnectionLostError for LinkDetaches.
+            # Else, vendor error condition that starts with "com.", so raise ConnectError.
+            if exception.condition in PyamqpTransport.ERROR_CONDITIONS:
+                error = ConnectionLostError(str(exception), exception)
+            else:
+                error = ConnectError(str(exception), exception)
+        # TODO: do we need MessageHandlerError in amqp any more
         #  if connection/session/link error are enough?
         # elif isinstance(exception, errors.MessageHandlerError):
         #     error = ConnectionLostError(str(exception), exception)
@@ -542,12 +550,21 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
         elif isinstance(exception, TimeoutError):
             error = ConnectionLostError(str(exception), exception)
         else:
-            error = EventHubError(str(exception), exception)
+            if (
+                isinstance(exception, FileNotFoundError)
+                and is_consumer
+                and exception.filename
+                and "ca_certs" in exception.filename
+            ):
+
+                error = exception
+            else:
+                error = EventHubError(str(exception), exception)
         return error
 
     @staticmethod
     def _handle_exception(
-        exception, closable
+        exception, closable, *, is_consumer=False
     ):  # pylint:disable=too-many-branches, too-many-statements
         try:  # closable is a producer/consumer object
             name = closable._name  # pylint: disable=protected-access
@@ -596,4 +613,4 @@ class PyamqpTransport(AmqpTransport):   # pylint: disable=too-many-public-method
             else:  # errors.AMQPConnectionError, compat.TimeoutException
                 if hasattr(closable, "_close_connection"):
                     closable._close_connection()  # pylint:disable=protected-access
-            return PyamqpTransport._create_eventhub_exception(exception)
+            return PyamqpTransport._create_eventhub_exception(exception, is_consumer=is_consumer)
