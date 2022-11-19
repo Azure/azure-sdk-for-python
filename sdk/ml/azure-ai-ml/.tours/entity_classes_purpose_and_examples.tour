@@ -34,7 +34,7 @@
     {
       "directory": "sdk/ml/azure-ai-ml/azure/ai/ml/operations",
       "description": "The API conversion steps are generally used by the files in the (repo)/sdk/ml/azure-ai-ml/azure/ai/ml/operations directory. The \\<resource\\>_operations files in this directory contain the actual logic to make and process requests from the Azure API.",
-      "title": "Related DIrectory: Operations"
+      "title": "Related Directory: Operations"
     },
     {
       "file": "sdk/ml/azure-ai-ml/azure/ai/ml/operations/_schedule_operations.py",
@@ -60,7 +60,7 @@
     },
     {
       "file": "sdk/ml/azure-ai-ml/azure/ai/ml/entities/_schedule/schedule.py",
-      "description": "Another important feature of entity classes is their ability to be loaded to and from YAML. This is largely achieved by a separete set of classes call schema classes, but some boilerplate is still needed in the corresponding entity classes to achieve this, namely the `_load` and `dump` functions. Though these functions are mostly boilerplate, but you should still be aware of them. They sometimes contain custom logic to help convert between an entity class and its corresponding schema class if they differ.",
+      "description": "Another important feature of entity classes is their ability to be loaded to and from YAML. This is largely achieved by a separate set of classes call schema classes, but some boilerplate is still needed in the corresponding entity classes to achieve this, namely the `_load` and `dump` functions. Though these functions are mostly boilerplate, but you should still be aware of them. They sometimes contain custom logic to help convert between an entity class and its corresponding schema class if they differ.",
       "line": 93,
       "title": "Common Functions: _load and dump"
     },
