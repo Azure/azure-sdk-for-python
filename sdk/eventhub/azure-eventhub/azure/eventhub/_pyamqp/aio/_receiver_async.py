@@ -54,8 +54,8 @@ class ReceiverLink(Link):
         await self._outgoing_flow()
 
     async def _incoming_transfer(self, frame):
-        if self.network_trace:
-            _LOGGER.debug("<- %r", TransferFrame(*frame), extra=self.network_trace_params)
+        # if self.network_trace:
+        #     _LOGGER.debug("<- %r", TransferFrame(*frame), extra=self.network_trace_params)
         self.current_link_credit -= 1
         self.delivery_count += 1
         self.received_delivery_id = frame[1]  # delivery_id
@@ -69,8 +69,8 @@ class ReceiverLink(Link):
                 self._received_payload = bytearray()
             else:
                 message = decode_payload(frame[11])
-                if self.network_trace:
-                    _LOGGER.debug("   %r", message, extra=self.network_trace_params)
+                # if self.network_trace:
+                #     _LOGGER.debug("   %r", message, extra=self.network_trace_params)
             delivery_state = await self._process_incoming_message(frame, message)
             if not frame[4] and delivery_state:  # settled
                 await self._outgoing_disposition(

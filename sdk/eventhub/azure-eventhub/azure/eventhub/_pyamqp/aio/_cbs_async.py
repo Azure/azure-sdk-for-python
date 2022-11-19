@@ -139,11 +139,11 @@ class CBSAuthenticator(object):  # pylint:disable=too-many-instance-attributes
 
     async def _update_status(self):
         if self.auth_state == CbsAuthState.OK or self.auth_state == CbsAuthState.REFRESH_REQUIRED:
-            _LOGGER.debug("update_status In refresh required or OK.")
+            # _LOGGER.debug("update_status In refresh required or OK.")
             is_expired, is_refresh_required = check_expiration_and_refresh_status(
                 self._expires_on, self._refresh_window
             )  # pylint:disable=line-too-long
-            _LOGGER.debug("is expired == %r, is refresh required == %r", is_expired, is_refresh_required)
+            # _LOGGER.debug("is expired == %r, is refresh required == %r", is_expired, is_refresh_required)
             if is_expired:
                 self.auth_state = CbsAuthState.EXPIRED
             elif is_refresh_required:

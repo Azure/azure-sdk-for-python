@@ -68,7 +68,7 @@ _LOGGER = logging.getLogger(__name__)
 
 class AsyncTransportMixin:
     async def receive_frame(self, timeout=None, **kwargs):
-        try:
+        # try:
             header, channel, payload = await asyncio.wait_for(
                 self.read(**kwargs), timeout=timeout
             )
@@ -76,15 +76,18 @@ class AsyncTransportMixin:
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
-            _LOGGER.info("ICH%d <- %r", channel, decoded)
+            # print(channel, decoded)
+            # _LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
-        except (
-            TimeoutError,
-            socket.timeout,
-            asyncio.IncompleteReadError,
-            asyncio.TimeoutError,
-        ):
-            return None, None
+        # except (
+        #     TimeoutError,
+        #     socket.timeout,
+        #     asyncio.IncompleteReadError,
+        #     asyncio.TimeoutError,
+        # ) as e :
+        #     print(e)
+        #     print("there was an error")
+        #     return None, None
 
     async def read(self, verify_frame_type=0):
         async with self.socket_lock:
@@ -98,10 +101,14 @@ class AsyncTransportMixin:
                 channel = struct.unpack(">H", frame_header[6:])[0]
                 size = frame_header[0:4]
                 if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation
+                    print("amqp header")
                     return frame_header, channel, None
                 size = struct.unpack(">I", size)[0]
                 offset = frame_header[4]
                 frame_type = frame_header[5]
+                # print(frame_type, offset)
+                # there was an error
+                # 6 11
                 if verify_frame_type is not None and frame_type != verify_frame_type:
                     _LOGGER.debug(
                         "Received invalid frame type: %r, expected: %r", frame_type, verify_frame_type

@@ -319,6 +319,7 @@ class AMQPClientAsync(AMQPClientSync):
         :raises: TimeoutError if CBS authentication timeout reached.
         """
         if self._shutdown:
+            print("shutdown set?")
             return False
         if not await self.client_ready_async():
             return True
@@ -768,6 +769,8 @@ class ReceiveClientAsync(ReceiveClientSync, AMQPClientAsync):
                     self.do_work_async(batch=to_receive_size),
                     timeout=timeout_time - now_time if timeout else None
                 )
+                if not receiving:
+                    print("false22")
             except asyncio.TimeoutError:
                 break
 

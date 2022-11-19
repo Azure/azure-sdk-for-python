@@ -320,8 +320,8 @@ class Session(object):  # pylint: disable=too-many-instance-attributes
         await self._connection._process_outgoing_frame(self.channel, frame)  # pylint: disable=protected-access
 
     async def _incoming_disposition(self, frame):
-        if self.network_trace:
-            _LOGGER.info("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
+        # if self.network_trace:
+        #     _LOGGER.info("<- %r", DispositionFrame(*frame), extra=self.network_trace_params)
         for link in self._input_handles.values():
             await link._incoming_disposition(frame)  # pylint: disable=protected-access
 

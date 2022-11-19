@@ -156,18 +156,29 @@ class _SendTest(BatchPerfTest):
         eventhub_name = self.get_from_env("AZURE_EVENTHUB_NAME")
 
         transport_type = TransportType.AmqpOverWebsocket if arguments.transport_type==1 else TransportType.Amqp
+        import logging
+        import sys
+        logger = logging.getLogger('azure')
+        logger.setLevel(logging.DEBUG)
+
+        # Direct logging output to stdout. Without adding a handler,
+        # no logging output is visible.
+        handler = logging.StreamHandler(stream=sys.stdout)
+        logger.addHandler(handler)
 
         self.producer = EventHubProducerClient.from_connection_string(
             connection_string,
             eventhub_name=eventhub_name,
             transport_type=transport_type,
-            uamqp_transport=arguments.uamqp_transport
+            uamqp_transport=arguments.uamqp_transport,
+            logging_enable=True
         )
         self.async_producer = AsyncEventHubProducerClient.from_connection_string(
             connection_string,
             eventhub_name=eventhub_name,
             transport_type=transport_type,
-            uamqp_transport=arguments.uamqp_transport
+            uamqp_transport=arguments.uamqp_transport,
+            logging_enable=True
         )
 
     async def setup(self):
