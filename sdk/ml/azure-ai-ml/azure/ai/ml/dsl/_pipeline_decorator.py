@@ -171,7 +171,8 @@ def pipeline(
                                        k not in non_pipeline_inputs}
                 pipeline_builder._update_inputs(pipeline_parameters)
 
-                non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
+                non_pipeline_params_dict = {k: v for k, v in provided_positional_kwargs.items()
+                                            if k in non_pipeline_inputs}
 
                 # TODO: cache built pipeline component
                 pipeline_component = pipeline_builder.build(
