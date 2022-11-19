@@ -106,6 +106,10 @@ class AsyncTransportMixin:
                     _LOGGER.debug(
                         "Received invalid frame type: %r, expected: %r", frame_type, verify_frame_type
                     )
+                    raise ValueError(
+                        f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
+                    )
+
                 # >I is an unsigned int, but the argument to sock.recv is signed,
                 # so we know the size can be at most 2 * SIGNED_INT_MAX
                 payload_size = size - len(frame_header)
