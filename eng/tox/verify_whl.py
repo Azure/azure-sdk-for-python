@@ -11,6 +11,7 @@ import logging
 import os
 import glob
 import shutil
+import pdb
 from tox_helper_tasks import (
     unzip_sdist_to_directory,
     move_and_rename,
@@ -36,13 +37,14 @@ def extract_whl(dist_dir, version):
     path_to_whl = glob.glob(os.path.join(dist_dir, "*{}*.whl".format(version)))[0]
 
     # Cleanup any existing stale files if any and rename whl file to tar.gz
-    zip_file = path_to_whl.replace(".whl", ".tar.gz")
+    zip_file = path_to_whl.replace(".whl", ".zip")
     cleanup(zip_file)
     os.rename(path_to_whl, zip_file)
 
     # Extrat renamed gz file to unzipped folder
     extract_location = os.path.join(dist_dir, "unzipped")
     cleanup(extract_location)
+
     unzip_file_to_directory(zip_file, extract_location)
     return extract_location
 

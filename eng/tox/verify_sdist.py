@@ -10,7 +10,7 @@ import argparse
 import logging
 import os
 import glob
-import shutil
+import pdb
 from unicodedata import name
 from xmlrpc.client import Boolean
 from tox_helper_tasks import (
@@ -42,6 +42,7 @@ def get_root_directories_in_sdist(dist_dir: str, version: str) -> List[str]:
     """
     # find sdist zip file
     # extract sdist and find list of directories in sdist
+
     path_to_zip = glob.glob(os.path.join(dist_dir, "*{}*.tar.gz".format(version)))[0]
     extract_location = os.path.join(dist_dir, "unzipped")
     # Cleanup any files in unzipped
