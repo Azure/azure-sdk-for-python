@@ -1,6 +1,7 @@
 import os
 from io import StringIO
 from pathlib import Path
+from typing import Dict
 from unittest import mock
 from unittest.mock import patch
 
@@ -1930,20 +1931,24 @@ class TestDSLPipeline:
         component_func1 = load_component(source=component_yaml, params_override=[{"name": "component_name_1"}])
         component_func2 = load_component(source=component_yaml, params_override=[{"name": "component_name_2"}])
 
-        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component"])
-        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component):
+        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component",
+                                           "param_with_annotation", "param_with_default"])
+        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component,
+                          param_with_annotation: Dict[str, str], param_with_default: int = 1):
+            assert param_with_default == 1
+            assert param_with_annotation == {"mock": "dict"}
             component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
             component_func2(component_in_number=other_params, component_in_path=job_in_path)
             if is_add_component:
                 component_func2(component_in_number=other_params, component_in_path=job_in_path)
 
-        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, False)
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, False, {"mock": "dict"})
         assert len(pipeline.jobs) == 2
         assert "other_params" not in pipeline.inputs
         assert isinstance(pipeline.jobs[component_func1.name].inputs["component_in_number"]._data, PipelineInput)
         assert pipeline.jobs[component_func2.name].inputs["component_in_number"]._data == 15
 
-        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True)
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True, {"mock": "dict"})
         assert len(pipeline.jobs) == 3
 
         @dsl.pipeline(non_pipeline_parameters=["other_params", "is_add_component"])

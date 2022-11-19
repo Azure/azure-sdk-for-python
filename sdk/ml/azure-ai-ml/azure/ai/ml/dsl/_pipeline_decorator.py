@@ -176,7 +176,8 @@ def pipeline(
                 # TODO: cache built pipeline component
                 pipeline_component = pipeline_builder.build(
                     user_provided_kwargs=provided_positional_kwargs,
-                    non_pipeline_params_dict=non_pipeline_params_dict
+                    non_pipeline_inputs_dict=non_pipeline_params_dict,
+                    non_pipeline_inputs=non_pipeline_inputs
                 )
             finally:
                 # use `finally` to ensure pop operation from the stack
