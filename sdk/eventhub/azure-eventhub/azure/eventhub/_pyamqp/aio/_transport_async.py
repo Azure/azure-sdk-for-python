@@ -555,6 +555,9 @@ class WebSocketTransportAsync(
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
             return view
+        except asyncio.CancelledError as ce:
+            await self.session.close()
+            raise ConnectionError('Websocket connection closed: %r' % ce) from ce
         except asyncio.TimeoutError as te:
             raise ConnectionError('Receive timed out (%s)' % te)
         except OSError as e:
@@ -576,6 +579,9 @@ class WebSocketTransportAsync(
         async with self.socket_lock:
             try:
                 await self.ws.send_bytes(s)
+            except asyncio.CancelledError as ce:
+                await self.session.close()
+                raise ConnectionError('Websocket connection closed: %r' % ce) from ce
             except asyncio.TimeoutError as te:
                 raise ConnectionError('Send timed out (%s)' % te)
             except OSError as e:
