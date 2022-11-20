@@ -357,11 +357,7 @@ def test_send_multiple_partitions_with_app_prop(connstr_receivers, uamqp_transpo
     app_prop_key = "raw_prop"
     app_prop_value = "raw_value"
     app_prop = {app_prop_key: app_prop_value}
-    client = EventHubProducerClient.from_connection_string(
-            connection_str,
-            uamqp_transport=uamqp_transport,
-            transport_type=TransportType.Amqp
-        )
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     with client:
         ed0 = EventData(b"Message 0")
         ed0.properties = app_prop
@@ -438,11 +434,7 @@ def test_send_with_create_event_batch_with_app_prop_sync(connstr_receivers, uamq
 def test_send_list(connstr_receivers, uamqp_transport, timeout_factor):
     connection_str, receivers = connstr_receivers
     timeout = 10 * timeout_factor
-    client = EventHubProducerClient.from_connection_string(
-        connection_str,
-        uamqp_transport=uamqp_transport,
-        transport_type=uamqp_TransportType.Amqp
-    )
+    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
     payload = "A1"
     with client:
         client.send_batch([EventData(payload)])

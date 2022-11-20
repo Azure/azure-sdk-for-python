@@ -19,7 +19,6 @@ from ..._transport._pyamqp_transport import PyamqpTransport
 from ...exceptions import (
     EventHubError,
     EventDataSendError,
-    OperationTimeoutError
 )
 from ..._common import EventData
 
@@ -106,13 +105,10 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
         :param logger: Logger.
         """
         # pylint: disable=protected-access
-        try:
-            await producer._open()
-            timeout = timeout_time - time.time() if timeout_time else 0
-            await producer._handler.send_message_async(producer._unsent_events[0], timeout=timeout)
-            producer._unsent_events = None
-        except TimeoutError as exc:
-            raise OperationTimeoutError(message=str(exc), details=exc)
+        await producer._open()
+        timeout = timeout_time - time.time() if timeout_time else 0
+        await producer._handler.send_message_async(producer._unsent_events[0], timeout=timeout)
+        producer._unsent_events = None
 
     @staticmethod
     def create_receive_client(*, config, **kwargs):  # pylint:disable=unused-argument
@@ -315,7 +311,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def _handle_exception_async(  # pylint:disable=too-many-branches, too-many-statements
-        exception: Exception, closable: Union["ClientBaseAsync", "ConsumerProducerMixin"], *, is_consumer=False
+        exception: Exception, closable: Union["ClientBaseAsync", "ConsumerProducerMixin"]
     ) -> Exception:
         # pylint: disable=protected-access
         if isinstance(exception, asyncio.CancelledError):
@@ -365,7 +361,7 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
                 #         closable._close_handler()  # pylint:disable=protected-access
                 else:  # errors.AMQPConnectionError, compat.TimeoutException
                     await closable._close_connection_async()  # pylint:disable=protected-access
-                return PyamqpTransportAsync._create_eventhub_exception(exception, is_consumer=is_consumer)
+                return PyamqpTransportAsync._create_eventhub_exception(exception)
             except AttributeError:
                 pass
-            return PyamqpTransportAsync._create_eventhub_exception(exception, is_consumer=is_consumer)
+            return PyamqpTransportAsync._create_eventhub_exception(exception)

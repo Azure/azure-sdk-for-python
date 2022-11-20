@@ -511,15 +511,6 @@ if uamqp_installed:
             )
 
         @staticmethod
-        def open_mgmt_client(mgmt_client, conn):
-            """
-            Opens the mgmt AMQP client.
-            :param AMQPClient mgmt_client: uamqp AMQPClient.
-            :param conn: Connection.
-            """
-            mgmt_client.open(connection=conn)
-
-        @staticmethod
         def get_updated_token(mgmt_auth):
             """
             Return updated auth token.
@@ -613,7 +604,7 @@ if uamqp_installed:
 
         @staticmethod
         def _handle_exception(
-            exception, closable, *, is_consumer=False   # pylint:disable=unused-argument
+            exception, closable
         ):  # pylint:disable=too-many-branches, too-many-statements
             try:  # closable is a producer/consumer object
                 name = closable._name  # pylint: disable=protected-access
