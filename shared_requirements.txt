@@ -302,7 +302,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-core-tracing-opentelemetry opentelemetry-api<2.0.0,>=1.0.0
 #override azure-identity six>=1.12.0
 #override azure-mgmt-managedservices typing-extensions>=4.3.0; python_version<'3.8.0'
-#override azure-messaging-webpubsubservice azure-core<2.0.0,>=1.23.0
+#override azure-messaging-webpubsubservice azure-core<2.0.0,>=1.24.0
 #override azure-messaging-webpubsubservice pyjwt>=1.7.1
 #override azure-messaging-webpubsubservice six>=1.12.0
 #override azure-messaging-webpubsubservice cryptography>=2.8.0
@@ -707,6 +707,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-ai-anomalydetector typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-vmwarecloudsimple msrest>=0.7.1
 #override azure-developer-devcenter azure-core<2.0.0,>=1.24.0
+#override azure-messaging-webpubsubservice isodate<1.0.0,>=0.6.1
 
 # azure-ai-ml
 pyyaml<7.0.0,>=5.1.0
