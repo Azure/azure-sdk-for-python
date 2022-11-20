@@ -57,6 +57,7 @@ from .constants import (
     TransportType,
     AMQP_WS_SUBPROTOCOL,
 )
+from .error import AuthenticationException, ErrorCondition
 
 
 try:
@@ -551,7 +552,15 @@ class SSLTransport(_AbstractTransport):
         }
 
         # TODO: We need to refactor this.
-        sock = ssl.wrap_socket(**opts)  # pylint: disable=deprecated-method
+        try:
+            sock = ssl.wrap_socket(**opts)  # pylint: disable=deprecated-method
+        except FileNotFoundError as exc:
+            # FileNotFoundError does not have missing filename info, so adding it below.
+            # Assuming that this must be ca_certs, since this is the only file path that
+            # users can pass in (`connection_verify` in the EH/SB clients) through opts above.
+            # For uamqp exception parity. Remove later when resolving issue #27128.
+            exc.filename = {"ca_certs": ca_certs}
+            raise exc
         # Set SNI headers if supported
         if (
             (server_hostname is not None)
@@ -684,7 +693,12 @@ class WebSocketTransport(_AbstractTransport):
             if username or password:
                 http_proxy_auth = (username, password)
         try:
-            from websocket import create_connection
+            from websocket import (
+                create_connection,
+                WebSocketAddressException,
+                WebSocketTimeoutException,
+                WebSocketConnectionClosedException
+            )
 
             self.ws = create_connection(
                 url="wss://{}".format(self._custom_endpoint or self._host),
@@ -696,6 +710,25 @@ class WebSocketTransport(_AbstractTransport):
                 http_proxy_port=http_proxy_port,
                 http_proxy_auth=http_proxy_auth,
             )
+        except WebSocketAddressException as exc:
+            raise AuthenticationException(
+                ErrorCondition.ClientError,
+                description="Failed to authenticate the connection due to exception: " + str(exc),
+                error=exc,
+            )
+        # TODO: resolve pylance error when type: ignore is removed below, issue #22051
+        except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:    # type: ignore
+            self.close()
+            if isinstance(exc, WebSocketTimeoutException):
+                message = f'Send timed out ({str(exc)})'
+            elif isinstance(exc, SSLError):
+                message = f'Send disconnected by SSL ({str(exc)})'
+            else:
+                message = f'Send disconnected ({str(exc)})'
+            raise ConnectionError(message)
+        except (OSError, IOError, SSLError):
+            self.close()
+            raise
         except ImportError:
             raise ValueError(
                 "Please install websocket-client library to use websocket transport."
@@ -722,7 +755,12 @@ class WebSocketTransport(_AbstractTransport):
                     n = 0
             return view
         except WebSocketTimeoutException as wte:
-            raise ConnectionError('recv timed out (%s)' % wte)
+            raise ConnectionError('Receive timed out (%s)' % wte)
+
+    def close(self):
+        if self.ws:
+            self._shutdown_transport()
+            self.ws = None
 
     def _shutdown_transport(self):
         # TODO Sync and Async close functions named differently
@@ -739,9 +777,9 @@ class WebSocketTransport(_AbstractTransport):
         try:
             self.ws.send_binary(s)
         except WebSocketTimeoutException as e:
-            raise ConnectionError('send timed out (%s)' % e)
+            raise ConnectionError('Send timed out (%s)' % e)
         except SSLError as e:
-            raise ConnectionError('send disconnected by SSL (%s)' % e)
+            raise ConnectionError('Send disconnected by SSL (%s)' % e)
         except WebSocketConnectionClosedException as e:
-            raise ConnectionError('send disconnected (%s)' % e)
+            raise ConnectionError('Send disconnected (%s)' % e)
             
