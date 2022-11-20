@@ -191,7 +191,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             await self._outgoing_header()
             await self._set_state(ConnectionState.HDR_SENT)
             if not self._allow_pipelined_open:
-                await self._process_incoming_frame(*(await self._read_frame(wait=True)))
+                await self._read_frame(wait=True)
                 if self.state != ConnectionState.HDR_EXCH:
                     await self._disconnect()
                     raise ValueError(
@@ -223,8 +223,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Whether the connection is in a state where it is legal to read for incoming frames."""
         return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
 
-    async def _read_frame(self, wait=True, **kwargs):  # type: ignore # TODO: missing return
-        # type: (bool, Any) -> Tuple[int, Optional[Tuple[int, NamedTuple]]]
+    async def _read_frame(self, wait: Union[bool, int, float] = True, **kwargs) -> bool:
         """Read an incoming frame from the transport.
 
         :param Union[bool, float] wait: Whether to block on the socket while waiting for an incoming frame.
@@ -235,15 +234,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
          descriptor and field values.
         """
-        if self._can_read():
-            if wait is False:
-                timeout = 1  # TODO: What should this default be?
-            elif wait is True:
-                timeout = None
-            else:
-                timeout = wait
-            return await self._transport.receive_frame(timeout=timeout, **kwargs)
-        _LOGGER.warning("Cannot read frame in current state: %r", self.state)
+        timeout: Optional[Union[int, float]] = None
+        if wait is False:
+            timeout = 1  # TODO: What should this default be?
+        elif wait is True:
+            timeout = None
+        else:
+            timeout = wait
+        new_frame = await self._transport.receive_frame(timeout=timeout, **kwargs)
+        return await self._process_incoming_frame(*new_frame)
 
     def _can_write(self):
         # type: () -> bool
@@ -422,12 +421,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             # If any of the values in the received open frame are invalid then the connection shall be closed.
             # The error amqp:invalid-field shall be set in the error.condition field of the CLOSE frame.
             await self.close(
-                error=cast(
-                    AMQPError,
-                    AMQPConnectionError(
-                        condition=ErrorCondition.InvalidField,
-                        description="Failed parsing OPEN frame: Max frame size is less than supported minimum.",
-                    ),
+                error=AMQPError(
+                    condition=ErrorCondition.InvalidField,
+                    description="Failed parsing OPEN frame: Max frame size is less than supported minimum.",
                 )
             )
             _LOGGER.error(
@@ -478,7 +474,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         ]
         if self.state in disconnect_states:
             await self._disconnect()
-            await self._set_state(ConnectionState.END)
             return
 
         close_error = None
@@ -493,7 +488,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         await self._set_state(ConnectionState.CLOSE_RCVD)
         await self._outgoing_close(error=close_error)
         await self._disconnect()
-        await self._set_state(ConnectionState.END)
 
         if frame[0]:
             self._error = AMQPConnectionError(
@@ -704,10 +698,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 await asyncio.sleep(self._idle_wait_time)
                 await self.listen(wait=False)
 
-    async def _listen_one_frame(self, **kwargs):
-        new_frame = await self._read_frame(**kwargs)
-        return await self._process_incoming_frame(*new_frame)
-
     async def listen(self, wait=False, batch=1, **kwargs):
         # type: (Union[float, int, bool], int, Any) -> None
         """Listen on the socket for incoming frames and process them.
@@ -750,15 +740,16 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 )
                 return
             for _ in range(batch):
-                if await asyncio.ensure_future(
-                    self._listen_one_frame(wait=wait, **kwargs)
-                ):
-                    # TODO: compare the perf difference between ensure_future and direct await
+                if self._can_read():
+                    if await self._read_frame(wait=wait, **kwargs):
+                        break
+                else:
+                    _LOGGER.info("Connection cannot read frames in this state: %r", self.state)
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
-                description="Can not send frame out due to exception: " + str(exc),
+                description="Can not read frame due to exception: " + str(exc),
                 error=exc,
             )
 
@@ -829,13 +820,13 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """
-        if self.state in [
-            ConnectionState.END,
-            ConnectionState.CLOSE_SENT,
-            ConnectionState.DISCARDING,
-        ]:
-            return
         try:
+            if self.state in [
+                ConnectionState.END,
+                ConnectionState.CLOSE_SENT,
+                ConnectionState.DISCARDING,
+            ]:
+                return
             await self._outgoing_close(error=error)
             if error:
                 self._error = AMQPConnectionError(
