@@ -223,11 +223,13 @@ class EventHubConsumer(
                     break
                 except Exception as exception:  # pylint: disable=broad-except
                     self._amqp_transport.check_link_stolen(self, exception)
+                    # TODO: below block hangs when retry_total > 0
+                    # need to remove/refactor, issue #27137
                     if not self.running:  # exit by close
                         return
                     if self._last_received_event:
                         self._offset = self._last_received_event.offset
-                    last_exception = self._handle_exception(exception)
+                    last_exception = self._handle_exception(exception, is_consumer=True)
                     retried_times += 1
                     if retried_times > max_retries:
                         _LOGGER.info(
