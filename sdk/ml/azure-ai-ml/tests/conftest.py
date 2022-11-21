@@ -320,6 +320,16 @@ def crud_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredent
 
 
 @pytest.fixture
+def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using in Pipelines end-to-end tests."""
+    return MLClient(
+        credential=auth,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="sdk-canary",
+    )
+
+
+@pytest.fixture
 def resource_group_name(location: str) -> str:
     return f"test-rg-{location}-v2-{_get_week_format()}"
 

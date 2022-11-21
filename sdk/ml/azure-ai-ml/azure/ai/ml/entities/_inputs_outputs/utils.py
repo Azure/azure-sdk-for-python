@@ -9,7 +9,7 @@ import copy
 from collections import OrderedDict
 from enum import Enum as PyEnum
 from enum import EnumMeta
-from inspect import Parameter, signature
+from inspect import Parameter, signature, getmro
 
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions  import UserErrorException
@@ -211,6 +211,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
     inherited_fields = _get_inherited_fields()
     # From annotations get field with type
     annotations = getattr(cls_or_func, "__annotations__", {})
+    annotations = {k: v for k, v in annotations.items() if k not in skip_params}
     annotations = _update_io_from_mldesigner(annotations)
     annotation_fields = _get_fields(annotations)
     # Update fields use class field with defaults from class dict or signature(func).paramters
@@ -224,7 +225,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
         # Infer parameter type from value if is function
         defaults_dict = {
             key: val.default for key, val in signature(cls_or_func).parameters.items()
-            if key not in skip_params
+            if key not in skip_params and val.kind != val.VAR_KEYWORD
         }
     fields = _update_fields_with_default(annotation_fields, defaults_dict)
     all_fields = _merge_and_reorder(inherited_fields, fields)
@@ -240,7 +241,15 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
     to IO entities.
     """
     from azure.ai.ml import Input, Output
+    from .enum_input import EnumInput
+
     mldesigner_pkg = "mldesigner"
+    param_name = "_Param"
+    return_annotation_key = "return"
+
+    def _is_primitive_type(io: type):
+        """Return true if type is subclass of mldesigner._input_output._Param"""
+        return any([io.__module__.startswith(mldesigner_pkg) and item.__name__ == param_name for item in getmro(io)])
 
     def _is_input_or_output_type(io: type, type_str: str):
         """Return true if type name contains type_str"""
@@ -258,6 +267,8 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
             elif _is_input_or_output_type(io, "Output"):
                 # mldesigner.Output -> entities.Output
                 io = Output
+            elif _is_primitive_type(io):
+                io = Output(type=io.TYPE_NAME) if key == return_annotation_key else Input(type=io.TYPE_NAME)
         elif hasattr(io, "_to_io_entity_args_dict"):
             try:
                 if _is_input_or_output_type(type(io), "Input"):
@@ -266,6 +277,12 @@ def _update_io_from_mldesigner(annotations: dict) -> dict:
                 elif _is_input_or_output_type(type(io), "Output"):
                     # mldesigner.Output() -> entities.Output()
                     io = Output(**io._to_io_entity_args_dict())
+                elif _is_primitive_type(type(io)):
+                    if io._is_enum():
+                        io = EnumInput(**io._to_io_entity_args_dict())
+                    else:
+                        io = Output(**io._to_io_entity_args_dict()) if key == return_annotation_key \
+                            else Input(**io._to_io_entity_args_dict())
             except BaseException as e:
                 raise UserErrorException(f"Failed to parse {io} to azure-ai-ml Input/Output: {str(e)}") from e
         result[key] = io
