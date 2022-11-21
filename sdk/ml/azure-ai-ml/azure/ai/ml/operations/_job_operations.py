@@ -66,7 +66,7 @@ from azure.ai.ml.constants._compute import ComputeType
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities import Compute, Job, PipelineJob, ValidationResult, ServiceInstance
 from azure.ai.ml.entities._assets._artifacts.code import Code
-from azure.ai.ml.entities._builders import BaseNode, Command, DoWhile, Spark
+from azure.ai.ml.entities._builders import BaseNode, Command, Spark
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
 from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -99,7 +99,7 @@ from azure.core.tracing.decorator import distributed_trace
 
 from .._utils._experimental import experimental
 from ..constants._component import ComponentSource
-from ..entities._builders.condition_node import ConditionNode
+from ..entities._builders.control_flow_node import ControlFlowNode
 from ..entities._job.pipeline._io import InputOutputBase, _GroupAttrDict, PipelineInput
 from ._component_operations import ComponentOperations
 from ._compute_operations import ComputeOperations
@@ -422,7 +422,7 @@ class JobOperations(_ScopeDependentOperations):
             for node_name, node in job.jobs.items():
                 try:
                     # TODO(1979547): refactor, not all nodes have compute
-                    if not isinstance(node, (DoWhile, ConditionNode)):
+                    if not isinstance(node, ControlFlowNode):
                         node.compute = self._try_get_compute_arm_id(node.compute)
                 except Exception as e:  # pylint: disable=broad-except
                     validation_result.append_error(yaml_path=f"jobs.{node_name}.compute", message=str(e))
