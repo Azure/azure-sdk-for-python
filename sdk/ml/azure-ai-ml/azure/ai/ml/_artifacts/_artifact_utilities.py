@@ -29,6 +29,7 @@ from azure.ai.ml._utils._asset_utils import (
     _validate_path,
     get_ignore_file,
     get_object_hash,
+    get_content_hash_version,
 )
 from azure.ai.ml._utils._storage_utils import (
     AzureMLDatastorePathUri,
@@ -36,7 +37,7 @@ from azure.ai.ml._utils._storage_utils import (
     get_storage_client,
 )
 from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
-from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS
+from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS, SERVICE_URL
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
@@ -320,7 +321,7 @@ def _upload_and_generate_remote_uri(
 
     # Asset name is required for uploading to a datastore
     asset_name = str(uuid.uuid4())
-    artifact_info = _upload_to_datastore(
+    artifact_info = _upload_snapshot_to_datastore(
         operation_scope=operation_scope,
         datastore_operation=datastore_operation,
         path=path,
@@ -442,3 +443,127 @@ def _check_and_upload_env_build_context(
         # TODO: Depending on decision trailing "/" needs to stay or not. EMS requires it to be present
         environment.build.path = uploaded_artifact.full_storage_path + "/"
     return environment
+
+
+def get_temp_data_reference(
+    operations: "DatastoreOperations"
+    asset_name: str,
+    asset_version: str,
+    request_headers: Dict[str, str],
+    asset_type: str
+    ) -> Tuple[str, str]:
+    # create temp data reference
+    temporary_data_reference_id = str(uuid.uuid4())
+
+    # get workspace credentials
+    resource_group_name = operations._resource_group_name
+    workspace_name = operations._workspace_name
+    workspace = operations.service_client.workspaces.get(resource_group_name=resource_group_name, workspace_name=workspace_name)
+    workspace_id = workspace.workspace_id
+
+    # build asset id
+    asset_id = f"azureml://locations/{location}/workspaces/{workspace_id}/{asset_type}/{asset_name}/versions/{asset_version}"
+
+    # build and send request
+    data = {
+        "assetId": asset_id,
+        "temporaryDataReferenceId": temporary_data_reference_id,
+        "temporaryDataReferenceType": "TemporaryBlobReference"
+    }
+    data_encoded = json.dumps(data).encode('utf-8')    
+    s = requests.Session()
+    request_url = f"{SERVICE_URL.format(location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
+    response = s.post(request_url, data=data_encoded, headers=request_headers)
+    if response.status_code != 200:
+        # Not shown here: retry behavior
+        print('Unexpected response:', response.status_code, response.txt)
+        return
+
+    response_json = json.loads(response.text)
+
+    # get SAS uri for upload and blob uri for asset registry
+    blob_uri = response_json['blobReferenceForConsumption']['blobUri']
+    sas_uri = response_json['blobReferenceForConsumption']['credential']['sasUri']
+
+    return blob_uri, sas_uri
+
+
+def get_asset_by_hash(hash_str: str, request_headers: Dict[str, str]) -> Tuple[str, str]:    
+    hash_version = get_content_hash_version()
+
+    # build request to API (API route is implemented at https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/ProjectContent/Contracts/ISnapshotControllerNewRoutes.cs&version=GBmaster&line=289&lineEnd=290&lineStartColumn=1&lineEndColumn=45&lineStyle=plain&_a=contents)
+    request_url = "{0}/content/v2.0/subscriptions/{1}/resourceGroups/{2}/providers/Microsoft.MachineLearningServices/workspaces/{3}"\
+                  "/snapshots/getByHash?hash={4}&hashVersion={5}"\
+        .format(service_url, subscription_id, resource_group, workspace_name,
+                hash_str, hash_version)
+    s = requests.Session()
+
+    # Response is SnapshotDto which is defined here: https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/ProjectContent/Contracts/SnapshotDto.cs&version=GBmaster&line=18&lineEnd=18&lineStartColumn=1&lineEndColumn=29&lineStyle=plain&_a=contents
+    response = s.get(request_url, headers=request_headers)
+    if response.status_code == 404:
+        # 404 status is the expected response if the snapshot does not exist
+        print('Snapshot with hash', hash_str, 'was not found')
+        return None
+    if response.status_code != 200:
+        # Not shown here: retry behavior
+        print('Unexpected response:', response.status_code, response.txt)
+        return None
+
+    response_json = json.loads(response.text)
+    name = response_json['name']
+    version = response_json['version']
+
+    return name, version
+
+
+def _upload_snapshot_to_datastore(
+    operation_scope: OperationScope,
+    datastore_operation: DatastoreOperations,
+    path: Union[str, Path, os.PathLike],
+    artifact_type: str,
+    datastore_name: str = None,
+    show_progress: bool = True,
+    asset_name: str = None,
+    asset_version: str = None,
+    asset_hash: str = None,
+    ignore_file: IgnoreFile = None,
+    sas_uri: str = None,  # contains registry sas url
+) -> ArtifactStorageInfo:
+    _validate_path(path, _type=artifact_type)
+
+    if not ignore_file:
+        ignore_file = get_ignore_file(path)
+    
+    if not asset_hash:
+        asset_hash = get_object_hash(path, ignore_file)
+    
+    ws_base_url = datastore_operation._operation._client._base_url
+    token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
+    request_headers={"Authorization": "Bearer " + token}
+    request_headers['Content-Type'] = 'application/json; charset=UTF-8'
+    existing_asset_name, existing_asset_version = get_asset_by_hash(hash_str=asset_hash, request_headers=request_headers)
+    
+    if existing_asset_name and existing_asset_version:
+        return 
+    else:
+        blob_uri, sas_uri = get_temp_data_reference(
+            operations=datastore_operation,
+            asset_name=asset_name,
+            asset_version=asset_version,
+            request_headers=request_headers,
+        )
+
+        artifact = upload_artifact(
+            str(path),
+            datastore_operation,
+            operation_scope,
+            datastore_name,
+            show_progress=show_progress,
+            asset_hash=asset_hash,
+            asset_name=asset_name,
+            asset_version=asset_version,
+            ignore_file=ignore_file,
+            sas_uri=sas_uri,
+        )
+
+    return artifact
