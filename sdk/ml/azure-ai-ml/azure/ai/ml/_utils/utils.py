@@ -667,13 +667,13 @@ def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], excl
     return transformed_dict
 
 
-def merge_dict(origin, delta):
-    result = copy.deepcopy(origin)
+def merge_dict(origin, delta, dep=0):
+    result = copy.deepcopy(origin) if dep == 0 else origin
     for key, val in delta.items():
         origin_val = origin.get(key)
         # Merge delta dict with original dict
         if isinstance(origin_val, dict) and isinstance(val, dict):
-            result[key] = merge_dict(origin_val, val)
+            result[key] = merge_dict(origin_val, val, dep + 1)
             continue
         result[key] = copy.deepcopy(val)
     return result
