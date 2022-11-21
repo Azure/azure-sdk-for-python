@@ -22,7 +22,7 @@ from azure.ai.ml._schema.job import BaseJobSchema
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
 from azure.ai.ml._schema.job.parameterized_spark import SparkConfSchema
 from azure.ai.ml._schema.pipeline.settings import PipelineJobSettingsSchema
-from azure.ai.ml._utils.utils import load_file
+from azure.ai.ml._utils.utils import load_file, merge_dict
 from azure.ai.ml.constants import JobType
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
 
@@ -96,15 +96,6 @@ class BaseCreateJobSchema(BaseJobSchema):
     def make(self, data: dict, **kwargs) -> "Job":
         from azure.ai.ml.entities import Job
 
-        def _update_data_to_job_dict(job_dict, data):
-            for key, val in data.items():
-                job_val = job_dict.get(key)
-                # Merge data dict with original job data dict
-                if isinstance(job_val, dict) and isinstance(val, dict):
-                    _update_data_to_job_dict(job_val, val)
-                    continue
-                job_dict[key] = val
-
         # Get the loaded job
         job = data.pop("job")
         # Get the raw dict data before load
@@ -115,9 +106,8 @@ class BaseCreateJobSchema(BaseJobSchema):
                 raise ValidationError("Could not load job for schedule without '_source_path' set.")
             # Load local job again with updated values
             job_dict = yaml.safe_load(load_file(job._source_path))
-            _update_data_to_job_dict(job_dict, raw_data)
             return Job._load(  # pylint: disable=no-member
-                data=job_dict,
+                data=merge_dict(job_dict, raw_data),
                 yaml_path=job._source_path,
                 **kwargs,
             )
