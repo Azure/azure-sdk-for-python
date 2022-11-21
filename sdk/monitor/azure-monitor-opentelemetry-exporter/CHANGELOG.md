@@ -12,7 +12,7 @@
 ### Bugs Fixed
 
 - Pass along sampleRate in SpanEvents from Span
-    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+    ([#27629](https://github.com/Azure/azure-sdk-for-python/pull/27629))
 
 ### Other Changes
 
