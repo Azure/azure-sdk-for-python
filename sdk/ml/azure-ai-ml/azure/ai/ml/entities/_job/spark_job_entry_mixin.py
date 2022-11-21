@@ -45,7 +45,7 @@ class SparkJobEntryMixin:
             # component with a function and the referenced component is in remote with name and version.
             return
         if not isinstance(self.entry, SparkJobEntry):
-            msg = "Entry is a required field."
+            msg = f'Unsupported type {type(self.entry)} detected when validate entry, entry should be SparkJobEntry.'
             raise ValidationException(
                 message=msg,
                 no_personal_data_message=msg,
