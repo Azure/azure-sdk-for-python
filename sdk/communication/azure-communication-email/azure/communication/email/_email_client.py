@@ -82,7 +82,7 @@ class EmailClient(object):
     @distributed_trace
     def send(
         self,
-        email_message: Union[JSON, IO]
+        email_message: Union[JSON, IO],
         **kwargs
     ) -> JSON:
         # cSpell:disable
