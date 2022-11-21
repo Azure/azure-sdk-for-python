@@ -11,7 +11,7 @@
 
 ### Bugs Fixed
 
-- Refactor ApplicationInsightsSampler to ensure whole number `itemCount`
+- Pass along sampleRate in SpanEvents from Span
     ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
 
 ### Other Changes
