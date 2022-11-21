@@ -166,6 +166,7 @@ SPARK_ENVIRONMENT_WARNING_MESSAGE = (
     "Spark job will only install the packages defined in the Conda configuration. It "
     "will not create a docker container using the image defined in the environment."
 )
+SERVICE_URL = "https://{}.api.azureml.ms"
 
 
 class AzureMLResourceType(object):
