@@ -83,6 +83,7 @@ class AsyncTransportMixin:
             socket.timeout,
             asyncio.IncompleteReadError,
             asyncio.TimeoutError,
+            ConnectionError,
         ):
             return None, None
 
@@ -126,7 +127,7 @@ class AsyncTransportMixin:
                     read_frame_buffer.write(
                         await self._read(payload_size, buffer=payload)
                     )
-            except (asyncio.CancelledError, TimeoutError, socket.timeout, asyncio.IncompleteReadError):
+            except (asyncio.CancelledError, TimeoutError, socket.timeout, asyncio.IncompleteReadError,ConnectionError):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
@@ -557,8 +558,8 @@ class WebSocketTransportAsync(
             return view
         except asyncio.CancelledError as ce:
             await self.session.close()
-            raise
-            #raise ConnectionError('Websocket connection closed: %r' % ce) from ce
+            #raise
+            raise ConnectionError('Websocket connection closed: %r' % ce) from ce
         except asyncio.TimeoutError as te:
             raise ConnectionError('Receive timed out (%s)' % te)
         except OSError as e:
