@@ -443,7 +443,7 @@ class MLClient(object):
         self._schedules = ScheduleOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2022,
+            self._service_client_10_2022_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,
