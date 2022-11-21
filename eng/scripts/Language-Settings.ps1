@@ -130,16 +130,21 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
 # Stage and Upload Docs to blob Storage
 function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
 {
-  $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".zip")}
+  $PublishedDocs = Get-ChildItem "$DocLocation" | Where-Object -FilterScript {$_.Name.EndsWith(".tar.gz")}
 
   foreach ($Item in $PublishedDocs)
   {
-    $PkgName = $Item.BaseName
+    $PkgName = (Split-Path -Path $Item -Leaf).Replace(".tar.gz", "")
+
     $ZippedDocumentationPath = Join-Path -Path $DocLocation -ChildPath $Item.Name
     $UnzippedDocumentationPath = Join-Path -Path $DocLocation -ChildPath $PkgName
     $VersionFileLocation = Join-Path -Path $UnzippedDocumentationPath -ChildPath "version.txt"
 
-    Expand-Archive -Force -Path $ZippedDocumentationPath -DestinationPath $UnzippedDocumentationPath
+    if (!(Test-Path $UnzippedDocumentationPath)) {
+      New-Item -Path $UnzippedDocumentationPath -ItemType Directory
+    }
+
+    tar -zxvf $ZippedDocumentationPath -C $UnzippedDocumentationPath
 
     $Version = $(Get-Content $VersionFileLocation).Trim()
 
@@ -194,6 +199,7 @@ function ValidatePackage
         -PackageSourceOverride $PackageSourceOverride -DocValidationImageId $DocValidationImageId -workingDirectory $installValidationFolder
   }
 }
+
 function DockerValidation{
   Param(
     [Parameter(Mandatory=$true)]
