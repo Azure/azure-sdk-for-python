@@ -9,10 +9,12 @@ import json
 import calendar
 from typing import (cast,
                     Tuple,
+                    Union,
                     )
 from datetime import datetime
 from msrest.serialization import TZ_UTC
 from azure.core.credentials import AccessToken, AzureKeyCredential
+
 
 def _convert_datetime_to_utc_int(input_datetime):
     """
@@ -24,6 +26,7 @@ def _convert_datetime_to_utc_int(input_datetime):
     :rtype: int
     """
     return int(calendar.timegm(input_datetime.utctimetuple()))
+
 
 def parse_connection_str(conn_str):
     # type: (str) -> Tuple[str, str, str, str]
@@ -93,28 +96,24 @@ def create_access_token(token):
     except ValueError as val_error:
         raise ValueError(token_parse_err_msg) from val_error
 
+
 def get_authentication_policy(
         endpoint,  # type: str
-        credential,  # type: TokenCredential or AzureKeyCredential
+        credential,  # type: Union[TokenCredential, AzureKeyCredential, str]
         decode_url=False,  # type: bool
         is_async=False,  # type: bool
 ):
-    # type: (...) -> BearerTokenCredentialPolicy or HMACCredentialPolicy
+    # type: (...) -> Union[BearerTokenCredentialPolicy, HMACCredentialsPolicy]
     """Returns the correct authentication policy based
     on which credential is being passed.
     :param endpoint: The endpoint to which we are authenticating to.
     :type endpoint: str
     :param credential: The credential we use to authenticate to the service
-    :type credential: Union[TokenCredential, str]
+    :type credential: Union[TokenCredential, AzureKeyCredential, str]
     :param isAsync: For async clients there is a need to decode the url
     :type bool: isAsync or str
     :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy or
     ~azure.communication.chat.shared.policy.HMACCredentialsPolicy
-    :type credential: TokenCredential or str
-    :param isAsync: For async clients there is a need to decode the url
-    :type bool: isAsync or str
-    :rtype: ~azure.core.pipeline.policies.BearerTokenCredentialPolicy
-    ~HMACCredentialsPolicy
     """
 
     if credential is None:
@@ -128,6 +127,9 @@ def get_authentication_policy(
         return BearerTokenCredentialPolicy(
             credential, "https://communication.azure.com//.default")
     if isinstance(credential, AzureKeyCredential):
+        from .._shared.policy import HMACCredentialsPolicy
+        return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
+    if isinstance(credential, str):
         from .._shared.policy import HMACCredentialsPolicy
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
