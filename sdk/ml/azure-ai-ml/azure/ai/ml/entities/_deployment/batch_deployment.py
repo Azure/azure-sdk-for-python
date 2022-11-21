@@ -219,7 +219,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
 
         if is_private_preview_enabled() and self.job_definition:
             non_flat_data = {}
-            non_flat_data["component_deployment"] = self.job_definition._to_dict()
+            non_flat_data["ComponentDeployment"] = self.job_definition._to_dict()
             flat_data = flatten(non_flat_data, ".")
             flat_data_keys = flat_data.keys()
             for k in flat_data_keys:
@@ -266,7 +266,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
         if not is_private_preview_enabled():
             del_key = []
             for k in deployment.properties:
-                if k.startswith("component_deployment"):
+                if k.startswith("ComponentDeployment"):
                     del_key.append(k)
             if len(del_key) > 0:
                 for k in del_key:
