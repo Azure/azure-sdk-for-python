@@ -573,9 +573,12 @@ class WebSocketTransportAsync(
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
-        await self.ws.close()
-        await self.session.close()
-        self.connected = False
+        try:
+            await self.ws.close()
+            await self.session.close()
+            self.connected = False
+        except asyncio.CancelledError:
+            self.connected = False
 
     async def write(self, s):
         """Completely write a string (byte array) to the peer.
