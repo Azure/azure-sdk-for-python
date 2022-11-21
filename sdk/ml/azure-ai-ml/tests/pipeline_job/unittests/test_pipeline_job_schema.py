@@ -757,9 +757,6 @@ class TestPipelineJobSchema:
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_sweep_job_with_input_bindings.yml",
                 {
                     "hello_world": {
-                        "component_in_number": {
-                            "job_input_type": "literal",
-                        },
                         "test1": {
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.job_data_path}}",

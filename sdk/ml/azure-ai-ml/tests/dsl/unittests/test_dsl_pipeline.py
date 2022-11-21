@@ -2136,3 +2136,33 @@ class TestDSLPipeline:
             "outputs": {"output": {"job_output_type": "uri_folder", "mode": "Direct"}},
             "settings": {"_source": "DSL"},
         }
+
+    def test_node_sweep_with_optional_input(self) -> None:
+        component_yaml = components_dir / "helloworld_component_optional_input.yml"
+        component_func = load_component(component_yaml)
+
+        @dsl.pipeline
+        def pipeline_func():
+            node1 = component_func(required_input=1, optional_input=2)  # noqa: F841
+            node2 = component_func(required_input=1)  # noqa: F841
+            node3 = component_func(required_input=1)
+            node_sweep = node3.sweep(
+                primary_metric="training_f1_score",
+                goal="minimize",
+                sampling_algorithm="random",
+            )
+            node_sweep.set_limits(
+                max_total_trials=20,
+                max_concurrent_trials=10,
+            )
+
+        pipeline_job = pipeline_func()
+        jobs_dict = pipeline_job._to_rest_object().as_dict()["properties"]["jobs"]
+        # for node1 inputs, should contain required_input and optional_input;
+        # while for node2 and node_sweep, should only contain required_input.
+        assert jobs_dict["node1"]["inputs"] == {
+            "required_input": {"job_input_type": "literal", "value": "1"},
+            "optional_input": {"job_input_type": "literal", "value": "2"},
+        }
+        assert jobs_dict["node2"]["inputs"] == {"required_input": {"job_input_type": "literal", "value": "1"}}
+        assert jobs_dict["node_sweep"]["inputs"] == {"required_input": {"job_input_type": "literal", "value": "1"}}
