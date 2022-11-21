@@ -44,8 +44,8 @@ class CopyTableSamples(object):
         self.table_connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
-        self.copy_to_blob_table_name = "copytoblobtablenameasync" + str(uuid4()).replace("-", "")
-        self.copy_to_table_table_name = "copytotabletablenameasync" + str(uuid4()).replace("-", "")
+        self.copy_to_blob_table_name = "copytoblobtablenameasync" + uuid4().hex
+        self.copy_to_table_table_name = "copytotabletablenameasync" + uuid4().hex
         self.blob_account_name = os.getenv("STORAGE_ACCOUNT_NAME")
         self.blob_account_key = os.getenv("STORAGE_ACCOUNT_KEY")
         self.blob_connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix=core.windows.net".format(
