@@ -11,12 +11,12 @@ interactions:
       Content-Length:
       - '0'
       User-Agent:
-      - azsdk-python-messaging-webpubsubservice/1.0.1b Python/3.11.0 (Windows-10-10.0.19045-SP0)
+      - azsdk-python-messaging-webpubsubservice/1.1.0b1 Python/3.11.0 (Windows-10-10.0.19045-SP0)
     method: POST
     uri: https://myservice.webpubsub.azure.com/api/hubs/hub/:generateToken?minutesToExpire=60&api-version=2022-11-01
   response:
     body:
-      string: '{"token":"eyJhbGciOiJIUzI1NiIsImtpZCI6InMtM2MwZWUyZWUtNDcyOC00YTllLWI0MzItZjBmZWE5ZGQ1OGE1IiwidHlwIjoiSldUIiwiY3R5IjoiSldUIn0.eyJuYmYiOjE2Njg2NzYzMTgsImV4cCI6MTY2ODY3OTkxOCwiaWF0IjoxNjY4Njc2MzE4LCJhdWQiOiJodHRwczovL3NpeXVhbi13cHMtZG9nZm9vZC0xLndlYnB1YnN1Yi5henVyZS5jb20vY2xpZW50L2h1YnMvaHViIn0.J5vfavL6hbbmQqf6RtdDJqGk-Z3AY8p7kQceEjkEpvs"}'
+      string: '{"token":"eyJhbGciOiJIUzI1NiIsImtpZCI6InMtM2MwZWUyZWUtNDcyOC00YTllLWI0MzItZjBmZWE5ZGQ1OGE1IiwidHlwIjoiSldUIiwiY3R5IjoiSldUIn0.eyJuYmYiOjE2NjkwMDA0MTYsImV4cCI6MTY2OTAwNDAxNiwiaWF0IjoxNjY5MDAwNDE2LCJhdWQiOiJodHRwczovL3NpeXVhbi13cHMtZG9nZm9vZC0xLndlYnB1YnN1Yi5henVyZS5jb20vY2xpZW50L2h1YnMvaHViIn0.HxD_P5Ls0p8fjJ3tO2NC4f1AP14HrdcTbNLK8Df_ERA"}'
     headers:
       api-supported-versions:
       - '2022-11-01'
@@ -25,7 +25,7 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Thu, 17 Nov 2022 09:11:58 GMT
+      - Mon, 21 Nov 2022 03:13:36 GMT
       strict-transport-security:
       - max-age=15724800; includeSubDomains
       transfer-encoding:

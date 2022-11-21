@@ -109,7 +109,7 @@ def build_get_client_access_token_request(
 
 
 def build_send_to_all_request(
-    hub: str, *, content: IO, excluded: Optional[List[str]] = None, filter: Optional[str] = None, **kwargs: Any
+    hub: str, *, content: IO, excluded: Optional[List[str]] = None, filter_string: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -130,8 +130,8 @@ def build_send_to_all_request(
     if excluded is not None:
         _params["excluded"] = [_SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded]
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    if filter_string is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter_string, "str")
 
     # Construct headers
     if content_type is not None:
@@ -298,7 +298,7 @@ def build_send_to_group_request(
     *,
     content: IO,
     excluded: Optional[List[str]] = None,
-    filter: Optional[str] = None,
+    filter_string: Optional[str] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -321,8 +321,8 @@ def build_send_to_group_request(
     if excluded is not None:
         _params["excluded"] = [_SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded]
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    if filter_string is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter_string, "str")
 
     # Construct headers
     if content_type is not None:
@@ -519,7 +519,7 @@ def build_close_user_connections_request(
 
 
 def build_send_to_user_request(
-    user_id: str, hub: str, *, content: IO, filter: Optional[str] = None, **kwargs: Any
+    user_id: str, hub: str, *, content: IO, filter_string: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
@@ -539,8 +539,8 @@ def build_send_to_user_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-    if filter is not None:
-        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
+    if filter_string is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter_string, "str")
 
     # Construct headers
     if content_type is not None:
@@ -770,7 +770,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
 
     @distributed_trace
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, **kwargs: Any
+        self, message: IO, *, excluded: Optional[List[str]] = None, filter_string: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -806,7 +806,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
         request = build_send_to_all_request(
             hub=self._config.hub,
             excluded=excluded,
-            filter=filter,
+            filter_string=filter_string,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1167,7 +1167,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
         message: IO,
         *,
         excluded: Optional[List[str]] = None,
-        filter: Optional[str] = None,
+        filter_string: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Send content inside request body to a group of connections.
@@ -1208,7 +1208,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
             group=group,
             hub=self._config.hub,
             excluded=excluded,
-            filter=filter,
+            filter_string=filter_string,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -1641,7 +1641,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
 
     @distributed_trace
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: IO, *, filter: Optional[str] = None, **kwargs: Any
+        self, user_id: str, message: IO, *, filter_string: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -1677,7 +1677,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-ma
         request = build_send_to_user_request(
             user_id=user_id,
             hub=self._config.hub,
-            filter=filter,
+            filter_string=filter_string,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

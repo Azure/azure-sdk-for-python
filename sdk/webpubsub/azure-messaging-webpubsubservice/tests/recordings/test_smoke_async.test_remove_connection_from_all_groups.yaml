@@ -5,7 +5,7 @@ interactions:
       Accept:
       - application/json
       User-Agent:
-      - azsdk-python-messaging-webpubsubservice/1.0.1b Python/3.11.0 (Windows-10-10.0.19045-SP0)
+      - azsdk-python-messaging-webpubsubservice/1.1.0b1 Python/3.11.0 (Windows-10-10.0.19045-SP0)
     method: DELETE
     uri: https://myservice.webpubsub.azure.com/api/hubs/hub/connections/fake%20connection%20id/groups?api-version=2022-11-01
   response:
@@ -14,7 +14,7 @@ interactions:
     headers:
       api-supported-versions: '2022-11-01'
       connection: keep-alive
-      date: Thu, 17 Nov 2022 09:12:08 GMT
+      date: Mon, 21 Nov 2022 03:13:44 GMT
       strict-transport-security: max-age=15724800; includeSubDomains
     status:
       code: 204
