@@ -101,7 +101,13 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
   $readmeContent = ""
 
   New-Item -ItemType Directory -Force -Path $workFolder
-  Expand-Archive -Path $pkg -DestinationPath $workFolder
+
+  if ($pkg.EndsWith(".zip")){
+    Expand-Archive -Path $pkg -DestinationPath $workFolder
+  }
+  else {
+    tar -zxvf $pkg -C $workFolder
+  }
 
   $changeLogLoc = @(Get-ChildItem -Path $workFolder -Recurse -Include "CHANGELOG.md")[0]
   if ($changeLogLoc) {
