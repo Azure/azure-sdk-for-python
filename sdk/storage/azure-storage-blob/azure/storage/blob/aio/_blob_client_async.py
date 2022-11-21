@@ -260,7 +260,7 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
             length: Optional[int] = None,
             metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ) -> Dict[str, str]:
+        ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.

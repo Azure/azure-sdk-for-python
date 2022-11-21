@@ -430,19 +430,9 @@ class AsyncIterStreamer():
     File-like streaming object for AsyncGenerators.
     """
     def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
-        self.generator = generator
         self.iterator = generator.__aiter__()
         self.leftover = b""
         self.encoding = encoding
-
-    def __len__(self):
-        return self.generator.__len__()
-
-    def __aiter__(self):
-        return self.iterator
-
-    async def __anext__(self):
-        return await self.iterator.__anext__()
 
     def seekable(self):
         return False
@@ -458,7 +448,7 @@ class AsyncIterStreamer():
         count = len(self.leftover)
         try:
             while count < size:
-                chunk = await self.__anext__()
+                chunk = await self.iterator.__anext__()
                 if isinstance(chunk, str):
                     chunk = chunk.encode(self.encoding)
                 data += chunk
