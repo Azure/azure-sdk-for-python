@@ -557,7 +557,8 @@ class WebSocketTransportAsync(
             return view
         except asyncio.CancelledError as ce:
             await self.session.close()
-            raise ConnectionError('Websocket connection closed: %r' % ce) from ce
+            raise
+            #raise ConnectionError('Websocket connection closed: %r' % ce) from ce
         except asyncio.TimeoutError as te:
             raise ConnectionError('Receive timed out (%s)' % te)
         except OSError as e:
