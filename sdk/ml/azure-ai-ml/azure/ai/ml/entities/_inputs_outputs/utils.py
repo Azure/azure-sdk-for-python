@@ -225,7 +225,7 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
         # Infer parameter type from value if is function
         defaults_dict = {
             key: val.default for key, val in signature(cls_or_func).parameters.items()
-            if key not in skip_params
+            if key not in skip_params and val.kind != val.VAR_KEYWORD
         }
     fields = _update_fields_with_default(annotation_fields, defaults_dict)
     all_fields = _merge_and_reorder(inherited_fields, fields)

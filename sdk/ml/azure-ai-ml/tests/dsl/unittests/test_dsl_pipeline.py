@@ -31,7 +31,7 @@ from azure.ai.ml.entities import (
 from azure.ai.ml.entities._builders import Command, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError
+from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError, UnsupportedParameterKindError, MultipleValueError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -1995,6 +1995,120 @@ class TestDSLPipeline:
             component_func=component_func2)
         assert len(pipeline.jobs) == 2
         assert component_func2.name in pipeline.jobs
+
+    def test_pipeline_with_variable_inputs(self):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func1 = load_component(path)
+        data = Data(name="test", version="1", type=AssetTypes.MLTABLE)
+
+        @dsl.pipeline
+        def pipeline_with_variable_args(**kwargs):
+            node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
+                                          component_in_path=kwargs["component_in_path1"])
+
+        @dsl.pipeline
+        def root_pipeline(component_in_number: int, component_in_path: Input, **kwargs):
+            """A pipeline with detailed docstring, including descriptions for inputs and outputs.
+
+            In this pipeline docstring, there are descriptions for inputs and outputs, via pipeline decorator,
+            Input/Output descriptions can infer from these descriptions.
+
+            Args:
+                component_in_number: component_in_number description
+                component_in_path: component_in_path description
+                component_in_number1: component_in_number1 description
+                component_in_path1: component_in_path1 description
+                args_0: args_0 description
+            """
+            node = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
+            node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
+                                          component_in_path=kwargs["component_in_path1"])
+            node_with_arg_kwarg = pipeline_with_variable_args(**kwargs)
+
+        pipeline = root_pipeline(10, data, component_in_number1=12, component_in_path1=data)
+
+        assert pipeline.component.inputs['component_in_number'].description == "component_in_number description"
+        assert pipeline.component.inputs['component_in_path'].description == "component_in_path description"
+        assert pipeline.component.inputs['component_in_number1'].description == "component_in_number1 description"
+        assert pipeline.component.inputs['component_in_path1'].description == "component_in_path1 description"
+
+        omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source"
+        ]
+        actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
+
+        assert actual_dict["inputs"] == {
+            "component_in_number": {"job_input_type": "literal", "value": "10"},
+            "component_in_path": {"uri": "test:1", "job_input_type": "mltable"},
+            "component_in_number1": {"job_input_type": "literal", "value": "12"},
+            "component_in_path1": {"uri": "test:1", "job_input_type": "mltable"},
+        }
+        assert actual_dict["jobs"] == {
+            'node': {
+                'name': 'node', 'type': 'command', 'inputs': {
+                    'component_in_number': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_number}}'
+                    },
+                    'component_in_path': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_path}}'
+                    }
+                }
+            },
+            'node_kwargs': {
+                'name': 'node_kwargs',
+                'type': 'command',
+                'inputs': {
+                    'component_in_number': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_number1}}'
+                    },
+                    'component_in_path': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_path1}}'
+                    }
+                }
+            },
+            'node_with_arg_kwarg': {
+                'name': 'node_with_arg_kwarg',
+                'type': 'pipeline',
+                'inputs': {
+                    'component_in_number1': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_number1}}'
+                    },
+                    'component_in_path1': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_path1}}'
+                    }
+                }
+            }
+        }
+
+        with pytest.raises(UnsupportedParameterKindError,
+                           match="dsl pipeline does not accept \*custorm_args as parameters\."):
+            @dsl.pipeline
+            def pipeline_with_variable_args(*custorm_args):
+                pass
+
+            pipeline_with_variable_args(1, 2, 3)
+
+        with mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: 'false'}):
+            with pytest.raises(UnsupportedParameterKindError,
+                               match="dsl pipeline does not accept \*args or \*\*kwargs as parameters\."):
+                root_pipeline(10, data, 11, data, component_in_number1=11, component_in_path1=data)
+
+    def test_pipeline_with_dumplicate_variable_inputs(self):
+
+        @dsl.pipeline
+        def pipeline_with_variable_args(key_1: int, **kargs):
+            pass
+
+        with pytest.raises(MultipleValueError,
+                           match="pipeline_with_variable_args\(\) got multiple values for argument 'key_1'\."):
+            pipeline_with_variable_args(10, key_1=10)
 
     def test_condition_node_consumption(self):
         from azure.ai.ml.dsl._condition import condition

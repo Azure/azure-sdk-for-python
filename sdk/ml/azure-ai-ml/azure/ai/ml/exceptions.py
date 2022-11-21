@@ -504,8 +504,9 @@ class UnsupportedParameterKindError(UserErrorException):
     """Exception raised when a user try setting attributes of
     inputs/outputs."""
 
-    def __init__(self, func_name):
-        msg = "%r: dsl pipeline does not accept *args or **kwargs as parameters." % func_name
+    def __init__(self, func_name, parameter_kind=None):
+        parameter_kind = parameter_kind or "*args or **kwargs"
+        msg = "%r: dsl pipeline does not accept %s as parameters." % (func_name, parameter_kind)
         super(UnsupportedParameterKindError, self).__init__(message=msg, no_personal_data_message=msg)
 
 
