@@ -1,5 +1,15 @@
 # Release History
 
+## 1.1.0b2 (2022-11-18)
+
+### Features Added
+
+  - Added operation group AccessConnectorsOperations
+  - Added operation group OutboundNetworkDependenciesEndpointsOperations
+  - Model EncryptionEntitiesDefinition has a new parameter managed_disk
+  - Model Workspace has a new parameter disk_encryption_set_id
+  - Model Workspace has a new parameter managed_disk_identity
+
 ## 1.1.0b1 (2021-08-02)
 
 **Features**
