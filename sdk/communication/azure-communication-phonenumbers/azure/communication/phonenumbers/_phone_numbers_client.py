@@ -121,8 +121,10 @@ class PhoneNumbersClient(object):
             for LRO operations if no Retry-After header is present.
         :rtype: ~azure.core.polling.LROPoller[None]
         """
+        polling_interval = kwargs.pop("polling_interval",2)
         return self._phone_number_client.phone_numbers.begin_release_phone_number(
             phone_number,
+            polling_interval=polling_interval,
             **kwargs
         )
 
