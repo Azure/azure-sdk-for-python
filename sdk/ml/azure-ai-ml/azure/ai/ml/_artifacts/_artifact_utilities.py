@@ -323,7 +323,7 @@ def _upload_and_generate_remote_uri(
 
     # Asset name is required for uploading to a datastore
     asset_name = str(uuid.uuid4())
-    artifact_info, _ = _upload_snapshot_to_datastore(
+    artifact_info = _upload_snapshot_to_datastore(
         operation_scope=operation_scope,
         datastore_operation=datastore_operation,
         path=path,
@@ -333,7 +333,7 @@ def _upload_and_generate_remote_uri(
         show_progress=show_progress,
     )
     path = artifact_info.relative_path
-
+    
     return SHORT_URI_FORMAT.format(datastore_name, path)
 
 
@@ -452,7 +452,7 @@ def get_temp_data_reference(
     asset_version: str,
     request_headers: Dict[str, str],
     asset_type: str = "codes",
-    ) -> Tuple[str, str]:
+    ) -> str:
     # create temp data reference
     temporary_data_reference_id = str(uuid.uuid4())
 
@@ -483,11 +483,10 @@ def get_temp_data_reference(
 
     response_json = json.loads(response.text)
 
-    # get SAS uri for upload and blob uri for asset registry
-    blob_uri = response_json['blobReferenceForConsumption']['blobUri']
+    # get SAS uri for upload
     sas_uri = response_json['blobReferenceForConsumption']['credential']['sasUri']
 
-    return blob_uri, sas_uri
+    return sas_uri
 
 
 def get_asset_by_hash(
@@ -564,9 +563,10 @@ def _upload_snapshot_to_datastore(
         print("we found the hash")
     if False:
         asset_name, asset_version = existing_asset
+        # TODO: implement this route
         return 
     else:
-        blob_uri, sas_uri = get_temp_data_reference(
+        sas_uri = get_temp_data_reference(
             operations=datastore_operation,
             asset_name=asset_name,
             asset_version=asset_version,
@@ -586,4 +586,4 @@ def _upload_snapshot_to_datastore(
             sas_uri=sas_uri,
         )
 
-    return artifact, blob_uri
+    return artifact
