@@ -10,7 +10,7 @@ import pytest
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
-from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, spark, \
+from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, \
     AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
 from azure.ai.ml.constants._common import (

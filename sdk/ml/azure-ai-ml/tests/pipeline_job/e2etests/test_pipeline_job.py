@@ -1360,6 +1360,7 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
 
+
 @pytest.mark.usefixtures(
     "recorded_test",
     "mock_code_hash",
