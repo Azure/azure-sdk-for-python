@@ -1,6 +1,7 @@
 import os
 from io import StringIO
 from pathlib import Path
+from typing import Dict
 from unittest import mock
 from unittest.mock import patch
 
@@ -9,7 +10,7 @@ import pytest
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
-from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, spark, \
+from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, \
     AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
 from azure.ai.ml.constants._common import (
@@ -1930,20 +1931,24 @@ class TestDSLPipeline:
         component_func1 = load_component(source=component_yaml, params_override=[{"name": "component_name_1"}])
         component_func2 = load_component(source=component_yaml, params_override=[{"name": "component_name_2"}])
 
-        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component"])
-        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component):
+        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component",
+                                           "param_with_annotation", "param_with_default"])
+        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component,
+                          param_with_annotation: Dict[str, str], param_with_default: int = 1):
+            assert param_with_default == 1
+            assert param_with_annotation == {"mock": "dict"}
             component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
             component_func2(component_in_number=other_params, component_in_path=job_in_path)
             if is_add_component:
                 component_func2(component_in_number=other_params, component_in_path=job_in_path)
 
-        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, False)
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, False, {"mock": "dict"})
         assert len(pipeline.jobs) == 2
         assert "other_params" not in pipeline.inputs
         assert isinstance(pipeline.jobs[component_func1.name].inputs["component_in_number"]._data, PipelineInput)
         assert pipeline.jobs[component_func2.name].inputs["component_in_number"]._data == 15
 
-        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True)
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True, {"mock": "dict"})
         assert len(pipeline.jobs) == 3
 
         @dsl.pipeline(non_pipeline_parameters=["other_params", "is_add_component"])
@@ -2131,3 +2136,33 @@ class TestDSLPipeline:
             "outputs": {"output": {"job_output_type": "uri_folder", "mode": "Direct"}},
             "settings": {"_source": "DSL"},
         }
+
+    def test_node_sweep_with_optional_input(self) -> None:
+        component_yaml = components_dir / "helloworld_component_optional_input.yml"
+        component_func = load_component(component_yaml)
+
+        @dsl.pipeline
+        def pipeline_func():
+            node1 = component_func(required_input=1, optional_input=2)  # noqa: F841
+            node2 = component_func(required_input=1)  # noqa: F841
+            node3 = component_func(required_input=1)
+            node_sweep = node3.sweep(
+                primary_metric="training_f1_score",
+                goal="minimize",
+                sampling_algorithm="random",
+            )
+            node_sweep.set_limits(
+                max_total_trials=20,
+                max_concurrent_trials=10,
+            )
+
+        pipeline_job = pipeline_func()
+        jobs_dict = pipeline_job._to_rest_object().as_dict()["properties"]["jobs"]
+        # for node1 inputs, should contain required_input and optional_input;
+        # while for node2 and node_sweep, should only contain required_input.
+        assert jobs_dict["node1"]["inputs"] == {
+            "required_input": {"job_input_type": "literal", "value": "1"},
+            "optional_input": {"job_input_type": "literal", "value": "2"},
+        }
+        assert jobs_dict["node2"]["inputs"] == {"required_input": {"job_input_type": "literal", "value": "1"}}
+        assert jobs_dict["node_sweep"]["inputs"] == {"required_input": {"job_input_type": "literal", "value": "1"}}

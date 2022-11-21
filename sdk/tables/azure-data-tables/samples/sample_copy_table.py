@@ -118,12 +118,12 @@ class CopyTableSamples(object):
         self.container_client = self.blob_service_client.create_container(self.copy_to_table_table_name)
         entity = copy.deepcopy(self.entity)
         # Convert type datetime, bytes, UUID values to string as they're not JSON serializable
-        entity["last_updated"] = entity["last_updated"].isoformat()
-        entity["product_id"] = entity["product_id"].hex
-        entity["barcode"] = entity["barcode"].decode("utf-8")
+        entity["last_updated"] = entity["last_updated"].isoformat() # type: ignore[attr-defined]
+        entity["product_id"] = entity["product_id"].hex # type: ignore[attr-defined]
+        entity["barcode"] = entity["barcode"].decode("utf-8") # type: ignore[attr-defined]
         for i in range(10):
             entity["RowKey"] = str(i)
-            blob_name = entity["PartitionKey"] + entity["RowKey"]
+            blob_name = entity["PartitionKey"] + entity["RowKey"] # type: ignore[operator]
             blob_client = self.blob_service_client.get_blob_client(self.copy_to_table_table_name, blob_name)
             blob_client.upload_blob(json.dumps(entity))
 
