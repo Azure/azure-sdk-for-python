@@ -169,7 +169,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
                 "The content_type '{}' is not one of the allowed values: "
                 "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
             )
-        
+
         request = build_send_to_all_request(
             hub=self._config.hub,
             excluded=excluded,
