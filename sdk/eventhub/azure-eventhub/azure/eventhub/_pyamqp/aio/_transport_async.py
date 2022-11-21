@@ -485,7 +485,7 @@ class WebSocketTransportAsync(
             password = self._http_proxy.get("password", None)
 
         try:
-            from aiohttp import ClientSession, ClientConnectorError
+            from aiohttp import ClientSession, ClientConnectorError, ConnectionResetError
             from urllib.parse import urlsplit
 
             if username or password:
@@ -527,6 +527,8 @@ class WebSocketTransportAsync(
                         description="Failed to authenticate the connection due to exception: " + str(exc),
                         error=exc,
                     )
+            except ConnectionResetError as exc:
+                raise ConnectionError('Websocket connection closed: %r' % exc) from exc
             self.connected = True
         except ImportError:
             raise ValueError(
@@ -534,10 +536,7 @@ class WebSocketTransportAsync(
             )
         except OSError as e:
             await self.session.close()
-            # raise ConnectionError('Websocket connection closed: %r' % e) from e
-        # except (Exception, BaseException) as exc:
-        #     raise ConnectionError('Websocket connection closed: %r' % exc) from exc
-
+            raise ConnectionError('Websocket connection closed: %r' % e) from e
 
     async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
@@ -560,25 +559,19 @@ class WebSocketTransportAsync(
                     n = 0
             return view
         except asyncio.CancelledError as ce:
-            # await self.session.close()
-            #raise
+            await self.session.close()
             raise ConnectionError('Websocket connection closed: %r' % ce) from ce
         except asyncio.TimeoutError as te:
             raise ConnectionError('Receive timed out (%s)' % te)
-        except OSError as e:
+        except OSError as exc:
             await self.session.close()
-            # raise ConnectionError('Websocket connection closed: %r' % e) from e
-        # except (Exception, BaseException) as exc:
-        #     raise ConnectionError('Websocket connection closed: %r' % exc) from exc
+            raise ConnectionError('Websocket connection closed: %r' % exc) from exc
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
-        # try:
         await self.ws.close()
         await self.session.close()
         self.connected = False
-        # except asyncio.CancelledError:
-        #     self.connected = False
 
     async def write(self, s):
         """Completely write a string (byte array) to the peer.
@@ -586,16 +579,15 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
+
         async with self.socket_lock:
             try:
                 await self.ws.send_bytes(s)
             except asyncio.CancelledError as ce:
-                # await self.session.close()
+                await self.session.close()
                 raise ConnectionError('Websocket connection closed: %r' % ce) from ce
             except asyncio.TimeoutError as te:
                 raise ConnectionError('Send timed out (%s)' % te)
-            except OSError as e:
+            except OSError as exc:
                 await self.session.close()
-                # raise ConnectionError('Websocket connection closed: %r' % e) from e
-            # except (Exception, BaseException) as exc:
-            #     raise ConnectionError('Websocket connection closed: %r' % exc) from exc
+                raise ConnectionError('Websocket connection closed: %r' % exc) from exc
