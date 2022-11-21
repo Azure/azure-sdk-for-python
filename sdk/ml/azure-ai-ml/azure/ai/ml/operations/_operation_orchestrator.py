@@ -281,6 +281,8 @@ class OperationOrchestrator(object):
 
     def _get_environment_arm_id(self, environment: Environment, register_asset: bool = True) -> Union[str, Environment]:
         if register_asset:
+            if environment.id:
+                return environment.id
             env_response = self._environments.create_or_update(environment)
             return env_response.id
         environment = _check_and_upload_env_build_context(
@@ -299,6 +301,8 @@ class OperationOrchestrator(object):
             self._validate_datastore_name(model.path)
 
             if register_asset:
+                if model.id:
+                    return model.id
                 return self._model.create_or_update(model).id
             uploaded_model, _ = _check_and_upload_path(
                 artifact=model,

@@ -17,6 +17,8 @@ from .._serialization import Deserializer, Serializer
 from ._configuration import ContainerServiceClientConfiguration
 from .operations import (
     AgentPoolsOperations,
+    FleetMembersOperations,
+    FleetsOperations,
     MaintenanceConfigurationsOperations,
     ManagedClusterSnapshotsOperations,
     ManagedClustersOperations,
@@ -69,6 +71,11 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
     :ivar trusted_access_role_bindings: TrustedAccessRoleBindingsOperations operations
     :vartype trusted_access_role_bindings:
      azure.mgmt.containerservice.v2022_09_02_preview.operations.TrustedAccessRoleBindingsOperations
+    :ivar fleets: FleetsOperations operations
+    :vartype fleets: azure.mgmt.containerservice.v2022_09_02_preview.operations.FleetsOperations
+    :ivar fleet_members: FleetMembersOperations operations
+    :vartype fleet_members:
+     azure.mgmt.containerservice.v2022_09_02_preview.operations.FleetMembersOperations
     :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
     :param subscription_id: The ID of the target subscription. Required.
@@ -125,6 +132,8 @@ class ContainerServiceClient:  # pylint: disable=client-accepts-api-version-keyw
         self.trusted_access_role_bindings = TrustedAccessRoleBindingsOperations(
             self._client, self._config, self._serialize, self._deserialize
         )
+        self.fleets = FleetsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.fleet_members = FleetMembersOperations(self._client, self._config, self._serialize, self._deserialize)
 
     def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import json
-import six
+from urllib import parse
 
 try:
     from unittest import mock
@@ -47,7 +47,7 @@ class Request:
         if self.url_substring and self.url_substring not in request.url:
             add_discrepancy("url substring", self.url_substring, request.url)
 
-        parsed = six.moves.urllib_parse.urlparse(request.url)
+        parsed = parse.urlparse(request.url)
         if self.authority and parsed.netloc != self.authority:
             add_discrepancy("authority", self.authority, parsed.netloc)
 
