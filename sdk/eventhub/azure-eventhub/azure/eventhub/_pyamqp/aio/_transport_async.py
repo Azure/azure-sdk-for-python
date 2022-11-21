@@ -557,7 +557,7 @@ class WebSocketTransportAsync(
                     n = 0
             return view
         except asyncio.CancelledError as ce:
-            await self.session.close()
+            # await self.session.close()
             #raise
             raise ConnectionError('Websocket connection closed: %r' % ce) from ce
         except asyncio.TimeoutError as te:
@@ -568,9 +568,12 @@ class WebSocketTransportAsync(
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
-        await self.ws.close()
-        await self.session.close()
-        self.connected = False
+        try:
+            await self.ws.close()
+            await self.session.close()
+            self.connected = False
+        except asyncio.CancelledError:
+            self.connected = False
 
     async def write(self, s):
         """Completely write a string (byte array) to the peer.
@@ -582,7 +585,7 @@ class WebSocketTransportAsync(
             try:
                 await self.ws.send_bytes(s)
             except asyncio.CancelledError as ce:
-                await self.session.close()
+                # await self.session.close()
                 raise ConnectionError('Websocket connection closed: %r' % ce) from ce
             except asyncio.TimeoutError as te:
                 raise ConnectionError('Send timed out (%s)' % te)
