@@ -7,6 +7,8 @@
 import logging
 import os
 import uuid
+import requests
+import json
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional, Tuple, TypeVar, Union
@@ -321,7 +323,7 @@ def _upload_and_generate_remote_uri(
 
     # Asset name is required for uploading to a datastore
     asset_name = str(uuid.uuid4())
-    artifact_info = _upload_snapshot_to_datastore(
+    artifact_info, _ = _upload_snapshot_to_datastore(
         operation_scope=operation_scope,
         datastore_operation=datastore_operation,
         path=path,
@@ -330,10 +332,9 @@ def _upload_and_generate_remote_uri(
         artifact_type=artifact_type,
         show_progress=show_progress,
     )
-
     path = artifact_info.relative_path
-    datastore = AMLNamedArmId(artifact_info.datastore_arm_id).asset_name
-    return SHORT_URI_FORMAT.format(datastore, path)
+
+    return SHORT_URI_FORMAT.format(datastore_name, path)
 
 
 def _update_metadata(name, version, indicator_file, datastore_info) -> None:
@@ -446,11 +447,11 @@ def _check_and_upload_env_build_context(
 
 
 def get_temp_data_reference(
-    operations: "DatastoreOperations"
+    operations: "DatastoreOperations",
     asset_name: str,
     asset_version: str,
     request_headers: Dict[str, str],
-    asset_type: str
+    asset_type: str = "codes",
     ) -> Tuple[str, str]:
     # create temp data reference
     temporary_data_reference_id = str(uuid.uuid4())
@@ -458,11 +459,12 @@ def get_temp_data_reference(
     # get workspace credentials
     resource_group_name = operations._resource_group_name
     workspace_name = operations._workspace_name
-    workspace = operations.service_client.workspaces.get(resource_group_name=resource_group_name, workspace_name=workspace_name)
+    workspace = operations._service_client.workspaces.get(resource_group_name=resource_group_name, workspace_name=workspace_name)
     workspace_id = workspace.workspace_id
+    workspace_location = workspace.location
 
     # build asset id
-    asset_id = f"azureml://locations/{location}/workspaces/{workspace_id}/{asset_type}/{asset_name}/versions/{asset_version}"
+    asset_id = f"azureml://locations/{workspace_location}/workspaces/{workspace_id}/{asset_type}/{asset_name}/versions/{asset_version}"
 
     # build and send request
     data = {
@@ -472,7 +474,7 @@ def get_temp_data_reference(
     }
     data_encoded = json.dumps(data).encode('utf-8')    
     s = requests.Session()
-    request_url = f"{SERVICE_URL.format(location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
+    request_url = f"{SERVICE_URL.format(workspace_location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
     response = s.post(request_url, data=data_encoded, headers=request_headers)
     if response.status_code != 200:
         # Not shown here: retry behavior
@@ -488,26 +490,41 @@ def get_temp_data_reference(
     return blob_uri, sas_uri
 
 
-def get_asset_by_hash(hash_str: str, request_headers: Dict[str, str]) -> Tuple[str, str]:    
+def get_asset_by_hash(
+    operations: "DatastoreOperations",
+    hash_str: str,
+    request_headers: Dict[str, str]) -> Tuple[str, str]: 
     hash_version = get_content_hash_version()
 
-    # build request to API (API route is implemented at https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/ProjectContent/Contracts/ISnapshotControllerNewRoutes.cs&version=GBmaster&line=289&lineEnd=290&lineStartColumn=1&lineEndColumn=45&lineStyle=plain&_a=contents)
-    request_url = "{0}/content/v2.0/subscriptions/{1}/resourceGroups/{2}/providers/Microsoft.MachineLearningServices/workspaces/{3}"\
-                  "/snapshots/getByHash?hash={4}&hashVersion={5}"\
-        .format(service_url, subscription_id, resource_group, workspace_name,
-                hash_str, hash_version)
-    s = requests.Session()
+    # get workspace credentials
+    subscription_id = operations._subscription_id
+    resource_group_name = operations._resource_group_name
+    workspace_name = operations._workspace_name
+    workspace = operations._service_client.workspaces.get(resource_group_name=resource_group_name, workspace_name=workspace_name)
+    workspace_id = workspace.workspace_id
+    workspace_location = workspace.location  
 
-    # Response is SnapshotDto which is defined here: https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/ProjectContent/Contracts/SnapshotDto.cs&version=GBmaster&line=18&lineEnd=18&lineStartColumn=1&lineEndColumn=29&lineStyle=plain&_a=contents
-    response = s.get(request_url, headers=request_headers)
-    if response.status_code == 404:
-        # 404 status is the expected response if the snapshot does not exist
-        print('Snapshot with hash', hash_str, 'was not found')
-        return None
-    if response.status_code != 200:
-        # Not shown here: retry behavior
-        print('Unexpected response:', response.status_code, response.txt)
-        return None
+    try:
+        # build request to API (API route is implemented at https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/ProjectContent/Contracts/ISnapshotControllerNewRoutes.cs&version=GBmaster&line=289&lineEnd=290&lineStartColumn=1&lineEndColumn=45&lineStyle=plain&_a=contents)
+        request_url = "{0}/content/v2.0/subscriptions/{1}/resourceGroups/{2}/providers/Microsoft.MachineLearningServices/workspaces/{3}"\
+                    "/snapshots/getByHash?hash={4}&hashVersion={5}"\
+            .format(SERVICE_URL.format(workspace_location), subscription_id, resource_group_name, workspace_name,
+                    hash_str, hash_version)
+        s = requests.Session()
+
+        # Response is SnapshotDto which is defined here: https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/ProjectContent/Contracts/SnapshotDto.cs&version=GBmaster&line=18&lineEnd=18&lineStartColumn=1&lineEndColumn=29&lineStyle=plain&_a=contents
+        response = s.get(request_url, headers=request_headers)
+        if response.status_code == 404:
+            # 404 status is the expected response if the snapshot does not exist
+            print('Snapshot with hash', hash_str, 'was not found')
+            return None
+        if response.status_code != 200:
+            # Not shown here: retry behavior
+            print('Unexpected response:', response.status_code, response.txt)
+            return None
+    except:
+        print("connection failed, continuing on")
+        pass
 
     response_json = json.loads(response.text)
     name = response_json['name']
@@ -541,9 +558,12 @@ def _upload_snapshot_to_datastore(
     token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
     request_headers={"Authorization": "Bearer " + token}
     request_headers['Content-Type'] = 'application/json; charset=UTF-8'
-    existing_asset_name, existing_asset_version = get_asset_by_hash(hash_str=asset_hash, request_headers=request_headers)
-    
-    if existing_asset_name and existing_asset_version:
+
+    existing_asset = get_asset_by_hash(operations=datastore_operation, hash_str=asset_hash, request_headers=request_headers)
+    if existing_asset:
+        print("we found the hash")
+    if False:
+        asset_name, asset_version = existing_asset
         return 
     else:
         blob_uri, sas_uri = get_temp_data_reference(
@@ -566,4 +586,4 @@ def _upload_snapshot_to_datastore(
             sas_uri=sas_uri,
         )
 
-    return artifact
+    return artifact, blob_uri
