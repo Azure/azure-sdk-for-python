@@ -73,37 +73,45 @@ class TestDoWhile(TestConditionalNodeInPipeline):
         assert isinstance(created_pipeline.jobs["get_do_while_result"], Command)
 
 
-class TestParallelFor(TestConditionalNodeInPipeline):
-
-    @pytest.mark.parametrize(
-        "source, expected_node",
-        [
-            ("./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml", {
-                'body': '${{parent.jobs.parallel_body}}',
-                'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
-                'type': 'parallel_for'
-            }),
-            ("./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_list_input.yaml", {
-                'body': '${{parent.jobs.parallel_body}}',
-                'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
-                'type': 'parallel_for'
-            }),
-            ("./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_dict_input.yaml", {
-                'body': '${{parent.jobs.parallel_body}}',
-                'items': '{"branch1": {"component_in_number": 1}, "branch2": '
-                         '{"component_in_number": 2}}',
-                'type': 'parallel_for'
-            }),
-        ]
+def assert_foreach(client: MLClient, job_name, source, expected_node):
+    params_override = [{"name": job_name}]
+    pipeline_job = load_job(
+        source,
+        params_override=params_override,
     )
-    def test_simple_foreach(self, client: MLClient, randstr: Callable, source, expected_node):
-        params_override = [{"name": randstr("job_name")}]
-        pipeline_job = load_job(
-            source,
-            params_override=params_override,
-        )
 
-        created_pipeline_job = assert_job_cancel(pipeline_job, client)
-        assert isinstance(created_pipeline_job.jobs["parallel_node"], ParallelFor)
-        rest_job_dict = pipeline_job._to_rest_object().as_dict()
-        assert rest_job_dict["properties"]["jobs"]["parallel_node"] == expected_node
+    created_pipeline_job = assert_job_cancel(pipeline_job, client)
+    assert isinstance(created_pipeline_job.jobs["parallel_node"], ParallelFor)
+    rest_job_dict = pipeline_job._to_rest_object().as_dict()
+    assert rest_job_dict["properties"]["jobs"]["parallel_node"] == expected_node
+
+
+class TestParallelFor(TestConditionalNodeInPipeline):
+    def test_simple_foreach_string_item(self, client: MLClient, randstr: Callable):
+        source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job.yaml"
+        expected_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
+            'type': 'parallel_for'
+        }
+
+        assert_foreach(client, randstr("job_name"), source, expected_node)
+
+    def test_simple_foreach_list_item(self, client: MLClient, randstr: Callable):
+        source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_list_input.yaml"
+        expected_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
+            'type': 'parallel_for'
+        }
+        assert_foreach(client, randstr("job_name"), source, expected_node)
+
+    def test_simple_foreach_dict_item(self, client: MLClient, randstr: Callable):
+        source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_dict_input.yaml"
+        expected_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '{"branch1": {"component_in_number": 1}, "branch2": '
+                     '{"component_in_number": 2}}',
+            'type': 'parallel_for'
+        }
+        assert_foreach(client, randstr("job_name"), source, expected_node)
