@@ -9,9 +9,10 @@ import asyncio
 from typing import Callable, Any, Coroutine, Awaitable
 
 import pytest
+from devtools_testutils.aio import recorded_by_proxy_async
 from _decorators_async import RouterPreparersAsync
 from _validators import JobQueueValidator
-from _router_test_case_async import AsyncRouterTestCase
+from _router_test_case_async import AsyncRouterRecordedTestCase
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from azure.communication.jobrouter._shared.utils import parse_connection_str
 from azure.core.exceptions import ResourceNotFoundError
@@ -31,14 +32,7 @@ queue_labels = {
 
 
 # The test class name needs to start with "Test" to get collected by pytest
-class TestJobQueueAsync(AsyncRouterTestCase):
-    def __init__(self, method_name):
-        super(TestJobQueueAsync, self).__init__(method_name)
-
-        self.queue_ids = {}  # type: Dict[str, List[str]]
-        self.distribution_policy_ids = {}  # type: Dict[str, List[str]]
-        self.exception_policy_ids = {}  # type: Dict[str, List[str]]
-
+class TestJobQueueAsync(AsyncRouterRecordedTestCase):
     async def clean_up(self):
         # delete in live mode
         if not self.is_playback():
@@ -53,15 +47,6 @@ class TestJobQueueAsync(AsyncRouterTestCase):
                         and any(self.distribution_policy_ids[self._testMethodName]):
                     for policy_id in set(self.distribution_policy_ids[self._testMethodName]):
                         await router_client.delete_distribution_policy(distribution_policy_id = policy_id)
-
-    def setUp(self):
-        super(TestJobQueueAsync, self).setUp()
-
-        endpoint, _ = parse_connection_str(self.connection_str)
-        self.endpoint = endpoint
-
-    def tearDown(self):
-        super(TestJobQueueAsync, self).tearDown()
 
     def get_distribution_policy_id(self):
         return self._testMethodName + "_tst_dp_async"
@@ -91,7 +76,8 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         else:
             self.distribution_policy_ids[self._testMethodName] = [distribution_policy_id]
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_create_queue(self):
@@ -123,7 +109,8 @@ class TestJobQueueAsync(AsyncRouterTestCase):
             )
 
     @pytest.mark.skip(reason = "Upsert queue not working correctly")
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_queue(self):
@@ -176,7 +163,8 @@ class TestJobQueueAsync(AsyncRouterTestCase):
             )
 
     @pytest.mark.skip(reason = "Upsert queue not working correctly")
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_update_queue_w_kwargs(self):
@@ -228,7 +216,8 @@ class TestJobQueueAsync(AsyncRouterTestCase):
                 distribution_policy_id = self.get_distribution_policy_id()
             )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_get_queue(self):
@@ -271,7 +260,8 @@ class TestJobQueueAsync(AsyncRouterTestCase):
                 distribution_policy_id = self.get_distribution_policy_id()
             )
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_delete_queue(self):
@@ -304,7 +294,8 @@ class TestJobQueueAsync(AsyncRouterTestCase):
         assert nfe.value.reason == "Not Found"
         assert nfe.value.status_code == 404
 
-    @AsyncCommunicationTestCase.await_prepared_test
+    @RouterPreparersAsync.router_test_decorator_async
+    @recorded_by_proxy_async
     @RouterPreparersAsync.before_test_execute_async('setup_distribution_policy')
     @RouterPreparersAsync.after_test_execute_async('clean_up')
     async def test_list_queues(self):

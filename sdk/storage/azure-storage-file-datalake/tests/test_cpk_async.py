@@ -11,7 +11,7 @@ from azure.storage.filedatalake import CustomerProvidedEncryptionKey
 from azure.storage.filedatalake.aio import DataLakeServiceClient
 
 from devtools_testutils.aio import recorded_by_proxy_async
-from devtools_testutils.storage import StorageRecordedTestCase
+from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import DataLakePreparer
 
 # ------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ TEST_ENCRYPTION_KEY = CustomerProvidedEncryptionKey(
 # ------------------------------------------------------------------------------
 
 
-class TestDatalakeCpkAsync(StorageRecordedTestCase):
+class TestDatalakeCpkAsync(AsyncStorageRecordedTestCase):
     async def _setup(self, account_name, account_key):
         url = self.account_url(account_name, 'dfs')
         self.dsc = DataLakeServiceClient(url, credential=account_key)
@@ -36,12 +36,11 @@ class TestDatalakeCpkAsync(StorageRecordedTestCase):
             except ResourceExistsError:
                 pass
 
-    def teardown(self):
+    async def teardown(self):
         if self.is_live:
             try:
-                loop = asyncio.get_event_loop()
-                loop.run_until_complete(self.dsc.delete_file_system(self.file_system_name))
-                loop.run_until_complete(self.dsc.__aexit__())
+                await self.dsc.delete_file_system(self.file_system_name)
+                await self.dsc.close()
             except ResourceNotFoundError:
                 pass
 

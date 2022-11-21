@@ -1,5 +1,9 @@
 trigger: none
 
+variables:
+- name: Skip.RemoveTestResources
+  value: true
+
 extends:
   template: ./tests.yml
   parameters:

@@ -232,24 +232,19 @@ class RoomsClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_get_invalid_room_async(self):
         # random room id
-        with pytest.raises(HttpResponseError) as ex:
-            async with self.rooms_client:
-                await self.rooms_client.get_room(room_id="89469124725336262")
+        async with self.rooms_client:
+            create_response = await self.rooms_client.create_room()
 
+            # delete created room
+            await self.rooms_client.delete_room(room_id=create_response.id)
+            with pytest.raises(HttpResponseError) as ex:
+            
+                get_response = await self.rooms_client.get_room(room_id=create_response.id)
                 # Resource not found
-                assert str(ex.value.status_code) == "404"
-                assert ex.value.message is not None
+            assert str(ex.value.status_code) == "404"
+            assert ex.value.message is not None
+            await self.rooms_client.delete_room(room_id=create_response.id)
 
-    @AsyncCommunicationTestCase.await_prepared_test
-    async def test_delete_invalid_room_async(self):
-        # random room id
-        with pytest.raises(HttpResponseError) as ex:
-            async with self.rooms_client:
-                await self.rooms_client.delete_room(room_id="78469124725336262")
-
-                # Resource not found
-                assert str(ex.value.status_code) == "404"
-                assert ex.value.message is not None
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_update_room_only_ValidFrom_async(self):

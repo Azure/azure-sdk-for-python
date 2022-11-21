@@ -68,7 +68,7 @@ class TableEntitySamples(object):
                 # [START get_entity]
                 # Get Entity by partition and row key
                 got_entity = await table.get_entity(
-                    partition_key=my_entity["PartitionKey"], row_key=my_entity["RowKey"]
+                    partition_key=my_entity["PartitionKey"], row_key=my_entity["RowKey"] # type: ignore[arg-type]
                 )
                 print("Received entity: {}".format(got_entity))
                 # [END get_entity]
@@ -153,7 +153,7 @@ class TableEntitySamples(object):
             try:
                 # Create entities
                 await table.create_entity(entity=entity)
-                created = await table.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"])
+                created = await table.get_entity(partition_key=entity["PartitionKey"], row_key=entity["RowKey"]) # type: ignore[arg-type]
 
                 # [START upsert_entity]
                 # Try Replace and insert on fail

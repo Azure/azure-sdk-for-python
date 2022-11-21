@@ -494,8 +494,8 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         information see https://www.hl7.org/fhir/overview.html.
     :vartype fhir_bundle: Optional[dict[str, any]]
     :ivar detected_language: If 'language' is set to 'auto' for the document in the request this
-        field will contain the DetectedLanguage for the document.
-    :vartype detected_language: Optional[~azure.ai.textanalytics.DetectedLanguage]
+        field will contain the detected language for the document.
+    :vartype detected_language: Optional[str]
     :ivar bool is_error: Boolean check for error item when iterating over list of
         results. Always False for an instance of a AnalyzeHealthcareEntitiesResult.
     :ivar str kind: The text analysis kind - "Healthcare".
@@ -528,6 +528,8 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
             for r in healthcare_result.relations
         ]
         fhir_bundle = healthcare_result.fhir_bundle if hasattr(healthcare_result, "fhir_bundle") else None
+        detected_language = healthcare_result.detected_language \
+            if hasattr(healthcare_result, "detected_language") else None
         return cls(
             id=healthcare_result.id,
             entities=entities,
@@ -542,9 +544,10 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
                 healthcare_result.statistics
             ),
             fhir_bundle=fhir_bundle,
-            detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
-                healthcare_result.detected_language
-            ) if hasattr(healthcare_result, "detected_language") and healthcare_result.detected_language else None
+            detected_language=detected_language  # https://github.com/Azure/azure-sdk-for-python/issues/27171
+            # detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
+            #     healthcare_result.detected_language
+            # ) if hasattr(healthcare_result, "detected_language") and healthcare_result.detected_language else None
         )
 
     def __repr__(self):
@@ -557,7 +560,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
                 repr(self.warnings),
                 repr(self.statistics),
                 self.fhir_bundle,
-                repr(self.detected_language),
+                self.detected_language,
                 self.is_error,
             )[:1024]
         )
@@ -3121,13 +3124,11 @@ class DynamicClassificationResult(DictMixin):
 
     @classmethod
     def _from_generated(cls, result):
-        # FIXME: https://github.com/Azure/azure-sdk-for-python/issues/27089
-        classes = result.class_property or result.additional_properties.get("classifications", None)
         return cls(
             id=result.id,
             classifications=[
                 ClassificationCategory._from_generated(c)  # pylint: disable=protected-access
-                for c in classes
+                for c in result.classifications
             ],
             warnings=[
                 TextAnalyticsWarning._from_generated(  # pylint: disable=protected-access

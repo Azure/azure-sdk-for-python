@@ -25,7 +25,6 @@ from azure.ai.ml.exceptions import (
     UnsupportedParameterKindError,
     UserErrorException,
     ParamValueNotExistsError,
-    UnExpectedNonPipelineParameterTypeError,
 )
 
 from ._pipeline_component_builder import PipelineComponentBuilder, _is_inside_dsl_pipeline_func
@@ -166,12 +165,13 @@ def pipeline(
                 provided_positional_args = _validate_args(func, args, kwargs, non_pipeline_inputs)
                 # Convert args to kwargs
                 kwargs.update(provided_positional_args)
-                non_pipeline_params_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
+                non_pipeline_inputs_dict = {k: v for k, v in kwargs.items() if k in non_pipeline_inputs}
 
                 # TODO: cache built pipeline component
                 pipeline_component = pipeline_builder.build(
                     user_provided_kwargs=kwargs,
-                    non_pipeline_params_dict=non_pipeline_params_dict
+                    non_pipeline_inputs_dict=non_pipeline_inputs_dict,
+                    non_pipeline_inputs=non_pipeline_inputs
                 )
             finally:
                 # use `finally` to ensure pop operation from the stack
@@ -227,7 +227,8 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
     """Validate customer function args and convert them to kwargs."""
     if not isinstance(non_pipeline_inputs, List) or \
             any(not isinstance(param, str) for param in non_pipeline_inputs):
-        raise UnExpectedNonPipelineParameterTypeError()
+        msg = "Type of 'non_pipeline_parameter' in dsl.pipeline should be a list of string"
+        raise UserErrorException(message=msg, no_personal_data_message=msg)
     # Positional arguments validate
     all_parameters = [param for _, param in signature(func).parameters.items()]
     # Implicit parameter are *args and **kwargs

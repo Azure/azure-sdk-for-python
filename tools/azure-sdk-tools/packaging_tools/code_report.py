@@ -126,7 +126,6 @@ def create_report_from_func(function_attr):
         func_content["parameters"].append(
             {
                 "name": parameter.name,
-                "type": str(parameter.kind),
                 "has_default_value": not (parameter.default is parameter.empty),
             }
         )

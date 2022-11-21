@@ -4,9 +4,9 @@
 Conversational Language Understanding - aka **CLU** for short - is a cloud-based conversational AI service which provides many language understanding capabilities like:
 - Conversation App: It's used in extracting intents and entities in conversations
 - Workflow app: Acts like an orchestrator to select the best candidate to analyze conversations to get best response from apps like Qna, Luis, and Conversation App
-- Conversational Summarization: Used to summarize conversations in the form of issues, and final resolutions
-- Conversational PII: Used to extract and redact personally-identifiable info (PII)
-- Conversational Sentiment Analysis: Used to analyze sentiment of conversations
+- Conversational Summarization: Used to analyze conversations in the form of issues/resolution, chapter title, and narrative summarizations
+- Conversational PII: Used to extract and redact personally-identifiable information (PII)
+- Conversational Sentiment Analysis: Used to analyze the sentiment of conversations
 
 [Source code][conversationallanguage_client_src] | [Package (PyPI)][conversationallanguage_pypi_package] | [API reference documentation][api_reference_documentation] | [Samples][conversationallanguage_samples] | [Product documentation][conversationallanguage_docs] | [Analysis REST API documentation][conversationanalysis_restdocs] | [Authoring REST API documentation][conversationanalysis_restdocs_authoring]
 
