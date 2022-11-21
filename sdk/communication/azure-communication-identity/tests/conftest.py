@@ -28,7 +28,7 @@
 import pytest
 import os
 from devtools_testutils import test_proxy, add_general_regex_sanitizer, add_header_regex_sanitizer, \
-    set_default_session_settings, add_body_key_sanitizer, add_oauth_response_sanitizer
+    set_default_session_settings, add_body_key_sanitizer, add_oauth_response_sanitizer, add_general_string_sanitizer
 from azure.communication.identity._shared.utils import parse_connection_str
 
 @pytest.fixture(scope="session", autouse=True)
@@ -40,7 +40,7 @@ def add_sanitizers(test_proxy):
     if connection_str is not None:
         endpoint, _ = parse_connection_str(connection_str)
         resource_name = endpoint.split(".")[0]
-        add_general_regex_sanitizer(regex=resource_name, value="sanitized")
+        add_general_string_sanitizer(target=resource_name, value="sanitized")
 
     subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
     add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")

@@ -344,6 +344,7 @@ class TestClientAsync(AzureRecordedTestCase):
                 await identity_client.create_user_and_token(scopes=None)
 
         assert ex is not None
+        assert str(ex.value) == "'accessToken'"
 
     @CommunicationPreparer()
     @recorded_by_proxy_async
@@ -358,6 +359,7 @@ class TestClientAsync(AzureRecordedTestCase):
                 await identity_client.delete_user(user=None)
 
         assert ex is not None
+        assert str(ex.value) == "'NoneType' object has no attribute 'properties'"
 
     @CommunicationPreparer()
     @recorded_by_proxy_async
@@ -372,6 +374,7 @@ class TestClientAsync(AzureRecordedTestCase):
                 await identity_client.revoke_tokens(user=None)
 
         assert ex is not None
+        assert str(ex.value) == 'No value for given attribute'
 
     @CommunicationPreparer()
     @recorded_by_proxy_async
@@ -386,6 +389,7 @@ class TestClientAsync(AzureRecordedTestCase):
                 await identity_client.get_token(user=None, scopes=[CommunicationTokenScope.CHAT])
 
         assert ex is not None
+        assert str(ex.value) == "'NoneType' object has no attribute 'properties'"
 
     @CommunicationPreparer()
     @recorded_by_proxy_async
@@ -401,6 +405,7 @@ class TestClientAsync(AzureRecordedTestCase):
                 await identity_client.get_token(user, scopes=None)
 
         assert ex is not None
+        assert str(ex.value.error.code) == 'ValidationError'
 
     @CommunicationPreparer()
     @acs_identity_decorator
