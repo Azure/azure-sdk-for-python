@@ -84,6 +84,7 @@ class AsyncTransportMixin:
             asyncio.IncompleteReadError,
             asyncio.TimeoutError,
             ConnectionError,
+            asyncio.CancelledError
         ):
             return None, None
 
@@ -556,10 +557,11 @@ class WebSocketTransportAsync(
                     self._read_buffer = BytesIO(data[n:])
                     n = 0
             return view
-        except asyncio.CancelledError as ce:
-            await self.session.close()
-            #raise
-            raise ConnectionError('Websocket connection closed: %r' % ce) from ce
+        except asyncio.CancelledError:
+            # Can't close session here, b/c a ping/heartbeat is sent and a ConnectionResetError
+            # is raised in receive_frame(), but can't be caught.
+            # await self.session.close()
+            raise
         except asyncio.TimeoutError as te:
             raise ConnectionError('Receive timed out (%s)' % te)
         except OSError as e:
