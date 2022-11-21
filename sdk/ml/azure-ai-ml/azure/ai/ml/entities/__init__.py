@@ -21,7 +21,6 @@ from ._compute._aml_compute_node_info import AmlComputeNodeInfo
 from ._compute._schedule import ComputePowerAction, ComputeSchedules, ComputeStartStopSchedule, ScheduleState
 from ._compute._usage import Usage, UsageName
 from ._compute._vm_size import VmSize
-from ._compute._image_metadata import ImageMetadata
 from ._compute.aml_compute import AmlCompute, AmlComputeSshSettings
 from ._compute.compute import Compute, NetworkSettings
 from ._compute.compute_instance import AssignedUserConfiguration, ComputeInstance, ComputeInstanceSshSettings
@@ -217,7 +216,6 @@ __all__ = [
     "SynapseSparkCompute",
     "AutoScaleSettings",
     "AutoPauseSettings",
-    "ImageMetadata",
     # builders
     "Command",
     "Parallel",
