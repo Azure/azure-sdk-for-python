@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 
 import sys
-from typing import Any, Union
+from typing import Any, Union, IO
 from uuid import uuid4
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
@@ -81,7 +81,7 @@ class EmailClient(object): # pylint: disable=client-accepts-api-version-keyword
     @distributed_trace_async
     async def send(
         self,
-        email_message: JSON,
+        email_message: Union[JSON, IO],
         **kwargs
     ) -> JSON:
         # cSpell:disable
