@@ -668,7 +668,7 @@ def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], excl
 
 
 def merge_dict(origin, delta):
-    result = {}
+    result = copy.deepcopy(origin)
     for key, val in delta.items():
         origin_val = origin.get(key)
         # Merge delta dict with original dict
