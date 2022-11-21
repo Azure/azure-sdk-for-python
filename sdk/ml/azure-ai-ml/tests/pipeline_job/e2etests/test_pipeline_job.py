@@ -417,6 +417,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "jobs.hello_world_inline_commandjob_1.properties",
                     "jobs.hello_world_inline_commandjob_2.properties",
                     "source_job_id",
+                    "services",
                 ],
             ),
             (
@@ -498,6 +499,7 @@ class TestPipelineJob(AzureRecordedTestCase):
                     "jobs.train_job.properties",
                     "jobs.score_job.properties",
                     "source_job_id",
+                    "services",
                 ],
             ),
         ]
