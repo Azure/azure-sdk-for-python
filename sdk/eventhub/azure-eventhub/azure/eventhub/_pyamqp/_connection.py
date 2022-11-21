@@ -197,6 +197,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 description="Failed to initiate the connection due to exception: " + str(exc),
                 error=exc,
             )
+        except Exception: # pylint:disable=try-except-raise
+            raise
 
     def _disconnect(self):
         # type: () -> None
