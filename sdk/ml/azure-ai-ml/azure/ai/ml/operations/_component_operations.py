@@ -568,7 +568,18 @@ def _refine_component(component_func: types.FunctionType) -> Component:
         """Check all parameter is annotated or has a default value with
         clear type(not None)."""
         annotations = getattr(f, "__annotations__", {})
-        defaults_dict = {key: val.default for key, val in signature(f).parameters.items()}
+        func_parameters = signature(f).parameters
+        defaults_dict = {key: val.default for key, val in func_parameters.items()}
+        variable_inputs = [key for key, val in func_parameters.items()
+                           if val.kind in [val.VAR_POSITIONAL, val.VAR_KEYWORD]]
+        if variable_inputs:
+            msg = "Cannot register the component {} with variable inputs {!r}."
+            raise ValidationException(
+                message=msg.format(f.__name__, variable_inputs),
+                no_personal_data_message=msg.format("[keys]", "[name]"),
+                target=ErrorTarget.COMPONENT,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         unknown_type_keys = [
             key for key, val in defaults_dict.items() if key not in annotations and val is Parameter.empty
         ]
