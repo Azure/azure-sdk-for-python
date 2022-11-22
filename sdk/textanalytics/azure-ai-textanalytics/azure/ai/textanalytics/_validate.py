@@ -66,7 +66,7 @@ def validate_multiapi_args(**kwargs: typing.Any) -> typing.Callable[[typing.Call
 
     def decorator(func: typing.Callable[P, T]) -> typing.Callable[P, T]:
         @functools.wraps(func)
-        def wrapper(*args: P.args, **kwargs: P.kwargs) -> T:
+        def wrapper(*args: typing.Any, **kwargs: typing.Any) -> T:
             try:
                 # this assumes the client has an _api_version attribute
                 client = args[0]

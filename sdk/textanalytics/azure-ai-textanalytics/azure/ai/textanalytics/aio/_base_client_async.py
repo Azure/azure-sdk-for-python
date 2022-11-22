@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-from typing import Any, Union, cast
+from typing import Any, Union
 from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy

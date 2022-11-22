@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any, cast
+from typing import Union, Any
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy

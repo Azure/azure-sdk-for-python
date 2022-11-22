@@ -1336,7 +1336,7 @@ class DetectLanguageInput(LanguageInput):
     """
 
     def __init__(
-        self, *, id: str, text: str, country_hint: Optional[str] = None
+        self, *, id: str, text: str, country_hint: Optional[str] = None  # pylint: disable=redefined-builtin
     ) -> None:
         super().__init__(id=id, text=text, country_hint=country_hint)
         self.id = id
@@ -1494,7 +1494,9 @@ class TextDocumentInput(DictMixin, MultiLanguageInput):
         The 'auto' option for language.
     """
 
-    def __init__(self, *, id: str, text: str, language: Optional[str] = None) -> None:
+    def __init__(
+            self, *, id: str, text: str, language: Optional[str] = None  # pylint: disable=redefined-builtin
+    ) -> None:
         super().__init__(id=id, text=text, language=language)
         self.id = id
         self.text = text
