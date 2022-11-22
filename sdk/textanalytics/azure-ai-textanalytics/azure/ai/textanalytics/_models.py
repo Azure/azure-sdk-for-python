@@ -5,7 +5,7 @@
 # ------------------------------------
 import re
 from enum import Enum
-from typing import Optional, List, Dict, Any, Union, cast
+from typing import Optional, List, Dict, Any, Union
 from typing_extensions import Literal
 from azure.core import CaseInsensitiveEnumMeta
 from ._generated.models import (
@@ -26,7 +26,7 @@ from ._generated.models import (
     TemporalSpanResolution,
     VolumeResolution,
     WeightResolution,
-    HealthcareDocumentType
+    HealthcareDocumentType,
 )
 from ._generated.v3_0 import models as _v3_0_models
 from ._generated.v3_1 import models as _v3_1_models
@@ -352,7 +352,14 @@ class DetectedLanguage(DictMixin):
         The *script* property.
     """
 
-    def __init__(self, *, name: str, iso6391_name: str, confidence_score: float, script: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        iso6391_name: str,
+        confidence_score: float,
+        script: Optional[str] = None,
+    ) -> None:
         self.name = name
         self.iso6391_name = iso6391_name
         self.confidence_score = confidence_score
@@ -369,8 +376,10 @@ class DetectedLanguage(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"DetectedLanguage(name={self.name}, iso6391_name={self.iso6391_name}, " \
-               f"confidence_score={self.confidence_score}, script={self.script})"[:1024]
+        return (
+            f"DetectedLanguage(name={self.name}, iso6391_name={self.iso6391_name}, "
+            f"confidence_score={self.confidence_score}, script={self.script})"[:1024]
+        )
 
 
 class RecognizeEntitiesResult(DictMixin):
@@ -412,9 +421,12 @@ class RecognizeEntitiesResult(DictMixin):
         self.kind: Literal["EntityRecognition"] = "EntityRecognition"
 
     def __repr__(self) -> str:
-        return f"RecognizeEntitiesResult(id={self.id}, entities={repr(self.entities)}, " \
-               f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, " \
-               f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"RecognizeEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, "
+            f"kind={self.kind})"[:1024]
+        )
 
 
 class RecognizePiiEntitiesResult(DictMixin):
@@ -459,8 +471,12 @@ class RecognizePiiEntitiesResult(DictMixin):
         self.kind: Literal["PiiEntityRecognition"] = "PiiEntityRecognition"
 
     def __repr__(self) -> str:
-        return f"RecognizePiiEntitiesResult(id={self.id}, entities={repr(self.entities)}, redacted_text={self.redacted_text}, warnings={repr(self.warnings)}, " \
-               f"statistics={repr(self.statistics)}, detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"RecognizePiiEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"redacted_text={self.redacted_text}, warnings={repr(self.warnings)}, "
+            f"statistics={repr(self.statistics)}, detected_language={repr(self.detected_language)}, "
+            f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
 
 class AnalyzeHealthcareEntitiesResult(DictMixin):
@@ -549,8 +565,12 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"AnalyzeHealthcareEntitiesResult(id={self.id}, entities={repr(self.entities)}, entity_relations={repr(self.entity_relations)}, warnings={repr(self.warnings)}, " \
-               f"statistics={repr(self.statistics)}, fhir_bundle={self.fhir_bundle}, detected_language={self.detected_language}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"AnalyzeHealthcareEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"entity_relations={repr(self.entity_relations)}, warnings={repr(self.warnings)}, "
+            f"statistics={repr(self.statistics)}, fhir_bundle={self.fhir_bundle}, "
+            f"detected_language={self.detected_language}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
 
 class HealthcareRelation(DictMixin):
@@ -573,7 +593,13 @@ class HealthcareRelation(DictMixin):
         The *confidence_score* property.
     """
 
-    def __init__(self, *, relation_type: str, roles: List["HealthcareRelationRole"], confidence_score: Optional[float] = None) -> None:
+    def __init__(
+        self,
+        *,
+        relation_type: str,
+        roles: List["HealthcareRelationRole"],
+        confidence_score: Optional[float] = None,
+    ) -> None:
         self.relation_type = relation_type
         self.roles = roles
         self.confidence_score = confidence_score
@@ -595,7 +621,8 @@ class HealthcareRelation(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"HealthcareRelation(relation_type={self.relation_type}, roles={repr(self.roles)}, confidence_score={self.confidence_score})"[:1024]
+        return f"HealthcareRelation(relation_type={self.relation_type}, roles={repr(self.roles)}, " \
+               f"confidence_score={self.confidence_score})"[:1024]
 
 
 class HealthcareRelationRole(DictMixin):
@@ -669,8 +696,11 @@ class DetectLanguageResult(DictMixin):
         self.kind: Literal["LanguageDetection"] = "LanguageDetection"
 
     def __repr__(self) -> str:
-        return f"DetectLanguageResult(id={self.id}, primary_language={repr(self.primary_language)}, warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, " \
-               f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"DetectLanguageResult(id={self.id}, primary_language={repr(self.primary_language)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, is_error={self.is_error}, "
+            f"kind={self.kind})"[:1024]
+        )
 
 
 class CategorizedEntity(DictMixin):
@@ -731,10 +761,10 @@ class CategorizedEntity(DictMixin):
                     TemperatureResolution,
                     TemporalSpanResolution,
                     VolumeResolution,
-                    WeightResolution
+                    WeightResolution,
                 ]
             ]
-        ]
+        ],
     ) -> None:
         self.text = text
         self.category = category
@@ -764,8 +794,11 @@ class CategorizedEntity(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"CategorizedEntity(text={self.text}, category={self.category}, subcategory={self.subcategory}, " \
-               f"length={self.length}, offset={self.offset}, confidence_score={self.confidence_score}, resolutions={repr(self.resolutions)})"[:1024]
+        return (
+            f"CategorizedEntity(text={self.text}, category={self.category}, subcategory={self.subcategory}, "
+            f"length={self.length}, offset={self.offset}, confidence_score={self.confidence_score}, "
+            f"resolutions={repr(self.resolutions)})"[:1024]
+        )
 
 
 class PiiEntity(DictMixin):
@@ -816,8 +849,10 @@ class PiiEntity(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"PiiEntity(text={self.text}, category={self.category}, subcategory={self.subcategory}, length={self.length}, " \
-               f"offset={self.offset}, confidence_score={self.confidence_score})"[:1024]
+        return (
+            f"PiiEntity(text={self.text}, category={self.category}, subcategory={self.subcategory}, "
+            f"length={self.length}, offset={self.offset}, confidence_score={self.confidence_score})"[:1024]
+        )
 
 
 class HealthcareEntity(DictMixin):
@@ -846,7 +881,19 @@ class HealthcareEntity(DictMixin):
     :vartype data_sources: Optional[list[~azure.ai.textanalytics.HealthcareEntityDataSource]]
     """
 
-    def __init__(self, *, text: str, normalized_text: Optional[str] = None, category: str, subcategory: Optional[str] = None, assertion: Optional["HealthcareEntityAssertion"] = None, length: int, offset: int, confidence_score: float, data_sources: Optional[List["HealthcareEntityDataSource"]]) -> None:
+    def __init__(
+        self,
+        *,
+        text: str,
+        normalized_text: Optional[str] = None,
+        category: str,
+        subcategory: Optional[str] = None,
+        assertion: Optional["HealthcareEntityAssertion"] = None,
+        length: int,
+        offset: int,
+        confidence_score: float,
+        data_sources: Optional[List["HealthcareEntityDataSource"]],
+    ) -> None:
         self.text = text
         self.normalized_text = normalized_text
         self.category = category
@@ -889,8 +936,12 @@ class HealthcareEntity(DictMixin):
         return hash(repr(self))
 
     def __repr__(self) -> str:
-        return f"HealthcareEntity(text={self.text}, normalized_text={self.normalized_text}, category={self.category}, subcategory={self.subcategory}, assertion={repr(self.assertion)}, length={self.length}, " \
-               f"offset={self.offset}, confidence_score={self.confidence_score}, data_sources={repr(self.data_sources)})"[:1024]
+        return (
+            f"HealthcareEntity(text={self.text}, normalized_text={self.normalized_text}, "
+            f"category={self.category}, subcategory={self.subcategory}, assertion={repr(self.assertion)}, "
+            f"length={self.length}, offset={self.offset}, confidence_score={self.confidence_score}, "
+            f"data_sources={repr(self.data_sources)})"[:1024]
+        )
 
 
 class HealthcareEntityAssertion(DictMixin):
@@ -914,7 +965,13 @@ class HealthcareEntityAssertion(DictMixin):
         mother. Possible values are "subject" and "other".
     """
 
-    def __init__(self, *, conditionality: Optional[str] = None, certainty: Optional[str] = None, association: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        *,
+        conditionality: Optional[str] = None,
+        certainty: Optional[str] = None,
+        association: Optional[str] = None,
+    ) -> None:
         self.conditionality = conditionality
         self.certainty = certainty
         self.association = association
@@ -928,7 +985,8 @@ class HealthcareEntityAssertion(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"HealthcareEntityAssertion(conditionality={self.conditionality}, certainty={self.certainty}, association={self.association})"[:1024]
+        return f"HealthcareEntityAssertion(conditionality={self.conditionality}, certainty={self.certainty}, " \
+               f"association={self.association})"[:1024]
 
 
 class HealthcareEntityDataSource(DictMixin):
@@ -944,7 +1002,9 @@ class HealthcareEntityDataSource(DictMixin):
         self.name = name
 
     def __repr__(self) -> str:
-        return "HealthcareEntityDataSource(entity_id={self.entity_id}, name={self.name})"[:1024]
+        return (
+            "HealthcareEntityDataSource(entity_id={self.entity_id}, name={self.name})"[:1024]
+        )
 
 
 class TextAnalyticsError(DictMixin):
@@ -964,7 +1024,9 @@ class TextAnalyticsError(DictMixin):
     :vartype target: Optional[str]
     """
 
-    def __init__(self, *, code: str, message: str, target: Optional[str] = None) -> None:
+    def __init__(
+        self, *, code: str, message: str, target: Optional[str] = None
+    ) -> None:
         self.code = code
         self.message = message
         self.target = target
@@ -1049,8 +1111,11 @@ class ExtractKeyPhrasesResult(DictMixin):
         self.kind: Literal["KeyPhraseExtraction"] = "KeyPhraseExtraction"
 
     def __repr__(self) -> str:
-        return f"ExtractKeyPhrasesResult(id={self.id}, key_phrases={self.key_phrases}, warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, " \
-               f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"ExtractKeyPhrasesResult(id={self.id}, key_phrases={self.key_phrases}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
 
 class RecognizeLinkedEntitiesResult(DictMixin):
@@ -1092,8 +1157,11 @@ class RecognizeLinkedEntitiesResult(DictMixin):
         self.kind: Literal["EntityLinking"] = "EntityLinking"
 
     def __repr__(self) -> str:
-        return f"RecognizeLinkedEntitiesResult(id={self.id}, entities={repr(self.entities)}, warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, " \
-               f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[1024]
+        return (
+            f"RecognizeLinkedEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
 
 class AnalyzeSentimentResult(DictMixin):
@@ -1146,8 +1214,12 @@ class AnalyzeSentimentResult(DictMixin):
         self.kind: Literal["SentimentAnalysis"] = "SentimentAnalysis"
 
     def __repr__(self) -> str:
-        return f"AnalyzeSentimentResult(id={self.id}, sentiment={self.sentiment}, warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, confidence_scores={repr(self.confidence_scores)}, " \
-               f"sentences={repr(self.sentences)}, detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"AnalyzeSentimentResult(id={self.id}, sentiment={self.sentiment}, warnings={repr(self.warnings)}, "
+            f"statistics={repr(self.statistics)}, confidence_scores={repr(self.confidence_scores)}, "
+            f"sentences={repr(self.sentences)}, detected_language={repr(self.detected_language)}, "
+            f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
 
 class TextDocumentStatistics(DictMixin):
@@ -1175,7 +1247,8 @@ class TextDocumentStatistics(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"TextDocumentStatistics(character_count={self.character_count}, transaction_count={self.transaction_count})"[:1024]
+        return f"TextDocumentStatistics(character_count={self.character_count}, " \
+               f"transaction_count={self.transaction_count})"[:1024]
 
 
 class DocumentError(DictMixin):
@@ -1238,7 +1311,8 @@ class DocumentError(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"DocumentError(id={self.id}, error={repr(self.error)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        return f"DocumentError(id={self.id}, error={repr(self.error)}, " \
+               f"is_error={self.is_error}, kind={self.kind})"[:1024]
 
 
 class DetectLanguageInput(LanguageInput):
@@ -1261,7 +1335,9 @@ class DetectLanguageInput(LanguageInput):
     :vartype country_hint: Optional[str]
     """
 
-    def __init__(self, *, id: str, text: str, country_hint: Optional[str] = None) -> None:
+    def __init__(
+        self, *, id: str, text: str, country_hint: Optional[str] = None
+    ) -> None:
         super().__init__(id=id, text=text, country_hint=country_hint)
         self.id = id
         self.text = text
@@ -1299,7 +1375,17 @@ class LinkedEntity(DictMixin):
         The *bing_entity_search_api_id* property.
     """
 
-    def __init__(self, *, name: str, matches: List["LinkedEntityMatch"], language: str, url: str, data_source: str, data_source_entity_id: Optional[str] = None, bing_entity_search_api_id: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        matches: List["LinkedEntityMatch"],
+        language: str,
+        url: str,
+        data_source: str,
+        data_source_entity_id: Optional[str] = None,
+        bing_entity_search_api_id: Optional[str] = None,
+    ) -> None:
         self.name = name
         self.matches = matches
         self.language = language
@@ -1327,8 +1413,11 @@ class LinkedEntity(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"LinkedEntity(name={self.name}, matches={repr(self.matches)}, language={self.language}, data_source_entity_id={self.data_source_entity_id}, url={self.url}, " \
-               f"data_source={self.data_source}, bing_entity_search_api_id={self.bing_entity_search_api_id})"[:1024]
+        return (
+            f"LinkedEntity(name={self.name}, matches={repr(self.matches)}, language={self.language}, "
+            f"data_source_entity_id={self.data_source_entity_id}, url={self.url}, "
+            f"data_source={self.data_source}, bing_entity_search_api_id={self.bing_entity_search_api_id})"[:1024]
+        )
 
 
 class LinkedEntityMatch(DictMixin):
@@ -1351,7 +1440,9 @@ class LinkedEntityMatch(DictMixin):
         The *offset* and *length* properties.
     """
 
-    def __init__(self, *, confidence_score: float, text: str, length: int, offset: int) -> None:
+    def __init__(
+        self, *, confidence_score: float, text: str, length: int, offset: int
+    ) -> None:
         self.confidence_score = confidence_score
         self.text = text
         self.length = length
@@ -1374,7 +1465,8 @@ class LinkedEntityMatch(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"LinkedEntityMatch(confidence_score={self.confidence_score}, text={self.text}, length={self.length}, offset={self.offset})"[:1024]
+        return f"LinkedEntityMatch(confidence_score={self.confidence_score}, text={self.text}, " \
+               f"length={self.length}, offset={self.offset})"[:1024]
 
 
 class TextDocumentInput(DictMixin, MultiLanguageInput):
@@ -1429,7 +1521,14 @@ class TextDocumentBatchStatistics(DictMixin):
     :vartype transaction_count: int
     """
 
-    def __init__(self, *, document_count: int, valid_document_count: int, erroneous_document_count: int, transaction_count: int) -> None:
+    def __init__(
+        self,
+        *,
+        document_count: int,
+        valid_document_count: int,
+        erroneous_document_count: int,
+        transaction_count: int,
+    ) -> None:
         self.document_count = document_count
         self.valid_document_count = valid_document_count
         self.erroneous_document_count = erroneous_document_count
@@ -1447,8 +1546,12 @@ class TextDocumentBatchStatistics(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"TextDocumentBatchStatistics(document_count={self.document_count}, valid_document_count={self.valid_document_count}, erroneous_document_count={self.erroneous_document_count}, " \
-               f"transaction_count={self.transaction_count})"[:1024]
+        return (
+            f"TextDocumentBatchStatistics(document_count={self.document_count}, "
+            f"valid_document_count={self.valid_document_count}, "
+            f"erroneous_document_count={self.erroneous_document_count}, "
+            f"transaction_count={self.transaction_count})"[:1024]
+        )
 
 
 class SentenceSentiment(DictMixin):
@@ -1482,7 +1585,16 @@ class SentenceSentiment(DictMixin):
         The *offset*, *length*, and *mined_opinions* properties.
     """
 
-    def __init__(self, *, text: str, sentiment: str, confidence_scores: "SentimentConfidenceScores", length: int, offset: int, mined_opinions: Optional[List["MinedOpinion"]] = None) -> None:
+    def __init__(
+        self,
+        *,
+        text: str,
+        sentiment: str,
+        confidence_scores: "SentimentConfidenceScores",
+        length: int,
+        offset: int,
+        mined_opinions: Optional[List["MinedOpinion"]] = None,
+    ) -> None:
         self.text = text
         self.sentiment = sentiment
         self.confidence_scores = confidence_scores
@@ -1524,8 +1636,11 @@ class SentenceSentiment(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"SentenceSentiment(text={self.text}, sentiment={self.sentiment}, confidence_scores={repr(self.confidence_scores)}, " \
-               f"length={self.length}, offset={self.offset}, mined_opinions={repr(self.mined_opinions)})"[:1024]
+        return (
+            f"SentenceSentiment(text={self.text}, sentiment={self.sentiment}, "
+            f"confidence_scores={repr(self.confidence_scores)}, length={self.length}, "
+            f"offset={self.offset}, mined_opinions={repr(self.mined_opinions)})"[:1024]
+        )
 
 
 class MinedOpinion(DictMixin):
@@ -1539,7 +1654,9 @@ class MinedOpinion(DictMixin):
     :vartype assessments: list[~azure.ai.textanalytics.AssessmentSentiment]
     """
 
-    def __init__(self, *, target: "TargetSentiment", assessments: List["AssessmentSentiment"]) -> None:
+    def __init__(
+        self, *, target: "TargetSentiment", assessments: List["AssessmentSentiment"]
+    ) -> None:
         self.target = target
         self.assessments = assessments
 
@@ -1604,7 +1721,15 @@ class TargetSentiment(DictMixin):
         set in the original request, which is UnicodeCodePoints by default.
     """
 
-    def __init__(self, *, text: str, sentiment: str, confidence_scores: "SentimentConfidenceScores", length: int, offset: int) -> None:
+    def __init__(
+        self,
+        *,
+        text: str,
+        sentiment: str,
+        confidence_scores: "SentimentConfidenceScores",
+        length: int,
+        offset: int,
+    ) -> None:
         self.text = text
         self.sentiment = sentiment
         self.confidence_scores = confidence_scores
@@ -1624,8 +1749,11 @@ class TargetSentiment(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"TargetSentiment(text={self.text}, sentiment={self.sentiment}, confidence_scores={repr(self.confidence_scores)}, " \
-               f"length={self.length}, offset={self.offset})"[:1024]
+        return (
+            f"TargetSentiment(text={self.text}, sentiment={self.sentiment}, "
+            f"confidence_scores={repr(self.confidence_scores)}, "
+            f"length={self.length}, offset={self.offset})"[:1024]
+        )
 
 
 class AssessmentSentiment(DictMixin):
@@ -1652,7 +1780,16 @@ class AssessmentSentiment(DictMixin):
         "The food is not good", the assessment "good" is negated.
     """
 
-    def __init__(self, *, text: str, sentiment: str, confidence_scores: "SentimentConfidenceScores", length: int, offset: int, is_negated: bool) -> None:
+    def __init__(
+        self,
+        *,
+        text: str,
+        sentiment: str,
+        confidence_scores: "SentimentConfidenceScores",
+        length: int,
+        offset: int,
+        is_negated: bool,
+    ) -> None:
         self.text = text
         self.sentiment = sentiment
         self.confidence_scores = confidence_scores
@@ -1674,8 +1811,11 @@ class AssessmentSentiment(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"AssessmentSentiment(text={self.text}, sentiment={self.sentiment}, confidence_scores={repr(self.confidence_scores)}, length={self.length}, offset={self.offset}, " \
-               f"is_negated={self.is_negated})"[:1024]
+        return (
+            f"AssessmentSentiment(text={self.text}, sentiment={self.sentiment}, "
+            f"confidence_scores={repr(self.confidence_scores)}, length={self.length}, "
+            f"offset={self.offset}, is_negated={self.is_negated})"[:1024]
+        )
 
 
 class SentimentConfidenceScores(DictMixin):
@@ -1704,7 +1844,8 @@ class SentimentConfidenceScores(DictMixin):
         )
 
     def __repr__(self) -> str:
-        return f"SentimentConfidenceScores(positive={self.positive}, neutral={self.neutral}, negative={self.negative})"[:1024]
+        return f"SentimentConfidenceScores(positive={self.positive}, " \
+               f"neutral={self.neutral}, negative={self.negative})"[:1024]
 
 
 class _AnalyzeActionsType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -1771,13 +1912,21 @@ class RecognizeEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, *, model_version: Optional[str] = None, string_index_type: str = "UnicodeCodePoint", disable_service_logs: Optional[bool] = None) -> None:
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        string_index_type: str = "UnicodeCodePoint",
+        disable_service_logs: Optional[bool] = None,
+    ) -> None:
         self.model_version = model_version
         self.string_index_type = string_index_type
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"RecognizeEntitiesAction(model_version={self.model_version}, string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs})"[:1024]
+        return f"RecognizeEntitiesAction(model_version={self.model_version}, " \
+               f"string_index_type={self.string_index_type}, " \
+               f"disable_service_logs={self.disable_service_logs})"[:1024]
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
@@ -1846,15 +1995,26 @@ class AnalyzeSentimentAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, *, show_opinion_mining: Optional[bool] = None, model_version: Optional[str] = None, string_index_type: str = "UnicodeCodePoint", disable_service_logs: Optional[bool] = None) -> None:
+    def __init__(
+        self,
+        *,
+        show_opinion_mining: Optional[bool] = None,
+        model_version: Optional[str] = None,
+        string_index_type: str = "UnicodeCodePoint",
+        disable_service_logs: Optional[bool] = None,
+    ) -> None:
         self.model_version = model_version
         self.show_opinion_mining = show_opinion_mining
         self.string_index_type = string_index_type
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"AnalyzeSentimentAction(model_version={self.model_version}, show_opinion_mining={self.show_opinion_mining}, string_index_type={self.string_index_type}, " \
-               f"disable_service_logs={self.disable_service_logs}"[:1024]
+        return (
+            f"AnalyzeSentimentAction(model_version={self.model_version}, "
+            f"show_opinion_mining={self.show_opinion_mining}, "
+            f"string_index_type={self.string_index_type}, "
+            f"disable_service_logs={self.disable_service_logs}"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
@@ -1926,7 +2086,15 @@ class RecognizePiiEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, *, categories_filter: Optional[List[Union[str, PiiEntityCategory]]] = None, domain_filter: Optional[str] = None, model_version: Optional[str] = None, string_index_type: str = "UnicodeCodePoint", disable_service_logs: Optional[bool] = None) -> None:
+    def __init__(
+        self,
+        *,
+        categories_filter: Optional[List[Union[str, PiiEntityCategory]]] = None,
+        domain_filter: Optional[str] = None,
+        model_version: Optional[str] = None,
+        string_index_type: str = "UnicodeCodePoint",
+        disable_service_logs: Optional[bool] = None,
+    ) -> None:
         self.model_version = model_version
         self.domain_filter = domain_filter
         self.categories_filter = categories_filter
@@ -1934,8 +2102,12 @@ class RecognizePiiEntitiesAction(DictMixin):
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"RecognizePiiEntitiesAction(model_version={self.model_version}, domain_filter={self.domain_filter}, categories_filter={self.categories_filter}, " \
-               f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}"[:1024]
+        return (
+            f"RecognizePiiEntitiesAction(model_version={self.model_version}, "
+            f"domain_filter={self.domain_filter}, categories_filter={self.categories_filter}, "
+            f"string_index_type={self.string_index_type}, "
+            f"disable_service_logs={self.disable_service_logs}"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
@@ -1990,12 +2162,18 @@ class ExtractKeyPhrasesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, *, model_version: Optional[str] = None, disable_service_logs: Optional[bool] = None) -> None:
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        disable_service_logs: Optional[bool] = None,
+    ) -> None:
         self.model_version = model_version
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"ExtractKeyPhrasesAction(model_version={self.model_version}, disable_service_logs={self.disable_service_logs})"[:1024]
+        return f"ExtractKeyPhrasesAction(model_version={self.model_version}, " \
+               f"disable_service_logs={self.disable_service_logs})"[:1024]
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
@@ -2052,14 +2230,23 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         https://www.microsoft.com/ai/responsible-ai.
     """
 
-    def __init__(self, *, model_version: Optional[str] = None, string_index_type: str = "UnicodeCodePoint", disable_service_logs: Optional[bool] = None) -> None:
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        string_index_type: str = "UnicodeCodePoint",
+        disable_service_logs: Optional[bool] = None,
+    ) -> None:
         self.model_version = model_version
         self.string_index_type = string_index_type
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"RecognizeLinkedEntitiesAction(model_version={self.model_version}, string_index_type={self.string_index_type}), " \
-               f"disable_service_logs={self.disable_service_logs}"[:1024]
+        return (
+            f"RecognizeLinkedEntitiesAction(model_version={self.model_version}, "
+            f"string_index_type={self.string_index_type}), "
+            f"disable_service_logs={self.disable_service_logs}"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):
         if is_language_api(api_version):
@@ -2134,8 +2321,11 @@ class RecognizeCustomEntitiesAction(DictMixin):
         self.string_index_type = string_index_type
 
     def __repr__(self) -> str:
-        return f"RecognizeCustomEntitiesAction(project_name={self.project_name}, deployment_name={self.deployment_name}, disable_service_logs={self.disable_service_logs}, " \
-               f"string_index_type={self.string_index_type})"[:1024]
+        return (
+            f"RecognizeCustomEntitiesAction(project_name={self.project_name}, "
+            f"deployment_name={self.deployment_name}, disable_service_logs={self.disable_service_logs}, "
+            f"string_index_type={self.string_index_type})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v2022_10_01_preview_models.CustomEntitiesLROTask(
@@ -2185,8 +2375,12 @@ class RecognizeCustomEntitiesResult(DictMixin):
         self.kind: Literal["CustomEntityRecognition"] = "CustomEntityRecognition"
 
     def __repr__(self) -> str:
-        return f"RecognizeCustomEntitiesResult(id={self.id}, entities={repr(self.entities)}, warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, " \
-               f"detected_language={repr(self.detected_language)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"RecognizeCustomEntitiesResult(id={self.id}, entities={repr(self.entities)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)}, is_error={self.is_error},"
+            f" kind={self.kind})"[:1024]
+        )
 
     @classmethod
     def _from_generated(cls, result):
@@ -2246,15 +2440,17 @@ class MultiLabelClassifyAction(DictMixin):
         project_name: str,
         deployment_name: str,
         *,
-        disable_service_logs: Optional[bool] = None
+        disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"MultiLabelClassifyAction(project_name={self.project_name}, deployment_name={self.deployment_name}, " \
-               f"disable_service_logs={self.disable_service_logs})"[:1024]
+        return (
+            f"MultiLabelClassifyAction(project_name={self.project_name}, deployment_name={self.deployment_name}, "
+            f"disable_service_logs={self.disable_service_logs})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v2022_10_01_preview_models.CustomMultiLabelClassificationLROTask(
@@ -2290,10 +2486,7 @@ class ClassifyDocumentResult(DictMixin):
         The *detected_language* property.
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.id: str = kwargs["id"]
         self.classifications: List[ClassificationCategory] = kwargs["classifications"]
         self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
@@ -2303,8 +2496,12 @@ class ClassifyDocumentResult(DictMixin):
         self.kind: Literal["CustomDocumentClassification"] = "CustomDocumentClassification"
 
     def __repr__(self) -> str:
-        return f"ClassifyDocumentResult(id={self.id}, classifications={repr(self.classifications)}, warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, detected_language={repr(self.detected_language)} " \
-               f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"ClassifyDocumentResult(id={self.id}, classifications={repr(self.classifications)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)} "
+            f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
     @classmethod
     def _from_generated(cls, result):
@@ -2364,15 +2561,17 @@ class SingleLabelClassifyAction(DictMixin):
         project_name: str,
         deployment_name: str,
         *,
-        disable_service_logs: Optional[bool] = None
+        disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"SingleLabelClassifyAction(project_name={self.project_name}, deployment_name={self.deployment_name}, " \
-               f"disable_service_logs={self.disable_service_logs})"[:1024]
+        return (
+            f"SingleLabelClassifyAction(project_name={self.project_name}, deployment_name={self.deployment_name}, "
+            f"disable_service_logs={self.disable_service_logs})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v2022_10_01_preview_models.CustomSingleLabelClassificationLROTask(
@@ -2392,17 +2591,13 @@ class ClassificationCategory(DictMixin):
     :ivar float confidence_score: Confidence score between 0 and 1 of the recognized classification.
     """
 
-    def __init__(
-        self,
-        *,
-        category: str,
-        confidence_score: float
-    ) -> None:
+    def __init__(self, *, category: str, confidence_score: float) -> None:
         self.category = category
         self.confidence_score = confidence_score
 
     def __repr__(self) -> str:
-        return f"ClassificationCategory(category={self.category}, confidence_score={self.confidence_score})"[:1024]
+        return f"ClassificationCategory(category={self.category}, " \
+               f"confidence_score={self.confidence_score})"[:1024]
 
     @classmethod
     def _from_generated(cls, result):
@@ -2469,7 +2664,15 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         The *fhir_version* and *document_type* keyword arguments.
     """
 
-    def __init__(self, *, model_version: Optional[str] = None, string_index_type: str = "UnicodeCodePoint", disable_service_logs: Optional[bool] = None, fhir_version: Optional[str] = None, document_type: Optional[Union[str, HealthcareDocumentType]] = None) -> None:
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        string_index_type: str = "UnicodeCodePoint",
+        disable_service_logs: Optional[bool] = None,
+        fhir_version: Optional[str] = None,
+        document_type: Optional[Union[str, HealthcareDocumentType]] = None,
+    ) -> None:
         self.model_version = model_version
         self.string_index_type = string_index_type
         self.disable_service_logs = disable_service_logs
@@ -2477,8 +2680,11 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         self.document_type = document_type
 
     def __repr__(self) -> str:
-        return f"AnalyzeHealthcareEntitiesAction(model_version={self.model_version}, string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, " \
-               f"fhir_version={self.fhir_version}, document_type={self.document_type})"[:1024]
+        return (
+            f"AnalyzeHealthcareEntitiesAction(model_version={self.model_version}, "
+            f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
+            f"fhir_version={self.fhir_version}, document_type={self.document_type})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v2022_10_01_preview_models.HealthcareLROTask(
@@ -2533,7 +2739,15 @@ class ExtractSummaryAction(DictMixin):
         The *ExtractSummaryAction* model.
     """
 
-    def __init__(self, *, model_version: Optional[str] = None, string_index_type: str = "UnicodeCodePoint", disable_service_logs: Optional[bool] = None, max_sentence_count: Optional[int] = None, order_by: Optional[str] = None) -> None:
+    def __init__(
+        self,
+        *,
+        model_version: Optional[str] = None,
+        string_index_type: str = "UnicodeCodePoint",
+        disable_service_logs: Optional[bool] = None,
+        max_sentence_count: Optional[int] = None,
+        order_by: Optional[str] = None,
+    ) -> None:
         self.model_version = model_version
         self.string_index_type = string_index_type
         self.disable_service_logs = disable_service_logs
@@ -2541,8 +2755,11 @@ class ExtractSummaryAction(DictMixin):
         self.order_by = order_by
 
     def __repr__(self) -> str:
-        return f"ExtractSummaryAction(model_version={self.model_version}, string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, " \
-               f"max_sentence_count={self.max_sentence_count}, order_by={self.order_by})"[:1024]
+        return (
+            f"ExtractSummaryAction(model_version={self.model_version}, "
+            f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
+            f"max_sentence_count={self.max_sentence_count}, order_by={self.order_by})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v2022_10_01_preview_models.ExtractiveSummarizationLROTask(  # pylint: disable=no-member
@@ -2590,8 +2807,12 @@ class ExtractSummaryResult(DictMixin):
         self.kind: Literal["ExtractiveSummarization"] = "ExtractiveSummarization"
 
     def __repr__(self) -> str:
-        return f"ExtractSummaryResult(id={self.id}, sentences={repr(self.sentences)}, warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, detected_language={repr(self.detected_language)}," \
-               f" is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"ExtractSummaryResult(id={self.id}, sentences={repr(self.sentences)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"detected_language={repr(self.detected_language)},"
+            f" is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
     @classmethod
     def _from_generated(cls, summary):
@@ -2614,7 +2835,7 @@ class ExtractSummaryResult(DictMixin):
             ),
             detected_language=DetectedLanguage._from_generated(  # pylint: disable=protected-access
                 summary.detected_language
-            )  if hasattr(summary, "detected_language") and summary.detected_language else None
+            ) if hasattr(summary, "detected_language") and summary.detected_language else None
         )
 
 
@@ -2635,14 +2856,17 @@ class SummarySentence(DictMixin):
         The *SummarySentence* model.
     """
 
-    def __init__(self, *, text: str, rank_score: float, offset: int, length: int) -> None:
+    def __init__(
+        self, *, text: str, rank_score: float, offset: int, length: int
+    ) -> None:
         self.text = text
         self.rank_score = rank_score
         self.offset = offset
         self.length = length
 
     def __repr__(self) -> str:
-        return f"SummarySentence(text={self.text}, rank_score={self.rank_score}, offset={self.offset}, length={self.length})"[:1024]
+        return f"SummarySentence(text={self.text}, rank_score={self.rank_score}, " \
+               f"offset={self.offset}, length={self.length})"[:1024]
 
     @classmethod
     def _from_generated(cls, sentence):
@@ -2690,8 +2914,11 @@ class AbstractSummaryResult(DictMixin):
         self.kind: Literal["AbstractiveSummarization"] = "AbstractiveSummarization"
 
     def __repr__(self) -> str:
-        return f"AbstractSummaryResult(id={self.id}, detected_language={repr(self.detected_language)}, warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, " \
-               f"summaries={repr(self.summaries)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"AbstractSummaryResult(id={self.id}, detected_language={repr(self.detected_language)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"summaries={repr(self.summaries)}, is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
     @classmethod
     def _from_generated(cls, result):
@@ -2728,7 +2955,9 @@ class AbstractiveSummary(DictMixin):
         The *AbstractiveSummary* model.
     """
 
-    def __init__(self, *, text: str, contexts: Optional[List["SummaryContext"]] = None) -> None:
+    def __init__(
+        self, *, text: str, contexts: Optional[List["SummaryContext"]] = None
+    ) -> None:
         self.text = text
         self.contexts = contexts
 
@@ -2822,15 +3051,25 @@ class AbstractSummaryAction(DictMixin):
         The *AbstractSummaryAction* model.
     """
 
-    def __init__(self, *, sentence_count: Optional[int] = None, model_version: Optional[str] = None, string_index_type: str = "UnicodeCodePoint", disable_service_logs: Optional[bool] = None) -> None:
+    def __init__(
+        self,
+        *,
+        sentence_count: Optional[int] = None,
+        model_version: Optional[str] = None,
+        string_index_type: str = "UnicodeCodePoint",
+        disable_service_logs: Optional[bool] = None,
+    ) -> None:
         self.sentence_count = sentence_count
         self.model_version = model_version
         self.string_index_type = string_index_type
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
-        return f"AbstractSummaryAction(model_version={self.model_version}, string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, " \
-               f"sentence_count={self.sentence_count})"[:1024]
+        return (
+            f"AbstractSummaryAction(model_version={self.model_version}, "
+            f"string_index_type={self.string_index_type}, disable_service_logs={self.disable_service_logs}, "
+            f"sentence_count={self.sentence_count})"[:1024]
+        )
 
     def _to_generated(self, api_version, task_id):  # pylint: disable=unused-argument
         return _v2022_10_01_preview_models.AbstractiveSummarizationLROTask(
@@ -2864,10 +3103,7 @@ class DynamicClassificationResult(DictMixin):
         The *DynamicClassificationResult* model.
     """
 
-    def __init__(
-        self,
-        **kwargs: Any
-    ) -> None:
+    def __init__(self, **kwargs: Any) -> None:
         self.id: str = kwargs["id"]
         self.classifications: List[ClassificationCategory] = kwargs["classifications"]
         self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
@@ -2876,8 +3112,11 @@ class DynamicClassificationResult(DictMixin):
         self.kind: Literal["DynamicClassification"] = "DynamicClassification"
 
     def __repr__(self) -> str:
-        return f"DynamicClassificationResult(id={self.id}, classifications={repr(self.classifications)}, warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, " \
-               f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        return (
+            f"DynamicClassificationResult(id={self.id}, classifications={repr(self.classifications)}, "
+            f"warnings={repr(self.warnings)}, statistics={repr(self.statistics)}, "
+            f"is_error={self.is_error}, kind={self.kind})"[:1024]
+        )
 
     @classmethod
     def _from_generated(cls, result):

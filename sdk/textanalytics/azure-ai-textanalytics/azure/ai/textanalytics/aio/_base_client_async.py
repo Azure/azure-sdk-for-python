@@ -7,7 +7,6 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
 from .._generated.aio import TextAnalyticsClient as _TextAnalyticsClient
-from .._base_client import TextAnalyticsApiVersion
 from .._policies import TextAnalyticsResponseHookPolicy, QuotaExceededPolicy
 from .._user_agent import USER_AGENT
 from .._version import DEFAULT_API_VERSION
@@ -69,7 +68,6 @@ class AsyncTextAnalyticsClientBase:
             raise ValueError("Parameter 'endpoint' must be a string.")
         self._api_version = kwargs.pop("api_version", DEFAULT_API_VERSION)
         if hasattr(self._api_version, "value"):
-            self._api_version = cast(TextAnalyticsApiVersion, self._api_version)
             self._api_version = self._api_version.value
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
