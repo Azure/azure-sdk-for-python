@@ -1,17 +1,24 @@
 # Release History
 
-## 1.1.2 (Unreleased)
+## 1.1.2 (2022-11-21)
 
-## Features Added
-- Added OS Image Patching parameters to Compute Instance.
+### Features Added
+- Restored idle_time_before_shutdown property for Compute Instances. 
+- Deprecated idle_time_before_shutdown property in favor of idle_time_before_shutdown_minutes.
 
-## 1.1.1 (Unreleased)
+### Bugs Fixed
+- Fixed idle_time_before_shutdown appearing as None for Compute Instances returned by `show` or `list`.
+- Fixed idle_time_before_shutdown_minutes preventing creation of Compute Instances when set to None.
 
-## Features Added
-- Added OS Image Patching parameters to Compute Instance.
+## 1.1.1 (2022-11-15)
+
+### Breaking Changes
 - Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
 
-## 1.1.0 (Unreleased)
+### Bugs Fixed
+- Fixed idle_time_before_shutdown_minutes not appearing in GET calls for Compute Instances.
+
+## 1.1.0 (2022-11-07)
 
 ### Features Added
 - Registry list operation now accepts scope value to allow subscription-only based requests.
@@ -19,8 +26,6 @@
 - Add registry delete operation.
 - The values of JobService.job_service_type are now using the snake case. e.g jupyter_lab, ssh, tensor_board, vs_code.
 - Command function now accepts services param of type Dict[str, JobService] instead of dict.
-
-### Breaking Changes
 
 ### Bugs Fixed
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
@@ -35,7 +40,6 @@
 ### Other Changes
 - Switched compute operations to go through 2022-10-01-preview API version.
 
-
 ## 1.0.0 (2022-10-10)
 - GA release
 - Dropped support for Python 3.6. The Python versions supported for this release are 3.7-3.10.
@@ -49,7 +53,6 @@
 - Endpoint and Job use unified identity classes.
 - Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
 
-### Bugs Fixed
 
 ### Other Changes
  - Switched Compute operations to use Oct preview API version.
@@ -124,9 +127,6 @@
 - Fixed mismatch errors when updating scale_settings for KubernetesOnlineDeployment.
 - Removed az CLI command that was printed when deleting OnlineEndpoint
 
-### Other Changes
-
-
 ## 0.1.0b5 (2022-07-15)
 
 ### Features Added
@@ -139,7 +139,6 @@
 - Added end_time to job schedule.
 - MIR and pipeline job now support registry assets.
 
-### Breaking Changes
 
 ### Bugs Fixed
 

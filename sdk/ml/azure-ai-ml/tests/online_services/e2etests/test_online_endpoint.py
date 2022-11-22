@@ -104,7 +104,7 @@ traffic:
     reason="Tests failing in internal automation due to lack of quota. Cannot record or run in live mode."
 )
 @pytest.mark.e2etest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestOnlineEndpoint(AzureRecordedTestCase):
     def test_online_endpoint_e2e(
         self,

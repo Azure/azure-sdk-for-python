@@ -1360,19 +1360,12 @@ class TestPipelineJob(AzureRecordedTestCase):
         )
 
 
-@pytest.mark.usefixtures(
-    "recorded_test",
-    "mock_code_hash",
-    "enable_pipeline_private_preview_features",
-    "mock_asset_name",
-    "mock_component_hash",
-    "enable_environment_id_arm_expansion",
-)
-@pytest.mark.timeout(timeout=_PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
+@pytest.mark.usefixtures("enable_pipeline_private_preview_features")
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
 @pytest.mark.skipif(condition=not is_live(), reason="no need to run in playback mode")
-class TestPipelineJobLongRunning(AzureRecordedTestCase):
+@pytest.mark.timeout(timeout=_PIPELINE_JOB_LONG_RUNNING_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
+class TestPipelineJobLongRunning:
     """Long-running tests that require pipeline job completed."""
     def test_pipeline_job_get_child_run(self, client: MLClient, randstr: Callable[[str], str]):
         pipeline_job = load_job(
@@ -1380,6 +1373,7 @@ class TestPipelineJobLongRunning(AzureRecordedTestCase):
             params_override=[{"name": randstr("name")}],
         )
         job = client.jobs.create_or_update(pipeline_job)
+        print("pipeline job name:", job.name)
         wait_until_done(client, job)
         child_job = next(
             job
@@ -1399,6 +1393,7 @@ class TestPipelineJobLongRunning(AzureRecordedTestCase):
                 params_override=[{"name": randstr("job_name")}],
             )
         )
+        print("pipeline job name:", job.name)
         wait_until_done(client, job)
         client.jobs.download(name=job.name, download_path=tmp_path)
         artifact_dir = tmp_path / "artifacts"
@@ -1414,6 +1409,7 @@ class TestPipelineJobLongRunning(AzureRecordedTestCase):
                 params_override=[{"name": randstr("job_name")}],
             )
         )
+        print("pipeline job name:", job.name)
         wait_until_done(client, job)
         child_job = next(
             job
@@ -1433,7 +1429,6 @@ class TestPipelineJobLongRunning(AzureRecordedTestCase):
         assert output_dir.exists()
         assert next(output_dir.iterdir(), None), "No artifacts were downloaded"
 
-    @pytest.mark.disable_mock_code_hash
     def test_reused_pipeline_child_job_download(
         self,
         client: MLClient,
@@ -1444,7 +1439,7 @@ class TestPipelineJobLongRunning(AzureRecordedTestCase):
 
         # ensure previous job exists for reuse
         job_name = randstr("job_name")
-        print(f"previous job name: {job_name}")
+        print("previous job name:", job_name)
         previous_job = client.jobs.create_or_update(
             load_job(source=pipeline_spec_path, params_override=[{"name": job_name}])
         )
@@ -1452,7 +1447,7 @@ class TestPipelineJobLongRunning(AzureRecordedTestCase):
 
         # submit a new job that will reuse previous job
         new_job_name = randstr("new_job_name")
-        print(f"new job name: {new_job_name}")
+        print("new job name:", new_job_name)
         new_job = client.jobs.create_or_update(
             load_job(pipeline_spec_path, params_override=[{"name": new_job_name}]),
         )
