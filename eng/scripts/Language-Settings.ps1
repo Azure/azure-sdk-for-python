@@ -102,7 +102,7 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
 
   New-Item -ItemType Directory -Force -Path $workFolder
 
-  if ($pkg.EndsWith(".zip")){
+  if ($pkg.Extension -eq ".zip"){
     Expand-Archive -Path $pkg -DestinationPath $workFolder
   }
   else {
