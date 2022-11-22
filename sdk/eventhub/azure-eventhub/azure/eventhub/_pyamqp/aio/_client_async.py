@@ -144,7 +144,7 @@ class AMQPClientAsync(AMQPClientSync):
                 if elapsed_time >= self._keep_alive_interval:
                     _logger.info("Keeping %r connection alive. %r",
                                  self.__class__.__name__,
-                                 self._connection.container_id)
+                                 self._connection._container_id)
                     await asyncio.shield(self._connection.work_async())
                     start_time = current_time
                 await asyncio.sleep(1)
@@ -494,13 +494,8 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
 
         :rtype: bool
         """
-        # try:
         await self._link.update_pending_deliveries()
         await self._connection.listen(wait=self._socket_timeout, **kwargs)
-        # except ValueError:
-        #     _logger.info("Timeout reached, closing sender.")
-        #     self._shutdown = True
-        #     return False
         return True
 
     async def _transfer_message_async(self, message_delivery, timeout=0):
@@ -563,6 +558,12 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = await self.do_work_async()
+        else:
+           if not message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+                raise MessageException(
+                    condition=ErrorCondition.ClientError,
+                    description="Send failed - connection not running."
+                )
 
         if message_delivery.state in (
             MessageDeliveryState.Error,

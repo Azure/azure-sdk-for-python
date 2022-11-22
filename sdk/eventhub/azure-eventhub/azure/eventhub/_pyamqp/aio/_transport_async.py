@@ -79,14 +79,11 @@ class AsyncTransportMixin:
             _LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
         except (
-            asyncio.CancelledError,
             TimeoutError,
             socket.timeout,
             asyncio.IncompleteReadError,
             asyncio.TimeoutError,
-            ConnectionError,
-        ) :
-     
+        ):
             return None, None
 
     async def read(self, verify_frame_type=0):
@@ -129,7 +126,13 @@ class AsyncTransportMixin:
                     read_frame_buffer.write(
                         await self._read(payload_size, buffer=payload)
                     )
-            except (asyncio.CancelledError, TimeoutError, socket.timeout, asyncio.IncompleteReadError, ConnectionError):
+            except (
+                asyncio.CancelledError,
+                asyncio.TimeoutError,
+                TimeoutError,
+                socket.timeout,
+                asyncio.IncompleteReadError
+            ):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
@@ -232,6 +235,7 @@ class AsyncTransport(
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
+        self.name = kwargs.get('name')
 
     async def connect(self):
         try:
@@ -471,6 +475,7 @@ class WebSocketTransportAsync(
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
+        self.name = kwargs.get('name')
 
     async def connect(self):
         self.sslopts = self._build_ssl_opts(self.sslopts)
@@ -529,44 +534,36 @@ class WebSocketTransportAsync(
                         description="Failed to authenticate the connection due to exception: " + str(exc),
                         error=exc,
                     )
+                raise ConnectionError("Failed to establish websocket connection: " + str(exc))
             self.connected = True
         except ImportError:
             raise ValueError(
                 "Please install aiohttp library to use websocket transport."
             )
-        # except OSError as e:
-        #     await self.session.close()
-        #     # raise ConnectionError('Websocket connection closed: %r' % e) from e
 
-    async def _read(self, n, buffer=None, **kwargs):  # pylint: disable=unused-argument
+    async def _read(self, toread, buffer=None, **kwargs):  # pylint: disable=unused-argument
         """Read exactly n bytes from the peer."""
-
         length = 0
-        view = buffer or memoryview(bytearray(n))
+        view = buffer or memoryview(bytearray(toread))
         nbytes = self._read_buffer.readinto(view)
         length += nbytes
-        n -= nbytes
-
+        toread -= nbytes
         try:
-            while n:
+            while toread:
                 data = await self.ws.receive_bytes()
-                if len(data) <= n:
-                    view[length : length + len(data)] = data
-                    n -= len(data)
+                read_length = len(data)
+                if read_length <= toread:
+                    view[length : length + read_length] = data
+                    toread -= read_length
+                    length += read_length
                 else:
-                    view[length : length + n] = data[0:n]
-                    self._read_buffer = BytesIO(data[n:])
-                    n = 0
+                    view[length : length + toread] = data[0:toread]
+                    self._read_buffer = BytesIO(data[toread:])
+                    toread = 0
             return view
-        except asyncio.CancelledError as ce:
-            # await self.session.close()
-            #raise
-            raise ConnectionError('Websocket connection closed: %r' % ce) from ce
-        except asyncio.TimeoutError as te:
-            raise ConnectionError('Receive timed out (%s)' % te)
-        # except OSError as e:
-        #     await self.session.close()
-        #     # raise ConnectionError('Websocket connection closed: %r' % e) from e
+        except:
+            self._read_buffer = BytesIO(view[:length])
+            raise
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
@@ -574,20 +571,10 @@ class WebSocketTransportAsync(
         await self.session.close()
         self.connected = False
 
-    async def write(self, s):
+    async def _write(self, s):
         """Completely write a string (byte array) to the peer.
         ABNF, OPCODE_BINARY = 0x2
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        async with self.socket_lock:
-            try:
-                await self.ws.send_bytes(s)
-            except asyncio.CancelledError as ce:
-                # await self.session.close()
-                raise ConnectionError('Websocket connection closed: %r' % ce) from ce
-            except asyncio.TimeoutError as te:
-                raise ConnectionError('Send timed out (%s)' % te)
-            # except OSError as e:
-            #     await self.session.close()
-            #     # raise ConnectionError('Websocket connection closed: %r' % e) from e
+        await self.ws.send_bytes(s)

@@ -85,7 +85,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             custom_parsed_url = urlparse(custom_endpoint_address)
             custom_port = custom_parsed_url.port or WEBSOCKET_PORT
             custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
-
+        self._container_id = kwargs.pop("container_id", None) or str(
+            uuid.uuid4()
+        )  # type: str
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
         if transport:
@@ -101,14 +103,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
                 custom_endpoint=custom_endpoint,
+                name=self._container_id,
                 **kwargs,
             )
         else:
-            self._transport = AsyncTransport(parsed_url.netloc, **kwargs)
+            self._transport = AsyncTransport(
+                parsed_url.netloc,
+                name=self._container_id,
+                **kwargs)
 
-        self._container_id = kwargs.pop("container_id", None) or str(
-            uuid.uuid4()
-        )  # type: str
         self._max_frame_size = kwargs.pop(
             "max_frame_size", MAX_FRAME_SIZE_BYTES
         )  # type: int
