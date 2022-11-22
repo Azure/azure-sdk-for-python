@@ -18,12 +18,12 @@ ALL_API_VERSIONS = "--all-api-versions"
 
 
 def pytest_addoption(parser):
-    parser.addoption(ALL_API_VERSIONS, action="store_true", default="false",
-                     help="run all API versions: true, only latest or default: false")
+    parser.addoption(ALL_API_VERSIONS, action="store_true", default=False,
+                     help="Test all api version in live mode. Not applicable in playback mode.")
 
 
 def pytest_configure(config):
-    if config.getoption(ALL_API_VERSIONS) == 'false':
+    if is_live() and not config.getoption(ALL_API_VERSIONS):
         pytest.api_version = [DEFAULT_VERSION]
     else:
         pytest.api_version = ApiVersion
