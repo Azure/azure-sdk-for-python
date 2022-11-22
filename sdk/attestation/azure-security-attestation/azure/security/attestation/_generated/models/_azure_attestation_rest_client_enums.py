@@ -7,7 +7,6 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum, EnumMeta
-from six import with_metaclass
 
 class _CaseInsensitiveEnumMeta(EnumMeta):
     def __getitem__(self, name):
@@ -26,7 +25,7 @@ class _CaseInsensitiveEnumMeta(EnumMeta):
             raise AttributeError(name)
 
 
-class AttestationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class AttestationType(str, Enum, metaclass=_CaseInsensitiveEnumMeta):
 
     #: Intel Software Guard eXtensions.
     SGX_ENCLAVE = "SgxEnclave"
@@ -35,7 +34,7 @@ class AttestationType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: Edge TPM Virtualization Based Security.
     TPM = "Tpm"
 
-class CertificateModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class CertificateModification(str, Enum, metaclass=_CaseInsensitiveEnumMeta):
     """The result of the operation
     """
 
@@ -45,7 +44,7 @@ class CertificateModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum
     #: certificates.
     IS_ABSENT = "IsAbsent"
 
-class DataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class DataType(str, Enum, metaclass=_CaseInsensitiveEnumMeta):
     """Specifies the type of the data encoded contained within the "data" field of a "RuntimeData" or
     "InitTimeData" object
     """
@@ -56,7 +55,7 @@ class DataType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     #: MAA.
     JSON = "JSON"
 
-class PolicyModification(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+class PolicyModification(str, Enum, metaclass=_CaseInsensitiveEnumMeta):
     """The result of the operation
     """
 
