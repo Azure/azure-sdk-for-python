@@ -8,17 +8,17 @@ from typing import Dict, Union
 
 from pydash import get
 
-from azure.ai.ml._ml_exceptions import ErrorCategory, ErrorTarget, JobException
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._component import ComponentJobConstants
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineOutput
 from azure.ai.ml.entities._job.sweep.search_space import Choice, Randint, SweepDistribution
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, JobException
 
 
 class ComponentTranslatableMixin:
-    PYTHON_SDK_TYPE_MAPPING = {
+    _PYTHON_SDK_TYPE_MAPPING = {
         float: "number",
         int: "integer",
         bool: "boolean",
@@ -27,6 +27,10 @@ class ComponentTranslatableMixin:
 
     @classmethod
     def _find_source_from_parent_inputs(cls, input: str, pipeline_job_inputs: dict):
+        """Find source type and mode of input/output from parent input.
+
+        :return: tuple(type, mode)
+        """
         _input_name = input.split(".")[2][:-2]
         if _input_name not in pipeline_job_inputs.keys():
             msg = "Failed to find top level definition for input binding {}."
@@ -36,13 +40,18 @@ class ComponentTranslatableMixin:
                 target=ErrorTarget.PIPELINE,
                 error_category=ErrorCategory.USER_ERROR,
             )
-        input_type = type(pipeline_job_inputs[_input_name])
-        if input_type in cls.PYTHON_SDK_TYPE_MAPPING.keys():
-            return cls.PYTHON_SDK_TYPE_MAPPING[input_type]
-        return getattr(pipeline_job_inputs[_input_name], "type", AssetTypes.URI_FOLDER)
+        input_data = pipeline_job_inputs[_input_name]
+        input_type = type(input_data)
+        if input_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+            return cls._PYTHON_SDK_TYPE_MAPPING[input_type], None
+        return getattr(input_data, "type", AssetTypes.URI_FOLDER), getattr(input_data, "mode", None)
 
     @classmethod
     def _find_source_from_parent_outputs(cls, input: str, pipeline_job_outputs: dict):
+        """Find source type and mode of input/output from parent output.
+
+        :return: tuple(type, mode)
+        """
         _output_name = input.split(".")[2][:-2]
         if _output_name not in pipeline_job_outputs.keys():
             msg = "Failed to find top level definition for output binding {}."
@@ -54,16 +63,26 @@ class ComponentTranslatableMixin:
             )
         output_data = pipeline_job_outputs[_output_name]
         output_type = type(output_data)
-        if output_type in cls.PYTHON_SDK_TYPE_MAPPING.keys():
-            return cls.PYTHON_SDK_TYPE_MAPPING[output_type]
+        if output_type in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+            return cls._PYTHON_SDK_TYPE_MAPPING[output_type], None
         if isinstance(output_data, dict):
             if "type" in output_data:
-                return output_data["type"]
-            return AssetTypes.URI_FOLDER
-        return getattr(output_data, "type", AssetTypes.URI_FOLDER)
+                output_data_type = output_data["type"]
+            else:
+                output_data_type = AssetTypes.URI_FOLDER
+            if "mode" in output_data:
+                output_data_mode = output_data["mode"]
+            else:
+                output_data_mode = None
+            return output_data_type, output_data_mode
+        return getattr(output_data, "type", AssetTypes.URI_FOLDER), getattr(output_data, "mode", None)
 
     @classmethod
     def _find_source_from_other_jobs(cls, input: str, jobs_dict: dict, pipeline_job_dict: dict):
+        """Find source type and mode of input/output from other job.
+
+        :return: tuple(type, mode)
+        """
         from azure.ai.ml.entities import CommandJob
         from azure.ai.ml.entities._builders import BaseNode
         from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -82,6 +101,9 @@ class ComponentTranslatableMixin:
         _input_job_name, _io_type, _name = m.groups()
         _input_job = jobs_dict[_input_job_name]
 
+        # we only support input of one job is from output of another output, but input mode should be decoupled with
+        # output mode, so we always return None source_mode
+        source_mode = None
         if isinstance(_input_job, BaseNode):
             # If source is base node, get type from io builder
             _source = _input_job[_io_type][_name]
@@ -101,8 +123,8 @@ class ComponentTranslatableMixin:
                         #  otherwise _input_job's input/output is bound to pipeline input/output, we continue
                         #  infer the type according to _source._data. Will return corresponding pipeline
                         #  input/output type because we didn't get the component.
-                        source_type = cls._find_source_input_output_type(_source._data, pipeline_job_dict)
-                return source_type
+                        source_type, _ = cls._find_source_input_output_type(_source._data, pipeline_job_dict)
+                return source_type, source_mode
             except AttributeError:
                 msg = "Failed to get referenced component type {}."
                 raise JobException(
@@ -115,8 +137,9 @@ class ComponentTranslatableMixin:
             # If source has not parsed to Command yet, infer type
             _source = get(_input_job, f"{_io_type}.{_name}")
             if isinstance(_source, str):
-                return cls._find_source_input_output_type(_source, pipeline_job_dict)
-            return getattr(_source, "type", AssetTypes.URI_FOLDER)
+                source_type, _ = cls._find_source_input_output_type(_source, pipeline_job_dict)
+                return source_type, source_mode
+            return getattr(_source, "type", AssetTypes.URI_FOLDER), source_mode
         if isinstance(_input_job, AutoMLJob):
             # If source is AutoMLJob, only outputs is supported
             if _io_type != "outputs":
@@ -128,7 +151,7 @@ class ComponentTranslatableMixin:
                     error_category=ErrorCategory.USER_ERROR,
                 )
             # AutoMLJob's output type can only be MLTABLE
-            return AssetTypes.MLTABLE
+            return AssetTypes.MLTABLE, source_mode
         msg = f"Unknown referenced source job type: {type(_input_job)}."
         raise JobException(
             message=msg,
@@ -139,6 +162,10 @@ class ComponentTranslatableMixin:
 
     @classmethod
     def _find_source_input_output_type(cls, input: str, pipeline_job_dict: dict):
+        """Find source type and mode of input/output.
+
+        :return: tuple(type, mode)
+        """
         pipeline_job_inputs = pipeline_job_dict.get("inputs", {})
         pipeline_job_outputs = pipeline_job_dict.get("outputs", {})
         jobs_dict = pipeline_job_dict.get("jobs", {})
@@ -181,28 +208,30 @@ class ComponentTranslatableMixin:
 
         if isinstance(input, str) and bool(re.search(ComponentJobConstants.INPUT_PATTERN, input)):
             # handle input bindings
-            input_variable["type"] = cls._find_source_input_output_type(input, pipeline_job_dict)
+            input_variable["type"], input_variable["mode"] = cls._find_source_input_output_type(
+                input, pipeline_job_dict
+            )
 
         elif isinstance(input, Input):
             input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
             elif isinstance(input, Randint):
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[int]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[int]
             else:
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[float]
 
             input_variable["optional"] = False
-        elif type(input) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
-            input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
+        elif type(input) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+            input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
         elif isinstance(input, PipelineInput):
             # Infer input type from input data
             input_variable = input._to_input()._to_dict()
         else:
             msg = "'{}' is not supported as component input, supported types are '{}'.".format(
-                type(input), cls.PYTHON_SDK_TYPE_MAPPING.keys()
+                type(input), cls._PYTHON_SDK_TYPE_MAPPING.keys()
             )
             raise JobException(
                 message=msg,
@@ -220,15 +249,15 @@ class ComponentTranslatableMixin:
             input_variable = input._to_dict()
         elif isinstance(input, SweepDistribution):
             if isinstance(input, Choice):
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input.values[0])]
             elif isinstance(input, Randint):
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[int]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[int]
             else:
-                input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[float]
+                input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[float]
 
             input_variable["optional"] = False
         else:
-            input_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(input)]
+            input_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(input)]
             input_variable["default"] = input
         return Input(**input_variable)
 
@@ -254,7 +283,9 @@ class ComponentTranslatableMixin:
 
         if isinstance(output, str) and bool(re.search(ComponentJobConstants.OUTPUT_PATTERN, output)):
             # handle output bindings
-            output_variable["type"] = cls._find_source_input_output_type(output, pipeline_job_dict)
+            output_variable["type"], output_variable["mode"] = cls._find_source_input_output_type(
+                output, pipeline_job_dict
+            )
 
         elif isinstance(output, Output):
             output_variable = output._to_dict()
@@ -262,12 +293,12 @@ class ComponentTranslatableMixin:
         elif isinstance(output, PipelineOutput):
             output_variable = output._to_output()._to_dict()
 
-        elif type(output) in cls.PYTHON_SDK_TYPE_MAPPING.keys():
-            output_variable["type"] = cls.PYTHON_SDK_TYPE_MAPPING[type(output)]
+        elif type(output) in cls._PYTHON_SDK_TYPE_MAPPING.keys():
+            output_variable["type"] = cls._PYTHON_SDK_TYPE_MAPPING[type(output)]
             output_variable["default"] = output
         else:
             msg = "'{}' is not supported as component output, supported types are '{}'.".format(
-                type(output), cls.PYTHON_SDK_TYPE_MAPPING.keys()
+                type(output), cls._PYTHON_SDK_TYPE_MAPPING.keys()
             )
             raise JobException(
                 message=msg,

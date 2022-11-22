@@ -51,7 +51,7 @@
             "max_concurrency_per_instance": 12,
             "error_threshold": 10,
             "mini_batch_error_threshold": 5,
-            "logging_level": "DEBUG",
+            "logging_level": "INFO",
             "mini_batch_size": "10kb",
             "input_data": "${{inputs.score_input}}",
             "task": {

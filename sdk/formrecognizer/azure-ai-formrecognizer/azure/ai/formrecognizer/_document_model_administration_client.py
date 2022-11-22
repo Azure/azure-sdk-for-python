@@ -282,7 +282,7 @@ class DocumentModelAdministrationClient(FormRecognizerClientBase):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/v3.2/sample_copy_model.py
+            .. literalinclude:: ../samples/v3.2/sample_copy_model_to.py
                 :start-after: [START begin_copy_document_model_to]
                 :end-before: [END begin_copy_document_model_to]
                 :language: python

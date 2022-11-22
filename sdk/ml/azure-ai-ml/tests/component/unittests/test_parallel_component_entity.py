@@ -5,7 +5,6 @@ from azure.ai.ml import load_component
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
-from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -13,6 +12,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestParallelComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
@@ -57,7 +57,7 @@ class TestParallelComponentEntity:
             max_concurrency_per_instance=12,
             error_threshold=10,
             mini_batch_error_threshold=5,
-            logging_level="DEBUG",
+            logging_level="INFO",
             task=task,
             base_path="./tests/test_configs/components",
         )
@@ -80,8 +80,6 @@ class TestParallelComponentEntity:
         expected_rest_component = {
             "componentId": "fake_component",
             "_source": "YAML.COMPONENT",
-            "computeId": None,
-            "display_name": None,
             "input_data": "${{inputs.component_in_path}}",
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "10"},
@@ -90,19 +88,9 @@ class TestParallelComponentEntity:
                     "value": "${{parent.inputs.pipeline_input}}",
                 },
             },
-            "name": None,
-            "outputs": {},
-            "tags": {},
             "input_data": "${{inputs.component_in_path}}",
             "type": "parallel",
-            "error_threshold": None,
-            "logging_level": None,
-            "max_concurrency_per_instance": None,
-            "mini_batch_error_threshold": None,
             "mini_batch_size": 10485760,
-            "retry_settings": None,
-            "resources": None,
-            "environment_variables": {},
             "task": {
                 "append_row_to": "${{outputs.scoring_summary}}",
                 "program_arguments": "--label ${{inputs.label}} --model ${{inputs.model}} "

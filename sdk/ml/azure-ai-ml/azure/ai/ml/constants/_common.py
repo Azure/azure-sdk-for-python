@@ -3,6 +3,9 @@
 # ---------------------------------------------------------
 from enum import Enum
 
+from azure.core import CaseInsensitiveEnumMeta
+
+
 AZUREML_CLOUD_ENV_NAME = "AZUREML_CURRENT_CLOUD"
 API_VERSION_2020_09_01_PREVIEW = "2020-09-01-preview"
 API_VERSION_2020_09_01_DATAPLANE = "2020-09-01-dataplanepreview"
@@ -26,6 +29,7 @@ RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspace
 NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}"
 LEVEL_ONE_NAMED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/{}/{}"
 VERSIONED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/versions/{}"
+LABELLED_RESOURCE_ID_FORMAT = "/subscriptions/{}/resourceGroups/{}/providers/{}/workspaces/{}/{}/{}/labels/{}"
 DATASTORE_RESOURCE_ID = (
     "/subscriptions/{}/resourceGroups/{}/providers/Microsoft.MachineLearningServices/workspaces/{}/datastores/{}"
 )
@@ -34,6 +38,7 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
 )
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
+LABELLED_RESOURCE_NAME = "{}@{}"
 PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
@@ -65,6 +70,7 @@ MAX_AUTOINCREMENT_ATTEMPTS = 3
 REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
+INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"
 REGISTRY_VERSION_PATTERN = "^azureml://registries/([^/]+)/([^/]+)/([^/]+)/versions/([^/]+)"
 REGISTRY_ASSET_ID = "azureml://registries/{}/{}/{}/versions/{}"
 SHORT_URI_FORMAT = "azureml://datastores/{}/paths/{}"
@@ -79,6 +85,15 @@ OUTPUT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/(ExperimentRun/.+)"
 LONG_URI_REGEX_FORMAT = (
     "azureml://subscriptions/([^/]+)/resource[gG]roups/([^/]+)/workspaces/([^/]+)/datastores/([^/]+)/paths/(.+)"
 )
+ASSET_ARM_ID_REGEX_FORMAT = (
+    "azureml:/subscriptions/([^/]+)/resource[gG]roups/([^/]+)/"
+    "providers/Microsoft.MachineLearningServices/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
+)
+ASSET_ID_REGEX_FORMAT = (
+    "azureml://subscriptions/([^/]+)/resource[gG]roups/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
+)
+ASSET_ID_RESOURCE_REGEX_FORMAT = "azureml://resource[gG]roups/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
+MODEL_ID_REGEX_FORMAT = "azureml://models/([^/]+)/versions/(.+)"
 ASSET_ID_URI_REGEX_FORMAT = "azureml://locations/([^/]+)/workspaces/([^/]+)/([^/]+)/([^/]+)/versions/(.+)"
 AZUREML_CLI_SYSTEM_EXECUTED_ENV_VAR = "AZUREML_CLI_SYSTEM_EXECUTED"
 DOCSTRING_TEMPLATE = ".. note::    {0} {1}\n\n"
@@ -89,7 +104,7 @@ EXPERIMENTAL_FIELD_MESSAGE = "This is an experimental field,"
 EXPERIMENTAL_LINK_MESSAGE = (
     "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
 )
-REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "For a more detailed breakdown of the {} schema, please see: {}."
+REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "Visit this link to refer to the {} schema if needed: {}."
 STORAGE_AUTH_MISMATCH_ERROR = "AuthorizationPermissionMismatch"
 SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
 BATCH_JOB_CHILD_RUN_NAME = "batchscoring"
@@ -119,6 +134,8 @@ STORAGE_ACCOUNT_URLS = {
     "AzureFile": "https://{}.file.{}",
 }
 
+DEFAULT_LABEL_NAME = "default"
+DEFAULT_COMPONENT_VERSION = "azureml_default"
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
 SCHEMA_VALIDATION_ERROR_TEMPLATE = (
@@ -169,6 +186,7 @@ class AzureMLResourceType(object):
     WORKSPACE_CONNECTION = "workspace_connections"
     COMPONENT = "components"
     SCHEDULE = "schedules"
+    REGISTRY = "registries"
 
     NAMED_TYPES = {
         JOB,
@@ -322,6 +340,7 @@ class YAMLRefDocLinks:
     COMMAND_COMPONENT = "https://aka.ms/ml-cli-v2-component-command-yaml-reference"
     PARALLEL_COMPONENT = "https://aka.ms/ml-cli-v2-component-parallel-yaml-reference"
     SCHEDULE = "https://aka.ms/ml-cli-v2-schedule-yaml-reference"
+    REGISTRY = "https://aka.ms/ml-cli-v2-registry-yaml-reference"
 
 
 class YAMLRefDocSchemaNames:
@@ -366,7 +385,7 @@ class LoggingLevel:
     DEBUG = "DEBUG"
 
 
-class TimeZone(str, Enum):
+class TimeZone(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Time zones that a job or compute instance schedule accepts."""
 
     DATELINE_STANDARD_TIME = "Dateline Standard Time"
@@ -539,3 +558,22 @@ class ModelType:
     CUSTOM = "CustomModel"
     MLFLOW = "MLFlowModel"
     TRITON = "TritonModel"
+
+
+class RollingRate:
+    YEAR = "year"
+    MONTH = "month"
+    DAY = "day"
+    HOUR = "hour"
+    MINUTE = "minute"
+
+
+class Scope:
+    SUBSCRIPTION="subscription"
+    RESOURCE_GROUP="resource_group"
+
+
+class IdentityType:
+    AML_TOKEN = "aml_token"
+    USER_IDENTITY = "user_identity"
+    MANAGED_IDENTITY = "managed_identity"

@@ -42,7 +42,7 @@ jobs:
     #  type: managed
 
     args: >-
-      --file_input1 ${{inputs.test1}}
+      --file_input1 ${{inputs.file_input1}}
       --file_input2 ${{inputs.file_input2}}
       --output ${{outputs.output}}
 

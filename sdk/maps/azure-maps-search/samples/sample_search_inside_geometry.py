@@ -18,13 +18,10 @@ USAGE:
 """
 
 import os
-from shapely.geometry import Polygon
-
 
 subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 def search_inside_geometry():
-    # [START search_inside_geometry]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -72,12 +69,26 @@ def search_inside_geometry():
         ]
     }
 
-    geo_obj_interface = Polygon([
-        [-122.43576049804686, 37.7524152343544],
-        [-122.43301391601562, 37.70660472542312],
-        [-122.36434936523438, 37.712059855877314],
-        [-122.43576049804686, 37.7524152343544]
-    ])
+    # This is the mock results we can get from 3rd party package `Shapely`
+    #
+    # from shapely.geometry import Polygon
+    #
+    # data = Polygon([
+    #     [-122.43576049804686, 37.7524152343544],
+    #     [-122.43301391601562, 37.70660472542312],
+    #     [-122.36434936523438, 37.712059855877314],
+    #     [-122.43576049804686, 37.7524152343544]
+    # ]).__geo_interface__
+    #
+    geo_obj_interface = {
+        'type': 'Polygon',
+        'coordinates': ((
+            (-122.43576049804686, 37.7524152343544),
+            (-122.43301391601562, 37.70660472542312),
+            (-122.36434936523438, 37.712059855877314),
+            (-122.43576049804686, 37.7524152343544)),
+        )
+    }
 
     geo_thing_wkt = 'POLYGON ((-122.43576049804686 37.7524152343544, 40 40, 20 40, 10 20, -122.43576049804686 37.7524152343544))'
 
@@ -108,8 +119,6 @@ def search_inside_geometry():
     print(result3.results[0].address.local_name)
     print(result3.results[0].address.country_subdivision)
     print(f'Id of the first result item of result 3: {result3.results[0].id}')
-
-    # [END search_inside_geometry]
 
 if __name__ == '__main__':
     search_inside_geometry()

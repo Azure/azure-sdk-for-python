@@ -22,7 +22,6 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 # cSpell:disable
 def fuzzy_search_batch_failure():
-    # [START fuzzy_search_batch_failure]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search import MapsSearchClient
 
@@ -44,7 +43,6 @@ def fuzzy_search_batch_failure():
             count = count+1
             print(f"Error: {item.response.error.message}")
     print(f"There are total of {count} search queries failed.")
-    # [END fuzzy_search_batch_failure]
 
 if __name__ == '__main__':
     fuzzy_search_batch_failure()

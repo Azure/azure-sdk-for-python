@@ -38,6 +38,8 @@ class SchemaProperties(object):
     :vartype group_name: str
     :ivar name: Name of schema.
     :vartype name: str
+    :ivar version: Version of schema.
+    :vartype version: int
     """
 
     def __init__(self, **kwargs):
@@ -46,11 +48,12 @@ class SchemaProperties(object):
         self.format = kwargs.pop("format")
         self.group_name = kwargs.pop("group_name")
         self.name = kwargs.pop("name")
+        self.version = kwargs.pop("version")
 
     def __repr__(self):
         return (
             f"SchemaProperties(id={self.id}, format={self.format}, "
-            f"group_name={self.group_name}, name={self.name})"[:1024]
+            f"group_name={self.group_name}, name={self.name}, version={self.version})"[:1024]
         )
 
 

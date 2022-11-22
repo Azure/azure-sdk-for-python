@@ -1,5 +1,6 @@
 import copy
 import json
+import os
 from pathlib import Path
 from unittest import mock
 
@@ -11,11 +12,10 @@ from azure.ai.ml import MLClient, load_component
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentVersionData
 from azure.ai.ml._utils._arm_id_utils import PROVIDER_RESOURCE_ID_WITH_VERSION
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, AssetTypes, LegacyAssetTypes
-from azure.ai.ml.entities import CommandComponent, Component
+from azure.ai.ml.entities import CommandComponent, Component, PipelineComponent
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._component.component import COMPONENT_CODE_PLACEHOLDER, COMPONENT_PLACEHOLDER
 from azure.ai.ml.entities._component.component_factory import component_factory
-from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
 
@@ -48,6 +48,7 @@ def load_component_entity_from_yaml(
     internal_representation.__init__(
         **data,
     )
+    internal_representation._base_path = context[BASE_PATH_CONTEXT_KEY]
 
     def mock_get_asset_arm_id(*args, **kwargs):
         if len(args) > 0:
@@ -59,7 +60,10 @@ def load_component_entity_from_yaml(
                     # for generated code, return content in it
                     with open(arg.path) as f:
                         return f.read()
-                return f"{str(arg.path)}:1"
+                elif os.path.isfile(arg.path):
+                    return f"{str(arg.path)}:1"
+                else:
+                    return f"{Path(arg.path).name}:1"
         return "xxx"
 
     # change internal assets into arm id
@@ -94,6 +98,7 @@ def load_component_entity_from_rest_json(path) -> Component:
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestCommandComponent:
     def test_serialize_deserialize_basic(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
@@ -121,7 +126,7 @@ class TestCommandComponent:
         test_path = "./tests/test_configs/components/helloworld_component_alt1.yml"
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
 
-        assert component_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu"
+        assert component_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
 
     def test_serialize_deserialize_input_types(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/input_types_component.yml"
@@ -187,15 +192,13 @@ class TestCommandComponent:
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
         # make sure code has "created"
         assert component_entity.code
-        expected_path = Path("./tests/test_configs/components/helloworld_components_with_env").resolve()
-        assert component_entity.code == f"{str(expected_path)}:1"
 
     def test_serialize_deserialize_default_code(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
         # make sure default code has generated with name and version as content
         assert component_entity.code
-        assert COMPONENT_CODE_PLACEHOLDER == component_entity.code
+        assert component_entity.code == COMPONENT_CODE_PLACEHOLDER
 
     def test_serialize_deserialize_input_output_path(self, mock_machinelearning_client: MLClient):
         expected_value_dict = {
@@ -294,6 +297,28 @@ class TestCommandComponent:
         component_hash2 = component_entity2._get_anonymous_hash()
         assert component_hash1 != component_hash2
 
+    def test_command_component_with_properties(self):
+        test_path = "./tests/test_configs/components/helloworld_component_with_properties.yml"
+        component_entity = load_component(source=test_path)
+        assert component_entity.properties == {"azureml.pipelines.dynamic": "true"}
+
+        validation_result = component_entity._validate()
+        assert validation_result.passed is True
+
+    def test_component_factory(self):
+        test_path = "./tests/test_configs/components/helloworld_component_with_properties.yml"
+        component_entity = load_component(source=test_path)
+        recreated_component = component_factory.load_from_dict(
+            data=component_entity._to_dict(),
+            context={
+                "source_path": test_path,
+            }
+        )
+        assert recreated_component._to_dict() == component_entity._to_dict()
+
+        recreated_component = component_factory.load_from_rest(obj=component_entity._to_rest_object())
+        assert recreated_component._to_dict() == component_entity._to_dict()
+
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
@@ -325,9 +350,9 @@ class TestPipelineComponent:
 class TestSparkComponent:
     def test_component_load(self):
         # code is specified in yaml, value is respected
-        component_yaml = "./tests/test_configs/components/basic_spark_component.yml"
+        component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/add_greeting_column_component.yml"
         spark_component = load_component(
-            path=component_yaml,
+            component_yaml,
         )
         validation_result = spark_component._validate()
         assert validation_result.passed is True

@@ -23,7 +23,6 @@ subscription_key = os.getenv("AZURE_SUBSCRIPTION_KEY")
 
 # cSpell:disable
 async def search_structured_address_async():
-    # [START search_structured_address_async]
     from azure.core.credentials import AzureKeyCredential
     from azure.maps.search.aio import MapsSearchClient
     from azure.maps.search.models import StructuredAddress
@@ -42,8 +41,6 @@ async def search_structured_address_async():
 
     print("Get Search Address Structured:")
     print(result)
-    # [END search_structured_address_async]
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(search_structured_address_async())
+    asyncio.run(search_structured_address_async())

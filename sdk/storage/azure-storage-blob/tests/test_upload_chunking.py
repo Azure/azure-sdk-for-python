@@ -6,25 +6,19 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import pytest
-
 import os
-from devtools_testutils import ResourceGroupPreparer, StorageAccountPreparer
-from azure.storage.blob._shared.uploads import SubStream
+import unittest
+from io import BytesIO, SEEK_SET
 from threading import Lock
-from io import (BytesIO, SEEK_SET)
 
-from settings.testcase import BlobPreparer
-from devtools_testutils.storage import StorageTestCase
-# ------------------------------------------------------------------------------
+from azure.storage.blob._shared.uploads import SubStream
 
 
-class StorageBlobUploadChunkingTest(StorageTestCase):
+class StorageBlobUploadChunkingTest(unittest.TestCase):
 
     # this is a white box test that's designed to make sure _Substream behaves properly
     # when the buffer needs to be swapped out at least once
-    @BlobPreparer()
-    def test_sub_stream_with_length_larger_than_buffer(self, storage_account_name, storage_account_key):
+    def test_sub_stream_with_length_larger_than_buffer(self, **kwargs):
         data = os.urandom(12 * 1024 * 1024)
 
         # assuming the max size of the buffer is 4MB, this test needs to be updated if that has changed
@@ -36,24 +30,24 @@ class StorageBlobUploadChunkingTest(StorageTestCase):
 
         try:
             # substream should start with position at 0
-            self.assertEqual(substream.tell(), 0)
+            assert substream.tell() == 0
 
             # reading a chunk that is smaller than the buffer
             data_chunk_1 = substream.read(2 * 1024 * 1024)
-            self.assertEqual(len(data_chunk_1), 2 * 1024 * 1024)
+            assert len(data_chunk_1) == 2 * 1024 * 1024
 
             # reading a chunk that is bigger than the data remaining in buffer, force a buffer swap
             data_chunk_2 = substream.read(4 * 1024 * 1024)
-            self.assertEqual(len(data_chunk_2), 4 * 1024 * 1024)
+            assert len(data_chunk_2) == 4 * 1024 * 1024
 
             # assert data is consistent
-            self.assertEqual(data_chunk_1 + data_chunk_2, expected_data)
-            self.assertEqual(6 * 1024 * 1024, substream.tell())
+            assert data_chunk_1 + data_chunk_2 == expected_data
+            assert 6 * 1024 * 1024 == substream.tell()
 
             # attempt to read more than what the sub stream contains should return nothing
             empty_data = substream.read(1 * 1024 * 1024)
-            self.assertEqual(0, len(empty_data))
-            self.assertEqual(6 * 1024 * 1024, substream.tell())
+            assert 0 == len(empty_data)
+            assert 6 * 1024 * 1024 == substream.tell()
 
             # test seek outside of current buffer, which is at the moment the last 2MB of data
             substream.seek(0, SEEK_SET)
@@ -61,14 +55,14 @@ class StorageBlobUploadChunkingTest(StorageTestCase):
             data_chunk_2 = substream.read(2 * 1024 * 1024)
 
             # assert data is consistent
-            self.assertEqual(data_chunk_1 + data_chunk_2, expected_data)
+            assert data_chunk_1 + data_chunk_2 == expected_data
 
             # test seek inside of buffer, which is at the moment the last 2MB of data
             substream.seek(4 * 1024 * 1024, SEEK_SET)
             data_chunk_2 = substream.read(2 * 1024 * 1024)
 
             # assert data is consistent
-            self.assertEqual(data_chunk_1 + data_chunk_2, expected_data)
+            assert data_chunk_1 + data_chunk_2 == expected_data
 
         finally:
             wrapped_stream.close()
@@ -76,8 +70,7 @@ class StorageBlobUploadChunkingTest(StorageTestCase):
 
     # this is a white box test that's designed to make sure _Substream behaves properly
     # when block size is smaller than 4MB, thus there's no need for buffer swap
-    @BlobPreparer()
-    def test_sub_stream_with_length_equal_to_buffer(self, storage_account_name, storage_account_key):
+    def test_sub_stream_with_length_equal_to_buffer(self, **kwargs):
         data = os.urandom(6 * 1024 * 1024)
 
         # assuming the max size of the buffer is 4MB, this test needs to be updated if that has changed
@@ -89,25 +82,25 @@ class StorageBlobUploadChunkingTest(StorageTestCase):
 
         try:
             # substream should start with position at 0
-            self.assertEqual(substream.tell(), 0)
+            assert substream.tell() == 0
 
             # reading a chunk that is smaller than the buffer
             data_chunk_1 = substream.read(1 * 1024 * 1024)
-            self.assertEqual(len(data_chunk_1), 1 * 1024 * 1024)
+            assert len(data_chunk_1) == 1 * 1024 * 1024
 
             # reading a chunk that is bigger than the buffer, should not read anything beyond
             data_chunk_2 = substream.read(4 * 1024 * 1024)
-            self.assertEqual(len(data_chunk_2), 1 * 1024 * 1024)
+            assert len(data_chunk_2) == 1 * 1024 * 1024
 
             # assert data is consistent
-            self.assertEqual(data_chunk_1 + data_chunk_2, expected_data)
+            assert data_chunk_1 + data_chunk_2 == expected_data
 
             # test seek
             substream.seek(1 * 1024 * 1024, SEEK_SET)
             data_chunk_2 = substream.read(1 * 1024 * 1024)
 
             # assert data is consistent
-            self.assertEqual(data_chunk_1 + data_chunk_2, expected_data)
+            assert data_chunk_1 + data_chunk_2 == expected_data
 
         finally:
             wrapped_stream.close()

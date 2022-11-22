@@ -9,6 +9,7 @@ from azure.identity import (
     AzureAuthorityHosts,
     CredentialUnavailableError,
     SharedTokenCacheCredential,
+    TokenCachePersistenceOptions,
 )
 from azure.identity._constants import DEVELOPER_SIGN_ON_CLIENT_ID, EnvironmentVariables
 from azure.identity._internal.shared_token_cache import (
@@ -140,7 +141,9 @@ def test_tenant_id():
     )
 
     credential = SharedTokenCacheCredential(
-        _cache=populated_cache(get_account_event("test@user", "uid", "utid")), transport=transport
+        _cache=populated_cache(get_account_event("test@user", "uid", "utid")),
+        transport=transport,
+        additionally_allowed_tenants=['*']
     )
 
     credential.get_token("scope", tenant_id="tenant_id")
@@ -762,6 +765,18 @@ def test_initialization():
             assert mock_cache_loader.call_count == 1
 
 
+def test_initialization_with_cache_options():
+    """the credential should use user-supplied persistence options"""
+
+    with patch("azure.identity._internal.shared_token_cache._load_persistent_cache") as mock_cache_loader:
+        options = TokenCachePersistenceOptions(name="foo.cache")
+        credential = SharedTokenCacheCredential(cache_persistence_options=options)
+
+        with pytest.raises(CredentialUnavailableError):
+            credential.get_token("scope")
+        mock_cache_loader.assert_called_once_with(options)
+
+
 def test_authentication_record_authenticating_tenant():
     """when given a record and 'tenant_id', the credential should authenticate in the latter"""
 
@@ -862,7 +877,7 @@ def test_multitenant_authentication():
     cache = populated_cache(expected_account)
 
     credential = SharedTokenCacheCredential(
-        authority=authority, transport=Mock(send=send), _cache=cache
+        authority=authority, transport=Mock(send=send), _cache=cache, additionally_allowed_tenants=['*']
     )
     token = credential.get_token("scope")
     assert token.token == first_token
@@ -913,6 +928,7 @@ def test_multitenant_authentication_auth_record():
         transport=Mock(send=send),
         authentication_record=record,
         _cache=cache,
+        additionally_allowed_tenants = ['*']
     )
     token = credential.get_token("scope")
     assert token.token == first_token

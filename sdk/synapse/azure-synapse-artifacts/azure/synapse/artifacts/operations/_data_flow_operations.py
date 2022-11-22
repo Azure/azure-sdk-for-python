@@ -8,9 +8,14 @@
 # --------------------------------------------------------------------------
 from typing import Any, Callable, Dict, Iterable, Optional, TypeVar, Union, cast
 
-from msrest import Serializer
-
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.paging import ItemPaged
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import HttpResponse
@@ -21,193 +26,172 @@ from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
 from .. import models as _models
+from .._serialization import Serializer
 from .._vendor import _convert_request, _format_url_section
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, HttpResponse], T, Dict[str, Any]], Any]]
 
 _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
-def build_create_or_update_data_flow_request_initial(
-    data_flow_name: str,
-    *,
-    json: Optional[_models.DataFlowResource] = None,
-    content: Any = None,
-    if_match: Optional[str] = None,
-    **kwargs: Any
+
+def build_create_or_update_data_flow_request(
+    data_flow_name: str, *, if_match: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/dataflows/{dataFlowName}")
     path_format_arguments = {
-        "dataFlowName": _SERIALIZER.url("data_flow_name", data_flow_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        "dataFlowName": _SERIALIZER.url(
+            "data_flow_name",
+            data_flow_name,
+            "str",
+            max_length=260,
+            min_length=1,
+            pattern=r"^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$",
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if if_match is not None:
-        _headers['If-Match'] = _SERIALIZER.header("if_match", if_match, 'str')
+        _headers["If-Match"] = _SERIALIZER.header("if_match", if_match, "str")
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="PUT",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
 def build_get_data_flow_request(
-    data_flow_name: str,
-    *,
-    if_none_match: Optional[str] = None,
-    **kwargs: Any
+    data_flow_name: str, *, if_none_match: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/dataflows/{dataFlowName}")
     path_format_arguments = {
-        "dataFlowName": _SERIALIZER.url("data_flow_name", data_flow_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        "dataFlowName": _SERIALIZER.url(
+            "data_flow_name",
+            data_flow_name,
+            "str",
+            max_length=260,
+            min_length=1,
+            pattern=r"^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$",
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if if_none_match is not None:
-        _headers['If-None-Match'] = _SERIALIZER.header("if_none_match", if_none_match, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["If-None-Match"] = _SERIALIZER.header("if_none_match", if_none_match, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_delete_data_flow_request_initial(
-    data_flow_name: str,
-    **kwargs: Any
-) -> HttpRequest:
+def build_delete_data_flow_request(data_flow_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/dataflows/{dataFlowName}")
     path_format_arguments = {
-        "dataFlowName": _SERIALIZER.url("data_flow_name", data_flow_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        "dataFlowName": _SERIALIZER.url(
+            "data_flow_name",
+            data_flow_name,
+            "str",
+            max_length=260,
+            min_length=1,
+            pattern=r"^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$",
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="DELETE",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_rename_data_flow_request_initial(
-    data_flow_name: str,
-    *,
-    json: Optional[_models.ArtifactRenameRequest] = None,
-    content: Any = None,
-    **kwargs: Any
-) -> HttpRequest:
+def build_rename_data_flow_request(data_flow_name: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    content_type = kwargs.pop('content_type', _headers.pop('Content-Type', None))  # type: Optional[str]
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/dataflows/{dataFlowName}/rename")
     path_format_arguments = {
-        "dataFlowName": _SERIALIZER.url("data_flow_name", data_flow_name, 'str', max_length=260, min_length=1, pattern=r'^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$'),
+        "dataFlowName": _SERIALIZER.url(
+            "data_flow_name",
+            data_flow_name,
+            "str",
+            max_length=260,
+            min_length=1,
+            pattern=r"^[A-Za-z0-9_][^<>*#.%&:\\+?/]*$",
+        ),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     if content_type is not None:
-        _headers['Content-Type'] = _SERIALIZER.header("content_type", content_type, 'str')
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+        _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="POST",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        json=json,
-        content=content,
-        **kwargs
-    )
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_get_data_flows_by_workspace_request(
-    **kwargs: Any
-) -> HttpRequest:
+def build_get_data_flows_by_workspace_request(**kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-    accept = _headers.pop('Accept', "application/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = kwargs.pop("template_url", "/dataflows")
 
     # Construct parameters
-    _params['api-version'] = _SERIALIZER.query("api_version", api_version, 'str')
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
-    _headers['Accept'] = _SERIALIZER.header("accept", accept, 'str')
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(
-        method="GET",
-        url=_url,
-        params=_params,
-        headers=_headers,
-        **kwargs
-    )
+    return HttpRequest(method="GET", url=_url, params=_params, headers=_headers, **kwargs)
+
 
 class DataFlowOperations:
     """
@@ -228,50 +212,47 @@ class DataFlowOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     def _create_or_update_data_flow_initial(
-        self,
-        data_flow_name: str,
-        properties: _models.DataFlow,
-        if_match: Optional[str] = None,
-        **kwargs: Any
+        self, data_flow_name: str, properties: _models.DataFlow, if_match: Optional[str] = None, **kwargs: Any
     ) -> Optional[_models.DataFlowResource]:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.DataFlowResource]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.DataFlowResource]]
 
         _data_flow = _models.DataFlowResource(properties=properties)
-        _json = self._serialize.body(_data_flow, 'DataFlowResource')
+        _json = self._serialize.body(_data_flow, "DataFlowResource")
 
-        request = build_create_or_update_data_flow_request_initial(
+        request = build_create_or_update_data_flow_request(
             data_flow_name=data_flow_name,
+            if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            if_match=if_match,
-            template_url=self._create_or_update_data_flow_initial.metadata['url'],
+            template_url=self._create_or_update_data_flow_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -280,36 +261,28 @@ class DataFlowOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('DataFlowResource', pipeline_response)
+            deserialized = self._deserialize("DataFlowResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_data_flow_initial.metadata = {'url': "/dataflows/{dataFlowName}"}  # type: ignore
-
+    _create_or_update_data_flow_initial.metadata = {"url": "/dataflows/{dataFlowName}"}  # type: ignore
 
     @distributed_trace
     def begin_create_or_update_data_flow(
-        self,
-        data_flow_name: str,
-        properties: _models.DataFlow,
-        if_match: Optional[str] = None,
-        **kwargs: Any
+        self, data_flow_name: str, properties: _models.DataFlow, if_match: Optional[str] = None, **kwargs: Any
     ) -> LROPoller[_models.DataFlowResource]:
         """Creates or updates a data flow.
 
-        :param data_flow_name: The data flow name.
+        :param data_flow_name: The data flow name. Required.
         :type data_flow_name: str
-        :param properties: Data flow properties.
+        :param properties: Data flow properties. Required.
         :type properties: ~azure.synapse.artifacts.models.DataFlow
         :param if_match: ETag of the data flow entity. Should only be specified for update, for which
          it should match existing entity or can be * for unconditional update. Default value is None.
         :type if_match: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -321,20 +294,17 @@ class DataFlowOperations:
         :return: An instance of LROPoller that returns either DataFlowResource or the result of
          cls(response)
         :rtype: ~azure.core.polling.LROPoller[~azure.synapse.artifacts.models.DataFlowResource]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DataFlowResource]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataFlowResource]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._create_or_update_data_flow_initial(  # type: ignore
                 data_flow_name=data_flow_name,
@@ -342,150 +312,140 @@ class DataFlowOperations:
                 if_match=if_match,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('DataFlowResource', pipeline_response)
+            deserialized = self._deserialize("DataFlowResource", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update_data_flow.metadata = {'url': "/dataflows/{dataFlowName}"}  # type: ignore
+    begin_create_or_update_data_flow.metadata = {"url": "/dataflows/{dataFlowName}"}  # type: ignore
 
     @distributed_trace
     def get_data_flow(
-        self,
-        data_flow_name: str,
-        if_none_match: Optional[str] = None,
-        **kwargs: Any
+        self, data_flow_name: str, if_none_match: Optional[str] = None, **kwargs: Any
     ) -> _models.DataFlowResource:
         """Gets a data flow.
 
-        :param data_flow_name: The data flow name.
+        :param data_flow_name: The data flow name. Required.
         :type data_flow_name: str
         :param if_none_match: ETag of the data flow entity. Should only be specified for get. If the
          ETag matches the existing entity tag, or if * was provided, then no content will be returned.
          Default value is None.
         :type if_none_match: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: DataFlowResource, or the result of cls(response)
+        :return: DataFlowResource or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.DataFlowResource
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DataFlowResource]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataFlowResource]
 
-        
         request = build_get_data_flow_request(
             data_flow_name=data_flow_name,
-            api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_data_flow.metadata['url'],
+            api_version=api_version,
+            template_url=self.get_data_flow.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudError, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
-        deserialized = self._deserialize('DataFlowResource', pipeline_response)
+        deserialized = self._deserialize("DataFlowResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_data_flow.metadata = {'url': "/dataflows/{dataFlowName}"}  # type: ignore
-
+    get_data_flow.metadata = {"url": "/dataflows/{dataFlowName}"}  # type: ignore
 
     def _delete_data_flow_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        data_flow_name: str,
-        **kwargs: Any
+        self, data_flow_name: str, **kwargs: Any
     ) -> None:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
-        request = build_delete_data_flow_request_initial(
+        request = build_delete_data_flow_request(
             data_flow_name=data_flow_name,
             api_version=api_version,
-            template_url=self._delete_data_flow_initial.metadata['url'],
+            template_url=self._delete_data_flow_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
@@ -495,22 +455,14 @@ class DataFlowOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_data_flow_initial.metadata = {'url': "/dataflows/{dataFlowName}"}  # type: ignore
-
+    _delete_data_flow_initial.metadata = {"url": "/dataflows/{dataFlowName}"}  # type: ignore
 
     @distributed_trace
-    def begin_delete_data_flow(  # pylint: disable=inconsistent-return-statements
-        self,
-        data_flow_name: str,
-        **kwargs: Any
-    ) -> LROPoller[None]:
+    def begin_delete_data_flow(self, data_flow_name: str, **kwargs: Any) -> LROPoller[None]:
         """Deletes a data flow.
 
-        :param data_flow_name: The data flow name.
+        :param data_flow_name: The data flow name. Required.
         :type data_flow_name: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -521,100 +473,94 @@ class DataFlowOperations:
          Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._delete_data_flow_initial(  # type: ignore
                 data_flow_name=data_flow_name,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete_data_flow.metadata = {'url': "/dataflows/{dataFlowName}"}  # type: ignore
+    begin_delete_data_flow.metadata = {"url": "/dataflows/{dataFlowName}"}  # type: ignore
 
     def _rename_data_flow_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        data_flow_name: str,
-        new_name: Optional[str] = None,
-        **kwargs: Any
+        self, data_flow_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> None:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_data_flow_request_initial(
+        request = build_rename_data_flow_request(
             data_flow_name=data_flow_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_data_flow_initial.metadata['url'],
+            template_url=self._rename_data_flow_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -624,25 +570,18 @@ class DataFlowOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _rename_data_flow_initial.metadata = {'url': "/dataflows/{dataFlowName}/rename"}  # type: ignore
-
+    _rename_data_flow_initial.metadata = {"url": "/dataflows/{dataFlowName}/rename"}  # type: ignore
 
     @distributed_trace
-    def begin_rename_data_flow(  # pylint: disable=inconsistent-return-statements
-        self,
-        data_flow_name: str,
-        new_name: Optional[str] = None,
-        **kwargs: Any
+    def begin_rename_data_flow(
+        self, data_flow_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> LROPoller[None]:
         """Renames a dataflow.
 
-        :param data_flow_name: The data flow name.
+        :param data_flow_name: The data flow name. Required.
         :type data_flow_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -653,120 +592,106 @@ class DataFlowOperations:
          Retry-After header is present.
         :return: An instance of LROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.LROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, PollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = self._rename_data_flow_initial(  # type: ignore
                 data_flow_name=data_flow_name,
                 new_name=new_name,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(PollingMethod, LROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: PollingMethod
-        elif polling is False: polling_method = cast(PollingMethod, NoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                PollingMethod, LROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return LROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_rename_data_flow.metadata = {'url': "/dataflows/{dataFlowName}/rename"}  # type: ignore
+    begin_rename_data_flow.metadata = {"url": "/dataflows/{dataFlowName}/rename"}  # type: ignore
 
     @distributed_trace
-    def get_data_flows_by_workspace(
-        self,
-        **kwargs: Any
-    ) -> Iterable[_models.DataFlowListResponse]:
+    def get_data_flows_by_workspace(self, **kwargs: Any) -> Iterable["_models.DataFlowResource"]:
         """Lists data flows.
 
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either DataFlowListResponse or the result of
-         cls(response)
-        :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.DataFlowListResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: An iterator like instance of either DataFlowResource or the result of cls(response)
+        :rtype: ~azure.core.paging.ItemPaged[~azure.synapse.artifacts.models.DataFlowResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.DataFlowListResponse]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.DataFlowListResponse]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_data_flows_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_data_flows_by_workspace.metadata['url'],
+                    template_url=self.get_data_flows_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_get_data_flows_by_workspace_request(
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
@@ -780,22 +705,17 @@ class DataFlowOperations:
         def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CloudError, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
+        return ItemPaged(get_next, extract_data)
 
-        return ItemPaged(
-            get_next, extract_data
-        )
-    get_data_flows_by_workspace.metadata = {'url': "/dataflows"}  # type: ignore
+    get_data_flows_by_workspace.metadata = {"url": "/dataflows"}  # type: ignore

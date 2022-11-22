@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -9,31 +10,30 @@
 import datetime
 from typing import Dict, List, Optional
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
 
-class Error(msrest.serialization.Model):
+class Error(_serialization.Model):
     """Azure App Configuration error object.
 
-    :param type: The type of the error.
-    :type type: str
-    :param title: A brief summary of the error.
-    :type title: str
-    :param name: The name of the parameter that resulted in the error.
-    :type name: str
-    :param detail: A detailed description of the error.
-    :type detail: str
-    :param status: The HTTP status code that the error maps to.
-    :type status: int
+    :ivar type: The type of the error.
+    :vartype type: str
+    :ivar title: A brief summary of the error.
+    :vartype title: str
+    :ivar name: The name of the parameter that resulted in the error.
+    :vartype name: str
+    :ivar detail: A detailed description of the error.
+    :vartype detail: str
+    :ivar status: The HTTP status code that the error maps to.
+    :vartype status: int
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'title': {'key': 'title', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'detail': {'key': 'detail', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'int'},
+        "type": {"key": "type", "type": "str"},
+        "title": {"key": "title", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "detail": {"key": "detail", "type": "str"},
+        "status": {"key": "status", "type": "int"},
     }
 
     def __init__(
@@ -46,7 +46,19 @@ class Error(msrest.serialization.Model):
         status: Optional[int] = None,
         **kwargs
     ):
-        super(Error, self).__init__(**kwargs)
+        """
+        :keyword type: The type of the error.
+        :paramtype type: str
+        :keyword title: A brief summary of the error.
+        :paramtype title: str
+        :keyword name: The name of the parameter that resulted in the error.
+        :paramtype name: str
+        :keyword detail: A detailed description of the error.
+        :paramtype detail: str
+        :keyword status: The HTTP status code that the error maps to.
+        :paramtype status: int
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.title = title
         self.name = name
@@ -54,7 +66,7 @@ class Error(msrest.serialization.Model):
         self.status = status
 
 
-class Key(msrest.serialization.Model):
+class Key(_serialization.Model):
     """Key.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -64,77 +76,75 @@ class Key(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Key, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
 
 
-class KeyListResult(msrest.serialization.Model):
+class KeyListResult(_serialization.Model):
     """The result of a list request.
 
-    :param items: The collection value.
-    :type items: list[~azure.appconfiguration.models.Key]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar items: The collection value.
+    :vartype items: list[~azure.appconfiguration.models.Key]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'items': {'key': 'items', 'type': '[Key]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "items": {"key": "items", "type": "[Key]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        items: Optional[List["Key"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(KeyListResult, self).__init__(**kwargs)
+    def __init__(self, *, items: Optional[List["_models.Key"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword items: The collection value.
+        :paramtype items: list[~azure.appconfiguration.models.Key]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.items = items
         self.next_link = next_link
 
 
-class KeyValue(msrest.serialization.Model):
+class KeyValue(_serialization.Model):
     """KeyValue.
 
-    :param key:
-    :type key: str
-    :param label:
-    :type label: str
-    :param content_type:
-    :type content_type: str
-    :param value:
-    :type value: str
-    :param last_modified:
-    :type last_modified: ~datetime.datetime
-    :param tags: A set of tags. Dictionary of :code:`<string>`.
-    :type tags: dict[str, str]
-    :param locked:
-    :type locked: bool
-    :param etag:
-    :type etag: str
+    :ivar key:
+    :vartype key: str
+    :ivar label:
+    :vartype label: str
+    :ivar content_type:
+    :vartype content_type: str
+    :ivar value:
+    :vartype value: str
+    :ivar last_modified:
+    :vartype last_modified: ~datetime.datetime
+    :ivar tags: Dictionary of :code:`<string>`.
+    :vartype tags: dict[str, str]
+    :ivar locked:
+    :vartype locked: bool
+    :ivar etag:
+    :vartype etag: str
     """
 
     _attribute_map = {
-        'key': {'key': 'key', 'type': 'str'},
-        'label': {'key': 'label', 'type': 'str'},
-        'content_type': {'key': 'content_type', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'last_modified': {'key': 'last_modified', 'type': 'iso-8601'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'locked': {'key': 'locked', 'type': 'bool'},
-        'etag': {'key': 'etag', 'type': 'str'},
+        "key": {"key": "key", "type": "str"},
+        "label": {"key": "label", "type": "str"},
+        "content_type": {"key": "content_type", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "last_modified": {"key": "last_modified", "type": "iso-8601"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "locked": {"key": "locked", "type": "bool"},
+        "etag": {"key": "etag", "type": "str"},
     }
 
     def __init__(
@@ -150,7 +160,25 @@ class KeyValue(msrest.serialization.Model):
         etag: Optional[str] = None,
         **kwargs
     ):
-        super(KeyValue, self).__init__(**kwargs)
+        """
+        :keyword key:
+        :paramtype key: str
+        :keyword label:
+        :paramtype label: str
+        :keyword content_type:
+        :paramtype content_type: str
+        :keyword value:
+        :paramtype value: str
+        :keyword last_modified:
+        :paramtype last_modified: ~datetime.datetime
+        :keyword tags: Dictionary of :code:`<string>`.
+        :paramtype tags: dict[str, str]
+        :keyword locked:
+        :paramtype locked: bool
+        :keyword etag:
+        :paramtype etag: str
+        """
+        super().__init__(**kwargs)
         self.key = key
         self.label = label
         self.content_type = content_type
@@ -161,33 +189,33 @@ class KeyValue(msrest.serialization.Model):
         self.etag = etag
 
 
-class KeyValueListResult(msrest.serialization.Model):
+class KeyValueListResult(_serialization.Model):
     """The result of a list request.
 
-    :param items: The collection value.
-    :type items: list[~azure.appconfiguration.models.KeyValue]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar items: The collection value.
+    :vartype items: list[~azure.appconfiguration.models.KeyValue]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'items': {'key': 'items', 'type': '[KeyValue]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "items": {"key": "items", "type": "[KeyValue]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        items: Optional[List["KeyValue"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(KeyValueListResult, self).__init__(**kwargs)
+    def __init__(self, *, items: Optional[List["_models.KeyValue"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword items: The collection value.
+        :paramtype items: list[~azure.appconfiguration.models.KeyValue]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.items = items
         self.next_link = next_link
 
 
-class Label(msrest.serialization.Model):
+class Label(_serialization.Model):
     """Label.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -197,42 +225,40 @@ class Label(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Label, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
 
 
-class LabelListResult(msrest.serialization.Model):
+class LabelListResult(_serialization.Model):
     """The result of a list request.
 
-    :param items: The collection value.
-    :type items: list[~azure.appconfiguration.models.Label]
-    :param next_link: The URI that can be used to request the next set of paged results.
-    :type next_link: str
+    :ivar items: The collection value.
+    :vartype items: list[~azure.appconfiguration.models.Label]
+    :ivar next_link: The URI that can be used to request the next set of paged results.
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'items': {'key': 'items', 'type': '[Label]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "items": {"key": "items", "type": "[Label]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        items: Optional[List["Label"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
-        super(LabelListResult, self).__init__(**kwargs)
+    def __init__(self, *, items: Optional[List["_models.Label"]] = None, next_link: Optional[str] = None, **kwargs):
+        """
+        :keyword items: The collection value.
+        :paramtype items: list[~azure.appconfiguration.models.Label]
+        :keyword next_link: The URI that can be used to request the next set of paged results.
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.items = items
         self.next_link = next_link

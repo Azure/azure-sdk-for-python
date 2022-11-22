@@ -1,5 +1,54 @@
 # Release History
 
+## 4.0.0b1 (2022-11-07)
+
+### Features Added
+
+  - Added operation group BenefitRecommendationsOperations
+  - Added operation group BenefitUtilizationSummariesOperations
+  - Added operation group GenerateCostDetailsReportOperations
+  - Added operation group GenerateDetailedCostReportOperationResultsOperations
+  - Added operation group GenerateDetailedCostReportOperationStatusOperations
+  - Added operation group GenerateDetailedCostReportOperations
+  - Added operation group PriceSheetOperations
+  - Added operation group ScheduledActionsOperations
+  - Model Alert has a new parameter e_tag
+  - Model AlertPropertiesDetails has a new parameter company_name
+  - Model AlertPropertiesDetails has a new parameter department_name
+  - Model AlertPropertiesDetails has a new parameter enrollment_end_date
+  - Model AlertPropertiesDetails has a new parameter enrollment_number
+  - Model AlertPropertiesDetails has a new parameter enrollment_start_date
+  - Model AlertPropertiesDetails has a new parameter invoicing_threshold
+  - Model CommonExportProperties has a new parameter next_run_time_estimate
+  - Model CommonExportProperties has a new parameter partition_data
+  - Model CommonExportProperties has a new parameter run_history
+  - Model Dimension has a new parameter e_tag
+  - Model Dimension has a new parameter location
+  - Model Dimension has a new parameter sku
+  - Model Export has a new parameter next_run_time_estimate
+  - Model Export has a new parameter partition_data
+  - Model Export has a new parameter run_history
+  - Model ExportDeliveryDestination has a new parameter sas_token
+  - Model ExportDeliveryDestination has a new parameter storage_account
+  - Model ExportProperties has a new parameter next_run_time_estimate
+  - Model ExportProperties has a new parameter partition_data
+  - Model ExportProperties has a new parameter run_history
+  - Model Operation has a new parameter action_type
+  - Model Operation has a new parameter is_data_action
+  - Model Operation has a new parameter origin
+  - Model OperationDisplay has a new parameter description
+
+### Breaking Changes
+
+  - Model Alert no longer has parameter tags
+  - Model ProxyResource no longer has parameter e_tag
+  - Model ReportConfigFilter no longer has parameter tag_key
+  - Model ReportConfigFilter no longer has parameter tag_value
+  - Model Resource no longer has parameter tags
+  - Operation ExportsOperations.get has a new parameter expand
+  - Operation ExportsOperations.list has a new parameter expand
+  - Removed operation group SettingsOperations
+
 ## 3.0.0 (2021-07-27)
 
 **Breaking changes**

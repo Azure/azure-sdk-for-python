@@ -24,24 +24,30 @@ class SamplingAlgorithm(ABC, RestTranslatableMixin):
 
         sampling_algorithm = None
         if obj.sampling_algorithm_type == SamplingAlgorithmType.RANDOM:
-            sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(obj)
+            sampling_algorithm = RandomSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
         if obj.sampling_algorithm_type == SamplingAlgorithmType.GRID:
-            sampling_algorithm = GridSamplingAlgorithm._from_rest_object(obj)
+            sampling_algorithm = GridSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
         if obj.sampling_algorithm_type == SamplingAlgorithmType.BAYESIAN:
-            sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(obj)
+            sampling_algorithm = BayesianSamplingAlgorithm._from_rest_object(obj)  # pylint: disable=protected-access
 
         return sampling_algorithm
 
 
 class RandomSamplingAlgorithm(SamplingAlgorithm):
+    """Random Sampling Algorithm.
+    :ivar type: Specifies the type of sampling algorithm. Set automatically to "random" for this class.
+    :vartype type: str
+    """
+
     def __init__(
         self,
         *,
         rule=None,
         seed=None,
     ) -> None:
+        super().__init__()
         self.type = SamplingAlgorithmType.RANDOM.lower()
         self.rule = rule
         self.seed = seed
@@ -61,7 +67,13 @@ class RandomSamplingAlgorithm(SamplingAlgorithm):
 
 
 class GridSamplingAlgorithm(SamplingAlgorithm):
+    """Grid Sampling Algorithm.
+    :ivar type: Specifies the type of sampling algorithm. Set automatically to "grid" for this class.
+    :vartype type: str
+    """
+
     def __init__(self) -> None:
+        super().__init__()
         self.type = SamplingAlgorithmType.GRID.lower()
 
     # pylint: disable=no-self-use
@@ -75,7 +87,13 @@ class GridSamplingAlgorithm(SamplingAlgorithm):
 
 
 class BayesianSamplingAlgorithm(SamplingAlgorithm):
+    """Bayesian Sampling Algorithm.
+    :ivar type: Specifies the type of sampling algorithm. Set automatically to "bayesian" for this class.
+    :vartype type: str
+    """
+
     def __init__(self):
+        super().__init__()
         self.type = SamplingAlgorithmType.BAYESIAN.lower()
 
     # pylint: disable=no-self-use

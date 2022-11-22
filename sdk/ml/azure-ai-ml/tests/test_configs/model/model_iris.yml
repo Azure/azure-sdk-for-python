@@ -1,0 +1,15 @@
+name: iris_model
+type: mlflow_model
+path: ./iris_model
+version: 1
+description: "this is a iris model"
+tags:
+  foo: bar
+  abc: 123
+utc_time_created: '2020-10-19 17:44:02.096572'
+flavors:
+  sklearn:
+    sklearn_version: 0.23.2
+  python_function:
+    loader_module: office.plrmodel
+    python_version: 3.8.5
