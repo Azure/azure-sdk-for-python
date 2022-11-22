@@ -29,7 +29,6 @@ from azure.ai.ml.entities._job.pipeline._attr_dict import (
     has_attr_safe,
     try_get_non_arbitrary_attr_for_potential_attr_dict,
 )
-from azure.ai.ml.entities._job.pipeline._io import PipelineIOMixin
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.entities._validation import MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
@@ -37,7 +36,7 @@ from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationExcepti
 module_logger = logging.getLogger(__name__)
 
 
-class PipelineComponent(Component, PipelineIOMixin):
+class PipelineComponent(Component):
     """Pipeline component, currently used to store components in a
     azure.ai.ml.dsl.pipeline.
 
