@@ -51,7 +51,7 @@ class DictMixin:
     def items(self) -> Iterable[Tuple[str, Any]]:
         return [(k, v) for k, v in self.__dict__.items() if not k.startswith("_")]
 
-    def get(self, key, default: Optional[Any] = None) -> Any:
+    def get(self, key: str, default: Optional[Any] = None) -> Any:
         if key in self.__dict__:
             return self.__dict__[key]
         return default

@@ -3,7 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Union, Any
+from typing import Union, Any, cast
 from enum import Enum
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import AzureKeyCredentialPolicy, HttpLoggingPolicy
@@ -84,6 +84,7 @@ class TextAnalyticsClientBase:
 
         self._api_version = kwargs.pop("api_version", DEFAULT_API_VERSION)
         if hasattr(self._api_version, "value"):
+            self._api_version = cast(TextAnalyticsApiVersion, self._api_version)
             self._api_version = self._api_version.value
         self._client = _TextAnalyticsClient(
             endpoint=endpoint,
