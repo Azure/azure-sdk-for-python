@@ -646,7 +646,7 @@ def pytest_configure(config):
         ("pipeline_test", "marks tests as pipeline tests, which will create pipeline jobs during testing"),
         ("automl_test", "marks tests as automl tests, which will create automl jobs during testing"),
         ("core_sdk_test", "marks tests as core sdk tests"),
-        ("production_experience_test", "marks tests as production experience tests"),
+        ("production_experiences_test", "marks tests as production experience tests"),
         ("training_experiences_test", "marks tests as training experience tests"),
         ("data_experiences_test", "marks tests as data experience tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),
