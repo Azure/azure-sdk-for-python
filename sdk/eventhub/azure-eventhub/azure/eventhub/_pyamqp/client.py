@@ -555,13 +555,8 @@ class SendClient(AMQPClient):
 
         :rtype: bool
         """
-        try:
-            self._link.update_pending_deliveries()
-            self._connection.listen(wait=self._socket_timeout, **kwargs)
-        except ValueError:
-            _logger.info("Timeout reached, closing sender.")
-            self._shutdown = True
-            return False
+        self._link.update_pending_deliveries()
+        self._connection.listen(wait=self._socket_timeout, **kwargs)
         return True
 
     def _transfer_message(self, message_delivery, timeout=0):
@@ -631,6 +626,12 @@ class SendClient(AMQPClient):
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = self.do_work()
+        else:
+           if not message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+                raise MessageException(
+                    condition=ErrorCondition.ClientError,
+                    description="Send failed - connection not running."
+                )
         if message_delivery.state in (
             MessageDeliveryState.Error,
             MessageDeliveryState.Cancelled,

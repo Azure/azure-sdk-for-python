@@ -432,6 +432,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             _LOGGER.error(
                 "Failed parsing OPEN frame: Max frame size is less than supported minimum."
             )
+            return
         else:
             self._remote_max_frame_size = frame[2]
         if self.state == ConnectionState.OPEN_SENT:

@@ -409,8 +409,11 @@ class AsyncTransport(
 
     async def _write(self, s):
         """Write a string out to the SSL socket fully."""
-        self.writer.write(s)
-        await self.writer.drain()
+        try:
+            self.writer.write(s)
+            await self.writer.drain()
+        except AttributeError:
+            raise IOError("Connection has already been closed")
 
     async def close(self):
         async with self.socket_lock:

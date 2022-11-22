@@ -104,7 +104,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             custom_parsed_url = urlparse(custom_endpoint_address)
             custom_port = custom_parsed_url.port or WEBSOCKET_PORT
             custom_endpoint = f"{custom_parsed_url.hostname}:{custom_port}{custom_parsed_url.path}"
-
+        self._container_id = kwargs.pop("container_id", None) or str(uuid.uuid4())  # type: str
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
         if transport:
@@ -115,12 +115,18 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 sasl_transport = SASLWithWebSocket
                 endpoint = parsed_url.hostname + parsed_url.path
             self._transport = sasl_transport(
-                host=endpoint, credential=kwargs["sasl_credential"], custom_endpoint=custom_endpoint, **kwargs
+                host=endpoint,
+                credential=kwargs["sasl_credential"],
+                custom_endpoint=custom_endpoint,
+                name=self._container_id,
+                **kwargs
             )
         else:
-            self._transport = Transport(parsed_url.netloc, transport_type=self._transport_type, **kwargs)
-
-        self._container_id = kwargs.pop("container_id", None) or str(uuid.uuid4())  # type: str
+            self._transport = Transport(
+                parsed_url.netloc,
+                transport_type=self._transport_type,
+                name=self._container_id
+                **kwargs)
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)  # type: int
         self._remote_max_frame_size = None  # type: Optional[int]
         self._channel_max = kwargs.pop("channel_max", MAX_CHANNELS)  # type: int
@@ -181,7 +187,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self._set_state(ConnectionState.HDR_SENT)
             if not self._allow_pipelined_open:
                 # TODO: List/tuple expected as variable args
-                self._process_incoming_frame(*self._read_frame(wait=True))  # type: ignore
+                self._read_frame(wait=True)
                 if self.state != ConnectionState.HDR_EXCH:
                     self._disconnect()
                     raise ValueError("Did not receive reciprocal protocol header. Disconnecting.")
@@ -211,9 +217,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Whether the connection is in a state where it is legal to read for incoming frames."""
         return self.state not in (ConnectionState.CLOSE_RCVD, ConnectionState.END)
 
-    def _read_frame(  # type: ignore # TODO: missing return
+    def _read_frame(
         self, wait: Union[bool, float] = True, **kwargs: Any
-    ) -> Tuple[int, Optional[Tuple[int, NamedTuple]]]:
+    ) -> bool:
         """Read an incoming frame from the transport.
 
         :param Union[bool, float] wait: Whether to block on the socket while waiting for an incoming frame.
@@ -224,16 +230,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :returns: A tuple with the incoming channel number, and the frame in the form or a tuple of performative
          descriptor and field values.
         """
-        if self._can_read():
-            if wait is False:
-                return self._transport.receive_frame(**kwargs)
-            if wait is True:
-                with self._transport.block():
-                    return self._transport.receive_frame(**kwargs)
-            else:
-                with self._transport.block_with_timeout(timeout=wait):
-                    return self._transport.receive_frame(**kwargs)
-        _LOGGER.warning("Cannot read frame in current state: %r", self.state)
+        if wait is False:
+            new_frame = self._transport.receive_frame(**kwargs)
+        if wait is True:
+            with self._transport.block():
+                new_frame = self._transport.receive_frame(**kwargs)
+        else:
+            with self._transport.block_with_timeout(timeout=wait):
+                new_frame = self._transport.receive_frame(**kwargs)
+        return self._process_incoming_frame(*new_frame)
 
     def _can_write(self):
         # type: () -> bool
@@ -394,17 +399,15 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             # If any of the values in the received open frame are invalid then the connection shall be closed.
             # The error amqp:invalid-field shall be set in the error.condition field of the CLOSE frame.
             self.close(
-                error=cast(
-                    AMQPError,
-                    AMQPConnectionError(
-                        condition=ErrorCondition.InvalidField,
-                        description="Failed parsing OPEN frame: Max frame size is less than supported minimum.",
-                    ),
+                error=AMQPError(
+                    condition=ErrorCondition.InvalidField,
+                    description="Failed parsing OPEN frame: Max frame size is less than supported minimum.",
                 )
             )
             _LOGGER.error(
                 "Failed parsing OPEN frame: Max frame size is less than supported minimum."
             )
+            return
         else:
             self._remote_max_frame_size = frame[2]
         if self.state == ConnectionState.OPEN_SENT:
@@ -450,7 +453,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         ]
         if self.state in disconnect_states:
             self._disconnect()
-            self._set_state(ConnectionState.END)
             return
 
         close_error = None
@@ -461,7 +463,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._set_state(ConnectionState.CLOSE_RCVD)
         self._outgoing_close(error=close_error)
         self._disconnect()
-        self._set_state(ConnectionState.END)
 
         if frame[0]:
             self._error = AMQPConnectionError(
@@ -713,13 +714,16 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 )
                 return
             for _ in range(batch):
-                new_frame = self._read_frame(wait=wait, **kwargs)
-                if self._process_incoming_frame(*new_frame):
+                if self._can_read():
+                    if self._read_frame(wait=wait, **kwargs):
+                        break
+                else:
+                    _LOGGER.info("Connection cannot read frames in this state: %r", self.state)
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
                 ErrorCondition.SocketError,
-                description="Can not send frame out due to exception: " + str(exc),
+                description="Can not read frame due to exception: " + str(exc),
                 error=exc,
             )
         except Exception:  # pylint:disable=try-except-raise
@@ -793,13 +797,13 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         :param bool wait: Whether to wait for a service Close response. Default is `False`.
         :rtype: None
         """
-        if self.state in [
-            ConnectionState.END,
-            ConnectionState.CLOSE_SENT,
-            ConnectionState.DISCARDING,
-        ]:
-            return
         try:
+            if self.state in [
+                ConnectionState.END,
+                ConnectionState.CLOSE_SENT,
+                ConnectionState.DISCARDING,
+            ]:
+                return
             self._outgoing_close(error=error)
             if error:
                 self._error = AMQPConnectionError(
