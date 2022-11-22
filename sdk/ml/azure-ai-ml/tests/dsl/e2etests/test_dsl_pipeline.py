@@ -52,6 +52,7 @@ common_omit_fields = [
     "jobs.*.properties",
     "settings._source",
     "source_job_id",
+    "services",
 ]
 
 
@@ -578,21 +579,18 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
-        synapse_compute_name = "spark31"
 
         @dsl.pipeline(
             name=f"test_optional_input_component_pipeline_" + randstr("pipeline_name"),
             description="The spark node with optional inputs",
             tags={"owner": "sdkteam", "tag": "tagvalue"},
-            compute=synapse_compute_name,
         )
         def sample_pipeline(job_in_file, sample_rate):
             node1 = spark_with_optional_inputs_component_func(input1=job_in_file, sample_rate=sample_rate)
-            node1.compute = synapse_compute_name
+            node1.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
             return {"pipeline_output": node1.outputs.output1}
 
         pipeline = sample_pipeline(
@@ -610,7 +608,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         expected_job = {
             "description": "The spark node with optional inputs",
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
-            "compute_id": "spark31",
             "is_archived": False,
             "job_type": "Pipeline",
             "inputs": {
@@ -619,12 +616,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             },
             "jobs": {
                 "node1": {
-                    "archives": None,
                     "args": "--input1 ${{inputs.input1}} --output2 "
                     "${{outputs.output1}} --my_sample_rate "
                     "${{inputs.sample_rate}} $[[--input_optional "
                     "${{inputs.input_optional}}]]",
-                    "computeId": "spark31",
                     "conf": {
                         "spark.driver.cores": 1,
                         "spark.driver.memory": "2g",
@@ -635,23 +630,19 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         "spark.executor.instances": 1,
                         "spark.executor.memory": "2g",
                     },
-                    "display_name": None,
                     "entry": {
                         "file": "sampleword_with_optional_input.py",
                         "spark_job_entry_type": "SparkJobPythonEntry",
                     },
-                    "files": None,
-                    "identity": {"identity_type": "Managed"},
+                    "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
                         "input1": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_file}}"},
                         "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
                     },
-                    "jars": None,
                     "name": "node1",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                    "py_files": None,
-                    "resources": None,
-                    "tags": {},
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 }
             },
@@ -1010,6 +1001,21 @@ class TestDSLPipeline(AzureRecordedTestCase):
         with pytest.raises(ValidationException) as e:
             client.components.create_or_update(pipeline_with_non_pipeline_inputs)
         assert "Cannot register pipeline component 'pipeline_with_non_pipeline_inputs' with non_pipeline_inputs." in e.value.message
+
+        @dsl.pipeline()
+        def pipeline_with_variable_inputs(
+            required_input: Input,
+            required_param: str,
+            *args, **kwargs
+        ):
+            default_optional_func(
+                required_input=required_input,
+                required_param=required_param,
+            )
+
+        with pytest.raises(ValidationException) as e:
+            client.components.create_or_update(pipeline_with_variable_inputs)
+        assert "Cannot register the component pipeline_with_variable_inputs with variable inputs ['args', 'kwargs']" in e.value.message
 
     def test_create_pipeline_component_by_dsl(self, caplog, client: MLClient):
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
@@ -1692,7 +1698,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO: re-record since job is in terminal state before cancel")
     def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
         environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
         inputs = {
@@ -1722,7 +1727,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             name=randstr("pipeline_name"),
             description="The pipeline job with parallel function",
             tags={"owner": "sdkteam", "tag": "tagvalue"},
-            default_compute="cpu-cluster",
         )
         def parallel_in_pipeline(job_data_path):
             parallel_job = ParallelJob(
@@ -1753,6 +1757,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 mode=InputOutputModes.EVAL_MOUNT,
             ),
         )
+        pipeline.settings.default_compute = "cpu-cluster"
         # submit job to workspace
         pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
         omit_fields = [
@@ -1804,8 +1809,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert expected_job == actual_job
 
     def test_multi_parallel_components_with_file_input_pipeline_output(
-        self, client: MLClient, randstr: Callable[[str], str]
-    ) -> None:
+        self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
@@ -1973,7 +1977,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    def test_dsl_pipeline_with_only_setting_pipeline_level(self, client: MLClient) -> None:
+    def test_dsl_pipeline_with_only_setting_pipeline_level(self, client: MLClient):
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_only_setting_pipeline_level,
         )
@@ -2018,7 +2022,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    def test_dsl_pipeline_with_only_setting_binding_node(self, client: MLClient) -> None:
+    def test_dsl_pipeline_with_only_setting_binding_node(self, client: MLClient):
         # Todo: checkout run priority when backend is ready
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_only_setting_binding_node,
@@ -2186,20 +2190,18 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
-        synapse_compute_name = "spark31"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
         count_by_row = load_component(str(components_dir / "count_by_row_component.yml"))
 
         # Construct pipeline
-        @dsl.pipeline(compute=synapse_compute_name)
+        @dsl.pipeline()
         def spark_pipeline_from_yaml(iris_data):
             add_greeting_column_node = add_greeting_column(file_input=iris_data)
-            add_greeting_column_node.compute = synapse_compute_name
+            add_greeting_column_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
             count_by_row_node = count_by_row(file_input=iris_data)
-            count_by_row_node.compute = synapse_compute_name
+            count_by_row_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
             return {"output": count_by_row_node.outputs.output}
 
         pipeline = spark_pipeline_from_yaml(
@@ -2216,13 +2218,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = assert_job_cancel(pipeline, client, experiment_name="spark_in_pipeline")
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
-        expected_keys = ["status", "properties", "tags", "creation_context"]
+        expected_keys = ["status", "properties", "creation_context"]
         for k in expected_keys:
             assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
 
         # original job did not change
         assert_job_input_output_types(pipeline_job)
-        assert pipeline_job.compute == synapse_compute_name
 
     def test_pipeline_with_group(self, client: MLClient):
         from enum import Enum
@@ -2352,3 +2353,31 @@ class TestDSLPipeline(AzureRecordedTestCase):
                       'name': 'node3',
                       'type': 'command'}
         }
+
+    def test_default_pipeline_job_services(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
+        component_func2 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
+
+        @dsl.pipeline(
+            name=randstr("pipeline_name"),
+            description="The hello world pipeline job",
+            tags={"owner": "sdkteam", "tag": "tagvalue"},
+            compute="cpu-cluster",
+            experiment_name=experiment_name,
+            continue_on_step_failure=True,
+        )
+        def pipeline(job_in_number, job_in_other_number, job_in_path):
+            component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
+            component_func2(component_in_number=job_in_other_number, component_in_path=job_in_path)
+
+        pipeline = pipeline(10, 15, job_input)
+        job = client.jobs.create_or_update(pipeline)
+        # check required fields in job dict
+        default_services = job._to_dict()["services"]
+        assert "Studio" in default_services
+        assert "Tracking" in default_services
+        assert default_services["Studio"]["endpoint"].startswith("https://ml.azure.com/runs/")
+        assert default_services["Studio"]["job_service_type"] == "Studio"
+        assert default_services["Tracking"]["endpoint"].startswith("azureml://")
+        assert default_services["Tracking"]["job_service_type"] == "Tracking"

@@ -31,7 +31,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview import AzureMachineLearningWork
 from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._restclient.v2022_10_01 import AzureMachineLearningWorkspaces as ServiceClient102022
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
-from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
+#from azure.ai.ml._telemetry.logging_handler import get_appinsights_log_handler
 from azure.ai.ml._user_agent import USER_AGENT
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -216,12 +216,13 @@ class MLClient(object):
         if registry_name:
             properties.update({"registry_name": registry_name})
 
-        user_agent = None
-        if "user_agent" in kwargs:
-            user_agent = kwargs.get("user_agent")
+        # user_agent = None
+        # if "user_agent" in kwargs:
+        #     user_agent = kwargs.get("user_agent")
 
-        app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
-        app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
+        # app_insights_handler = get_appinsights_log_handler(user_agent, **{"properties": properties})
+        # app_insights_handler_kwargs = {"app_insights_handler": app_insights_handler}
+        app_insights_handler_kwargs = {}
 
         base_url = _get_base_url_from_metadata(cloud_name=cloud_name, is_local_mfe=True)
         self._base_url = base_url
@@ -440,7 +441,7 @@ class MLClient(object):
         self._schedules = ScheduleOperations(
             self._operation_scope,
             self._operation_config,
-            self._service_client_10_2022,
+            self._service_client_10_2022_preview,
             self._operation_container,
             self._credential,
             _service_client_kwargs=kwargs,

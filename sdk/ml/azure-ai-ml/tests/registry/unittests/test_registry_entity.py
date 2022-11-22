@@ -95,9 +95,6 @@ class TestRegistryEntity:
         assert registry_entity
         assert registry_entity.location == loc_1
         assert registry_entity.tags == exterior_tags
-        # TODO https://dev.azure.com/msdata/Vienna/_workitems/edit/1971490/
-        # assert registry_entity.name == name #  TODO Local workspace obj doesn't record name besides pushing up to super class. Should we?
-        # assert registry_entity.id == id # TODO Local workspace obj doesn't record id. Should we?
         assert registry_entity.public_network_access == pna
         assert registry_entity.discovery_url == discovery_url
         assert registry_entity.intellectual_property_publisher == ipp
