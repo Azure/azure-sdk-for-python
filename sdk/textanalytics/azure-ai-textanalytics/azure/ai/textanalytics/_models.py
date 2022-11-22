@@ -411,12 +411,19 @@ class RecognizeEntitiesResult(DictMixin):
         The *detected_language* property.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.entities: List["CategorizedEntity"] = kwargs["entities"]
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional["TextDocumentStatistics"] = kwargs.get("warnings", None)
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get("detected_language", None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List["CategorizedEntity"],
+        warnings: List["TextAnalyticsWarning"],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
         self.is_error: Literal[False] = False
         self.kind: Literal["EntityRecognition"] = "EntityRecognition"
 
@@ -460,13 +467,21 @@ class RecognizePiiEntitiesResult(DictMixin):
         The *detected_language* property.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.entities: List["PiiEntity"] = kwargs["entities"]
-        self.redacted_text: str = kwargs["redacted_text"]
-        self.warnings: List["TextAnalyticsWarning"] = kwargs["warnings"]
-        self.statistics: Optional["TextDocumentStatistics"] = kwargs.get("statistics", None)
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get("detected_language", None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List["PiiEntity"],
+        redacted_text: str,
+        warnings: List["TextAnalyticsWarning"],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None,
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.redacted_text = redacted_text
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
         self.is_error: Literal[False] = False
         self.kind: Literal["PiiEntityRecognition"] = "PiiEntityRecognition"
 
@@ -518,14 +533,23 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
         The *fhir_bundle* and *detected_language* properties.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.entities: List["HealthcareEntity"] = kwargs["entities"]
-        self.entity_relations: List["HealthcareRelation"] = kwargs["entity_relations"]
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional["TextDocumentStatistics"] = kwargs.get("statistics", None)
-        self.fhir_bundle: Optional[Dict[str, Any]] = kwargs.get("fhir_bundle", None)
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get("detected_language", None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List["HealthcareEntity"],
+        entity_relations: List["HealthcareRelation"],
+        warnings: List["TextAnalyticsWarning"],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        fhir_bundle: Optional[Dict[str, Any]] = None,
+        detected_language: Optional[str] = None
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.entity_relations = entity_relations
+        self.warnings = warnings
+        self.statistics = statistics
+        self.fhir_bundle = fhir_bundle
+        self.detected_language = detected_language
         self.is_error: Literal[False] = False
         self.kind: Literal["Healthcare"] = "Healthcare"
 
@@ -687,11 +711,17 @@ class DetectLanguageResult(DictMixin):
     :ivar str kind: The text analysis kind - "LanguageDetection".
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.primary_language: DetectedLanguage = kwargs["primary_language"]
-        self.warnings: List["TextAnalyticsWarning"] = kwargs["warnings"]
-        self.statistics: Optional["TextDocumentStatistics"] = kwargs.get("statistics", None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        primary_language: DetectedLanguage,
+        warnings: List["TextAnalyticsWarning"],
+        statistics: Optional["TextDocumentStatistics"] = None
+    ) -> None:
+        self.id = id
+        self.primary_language = primary_language
+        self.warnings = warnings
+        self.statistics = statistics
         self.is_error: Literal[False] = False
         self.kind: Literal["LanguageDetection"] = "LanguageDetection"
 
@@ -1003,7 +1033,7 @@ class HealthcareEntityDataSource(DictMixin):
 
     def __repr__(self) -> str:
         return (
-            "HealthcareEntityDataSource(entity_id={self.entity_id}, name={self.name})"[:1024]
+            f"HealthcareEntityDataSource(entity_id={self.entity_id}, name={self.name})"[:1024]
         )
 
 
@@ -1101,12 +1131,19 @@ class ExtractKeyPhrasesResult(DictMixin):
         The *detected_language* property.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.key_phrases: List[str] = kwargs["key_phrases"]
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional["TextDocumentStatistics"] = kwargs.get("statistics", None)
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get("detected_language", None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        key_phrases: List[str],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None
+    ) -> None:
+        self.id = id
+        self.key_phrases = key_phrases
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
         self.is_error: Literal[False] = False
         self.kind: Literal["KeyPhraseExtraction"] = "KeyPhraseExtraction"
 
@@ -1147,12 +1184,19 @@ class RecognizeLinkedEntitiesResult(DictMixin):
         The *detected_language* property.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.entities: List["LinkedEntity"] = kwargs["entities"]
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional["TextDocumentStatistics"] = kwargs.get("statistics", None)
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get("detected_language", None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List["LinkedEntity"],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
         self.is_error: Literal[False] = False
         self.kind: Literal["EntityLinking"] = "EntityLinking"
 
@@ -1202,14 +1246,23 @@ class AnalyzeSentimentResult(DictMixin):
         The *detected_language* property.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.sentiment: str = kwargs["sentiment"]
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional["TextDocumentStatistics"] = kwargs.get("statistics", None)
-        self.confidence_scores: "SentimentConfidenceScores" = kwargs["confidence_scores"]
-        self.sentences: List["SentenceSentiment"] = kwargs["sentences"]
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get("detected_language", None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        sentiment: str,
+        confidence_scores: "SentimentConfidenceScores",
+        sentences: List["SentenceSentiment"],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional["TextDocumentStatistics"] = None,
+        detected_language: Optional[DetectedLanguage] = None
+    ) -> None:
+        self.id = id
+        self.sentiment = sentiment
+        self.warnings = warnings
+        self.statistics = statistics
+        self.confidence_scores = confidence_scores
+        self.sentences = sentences
+        self.detected_language = detected_language
         self.is_error: Literal[False] = False
         self.kind: Literal["SentimentAnalysis"] = "SentimentAnalysis"
 
@@ -1266,29 +1319,29 @@ class DocumentError(DictMixin):
     :ivar str kind: Error kind - "DocumentError".
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.error: TextAnalyticsError = kwargs["error"]
+    def __init__(self, id: str, error: TextAnalyticsError) -> None:  # pylint: disable=redefined-builtin
+        self.id = id
+        self.error = error
         self.is_error: Literal[True] = True
         self.kind: Literal["DocumentError"] = "DocumentError"
 
     def __getattr__(self, attr: str) -> Any:
-        result_set = set()
-        result_set.update(
-            RecognizeEntitiesResult().keys()
-            + RecognizePiiEntitiesResult().keys()
-            + DetectLanguageResult().keys()
-            + RecognizeLinkedEntitiesResult().keys()
-            + AnalyzeSentimentResult().keys()
-            + ExtractKeyPhrasesResult().keys()
-            + AnalyzeHealthcareEntitiesResult().keys()
-            + RecognizeCustomEntitiesResult().keys()
-            + ClassifyDocumentResult().keys()
-            + ExtractSummaryResult().keys()
-            + AbstractSummaryResult().keys()
-            + DynamicClassificationResult().keys()
-        )
-        result_attrs = result_set.difference(DocumentError().keys())
+        result_attrs = [
+            'key_phrases',
+            'warnings',
+            'primary_language',
+            'sentences',
+            'statistics',
+            'fhir_bundle',
+            'redacted_text',
+            'sentiment',
+            'entities',
+            'entity_relations',
+            'classifications',
+            'detected_language',
+            'confidence_scores',
+            'summaries'
+        ]
         if attr in result_attrs:
             raise AttributeError(
                 "'DocumentError' object has no attribute '{}'. The service was unable to process this document:\n"
@@ -1307,7 +1360,6 @@ class DocumentError(DictMixin):
             error=TextAnalyticsError._from_generated(  # pylint: disable=protected-access
                 doc_err.error
             ),
-            is_error=True,
         )
 
     def __repr__(self) -> str:
@@ -2367,12 +2419,19 @@ class RecognizeCustomEntitiesResult(DictMixin):
         The *detected_language* property.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.entities: List[CategorizedEntity] = kwargs["entities"]
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional[TextDocumentStatistics] = kwargs.get("statistics", None)
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get("detected_language", None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        entities: List[CategorizedEntity],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional[TextDocumentStatistics] = None,
+        detected_language: Optional[DetectedLanguage] = None
+    ) -> None:
+        self.id = id
+        self.entities = entities
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
         self.is_error: Literal[False] = False
         self.kind: Literal["CustomEntityRecognition"] = "CustomEntityRecognition"
 
@@ -2488,12 +2547,19 @@ class ClassifyDocumentResult(DictMixin):
         The *detected_language* property.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.classifications: List[ClassificationCategory] = kwargs["classifications"]
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional[TextDocumentStatistics] = kwargs.get('statistics', None)
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get('detected_language', None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        classifications: List["ClassificationCategory"],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional[TextDocumentStatistics] = None,
+        detected_language: Optional[DetectedLanguage] = None
+    ) -> None:
+        self.id = id
+        self.classifications = classifications
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
         self.is_error: Literal[False] = False
         self.kind: Literal["CustomDocumentClassification"] = "CustomDocumentClassification"
 
@@ -2799,12 +2865,19 @@ class ExtractSummaryResult(DictMixin):
         The *ExtractSummaryResult* model.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.sentences: List[SummarySentence] = kwargs["sentences"]
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional[TextDocumentStatistics] = kwargs.get("statistics", None)
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get("detected_language", None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        sentences: List["SummarySentence"],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional[TextDocumentStatistics] = None,
+        detected_language: Optional[DetectedLanguage] = None
+    ) -> None:
+        self.id = id
+        self.sentences = sentences
+        self.warnings = warnings
+        self.statistics = statistics
+        self.detected_language = detected_language
         self.is_error: Literal[False] = False
         self.kind: Literal["ExtractiveSummarization"] = "ExtractiveSummarization"
 
@@ -2906,12 +2979,19 @@ class AbstractSummaryResult(DictMixin):
         The *AbstractSummaryResult* model.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.detected_language: Optional[DetectedLanguage] = kwargs.get("detected_language", None)
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional[TextDocumentStatistics] = kwargs.get("statistics", None)
-        self.summaries: List[AbstractiveSummary] = kwargs["summaries"]
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        summaries: List["AbstractiveSummary"],
+        warnings: List[TextAnalyticsWarning],
+        detected_language: Optional[DetectedLanguage] = None,
+        statistics: Optional[TextDocumentStatistics] = None
+    ) -> None:
+        self.id = id
+        self.detected_language = detected_language
+        self.warnings = warnings
+        self.statistics = statistics
+        self.summaries = summaries
         self.is_error: Literal[False] = False
         self.kind: Literal["AbstractiveSummarization"] = "AbstractiveSummarization"
 
@@ -3105,11 +3185,17 @@ class DynamicClassificationResult(DictMixin):
         The *DynamicClassificationResult* model.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id: str = kwargs["id"]
-        self.classifications: List[ClassificationCategory] = kwargs["classifications"]
-        self.warnings: List[TextAnalyticsWarning] = kwargs["warnings"]
-        self.statistics: Optional[TextDocumentStatistics] = kwargs.get('statistics', None)
+    def __init__(
+        self,
+        id: str,  # pylint: disable=redefined-builtin
+        classifications: List[ClassificationCategory],
+        warnings: List[TextAnalyticsWarning],
+        statistics: Optional[TextDocumentStatistics] = None
+    ) -> None:
+        self.id = id
+        self.classifications = classifications
+        self.warnings = warnings
+        self.statistics = statistics
         self.is_error: Literal[False] = False
         self.kind: Literal["DynamicClassification"] = "DynamicClassification"
 
