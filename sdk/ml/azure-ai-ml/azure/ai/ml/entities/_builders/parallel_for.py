@@ -9,7 +9,7 @@ from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants._component import ControlFlowType
-from azure.ai.ml.entities import Component
+from azure.ai.ml.entities import Component, Pipeline
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
@@ -54,7 +54,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
 
         # parallel for node shares output meta with body
         try:
-            outputs = self.body._component.outputs
+            if isinstance(self.body, Pipeline):
+                outputs = self.body._component._build_outputs()
+            else:
+                outputs = self.body._component.outputs
         except AttributeError:
             outputs = {}
 

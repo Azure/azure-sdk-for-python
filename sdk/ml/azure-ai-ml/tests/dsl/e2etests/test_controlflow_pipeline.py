@@ -11,7 +11,6 @@ from azure.ai.ml.dsl._condition import condition
 
 from .._util import include_private_preview_nodes_in_pipeline, _DSL_TIMEOUT_SECOND
 
-
 test_input = Input(
     type="uri_file",
     path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
@@ -349,6 +348,57 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                                                  'uri': 'https://dprepdata.blob.core.windows.net/demo/Titanic.csv'}},
                 'name': 'parallel_body',
                 'type': 'command'},
+            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+                              'items': '[{"component_in_number": 1}, '
+                                       '{"component_in_number": 2}]',
+                              'type': 'parallel_for'}
+        }
+
+    def test_parallel_for_pipeline_with_subgraph(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+
+        @pipeline
+        def sub_graph(component_in_number: int = 10):
+            node = hello_world_component(component_in_path=test_input, component_in_number=component_in_number)
+            return {
+                "component_out_path": node.outputs.component_out_path
+            }
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = sub_graph()
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            after_node = hello_world_component(
+                component_in_path=parallel_node.outputs.component_out_path,
+            )
+            after_node.compute = "cpu-cluster"
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"] == {
+            'after_node': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
+                           'computeId': 'cpu-cluster',
+                           'inputs': {'component_in_path': {
+                               'job_input_type': 'literal',
+                               'value': '${{parent.jobs.parallel_node.outputs.component_out_path}}'}},
+                           'name': 'after_node',
+                           'type': 'command'},
+            'parallel_body': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
+                              'name': 'parallel_body',
+                              'type': 'pipeline'},
             'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
                               'items': '[{"component_in_number": 1}, '
                                        '{"component_in_number": 2}]',

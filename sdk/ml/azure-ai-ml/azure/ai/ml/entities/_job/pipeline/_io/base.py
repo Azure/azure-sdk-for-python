@@ -361,7 +361,7 @@ class NodeOutput(InputOutputBase, PipelineExpressionMixin):
             Details will be provided in the error message.
         """
         # Allow inline output binding with string, eg: "component_out_path_1": "${{parents.outputs.job_out_data_1}}"
-        if data and not isinstance(data, (Output, str)):
+        if data is not None and not isinstance(data, (Output, str)):
             msg = "Got unexpected type for output: {}."
             raise ValidationException(
                 message=msg.format(data),
