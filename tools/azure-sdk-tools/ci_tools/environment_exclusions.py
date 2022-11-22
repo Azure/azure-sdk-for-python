@@ -191,6 +191,7 @@ PYRIGHT_OPT_OUT = [
     "azure-synapse-monitoring",
     "azure-synapse-spark",
     "azure-data-tables",
+    "azure-ai-textanalytics",
     "azure-ai-translation-document",
     "azure-messaging-webpubsubservice",
 ]
