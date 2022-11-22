@@ -114,7 +114,7 @@ class Code(Artifact):
 
         return code_version_resource
 
-    def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
+    def _update_path(self, asset_artifact: ArtifactStorageInfo, datastore_name: str = None) -> None:
         """Updates an an artifact with the remote path of a local upload."""
         if asset_artifact.is_file:
             # Code paths cannot be pointers to single files. It must be a pointer to a container

@@ -10,7 +10,7 @@ from typing import Dict, List, Optional, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path
+from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path_new
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -179,7 +179,7 @@ class DataOperations(_ScopeDependentOperations):
             referenced_uris = self._validate(data)
             if referenced_uris:
                 data._referenced_uris = referenced_uris
-            data, _ = _check_and_upload_path(artifact=data, asset_operations=self, artifact_type=ErrorTarget.DATA)
+            data, _ = _check_and_upload_path_new(artifact=data, asset_operations=self, artifact_type=ErrorTarget.DATA)
             data_version_resource = data._to_rest_object()
             auto_increment_version = data._auto_increment_version
 
@@ -266,6 +266,7 @@ class DataOperations(_ScopeDependentOperations):
             return
 
         if os.path.isabs(asset_path):
+            asset_type = AssetTypes.URI_FILE
             _assert_local_path_matches_asset_type(asset_path, asset_type)
         else:
             abs_path = Path(base_path, asset_path).resolve()

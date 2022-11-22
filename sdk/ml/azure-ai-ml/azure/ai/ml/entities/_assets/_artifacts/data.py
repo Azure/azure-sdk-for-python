@@ -208,9 +208,12 @@ class Data(Artifact):
         )
         return data
 
-    def _update_path(self, asset_artifact: ArtifactStorageInfo) -> None:
-        regex = r"datastores\/(.+)"
-        groups = re.search(regex, asset_artifact.datastore_arm_id)
-        if groups:
-            datastore_name = groups.group(1)
+    def _update_path(self, asset_artifact: ArtifactStorageInfo, datastore_name: str = None) -> None:
+        if datastore_name:
             self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)
+        else:
+            regex = r"datastores\/(.+)"
+            groups = re.search(regex, asset_artifact.datastore_arm_id)
+            if groups:
+                datastore_name = groups.group(1)
+                self.path = SHORT_URI_FORMAT.format(datastore_name, asset_artifact.relative_path)

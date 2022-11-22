@@ -323,7 +323,7 @@ def _upload_and_generate_remote_uri(
 
     # Asset name is required for uploading to a datastore
     asset_name = str(uuid.uuid4())
-    asset_id = _upload_snapshot_to_datastore(
+    artifact = _upload_snapshot_to_datastore(
         operation_scope=operation_scope,
         datastore_operation=datastore_operation,
         path=path,
@@ -333,9 +333,7 @@ def _upload_and_generate_remote_uri(
         show_progress=show_progress,
     )
 
-    print("here's my asset_id: ", asset_id)
-
-    return asset_id
+    return artifact
 
 
 def _update_metadata(name, version, indicator_file, datastore_info) -> None:
@@ -611,7 +609,7 @@ def _check_and_upload_path_new(
     artifact: T,
     asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"],
     artifact_type: str,
-    datastore_name: str = None,
+    datastore_name: str = WORKSPACE_BLOB_STORE,
     sas_uri: str = None,
     show_progress: bool = True,
 ) -> Tuple[T, str]:
@@ -625,8 +623,10 @@ def _check_and_upload_path_new(
     param str sas_uri: the sas uri to use for uploading
     """
 
-    datastore_name = artifact.datastore
+    if artifact.datastore:
+        datastore_name = artifact.datastore
     indicator_file = None
+
     if (
         hasattr(artifact, "local_path")
         and artifact.local_path is not None
@@ -665,5 +665,5 @@ def _check_and_upload_path_new(
                 uploaded_artifact.version,
             )
         # Pass all of the upload information to the assets, and they will each construct the URLs that they support
-        artifact._update_path(uploaded_artifact)
+        artifact._update_path(uploaded_artifact, datastore_name=datastore_name)
     return artifact, indicator_file
