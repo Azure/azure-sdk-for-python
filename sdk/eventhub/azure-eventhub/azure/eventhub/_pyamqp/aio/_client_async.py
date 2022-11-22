@@ -318,6 +318,7 @@ class AMQPClientAsync(AMQPClientSync):
         :rtype: bool
         :raises: TimeoutError if CBS authentication timeout reached.
         """
+
         if self._shutdown:
             return False
         if not await self.client_ready_async():
@@ -493,13 +494,13 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
 
         :rtype: bool
         """
-        try:
-            await self._link.update_pending_deliveries()
-            await self._connection.listen(wait=self._socket_timeout, **kwargs)
-        except ValueError:
-            _logger.info("Timeout reached, closing sender.")
-            self._shutdown = True
-            return False
+        # try:
+        await self._link.update_pending_deliveries()
+        await self._connection.listen(wait=self._socket_timeout, **kwargs)
+        # except ValueError:
+        #     _logger.info("Timeout reached, closing sender.")
+        #     self._shutdown = True
+        #     return False
         return True
 
     async def _transfer_message_async(self, message_delivery, timeout=0):
