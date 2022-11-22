@@ -581,7 +581,8 @@ def _upload_snapshot_to_datastore(
         asset_name, asset_version = existing_asset
         # TODO: implement this route
         return
-    elif not sas_uri:
+
+    if not sas_uri:
         print("no registry sas uri given.\n")
         sas_uri = get_temp_data_reference(
             operations=datastore_operation,
