@@ -746,15 +746,13 @@ class CategorizedEntity(DictMixin):
 
     @classmethod
     def _from_generated(cls, entity):
-        offset: int = entity.offset
-        length: int = entity.length
+        offset = entity.offset
+        length = entity.length
         if isinstance(entity, _v3_0_models.Entity):
             # we do not return offset for v3.0 since
             # the correct encoding was not introduced for v3.0
-            offset = None  # pyright: ignore
-            length = None  # pyright: ignore
-        else:
-            entity = cast(_v2022_10_01_preview_models.EntityWithResolution, entity)
+            offset = None
+            length = None
         return cls(
             text=entity.text,
             category=entity.category,
@@ -1361,13 +1359,13 @@ class LinkedEntityMatch(DictMixin):
 
     @classmethod
     def _from_generated(cls, match):
-        offset: int = match.offset
-        length: int = match.length
+        offset = match.offset
+        length = match.length
         if isinstance(match, _v3_0_models.Match):
             # we do not return offset for v3.0 since
             # the correct encoding was not introduced for v3.0
-            offset = None  # pyright: ignore
-            length = None  # pyright: ignore
+            offset = None
+            length = None
         return cls(
             confidence_score=match.confidence_score,
             text=match.text,
@@ -1494,15 +1492,13 @@ class SentenceSentiment(DictMixin):
 
     @classmethod
     def _from_generated(cls, sentence, results, sentiment):
-        offset: int = sentence.offset
-        length: int = sentence.length
+        offset = sentence.offset
+        length = sentence.length
         if isinstance(sentence, _v3_0_models.SentenceSentiment):
             # we do not return offset for v3.0 since
             # the correct encoding was not introduced for v3.0
-            offset = None  # pyright: ignore
-            length = None  # pyright: ignore
-        else:
-            sentence = cast(_v2022_10_01_preview_models.SentenceSentiment, sentence)
+            offset = None
+            length = None
         if hasattr(sentence, "targets"):
             mined_opinions = (
                 [

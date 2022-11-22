@@ -165,7 +165,7 @@ class AsyncAnalyzeHealthcareEntitiesLROPollingMethod(
     TextAnalyticsAsyncLROPollingMethod
 ):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        self._text_analytics_client = kwargs["text_analytics_client"]
+        self._text_analytics_client = kwargs.pop("text_analytics_client")
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
         super().__init__(
@@ -331,7 +331,7 @@ class AsyncAnalyzeActionsLROPollingMethod(TextAnalyticsAsyncLROPollingMethod):
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._task_id_order = kwargs.pop("task_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
-        self._text_analytics_client = kwargs.pop("text_analytics_client", None)
+        self._text_analytics_client = kwargs.pop("text_analytics_client")
         super().__init__(*args, **kwargs)
 
     @property

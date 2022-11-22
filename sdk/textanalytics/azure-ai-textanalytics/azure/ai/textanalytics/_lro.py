@@ -381,7 +381,7 @@ class AnalyzeActionsLROPollingMethod(TextAnalyticsLROPollingMethod):
         self._doc_id_order = kwargs.pop("doc_id_order", None)
         self._task_id_order = kwargs.pop("task_id_order", None)
         self._show_stats = kwargs.pop("show_stats", None)
-        self._text_analytics_client = kwargs["text_analytics_client"]
+        self._text_analytics_client = kwargs.pop("text_analytics_client")
         super().__init__(*args, **kwargs)
 
     @property
