@@ -2306,3 +2306,15 @@ class TestDSLPipeline:
             'optional_input': {'default': '2', 'optional': True, 'type': 'integer'},
             'required_input': {'type': 'integer'}
         }
+
+        # setting _validate_required_input_not_provided to False will skip the unprovided input check
+        @dsl.pipeline
+        def outer_pipeline():
+            node = pipeline_func()
+            node._validate_required_input_not_provided = False
+
+        pipeline_job = outer_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        validate_result = pipeline_job._validate()
+        assert validate_result.passed
