@@ -8,7 +8,11 @@ from typing import Dict, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_snapshot
+from azure.ai.ml._artifacts._artifact_utilities import (
+    _check_and_upload_snapshot,
+    _get_existing_snapshot_by_hash,
+    _get_snapshot_path_info
+)
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -81,6 +85,7 @@ class CodeOperations(_ScopeDependentOperations):
             name = code.name
             version = code.version
             sas_uri = None
+            path, ignore_file, asset_hash = _get_snapshot_path_info(code)
 
             if self._registry_name:
                 sas_uri = get_sas_uri_for_registry_asset(
@@ -91,8 +96,14 @@ class CodeOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
-            code, _ = _check_and_upload_snapshot(
-                artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
+            else:
+                existing_asset = _get_existing_snapshot_by_hash(self._datastore_operation, asset_hash)
+                if existing_asset:
+                    return self.get(name=existing_asset.get("name"), version=existing_asset.get("version"))
+
+
+            code = _check_and_upload_snapshot(
+                artifact=code, path=path, ignore_file=ignore_file, asset_operations=self, sas_uri=sas_uri,
             )
 
             # For anonymous code, if the code already exists in storage, we reuse the name,

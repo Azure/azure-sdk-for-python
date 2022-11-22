@@ -31,6 +31,7 @@ from azure.ai.ml._utils._asset_utils import (
     _validate_path,
     get_ignore_file,
     get_object_hash,
+    get_content_hash,
     get_content_hash_version,
 )
 from azure.ai.ml._utils._storage_utils import (
@@ -447,14 +448,14 @@ def _check_and_upload_env_build_context(
     return environment
 
 
-def get_temp_data_reference(
+def get_temporary_data_reference(
     operations: "DatastoreOperations",
     asset_name: str,
     asset_version: str,
     request_headers: Dict[str, str],
     asset_type: str = "codes",
     ) -> str:
-    # create temp data reference
+    # create temporary data reference
     temporary_data_reference_id = str(uuid.uuid4())
 
     # get workspace credentials
@@ -497,7 +498,8 @@ def get_temp_data_reference(
 def get_asset_by_hash(
     operations: "DatastoreOperations",
     hash_str: str,
-    request_headers: Dict[str, str]) -> Tuple[str, str]:
+    request_headers: Dict[str, str]) -> Dict[str, str]:
+    existing_asset = {}
     hash_version = get_content_hash_version()
 
     # get workspace credentials
@@ -534,17 +536,57 @@ def get_asset_by_hash(
         return None
 
     response_json = json.loads(response.text)
-    name = response_json['name']
-    version = response_json['version']
+    existing_asset["name"] = response_json['name']
+    existing_asset["version"] = response_json['version']
 
-    return name, version
+    return existing_asset
+
+
+def _get_snapshot_path_info(artifact) -> Tuple[str, str, str]:
+    if (
+        hasattr(artifact, "local_path")
+        and artifact.local_path is not None
+        or (
+            hasattr(artifact, "path")
+            and artifact.path is not None
+            and not (is_url(artifact.path) or is_mlflow_uri(artifact.path))
+        )
+    ):
+        path = (
+            Path(artifact.path)
+            if hasattr(artifact, "path") and artifact.path is not None
+            else Path(artifact.local_path)
+        )
+        if not path.is_absolute():
+            path = Path(artifact.base_path, path).resolve()
+
+    _validate_path(path, _type=ErrorTarget.CODE)
+
+    ignore_file = get_ignore_file(path)
+    asset_hash = get_content_hash(path, ignore_file)
+
+    return path, ignore_file, asset_hash
+
+
+def _get_existing_snapshot_by_hash(datastore_operation, asset_hash):
+    ws_base_url = datastore_operation._operation._client._base_url
+    token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
+    request_headers={"Authorization": "Bearer " + token}
+    request_headers['Content-Type'] = 'application/json; charset=UTF-8'
+
+    existing_asset = get_asset_by_hash(
+        operations=datastore_operation,
+        hash_str=asset_hash,
+        request_headers=request_headers,
+    )
+
+    return existing_asset
 
 
 def _upload_snapshot_to_datastore(
     operation_scope: OperationScope,
     datastore_operation: DatastoreOperations,
     path: Union[str, Path, os.PathLike],
-    artifact_type: str,
     datastore_name: str = None,
     show_progress: bool = True,
     asset_name: str = None,
@@ -553,31 +595,13 @@ def _upload_snapshot_to_datastore(
     ignore_file: IgnoreFile = None,
     sas_uri: str = None,  # contains registry sas url
 ) -> ArtifactStorageInfo:
-    _validate_path(path, _type=artifact_type)
-
-    if not ignore_file:
-        ignore_file = get_ignore_file(path)
-
-    if not asset_hash:
-        asset_hash = get_object_hash(path, ignore_file)
-
     ws_base_url = datastore_operation._operation._client._base_url
     token = datastore_operation._credential.get_token(ws_base_url + "/.default").token
     request_headers={"Authorization": "Bearer " + token}
     request_headers['Content-Type'] = 'application/json; charset=UTF-8'
 
-    # existing_asset = get_asset_by_hash(
-    #     operations=datastore_operation,
-    #     hash_str=asset_hash,
-    #     request_headers=request_headers,
-    # )
-    # if existing_asset:
-    #     asset_name, asset_version = existing_asset
-    #     # TODO: implement this route
-    #     return
-
     if not sas_uri:
-        sas_uri = get_temp_data_reference(
+        sas_uri = get_temporary_data_reference(
             operations=datastore_operation,
             asset_name=asset_name,
             asset_version=asset_version,
@@ -603,7 +627,8 @@ def _upload_snapshot_to_datastore(
 def _check_and_upload_snapshot(
     artifact: T,
     asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"],
-    artifact_type: str,
+    path: Union[str, Path, os.PathLike],
+    ignore_file: IgnoreFile = None,
     datastore_name: str = WORKSPACE_BLOB_STORE,
     sas_uri: str = None,
     show_progress: bool = True,
@@ -617,47 +642,24 @@ def _check_and_upload_snapshot(
     param str datastore_name: the name of the datastore to upload to
     param str sas_uri: the sas uri to use for uploading
     """
+    uploaded_artifact = _upload_snapshot_to_datastore(
+        operation_scope=asset_operations._operation_scope,
+        datastore_operation=asset_operations._datastore_operation,
+        path=path,
+        datastore_name=datastore_name,
+        asset_name=artifact.name,
+        asset_version=str(artifact.version),
+        asset_hash=artifact._upload_hash if hasattr(artifact, "_upload_hash") else None,
+        show_progress=show_progress,
+        sas_uri=sas_uri,
+        ignore_file=ignore_file,
+    )
 
-    datastore_name = artifact.datastore
-    indicator_file = None
-
-    if (
-        hasattr(artifact, "local_path")
-        and artifact.local_path is not None
-        or (
-            hasattr(artifact, "path")
-            and artifact.path is not None
-            and not (is_url(artifact.path) or is_mlflow_uri(artifact.path))
+    if artifact._is_anonymous:
+        artifact.name, artifact.version = (
+            uploaded_artifact.name,
+            uploaded_artifact.version,
         )
-    ):
-        path = (
-            Path(artifact.path)
-            if hasattr(artifact, "path") and artifact.path is not None
-            else Path(artifact.local_path)
-        )
-        if not path.is_absolute():
-            path = Path(artifact.base_path, path).resolve()
-
-        uploaded_artifact = _upload_snapshot_to_datastore(
-            operation_scope=asset_operations._operation_scope,
-            datastore_operation=asset_operations._datastore_operation,
-            path=path,
-            datastore_name=datastore_name,
-            asset_name=artifact.name,
-            asset_version=str(artifact.version),
-            asset_hash=artifact._upload_hash if hasattr(artifact, "_upload_hash") else None,
-            artifact_type=artifact_type,
-            show_progress=show_progress,
-            sas_uri=sas_uri,
-            ignore_file=getattr(artifact, "_ignore_file", None),
-        )
-
-        indicator_file = uploaded_artifact.indicator_file  # reference to storage contents
-        if artifact._is_anonymous:
-            artifact.name, artifact.version = (
-                uploaded_artifact.name,
-                uploaded_artifact.version,
-            )
-        # Pass all of the upload information to the assets, and they will each construct the URLs that they support
-        artifact._update_path(uploaded_artifact)
-    return artifact, indicator_file
+    # Pass all of the upload information to the assets, and they will each construct the URLs that they support
+    artifact._update_path(uploaded_artifact)
+    return artifact
