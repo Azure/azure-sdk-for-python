@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AuthenticationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the multi-cloud connector.
-    """
+    """State of the multi-cloud connector."""
 
     #: Valid connector
     VALID = "Valid"
@@ -22,6 +21,7 @@ class AuthenticationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMe
     EXPIRED = "Expired"
     #: Incorrect policy of the connector
     INCORRECT_POLICY = "IncorrectPolicy"
+
 
 class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Connect to your cloud account, for AWS use either account credentials or role-based
@@ -35,18 +35,18 @@ class AuthenticationType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: GCP account connector service to service authentication
     GCP_CREDENTIALS = "gcpCredentials"
 
+
 class AutoProvision(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Whether or not to automatically install Azure Arc (hybrid compute) agents on machines.
-    """
+    """Whether or not to automatically install Azure Arc (hybrid compute) agents on machines."""
 
     #: Install missing Azure Arc agents on machines automatically
     ON = "On"
     #: Do not install Azure Arc agent on the machines automatically
     OFF = "Off"
 
+
 class HybridComputeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the service principal and its secret.
-    """
+    """State of the service principal and its secret."""
 
     #: Valid service principal details.
     VALID = "Valid"
@@ -55,9 +55,9 @@ class HybridComputeProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMet
     #: the service principal details are expired
     EXPIRED = "Expired"
 
+
 class PermissionProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """A permission detected in the cloud account.
-    """
+    """A permission detected in the cloud account."""
 
     #: This permission provides read only access to AWS Security Hub resources.
     AWS_AWS_SECURITY_HUB_READ_ONLY_ACCESS = "AWS::AWSSecurityHubReadOnlyAccess"
