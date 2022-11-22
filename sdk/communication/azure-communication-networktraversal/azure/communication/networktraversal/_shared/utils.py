@@ -126,10 +126,7 @@ def get_authentication_policy(
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
         return BearerTokenCredentialPolicy(
             credential, "https://communication.azure.com//.default")
-    if isinstance(credential, AzureKeyCredential):
-        from .._shared.policy import HMACCredentialsPolicy
-        return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
-    if isinstance(credential, str):
+    if isinstance(credential, AzureKeyCredential) or isinstance(credential, str):
         from .._shared.policy import HMACCredentialsPolicy
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 

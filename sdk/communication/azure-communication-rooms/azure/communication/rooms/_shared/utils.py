@@ -68,6 +68,20 @@ def get_current_utc_as_int():
     return _convert_datetime_to_utc_int(current_utc_datetime)
 
 
+def verify_datetime_format(input_datetime):
+    #type: (datetime) -> bool
+    if input_datetime is None:
+        return True
+    try:
+        if isinstance(input_datetime, str):
+            input_datetime = isodate.parse_datetime(input_datetime)
+        if isinstance(input_datetime, datetime):
+            return True
+    except:
+        raise ValueError("{} is not a valid ISO-8601 datetime format".format(input_datetime)) from None
+    return True
+
+
 def create_access_token(token):
     # type: (str) -> AccessToken
     """Creates an instance of azure.core.credentials.AccessToken from a
@@ -127,10 +141,7 @@ def get_authentication_policy(
         from azure.core.pipeline.policies import BearerTokenCredentialPolicy
         return BearerTokenCredentialPolicy(
             credential, "https://communication.azure.com//.default")
-    if isinstance(credential, AzureKeyCredential):
-        from .._shared.policy import HMACCredentialsPolicy
-        return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
-    if isinstance(credential, str):
+    if isinstance(credential, AzureKeyCredential) or isinstance(credential, str):
         from .._shared.policy import HMACCredentialsPolicy
         return HMACCredentialsPolicy(endpoint, credential, decode_url=decode_url)
 
