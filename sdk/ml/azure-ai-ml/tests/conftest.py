@@ -325,7 +325,7 @@ def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCr
     return MLClient(
         credential=auth,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
-        registry_name="sdk-canary",
+        registry_name="sdk-test",
     )
 
 
