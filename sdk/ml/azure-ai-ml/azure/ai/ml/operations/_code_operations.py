@@ -8,7 +8,7 @@ from typing import Dict, Union
 
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
-from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_path_new
+from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_snapshot
 from azure.ai.ml._artifacts._constants import (
     ASSET_PATH_ERROR,
     CHANGED_ASSET_PATH_MSG,
@@ -91,7 +91,7 @@ class CodeOperations(_ScopeDependentOperations):
                     registry=self._registry_name,
                     body=get_asset_body_for_registry_storage(self._registry_name, "codes", name, version),
                 )
-            code, _ = _check_and_upload_path_new(
+            code, _ = _check_and_upload_snapshot(
                 artifact=code, asset_operations=self, sas_uri=sas_uri, artifact_type=ErrorTarget.CODE
             )
 

@@ -510,32 +510,28 @@ def get_asset_by_hash(
     )
     workspace_location = workspace.location
 
-    try:
-        # build request to API (API route is implemented at 
-        # https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/
-        # ProjectContent/Contracts/ISnapshotControllerNewRoutes.cs&version=GBmaster&
-        # line=289&lineEnd=290&lineStartColumn=1&lineEndColumn=45&lineStyle=plain&_a=contents)
-        request_url = f"{SERVICE_URL.format(workspace_location)}/content/v2.0/subscriptions/{subscription_id}/"\
-            f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"\
-            f"{workspace_name}/snapshots/getByHash?hash={hash_str}&hashVersion={hash_version}"
+    # build request to API (API route is implemented at 
+    # https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/
+    # ProjectContent/Contracts/ISnapshotControllerNewRoutes.cs&version=GBmaster&
+    # line=289&lineEnd=290&lineStartColumn=1&lineEndColumn=45&lineStyle=plain&_a=contents)
+    request_url = f"{SERVICE_URL.format(workspace_location)}/content/v2.0/subscriptions/{subscription_id}/"\
+        f"resourceGroups/{resource_group_name}/providers/Microsoft.MachineLearningServices/workspaces/"\
+        f"{workspace_name}/snapshots/getByHash?hash={hash_str}&hashVersion={hash_version}"
 
-        s = requests.Session()
+    s = requests.Session()
 
-        # Response is SnapshotDto which is defined here: https://dev.azure.com/msdata/Vienna/_git/vienna?
-        # path=/src/azureml-api/src/ProjectContent/Contracts/SnapshotDto.cs&version=GBmaster&line=18&
-        # lineEnd=18&lineStartColumn=1&lineEndColumn=29&lineStyle=plain&_a=contents
-        response = s.get(request_url, headers=request_headers)
-        if response.status_code == 404:
-            # 404 status is the expected response if the snapshot does not exist
-            print('Snapshot with hash', hash_str, 'was not found')
-            return None
-        if response.status_code != 200:
-            # Not shown here: retry behavior
-            print('Unexpected response:', response.status_code, response.txt)
-            return None
-    except:
-        print("connection failed, continuing on")
-        pass
+    # Response is SnapshotDto which is defined here: https://dev.azure.com/msdata/Vienna/_git/vienna?
+    # path=/src/azureml-api/src/ProjectContent/Contracts/SnapshotDto.cs&version=GBmaster&line=18&
+    # lineEnd=18&lineStartColumn=1&lineEndColumn=29&lineStyle=plain&_a=contents
+    response = s.get(request_url, headers=request_headers)
+    if response.status_code == 404:
+        # 404 status is the expected response if the snapshot does not exist
+        print('Snapshot with hash', hash_str, 'was not found')
+        return None
+    if response.status_code != 200:
+        # Not shown here: retry behavior
+        print('Unexpected response:', response.status_code, response.txt)
+        return None
 
     response_json = json.loads(response.text)
     name = response_json['name']
@@ -570,17 +566,15 @@ def _upload_snapshot_to_datastore(
     request_headers={"Authorization": "Bearer " + token}
     request_headers['Content-Type'] = 'application/json; charset=UTF-8'
 
-    existing_asset = get_asset_by_hash(
-        operations=datastore_operation,
-        hash_str=asset_hash,
-        request_headers=request_headers,
-    )
-    if existing_asset:
-        print("we found the hash")
-    if False:
-        asset_name, asset_version = existing_asset
-        # TODO: implement this route
-        return
+    # existing_asset = get_asset_by_hash(
+    #     operations=datastore_operation,
+    #     hash_str=asset_hash,
+    #     request_headers=request_headers,
+    # )
+    # if existing_asset:
+    #     asset_name, asset_version = existing_asset
+    #     # TODO: implement this route
+    #     return
 
     if not sas_uri:
         sas_uri = get_temp_data_reference(
@@ -606,7 +600,7 @@ def _upload_snapshot_to_datastore(
     return artifact
 
 
-def _check_and_upload_path_new(
+def _check_and_upload_snapshot(
     artifact: T,
     asset_operations: Union["DataOperations", "ModelOperations", "CodeOperations"],
     artifact_type: str,
