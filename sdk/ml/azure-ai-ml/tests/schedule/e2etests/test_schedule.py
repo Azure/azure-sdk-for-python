@@ -182,3 +182,23 @@ class TestSchedule(AzureRecordedTestCase):
         # add default mode for local
         schedule_job_dict["inputs"]["hello_input"]["mode"] = "ro_mount"
         assert schedule_job_dict == rest_schedule_job_dict
+
+    @pytest.mark.usefixtures(
+        "enable_pipeline_private_preview_features",
+    )
+    def test_spark_job_schedule(self, client: MLClient, randstr: Callable[[], str]):
+        params_override = [{"name": randstr("name")}]
+        test_path = "./tests/test_configs/schedule/local_cron_spark_job.yml"
+        schedule = load_schedule(test_path, params_override=params_override)
+        rest_schedule = client.schedules.begin_create_or_update(schedule).result(
+            timeout=LROConfigurations.POLLING_TIMEOUT
+        )
+        assert rest_schedule.name == schedule.name
+        client.schedules.begin_disable(schedule.name)
+        rest_schedule_job_dict = rest_schedule._to_dict()["create_job"]
+        # pop added experiment name Default
+        rest_schedule_job_dict.pop("experiment_name", None)
+        rest_schedule_job_dict.pop("status", None)
+        schedule_job_dict = schedule._to_dict()["create_job"]
+        # pop job name, empty parameters from local dict
+        assert schedule_job_dict == rest_schedule_job_dict
