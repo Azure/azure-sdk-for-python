@@ -323,7 +323,7 @@ def _upload_and_generate_remote_uri(
 
     # Asset name is required for uploading to a datastore
     asset_name = str(uuid.uuid4())
-    artifact = _upload_snapshot_to_datastore(
+    artifact_info = _upload_to_datastore(
         operation_scope=operation_scope,
         datastore_operation=datastore_operation,
         path=path,
@@ -333,7 +333,9 @@ def _upload_and_generate_remote_uri(
         show_progress=show_progress,
     )
 
-    return artifact
+    path = artifact_info.relative_path
+    datastore = AMLNamedArmId(artifact_info.datastore_arm_id).asset_name
+    return SHORT_URI_FORMAT.format(datastore, path)
 
 
 def _update_metadata(name, version, indicator_file, datastore_info) -> None:
@@ -581,7 +583,6 @@ def _upload_snapshot_to_datastore(
         return
 
     if not sas_uri:
-        print("no registry sas uri given.\n")
         sas_uri = get_temp_data_reference(
             operations=datastore_operation,
             asset_name=asset_name,
@@ -623,8 +624,7 @@ def _check_and_upload_path_new(
     param str sas_uri: the sas uri to use for uploading
     """
 
-    if artifact.datastore:
-        datastore_name = artifact.datastore
+    datastore_name = artifact.datastore
     indicator_file = None
 
     if (
@@ -665,5 +665,5 @@ def _check_and_upload_path_new(
                 uploaded_artifact.version,
             )
         # Pass all of the upload information to the assets, and they will each construct the URLs that they support
-        artifact._update_path(uploaded_artifact, datastore_name=datastore_name)
+        artifact._update_path(uploaded_artifact)
     return artifact, indicator_file
