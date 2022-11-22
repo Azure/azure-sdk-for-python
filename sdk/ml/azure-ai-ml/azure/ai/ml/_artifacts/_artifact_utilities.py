@@ -13,6 +13,8 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional, Tuple, TypeVar, Union
 
+from azure.core.exceptions import HttpResponseError
+
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._gen2_storage_helper import Gen2StorageClient
 from azure.ai.ml._azure_environments import _get_storage_endpoint_from_metadata
@@ -39,8 +41,14 @@ from azure.ai.ml._utils._storage_utils import (
     get_artifact_path_from_storage_url,
     get_storage_client,
 )
-from azure.ai.ml._utils.utils import is_mlflow_uri, is_url
-from azure.ai.ml.constants._common import SHORT_URI_FORMAT, STORAGE_ACCOUNT_URLS, SERVICE_URL
+from azure.ai.ml._utils.utils import is_mlflow_uri, is_url, retry
+
+from azure.ai.ml.constants._common import (
+    SHORT_URI_FORMAT,
+    STORAGE_ACCOUNT_URLS,
+    SERVICE_URL,
+    MAX_ASSET_STORE_API_CALL_ATTEMPTS,
+)
 from azure.ai.ml.entities import Environment
 from azure.ai.ml.entities._assets._artifacts.artifact import Artifact, ArtifactStorageInfo
 from azure.ai.ml.entities._datastore._constants import WORKSPACE_BLOB_STORE
@@ -448,6 +456,12 @@ def _check_and_upload_env_build_context(
     return environment
 
 
+@retry(
+    exceptions=HttpResponseError,
+    failure_msg="Artifact upload exceeded maximum retries. Try again.",
+    logger=module_logger,
+    max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
+)
 def get_temporary_data_reference(
     operations: "DatastoreOperations",
     asset_name: str,
@@ -483,9 +497,7 @@ def get_temporary_data_reference(
     request_url = f"{SERVICE_URL.format(workspace_location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
     response = s.post(request_url, data=data_encoded, headers=request_headers)
     if response.status_code != 200:
-        # Not shown here: retry behavior
-        print('Unexpected response:', response.status_code, response.txt)
-        return
+        raise HttpResponseError(response=response)
 
     response_json = json.loads(response.text)
 
@@ -495,6 +507,12 @@ def get_temporary_data_reference(
     return sas_uri
 
 
+@retry(
+    exceptions=HttpResponseError,
+    failure_msg="Artifact upload exceeded maximum retries. Try again.",
+    logger=module_logger,
+    max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
+)
 def get_asset_by_hash(
     operations: "DatastoreOperations",
     hash_str: str,
@@ -527,13 +545,9 @@ def get_asset_by_hash(
     # lineEnd=18&lineStartColumn=1&lineEndColumn=29&lineStyle=plain&_a=contents
     response = s.get(request_url, headers=request_headers)
     if response.status_code == 404:
-        # 404 status is the expected response if the snapshot does not exist
-        print('Snapshot with hash', hash_str, 'was not found')
         return None
     if response.status_code != 200:
-        # Not shown here: retry behavior
-        print('Unexpected response:', response.status_code, response.txt)
-        return None
+        raise HttpResponseError(response=response)
 
     response_json = json.loads(response.text)
     existing_asset["name"] = response_json['name']
