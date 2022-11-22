@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from math import ceil
 from time import sleep
 
-from devtools_testutils import recorded_by_proxy
+from devtools_testutils import recorded_by_proxy, set_custom_default_matcher
 
 try:
     # Hack to run ChangeFeed tests locally due to conflicting namespace and dependency with blob.
@@ -30,6 +30,7 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_get_change_feed_events_by_page(self, **kwargs):
+        set_custom_default_matcher(ignore_query_ordering=True)
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
