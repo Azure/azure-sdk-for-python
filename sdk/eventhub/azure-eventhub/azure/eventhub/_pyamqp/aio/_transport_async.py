@@ -79,6 +79,7 @@ class AsyncTransportMixin:
             _LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
         except (
+            asyncio.CancelledError,
             TimeoutError,
             socket.timeout,
             asyncio.IncompleteReadError,
@@ -128,7 +129,7 @@ class AsyncTransportMixin:
                     read_frame_buffer.write(
                         await self._read(payload_size, buffer=payload)
                     )
-            except (asyncio.CancelledError, TimeoutError, socket.timeout, asyncio.IncompleteReadError):
+            except (asyncio.CancelledError, TimeoutError, socket.timeout, asyncio.IncompleteReadError, ConnectionError):
                 read_frame_buffer.write(self._read_buffer.getvalue())
                 self._read_buffer = read_frame_buffer
                 self._read_buffer.seek(0)
