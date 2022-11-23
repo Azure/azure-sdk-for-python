@@ -48,9 +48,9 @@ def get_log_file(prefix: str = "") -> str:
 
 def run_logged(*args, prefix="", **kwargs):
     logfile = get_log_file(prefix)
+    logfile_error = get_log_file(f"{prefix}_error")
 
-    with open(logfile, "w") as log_output:
-        run(*args, **kwargs, stdout=log_output)
-
+    with open(logfile, "w") as log_output, open(logfile_error, "w") as error_output:
+        run(*args, **kwargs, stdout=log_output, stderr=error_output)
 
 __all__ = ["initialize_logger", "run_logged"]

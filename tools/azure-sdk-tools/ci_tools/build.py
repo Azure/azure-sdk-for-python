@@ -10,6 +10,8 @@ from ci_tools.variables import discover_repo_root, get_artifact_directory
 from ci_tools.versioning.version_shared import set_version_py, set_dev_classifier
 from ci_tools.versioning.version_set_dev import get_dev_version, format_build_id
 from ci_tools.logging import initialize_logger, run_logged
+import build
+
 
 def build() -> None:
     parser = argparse.ArgumentParser(
