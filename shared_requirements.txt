@@ -382,6 +382,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-storageimportexport msrest>=0.7.1
 #override azure-mgmt-recoveryservicessiterecovery azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-mgmt-testbase azure-mgmt-core>=1.3.2,<2.0.0
+#override azure-mgmt-scvmm typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-vmwarecloudsimple azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-apimanagement msrest>=0.7.1
 #override azure-mgmt-apimanagement azure-mgmt-core>=1.3.2,<2.0.0
@@ -527,10 +528,10 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-synapse azure-mgmt-core>=1.3.0,<2.0.0
 #override azure-mgmt-cosmosdb azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-datafactory azure-mgmt-core>=1.3.2,<2.0.0
-#override azure-mgmt-scvmm msrest>=0.6.21
+#override azure-mgmt-scvmm msrest>=0.7.1
 #override azure-mgmt-support typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-security msrest>=0.7.1
-#override azure-mgmt-scvmm azure-mgmt-core>=1.3.0,<2.0.0
+#override azure-mgmt-scvmm azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-reservations msrest>=0.7.1
 #override azure-mgmt-reservations azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-elastic azure-mgmt-core>=1.3.2,<2.0.0
