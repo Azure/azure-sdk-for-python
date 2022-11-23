@@ -324,7 +324,10 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
         Override this method to add customized validation logic.
         """
-        return self._validate_inputs(raise_error=False)
+        validate_result = self._validate_inputs(raise_error=False)
+        if isinstance(self._component, SchemaValidatableMixin):
+            validate_result.merge_with(self._component._validate(), field_name=self._get_component_attr_name())
+        return validate_result
 
     @classmethod
     def _get_skip_fields_in_schema_validation(cls) -> List[str]:
