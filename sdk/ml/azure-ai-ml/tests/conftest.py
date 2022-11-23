@@ -325,7 +325,7 @@ def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCr
     return MLClient(
         credential=auth,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
-        registry_name="sdk-canary",
+        registry_name="sdk-test",
     )
 
 
@@ -646,7 +646,7 @@ def pytest_configure(config):
         ("pipeline_test", "marks tests as pipeline tests, which will create pipeline jobs during testing"),
         ("automl_test", "marks tests as automl tests, which will create automl jobs during testing"),
         ("core_sdk_test", "marks tests as core sdk tests"),
-        ("production_experience_test", "marks tests as production experience tests"),
+        ("production_experiences_test", "marks tests as production experience tests"),
         ("training_experiences_test", "marks tests as training experience tests"),
         ("data_experiences_test", "marks tests as data experience tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),

@@ -11,7 +11,7 @@ from devtools_testutils import AzureRecordedTestCase
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestBatchEndpoint(AzureRecordedTestCase):
     def test_batch_endpoint_create(
         self, client: MLClient, rand_batch_name: Callable[[], str]

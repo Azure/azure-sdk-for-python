@@ -173,7 +173,6 @@ class TestHealth(TextAnalyticsTest):
         response = client.begin_analyze_healthcare_entities(
             docs,
             show_stats=True,
-            model_version="2021-01-11",
             polling_interval=self._interval(),
             raw_response_hook = callback,
         ).result()
