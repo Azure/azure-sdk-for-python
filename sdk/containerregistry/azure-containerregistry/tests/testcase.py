@@ -9,7 +9,12 @@ import pytest
 import time
 
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._helpers import _is_tag, OCI_MANIFEST_MEDIA_TYPE
+from azure.containerregistry._helpers import(
+    _is_tag,
+    AZURE_RESOURCE_MANAGER_CHINA,
+    AZURE_RESOURCE_MANAGER_GOVERNMENT,
+    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+)
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
 
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
@@ -17,7 +22,7 @@ from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSou
 from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 
 from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential
-from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD, AZURE_GERMAN_CLOUD
+from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD
 
 
 REDACTED = "REDACTED"
@@ -135,24 +140,18 @@ def get_authority(endpoint):
     if ".azurecr.us" in endpoint:
         logger.warning("US Gov Authority:")
         return AzureAuthorityHosts.AZURE_GOVERNMENT
-    if ".azurecr.de" in endpoint:
-        logger.warning("Germany Authority:")
-        return AzureAuthorityHosts.AZURE_GERMANY
     raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
 
 def get_audience(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-        logger.warning("Public auth scope")
-        return "https://management.azure.com"
+        logger.warning("Public cloud audience")
+        return AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
     if authority == AzureAuthorityHosts.AZURE_CHINA:
-        logger.warning("China scope")
-        return "https://management.chinacloudapi.cn"
+        logger.warning("China cloud audience")
+        return AZURE_RESOURCE_MANAGER_CHINA
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
-        logger.warning("US Gov scope")
-        return "https://management.usgovcloudapi.net"
-    if authority == AzureAuthorityHosts.AZURE_GERMANY:
-        logger.warning("Germany scope")
-        return "https://management.microsoftazure.de"
+        logger.warning("US Gov cloud audience")
+        return AZURE_RESOURCE_MANAGER_GOVERNMENT
 
 def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
@@ -164,9 +163,6 @@ def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
         return AZURE_US_GOV_CLOUD
-    if authority == AzureAuthorityHosts.AZURE_GERMANY:
-        logger.warning("Germany scope")
-        return AZURE_GERMAN_CLOUD
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(authority, repository, tags):
