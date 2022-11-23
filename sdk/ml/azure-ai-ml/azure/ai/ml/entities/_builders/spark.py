@@ -487,7 +487,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
             or self.code.startswith(REGISTRY_URI_FORMAT)
             or self.code.startswith(ARM_ID_PREFIX)
             or is_url(self.code)
-            or (True if self.CODE_ID_RE_PATTERN.match(self.code) else False)
+            or bool(self.CODE_ID_RE_PATTERN.match(self.code))
         )
         validation_result = self._create_empty_validation_result()
         # validate whether component entry exists to ensure code path is correct, especially when code is default value
@@ -510,19 +510,18 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 if code_path.exists():
                     code_path = code_path.resolve().absolute()
                 else:
-                    msg = "Code path {} doesn't exist."
                     validation_result.append_error(
-                        message=msg.format(code_path), yaml_path=f"component.code"
+                        message=f"Code path {code_path} doesn't exist.", yaml_path=f"component.code"
                     )
                 entry_path = code_path / self.entry.entry
             else:
                 entry_path = Path(self.code) / self.entry.entry
 
-            if isinstance(self.entry, SparkJobEntry) and self.entry.entry_type == SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
+            if isinstance(self.entry, SparkJobEntry) and self.entry.entry_type == \
+                    SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
                 if not entry_path.exists():
-                    msg = "Entry {} doesn't exist."
                     validation_result.append_error(
-                        message=msg.format(entry_path), yaml_path=f"component.entry"
+                        message=f"Entry {entry_path} doesn't exist.", yaml_path=f"component.entry"
                     )
         return validation_result.try_raise(error_target=self._get_validation_error_target(),
                                            raise_error=raise_error)
