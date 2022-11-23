@@ -1,5 +1,13 @@
 # Release History
 
+## 11.4.0b3 (Unreleased)
+
+### Features Added
+
+- Enabled `OcrSkill` and `ImageAnalysisSkill`
+
+### Other Changes
+
 ## 11.4.0b2 (2022-11-08)
 
 ### Features Added

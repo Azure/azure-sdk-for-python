@@ -82,10 +82,10 @@ def add_sanitizers(test_proxy, fake_datastore_key):
     )
     # for internal code whose upload_hash is of length 36
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s]{36})\\/?", group_for_replace="1"
+        value="000000000000000000000000000000000000", regex="\\/LocalUpload\\/([^/\\s\"]{36})\\/?", group_for_replace="1"
     )
     add_general_regex_sanitizer(
-        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s]{36})\\/",
+        value="000000000000000000000000000000000000", regex="\\/az-ml-artifacts\\/([^/\\s\"]{36})\\/",
         group_for_replace="1"
     )
 
@@ -320,6 +320,16 @@ def crud_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredent
 
 
 @pytest.fixture
+def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using in Pipelines end-to-end tests."""
+    return MLClient(
+        credential=auth,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="sdk-test",
+    )
+
+
+@pytest.fixture
 def resource_group_name(location: str) -> str:
     return f"test-rg-{location}-v2-{_get_week_format()}"
 
@@ -427,7 +437,7 @@ def mock_code_hash(request, mocker: MockFixture) -> None:
     def generate_hash(*args, **kwargs):
         return str(uuid.uuid4())
 
-    if is_live_and_not_recording():
+    if "disable_mock_code_hash" not in request.keywords and is_live_and_not_recording():
         mocker.patch("azure.ai.ml._artifacts._artifact_utilities.get_object_hash", side_effect=generate_hash)
     elif not is_live():
         mocker.patch(
@@ -576,6 +586,7 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.entities._job.pipeline.pipeline_job.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml.entities._schedule.schedule.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()
@@ -635,7 +646,7 @@ def pytest_configure(config):
         ("pipeline_test", "marks tests as pipeline tests, which will create pipeline jobs during testing"),
         ("automl_test", "marks tests as automl tests, which will create automl jobs during testing"),
         ("core_sdk_test", "marks tests as core sdk tests"),
-        ("production_experience_test", "marks tests as production experience tests"),
+        ("production_experiences_test", "marks tests as production experience tests"),
         ("training_experiences_test", "marks tests as training experience tests"),
         ("data_experiences_test", "marks tests as data experience tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),

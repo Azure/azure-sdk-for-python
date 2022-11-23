@@ -24,9 +24,10 @@ from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._component.pipeline_component import PipelineComponent
-from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, _get_param_with_standard_annotation
+from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, _get_param_with_standard_annotation, Input
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, PipelineOutput, _GroupAttrDict
+from azure.ai.ml.entities._inputs_outputs.utils import _get_annotation_by_value
 
 # We need to limit the depth of pipeline to avoid the built graph goes too deep and prevent potential
 # stack overflow in dsl.pipeline.
@@ -181,12 +182,13 @@ class PipelineComponentBuilder:
         """
         self.nodes.append(node)
 
-    def build(self, *, user_provided_kwargs=None, non_pipeline_params_dict=None) -> PipelineComponent:
+    def build(self, *, user_provided_kwargs=None,
+              non_pipeline_inputs_dict=None, non_pipeline_inputs=None) -> PipelineComponent:
         """
         Build a pipeline component from current pipeline builder.
-
         :param user_provided_kwargs: The kwargs user provided to dsl pipeline function. None if not provided.
-        :param non_pipeline_params_dict: Non-pipeline parameters to provided value. None if not exist.
+        :param non_pipeline_inputs_dict: The non-pipeline input provided key-value. None if not exist.
+        :param non_pipeline_inputs: List of non-pipeline input name. None if not exist.
         """
         if user_provided_kwargs is None:
             user_provided_kwargs = {}
@@ -198,8 +200,9 @@ class PipelineComponentBuilder:
             user_provided_kwargs=user_provided_kwargs,
             # TODO: support result() for pipeline input inside parameter group
             group_default_kwargs=self._get_group_parameter_defaults(),
-            non_pipeline_parameter_dict=non_pipeline_params_dict
+            non_pipeline_inputs=non_pipeline_inputs
         )
+        kwargs.update(non_pipeline_inputs_dict or {})
         # We use this stack to store the dsl pipeline definition hierarchy
         _definition_builder_stack.push(self)
 
@@ -399,9 +402,23 @@ class PipelineComponentBuilder:
             result[final_name] = node
         return result
 
+    def _update_inputs(self, pipeline_inputs):
+        """Update the pipeline inputs by the dict."""
+        for input_name, value in pipeline_inputs.items():
+            if input_name not in self.inputs:
+                if isinstance(value, PipelineInput):
+                    value = value._data
+                if isinstance(value, Input):
+                    anno = copy.copy(value)
+                else:
+                    anno = _get_annotation_by_value(value)
+                anno.name = input_name
+                anno.description = self._args_description.get(input_name)
+                self.inputs[input_name] = anno
+
 
 def _build_pipeline_parameter(
-        func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_parameter_dict=None):
+        func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_inputs=None):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
     # @parameter_group
@@ -413,14 +430,14 @@ def _build_pipeline_parameter(
     #   component_func(input=param.key)  <--- param.key should be val.
 
     # transform kwargs
-    transformed_kwargs = non_pipeline_parameter_dict or {}
+    transformed_kwargs, non_pipeline_inputs = {}, non_pipeline_inputs or []
     if group_default_kwargs:
         transformed_kwargs.update(
             {
                 key: _wrap_pipeline_parameter(
                     key, default_value=value, actual_value=value
                 ) for key, value in group_default_kwargs.items()
-                if key not in non_pipeline_parameter_dict
+                if key not in non_pipeline_inputs
             }
         )
 
@@ -434,12 +451,17 @@ def _build_pipeline_parameter(
     parameters = all_params(signature(func).parameters)
     # transform default values
     for left_args in parameters:
-        if left_args.name not in transformed_kwargs.keys():
+        if left_args.name not in transformed_kwargs.keys() and left_args.kind != Parameter.VAR_KEYWORD and \
+                left_args.name not in non_pipeline_inputs:
             default_value = left_args.default if left_args.default is not Parameter.empty else None
             actual_value = user_provided_kwargs.get(left_args.name)
             transformed_kwargs[left_args.name] = _wrap_pipeline_parameter(
                 key=left_args.name, default_value=default_value, actual_value=actual_value
             )
+    # Add variable kwargs to transformed_kwargs.
+    for key, value in user_provided_kwargs.items():
+        if key not in transformed_kwargs:
+            transformed_kwargs[key] = _wrap_pipeline_parameter(key=key, default_value=None, actual_value=value)
     return transformed_kwargs
 
 

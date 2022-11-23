@@ -104,10 +104,7 @@ class ChangeLog:
                     _REMOVE_OPERATION_PARAM.format(operation_name, function_name, removed_parameter)
                 )
             for added_parameter in new_parameters_set - old_parameters_set:
-                if (
-                    new_parameters[added_parameter]["type"] == "KEYWORD_ONLY"
-                    and new_parameters[added_parameter]["has_default_value"]
-                ):
+                if new_parameters[added_parameter]["has_default_value"]:
                     self.features.append(
                         _ADD_OPERATION_PARAM_FEATURE.format(operation_name, function_name, added_parameter)
                     )
@@ -200,7 +197,7 @@ class ChangeLog:
 ## Features
 _ADD_OPERATION_GROUP = "Added operation group {}"
 _ADD_OPERATION = "Added operation {}.{}"
-_ADD_OPERATION_PARAM_FEATURE = "Operation {}.{} has a new optional and keyword-only parameter {}"
+_ADD_OPERATION_PARAM_FEATURE = "Operation {}.{} has a new optional parameter {}"
 _MODEL_PARAM_ADD = "Model {} has a new parameter {}"
 _MODEL_ADD = "Added model {}"
 
@@ -215,7 +212,7 @@ _MODEL_SIGNATURE_CHANGE = "Model {} has a new signature"
 _MODEL_PARAM_DELETE = "Model {} no longer has parameter {}"
 _MODEL_PARAM_ADD_REQUIRED = "Model {} has a new required parameter {}"
 _MODEL_PARAM_CHANGE_REQUIRED = "Parameter {} of model {} is now required"
-_ADD_OPERATION_PARAM = "Operation {}.{} has a new parameter {}"
+_ADD_OPERATION_PARAM = "Operation {}.{} has a new required parameter {}"
 
 
 def build_change_log(old_report, new_report):
