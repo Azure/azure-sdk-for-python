@@ -4,14 +4,14 @@
 
 # pylint: disable=protected-access
 
+import json
 import logging
 import os
 import uuid
-import requests
-import json
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Dict, Optional, Tuple, TypeVar, Union
+import requests
 
 from azure.core.exceptions import HttpResponseError
 
@@ -530,7 +530,7 @@ def get_asset_by_hash(
     )
     workspace_location = workspace.location
 
-    # build request to API (API route is implemented at 
+    # build request to API (API route is implemented at
     # https://dev.azure.com/msdata/Vienna/_git/vienna?path=/src/azureml-api/src/
     # ProjectContent/Contracts/ISnapshotControllerNewRoutes.cs&version=GBmaster&
     # line=289&lineEnd=290&lineStartColumn=1&lineEndColumn=45&lineStyle=plain&_a=contents)
