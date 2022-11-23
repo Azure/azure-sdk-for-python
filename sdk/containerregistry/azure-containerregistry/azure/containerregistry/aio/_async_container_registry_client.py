@@ -18,7 +18,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS
+from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 if TYPE_CHECKING:
@@ -28,24 +28,27 @@ if TYPE_CHECKING:
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
-        self, endpoint: str, credential: "Optional['AsyncTokenCredential']" = None, *, audience: str, **kwargs: "Any"
+        self,
+        endpoint: str,
+        credential: "Optional['AsyncTokenCredential']" = None,
+        audience: Optional[str] = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+        **kwargs: "Any"
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
         :param str endpoint: An ACR endpoint.
         :param credential: The credential with which to authenticate.
         :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+        :param audience: URL to use for credential authentication with AAD. Its value could be
+         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de"
+         or "https://management.usgovcloudapi.net".
+        :param audience: str
         :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
          may result in unsupported behavior.
         :paramtype api_version: str
-        :keyword audience: URL to use for credential authentication with AAD. Its value could be
-         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de"
-         or "https://management.usgovcloudapi.net".
-        :paramtype audience: str
         :returns: None
         :rtype: None
-        :raises ValueError: If the provided api_version keyword-only argument isn't supported or
-         audience keyword-only argument isn't provided.
+        :raises ValueError: If the provided api_version keyword-only argument isn't supported.
 
         .. admonition:: Example:
 
