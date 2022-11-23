@@ -32,13 +32,13 @@ from dotenv import load_dotenv
 load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
-client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestingClient(credential=DefaultAzureCredential(authority="https://login.windows-ppe.net"), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-TEST_ID = "my-new-sdk-test-id"
-FILE_ID = "my-file-id"
+TEST_ID = "my-sdk-test-id"
+FILE_NAME = "my-file-id.jmx"
 
 # uploading .jmx file to a test
-result = client.load_test_administration.upload_test_file(TEST_ID, FILE_ID, open("sample.jmx", "rb"))
+result = client.load_test_administration.upload_test_file(TEST_ID, FILE_NAME, open("sample.jmx", "rb"))
 
 print(result)
 print(result["validationStatus"])

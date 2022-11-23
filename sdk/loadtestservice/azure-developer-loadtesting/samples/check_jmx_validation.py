@@ -37,12 +37,12 @@ load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 # Build a client through AAD and resource endpoint
-client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestingClient(credential=DefaultAzureCredential(authority="https://login.windows-ppe.net"), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-TEST_ID = "my-new-sdk-test-id"
+TEST_ID = "my-sdk-test-id"
 
 # checking if jmx file is validated
-result = client.load_test_administration.check_test_file_validation_status(TEST_ID, refresh_time=11, time_out=10)
+result = client.load_test_administration.begin_get_test_script_validation_status(TEST_ID, refresh_time=11, timeout=100)
 
 # printing the result
 print(result)

@@ -35,7 +35,7 @@ LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 SUBSCRIPTION_ID = os.environ["SUBSCRIPTION_ID"]
 
 # Build a client through AAD and resource endpoint
-client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestingClient(credential=DefaultAzureCredential(authority="https://login.windows-ppe.net"), endpoint=LOADTESTSERVICE_ENDPOINT)
 
 TEST_ID = "my-new-sdk-test-id"
 APP_COMPONENT = "my-new-app-component"

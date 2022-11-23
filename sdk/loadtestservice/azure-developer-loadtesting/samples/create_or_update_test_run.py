@@ -32,12 +32,12 @@ load_dotenv()
 LOADTESTSERVICE_ENDPOINT = os.environ["LOADTESTSERVICE_ENDPOINT"]
 
 TEST_RUN_ID = "my-new-load-test-run"
-TEST_ID = "my-new-sdk-test-id"
+TEST_ID = "my-sdk-test-id"
 
 # Build a client through AAD and resource endpoint
-client = LoadTestingClient(credential=DefaultAzureCredential(), endpoint=LOADTESTSERVICE_ENDPOINT)
+client = LoadTestingClient(credential=DefaultAzureCredential(authority="https://login.windows-ppe.net"), endpoint=LOADTESTSERVICE_ENDPOINT)
 
-result = client.load_test_run.create_or_update_test(
+result = client.load_test_run.create_or_update_test_run(
     TEST_RUN_ID,
     {
         "testId": TEST_ID,
