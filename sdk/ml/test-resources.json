@@ -403,6 +403,13 @@
     "provisionGPUCluster": {
       "type": "bool",
       "defaultValue": "[bool('false')]"
+    },
+    "uaiNames": {
+      "type": "array",
+      "defaultValue": [
+        "uai-mhe",
+        "uai-mhe2"
+      ]
     }
   },
   "variables": {
@@ -754,6 +761,16 @@
           "vmSize": "[if(equals(parameters('location'), 'eastus2euap'), 'STANDARD_DS2_V2', 'STANDARD_NC6')]",
           "remoteLoginPortPublicAccess": "[parameters('remoteLoginPortPublicAccess')]"
         }
+      }
+    },
+    {
+      "type": "Microsoft.ManagedIdentity/userAssignedIdentities",
+      "apiVersion": "2022-01-31-preview",
+      "name": "[parameters('uaiNames')[copyIndex()]]",
+      "location": "[resourceGroup().location]",
+      "copy": {
+        "name": "uaicopy",
+        "count": "[length(parameters('uaiNames'))]"
       }
     },
     {
