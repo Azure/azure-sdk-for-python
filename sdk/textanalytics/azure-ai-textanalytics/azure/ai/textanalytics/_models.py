@@ -312,7 +312,7 @@ class PiiEntityDomain(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The different domains of PII entities that users can filter by"""
 
     PROTECTED_HEALTH_INFORMATION = (
-        "phi"  # See https://aka.ms/tanerpii for more information.
+        "phi"  # See https://aka.ms/azsdk/language/pii for more information.
     )
 
 
@@ -2009,7 +2009,7 @@ class AnalyzeSentimentAction(DictMixin):
 
 class RecognizePiiEntitiesAction(DictMixin):
     """RecognizePiiEntitiesAction encapsulates the parameters for starting a long-running PII
-    Entities Recognition operation.
+    Entities Recognition operation. See more information in the service docs: https://aka.ms/azsdk/language/pii
 
     If you just want to recognize pii entities in a list of documents, and not perform multiple
     long running actions on the input of documents, call method `recognize_pii_entities` instead
