@@ -45,7 +45,7 @@ def mock_model_operation(
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestModelOperations:
     def test_create_with_spec_file(
         self,

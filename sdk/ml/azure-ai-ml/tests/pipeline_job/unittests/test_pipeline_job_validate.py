@@ -14,7 +14,7 @@ from azure.ai.ml.entities._validate_funcs import validate_job
 from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
-from ..e2etests.test_control_flow_node_in_pipeline_job import update_pipeline_schema
+from ..e2etests.test_control_flow_pipeline import update_pipeline_schema
 
 
 def assert_the_same_path(actual_path, expected_path):
