@@ -6,6 +6,7 @@ import os
 import shutil
 import tempfile
 import zipfile
+import yaml
 from pathlib import Path
 from typing import Union
 
@@ -13,9 +14,12 @@ from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 from azure.ai.ml._utils._asset_utils import traverse_directory
 from .code import InternalComponentIgnoreFile
+from ._artifact_cache import ArtifactCache
 
 ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
+ADDITIONAL_INCLUDES_KEY = "additional_includes"
+ARTIFACT_KEY = "artifact"
 
 
 class _AdditionalIncludes:
@@ -37,9 +41,12 @@ class _AdditionalIncludes:
         if not self._additional_includes_file_path.is_file():
             return []
         if self.__includes is None:
-            with open(self._additional_includes_file_path, "r") as f:
-                lines = f.readlines()
-                self.__includes = [line.strip() for line in lines if len(line.strip()) > 0]
+            if self._is_yaml_format_additional_includes():
+                self.__includes = self._load_yaml_format_additional_includes()
+            else:
+                with open(self._additional_includes_file_path, "r") as f:
+                    lines = f.readlines()
+                    self.__includes = [line.strip() for line in lines if len(line.strip()) > 0]
         return self.__includes
 
     @property
@@ -201,3 +208,81 @@ class _AdditionalIncludes:
         if Path(self._tmp_code_path).is_dir():
             shutil.rmtree(self._tmp_code_path)
         self._tmp_code_path = None  # point code path back to real path
+
+    def _is_yaml_format_additional_includes(self):
+        try:
+            with open(self._additional_includes_file_path) as f:
+                additional_includes_configs = yaml.safe_load(f)
+                return isinstance(
+                    additional_includes_configs, dict) and ADDITIONAL_INCLUDES_KEY in additional_includes_configs
+        except Exception:
+            return False
+
+    def _load_yaml_format_additional_includes(self):
+        """
+        Load the additional includes by yaml format.
+
+        Addition includes is a list of include files, such as local paths and Azure Devops Artifacts.
+        Yaml format of addtional_include likes below:
+            additional_includes:
+             - your/local/path
+             - type: artifact
+               organization: devops_organization
+               project: devops_project
+               feed: artifacts_feed_name
+               name: universal_package_name
+               version: package_version
+               scope: scope_type
+        If will get the artifacts package from devops to the local, and merge them with the local path into
+        additional include list. If there are files conflict in the artifacts, user error will be raised.
+
+        :return additional_includes: Path list of additional_includes
+        :rtype additional_includes: List[str]
+        """
+        additional_includes, conflict_files = [], {}
+
+        def merge_local_path_to_additional_includes(local_path, config_info):
+            additional_includes.append(local_path)
+            file_name = Path(local_path).name
+            conflicts = conflict_files.get(file_name, set())
+            conflicts.add(config_info)
+            conflict_files[file_name] = conflicts
+
+        def get_artifacts_by_config(artifact_config):
+            artifact_cache = ArtifactCache()
+            if any(item not in artifact_config for item in ["feed", "name", "version"]):
+                raise UserErrorException("Feed, name and version are required for artifacts config.")
+            artifact_path = artifact_cache.get(
+                organization=artifact_config.get("organization", None),
+                project=artifact_config.get("project", None),
+                feed=artifact_config["feed"],
+                name=artifact_config["name"],
+                version=artifact_config["version"],
+                scope=artifact_config.get("scope", "organization"),
+                resolve=True)
+            return artifact_path
+
+        # Load the artifacts config from additional_includes
+        with open(self._additional_includes_file_path) as f:
+            additional_includes_configs = yaml.safe_load(f)
+            additional_includes_configs = additional_includes_configs.get(ADDITIONAL_INCLUDES_KEY, [])
+
+        for additional_include in additional_includes_configs:
+            if isinstance(additional_include, dict) and additional_include.get("type") == ARTIFACT_KEY:
+                # Get the artifacts package from devops to the local
+                artifact_path = get_artifacts_by_config(additional_include)
+                for item in os.listdir(artifact_path):
+                    config_info = f"{additional_include['name']}:{additional_include['version']} in " \
+                                  f"{additional_include['feed']}"
+                    merge_local_path_to_additional_includes(local_path=os.path.join(artifact_path, item),
+                                                            config_info=config_info)
+            elif isinstance(additional_include, str):
+                merge_local_path_to_additional_includes(local_path=additional_include, config_info=additional_include)
+            else:
+                raise RuntimeError(f"Unexpected format in additional_includes, {additional_include}")
+
+        # Check the file conflict in local path and artifact package.
+        conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}
+        if conflict_files:
+            raise RuntimeError(f"There are conflict files in additional include: {conflict_files}")
+        return additional_includes
