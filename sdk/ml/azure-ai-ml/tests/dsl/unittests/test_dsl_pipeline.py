@@ -2136,3 +2136,13 @@ class TestDSLPipeline:
             "outputs": {"output": {"job_output_type": "uri_folder", "mode": "Direct"}},
             "settings": {"_source": "DSL"},
         }
+
+    def test_spark_job_with_builder_in_pipeline_without_entry(self):
+        from test_configs.dsl_pipeline.spark_job_in_pipeline.invalid_pipeline import (
+            generate_dsl_pipeline_from_builder_without_entry as spark_job_in_pipeline,
+        )
+        pipeline = spark_job_in_pipeline()
+        result = pipeline._validate()
+        assert result.error_messages == {
+            'jobs.add_greeting_column.component.entry': 'Entry is a required field in SparkComponent.'
+        }
