@@ -31,27 +31,27 @@ from ...operations._operations import (
     build_load_test_administration_create_or_update_app_components_request,
     build_load_test_administration_create_or_update_server_metrics_config_request,
     build_load_test_administration_create_or_update_test_request,
-    build_load_test_administration_delete_load_test_request,
     build_load_test_administration_delete_test_file_request,
-    build_load_test_administration_get_app_components_request,
-    build_load_test_administration_get_load_test_request,
-    build_load_test_administration_get_server_metrics_config_request,
+    build_load_test_administration_delete_test_request,
     build_load_test_administration_get_test_file_request,
-    build_load_test_administration_list_load_tests_request,
+    build_load_test_administration_get_test_request,
+    build_load_test_administration_list_app_components_request,
+    build_load_test_administration_list_server_metrics_config_request,
     build_load_test_administration_list_test_files_request,
+    build_load_test_administration_list_tests_request,
     build_load_test_administration_upload_test_file_request,
     build_load_test_run_create_or_update_app_components_request,
     build_load_test_run_create_or_update_server_metrics_config_request,
     build_load_test_run_create_or_update_test_run_request,
     build_load_test_run_delete_test_run_request,
-    build_load_test_run_get_app_components_request,
-    build_load_test_run_get_metrics_request,
-    build_load_test_run_get_server_metrics_config_request,
     build_load_test_run_get_test_run_file_request,
     build_load_test_run_get_test_run_request,
+    build_load_test_run_list_app_components_request,
     build_load_test_run_list_metric_definitions_request,
     build_load_test_run_list_metric_dimension_values_request,
     build_load_test_run_list_metric_namespaces_request,
+    build_load_test_run_list_metrics_request,
+    build_load_test_run_list_server_metrics_config_request,
     build_load_test_run_list_test_runs_request,
     build_load_test_run_stop_test_run_request,
 )
@@ -127,11 +127,13 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -141,10 +143,12 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -153,10 +157,12 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -165,10 +171,12 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -177,10 +185,12 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -219,9 +229,9 @@ class LoadTestAdministrationOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -283,11 +293,13 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -297,10 +309,12 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -309,10 +323,12 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -321,10 +337,12 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -333,10 +351,12 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -375,9 +395,9 @@ class LoadTestAdministrationOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -463,11 +483,13 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -477,10 +499,12 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -489,10 +513,12 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -501,10 +527,12 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -513,10 +541,12 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -555,9 +585,9 @@ class LoadTestAdministrationOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -641,11 +671,13 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -655,10 +687,12 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -667,10 +701,12 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -679,10 +715,12 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -691,10 +729,12 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -733,9 +773,9 @@ class LoadTestAdministrationOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -839,9 +879,7 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def delete_load_test(  # pylint: disable=inconsistent-return-statements
-        self, test_id: str, **kwargs: Any
-    ) -> None:
+    async def delete_test(self, test_id: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
         """Delete a test by its name.
 
         Delete a test by its name.
@@ -866,7 +904,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_load_test_administration_delete_load_test_request(
+        request = build_load_test_administration_delete_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -891,7 +929,7 @@ class LoadTestAdministrationOperations:
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def get_load_test(self, test_id: str, **kwargs: Any) -> JSON:
+    async def get_test(self, test_id: str, **kwargs: Any) -> JSON:
         """Get load test details by test name.
 
         Get load test details by test name.
@@ -928,11 +966,13 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -942,10 +982,12 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -954,10 +996,12 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -966,10 +1010,12 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -978,10 +1024,12 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -1020,9 +1068,9 @@ class LoadTestAdministrationOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -1075,7 +1123,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_load_test_request(
+        request = build_load_test_administration_get_test_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -1107,7 +1155,7 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def list_load_tests(
+    def list_tests(
         self,
         *,
         orderby: Optional[str] = None,
@@ -1126,8 +1174,9 @@ class LoadTestAdministrationOperations:
         :keyword orderby: Sort on the supported fields in (field asc/desc) format. eg:
          lastModifiedDateTime asc. Supported fields - lastModifiedDateTime. Default value is None.
         :paramtype orderby: str
-        :keyword search: Prefix based, case sensitive search on searchable fields - testId, createdBy.
-         Default value is None.
+        :keyword search: Prefix based, case sensitive search on searchable fields - displayName,
+         createdBy. For example, to search for a test, with display name is Login Test, the search
+         parameter can be Login. Default value is None.
         :paramtype search: str
         :keyword last_modified_start_time: Start DateTime(ISO 8601 literal format) of the last updated
          time range to filter tests. Default value is None.
@@ -1167,11 +1216,13 @@ class LoadTestAdministrationOperations:
                             {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -1181,10 +1232,12 @@ class LoadTestAdministrationOperations:
                         "configFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -1193,10 +1246,12 @@ class LoadTestAdministrationOperations:
                         "inputArtifactsZipFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -1205,10 +1260,12 @@ class LoadTestAdministrationOperations:
                         "testScriptFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -1217,10 +1274,12 @@ class LoadTestAdministrationOperations:
                         "userPropFileInfo": {
                             "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry
                               time of the file (ISO 8601 literal format).
+                            "fileName": "str",  # Optional. Name of the file.
                             "fileType": "str",  # Optional. File type. Known values are:
                               "JMX_FILE", "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                            "filename": "str",  # Optional. Name of the file.
                             "url": "str",  # Optional. File URL.
+                            "validationFailureDetails": "str",  # Optional. Validation
+                              failure error details.
                             "validationStatus": "str"  # Optional. Validation status of
                               the file. Known values are: "NOT_VALIDATED", "VALIDATION_SUCCESS",
                               "VALIDATION_FAILURE", "VALIDATION_INITIATED", and
@@ -1259,9 +1318,9 @@ class LoadTestAdministrationOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -1317,7 +1376,7 @@ class LoadTestAdministrationOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_load_test_administration_list_load_tests_request(
+                request = build_load_test_administration_list_tests_request(
                     orderby=orderby,
                     search=search,
                     last_modified_start_time=last_modified_start_time,
@@ -1412,10 +1471,12 @@ class LoadTestAdministrationOperations:
                 response == {
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (ISO 8601 literal format).
+                    "fileName": "str",  # Optional. Name of the file.
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
                       "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                    "filename": "str",  # Optional. Name of the file.
                     "url": "str",  # Optional. File URL.
+                    "validationFailureDetails": "str",  # Optional. Validation failure error
+                      details.
                     "validationStatus": "str"  # Optional. Validation status of the file. Known
                       values are: "NOT_VALIDATED", "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
                       "VALIDATION_INITIATED", and "VALIDATION_NOT_REQUIRED".
@@ -1494,10 +1555,12 @@ class LoadTestAdministrationOperations:
                 response == {
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (ISO 8601 literal format).
+                    "fileName": "str",  # Optional. Name of the file.
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
                       "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                    "filename": "str",  # Optional. Name of the file.
                     "url": "str",  # Optional. File URL.
+                    "validationFailureDetails": "str",  # Optional. Validation failure error
+                      details.
                     "validationStatus": "str"  # Optional. Validation status of the file. Known
                       values are: "NOT_VALIDATED", "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
                       "VALIDATION_INITIATED", and "VALIDATION_NOT_REQUIRED".
@@ -1628,10 +1691,12 @@ class LoadTestAdministrationOperations:
                 response == {
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (ISO 8601 literal format).
+                    "fileName": "str",  # Optional. Name of the file.
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
                       "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                    "filename": "str",  # Optional. Name of the file.
                     "url": "str",  # Optional. File URL.
+                    "validationFailureDetails": "str",  # Optional. Validation failure error
+                      details.
                     "validationStatus": "str"  # Optional. Validation status of the file. Known
                       values are: "NOT_VALIDATED", "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
                       "VALIDATION_INITIATED", and "VALIDATION_NOT_REQUIRED".
@@ -1961,7 +2026,7 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def get_app_components(self, test_id: str, **kwargs: Any) -> JSON:
+    async def list_app_components(self, test_id: str, **kwargs: Any) -> JSON:
         """Get associated app component (collection of azure resources) for the given test.
 
         Get associated app component (collection of azure resources) for the given test.
@@ -2018,7 +2083,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_app_components_request(
+        request = build_load_test_administration_list_app_components_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2278,10 +2343,10 @@ class LoadTestAdministrationOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def get_server_metrics_config(self, test_id: str, **kwargs: Any) -> JSON:
-        """Get server metric configuration for the given test.
+    async def list_server_metrics_config(self, test_id: str, **kwargs: Any) -> JSON:
+        """List server metrics configuration for the given test.
 
-        Get server metric configuration for the given test.
+        List server metrics configuration for the given test.
 
         :param test_id: Unique name for the load test, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
@@ -2330,7 +2395,7 @@ class LoadTestAdministrationOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_administration_get_server_metrics_config_request(
+        request = build_load_test_administration_list_server_metrics_config_request(
             test_id=test_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -2521,9 +2586,9 @@ class LoadTestRunOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -2574,12 +2639,14 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
+                                    "fileName": "str",  # Optional. Name of the
+                                      file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
-                                    "filename": "str",  # Optional. Name of the
-                                      file.
                                     "url": "str",  # Optional. File URL.
+                                    "validationFailureDetails": "str",  #
+                                      Optional. Validation failure error details.
                                     "validationStatus": "str"  # Optional.
                                       Validation status of the file. Known values are: "NOT_VALIDATED",
                                       "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
@@ -2589,11 +2656,13 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -2602,11 +2671,13 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -2615,11 +2686,13 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -2628,11 +2701,13 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -2640,27 +2715,31 @@ class LoadTestRunOperations:
                             }
                         },
                         "outputArtifacts": {
-                            "logsUrl": {
+                            "logsFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
-                            "resultUrl": {
+                            "resultFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -2751,9 +2830,9 @@ class LoadTestRunOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -2804,12 +2883,14 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
+                                    "fileName": "str",  # Optional. Name of the
+                                      file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
-                                    "filename": "str",  # Optional. Name of the
-                                      file.
                                     "url": "str",  # Optional. File URL.
+                                    "validationFailureDetails": "str",  #
+                                      Optional. Validation failure error details.
                                     "validationStatus": "str"  # Optional.
                                       Validation status of the file. Known values are: "NOT_VALIDATED",
                                       "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
@@ -2819,11 +2900,13 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -2832,11 +2915,13 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -2845,11 +2930,13 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -2858,11 +2945,13 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -2870,27 +2959,31 @@ class LoadTestRunOperations:
                             }
                         },
                         "outputArtifacts": {
-                            "logsUrl": {
+                            "logsFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
-                            "resultUrl": {
+                            "resultFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3016,9 +3109,9 @@ class LoadTestRunOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -3069,12 +3162,14 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
+                                    "fileName": "str",  # Optional. Name of the
+                                      file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
-                                    "filename": "str",  # Optional. Name of the
-                                      file.
                                     "url": "str",  # Optional. File URL.
+                                    "validationFailureDetails": "str",  #
+                                      Optional. Validation failure error details.
                                     "validationStatus": "str"  # Optional.
                                       Validation status of the file. Known values are: "NOT_VALIDATED",
                                       "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
@@ -3084,11 +3179,13 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3097,11 +3194,13 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3110,11 +3209,13 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3123,11 +3224,13 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3135,27 +3238,31 @@ class LoadTestRunOperations:
                             }
                         },
                         "outputArtifacts": {
-                            "logsUrl": {
+                            "logsFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
-                            "resultUrl": {
+                            "resultFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3275,9 +3382,9 @@ class LoadTestRunOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -3328,12 +3435,14 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
+                                    "fileName": "str",  # Optional. Name of the
+                                      file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
-                                    "filename": "str",  # Optional. Name of the
-                                      file.
                                     "url": "str",  # Optional. File URL.
+                                    "validationFailureDetails": "str",  #
+                                      Optional. Validation failure error details.
                                     "validationStatus": "str"  # Optional.
                                       Validation status of the file. Known values are: "NOT_VALIDATED",
                                       "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
@@ -3343,11 +3452,13 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3356,11 +3467,13 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3369,11 +3482,13 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3382,11 +3497,13 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3394,27 +3511,31 @@ class LoadTestRunOperations:
                             }
                         },
                         "outputArtifacts": {
-                            "logsUrl": {
+                            "logsFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
-                            "resultUrl": {
+                            "resultFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3585,9 +3706,9 @@ class LoadTestRunOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -3638,12 +3759,14 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
+                                    "fileName": "str",  # Optional. Name of the
+                                      file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
-                                    "filename": "str",  # Optional. Name of the
-                                      file.
                                     "url": "str",  # Optional. File URL.
+                                    "validationFailureDetails": "str",  #
+                                      Optional. Validation failure error details.
                                     "validationStatus": "str"  # Optional.
                                       Validation status of the file. Known values are: "NOT_VALIDATED",
                                       "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
@@ -3653,11 +3776,13 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3666,11 +3791,13 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3679,11 +3806,13 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3692,11 +3821,13 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3704,27 +3835,31 @@ class LoadTestRunOperations:
                             }
                         },
                         "outputArtifacts": {
-                            "logsUrl": {
+                            "logsFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
-                            "resultUrl": {
+                            "resultFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -3825,10 +3960,12 @@ class LoadTestRunOperations:
                 response == {
                     "expireDateTime": "2020-02-20 00:00:00",  # Optional. Expiry time of the file
                       (ISO 8601 literal format).
+                    "fileName": "str",  # Optional. Name of the file.
                     "fileType": "str",  # Optional. File type. Known values are: "JMX_FILE",
                       "USER_PROPERTIES", and "ADDITIONAL_ARTIFACTS".
-                    "filename": "str",  # Optional. Name of the file.
                     "url": "str",  # Optional. File URL.
+                    "validationFailureDetails": "str",  # Optional. Validation failure error
+                      details.
                     "validationStatus": "str"  # Optional. Validation status of the file. Known
                       values are: "NOT_VALIDATED", "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
                       "VALIDATION_INITIATED", and "VALIDATION_NOT_REQUIRED".
@@ -3903,7 +4040,8 @@ class LoadTestRunOperations:
          Default value is None.
         :paramtype continuation_token_parameter: str
         :keyword search: Prefix based, case sensitive search on searchable fields - description,
-         executedUser. Default value is None.
+         executedUser. For example, to search for a test run, with description 500 VUs, the search
+         parameter can be 500. Default value is None.
         :paramtype search: str
         :keyword test_id: Unique name of an existing load test. Default value is None.
         :paramtype test_id: str
@@ -3978,9 +4116,9 @@ class LoadTestRunOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -4031,12 +4169,14 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
+                                    "fileName": "str",  # Optional. Name of the
+                                      file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
-                                    "filename": "str",  # Optional. Name of the
-                                      file.
                                     "url": "str",  # Optional. File URL.
+                                    "validationFailureDetails": "str",  #
+                                      Optional. Validation failure error details.
                                     "validationStatus": "str"  # Optional.
                                       Validation status of the file. Known values are: "NOT_VALIDATED",
                                       "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
@@ -4046,11 +4186,13 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4059,11 +4201,13 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4072,11 +4216,13 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4085,11 +4231,13 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4097,27 +4245,31 @@ class LoadTestRunOperations:
                             }
                         },
                         "outputArtifacts": {
-                            "logsUrl": {
+                            "logsFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
-                            "resultUrl": {
+                            "resultFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4304,9 +4456,9 @@ class LoadTestRunOperations:
                     "passFailCriteria": {
                         "passFailMetrics": {
                             "str": {
-                                "action": "str",  # Optional. Action taken after the
-                                  threshold is met. Default is "u2018continue"u2019. Known values are:
-                                  "stop" and "continue".
+                                "action": "continue",  # Optional. Default value is
+                                  "continue". Action taken after the threshold is met. Default is
+                                  "u2018continue"u2019. Known values are: "stop" and "continue".
                                 "actualValue": 0.0,  # Optional. The actual value of
                                   the client metric for the test run.
                                 "aggregate": "str",  # Optional. The aggregation
@@ -4357,12 +4509,14 @@ class LoadTestRunOperations:
                                 {
                                     "expireDateTime": "2020-02-20 00:00:00",  #
                                       Optional. Expiry time of the file (ISO 8601 literal format).
+                                    "fileName": "str",  # Optional. Name of the
+                                      file.
                                     "fileType": "str",  # Optional. File type.
                                       Known values are: "JMX_FILE", "USER_PROPERTIES", and
                                       "ADDITIONAL_ARTIFACTS".
-                                    "filename": "str",  # Optional. Name of the
-                                      file.
                                     "url": "str",  # Optional. File URL.
+                                    "validationFailureDetails": "str",  #
+                                      Optional. Validation failure error details.
                                     "validationStatus": "str"  # Optional.
                                       Validation status of the file. Known values are: "NOT_VALIDATED",
                                       "VALIDATION_SUCCESS", "VALIDATION_FAILURE",
@@ -4372,11 +4526,13 @@ class LoadTestRunOperations:
                             "configFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4385,11 +4541,13 @@ class LoadTestRunOperations:
                             "inputArtifactsZipFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4398,11 +4556,13 @@ class LoadTestRunOperations:
                             "testScriptFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4411,11 +4571,13 @@ class LoadTestRunOperations:
                             "userPropFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4423,27 +4585,31 @@ class LoadTestRunOperations:
                             }
                         },
                         "outputArtifacts": {
-                            "logsUrl": {
+                            "logsFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
                                   and "VALIDATION_NOT_REQUIRED".
                             },
-                            "resultUrl": {
+                            "resultFileInfo": {
                                 "expireDateTime": "2020-02-20 00:00:00",  # Optional.
                                   Expiry time of the file (ISO 8601 literal format).
+                                "fileName": "str",  # Optional. Name of the file.
                                 "fileType": "str",  # Optional. File type. Known
                                   values are: "JMX_FILE", "USER_PROPERTIES", and
                                   "ADDITIONAL_ARTIFACTS".
-                                "filename": "str",  # Optional. Name of the file.
                                 "url": "str",  # Optional. File URL.
+                                "validationFailureDetails": "str",  # Optional.
+                                  Validation failure error details.
                                 "validationStatus": "str"  # Optional. Validation
                                   status of the file. Known values are: "NOT_VALIDATED",
                                   "VALIDATION_SUCCESS", "VALIDATION_FAILURE", "VALIDATION_INITIATED",
@@ -4524,9 +4690,9 @@ class LoadTestRunOperations:
 
     @distributed_trace_async
     async def list_metric_namespaces(self, test_run_id: str, **kwargs: Any) -> JSON:
-        """Lists the metric namespaces for a load test run.
+        """List the metric namespaces for a load test run.
 
-        Lists the metric namespaces for a load test run.
+        List the metric namespaces for a load test run.
 
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
@@ -4594,9 +4760,9 @@ class LoadTestRunOperations:
 
     @distributed_trace_async
     async def list_metric_definitions(self, test_run_id: str, *, metric_namespace: str, **kwargs: Any) -> JSON:
-        """Lists the metric definitions for a load test run.
+        """List the metric definitions for a load test run.
 
-        Lists the metric definitions for a load test run.
+        List the metric definitions for a load test run.
 
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
@@ -4694,7 +4860,7 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @overload
-    async def get_metrics(
+    async def list_metrics(
         self,
         test_run_id: str,
         body: Optional[JSON] = None,
@@ -4707,9 +4873,9 @@ class LoadTestRunOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        """Lists the metric values for a load test run.
+        """List the metric values for a load test run.
 
-        Lists the metric values for a load test run.
+        List the metric values for a load test run.
 
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
@@ -4778,7 +4944,7 @@ class LoadTestRunOperations:
         """
 
     @overload
-    async def get_metrics(
+    async def list_metrics(
         self,
         test_run_id: str,
         body: Optional[IO] = None,
@@ -4791,9 +4957,9 @@ class LoadTestRunOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> JSON:
-        """Lists the metric values for a load test run.
+        """List the metric values for a load test run.
 
-        Lists the metric values for a load test run.
+        List the metric values for a load test run.
 
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
@@ -4849,7 +5015,7 @@ class LoadTestRunOperations:
         """
 
     @distributed_trace_async
-    async def get_metrics(
+    async def list_metrics(
         self,
         test_run_id: str,
         body: Optional[Union[JSON, IO]] = None,
@@ -4861,9 +5027,9 @@ class LoadTestRunOperations:
         interval: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
-        """Lists the metric values for a load test run.
+        """List the metric values for a load test run.
 
-        Lists the metric values for a load test run.
+        List the metric values for a load test run.
 
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
@@ -4943,7 +5109,7 @@ class LoadTestRunOperations:
             else:
                 _json = None
 
-        request = build_load_test_run_get_metrics_request(
+        request = build_load_test_run_list_metrics_request(
             test_run_id=test_run_id,
             metricname=metricname,
             metric_namespace=metric_namespace,
@@ -4994,9 +5160,9 @@ class LoadTestRunOperations:
         interval: Optional[str] = None,
         **kwargs: Any
     ) -> JSON:
-        """Lists the dimension values for the given metric dimension name.
+        """List the dimension values for the given metric dimension name.
 
-        Lists the dimension values for the given metric dimension name.
+        List the dimension values for the given metric dimension name.
 
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
@@ -5327,7 +5493,7 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def get_app_components(self, test_run_id: str, **kwargs: Any) -> JSON:
+    async def list_app_components(self, test_run_id: str, **kwargs: Any) -> JSON:
         """Get associated app component (collection of azure resources) for the given test run.
 
         Get associated app component (collection of azure resources) for the given test run.
@@ -5384,7 +5550,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_app_components_request(
+        request = build_load_test_run_list_app_components_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,
@@ -5646,10 +5812,10 @@ class LoadTestRunOperations:
         return cast(JSON, deserialized)
 
     @distributed_trace_async
-    async def get_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> JSON:
-        """Get server metric configuration for the given test run.
+    async def list_server_metrics_config(self, test_run_id: str, **kwargs: Any) -> JSON:
+        """List server metrics configuration for the given test run.
 
-        Get server metric configuration for the given test run.
+        List server metrics configuration for the given test run.
 
         :param test_run_id: Unique name for the load test run, must contain only lower-case alphabetic,
          numeric, underscore or hyphen characters. Required.
@@ -5698,7 +5864,7 @@ class LoadTestRunOperations:
 
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
-        request = build_load_test_run_get_server_metrics_config_request(
+        request = build_load_test_run_list_server_metrics_config_request(
             test_run_id=test_run_id,
             api_version=self._config.api_version,
             headers=_headers,

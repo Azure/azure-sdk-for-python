@@ -92,7 +92,7 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
             return cls(pipeline_response, cast(JSON, deserialized), {})
         return cast(JSON, deserialized)
 
-    async def check_test_file_validation_status(
+    async def begin_test_run_status(
         self, test_id: str, *, refresh_time: int = 10, timeout: int = 60
     ) -> TestFileValidationStatus:
         """Check if JMX file is validated or not
@@ -140,7 +140,7 @@ class LoadTestRunOperations(LoadTestRunOperationsGenerated):
     def __init__(self, *args, **kwargs):
         super(LoadTestRunOperations, self).__init__(*args, **kwargs)
 
-    async def check_test_run_completed(
+    async def begin_get_test_script_validation_status(
         self, test_run_id: str, *, refresh_time: int = 10, timeout: int = 60
     ) -> TestRunStatus:
         """Check if test run is completed

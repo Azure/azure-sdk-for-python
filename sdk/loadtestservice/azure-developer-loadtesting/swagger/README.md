@@ -7,7 +7,7 @@ namespace: azure.developer.loadtesting
 package-name: azure-developer-loadtesting
 license-header: MICROSOFT_MIT_NO_VERSION
 title: LoadTestingClient
-package-version: 1.0.0
+package-version: 1.0.0b3
 package-mode: dataplane
 package-pprint-name: Azure Developer LoadTesting
 security: AADToken
@@ -26,23 +26,8 @@ directive:
       where: $["paths"]["/tests"].get
       transform: $["operationId"] = "Test_ListTests";
     - from: swagger-document 
-      where: $["paths"]["/tests/{testId}/app-components"].patch
-      transform: $["operationId"] = "Test_CreateOrUpdateAppComponents";
-    - from: swagger-document 
-      where: $["paths"]["/test-runs/{testRunId}/app-components"].patch
-      transform: $["operationId"] = "TestRun_CreateOrUpdateAppComponents";
-    - from: swagger-document 
       where: $["paths"]["/test-runs/{testRunId}/metric-dimension/{name}/values"].get
       transform: $["operationId"] = "TestRun_ListMetricDimensionValues";
-    - from: swagger-document 
-      where: $["paths"]["/tests/{testId}"].delete
-      transform: $["operationId"] = "Test_DeleteLoadTest";
-    - from: swagger-document 
-      where: $["paths"]["/tests/{testId}"].get
-      transform: $["operationId"] = "Test_GetLoadTest";
-    - from: swagger-document 
-      where: $["paths"]["/tests"].get
-      transform: $["operationId"] = "Test_ListLoadTests";
     - from: swagger-document 
       where: $["paths"]["/tests/{testId}/files/{fileName}"].put
       transform: $["operationId"] = "Test_UploadTestFile";
