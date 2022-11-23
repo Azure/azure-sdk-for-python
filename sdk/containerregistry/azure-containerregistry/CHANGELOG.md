@@ -9,6 +9,8 @@
 ### Bugs Fixed
 
 ### Other Changes
+* Change `audience` to an optional parameter in `ContainerRegistryClient`, the default value is `"https://management.azure.com"`.
+* Stop support for Germany cloud.
 * Python 3.6 is no longer supported. Please use Python version 3.7 or later.
 * Bumped minimum dependency on `azure-core` to `>=1.24.0`
 * Bumped minimum dependency on `msrest` to `>=0.7.1`
