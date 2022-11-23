@@ -148,6 +148,17 @@ class AsyncTransportMixin:
             offset -= 2
         return frame_header, channel, payload[offset:]
 
+    async def write(self, s):
+        async with self.socket_lock:
+            try:
+                await self._write(s)
+            except socket.timeout:
+                raise
+            except (OSError, IOError, socket.error) as exc:
+                if get_errno(exc) not in _UNAVAIL:
+                    self.connected = False
+                raise
+
     async def send_frame(self, channel, frame, **kwargs):
         header, performative = encode_frame(frame, **kwargs)
         if performative is None:
@@ -433,17 +444,6 @@ class AsyncTransport(
         self.sock = None
         self.connected = False
 
-    async def write(self, s):
-        async with self.socket_lock:
-            try:
-                await self._write(s)
-            except socket.timeout:
-                raise
-            except (OSError, IOError, socket.error) as exc:
-                if get_errno(exc) not in _UNAVAIL:
-                    self.connected = False
-                raise
-
     async def negotiate(self):
         if not self.sslopts:
             return
@@ -570,9 +570,10 @@ class WebSocketTransportAsync(
 
     async def close(self):
         """Do any preliminary work in shutting down the connection."""
-        await self.ws.close()
-        await self.session.close()
-        self.connected = False
+        async with self.socket_lock:
+            await self.ws.close()
+            await self.session.close()
+            self.connected = False
 
     async def _write(self, s):
         """Completely write a string (byte array) to the peer.
@@ -580,4 +581,7 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        await self.ws.send_bytes(s)
+        try:
+            await self.ws.send_bytes(s)
+        except BaseException as e:
+            raise
