@@ -30,7 +30,6 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_get_change_feed_events_by_page(self, **kwargs):
-        set_custom_default_matcher(ignore_query_ordering=True)
         storage_account_name = kwargs.pop("storage_account_name")
         storage_account_key = kwargs.pop("storage_account_key")
 
