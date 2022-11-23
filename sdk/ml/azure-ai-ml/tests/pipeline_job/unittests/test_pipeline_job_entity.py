@@ -195,6 +195,8 @@ class TestPipelineJobEntity:
         assert pipeline.jobs == {}
 
     def test_command_job_with_invalid_mode_type_in_pipeline_deserialize(self):
+        # this json file is to test whether the client can handle the dirty data of node type/mode of the originally
+        # submitted job due to API switching
         rest_job_file = "./tests/test_configs/pipeline_jobs/invalid/with_invalid_job_input_type_mode.json"
         with open(rest_job_file, "r") as f:
             job_dict = yaml.safe_load(f)
@@ -205,9 +207,9 @@ class TestPipelineJobEntity:
             "hello_python_world_job": {
                 "inputs": {
                     "sample_input_data": {
-                        'mode': 'ro_mount',
+                        'mode': "ro_mount",
                         "type": "uri_folder",
-                        'path': 'azureml://datastores/workspaceblobstore/paths/LocalUpload/22fd2a62-9759-4843-ab92-5bd79c35f6f0/data/',
+                        'path': "azureml://datastores/workspaceblobstore/paths/LocalUpload/22fd2a62-9759-4843-ab92-5bd79c35f6f0/data/",
                     },
                     "sample_input_string": {
                         "mode": "ro_mount",
@@ -215,7 +217,7 @@ class TestPipelineJobEntity:
                     },
                 },
                 "outputs": {"sample_output_data": "${{parent.outputs.pipeline_sample_output_data}}"},
-                'component': 'azureml:/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-eastus/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/components/azureml_anonymous/versions/9904ff48-9cb2-4733-ad1c-eb1eb9940a19',
+                'component': "azureml:/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-eastus/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/components/azureml_anonymous/versions/9904ff48-9cb2-4733-ad1c-eb1eb9940a19",
                 "type": "command",
                 "compute": "azureml:cpu-cluster",
             }
