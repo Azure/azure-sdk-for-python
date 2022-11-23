@@ -28,7 +28,7 @@ no-namespace-folders: true
 python: true
 openapi-type: data-plane
 version-tolerant: true
-package-version: 1.1.0b3
+package-version: 1.1.0b4
 add-credential: true
 credential-scopes: https://cognitiveservices.azure.com/.default
 black: true
@@ -130,6 +130,12 @@ directive:
           "AzureKey": []
         }
     ];
+
+# Fix too long of link in description.
+- from: swagger-document
+  where: $.info
+  transform: |
+    $["description"] = "The language service conversations API is a suite of natural language processing (NLP) skills that can be used to analyze structured conversations (textual or spoken). Further documentation can be found in https://docs.microsoft.com/azure/cognitive-services/language-service/overview.";
 
 # Fix Endpoint parameter description and format.
 - from: swagger-document
