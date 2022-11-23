@@ -699,7 +699,8 @@
         "amlworkspace",
         "euap",
         "automl",
-        "azureml"
+        "azureml",
+        "uaicopy"
       ]
     },
     {
