@@ -34,6 +34,7 @@ from ._generated.v2022_10_01_preview import models as _v2022_10_01_preview_model
 from ._check import is_language_api, string_index_type_compatibility
 from ._dict_mixin import DictMixin
 
+STRING_INDEX_TYPE_DEFAULT = "UnicodeCodePoint"
 
 def _get_indices(relation):
     return [int(s) for s in re.findall(r"\d+", relation)]
@@ -413,6 +414,7 @@ class RecognizeEntitiesResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         entities: List["CategorizedEntity"],
         warnings: List["TextAnalyticsWarning"],
@@ -469,6 +471,7 @@ class RecognizePiiEntitiesResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         entities: List["PiiEntity"],
         redacted_text: str,
@@ -535,6 +538,7 @@ class AnalyzeHealthcareEntitiesResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         entities: List["HealthcareEntity"],
         entity_relations: List["HealthcareRelation"],
@@ -713,6 +717,7 @@ class DetectLanguageResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         primary_language: DetectedLanguage,
         warnings: List["TextAnalyticsWarning"],
@@ -1133,6 +1138,7 @@ class ExtractKeyPhrasesResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         key_phrases: List[str],
         warnings: List[TextAnalyticsWarning],
@@ -1186,6 +1192,7 @@ class RecognizeLinkedEntitiesResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         entities: List["LinkedEntity"],
         warnings: List[TextAnalyticsWarning],
@@ -1248,6 +1255,7 @@ class AnalyzeSentimentResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         sentiment: str,
         confidence_scores: "SentimentConfidenceScores",
@@ -1319,7 +1327,7 @@ class DocumentError(DictMixin):
     :ivar str kind: Error kind - "DocumentError".
     """
 
-    def __init__(self, id: str, error: TextAnalyticsError) -> None:  # pylint: disable=redefined-builtin
+    def __init__(self, *, id: str, error: TextAnalyticsError) -> None:  # pylint: disable=redefined-builtin
         self.id = id
         self.error = error
         self.is_error: Literal[True] = True
@@ -1970,11 +1978,11 @@ class RecognizeEntitiesAction(DictMixin):
         self,
         *,
         model_version: Optional[str] = None,
-        string_index_type: str = "UnicodeCodePoint",
+        string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type
+        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
@@ -2054,12 +2062,12 @@ class AnalyzeSentimentAction(DictMixin):
         *,
         show_opinion_mining: Optional[bool] = None,
         model_version: Optional[str] = None,
-        string_index_type: str = "UnicodeCodePoint",
+        string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.model_version = model_version
         self.show_opinion_mining = show_opinion_mining
-        self.string_index_type = string_index_type
+        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
@@ -2146,13 +2154,13 @@ class RecognizePiiEntitiesAction(DictMixin):
         categories_filter: Optional[List[Union[str, PiiEntityCategory]]] = None,
         domain_filter: Optional[str] = None,
         model_version: Optional[str] = None,
-        string_index_type: str = "UnicodeCodePoint",
+        string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.model_version = model_version
         self.domain_filter = domain_filter
         self.categories_filter = categories_filter
-        self.string_index_type = string_index_type
+        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
@@ -2288,11 +2296,11 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         self,
         *,
         model_version: Optional[str] = None,
-        string_index_type: str = "UnicodeCodePoint",
+        string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type
+        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
@@ -2366,13 +2374,13 @@ class RecognizeCustomEntitiesAction(DictMixin):
         project_name: str,
         deployment_name: str,
         *,
-        string_index_type: str = "UnicodeCodePoint",
+        string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = disable_service_logs
-        self.string_index_type = string_index_type
+        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
 
     def __repr__(self) -> str:
         return (
@@ -2421,6 +2429,7 @@ class RecognizeCustomEntitiesResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         entities: List[CategorizedEntity],
         warnings: List[TextAnalyticsWarning],
@@ -2549,6 +2558,7 @@ class ClassifyDocumentResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         classifications: List["ClassificationCategory"],
         warnings: List[TextAnalyticsWarning],
@@ -2736,13 +2746,13 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         self,
         *,
         model_version: Optional[str] = None,
-        string_index_type: str = "UnicodeCodePoint",
+        string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         fhir_version: Optional[str] = None,
         document_type: Optional[Union[str, HealthcareDocumentType]] = None,
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type
+        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
         self.fhir_version = fhir_version
         self.document_type = document_type
@@ -2811,13 +2821,13 @@ class ExtractSummaryAction(DictMixin):
         self,
         *,
         model_version: Optional[str] = None,
-        string_index_type: str = "UnicodeCodePoint",
+        string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
         max_sentence_count: Optional[int] = None,
         order_by: Optional[str] = None,
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type
+        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
         self.max_sentence_count = max_sentence_count
         self.order_by = order_by
@@ -2867,6 +2877,7 @@ class ExtractSummaryResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         sentences: List["SummarySentence"],
         warnings: List[TextAnalyticsWarning],
@@ -2981,6 +2992,7 @@ class AbstractSummaryResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         summaries: List["AbstractiveSummary"],
         warnings: List[TextAnalyticsWarning],
@@ -3138,12 +3150,12 @@ class AbstractSummaryAction(DictMixin):
         *,
         sentence_count: Optional[int] = None,
         model_version: Optional[str] = None,
-        string_index_type: str = "UnicodeCodePoint",
+        string_index_type: Optional[str] = None,
         disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.sentence_count = sentence_count
         self.model_version = model_version
-        self.string_index_type = string_index_type
+        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
@@ -3187,6 +3199,7 @@ class DynamicClassificationResult(DictMixin):
 
     def __init__(
         self,
+        *,
         id: str,  # pylint: disable=redefined-builtin
         classifications: List[ClassificationCategory],
         warnings: List[TextAnalyticsWarning],

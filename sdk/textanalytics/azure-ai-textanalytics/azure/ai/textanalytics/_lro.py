@@ -118,7 +118,7 @@ class TextAnalysisLROPoller(Protocol[PollingReturnType_co]):
 
 class TextAnalyticsOperationResourcePolling(OperationResourcePolling):
     def __init__(
-        self, operation_location_header: str ="operation-location", show_stats: bool =False
+        self, operation_location_header: str ="operation-location", show_stats: Optional[bool] = False
     ) -> None:
         super().__init__(
             operation_location_header=operation_location_header

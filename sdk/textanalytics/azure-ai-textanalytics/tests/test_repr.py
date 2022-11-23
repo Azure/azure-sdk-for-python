@@ -355,7 +355,6 @@ class TestRepr():
         model = _models.DocumentError(
             id="1",
             error=text_analytics_error[0],
-            is_error=True
         )
         model_repr = f"DocumentError(id=1, error={text_analytics_error[1]}, is_error=True, kind=DocumentError)"
 
