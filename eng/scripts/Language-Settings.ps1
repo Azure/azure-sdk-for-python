@@ -106,7 +106,13 @@ function Get-python-PackageInfoFromPackageFile ($pkg, $workingDirectory)
     Expand-Archive -Path $pkg -DestinationPath $workFolder
   }
   else {
+    Write-Host "tar -zxvf $pkg -C $workFolder"
     tar -zxvf $pkg -C $workFolder
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Error "tar failed with exit code $LASTEXITCODE."
+      exit $LASTEXITCODE
+    }
   }
 
   $changeLogLoc = @(Get-ChildItem -Path $workFolder -Recurse -Include "CHANGELOG.md")[0]
@@ -150,7 +156,13 @@ function Publish-python-GithubIODocs ($DocLocation, $PublicArtifactLocation)
       New-Item -Path $UnzippedDocumentationPath -ItemType Directory
     }
 
+    Write-Host "tar -zxvf $ZippedDocumentationPath -C $UnzippedDocumentationPath"
     tar -zxvf $ZippedDocumentationPath -C $UnzippedDocumentationPath
+
+    if ($LASTEXITCODE -ne 0) {
+      Write-Error "tar failed with exit code $LASTEXITCODE."
+      exit $LASTEXITCODE
+    }
 
     $Version = $(Get-Content $VersionFileLocation).Trim()
 
