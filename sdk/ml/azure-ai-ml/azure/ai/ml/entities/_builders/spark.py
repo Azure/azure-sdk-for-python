@@ -501,7 +501,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                     code_path = code_path.resolve().absolute()
                 else:
                     validation_result.append_error(
-                        message=f"Code path {code_path} doesn't exist.", yaml_path=f"component.code"
+                        message=f"Code path {code_path} doesn't exist.", yaml_path="component.code"
                     )
                 entry_path = code_path / self.entry.entry
             else:
@@ -511,7 +511,7 @@ class Spark(BaseNode, SparkJobEntryMixin):
                     SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
                 if not entry_path.exists():
                     validation_result.append_error(
-                        message=f"Entry {entry_path} doesn't exist.", yaml_path=f"component.entry"
+                        message=f"Entry {entry_path} doesn't exist.", yaml_path="component.entry"
                     )
         return validation_result.try_raise(error_target=self._get_validation_error_target(),
                                            raise_error=raise_error)
