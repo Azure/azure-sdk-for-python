@@ -1,12 +1,12 @@
 from pathlib import Path
 
-import pydash
 import pytest
 
 from azure.ai.ml import load_component, Input
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.base import _resolve_builders_2_data_bindings
+from azure.ai.ml.exceptions import UserErrorException
 from test_utilities.utils import omit_with_wildcard
 
 from .._util import _DSL_TIMEOUT_SECOND
@@ -177,3 +177,24 @@ class TestInputOutputBuilder:
                 'type': 'pipeline'}
         }
         assert rest_pipeline_job["jobs"] == expected_pipeline_job
+
+    def test_pipeline_expression_bool_test(self) -> None:
+        # non-pipeline scenario, bool test will return True
+        input1 = PipelineInput(name="input1", owner="pipeline", meta=None)
+        if input1:
+            pass
+        else:
+            assert False, "bool test for PipelineInput in non-pipeline scenario should always return True."
+
+        # pipeline scenario, should raise UserErrorException
+        @pipeline
+        def pipeline_func(int_param: int):
+            if int_param:
+                print("should not enter this line.")
+
+        with pytest.raises(UserErrorException) as e:
+            pipeline_func(int_param=1)
+        assert str(e.value) == (
+            "Type <class 'azure.ai.ml.entities._job.pipeline._io.base.PipelineInput'> "
+            "is not supported for operation bool()."
+        )
