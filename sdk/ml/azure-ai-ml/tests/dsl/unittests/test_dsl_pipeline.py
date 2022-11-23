@@ -2251,16 +2251,6 @@ class TestDSLPipeline:
             "settings": {"_source": "DSL"},
         }
 
-    def test_spark_job_with_builder_in_pipeline_without_entry(self):
-        from test_configs.dsl_pipeline.spark_job_in_pipeline.invalid_pipeline import (
-            generate_dsl_pipeline_from_builder_without_entry as spark_job_in_pipeline,
-        )
-        pipeline = spark_job_in_pipeline()
-        result = pipeline._validate()
-        assert result.error_messages == {
-            'jobs.add_greeting_column.component.entry': 'Entry is a required field in SparkComponent.'
-        }
-
     def test_node_sweep_with_optional_input(self) -> None:
         component_yaml = components_dir / "helloworld_component_optional_input.yml"
         component_func = load_component(component_yaml)

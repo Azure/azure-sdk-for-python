@@ -491,18 +491,8 @@ class Spark(BaseNode, SparkJobEntryMixin):
         )
         validation_result = self._create_empty_validation_result()
         # validate whether component entry exists to ensure code path is correct, especially when code is default value
-        if isinstance(self.component, SparkComponent) and self.component.code is None:
-            validation_result.append_error(
-                message="Code is a required field in SparkComponent.",
-                yaml_path="component.code",
-            )
-        elif isinstance(self.component, SparkComponent) and self.component.entry is None:
-            validation_result.append_error(
-                message="Entry is a required field in SparkComponent.",
-                yaml_path="component.entry",
-            )
-        elif self.code is None or is_remote_code:
-            # skip validate when code is not a local path or code is None
+        if self.code is None or is_remote_code or  not isinstance(self.entry, SparkJobEntry):
+            # skip validate when code is not a local path or code is None, or self.entry is not SparkJobEntry object
             pass
         else:
             if not path.isabs(self.code):
