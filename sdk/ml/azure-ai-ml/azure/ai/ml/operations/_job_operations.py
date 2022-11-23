@@ -993,15 +993,17 @@ class JobOperations(_ScopeDependentOperations):
                 asset_type = AzureMLResourceType.DATA
                 if entry.type in [AssetTypes.MLFLOW_MODEL, AssetTypes.CUSTOM_MODEL]:
                     asset_type = AzureMLResourceType.MODEL
+
                 entry.path = self._orchestrators.get_asset_arm_id(entry.path, asset_type)
             else:  # relative local path, upload, transform to remote url
-                from azure.ai.ml.entities import Data
                 local_path = Path(base_path, entry.path).resolve()
-                asset_type = AzureMLResourceType.DATA
-                entry_object = Data(path=local_path, type=AssetTypes.URI_FILE)
-                entry.path = self._orchestrators.get_asset_arm_id(entry_object, asset_type)
-                entry.type = AssetTypes.URI_FILE
-                assert entry.type != AssetTypes.URI_FOLDER
+                entry.path = _upload_and_generate_remote_uri(
+                    self._operation_scope,
+                    self._datastore_operations,
+                    local_path,
+                    datastore_name=datastore_name,
+                    show_progress=self._show_progress,
+                )
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
