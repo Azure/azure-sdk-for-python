@@ -2318,4 +2318,3 @@ class TestDSLPipeline:
 
         validate_result = pipeline_job._validate()
         assert validate_result.passed
-
