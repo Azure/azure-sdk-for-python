@@ -147,7 +147,7 @@ class TextAnalyticsClient(TextAnalyticsClientBase):
         default_language: Optional[str] = None,
         default_country_hint: Optional[str] = None,
         api_version: Optional[Union[str, TextAnalyticsApiVersion]] = None,
-        **kwargs,
+        **kwargs: Any,
     ) -> None:
         super().__init__(
             endpoint=endpoint, credential=credential, api_version=api_version, **kwargs

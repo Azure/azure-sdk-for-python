@@ -1982,7 +1982,7 @@ class RecognizeEntitiesAction(DictMixin):
         disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
@@ -2067,7 +2067,7 @@ class AnalyzeSentimentAction(DictMixin):
     ) -> None:
         self.model_version = model_version
         self.show_opinion_mining = show_opinion_mining
-        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
@@ -2160,7 +2160,7 @@ class RecognizePiiEntitiesAction(DictMixin):
         self.model_version = model_version
         self.domain_filter = domain_filter
         self.categories_filter = categories_filter
-        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
@@ -2300,7 +2300,7 @@ class RecognizeLinkedEntitiesAction(DictMixin):
         disable_service_logs: Optional[bool] = None,
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
@@ -2380,7 +2380,7 @@ class RecognizeCustomEntitiesAction(DictMixin):
         self.project_name = project_name
         self.deployment_name = deployment_name
         self.disable_service_logs = disable_service_logs
-        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
 
     def __repr__(self) -> str:
         return (
@@ -2752,7 +2752,7 @@ class AnalyzeHealthcareEntitiesAction(DictMixin):
         document_type: Optional[Union[str, HealthcareDocumentType]] = None,
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
         self.fhir_version = fhir_version
         self.document_type = document_type
@@ -2827,7 +2827,7 @@ class ExtractSummaryAction(DictMixin):
         order_by: Optional[str] = None,
     ) -> None:
         self.model_version = model_version
-        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
         self.max_sentence_count = max_sentence_count
         self.order_by = order_by
@@ -3155,7 +3155,7 @@ class AbstractSummaryAction(DictMixin):
     ) -> None:
         self.sentence_count = sentence_count
         self.model_version = model_version
-        self.string_index_type = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
+        self.string_index_type: str = string_index_type if string_index_type is not None else STRING_INDEX_TYPE_DEFAULT
         self.disable_service_logs = disable_service_logs
 
     def __repr__(self) -> str:
