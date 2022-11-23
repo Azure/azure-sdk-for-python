@@ -194,7 +194,6 @@ class TestPipelineJobEntity:
         pipeline = load_pipeline_entity_from_rest_json(job_dict)
         assert pipeline.jobs == {}
 
-    @pytest.mark.skip("azure.ai.ml.exceptions.ValidationException: Job input type None is not supported as job input.")
     def test_command_job_with_invalid_mode_type_in_pipeline_deserialize(self):
         rest_job_file = "./tests/test_configs/pipeline_jobs/invalid/with_invalid_job_input_type_mode.json"
         with open(rest_job_file, "r") as f:
@@ -206,8 +205,9 @@ class TestPipelineJobEntity:
             "hello_python_world_job": {
                 "inputs": {
                     "sample_input_data": {
+                        'mode': 'ro_mount',
                         "type": "uri_folder",
-                        "path": "azureml://datastores/workspaceblobstore/paths/LocalUpload/553d1a28-7933-4017-8321-96c2a9f1fc44/data/",
+                        'path': 'azureml://datastores/workspaceblobstore/paths/LocalUpload/22fd2a62-9759-4843-ab92-5bd79c35f6f0/data/',
                     },
                     "sample_input_string": {
                         "mode": "ro_mount",
@@ -215,7 +215,7 @@ class TestPipelineJobEntity:
                     },
                 },
                 "outputs": {"sample_output_data": "${{parent.outputs.pipeline_sample_output_data}}"},
-                "component": "azureml:/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master/components/azureml_anonymous/versions/6ffc3ff9-8801-4cc4-9285-9f8052b946fe",
+                'component': 'azureml:/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-eastus/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/components/azureml_anonymous/versions/9904ff48-9cb2-4733-ad1c-eb1eb9940a19',
                 "type": "command",
                 "compute": "azureml:cpu-cluster",
             }
