@@ -17,6 +17,11 @@ cd <swagger-folder>
 autorest
 ```
 
+After generation, run the [postprocessing](https://github.com/Azure/autorest.python/blob/autorestv3/docs/customizations.md#postprocessing) script to fix linting issues in the runtime library.
+
+`autorest --postprocess --output-folder=<path-to-root-of-package> --perform-load=false --python`
+
+
 ### Settings
 
 ```yaml
