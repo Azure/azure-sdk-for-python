@@ -43,6 +43,7 @@ def test_http_logger(http_request, http_response):
     universal_request = http_request('GET', 'http://localhost/')
     http_response = create_http_response(http_response, universal_request, None)
     http_response.status_code = 202
+    http_response.headers["x-ms-error-code"] = "ERRORCODE"
     request = PipelineRequest(universal_request, PipelineContext(None))
 
     # Basics

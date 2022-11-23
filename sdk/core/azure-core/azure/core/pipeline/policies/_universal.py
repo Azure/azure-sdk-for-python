@@ -383,6 +383,10 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         "User-Agent",
         "WWW-Authenticate", # OAuth Challenge header.
     ])
+    # Backward compatible for DEFAULT_HEADERS_WHITELIST but no documentation needed
+    # https://github.com/Azure/azure-sdk-for-python/issues/26331
+    DEFAULT_HEADERS_WHITELIST = DEFAULT_HEADERS_ALLOWLIST  # :meta private:
+
     REDACTED_PLACEHOLDER = "REDACTED"
     MULTI_RECORD_LOG = "AZURE_SDK_LOGGING_MULTIRECORD"
 
@@ -392,13 +396,6 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         )
         self.allowed_query_params = set()
         self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
-
-    def __getattribute__(self, __name: str) -> Any:
-        # Backward compatible for DEFAULT_HEADERS_WHITELIST but no documentation needed
-        # https://github.com/Azure/azure-sdk-for-python/issues/26331
-        if __name == "DEFAULT_HEADERS_WHITELIST":
-            __name = "DEFAULT_HEADERS_ALLOWLIST"
-        return super().__getattribute__(__name)
 
     def _redact_query_param(self, key, value):
         lower_case_allowed_query_params = [
