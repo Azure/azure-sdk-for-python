@@ -15,7 +15,7 @@ from typing import Any, Callable, Dict, TypeVar, List
 from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.entities import Data, PipelineJob, PipelineJobSettings, Model
 from azure.ai.ml.entities._builders.pipeline import Pipeline
-from azure.ai.ml.entities._inputs_outputs import Input, is_parameter_group
+from azure.ai.ml.entities._inputs_outputs import Input, is_group
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput, _GroupAttrDict
 from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpression
 from azure.ai.ml.exceptions import (
@@ -277,8 +277,8 @@ def _validate_args(func, args, kwargs, non_pipeline_inputs):
 
     def _is_supported_data_type(_data):
         return (
-            isinstance(_data, SUPPORTED_INPUT_TYPES)
-            or is_parameter_group(_data)
+                isinstance(_data, SUPPORTED_INPUT_TYPES)
+                or is_group(_data)
         )
 
     for pipeline_input_name in provided_args:

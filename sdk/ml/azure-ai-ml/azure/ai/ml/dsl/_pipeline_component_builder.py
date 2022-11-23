@@ -421,7 +421,7 @@ def _build_pipeline_parameter(
         func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_inputs=None):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
-    # @parameter_group
+    # @group
     # class Group:
     #   key = 'val'
     #
