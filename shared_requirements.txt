@@ -179,6 +179,7 @@ yarl<2.0,>=1.0
 #override azure-mgmt-portal msrest>=0.7.1
 #override azure-search-documents azure-core<2.0.0,>=1.24.0
 #override azure-mgmt-managementgroups typing-extensions>=4.3.0; python_version<'3.8.0'
+#override azure-mgmt-billingbenefits msrest>=0.7.1
 #override azure-mgmt-hybridnetwork azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-quota azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-ai-formrecognizer azure-core<2.0.0,>=1.23.0
@@ -628,6 +629,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-datadog typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-oep azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-communication msrest>=0.7.1
+#override azure-mgmt-billingbenefits typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-communication azure-mgmt-core>=1.3.2,<2.0.0
 #override azure-mgmt-marketplaceordering msrest>=0.7.1
 #override azure-mgmt-marketplaceordering azure-mgmt-core>=1.3.2,<2.0.0
@@ -736,6 +738,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 # azure-ai-ml
 pyyaml<7.0.0,>=5.1.0
 marshmallow<4.0.0,>=3.5
+#override azure-mgmt-billingbenefits azure-mgmt-core>=1.3.2,<2.0.0
 jsonschema<5.0.0,>=4.0.0
 tqdm<=5.0.0
 strictyaml<2.0.0
