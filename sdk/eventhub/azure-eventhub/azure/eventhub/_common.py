@@ -423,9 +423,11 @@ class EventData(object):
             if self.body_type != AmqpMessageBodyType.DATA:
                 return self._decode_non_data_body_as_str(encoding=encoding)
             return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
-        except TypeError:
+        except UnicodeDecodeError as e:
+            raise TypeError(f"Message data is not compatible with string type: {e}")
+        except TypeError as e:
             return str(data)
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=broad-except
             pass
         try:
             return cast(bytes, data).decode(encoding)

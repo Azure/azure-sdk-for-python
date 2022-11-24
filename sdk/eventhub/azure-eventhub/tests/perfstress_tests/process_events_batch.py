@@ -28,7 +28,7 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
                             pass
                 
                 # Consume properties and body.
-                _ = [repr(e) for e in events]
+                _ = [(list(e.body), str(e)) for e in events]
 
                 if self.args.checkpoint_interval:
                     self._partition_event_count[partition_context.partition_id] += len(events)
@@ -53,7 +53,7 @@ class ProcessEventsBatchTest(_EventHubProcessorTest):
                             pass
 
                 # Consume properties and body.
-                _ = [repr(e) for e in events]
+                _ = [(list(e.body), str(e)) for e in events]
 
                 if self.args.checkpoint_interval:
                     self._partition_event_count[partition_context.partition_id] += len(events)
