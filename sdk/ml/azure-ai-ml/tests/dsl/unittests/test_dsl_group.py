@@ -335,6 +335,25 @@ class TestDSLGroup:
             pipeline_job.inputs.group = "test"
         assert "'group' is expected to be a parameter group, but got <class 'str'>." in str(e)
 
+    def test_group_outputs(self):
+        pass
+
+    def test_group_port_inputs(self):
+        hello_world_component_yaml = "./tests/test_configs/components/helloworld_component.yml"
+        hello_world_component_func = load_component(hello_world_component_yaml)
+
+        @group
+        class PortInputs:
+            input1: Input(type="uri_file")
+            input2: Input(type="uri_folder")
+
+        @pipeline
+        def my_pipeline(inputs: PortInputs):
+            hello_world_component_func(component_in_path=inputs.input1)
+
+        pipeline_job = my_pipeline()
+        assert pipeline_job._to_dict()["jobs"] == {}
+
     @pytest.mark.skip(reason="Input group item .result() is not supported currently.")
     def test_input_group_result(self):
         @group

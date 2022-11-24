@@ -155,8 +155,12 @@ def group(_cls):
             # keep original annotation for Outputs
             if isinstance(anno, Output):
                 return anno
-            # convert to primitive type annotation for Inputs
-            return IOConstants.PRIMITIVE_STR_2_TYPE[anno.type]
+            try:
+                # convert to primitive type annotation if possible
+                return IOConstants.PRIMITIVE_STR_2_TYPE[anno.type]
+            except KeyError:
+                # otherwise, keep original annotation
+                return anno
 
         locals = {f"_type_{key}": _get_data_type_from_annotation(val) for key, val in fields.items()}
         # Collect field defaults if val is parameter and is optional
