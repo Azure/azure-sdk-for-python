@@ -16,6 +16,7 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
+        "Content-Security-Policy-Report-Only": "sanitized",
         "Content-Type": "application/json; charset=utf-8",
         "Date": "sanitized",
         "P3P": "sanitized",
@@ -194,7 +195,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "291ms"
+        "X-Processing-Time": "100ms"
       },
       "ResponseBody": {
         "identity": {
@@ -233,11 +234,11 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "171ms"
+        "X-Processing-Time": "176ms"
       },
       "ResponseBody": {
         "token": "sanitized",
-        "expiresOn": "2022-11-25T11:35:29.2534948\u002B00:00"
+        "expiresOn": "2022-11-25T11:44:31.3722567\u002B00:00"
       }
     },
     {
@@ -263,7 +264,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "264ms"
+        "X-Processing-Time": "476ms"
       },
       "ResponseBody": null
     }

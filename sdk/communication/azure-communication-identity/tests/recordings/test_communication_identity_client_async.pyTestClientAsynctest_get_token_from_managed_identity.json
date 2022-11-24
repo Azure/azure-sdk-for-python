@@ -25,7 +25,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "98ms"
+        "X-Processing-Time": "100ms"
       },
       "ResponseBody": {
         "identity": {
@@ -63,11 +63,11 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "170ms"
+        "X-Processing-Time": "177ms"
       },
       "ResponseBody": {
         "token": "sanitized",
-        "expiresOn": "2022-11-25T11:34:31.8579916\u002B00:00"
+        "expiresOn": "2022-11-25T11:46:46.4558089\u002B00:00"
       }
     }
   ],
