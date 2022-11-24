@@ -596,7 +596,6 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
-    @recorded_by_proxy_async
     async def test_construct_container_registry_client(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority)
@@ -604,8 +603,6 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
         client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential, audience="https://microsoft.com")
         with pytest.raises(ClientAuthenticationError):
             properties = await client.get_repository_properties(HELLO_WORLD)
-        with pytest.raises(TypeError):
-            client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
 
     @acr_preparer()
     @recorded_by_proxy_async
