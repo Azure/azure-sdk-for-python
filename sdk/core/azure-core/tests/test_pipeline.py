@@ -66,6 +66,9 @@ def test_default_http_logging_policy(http_request):
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST
     assert http_logging_policy.allowed_header_names == HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST
     assert "WWW-Authenticate" in http_logging_policy.allowed_header_names
+    # Testing I can replace the set entirely
+    HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST = set(HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)
+    HttpLoggingPolicy.DEFAULT_HEADERS_WHITELIST = set(HttpLoggingPolicy.DEFAULT_HEADERS_ALLOWLIST)
 
 @pytest.mark.parametrize("http_request", HTTP_REQUESTS)
 def test_pass_in_http_logging_policy(http_request):

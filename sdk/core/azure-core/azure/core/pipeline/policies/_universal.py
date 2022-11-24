@@ -351,8 +351,19 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
 
+class _HiddenClassProperties(type):
+    # Backward compatible for DEFAULT_HEADERS_WHITELIST but no documentation needed
+    # https://github.com/Azure/azure-sdk-for-python/issues/26331
 
-class HttpLoggingPolicy(SansIOHTTPPolicy):
+    @property
+    def DEFAULT_HEADERS_WHITELIST(cls):
+        return cls.DEFAULT_HEADERS_ALLOWLIST
+
+    @DEFAULT_HEADERS_WHITELIST.setter
+    def DEFAULT_HEADERS_WHITELIST(self, value):
+        self.DEFAULT_HEADERS_ALLOWLIST = value
+
+class HttpLoggingPolicy(SansIOHTTPPolicy, metaclass=_HiddenClassProperties):
     """The Pipeline policy that handles logging of HTTP requests and responses.
     """
 
@@ -383,9 +394,6 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
         "User-Agent",
         "WWW-Authenticate", # OAuth Challenge header.
     ])
-    # Backward compatible for DEFAULT_HEADERS_WHITELIST but no documentation needed
-    # https://github.com/Azure/azure-sdk-for-python/issues/26331
-    DEFAULT_HEADERS_WHITELIST = DEFAULT_HEADERS_ALLOWLIST  # :meta private:
 
     REDACTED_PLACEHOLDER = "REDACTED"
     MULTI_RECORD_LOG = "AZURE_SDK_LOGGING_MULTIRECORD"
