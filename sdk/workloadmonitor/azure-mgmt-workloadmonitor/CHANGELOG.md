@@ -4,7 +4,7 @@
 
 ### Other Changes
 
-  - Deprecated  this package. For more info, please see https://github.com/azure-deprecation/dashboard/issues/239
+  - Deprecated this package. For more info, please see https://github.com/azure-deprecation/dashboard/issues/239
 
 ## 1.0.0b3 (2022-10-27)
 
