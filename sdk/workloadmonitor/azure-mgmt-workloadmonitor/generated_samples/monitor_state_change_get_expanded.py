@@ -14,7 +14,7 @@ from azure.mgmt.workloadmonitor import WorkloadMonitorAPI
     pip install azure-identity
     pip install azure-mgmt-workloadmonitor
 # USAGE
-    python get_monitor_state_change_with_default_values.py
+    python monitor_state_change_get_expanded.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -40,6 +40,6 @@ def main():
     print(response)
 
 
-# x-ms-original-file: specification/workloadmonitor/resource-manager/Microsoft.WorkloadMonitor/preview/2020-01-13-preview/examples/MonitorStateChange_GetDefault.json
+# x-ms-original-file: specification/workloadmonitor/resource-manager/Microsoft.WorkloadMonitor/preview/2020-01-13-preview/examples/MonitorStateChange_GetExpanded.json
 if __name__ == "__main__":
     main()

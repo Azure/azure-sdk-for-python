@@ -40,7 +40,7 @@ class WorkloadMonitorAPIConfiguration(Configuration):  # pylint: disable=too-man
 
     def __init__(self, credential: "TokenCredential", **kwargs: Any) -> None:
         super(WorkloadMonitorAPIConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2020-01-13-preview")  # type: Literal["2020-01-13-preview"]
+        api_version: Literal["2020-01-13-preview"] = kwargs.pop("api_version", "2020-01-13-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
@@ -51,10 +51,7 @@ class WorkloadMonitorAPIConfiguration(Configuration):  # pylint: disable=too-man
         kwargs.setdefault("sdk_moniker", "mgmt-workloadmonitor/{}".format(VERSION))
         self._configure(**kwargs)
 
-    def _configure(
-        self, **kwargs  # type: Any
-    ):
-        # type: (...) -> None
+    def _configure(self, **kwargs: Any) -> None:
         self.user_agent_policy = kwargs.get("user_agent_policy") or policies.UserAgentPolicy(**kwargs)
         self.headers_policy = kwargs.get("headers_policy") or policies.HeadersPolicy(**kwargs)
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)

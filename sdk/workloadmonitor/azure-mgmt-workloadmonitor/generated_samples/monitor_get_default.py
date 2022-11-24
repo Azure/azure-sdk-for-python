@@ -14,7 +14,7 @@ from azure.mgmt.workloadmonitor import WorkloadMonitorAPI
     pip install azure-identity
     pip install azure-mgmt-workloadmonitor
 # USAGE
-    python get_monitor_state_changes_with_default_values.py
+    python monitor_get_default.py
 
     Before run the sample, please set the values of the client ID, tenant ID and client secret
     of the AAD application as environment variables: AZURE_CLIENT_ID, AZURE_TENANT_ID,
@@ -28,18 +28,17 @@ def main():
         credential=DefaultAzureCredential(),
     )
 
-    response = client.health_monitors.list_state_changes(
+    response = client.health_monitors.get(
         subscription_id="bc27da3b-3ba2-4e00-a6ec-1fde64aa1e21",
         resource_group_name="tugamidiAlerts",
         provider_name="Microsoft.Compute",
         resource_collection_name="virtualMachines",
         resource_name="linuxEUS",
-        monitor_id="logical-disks|C@3A",
+        monitor_id="logical-disks|C@3A|free-space",
     )
-    for item in response:
-        print(item)
+    print(response)
 
 
-# x-ms-original-file: specification/workloadmonitor/resource-manager/Microsoft.WorkloadMonitor/preview/2020-01-13-preview/examples/MonitorHistory_GetDefault.json
+# x-ms-original-file: specification/workloadmonitor/resource-manager/Microsoft.WorkloadMonitor/preview/2020-01-13-preview/examples/Monitor_GetDefault.json
 if __name__ == "__main__":
     main()

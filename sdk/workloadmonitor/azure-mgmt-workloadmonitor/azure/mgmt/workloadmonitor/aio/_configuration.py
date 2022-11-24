@@ -40,7 +40,7 @@ class WorkloadMonitorAPIConfiguration(Configuration):  # pylint: disable=too-man
 
     def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(WorkloadMonitorAPIConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2020-01-13-preview")  # type: Literal["2020-01-13-preview"]
+        api_version: Literal["2020-01-13-preview"] = kwargs.pop("api_version", "2020-01-13-preview")
 
         if credential is None:
             raise ValueError("Parameter 'credential' must not be None.")
