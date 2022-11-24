@@ -10,7 +10,7 @@ from azure.communication.identity import CommunicationIdentityClient
 from azure.communication.identity import CommunicationTokenScope
 from devtools_testutils import AzureRecordedTestCase, is_live, recorded_by_proxy
 from _shared.utils import get_http_logging_policy
-from _shared.fake_token_credential import FakeTokenCredential
+from devtools_testutils.fake_credentials import FakeTokenCredential
 from utils import is_token_expiration_within_allowed_deviation, generate_teams_user_aad_token, \
     skip_get_token_for_teams_user_test
 from azure.identity import DefaultAzureCredential

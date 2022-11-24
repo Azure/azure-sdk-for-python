@@ -10,23 +10,22 @@ from azure.communication.identity.aio import CommunicationIdentityClient
 from azure.communication.identity import CommunicationTokenScope
 from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.aio import recorded_by_proxy_async
-from _shared.communication_service_preparer import CommunicationPreparer
 from _shared.utils import get_http_logging_policy
-from _shared.fake_token_credential import FakeTokenCredential
+from devtools_testutils.fake_credentials_async import AsyncFakeCredential
 from utils import is_token_expiration_within_allowed_deviation, generate_teams_user_aad_token, \
     skip_get_token_for_teams_user_test
 from azure.identity.aio import DefaultAzureCredential
-from acs_identity_test_case import ACSIdentityTestCaseAsync
+from acs_identity_test_case import ACSIdentityTestCase
 
-class TestClientAsync(ACSIdentityTestCaseAsync):
+@pytest.mark.asyncio
+class TestClientAsync(ACSIdentityTestCase):
     def setup_method(self):
         super().setUp()
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_create_user_from_managed_identity(self):
         if not is_live():
-            credential = FakeTokenCredential()
+            credential = AsyncFakeCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
@@ -39,7 +38,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
 
         assert user.properties.get('id') is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_create_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -51,7 +49,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
 
         assert user.properties.get('id') is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_create_user_and_token(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -64,7 +61,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_custom_minimum_validity(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -84,7 +80,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         if is_live():
             assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_custom_maximum_validity(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -104,7 +99,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         if is_live():
             assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_custom_validity_under_minimum_allowed(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -122,7 +116,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_custom_validity_over_maximum_allowed(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -140,11 +133,10 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_from_managed_identity(self):
         if not is_live():
-            credential = FakeTokenCredential()
+            credential = AsyncFakeCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
@@ -159,7 +151,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -173,7 +164,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_with_custom_minimum_validity(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -194,7 +184,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         if is_live():
             assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_with_custom_maximum_validity(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -215,7 +204,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         if is_live():
             assert is_token_expiration_within_allowed_deviation(token_expires_in, token_response.expires_on)
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_with_custom_validity_under_minimum_allowed(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -234,7 +222,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_with_custom_validity_over_maximum_allowed(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -253,11 +240,10 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_revoke_tokens_from_managed_identity(self):
         if not is_live():
-            credential = FakeTokenCredential()
+            credential = AsyncFakeCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
@@ -273,7 +259,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_revoke_tokens(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -288,11 +273,10 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert user.properties.get('id') is not None
         assert token_response.token is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_delete_user_from_managed_identity(self):
         if not is_live():
-            credential = FakeTokenCredential()
+            credential = AsyncFakeCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
@@ -306,7 +290,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
 
         assert user.properties.get('id') is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_delete_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -319,7 +302,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
 
         assert user.properties.get('id') is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_create_user_and_token_with_no_scopes(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -334,7 +316,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert ex is not None
         assert str(ex.value) == "'accessToken'"
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_delete_user_with_no_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -349,7 +330,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert ex is not None
         assert str(ex.value) == "'NoneType' object has no attribute 'properties'"
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_revoke_tokens_with_no_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -364,7 +344,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert ex is not None
         assert str(ex.value) == 'No value for given attribute'
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_with_no_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -379,7 +358,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert ex is not None
         assert str(ex.value) == "'NoneType' object has no attribute 'properties'"
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_with_no_scopes(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -395,13 +373,12 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert ex is not None
         assert str(ex.value.error.code) == 'ValidationError'
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_from_managed_identity(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
             return
         if not is_live():
-            credential = FakeTokenCredential()
+            credential = AsyncFakeCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
@@ -416,7 +393,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
 
         assert token_response.token is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_valid_params(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
@@ -432,7 +408,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
 
         assert token_response.token is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_invalid_token(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
@@ -448,7 +423,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_empty_token(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
@@ -464,7 +438,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_expired_token(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
@@ -482,7 +455,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_empty_client_id(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
@@ -499,7 +471,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_invalid_client_id(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
@@ -516,7 +487,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_wrong_client_id(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
@@ -533,7 +503,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_invalid_user_object_id(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
@@ -550,7 +519,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_empty_user_object_id(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
@@ -567,7 +535,6 @@ class TestClientAsync(ACSIdentityTestCaseAsync):
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
-    @CommunicationPreparer()
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_wrong_user_object_id(self):
         if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
