@@ -7,8 +7,8 @@ import pytest
 from azure.ai.ml import Input, load_component
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.dsl import pipeline
-from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
-from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, is_parameter_group
+from azure.ai.ml.dsl._group_decorator import group
+from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, is_group
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
 from test_utilities.utils import omit_with_wildcard
 
@@ -19,7 +19,7 @@ from .._util import _DSL_TIMEOUT_SECOND
 @pytest.mark.timeout(_DSL_TIMEOUT_SECOND)
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
-class TestDSLPipeline:
+class TestDSLGroup:
     def test_validate_conflict_key(self) -> None:
         def validator(keys, assert_valid=True):
             if assert_valid:
@@ -62,7 +62,7 @@ class TestDSLPipeline:
             Option1 = "Option1"
             Option2 = "Option2"
 
-        @parameter_group
+        @group
         class MixedGroup:
             int_param: int
             str_param: str
@@ -95,7 +95,7 @@ class TestDSLPipeline:
         assert var.int_param == 2
 
     def test_group_items(self):
-        @parameter_group
+        @group
         class MixedGroup:
             int_param0: Input(type="integer")
             int_param1: int
@@ -121,26 +121,26 @@ class TestDSLPipeline:
         assert val.__dict__ == {"int_param0": 0, "int_param1": 1, "int_param2": 2, "int_param4": 9, "int_param3": 9}
 
     def test_create_nested_group(self):
-        @parameter_group
+        @group
         class SubGroup:
             param: int = 1
 
         with pytest.raises(ValueError) as e:
 
-            @parameter_group
+            @group
             class ItemGroup:
                 group_param: SubGroup = "str"
 
             ItemGroup()
         assert "Default value must be instance of parameter group" in str(e)
 
-        @parameter_group
+        @group
         class ItemGroup:
             group_param: SubGroup = SubGroup(param=2)
 
         assert hasattr(ItemGroup, IOConstants.GROUP_ATTR_NAME) is True
         assert isinstance(getattr(ItemGroup, IOConstants.GROUP_ATTR_NAME).values["group_param"], GroupInput)
-        assert is_parameter_group(ItemGroup.group_param) is True
+        assert is_group(ItemGroup.group_param) is True
         var = ItemGroup()
         assert isinstance(var.group_param.param, PipelineInput)
         assert var.group_param.param._data == 2
@@ -149,7 +149,7 @@ class TestDSLPipeline:
         # Test 'Input is not supported in parameter group' limitation
         with pytest.raises(Exception) as e:
 
-            @parameter_group
+            @group
             class Group:
                 param: Input
 
@@ -158,38 +158,38 @@ class TestDSLPipeline:
 
         with pytest.raises(Exception) as e:
 
-            @parameter_group
+            @group
             class Group:
                 param: Output
 
             Group()
         assert "Parameter 'param' with type 'Output' is not supported in parameter group." in str(e)
 
-    def test_parameter_group_inherit(self):
-        @parameter_group
+    def test_group_inherit(self):
+        @group
         class SubGroup:
             int_param0: int
             int_param1: int = 1
 
-        @parameter_group
+        @group
         class Group(SubGroup):
             int_param3: int
             int_param1: int
 
-        group = Group(int_param0=0, int_param1=1, int_param3=3)
-        assert group.int_param0 == 0
-        assert group.int_param1 == 1
-        assert group.int_param3 == 3
+        test_group = Group(int_param0=0, int_param1=1, int_param3=3)
+        assert test_group.int_param0 == 0
+        assert test_group.int_param1 == 1
+        assert test_group.int_param3 == 3
 
-    def test_parameter_group_inherit_parameter_order(self):
-        @parameter_group
+    def test_group_inherit_parameter_order(self):
+        @group
         class SubGroup0:
             int_param0: int
             int_param1: int
             int_param2: int
             int_param3: int = 3
 
-        @parameter_group
+        @group
         class SubGroup1:
             int_param3: int
             int_param4: int
@@ -199,7 +199,7 @@ class TestDSLPipeline:
         # Merge 0 with 1, order should be:
         # [int_param0, int_param2, int_param3, int_param4], [int_param1=1, int_param6=6]
 
-        @parameter_group
+        @group
         class Group(SubGroup1, SubGroup0):
             int_param1: int
             int_param5: int
@@ -233,11 +233,11 @@ class TestDSLPipeline:
             Option2 = "option2"
             Option3 = "option3"
 
-        @parameter_group
+        @group
         class SubParamClass:
             int_param: Input(min=1.0, max=5.0, type="integer")
 
-        @parameter_group
+        @group
         class ParamClass:
             enum_param: EnumOps
             sub: SubParamClass = SubParamClass(int_param=1)
@@ -278,11 +278,11 @@ class TestDSLPipeline:
         assert job_dict["inputs"] == {"data": 1, "group.enum_param": "option3", "group.sub.int_param": 5}
 
     def test_pipeline_with_default_group_value(self):
-        @parameter_group
+        @group
         class SubParamClass:
             int_param: Input(min=1.0, max=5.0, type="integer") = 1
 
-        @parameter_group
+        @group
         class ParamClass:
             str_param: str = "string_by_default"
             sub: SubParamClass = SubParamClass()
@@ -303,7 +303,7 @@ class TestDSLPipeline:
         }
 
     def test_assign_group_invalid(self):
-        @parameter_group
+        @group
         class ParamClass:
             str_param: str = "string_by_default"
 
@@ -327,7 +327,7 @@ class TestDSLPipeline:
         # Note: this is the expected behavior.
         assert (
             pipeline_job._to_dict()["inputs"]["str_param"]
-            == "TestDSLPipeline.test_assign_group_invalid.<locals>.ParamClass(str_param='string_by_default')"
+            == "TestDSLGroup.test_assign_group_invalid.<locals>.ParamClass(str_param='string_by_default')"
         )
 
         pipeline_job.inputs.str_param = "test"
@@ -335,13 +335,13 @@ class TestDSLPipeline:
             pipeline_job.inputs.group = "test"
         assert "'group' is expected to be a parameter group, but got <class 'str'>." in str(e)
 
-    @pytest.mark.skip(reason="Parameter group item .result() is not supported currently.")
-    def test_parameter_group_result(self):
-        @parameter_group
+    @pytest.mark.skip(reason="Input group item .result() is not supported currently.")
+    def test_input_group_result(self):
+        @group
         class SubParamClass:
             int_param: Input(min=1.0, max=5.0, type="integer") = 1
 
-        @parameter_group
+        @group
         class ParamClass:
             str_param: str
             sub: SubParamClass = SubParamClass()

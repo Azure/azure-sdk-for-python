@@ -8,7 +8,7 @@ from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
 
 from .input import Input
-from .utils import is_parameter_group
+from .utils import is_group
 
 
 class GroupInput(Input):
@@ -89,7 +89,7 @@ class GroupInput(Input):
     @staticmethod
     def custom_class_value_to_attr_dict(value, group_names=None):
         """Convert custom parameter group class object to GroupAttrDict."""
-        if not is_parameter_group(value):
+        if not is_group(value):
             return value
         group_definition = getattr(value, IOConstants.GROUP_ATTR_NAME)
         group_names = [*group_names] if group_names else []
@@ -97,7 +97,7 @@ class GroupInput(Input):
         from .._job.pipeline._io import PipelineInput
 
         for k, v in value.__dict__.items():
-            if is_parameter_group(v):
+            if is_group(v):
                 attr_dict[k] = GroupInput.custom_class_value_to_attr_dict(v, [*group_names, k])
                 continue
             data = v.value if isinstance(v, PyEnum) else v
@@ -173,12 +173,12 @@ class GroupInput(Input):
     def _update_default(self, default_value=None):  # pylint: disable=protected-access
         default_cls = type(default_value)
 
-        # Assert '__parameter_group__' must in the class of default value
+        # Assert '__dsl_group__' must in the class of default value
         if self._is_group_attr_dict(default_value):
             self.default = default_value
             self.optional = False
             return
-        if default_value and not is_parameter_group(default_cls):
+        if default_value and not is_group(default_cls):
             raise ValueError(f"Default value must be instance of parameter group, got {default_cls}.")
         if hasattr(default_value, "__dict__"):
             # Convert default value with customer type to _AttrDict
