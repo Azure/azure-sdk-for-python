@@ -491,7 +491,7 @@ def _get_deserialize_callable_from_annotation(
             def _deserialize_with_union(union_annotation: typing._GenericAlias, obj):
                 for t in union_annotation.__args__:
                     try:
-                        return _deserialize(t, obj)
+                        return _deserialize(t, obj, module)
                     except DeserializationError:
                         pass
                 raise DeserializationError()
@@ -538,7 +538,10 @@ def _get_deserialize_callable_from_annotation(
             ):
                 if obj is None:
                     return obj
-                return {_deserialize(key_deserializer, k): _deserialize(value_deserializer, v) for k, v in obj.items()}
+                return {
+                    _deserialize(key_deserializer, k, module): _deserialize(value_deserializer, v, module)
+                    for k, v in obj.items()
+                }
 
             return functools.partial(
                 _deserialize_dict,
@@ -557,7 +560,8 @@ def _get_deserialize_callable_from_annotation(
                     if obj is None:
                         return obj
                     return type(obj)(
-                        _deserialize(deserializer, entry) for entry, deserializer in zip(obj, entry_deserializers)
+                        _deserialize(deserializer, entry, module)
+                        for entry, deserializer in zip(obj, entry_deserializers)
                     )
 
                 entry_deserializers = [
@@ -572,7 +576,7 @@ def _get_deserialize_callable_from_annotation(
             ):
                 if obj is None:
                     return obj
-                return type(obj)(_deserialize(deserializer, entry) for entry in obj)
+                return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
 
             return functools.partial(_deserialize_sequence, deserializer)
     except (TypeError, IndexError, AttributeError, SyntaxError):
@@ -613,10 +617,12 @@ def _deserialize_with_callable(
         raise DeserializationError() from e
 
 
-def _deserialize(deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]], value: typing.Any):
+def _deserialize(
+    deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]], value: typing.Any, module: str = ""
+):
     if isinstance(value, PipelineResponse):
         value = value.http_response.json()
-    deserializer = _get_deserialize_callable_from_annotation(deserializer, "")
+    deserializer = _get_deserialize_callable_from_annotation(deserializer, module)
     return _deserialize_with_callable(deserializer, value)
 
 
