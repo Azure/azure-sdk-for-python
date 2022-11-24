@@ -28,19 +28,8 @@ from azure.core.pipeline.policies import HttpLoggingPolicy
 from ._authentication import ARMChallengeAuthenticationPolicy
 from ._base import ARMAutoResourceProviderRegistrationPolicy
 
-class _HiddenClassProperties(type):
-    # Backward compatible for DEFAULT_HEADERS_WHITELIST but no documentation needed
-    # https://github.com/Azure/azure-sdk-for-python/issues/26331
 
-    @property
-    def DEFAULT_HEADERS_WHITELIST(cls):
-        return cls.DEFAULT_HEADERS_ALLOWLIST
-
-    @DEFAULT_HEADERS_WHITELIST.setter
-    def DEFAULT_HEADERS_WHITELIST(self, value):
-        self.DEFAULT_HEADERS_ALLOWLIST = value
-
-class ARMHttpLoggingPolicy(HttpLoggingPolicy, metaclass=_HiddenClassProperties):
+class ARMHttpLoggingPolicy(HttpLoggingPolicy):
     """HttpLoggingPolicy with ARM specific safe headers fopr loggers.
     """
 
