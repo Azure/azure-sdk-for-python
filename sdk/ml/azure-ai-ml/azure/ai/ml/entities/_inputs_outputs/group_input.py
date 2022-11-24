@@ -41,9 +41,10 @@ class GroupInput(Input):
         default_dict = {}
         # Note: no top-level group names at this time.
         for k, v in self.values.items():
-            # skip create default for outputs
+            # skip create default for outputs or port inputs
             if isinstance(v, Output):
                 continue
+
             # Create PipelineInput object if not subgroup
             if not isinstance(v, GroupInput):
                 default_dict[k] = PipelineInput(name=k, data=v.default, meta=v)
