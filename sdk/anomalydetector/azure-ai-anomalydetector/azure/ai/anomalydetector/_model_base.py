@@ -18,6 +18,7 @@ from azure.core.utils._utils import _FixedOffset
 from collections.abc import MutableMapping
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.pipeline import PipelineResponse
 import copy
 
 _LOGGER = logging.getLogger(__name__)
@@ -253,9 +254,11 @@ _DESERIALIZE_MAPPING = {
 
 
 def _get_model(module_name: str, model_name: str):
+    models = {k: v for k, v in sys.modules[module_name].__dict__.items() if isinstance(v, type)}
     module_end = module_name.rsplit(".", 1)[0]
     module = sys.modules[module_end]
-    models = {k: v for k, v in module.__dict__.items() if isinstance(v, type)}
+    models.update({k: v for k, v in module.__dict__.items() if isinstance(v, type)})
+    model_name = model_name.split(".")[-1]
     if model_name not in models:
         return model_name
     return models[model_name]
@@ -611,6 +614,8 @@ def _deserialize_with_callable(
 
 
 def _deserialize(deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]], value: typing.Any):
+    if isinstance(value, PipelineResponse):
+        value = value.http_response.json()
     deserializer = _get_deserialize_callable_from_annotation(deserializer, "")
     return _deserialize_with_callable(deserializer, value)
 
