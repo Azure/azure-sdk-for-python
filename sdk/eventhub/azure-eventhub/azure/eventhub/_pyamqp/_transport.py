@@ -386,76 +386,79 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         raise NotImplementedError("Must be overriden in subclass")
 
     def close(self):
-        if self.sock is not None:
-            self._shutdown_transport()
-            # Call shutdown first to make sure that pending messages
-            # reach the AMQP broker if the program exits after
-            # calling this method.
-            try:
-                self.sock.shutdown(socket.SHUT_RDWR)
-            except Exception as exc:  # pylint: disable=broad-except
-                # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
-                #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
-                _LOGGER.info("Transport endpoint is already disconnected: %r", exc)
-            self.sock.close()
-            self.sock = None
-        self.connected = False
+        with self.socket_lock:
+            if self.sock is not None:
+                self._shutdown_transport()
+                # Call shutdown first to make sure that pending messages
+                # reach the AMQP broker if the program exits after
+                # calling this method.
+                try:
+                    self.sock.shutdown(socket.SHUT_RDWR)
+                except Exception as exc:  # pylint: disable=broad-except
+                    # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
+                    #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
+                    _LOGGER.info("Transport endpoint is already disconnected: %r", exc)
+                self.sock.close()
+                self.sock = None
+            self.connected = False
 
     def read(self, verify_frame_type=0):
-        read = self._read
-        read_frame_buffer = BytesIO()
-        try:
-            frame_header = memoryview(bytearray(8))
-            read_frame_buffer.write(read(8, buffer=frame_header, initial=True))
+        with self.socket_lock:
+            read = self._read
+            read_frame_buffer = BytesIO()
+            try:
+                frame_header = memoryview(bytearray(8))
+                read_frame_buffer.write(read(8, buffer=frame_header, initial=True))
 
-            channel = struct.unpack(">H", frame_header[6:])[0]
-            size = frame_header[0:4]
-            if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
-                return frame_header, channel, None
-            size = struct.unpack(">I", size)[0]
-            offset = frame_header[4]
-            frame_type = frame_header[5]
-            if verify_frame_type is not None and frame_type != verify_frame_type:
-                _LOGGER.debug(
-                    "Received invalid frame type: %r, expected: %r", frame_type, verify_frame_type
-                )
+                channel = struct.unpack(">H", frame_header[6:])[0]
+                size = frame_header[0:4]
+                if size == AMQP_FRAME:  # Empty frame or AMQP header negotiation TODO
+                    return frame_header, channel, None
+                size = struct.unpack(">I", size)[0]
+                offset = frame_header[4]
+                frame_type = frame_header[5]
+                if verify_frame_type is not None and frame_type != verify_frame_type:
+                    _LOGGER.debug(
+                        "Received invalid frame type: %r, expected: %r", frame_type, verify_frame_type
+                    )
 
-            # >I is an unsigned int, but the argument to sock.recv is signed,
-            # so we know the size can be at most 2 * SIGNED_INT_MAX
-            payload_size = size - len(frame_header)
-            payload = memoryview(bytearray(payload_size))
-            if size > SIGNED_INT_MAX:
-                read_frame_buffer.write(read(SIGNED_INT_MAX, buffer=payload))
-                read_frame_buffer.write(
-                    read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
-                )
-            else:
-                read_frame_buffer.write(read(payload_size, buffer=payload))
-        except (socket.timeout, TimeoutError):
-            read_frame_buffer.write(self._read_buffer.getvalue())
-            self._read_buffer = read_frame_buffer
-            self._read_buffer.seek(0)
-            raise
-        except (OSError, IOError, SSLError, socket.error) as exc:
-            # Don't disconnect for ssl read time outs
-            # http://bugs.python.org/issue10272
-            if isinstance(exc, SSLError) and "timed out" in str(exc):
-                raise socket.timeout()
-            if get_errno(exc) not in _UNAVAIL:
-                self.connected = False
-            raise
-        offset -= 2
+                # >I is an unsigned int, but the argument to sock.recv is signed,
+                # so we know the size can be at most 2 * SIGNED_INT_MAX
+                payload_size = size - len(frame_header)
+                payload = memoryview(bytearray(payload_size))
+                if size > SIGNED_INT_MAX:
+                    read_frame_buffer.write(read(SIGNED_INT_MAX, buffer=payload))
+                    read_frame_buffer.write(
+                        read(size - SIGNED_INT_MAX, buffer=payload[SIGNED_INT_MAX:])
+                    )
+                else:
+                    read_frame_buffer.write(read(payload_size, buffer=payload))
+            except (socket.timeout, TimeoutError):
+                read_frame_buffer.write(self._read_buffer.getvalue())
+                self._read_buffer = read_frame_buffer
+                self._read_buffer.seek(0)
+                raise
+            except (OSError, IOError, SSLError, socket.error) as exc:
+                # Don't disconnect for ssl read time outs
+                # http://bugs.python.org/issue10272
+                if isinstance(exc, SSLError) and "timed out" in str(exc):
+                    raise socket.timeout()
+                if get_errno(exc) not in _UNAVAIL:
+                    self.connected = False
+                raise
+            offset -= 2
         return frame_header, channel, payload[offset:]
 
     def write(self, s):
-        try:
-            self._write(s)
-        except socket.timeout:
-            raise
-        except (OSError, IOError, socket.error) as exc:
-            if get_errno(exc) not in _UNAVAIL:
-                self.connected = False
-            raise
+        with self.socket_lock:
+            try:
+                self._write(s)
+            except socket.timeout:
+                raise
+            except (OSError, IOError, socket.error) as exc:
+                if get_errno(exc) not in _UNAVAIL:
+                    self.connected = False
+                raise
 
     def receive_frame(self, **kwargs):
         try:
