@@ -57,6 +57,7 @@ class PrimitiveOutputSchema(OutputPortSchema):
         required=True,
     )
     is_control = fields.Bool()
+    early_available = fields.Bool()
 
 
 class ParameterSchema(metaclass=PatchedSchemaMeta):
