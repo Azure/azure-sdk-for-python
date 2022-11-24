@@ -14,7 +14,7 @@ parameters:
 - name: Iterations
   displayName: Iterations (times to run each test)
   type: number
-  default: '5'
+  default: '2'
 - name: AdditionalArguments
   displayName: AdditionalArguments (passed to PerfAutomation)
   type: string
