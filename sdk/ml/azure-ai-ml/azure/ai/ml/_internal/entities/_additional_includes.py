@@ -35,6 +35,7 @@ class _AdditionalIncludes:
 
         self._tmp_code_path = None
         self.__includes = None
+        self._artifact_validate_result = _ValidationResultBuilder.success()
 
     @property
     def _includes(self):
@@ -51,7 +52,7 @@ class _AdditionalIncludes:
 
     @property
     def with_includes(self):
-        return len(self._includes) != 0
+        return len(self._includes) != 0 or not self._artifact_validate_result.passed
 
     @property
     def _yaml_path(self) -> Path:
@@ -120,6 +121,7 @@ class _AdditionalIncludes:
 
     def _validate(self) -> MutableValidationResult:
         validation_result = _ValidationResultBuilder.success()
+        validation_result.merge_with(self._artifact_validate_result)
         if not self.with_includes:
             return validation_result
         for additional_include in self._includes:
@@ -240,6 +242,7 @@ class _AdditionalIncludes:
         :rtype additional_includes: List[str]
         """
         additional_includes, conflict_files = [], {}
+        self._artifact_validate_result = _ValidationResultBuilder.success()
 
         def merge_local_path_to_additional_includes(local_path, config_info):
             additional_includes.append(local_path)
@@ -269,20 +272,25 @@ class _AdditionalIncludes:
 
         for additional_include in additional_includes_configs:
             if isinstance(additional_include, dict) and additional_include.get("type") == ARTIFACT_KEY:
-                # Get the artifacts package from devops to the local
-                artifact_path = get_artifacts_by_config(additional_include)
-                for item in os.listdir(artifact_path):
-                    config_info = f"{additional_include['name']}:{additional_include['version']} in " \
-                                  f"{additional_include['feed']}"
-                    merge_local_path_to_additional_includes(local_path=os.path.join(artifact_path, item),
-                                                            config_info=config_info)
+                try:
+                    # Get the artifacts package from devops to the local
+                    artifact_path = get_artifacts_by_config(additional_include)
+                    for item in os.listdir(artifact_path):
+                        config_info = f"{additional_include['name']}:{additional_include['version']} in " \
+                                      f"{additional_include['feed']}"
+                        merge_local_path_to_additional_includes(local_path=os.path.join(artifact_path, item),
+                                                                config_info=config_info)
+                except Exception as e:
+                    self._artifact_validate_result.append_error(message=e.args[0])
             elif isinstance(additional_include, str):
                 merge_local_path_to_additional_includes(local_path=additional_include, config_info=additional_include)
             else:
-                raise RuntimeError(f"Unexpected format in additional_includes, {additional_include}")
+                self._artifact_validate_result.append_error(
+                    message=f"Unexpected format in additional_includes, {additional_include}")
 
         # Check the file conflict in local path and artifact package.
         conflict_files = {k: v for k, v in conflict_files.items() if len(v) > 1}
         if conflict_files:
-            raise RuntimeError(f"There are conflict files in additional include: {conflict_files}")
+            self._artifact_validate_result.append_error(
+                message=f"There are conflict files in additional include: {conflict_files}")
         return additional_includes

@@ -470,6 +470,26 @@ class TestComponent:
                 "os": "Linux",
             }
 
+    def test_artifacts_in_additional_includes(self):
+        yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
+        component: InternalComponent = load_component(source=yaml_path)
+        assert component._validate().passed, repr(component._validate())
+        with component._resolve_local_code() as code:
+            code_path = code.path
+            assert code_path.is_dir()
+            for path in ['0.0.1/', '0.0.1/file', '0.0.2/', '0.0.2/file', 'file1',
+                         'file_0_0_1', 'file_0_0_2', 'DockerFile']:
+                assert (code_path / path).exists()
+
+        yaml_path = "./tests/test_configs/internal/component_with_additional_includes/" \
+                    "artifacts_additional_includes_with_conflict.yml"
+        component: InternalComponent = load_component(source=yaml_path)
+        validation_result = component._validate()
+        assert validation_result.passed is False
+        assert "There are conflict files in additional include" in validation_result.error_messages["*"]
+        assert 'test_additional_include:0.0.1 in component-sdk-test-feed' in validation_result.error_messages["*"]
+        assert 'test_additional_include:0.0.3 in component-sdk-test-feed' in validation_result.error_messages["*"]
+
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
         [
