@@ -8,7 +8,7 @@
 import _thread
 import functools
 
-from azure.ai.ml import Input
+from azure.ai.ml import Input, Output
 from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, _get_param_with_standard_annotation
 
@@ -152,17 +152,26 @@ def group(_cls):
         def _get_data_type_from_annotation(anno: Input):
             if isinstance(anno, GroupInput):
                 return anno._group_class
-
+            # keep original annotation for Outputs
+            if isinstance(anno, Output):
+                return anno
+            # convert to primitive type annotation for Inputs
             return IOConstants.PRIMITIVE_STR_2_TYPE[anno.type]
 
         locals = {f"_type_{key}": _get_data_type_from_annotation(val) for key, val in fields.items()}
         # Collect field defaults if val is parameter and is optional
-        defaults = {f"_default_{key}": fields[key].default for key in fields}
+        defaults = {
+            f"_default_{key}": fields[key].default for key, val in fields.items() if not isinstance(val, Output)
+        }
         locals.update(defaults)
         # Ban positional init as we reordered the parameter.
         _init_param = ["self", "*"]
-        for key in fields:
-            _init_param.append(f"{key}:_type_{key}=_default_{key}")
+        for key, val in fields.items():
+            if isinstance(val, Output):
+                # no default for outputs
+                _init_param.append(f"{key}:_type_{key}")
+            else:
+                _init_param.append(f"{key}:_type_{key}=_default_{key}")
         body_lines = [f"self.{key}={key}" for key in fields]
         # If no body lines, use 'pass'.
         if not body_lines:
