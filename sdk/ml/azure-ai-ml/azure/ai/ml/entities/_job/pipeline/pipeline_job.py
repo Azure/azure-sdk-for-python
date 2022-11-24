@@ -470,14 +470,9 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         # This will be resolved in job_operations _resolve_arm_id_or_upload_dependencies.
         component_id = self.component if isinstance(self.component, str) else self.component.id
 
-        # MFE not support pass None or empty input value. Remove the empty inputs and parameters in jobs.
-        empty_inputs = [k for k, v in built_inputs.items() if v is None or v == ""]
-        if empty_inputs:
-            built_inputs = {k: v for k, v in built_inputs.items() if k not in empty_inputs}
-            empty_inputs_value = [f"${{{{parent.inputs.{k}}}}}" for k in empty_inputs]
-            for job in rest_component_jobs.values():
-                if "inputs" in job:
-                    job["inputs"] = {k: v for k, v in job["inputs"].items() if v["value"] not in empty_inputs_value}
+        # TODO remove it in the future.
+        # MFE not support pass None or empty input value. Remove the empty inputs in pipeline job.
+        built_inputs = {k: v for k, v in built_inputs.items() if v is not None and v != ""}
 
         pipeline_job = RestPipelineJob(
             compute_id=rest_compute,

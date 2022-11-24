@@ -225,7 +225,7 @@ class _AdditionalIncludes:
         Load the additional includes by yaml format.
 
         Addition includes is a list of include files, such as local paths and Azure Devops Artifacts.
-        Yaml format of addtional_include likes below:
+        Yaml format of additional_includes likes below:
             additional_includes:
              - your/local/path
              - type: artifact
