@@ -18,6 +18,7 @@ from ._serialization import Deserializer, Serializer
 from .operations import (
     AttachedNetworksOperations,
     CatalogsOperations,
+    CheckNameAvailabilityOperations,
     DevBoxDefinitionsOperations,
     DevCentersOperations,
     EnvironmentTypesOperations,
@@ -74,6 +75,9 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     :vartype operation_statuses: azure.mgmt.devcenter.operations.OperationStatusesOperations
     :ivar usages: UsagesOperations operations
     :vartype usages: azure.mgmt.devcenter.operations.UsagesOperations
+    :ivar check_name_availability: CheckNameAvailabilityOperations operations
+    :vartype check_name_availability:
+     azure.mgmt.devcenter.operations.CheckNameAvailabilityOperations
     :ivar skus: SkusOperations operations
     :vartype skus: azure.mgmt.devcenter.operations.SkusOperations
     :ivar pools: PoolsOperations operations
@@ -88,7 +92,7 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-10-12-preview". Note that overriding
+    :keyword api_version: Api Version. Default value is "2022-11-11-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -137,6 +141,9 @@ class DevCenterMgmtClient:  # pylint: disable=client-accepts-api-version-keyword
             self._client, self._config, self._serialize, self._deserialize
         )
         self.usages = UsagesOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.check_name_availability = CheckNameAvailabilityOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
         self.pools = PoolsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.schedules = SchedulesOperations(self._client, self._config, self._serialize, self._deserialize)
