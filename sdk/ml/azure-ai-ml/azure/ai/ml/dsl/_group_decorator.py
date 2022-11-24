@@ -4,7 +4,7 @@
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use globals/locals as argument name
 
-# Attribute on customer group class to mark a value type is parameter group.
+# Attribute on customized group class to mark a value type as a group of inputs/outputs.
 import _thread
 import functools
 
@@ -13,19 +13,19 @@ from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.entities._inputs_outputs import GroupInput, _get_param_with_standard_annotation
 
 
-def parameter_group(_cls):
+def group(_cls):
     """
-    Parameter group decorator to make user-defined class as a parameter group.
+    Group decorator to make user-defined class as a group of inputs/outputs.
 
     Usage:
-        Group a set of component parameters make component configuration easier.
+        Group a set of component inputs make component configuration easier.
 
-        e.g. Define a parameter group
+        e.g. Define a group
 
         .. code-block:: python
 
-            # define a parameter group
-            @dsl.parameter_group
+            # define a group
+            @dsl.group
             class ParamClass:
                 str_param: str
                 int_param: int = 1
@@ -33,17 +33,17 @@ def parameter_group(_cls):
             # see the help of auto-gen __init__ function
             help(ParamClass.__init__)
 
-        e.g. Define a parameter group with inheritance
+        e.g. Define a group with inheritance
 
         .. code-block:: python
 
-            # define the parent parameter group
-            @dsl.parameter_group
+            # define the parent group
+            @dsl.group
             class ParentClass:
                 str_param: str
                 int_param: int = 1
 
-            @dsl.parameter_group
+            @dsl.group
             class GroupClass(ParentClass):
                 float_param: float
                 str_param: str = 'test'
@@ -51,17 +51,17 @@ def parameter_group(_cls):
             # see the help of auto-gen __init__ function
             help(GroupClass.__init__)
 
-        e.g. Define a multi-level parameter group
+        e.g. Define a multi-level group
 
         .. code-block:: python
 
-            # define a sub parameter group
-            @dsl.parameter_group
+            # define a sub group
+            @dsl.group
             class SubGroupClass:
                 str_param: str
                 int_param: int = 1
 
-            @dsl.parameter_group
+            @dsl.group
             class ParentClass:
                 param_group1: SubGroupClass
                 # declare a sub group field with default
@@ -70,7 +70,7 @@ def parameter_group(_cls):
             # see the help of auto-gen __init__ function
             help(ParentClass.__init__)
 
-        e.g. Link and assign Parameter Group
+        e.g. Link and assign Group
 
         .. code-block:: python
 
@@ -80,8 +80,8 @@ def parameter_group(_cls):
             # create a parent group value
             my_parent_group = ParentClass(param_group1=my_param_group)
 
-            # option 1. use annotation to declare the parameter is a parameter group.
-            @dsl.pipeline()
+            # option 1. use annotation to declare the input is a group.
+            @pipeline
             def pipeline_func(params: SubGroupClass):
                 component = component_func(string_parameter=params.str_param,
                                            int_parameter=params.int_param)
@@ -89,8 +89,8 @@ def parameter_group(_cls):
             # create a pipeline instance
             pipeline = pipeline_func(my_param_group)
 
-            # option 2. use default of parameter to declare itself a parameter group.
-            @dsl.pipeline()
+            # option 2. use default of input to declare itself a group.
+            @pipeline
             def pipeline_func(params=my_param_group):
                 component = component_func(string_parameter=params.str_param,
                                            int_parameter=params.int_param)
@@ -98,8 +98,8 @@ def parameter_group(_cls):
             # create a pipeline instance
             pipeline = pipeline_func()
 
-            # use multi-level parameter group in pipeline.
-            @dsl.pipeline()
+            # use multi-level group in pipeline.
+            @pipeline
             def parent_func(params: ParentClass):
                 # pass sub group to sub pipeline.
                 pipeline = pipeline_func(params.param_group1)
@@ -111,12 +111,12 @@ def parameter_group(_cls):
             * Declare with Input annotation: `param: Input(type='integer', min=1, max=5)`
 
         * For sub group class
-            * Sub group class should be decorated with `dsl.parameter_group`
+            * Sub group class should be decorated with `dsl.group`
 
     Restrictions:
         * Each group member's name must be public (not start with '_').
-        * When use parameter group as a pipeline parameter, user **MUST** write the type annotation
-          or give it a non-None default value to infer the parameter group class.
+        * When use group as a pipeline input, user **MUST** write the type annotation
+          or give it a non-None default value to infer the group class.
 
     """
 
