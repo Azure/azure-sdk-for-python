@@ -38,5 +38,5 @@ def generate_teams_user_aad_token(self):
         teams_user_oid = result["id_token_claims"]["oid"]
     return teams_user_aad_token, teams_user_oid
 
-def skip_get_token_for_teams_user_test(self):
-    return str(self.skip_get_token_for_teams_user_tests).lower() == 'true'
+def skip_get_token_for_teams_user_test(skip_get_token):
+    return str(skip_get_token).lower() == 'true'

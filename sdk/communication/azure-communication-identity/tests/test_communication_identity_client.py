@@ -15,8 +15,7 @@ from _shared.fake_token_credential import FakeTokenCredential
 from utils import is_token_expiration_within_allowed_deviation, generate_teams_user_aad_token, \
     skip_get_token_for_teams_user_test
 from azure.identity import DefaultAzureCredential
-from azure.communication.identity._shared.utils import parse_connection_str
-from acs_identity_decorator import acs_identity_decorator
+from acs_identity_test_case import ACSIdentityTestCase
 
 
 class ArgumentPasser:
@@ -25,18 +24,19 @@ class ArgumentPasser:
             fn(test_class, _, value, **kwargs)
         return _wrapper
 
-class TestClient(AzureRecordedTestCase):
+class TestClient(ACSIdentityTestCase):
+    def setup_method(self):
+        super().setUp()
+
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_create_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
-        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
-
+    def test_create_user_from_managed_identity(self):
         if not is_live():
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
-            endpoint,
+            self.endpoint,
             credential,
             http_logging_policy=get_http_logging_policy()
         )
@@ -46,9 +46,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_create_user(self, communication_livetest_dynamic_connection_string):
+    def test_create_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
@@ -57,9 +57,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_create_user_and_token(self, communication_livetest_dynamic_connection_string):
+    def test_create_user_and_token(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user, token_response = identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT])
@@ -70,7 +70,6 @@ class TestClient(AzureRecordedTestCase):
     @CommunicationPreparer()
     @pytest.mark.parametrize("_, value", [("min_valid_hours", 1), ("max_valid_hours", 24)])
     @ArgumentPasser()
-    @acs_identity_decorator
     @recorded_by_proxy
     def test_create_user_and_token_with_valid_custom_expirations_new(self, _, valid_hours):
         identity_client = CommunicationIdentityClient.from_connection_string(
@@ -90,15 +89,14 @@ class TestClient(AzureRecordedTestCase):
     @CommunicationPreparer()
     @pytest.mark.parametrize("_, value", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)])
     @ArgumentPasser()
-    @acs_identity_decorator
     @recorded_by_proxy
-    def test_create_user_and_token_with_invalid_custom_expirations(self, _, time):
+    def test_create_user_and_token_with_invalid_custom_expirations(self, _, invalid_mins):
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
 
-        token_expires_in = timedelta(minutes=time)
+        token_expires_in = timedelta(minutes=invalid_mins)
 
         with pytest.raises(Exception) as ex:
             identity_client.create_user_and_token(scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
@@ -108,14 +106,13 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_get_token_from_managed_identity(self, communication_livetest_dynamic_connection_string):
-        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
+    def test_get_token_from_managed_identity(self):
         if not is_live():
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
-            endpoint,
+            self.endpoint,
             credential,
             http_logging_policy=get_http_logging_policy()
         )
@@ -128,9 +125,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_get_token(self, communication_livetest_dynamic_connection_string):
+    def test_get_token(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
@@ -143,16 +140,15 @@ class TestClient(AzureRecordedTestCase):
     @CommunicationPreparer()
     @pytest.mark.parametrize("_, value", [("min_valid_hours", 1), ("max_valid_hours", 24)])
     @ArgumentPasser()
-    @acs_identity_decorator
     @recorded_by_proxy
-    def test_get_token_with_valid_custom_expirations(self, _, value):
+    def test_get_token_with_valid_custom_expirations(self, _, valid_hours):
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
 
-        token_expires_in = timedelta(hours=value)
+        token_expires_in = timedelta(hours=valid_hours)
         token_response = identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT],
                                                    token_expires_in=token_expires_in)
 
@@ -164,16 +160,15 @@ class TestClient(AzureRecordedTestCase):
     @CommunicationPreparer()
     @pytest.mark.parametrize("_, value", [("min_invalid_mins", 59), ("max_invalid_mins", 1441)])
     @ArgumentPasser()
-    @acs_identity_decorator
     @recorded_by_proxy
-    def test_get_token_with_invalid_custom_expirations(self, _, value):
+    def test_get_token_with_invalid_custom_expirations(self, _, invalid_mins):
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
 
-        token_expires_in = timedelta(minutes=value)
+        token_expires_in = timedelta(minutes=invalid_mins)
 
         with pytest.raises(Exception) as ex:
             identity_client.get_token(user, scopes=[CommunicationTokenScope.CHAT], token_expires_in=token_expires_in)
@@ -183,14 +178,13 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_revoke_tokens_from_managed_identity(self, communication_livetest_dynamic_connection_string):
-        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
+    def test_revoke_tokens_from_managed_identity(self):
         if not is_live():
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
-            endpoint,
+            self.endpoint,
             credential,
             http_logging_policy=get_http_logging_policy()
         )
@@ -204,9 +198,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_revoke_tokens(self, communication_livetest_dynamic_connection_string):
+    def test_revoke_tokens(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
@@ -219,14 +213,13 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_delete_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
-        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
+    def test_delete_user_from_managed_identity(self):
         if not is_live():
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
-            endpoint,
+            self.endpoint,
             credential,
             http_logging_policy=get_http_logging_policy()
         )
@@ -238,9 +231,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_delete_user(self, communication_livetest_dynamic_connection_string):
+    def test_delete_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
@@ -251,9 +244,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_create_user_and_token_with_no_scopes(self, communication_livetest_dynamic_connection_string):
+    def test_create_user_and_token_with_no_scopes(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
 
@@ -265,9 +258,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_delete_user_with_no_user(self, communication_livetest_dynamic_connection_string):
+    def test_delete_user_with_no_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
 
@@ -279,9 +272,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_revoke_tokens_with_no_user(self, communication_livetest_dynamic_connection_string):
+    def test_revoke_tokens_with_no_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
 
@@ -293,9 +286,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_get_token_with_no_user(self, communication_livetest_dynamic_connection_string):
+    def test_get_token_with_no_user(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
 
@@ -307,9 +300,9 @@ class TestClient(AzureRecordedTestCase):
 
     @CommunicationPreparer()
     @recorded_by_proxy
-    def test_get_token_with_no_scopes(self, communication_livetest_dynamic_connection_string):
+    def test_get_token_with_no_scopes(self):
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         user = identity_client.create_user()
@@ -321,18 +314,16 @@ class TestClient(AzureRecordedTestCase):
         assert str(ex.value.error.code) == 'ValidationError'
 
     @CommunicationPreparer()
-    @acs_identity_decorator
     @recorded_by_proxy
-    def test_get_token_for_teams_user_from_managed_identity(self, communication_livetest_dynamic_connection_string):
-        if skip_get_token_for_teams_user_test(self):
+    def test_get_token_for_teams_user_from_managed_identity(self):
+        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
             return
-        endpoint, access_key = parse_connection_str(communication_livetest_dynamic_connection_string)
         if not is_live():
             credential = FakeTokenCredential()
         else:
             credential = DefaultAzureCredential()
         identity_client = CommunicationIdentityClient(
-            endpoint,
+            self.endpoint,
             credential,
             http_logging_policy=get_http_logging_policy()
         )
@@ -341,13 +332,12 @@ class TestClient(AzureRecordedTestCase):
         assert token_response.token is not None
 
     @CommunicationPreparer()
-    @acs_identity_decorator
     @recorded_by_proxy
-    def test_get_token_for_teams_user_with_valid_params(self, communication_livetest_dynamic_connection_string):
-        if skip_get_token_for_teams_user_test(self):
+    def test_get_token_for_teams_user_with_valid_params(self):
+        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         aad_token, user_object_id = generate_teams_user_aad_token(self)
@@ -357,28 +347,26 @@ class TestClient(AzureRecordedTestCase):
     @CommunicationPreparer()
     @pytest.mark.parametrize("_, value", [("empty_token", ""), ("invalid_token", "invalid")])
     @ArgumentPasser()
-    @acs_identity_decorator
     @recorded_by_proxy
-    def test_get_token_for_teams_user_with_invalid_token(self, _, value):
-        if skip_get_token_for_teams_user_test(self):
+    def test_get_token_for_teams_user_with_invalid_token(self, _, invalid_token):
+        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         with pytest.raises(Exception) as ex:
-            identity_client.get_token_for_teams_user(value, self.m365_client_id, "")
+            identity_client.get_token_for_teams_user(invalid_token, self.m365_client_id, "")
         assert str(ex.value.status_code) == "401"
         assert ex.value.message is not None
 
     @CommunicationPreparer()
-    @acs_identity_decorator
     @recorded_by_proxy
-    def test_get_token_for_teams_user_with_expired_token(self, communication_livetest_dynamic_connection_string):
-        if skip_get_token_for_teams_user_test(self):
+    def test_get_token_for_teams_user_with_expired_token(self):
+        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         _, user_object_id = generate_teams_user_aad_token(self)
@@ -391,10 +379,9 @@ class TestClient(AzureRecordedTestCase):
     @CommunicationPreparer()
     @pytest.mark.parametrize("_, value", [("empty_client_id", ""), ("invalid_client_id", "invalid")])
     @ArgumentPasser()
-    @acs_identity_decorator
     @recorded_by_proxy
-    def test_get_token_for_teams_user_with_invalid_client_id(self, _, value):
-        if skip_get_token_for_teams_user_test(self):
+    def test_get_token_for_teams_user_with_invalid_client_id(self, _, invalid_client):
+        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
@@ -402,18 +389,17 @@ class TestClient(AzureRecordedTestCase):
         )
         aad_token, user_object_id = generate_teams_user_aad_token(self)
         with pytest.raises(Exception) as ex:
-            identity_client.get_token_for_teams_user(aad_token, value, user_object_id)
+            identity_client.get_token_for_teams_user(aad_token, invalid_client, user_object_id)
         assert str(ex.value.status_code) == "400"
         assert ex.value.message is not None
 
     @CommunicationPreparer()
-    @acs_identity_decorator
     @recorded_by_proxy
-    def test_get_token_for_teams_user_with_wrong_client_id(self, communication_livetest_dynamic_connection_string):
-        if skip_get_token_for_teams_user_test(self):
+    def test_get_token_for_teams_user_with_wrong_client_id(self):
+        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
-            communication_livetest_dynamic_connection_string,
+            self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         aad_token, user_object_id = generate_teams_user_aad_token(self)
@@ -425,10 +411,9 @@ class TestClient(AzureRecordedTestCase):
     @CommunicationPreparer()
     @pytest.mark.parametrize("_, value", [("empty_user_object_id", ""), ("invalid_user_object_id", "invalid")])
     @ArgumentPasser()
-    @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_invalid_user_object_id(self, _, value):
-        if skip_get_token_for_teams_user_test(self):
+        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
@@ -441,10 +426,9 @@ class TestClient(AzureRecordedTestCase):
         assert ex.value.message is not None
 
     @CommunicationPreparer()
-    @acs_identity_decorator
     @recorded_by_proxy
     def test_get_token_for_teams_user_with_wrong_user_object_id(self):
-        if skip_get_token_for_teams_user_test(self):
+        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,

@@ -36,17 +36,11 @@ def add_sanitizers(test_proxy):
     set_default_session_settings()
     add_oauth_response_sanitizer()
 
-    connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
+    connection_str = os.environ.get('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
     if connection_str is not None:
         endpoint, _ = parse_connection_str(connection_str)
         resource_name = endpoint.split(".")[0]
         add_general_string_sanitizer(target=resource_name, value="sanitized")
-
-    subscription_id = os.environ.get("AZURE_SUBSCRIPTION_ID", "00000000-0000-0000-0000-000000000000")
-    add_general_regex_sanitizer(regex=subscription_id, value="00000000-0000-0000-0000-000000000000")
-
-    m365_client_id = os.environ.get("COMMUNICATION_M365_APP_ID", "sanitized")
-    add_general_regex_sanitizer(regex=m365_client_id, value="sanitized")
 
     msal_username = os.environ.get("COMMUNICATION_MSAL_USERNAME", "sanitized")
     add_general_regex_sanitizer(regex=msal_username, value="sanitized")
@@ -57,21 +51,13 @@ def add_sanitizers(test_proxy):
     expired_teams_token = os.environ.get("COMMUNICATION_EXPIRED_TEAMS_TOKEN", "sanitized")
     add_general_regex_sanitizer(regex=expired_teams_token, value="sanitized")
 
-    azure_tenant_id = os.environ.get("AZURE_TENANT_ID", "sanitized")
-    add_general_regex_sanitizer(regex=azure_tenant_id, value="sanitized")
-
-    azure_client_secret = os.environ.get("AZURE_CLIENT_SECRET", "sanitized")
-    add_general_regex_sanitizer(regex=azure_client_secret, value="sanitized")
-
-    azure_client_id = os.environ.get("AZURE_CLIENT_ID", "sanitized")
-    add_general_regex_sanitizer(regex=azure_client_id, value="sanitized")
-
     add_body_key_sanitizer(json_path="*.id", value="sanitized")
     add_body_key_sanitizer(json_path="*.token", value="sanitized")
     add_body_key_sanitizer(json_path="token", value="sanitized")
     add_body_key_sanitizer(json_path="*.userId", value="sanitized")
     add_body_key_sanitizer(json_path="userId", value="sanitized")
     add_body_key_sanitizer(json_path="*.domain_name", value="sanitized")
+    add_body_key_sanitizer(json_path="appId", value="sanitized")
 
     add_general_regex_sanitizer(regex='/identities/([^/?]+)', value='/identities/sanitized')
     add_general_regex_sanitizer(regex='common/userrealm/([^/.]+)', value='common/userrealm/sanitized@test')

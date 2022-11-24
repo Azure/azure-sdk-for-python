@@ -1,41 +1,6 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://login.microsoftonline.com/sanitized/oauth2/v2.0/token",
-      "RequestMethod": "POST",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "131",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "azsdk-python-identity/1.12.1 Python/3.9.13 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": "client_id=sanitized\u0026client_secret=sanitized\u0026grant_type=client_credentials\u0026scope=https%3A%2F%2Fcommunication.azure.com%2F%2F.default",
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-store, no-cache",
-        "Content-Length": "92",
-        "Content-Security-Policy-Report-Only": "sanitized",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "sanitized",
-        "Expires": "-1",
-        "P3P": "sanitized",
-        "Pragma": "no-cache",
-        "Set-Cookie": "sanitized",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "sanitized",
-        "x-ms-request-id": "sanitized",
-        "X-XSS-Protection": "0"
-      },
-      "ResponseBody": {
-        "token_type": "Bearer",
-        "expires_in": 86399,
-        "ext_expires_in": 86399,
-        "access_token": "Sanitized"
-      }
-    },
-    {
       "RequestUri": "https://sanitized.communication.azure.com/identities?api-version=2022-10-01",
       "RequestMethod": "POST",
       "RequestHeaders": {
@@ -60,7 +25,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "102ms"
+        "X-Processing-Time": "100ms"
       },
       "ResponseBody": {
         "identity": {
@@ -98,11 +63,11 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "191ms"
+        "X-Processing-Time": "172ms"
       },
       "ResponseBody": {
         "token": "sanitized",
-        "expiresOn": "2022-11-16T13:35:23.4862247\u002B00:00"
+        "expiresOn": "2022-11-25T11:34:38.1698639\u002B00:00"
       }
     },
     {
@@ -127,7 +92,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "438ms"
+        "X-Processing-Time": "218ms"
       },
       "ResponseBody": null
     }

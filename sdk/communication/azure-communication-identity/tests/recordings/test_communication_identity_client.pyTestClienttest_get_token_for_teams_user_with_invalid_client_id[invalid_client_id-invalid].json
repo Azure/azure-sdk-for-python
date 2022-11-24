@@ -8,7 +8,7 @@
         "Accept-Encoding": "gzip, deflate",
         "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "Content-Length": "60",
+        "Content-Length": "62",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-communication-identity/1.3.2 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
         "x-ms-client-request-id": "sanitized",
@@ -18,7 +18,7 @@
       },
       "RequestBody": {
         "token": "sanitized",
-        "appId": "invalid",
+        "appId": "sanitized",
         "userId": "sanitized"
       },
       "StatusCode": 400,
@@ -33,7 +33,7 @@
         "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
         "x-ms-client-request-id": "sanitized",
-        "X-Processing-Time": "126ms"
+        "X-Processing-Time": "124ms"
       },
       "ResponseBody": {
         "error": {
