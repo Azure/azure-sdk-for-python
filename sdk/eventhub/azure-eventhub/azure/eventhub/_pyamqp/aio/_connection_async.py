@@ -433,8 +433,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 "Failed parsing OPEN frame: Max frame size is less than supported minimum."
             )
             return
-        else:
-            self._remote_max_frame_size = frame[2]
+        self._remote_max_frame_size = frame[2]
         if self.state == ConnectionState.OPEN_SENT:
             await self._set_state(ConnectionState.OPENED)
         elif self.state == ConnectionState.HDR_EXCH:

@@ -125,7 +125,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             self._transport = Transport(
                 parsed_url.netloc,
                 transport_type=self._transport_type,
-                name=self._container_id
+                name=self._container_id,
                 **kwargs)
         self._max_frame_size = kwargs.pop("max_frame_size", MAX_FRAME_SIZE_BYTES)  # type: int
         self._remote_max_frame_size = None  # type: Optional[int]
@@ -408,8 +408,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 "Failed parsing OPEN frame: Max frame size is less than supported minimum."
             )
             return
-        else:
-            self._remote_max_frame_size = frame[2]
+        self._remote_max_frame_size = frame[2]
         if self.state == ConnectionState.OPEN_SENT:
             self._set_state(ConnectionState.OPENED)
         elif self.state == ConnectionState.HDR_EXCH:

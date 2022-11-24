@@ -626,12 +626,12 @@ class SendClient(AMQPClient):
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = self.do_work()
-        else:
-            if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-                raise MessageException(
-                    condition=ErrorCondition.ClientError,
-                    description="Send failed - connection not running."
-                )
+        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            raise MessageException(
+                condition=ErrorCondition.ClientError,
+                description="Send failed - connection not running."
+            )
+
         if message_delivery.state in (
             MessageDeliveryState.Error,
             MessageDeliveryState.Cancelled,

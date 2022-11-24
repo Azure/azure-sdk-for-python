@@ -146,33 +146,33 @@ class EventData(object):
         # pylint: disable=bare-except
         try:
             body_str = self.body_as_str()
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Message body read error: %r", e)
             body_str = "<read-error>"
         event_repr = f"body='{body_str}'"
         try:
             event_repr += f", properties={self.properties}"
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Message properties read error: %r", e)
             event_repr += ", properties=<read-error>"
         try:
             event_repr += f", offset={self.offset}"
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Message offset read error: %r", e)
             event_repr += ", offset=<read-error>"
         try:
             event_repr += f", sequence_number={self.sequence_number}"
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Message sequence number read error: %r", e)
             event_repr += ", sequence_number=<read-error>"
         try:
             event_repr += f", partition_key={self.partition_key!r}"
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Message partition key read error: %r", e)
             event_repr += ", partition_key=<read-error>"
         try:
             event_repr += f", enqueued_time={self.enqueued_time!r}"
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Message enqueued time read error: %r", e)
             event_repr += ", enqueued_time=<read-error>"
         return f"EventData({event_repr})"
@@ -180,7 +180,7 @@ class EventData(object):
     def __str__(self) -> str:
         try:
             body_str = self.body_as_str()
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Message body read error: %r", e)
             body_str = "<read-error>"
         event_str = f"{{ body: '{body_str}'"
@@ -194,7 +194,7 @@ class EventData(object):
                 event_str += f", partition_key={self.partition_key!r}"
             if self.enqueued_time:
                 event_str += f", enqueued_time={self.enqueued_time!r}"
-        except Exception as e:
+        except Exception as e:  # pylint: disable=broad-except
             _LOGGER.debug("Message metadata read error: %r", e)
         event_str += " }"
         return event_str

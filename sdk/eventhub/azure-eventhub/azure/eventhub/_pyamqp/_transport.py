@@ -627,7 +627,6 @@ class SSLTransport(_AbstractTransport):
 
                 length += nbytes
                 toread -= nbytes
-        
         except:  # noqa
             self._read_buffer = BytesIO(view[:length])
             raise

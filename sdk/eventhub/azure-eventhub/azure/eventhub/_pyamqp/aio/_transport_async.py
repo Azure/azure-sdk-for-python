@@ -581,7 +581,4 @@ class WebSocketTransportAsync(
         See http://tools.ietf.org/html/rfc5234
         http://tools.ietf.org/html/rfc6455#section-5.2
         """
-        try:
-            await self.ws.send_bytes(s)
-        except BaseException as e:
-            raise
+        await self.ws.send_bytes(s)

@@ -144,7 +144,7 @@ class AMQPClientAsync(AMQPClientSync):
                 if elapsed_time >= self._keep_alive_interval:
                     _logger.info("Keeping %r connection alive. %r",
                                  self.__class__.__name__,
-                                 self._connection._container_id)
+                                 self._connection._container_id)  # pylint: disable=protected-access
                     await asyncio.shield(self._connection.work_async())
                     start_time = current_time
                 await asyncio.sleep(1)
@@ -558,12 +558,11 @@ class SendClientAsync(SendClientSync, AMQPClientAsync):
         running = True
         while running and message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
             running = await self.do_work_async()
-        else:
-            if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
-                raise MessageException(
-                    condition=ErrorCondition.ClientError,
-                    description="Send failed - connection not running."
-                )
+        if message_delivery.state not in MESSAGE_DELIVERY_DONE_STATES:
+            raise MessageException(
+                condition=ErrorCondition.ClientError,
+                description="Send failed - connection not running."
+            )
 
         if message_delivery.state in (
             MessageDeliveryState.Error,
