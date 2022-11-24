@@ -448,6 +448,28 @@ class TestCommandComponentEntity:
         )
         assert actual_component_dict2 == expected_rest_component
 
+    def test_invalid_component_outputs(self) -> None:
+        yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
+        component = load_component(yaml_path)
+        with pytest.raises(ValidationException) as e:
+            component._validate(raise_error=True)
+        assert "Early available output 'component_out_string' requires is_control as True, got None." in str(e.value)
+        params_override = [
+            {
+                "outputs": {
+                    "component_out_string": {
+                        "description": "A string",
+                        "type": "string",
+                        "is_control": True,
+                        "early_available": True,
+                    }
+                }
+            },
+        ]
+        component = load_component(yaml_path, params_override=params_override)
+        validation_result = component._validate()
+        assert validation_result.passed
+
     def test_component_code_asset_ignoring_pycache(self) -> None:
         component_yaml = "./tests/test_configs/components/basic_component_code_local_path.yml"
         component = load_component(component_yaml)
