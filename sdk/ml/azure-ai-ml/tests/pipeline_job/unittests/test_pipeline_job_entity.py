@@ -890,9 +890,8 @@ class TestPipelineJobEntity:
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_code.yml"
         job = load_job(test_path)
-        with pytest.raises(ValidationException) as ve:
-            job._validate()
-            assert ve.message == "Entry doesn't exist"
+        result = job._validate()
+        assert 'jobs.hello_world.component.entry' in result.error_messages
 
     def test_spark_node_in_pipeline_with_git_code(
             self,
