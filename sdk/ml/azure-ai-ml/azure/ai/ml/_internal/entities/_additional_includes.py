@@ -37,7 +37,7 @@ class _AdditionalIncludes:
 
         self._tmp_code_path = None
         self.__includes = None
-        self._artifact_includes = None
+        self._is_artifact_includes = False
         self._artifact_validate_result = _ValidationResultBuilder.success()
 
     @property
@@ -45,9 +45,9 @@ class _AdditionalIncludes:
         if not self._additional_includes_file_path.is_file():
             return []
         if self.__includes is None:
-            if self._is_yaml_format_additional_includes():
+            self._is_artifact_includes = self._is_yaml_format_additional_includes()
+            if self._is_artifact_includes:
                 self.__includes = self._load_yaml_format_additional_includes()
-                self._artifact_includes = self.__includes
             else:
                 with open(self._additional_includes_file_path, "r") as f:
                     lines = f.readlines()
@@ -194,7 +194,10 @@ class _AdditionalIncludes:
                 self._resolve_folder_to_compress(additional_include, Path(tmp_folder_path))
             else:
                 dst_path = (tmp_folder_path / src_path.name).resolve()
-                self._copy(src_path, dst_path, ignore_file=IgnoreFile() if additional_include in self._artifact_includes else None)
+                self._copy(
+                    src_path, dst_path,
+                    ignore_file=IgnoreFile() if additional_include in self._is_artifact_includes else None
+                )
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
         return
 
