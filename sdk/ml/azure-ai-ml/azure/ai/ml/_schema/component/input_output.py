@@ -57,9 +57,9 @@ class PrimitiveOutputSchema(OutputPortSchema):
         allowed_values=SUPPORTED_PARAM_TYPES,
         required=True,
     )
-    is_control = fields.Bool()
-    # hide early_available in spec
+    # hide is_control and early_available in spec
     if is_private_preview_enabled():
+        is_control = fields.Bool()
         early_available = fields.Bool()
 
 
