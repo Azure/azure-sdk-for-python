@@ -8,7 +8,7 @@ from importlib import reload
 from os import getenv
 from pathlib import Path
 from typing import Callable, Tuple, Union
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 from azure.core.pipeline.transport import HttpTransport
@@ -17,6 +17,7 @@ from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -591,8 +592,8 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 
 
 @pytest.fixture()
-def enable_private_preview_schema_features(mocker: MockFixture):
-    """early_available is hidden under private preview, so need to patch and reload related classes."""
+def enable_private_preview_schema_features():
+    """Schemas will be imported at the very beginning, so need to reload related classes."""
     from azure.ai.ml._schema.component import command_component as command_component_schema, input_output
     from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
     from azure.ai.ml.entities._component import (
@@ -600,12 +601,17 @@ def enable_private_preview_schema_features(mocker: MockFixture):
         pipeline_component as pipeline_component_entity,
     )
 
-    mocker.patch("azure.ai.ml._utils.utils.is_private_preview_enabled", return_value=True)
-    reload(input_output)
-    reload(command_component_schema)
-    reload(pipeline_component_schema)
-    command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
-    pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
+    def _reload_related_classes():
+        reload(input_output)
+        reload(command_component_schema)
+        reload(pipeline_component_schema)
+        command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
+        pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
+
+    with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
+        _reload_related_classes()
+        yield
+        _reload_related_classes()
 
 
 @pytest.fixture()
