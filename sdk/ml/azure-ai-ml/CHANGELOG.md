@@ -4,7 +4,7 @@
 
 ### Bugs Fixed
 - Fixed Sweep node not excluding optional input with value `None` in REST object. 
-- Fixed bool test for pipeline expression in download operation.
+- Fixed bool test for output in download operation.
 
 ## 1.1.2 (Unreleased)
 
