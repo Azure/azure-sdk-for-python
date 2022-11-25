@@ -164,7 +164,7 @@ class ArtifactCache:
             )
             response = requests.get(url, headers=header)
             if response.status_code == 200:
-                artifacts_tool_path = os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
+                artifacts_tool_path = tempfile.mktemp()  # nosec B306
                 artifacts_tool_uri = response.json()["uri"]
                 response = requests.get(artifacts_tool_uri)
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
@@ -266,7 +266,7 @@ class ArtifactCache:
         if resolve:
             if artifact_package_path.exists():
                 # Remove invalid artifact package to avoid affecting download artifact.
-                temp_folder = os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
+                temp_folder = tempfile.mktemp()  # nosec B306
                 os.rename(artifact_package_path, temp_folder)
                 shutil.rmtree(temp_folder)
             # Download artifact
@@ -293,7 +293,7 @@ class ArtifactCache:
         :param project: Name or ID of the project.
         :return artifact_package_path: Cache path of the artifact package
         """
-        tempdir = os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
+        tempdir = tempfile.mktemp()  # nosec B306
         download_cmd = (
             f"az artifacts universal download --feed {feed} --name {name} --version {version} "
             f"--scope {scope} --path {tempdir}"
