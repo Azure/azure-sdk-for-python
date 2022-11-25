@@ -88,7 +88,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnvironmentTypeListResult]
 
         error_map = {
@@ -189,7 +189,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnvironmentType]
 
         request = build_get_request(
@@ -327,7 +327,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnvironmentType]
 
@@ -478,7 +478,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.EnvironmentType]
 
@@ -556,7 +556,7 @@ class EnvironmentTypesOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_request(

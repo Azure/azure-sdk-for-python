@@ -59,7 +59,7 @@ class ParallelFor(LoopNode, NodeIOMixin):
             outputs = {}
 
         # TODO: handle when body don't have component or component.outputs
-        self._outputs = self._build_outputs_dict_without_meta(outputs)
+        self._outputs = self._build_outputs_dict_without_meta(outputs, none_data=True)
 
         self._items = items
         self._validate_items(raise_error=True)
