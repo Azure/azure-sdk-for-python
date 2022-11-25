@@ -38,7 +38,7 @@ class ArtifactCache:
     _instance_lock = Lock()
     _instance = None
 
-    def __new__(cls, *args, **kwargs):
+    def __new__(cls):
         """Singleton creation disk cache"""
         if cls._instance is None:
             with cls._instance_lock:
@@ -52,7 +52,7 @@ class ArtifactCache:
         # check az extension azure-devops installed
         process = subprocess.Popen(
             "az artifacts --help",
-            shell=True,
+            shell=True,  # nosec B602
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
         )
@@ -99,7 +99,7 @@ class ArtifactCache:
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             encoding="utf-8",
-            shell=True,
+            shell=True,  # nosec B602
         )
         outs, errs = process.communicate()
         if process.returncode != 0:
@@ -150,8 +150,7 @@ class ArtifactCache:
             result = re.findall(pattern=organization_pattern, string=organization)
             if not result:
                 raise RuntimeError("Cannot find artifact organization.")
-            else:
-                organization_name = result[0]
+            organization_name = result[0]
 
         if not self._artifacts_tool_path:
             os_name = "Windows" if os.name == "nt" else "Linux"
@@ -165,7 +164,7 @@ class ArtifactCache:
             )
             response = requests.get(url, headers=header)
             if response.status_code == 200:
-                artifacts_tool_path = tempfile.mktemp()
+                artifacts_tool_path = os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
                 artifacts_tool_uri = response.json()["uri"]
                 response = requests.get(artifacts_tool_uri)
                 with zipfile.ZipFile(BytesIO(response.content)) as zip_file:
@@ -175,7 +174,7 @@ class ArtifactCache:
                 )
                 self._artifacts_tool_path = artifacts_tool_path
             else:
-                _logger.warning(f"Download artifact tool failed: {response.text}")
+                _logger.warning("Download artifact tool failed: %s", response.text)
 
     def _download_artifacts(
         self, download_cmd, organization, name, version, feed, max_retries=3
@@ -185,15 +184,15 @@ class ArtifactCache:
         while retries <= max_retries:
             try:
                 self._redirect_artifacts_tool_path(organization)
-            except Exception as e:
-                _logger.warning(f"Redirect artifacts tool path failed, details: {e}")
+            except Exception as e:  # pylint: disable=broad-except
+                _logger.warning("Redirect artifacts tool path failed, details: %s", e)
 
             retries += 1
             process = subprocess.Popen(
                 download_cmd,
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
-                shell=True,
+                shell=True,  # nosec B602
                 encoding="utf-8",
             )
             outputs, errs = process.communicate()
@@ -217,20 +216,18 @@ class ArtifactCache:
         path = Path(artifact_package_path)
         if not path.exists():
             return False
-        else:
-            checksum_path = path.parent / f"{path.name}_{self.POSTFIX_CHECKSUM}"
-            if checksum_path.exists():
-                with open(checksum_path, "r") as f:
-                    checksum = f.read()
-                    file_list = [
-                        os.path.join(root, f)
-                        for root, _, files in os.walk(path)
-                        for f in files
-                    ]
-                    artifact_hash = self.hash_files_content(file_list)
-                    return checksum == artifact_hash
-            else:
-                return False
+        checksum_path = path.parent / f"{path.name}_{self.POSTFIX_CHECKSUM}"
+        if checksum_path.exists():
+            with open(checksum_path, "r") as f:
+                checksum = f.read()
+                file_list = [
+                    os.path.join(root, f)
+                    for root, _, files in os.walk(path)
+                    for f in files
+                ]
+                artifact_hash = self.hash_files_content(file_list)
+                return checksum == artifact_hash
+        return False
 
     def get(
         self, feed, name, version, scope, organization=None, project=None, resolve=True
@@ -266,24 +263,22 @@ class ArtifactCache:
         if self._check_artifacts(artifact_package_path):
             # When the cache folder of artifact package exists, it's sure that the package has been downloaded.
             return artifact_package_path.absolute().resolve()
-        else:
-            if resolve:
-                if artifact_package_path.exists():
-                    # Remove invalid artifact package to avoid affecting download artifact.
-                    temp_folder = tempfile.mktemp()
-                    os.rename(artifact_package_path, temp_folder)
-                    shutil.rmtree(temp_folder)
-                # Download artifact
-                return self.set(
-                    feed=feed,
-                    name=name,
-                    version=version,
-                    organization=organization,
-                    project=project,
-                    scope=scope,
-                )
-            else:
-                return None
+        if resolve:
+            if artifact_package_path.exists():
+                # Remove invalid artifact package to avoid affecting download artifact.
+                temp_folder = os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
+                os.rename(artifact_package_path, temp_folder)
+                shutil.rmtree(temp_folder)
+            # Download artifact
+            return self.set(
+                feed=feed,
+                name=name,
+                version=version,
+                organization=organization,
+                project=project,
+                scope=scope,
+            )
+        return None
 
     def set(self, feed, name, version, scope, organization=None, project=None):
         """
@@ -298,7 +293,7 @@ class ArtifactCache:
         :param project: Name or ID of the project.
         :return artifact_package_path: Cache path of the artifact package
         """
-        tempdir = tempfile.mktemp()
+        tempdir = os.path.join(tempfile.gettempdir(), next(tempfile._get_candidate_names()))
         download_cmd = (
             f"az artifacts universal download --feed {feed} --name {name} --version {version} "
             f"--scope {scope} --path {tempdir}"
@@ -307,12 +302,12 @@ class ArtifactCache:
             download_cmd = download_cmd + f" --org {organization}"
         if project:
             download_cmd = download_cmd + f" --project {project}"
-        _logger.info(f"Start downloading artifacts {name}:{version} from {feed}.")
+        _logger.info("Start downloading artifacts %s:%s from %s.", name, version, feed)
         process = subprocess.Popen(
             download_cmd,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
-            shell=True,
+            shell=True,  # nosec B602
             encoding="utf-8",
         )
         # Avoid deadlock when setting stdout/stderr to PIPE.
@@ -324,7 +319,7 @@ class ArtifactCache:
             if re.findall(artifacts_tool_not_find_error_pattern, errs):
                 # When download artifacts tool failed retry download artifacts command
                 _logger.warning(
-                    f"Download package {name}:{version} from the feed {feed} failed: {errs}"
+                    "Download package %s:%s from the feed %s failed: %s", name, version, feed, errs
                 )
                 download_cmd = download_cmd + "--debug"
                 self._download_artifacts(

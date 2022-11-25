@@ -7,14 +7,15 @@ import shutil
 import tempfile
 import zipfile
 from pathlib import Path
-import yaml
 from typing import Union
 
+import yaml
+from azure.ai.ml._utils._asset_utils import traverse_directory
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
-from azure.ai.ml._utils._asset_utils import traverse_directory
-from .code import InternalComponentIgnoreFile
+
 from ._artifact_cache import ArtifactCache
+from .code import InternalComponentIgnoreFile
 
 ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
@@ -217,7 +218,7 @@ class _AdditionalIncludes:
                 additional_includes_configs = yaml.safe_load(f)
                 return isinstance(
                     additional_includes_configs, dict) and ADDITIONAL_INCLUDES_KEY in additional_includes_configs
-        except Exception:
+        except Exception:  # pylint: disable=broad-except
             return False
 
     def _load_yaml_format_additional_includes(self):
@@ -280,7 +281,7 @@ class _AdditionalIncludes:
                                       f"{additional_include['feed']}"
                         merge_local_path_to_additional_includes(local_path=os.path.join(artifact_path, item),
                                                                 config_info=config_info)
-                except Exception as e:
+                except Exception as e:  # pylint: disable=broad-except
                     self._artifact_validate_result.append_error(message=e.args[0])
             elif isinstance(additional_include, str):
                 merge_local_path_to_additional_includes(local_path=additional_include, config_info=additional_include)
