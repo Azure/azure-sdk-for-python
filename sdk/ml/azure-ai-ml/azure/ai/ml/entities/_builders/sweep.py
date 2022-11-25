@@ -11,6 +11,7 @@ from marshmallow import EXCLUDE, Schema
 
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.constants._job.sweep import SearchSpace
 from azure.ai.ml.entities._component.command_component import CommandComponent
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._credentials import (
@@ -149,6 +150,27 @@ class Sweep(ParameterizedSweep, BaseNode):
         """Id or instance of the command component/job to be run for the step."""
         return self._component
 
+    @property
+    def search_space(self):
+        return self._search_space
+    
+    @search_space.setter
+    def search_space(self, values: Dict[str, Dict[str, Union[str, int, float, dict]]]):
+        search_space = {}
+        for name, value in values.items():
+            search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
+        self._search_space = search_space
+
+    def _value_type_to_class(self, value):
+        value_type = value['type']
+        search_space_dict = {
+            SearchSpace.CHOICE: Choice, SearchSpace.RANDINT: Randint, SearchSpace.LOGNORMAL: LogNormal,
+            SearchSpace.NORMAL: Normal, SearchSpace.LOGUNIFORM: LogUniform, SearchSpace.UNIFORM: Uniform,
+            SearchSpace.QLOGNORMAL: QLogNormal, SearchSpace.QNORMAL: QNormal, SearchSpace.QLOGUNIFORM: QLogUniform,
+            SearchSpace.QUNIFORM: QUniform
+        }
+        return search_space_dict[value_type](**value)
+    
     @classmethod
     def _get_supported_inputs_types(cls):
         supported_types = super()._get_supported_inputs_types() or ()
