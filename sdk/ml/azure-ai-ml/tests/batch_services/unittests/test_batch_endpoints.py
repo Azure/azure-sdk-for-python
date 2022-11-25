@@ -159,7 +159,7 @@ def mock_batch_endpoint_operations(
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestBatchEndpointOperations:
     def test_batch_endpoint_create(
         self,

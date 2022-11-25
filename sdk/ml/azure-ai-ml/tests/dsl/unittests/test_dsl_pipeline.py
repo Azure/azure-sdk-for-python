@@ -2280,3 +2280,41 @@ class TestDSLPipeline:
         }
         assert jobs_dict["node2"]["inputs"] == {"required_input": {"job_input_type": "literal", "value": "1"}}
         assert jobs_dict["node_sweep"]["inputs"] == {"required_input": {"job_input_type": "literal", "value": "1"}}
+
+    def test_dsl_pipeline_unprovided_required_input(self):
+        component_yaml = components_dir / "helloworld_component_optional_input.yml"
+        component_func = load_component(component_yaml)
+
+        @dsl.pipeline
+        def pipeline_func(required_input: int, optional_input: int = 2):
+            component_func(required_input=required_input, optional_input=optional_input)
+
+        # no error when calling dsl pipeline func
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {
+            'inputs.required_input': "Required input 'required_input' for pipeline "
+                                     "'pipeline_func' not provided."
+        }
+
+        validate_result = pipeline_job.component._validate()
+        assert validate_result.error_messages == {}
+
+        # pipeline component has required inputs
+        assert pipeline_job.component._to_dict()["inputs"] == {
+            'optional_input': {'default': '2', 'optional': True, 'type': 'integer'},
+            'required_input': {'type': 'integer'}
+        }
+
+        # setting _validate_required_input_not_provided to False will skip the unprovided input check
+        @dsl.pipeline
+        def outer_pipeline():
+            node = pipeline_func()
+            node._validate_required_input_not_provided = False
+
+        pipeline_job = outer_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        validate_result = pipeline_job._validate()
+        assert validate_result.passed
