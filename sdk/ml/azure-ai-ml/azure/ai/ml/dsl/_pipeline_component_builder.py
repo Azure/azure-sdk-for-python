@@ -18,7 +18,7 @@ from azure.ai.ml._utils.utils import (
     parse_args_description_from_docstring,
 )
 from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.constants._component import ComponentSource
+from azure.ai.ml.constants._component import ComponentSource, IOConstants
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
@@ -235,9 +235,25 @@ class PipelineComponentBuilder:
         pipeline_component._outputs = self._build_pipeline_outputs(outputs)
         return pipeline_component
 
+    def _validate_group_annotation(self, name:str, val:GroupInput):
+        for k, v in val.values.items():
+            if isinstance(v, GroupInput):
+                self._validate_group_annotation(k, v)
+            elif isinstance(v, Output):
+                # TODO(2097468): automatically change it to Input when used in input annotation
+                raise UserErrorException("Output annotation cannot be used in @pipeline.")
+            elif isinstance(v, Input):
+                if v.type not in IOConstants.PRIMITIVE_STR_2_TYPE:
+                    # TODO(2097478): support port type groups
+                    raise UserErrorException(f"Only primitive types can be used as input of group, got {v.type}")
+            else:
+                raise UserErrorException(f"Unsupported annotation type {type(v)} for group field {name}.{k}")
+
     def _build_inputs(self, func):
         inputs = _get_param_with_standard_annotation(func, is_func=True, skip_params=self.non_pipeline_parameter_names)
         for k, v in inputs.items():
+            if isinstance(v, GroupInput):
+                self._validate_group_annotation(name=k, val=v)
             # add arg description
             if k in self._args_description:
                 v["description"] = self._args_description[k]
