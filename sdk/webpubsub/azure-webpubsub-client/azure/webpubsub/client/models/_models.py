@@ -9,9 +9,10 @@
 
 import sys
 from typing import Any, Mapping, overload, Union, Optional
+import json
 
 from .. import _model_base
-from .._model_base import rest_discriminator, rest_field
+from .._model_base import rest_discriminator, rest_field, AzureJSONEncoder
 from ._enums import DownstreamMessageType, UpstreamMessageType, WebPubSubDataType
 
 if sys.version_info >= (3, 9):
@@ -24,38 +25,92 @@ else:
     from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
+class OnConnectedArgs(_model_base.Model):
+    connection_id: str = rest_field(name="connectionId")
+    user_id: str = rest_field(name="userId")
 
-class WebPubSubMessageBase:
+    @overload
     def __init__(self) -> None:
-        self.kind = None
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+class WebPubSubMessageBase(_model_base.Model):
+    __mapping__ = {}
+    kind: Literal[None] = rest_discriminator(name="kind")
+
+    @overload
+    def __init__(self) -> None:
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.kind: Literal[None] = None
 
 
-class AckMessageError:
-    def __init__(self, name: str, message: str) -> None:
-        self.name = name
-        self.message = message
+class AckMessageError(_model_base.Model):
+    name: str = rest_field()
+    message: str = rest_field()
+
+    @overload
+    def __init__(self, *, name: str, message: str):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-class AckMessage(WebPubSubMessageBase):
+class AckMessage(WebPubSubMessageBase, discriminator="ack"):
+    kind: Literal["ack"] = rest_discriminator()
+    ack_id: int = rest_field(name="ackId")
+    success: bool = rest_field()
+    error: Optional[AckMessageError] = rest_field()
+
+    @overload
     def __init__(
-        self, ack_id: int, success: bool, error: Optional[AckMessageError] = None
+        self, *, ack_id: int, success: bool, error: Optional[AckMessageError] = None
     ) -> None:
-        super().__init__()
-        self.kind: Literal["ack"] = "ack"
-        self.ack_id = ack_id
-        self.success = success
-        self.error = error
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
-class ConnectedMessage(WebPubSubMessageBase):
+class ConnectedMessage(WebPubSubMessageBase, discriminator="connected"):
+    kind: Literal["connected"] = rest_discriminator()
+    connection_id: int = rest_field(name="connectionId")
+    user_id: str = rest_field(name="userId")
+    reconnection_token: str = rest_field(name="reconnectionToken")
+
+    @overload
     def __init__(
-        self, connection_id: int, user_id: str, reconnection_token: str
+        self, *, connection_id: int, user_id: str, reconnection_token: str
     ) -> None:
-        super().__init__()
-        self.kind: Literal["connected"] = "connected"
-        self.connection_id = connection_id
-        self.user_id = user_id
-        self.reconnection_token = reconnection_token
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
 
 class DisconnectedMessage(WebPubSubMessageBase):
@@ -209,6 +264,7 @@ class WebPubSubClientProtocolBase:
 
     @staticmethod
     def write_message(message: WebPubSubMessageBase) -> str:
+        return json.dumps(message, cls=AzureJSONEncoder)
         pass
 
 
@@ -225,6 +281,7 @@ class WebPubSubJsonReliableProtocol(WebPubSubClientProtocolBase):
         self.is_reliable_sub_protocol = True
         self.name = "json.reliable.webpubsub.azure.v1"
 
+
 class WebPubSubRetryOptions:
     def __init__(
         self,
@@ -238,13 +295,14 @@ class WebPubSubRetryOptions:
         self.max_retry_delay_in_ms = max_retry_delay_in_ms
         self.mode = mode
 
+
 class WebPubSubClientOptions:
     def __init__(
         self,
         protocol: Optional[WebPubSubClientProtocolBase] = None,
         auto_reconnect: Optional[bool] = None,
         auto_restore_groups: Optional[bool] = None,
-        message_retry_options: Optional[WebPubSubRetryOptions] = None
+        message_retry_options: Optional[WebPubSubRetryOptions] = None,
     ) -> None:
         self.protocol = protocol
         self.auto_reconnect = auto_reconnect

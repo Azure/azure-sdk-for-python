@@ -39,3 +39,11 @@ class WebPubSubDataType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     JSON = "json"
     TEXT = "text"
     PROTOBUF = "protobuf"
+
+class CallBackType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    CONNECTED = "connected"
+    DISCONNECTED = "disconnected"
+    STOPPED = "stopped"
+    SERVER_MESSAGE = "server-message"
+    GROUP_MESSAGE = "gourp-message"
+    REJOIN_GROUP_FAILED = "rejoin-group-failed"

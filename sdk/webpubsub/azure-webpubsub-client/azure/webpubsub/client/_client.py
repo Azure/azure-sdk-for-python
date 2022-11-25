@@ -9,13 +9,19 @@ import sys
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING, overload, Callable, Union, Optional, Dict
 
-from azure.core import PipelineClient
-from azure.core.rest import HttpRequest, HttpResponse
-
-from ._configuration import WebPubSubClientConfiguration
 from ._serialization import Deserializer, Serializer
-from .operations import HealthApiOperations, WebPubSubOperations
-from .models import WebPubSubClientState, WebPubSubClientOptions, WebPubSubRetryOptions
+from . import models
+from .models import (
+    WebPubSubClientState,
+    WebPubSubClientOptions,
+    WebPubSubRetryOptions,
+    CallBackType,
+    ConnectedMessage,
+    WebPubSubJsonReliableProtocol,
+)
+import websocket
+import threading
+import time
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
@@ -23,9 +29,6 @@ if TYPE_CHECKING:
 
 
 class WebPubSubClientCredential:
-
-    _client_access_url_provider: Callable[[Any], str] = None
-
     @overload
     def __init__(self, client_access_url_provider: str) -> None:
         ...
@@ -34,12 +37,11 @@ class WebPubSubClientCredential:
     def __init__(self, client_access_url_provider: Callable[[Any], str]) -> None:
         ...
 
-    @overload
     def __init__(
         self, client_access_url_provider: Union[str, Callable[[Any], str]]
     ) -> None:
         if isinstance(client_access_url_provider, str):
-            self._client_access_url_provider = lambda _: client_access_url_provider
+            self._client_access_url_provider = lambda: client_access_url_provider
         else:
             self._client_access_url_provider = client_access_url_provider
 
@@ -81,10 +83,6 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
     :paramtype api_version: str
     """
 
-    _credential: WebPubSubClientCredential = None
-    _state: WebPubSubClientState = WebPubSubClientState.STOPPED
-    _ack_id: int = 0
-
     @overload
     def __init__(
         self,
@@ -105,8 +103,8 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
 
     def __init__(
         self,
-        credential: Optional[WebPubSubClientCredential],
-        client_access_url: Optional[str],
+        credential: Optional[WebPubSubClientCredential] = None,
+        client_access_url: Optional[str] = None,
         options: Optional[WebPubSubClientOptions] = None,
         **kwargs: Any
     ) -> None:
@@ -121,18 +119,95 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
             options = WebPubSubClientOptions()
         self.build_default_options(options)
         self._options = options
-        self._message_retry_policy = RetryPolicy(self._options.message_retry_options)
-        self._reconnect_retry_policy = RetryPolicy(
-            WebPubSubRetryOptions(
-                max_retries=sys.maxint, retry_delay_in_ms=1000, mode="Fixed"
-            )
-        )
+        # self._message_retry_policy = RetryPolicy(self._options.message_retry_options)
+        # self._reconnect_retry_policy = RetryPolicy(
+        #     WebPubSubRetryOptions(
+        #         max_retries=sys.maxint, retry_delay_in_ms=1000, mode="Fixed"
+        #     )
+        # )
         self._protocol = self._options.protocol
         self._group_map: Dict[str, WebPubSubGroup] = {}
         self._ack_map: Dict[int, WebPubSubGroup] = {}
         self._sequence_id = SequenceId()
         self._state = WebPubSubClientState.STOPPED
         self._ack_id = 0
+        self._url = None
+        self._ws = None
+        self._handler = {CallBackType.CONNECTED: []}
+        self._event = threading.Event()
 
-    def build_default_options(options: WebPubSubClientOptions):
+    def on(self, type: str, listener: Callable[[Any], None]):
+        self._handler[type].append(listener)
+
+    def _call_back(self, type: CallBackType, *args):
+        for func in self._handler[type]:
+            if self._state == WebPubSubClientState.CONNECTED:
+                func(args)
+
+    def on_message(self, data: str):
+        def handle_connected_message(message: ConnectedMessage):
+            connected_args = models.OnConnectedArgs(
+                connected_id=message.connection_id,
+                user_id=message.user_id
+            )
+            self._call_back("connected", connected_args)
+
+        parsed_message = self._protocol.parse_messages(data)
+        if parsed_message["kind"] == "connected":
+            handle_connected_message(parsed_message)
+        pass
+
+    def _listen(self):
+        while self._state == WebPubSubClientState.CONNECTED:
+            try:
+                op_code, frame = self._ws.recv_data_frame(True)
+            except (
+                websocket.WebSocketConnectionClosedException,
+                websocket.KeyboardInterrupt,
+            ) as e:
+                self._call_back(CallBackType.DISCONNECTED)
+
+            if self._state != WebPubSubClientState.CONNECTED:
+                break
+
+            if (
+                op_code == websocket.ABNF.OPCODE_TEXT
+                or op_code == websocket.ABNF.OPCODE_BINARY
+            ):
+                data = frame.data
+                if op_code == websocket.ABNF.OPCODE_TEXT:
+                    data = data.decode("utf-8")
+                self.on_message(data)
+        pass
+
+    def connect(self):
+        self._ws = websocket.WebSocket()
+        self._ws.connect(self._url)
+        self._call_back(CallBackType.CONNECTED)
+        self._thread = threading.Thread(target=self._listen, daemon=True)
+        self._thread.start()
+
+    def start(self):
+        self._url = self._credential.get_client_access_url()
+        self.connect()
+        time.sleep(0.001)
+
+    def stop(self):
+        self._ws.close()
+        # while self._thread.is_alive():
+        #     time.sleep(1)
+        self._thread = None
+        self._ws = None
+
+    def send(self, message: str):
+        self._ws.send(message)
+
+    def build_default_options(self, options: WebPubSubClientOptions):
+        if options.auto_reconnect is None:
+            options.auto_reconnect = True
+        if options.auto_restore_groups is None:
+            options.auto_restore_groups = True
+        if options.protocol is None:
+            options.protocol = WebPubSubJsonReliableProtocol()
+        return
         pass
