@@ -57,7 +57,6 @@ class InternalPrimitiveOutputSchema(metaclass=PatchedSchemaMeta):
     )
     description = fields.Str()
     is_control = fields.Bool()
-    early_available = fields.Bool()
 
 
 class InternalParameterSchema(ParameterSchema):
