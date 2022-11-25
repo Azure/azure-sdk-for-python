@@ -643,7 +643,8 @@ class TestDSLPipelineJobValidate:
 
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
-        "update_pipeline_schema"
+        "update_pipeline_schema",
+        "enable_private_preview_schema_features",
     )
     def test_pipeline_with_invalid_do_while_node(self) -> None:
         with pytest.raises(ValidationError) as exception:
