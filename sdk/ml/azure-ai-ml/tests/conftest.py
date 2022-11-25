@@ -594,12 +594,18 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 def enable_private_preview_schema_features(mocker: MockFixture):
     """early_available is hidden under private preview, so need to patch and reload related classes."""
     from azure.ai.ml._schema.component import command_component as command_component_schema, input_output
-    from azure.ai.ml.entities._component import command_component as command_component_entity
+    from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
+    from azure.ai.ml.entities._component import (
+        command_component as command_component_entity,
+        pipeline_component as pipeline_component_entity,
+    )
 
     mocker.patch("azure.ai.ml._utils.utils.is_private_preview_enabled", return_value=True)
     reload(input_output)
     reload(command_component_schema)
+    reload(pipeline_component_schema)
     command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
+    pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
 
 
 @pytest.fixture()
