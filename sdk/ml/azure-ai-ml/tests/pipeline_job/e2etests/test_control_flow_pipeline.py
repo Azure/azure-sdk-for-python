@@ -32,7 +32,7 @@ def update_pipeline_schema():
     "recorded_test",
     "mock_code_hash",
     "enable_pipeline_private_preview_features",
-    "enable_private_preview_schema_features"
+    "enable_private_preview_schema_features",
     "update_pipeline_schema",
     "mock_asset_name",
     "mock_component_hash",
@@ -44,7 +44,6 @@ class TestConditionalNodeInPipeline(AzureRecordedTestCase):
     pass
 
 
-@pytest.mark.usefixtures("enable_private_preview_schema_features")
 class TestDoWhile(TestConditionalNodeInPipeline):
     def test_pipeline_with_do_while_node(self, client: MLClient, randstr: Callable[[], str]) -> None:
         params_override = [{"name": randstr('name')}]

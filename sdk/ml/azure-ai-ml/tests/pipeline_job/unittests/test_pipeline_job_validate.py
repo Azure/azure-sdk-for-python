@@ -652,7 +652,7 @@ class TestDSLPipelineJobValidate:
                 "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
             )
         error_message_str = re.findall(r"(\{.*\})", exception.value.args[0].replace("\n", ""))[0]
-        error_messages = json.loads(error_message_str.replace("\\", "\\\\"))
+        error_messages = json.loads(error_message_str)
 
         def assert_error_message(path, except_message, error_messages):
             msgs = next(filter(lambda item: item["path"] == path, error_messages))
