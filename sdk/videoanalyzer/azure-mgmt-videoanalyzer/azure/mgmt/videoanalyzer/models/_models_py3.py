@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,15 +8,16 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._video_analyzer_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """Common fields that are returned in the response for all Azure Resource Manager resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -30,28 +32,26 @@ class Resource(msrest.serialization.Model):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -73,28 +73,26 @@ class ProxyResource(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
 class AccessPolicyEntity(ProxyResource):
@@ -112,151 +110,167 @@ class AccessPolicyEntity(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param role: Defines the access level granted by this policy. Possible values include:
-     "Reader".
-    :type role: str or ~video_analyzer.models.AccessPolicyRole
-    :param authentication: Authentication method to be used when validating client API access.
-    :type authentication: ~video_analyzer.models.AuthenticationBase
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+    :ivar role: Defines the access level granted by this policy. "Reader"
+    :vartype role: str or ~azure.mgmt.videoanalyzer.models.AccessPolicyRole
+    :ivar authentication: Authentication method to be used when validating client API access.
+    :vartype authentication: ~azure.mgmt.videoanalyzer.models.AuthenticationBase
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'role': {'key': 'properties.role', 'type': 'str'},
-        'authentication': {'key': 'properties.authentication', 'type': 'AuthenticationBase'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "role": {"key": "properties.role", "type": "str"},
+        "authentication": {"key": "properties.authentication", "type": "AuthenticationBase"},
     }
 
     def __init__(
         self,
         *,
-        role: Optional[Union[str, "AccessPolicyRole"]] = None,
-        authentication: Optional["AuthenticationBase"] = None,
+        role: Optional[Union[str, "_models.AccessPolicyRole"]] = None,
+        authentication: Optional["_models.AuthenticationBase"] = None,
         **kwargs
     ):
-        super(AccessPolicyEntity, self).__init__(**kwargs)
+        """
+        :keyword role: Defines the access level granted by this policy. "Reader"
+        :paramtype role: str or ~azure.mgmt.videoanalyzer.models.AccessPolicyRole
+        :keyword authentication: Authentication method to be used when validating client API access.
+        :paramtype authentication: ~azure.mgmt.videoanalyzer.models.AuthenticationBase
+        """
+        super().__init__(**kwargs)
         self.role = role
         self.authentication = authentication
 
 
-class AccessPolicyEntityCollection(msrest.serialization.Model):
+class AccessPolicyEntityCollection(_serialization.Model):
     """A collection of AccessPolicyEntity items.
 
-    :param value: A collection of AccessPolicyEntity items.
-    :type value: list[~video_analyzer.models.AccessPolicyEntity]
-    :param next_link: A link to the next page of the collection (when the collection contains too
+    :ivar value: A collection of AccessPolicyEntity items.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.AccessPolicyEntity]
+    :ivar next_link: A link to the next page of the collection (when the collection contains too
      many results to return in one response).
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AccessPolicyEntity]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AccessPolicyEntity]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["AccessPolicyEntity"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.AccessPolicyEntity"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(AccessPolicyEntityCollection, self).__init__(**kwargs)
+        """
+        :keyword value: A collection of AccessPolicyEntity items.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.AccessPolicyEntity]
+        :keyword next_link: A link to the next page of the collection (when the collection contains too
+         many results to return in one response).
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class AccountEncryption(msrest.serialization.Model):
+class AccountEncryption(_serialization.Model):
     """Defines how the Video Analyzer account is (optionally) encrypted.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The type of key used to encrypt the Account Key. Possible values
-     include: "SystemKey", "CustomerKey".
-    :type type: str or ~video_analyzer.models.AccountEncryptionKeyType
-    :param key_vault_properties: The properties of the key used to encrypt the account.
-    :type key_vault_properties: ~video_analyzer.models.KeyVaultProperties
-    :param identity: The Key Vault identity.
-    :type identity: ~video_analyzer.models.ResourceIdentity
+    :ivar type: The type of key used to encrypt the Account Key. Required. Known values are:
+     "SystemKey" and "CustomerKey".
+    :vartype type: str or ~azure.mgmt.videoanalyzer.models.AccountEncryptionKeyType
+    :ivar key_vault_properties: The properties of the key used to encrypt the account.
+    :vartype key_vault_properties: ~azure.mgmt.videoanalyzer.models.KeyVaultProperties
+    :ivar identity: The Key Vault identity.
+    :vartype identity: ~azure.mgmt.videoanalyzer.models.ResourceIdentity
     :ivar status: The current status of the Key Vault mapping.
     :vartype status: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'status': {'readonly': True},
+        "type": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'status': {'key': 'status', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "KeyVaultProperties"},
+        "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        type: Union[str, "AccountEncryptionKeyType"],
-        key_vault_properties: Optional["KeyVaultProperties"] = None,
-        identity: Optional["ResourceIdentity"] = None,
+        type: Union[str, "_models.AccountEncryptionKeyType"],
+        key_vault_properties: Optional["_models.KeyVaultProperties"] = None,
+        identity: Optional["_models.ResourceIdentity"] = None,
         **kwargs
     ):
-        super(AccountEncryption, self).__init__(**kwargs)
+        """
+        :keyword type: The type of key used to encrypt the Account Key. Required. Known values are:
+         "SystemKey" and "CustomerKey".
+        :paramtype type: str or ~azure.mgmt.videoanalyzer.models.AccountEncryptionKeyType
+        :keyword key_vault_properties: The properties of the key used to encrypt the account.
+        :paramtype key_vault_properties: ~azure.mgmt.videoanalyzer.models.KeyVaultProperties
+        :keyword identity: The Key Vault identity.
+        :paramtype identity: ~azure.mgmt.videoanalyzer.models.ResourceIdentity
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.key_vault_properties = key_vault_properties
         self.identity = identity
         self.status = None
 
 
-class AudioEncoderBase(msrest.serialization.Model):
+class AudioEncoderBase(_serialization.Model):
     """Base type for all audio encoder presets, which define the recipe or instructions on how audio should be processed.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: AudioEncoderAac.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    AudioEncoderAac
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param bitrate_kbps: Bitrate, in kilobits per second or Kbps, at which audio should be encoded
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar bitrate_kbps: Bitrate, in kilobits per second or Kbps, at which audio should be encoded
      (2-channel stereo audio at a sampling rate of 48 kHz). Allowed values are 96, 112, 128, 160,
      192, 224, and 256. If omitted, the bitrate of the input audio is used.
-    :type bitrate_kbps: str
+    :vartype bitrate_kbps: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'bitrate_kbps': {'key': 'bitrateKbps', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "bitrate_kbps": {"key": "bitrateKbps", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.AudioEncoderAac': 'AudioEncoderAac'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.AudioEncoderAac": "AudioEncoderAac"}}
 
-    def __init__(
-        self,
-        *,
-        bitrate_kbps: Optional[str] = None,
-        **kwargs
-    ):
-        super(AudioEncoderBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, *, bitrate_kbps: Optional[str] = None, **kwargs):
+        """
+        :keyword bitrate_kbps: Bitrate, in kilobits per second or Kbps, at which audio should be
+         encoded (2-channel stereo audio at a sampling rate of 48 kHz). Allowed values are 96, 112, 128,
+         160, 192, 224, and 256. If omitted, the bitrate of the input audio is used.
+        :paramtype bitrate_kbps: str
+        """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.bitrate_kbps = bitrate_kbps
 
 
@@ -265,224 +279,225 @@ class AudioEncoderAac(AudioEncoderBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param bitrate_kbps: Bitrate, in kilobits per second or Kbps, at which audio should be encoded
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar bitrate_kbps: Bitrate, in kilobits per second or Kbps, at which audio should be encoded
      (2-channel stereo audio at a sampling rate of 48 kHz). Allowed values are 96, 112, 128, 160,
      192, 224, and 256. If omitted, the bitrate of the input audio is used.
-    :type bitrate_kbps: str
+    :vartype bitrate_kbps: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'bitrate_kbps': {'key': 'bitrateKbps', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "bitrate_kbps": {"key": "bitrateKbps", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        bitrate_kbps: Optional[str] = None,
-        **kwargs
-    ):
-        super(AudioEncoderAac, self).__init__(bitrate_kbps=bitrate_kbps, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.AudioEncoderAac'  # type: str
+    def __init__(self, *, bitrate_kbps: Optional[str] = None, **kwargs):
+        """
+        :keyword bitrate_kbps: Bitrate, in kilobits per second or Kbps, at which audio should be
+         encoded (2-channel stereo audio at a sampling rate of 48 kHz). Allowed values are 96, 112, 128,
+         160, 192, 224, and 256. If omitted, the bitrate of the input audio is used.
+        :paramtype bitrate_kbps: str
+        """
+        super().__init__(bitrate_kbps=bitrate_kbps, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.AudioEncoderAac"
 
 
-class AuthenticationBase(msrest.serialization.Model):
+class AuthenticationBase(_serialization.Model):
     """Base class for access policies authentication methods.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: JwtAuthentication.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    JwtAuthentication
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.JwtAuthentication': 'JwtAuthentication'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.JwtAuthentication": "JwtAuthentication"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(AuthenticationBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
 
 
-class CertificateSource(msrest.serialization.Model):
+class CertificateSource(_serialization.Model):
     """Base class for certificate sources.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: PemCertificateList.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    PemCertificateList
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.PemCertificateList': 'PemCertificateList'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.PemCertificateList": "PemCertificateList"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CertificateSource, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
 
 
-class CheckNameAvailabilityRequest(msrest.serialization.Model):
+class CheckNameAvailabilityRequest(_serialization.Model):
     """The check availability request body.
 
-    :param name: The name of the resource for which availability needs to be checked.
-    :type name: str
-    :param type: The resource type.
-    :type type: str
+    :ivar name: The name of the resource for which availability needs to be checked.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
-        super(CheckNameAvailabilityRequest, self).__init__(**kwargs)
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the resource for which availability needs to be checked.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class CheckNameAvailabilityResponse(msrest.serialization.Model):
+class CheckNameAvailabilityResponse(_serialization.Model):
     """The check availability result.
 
-    :param name_available: Indicates if the resource name is available.
-    :type name_available: bool
-    :param reason: The reason why the given name is not available. Possible values include:
-     "Invalid", "AlreadyExists".
-    :type reason: str or ~video_analyzer.models.CheckNameAvailabilityReason
-    :param message: Detailed reason why the given name is available.
-    :type message: str
+    :ivar name_available: Indicates if the resource name is available.
+    :vartype name_available: bool
+    :ivar reason: The reason why the given name is not available. Known values are: "Invalid" and
+     "AlreadyExists".
+    :vartype reason: str or ~azure.mgmt.videoanalyzer.models.CheckNameAvailabilityReason
+    :ivar message: Detailed reason why the given name is available.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "CheckNameAvailabilityReason"]] = None,
+        reason: Optional[Union[str, "_models.CheckNameAvailabilityReason"]] = None,
         message: Optional[str] = None,
         **kwargs
     ):
-        super(CheckNameAvailabilityResponse, self).__init__(**kwargs)
+        """
+        :keyword name_available: Indicates if the resource name is available.
+        :paramtype name_available: bool
+        :keyword reason: The reason why the given name is not available. Known values are: "Invalid"
+         and "AlreadyExists".
+        :paramtype reason: str or ~azure.mgmt.videoanalyzer.models.CheckNameAvailabilityReason
+        :keyword message: Detailed reason why the given name is available.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
         self.message = message
 
 
-class CredentialsBase(msrest.serialization.Model):
+class CredentialsBase(_serialization.Model):
     """Base class for credential objects.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: UsernamePasswordCredentials.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    UsernamePasswordCredentials
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.UsernamePasswordCredentials': 'UsernamePasswordCredentials'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.UsernamePasswordCredentials": "UsernamePasswordCredentials"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(CredentialsBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
 
 
-class TokenKey(msrest.serialization.Model):
+class TokenKey(_serialization.Model):
     """Key properties for JWT token validation.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: EccTokenKey, RsaTokenKey.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EccTokenKey, RsaTokenKey
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param kid: Required. JWT token key id. Validation keys are looked up based on the key id
-     present on the JWT token header.
-    :type kid: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar kid: JWT token key id. Validation keys are looked up based on the key id present on the
+     JWT token header. Required.
+    :vartype kid: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'kid': {'required': True},
+        "type": {"required": True},
+        "kid": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'kid': {'key': 'kid', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "kid": {"key": "kid", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.EccTokenKey': 'EccTokenKey', '#Microsoft.VideoAnalyzer.RsaTokenKey': 'RsaTokenKey'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.EccTokenKey": "EccTokenKey",
+            "#Microsoft.VideoAnalyzer.RsaTokenKey": "RsaTokenKey",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        kid: str,
-        **kwargs
-    ):
-        super(TokenKey, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, *, kid: str, **kwargs):
+        """
+        :keyword kid: JWT token key id. Validation keys are looked up based on the key id present on
+         the JWT token header. Required.
+        :paramtype kid: str
+        """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.kid = kid
 
 
@@ -491,47 +506,51 @@ class EccTokenKey(TokenKey):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param kid: Required. JWT token key id. Validation keys are looked up based on the key id
-     present on the JWT token header.
-    :type kid: str
-    :param alg: Required. Elliptical curve algorithm to be used: ES256, ES384 or ES512. Possible
-     values include: "ES256", "ES384", "ES512".
-    :type alg: str or ~video_analyzer.models.AccessPolicyEccAlgo
-    :param x: Required. X coordinate.
-    :type x: str
-    :param y: Required. Y coordinate.
-    :type y: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar kid: JWT token key id. Validation keys are looked up based on the key id present on the
+     JWT token header. Required.
+    :vartype kid: str
+    :ivar alg: Elliptical curve algorithm to be used: ES256, ES384 or ES512. Required. Known values
+     are: "ES256", "ES384", and "ES512".
+    :vartype alg: str or ~azure.mgmt.videoanalyzer.models.AccessPolicyEccAlgo
+    :ivar x: X coordinate. Required.
+    :vartype x: str
+    :ivar y: Y coordinate. Required.
+    :vartype y: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'kid': {'required': True},
-        'alg': {'required': True},
-        'x': {'required': True},
-        'y': {'required': True},
+        "type": {"required": True},
+        "kid": {"required": True},
+        "alg": {"required": True},
+        "x": {"required": True},
+        "y": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'kid': {'key': 'kid', 'type': 'str'},
-        'alg': {'key': 'alg', 'type': 'str'},
-        'x': {'key': 'x', 'type': 'str'},
-        'y': {'key': 'y', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "kid": {"key": "kid", "type": "str"},
+        "alg": {"key": "alg", "type": "str"},
+        "x": {"key": "x", "type": "str"},
+        "y": {"key": "y", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kid: str,
-        alg: Union[str, "AccessPolicyEccAlgo"],
-        x: str,
-        y: str,
-        **kwargs
-    ):
-        super(EccTokenKey, self).__init__(kid=kid, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.EccTokenKey'  # type: str
+    def __init__(self, *, kid: str, alg: Union[str, "_models.AccessPolicyEccAlgo"], x: str, y: str, **kwargs):
+        """
+        :keyword kid: JWT token key id. Validation keys are looked up based on the key id present on
+         the JWT token header. Required.
+        :paramtype kid: str
+        :keyword alg: Elliptical curve algorithm to be used: ES256, ES384 or ES512. Required. Known
+         values are: "ES256", "ES384", and "ES512".
+        :paramtype alg: str or ~azure.mgmt.videoanalyzer.models.AccessPolicyEccAlgo
+        :keyword x: X coordinate. Required.
+        :paramtype x: str
+        :keyword y: Y coordinate. Required.
+        :paramtype y: str
+        """
+        super().__init__(kid=kid, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.EccTokenKey"
         self.alg = alg
         self.x = x
         self.y = y
@@ -552,63 +571,64 @@ class EdgeModuleEntity(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
     :ivar edge_module_id: Internal ID generated for the instance of the Video Analyzer edge module.
     :vartype edge_module_id: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'edge_module_id': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "edge_module_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'edge_module_id': {'key': 'properties.edgeModuleId', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "edge_module_id": {"key": "properties.edgeModuleId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EdgeModuleEntity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.edge_module_id = None
 
 
-class EdgeModuleEntityCollection(msrest.serialization.Model):
+class EdgeModuleEntityCollection(_serialization.Model):
     """A collection of EdgeModuleEntity items.
 
-    :param value: A collection of EdgeModuleEntity items.
-    :type value: list[~video_analyzer.models.EdgeModuleEntity]
-    :param next_link: A link to the next page of the collection (when the collection contains too
+    :ivar value: A collection of EdgeModuleEntity items.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.EdgeModuleEntity]
+    :ivar next_link: A link to the next page of the collection (when the collection contains too
      many results to return in one response).
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[EdgeModuleEntity]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[EdgeModuleEntity]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["EdgeModuleEntity"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.EdgeModuleEntity"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(EdgeModuleEntityCollection, self).__init__(**kwargs)
+        """
+        :keyword value: A collection of EdgeModuleEntity items.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.EdgeModuleEntity]
+        :keyword next_link: A link to the next page of the collection (when the collection contains too
+         many results to return in one response).
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class EdgeModuleProvisioningToken(msrest.serialization.Model):
+class EdgeModuleProvisioningToken(_serialization.Model):
     """Provisioning token properties. A provisioning token allows for a single instance of Azure Video analyzer IoT edge module to be initialized and authorized to the cloud account. The provisioning token itself is short lived and it is only used for the initial handshake between IoT edge module and the cloud. After the initial handshake, the IoT edge module will agree on a set of authentication keys which will be auto-rotated as long as the module is able to periodically connect to the cloud. A new provisioning token can be generated for the same IoT edge module in case the module state lost or reset.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -623,54 +643,53 @@ class EdgeModuleProvisioningToken(msrest.serialization.Model):
     """
 
     _validation = {
-        'expiration_date': {'readonly': True},
-        'token': {'readonly': True},
+        "expiration_date": {"readonly": True},
+        "token": {"readonly": True},
     }
 
     _attribute_map = {
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'token': {'key': 'token', 'type': 'str'},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
+        "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EdgeModuleProvisioningToken, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.expiration_date = None
         self.token = None
 
 
-class EncoderPresetBase(msrest.serialization.Model):
+class EncoderPresetBase(_serialization.Model):
     """Base type for all encoder presets, which define the recipe or instructions on how the input content should be processed.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: EncoderCustomPreset, EncoderSystemPreset.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EncoderCustomPreset, EncoderSystemPreset
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.EncoderCustomPreset': 'EncoderCustomPreset', '#Microsoft.VideoAnalyzer.EncoderSystemPreset': 'EncoderSystemPreset'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.EncoderCustomPreset": "EncoderCustomPreset",
+            "#Microsoft.VideoAnalyzer.EncoderSystemPreset": "EncoderSystemPreset",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(EncoderPresetBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
 
 
 class EncoderCustomPreset(EncoderPresetBase):
@@ -678,118 +697,126 @@ class EncoderCustomPreset(EncoderPresetBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param audio_encoder: Describes a custom preset for encoding audio.
-    :type audio_encoder: ~video_analyzer.models.AudioEncoderBase
-    :param video_encoder: Describes a custom preset for encoding video.
-    :type video_encoder: ~video_analyzer.models.VideoEncoderBase
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar audio_encoder: Describes a custom preset for encoding audio.
+    :vartype audio_encoder: ~azure.mgmt.videoanalyzer.models.AudioEncoderBase
+    :ivar video_encoder: Describes a custom preset for encoding video.
+    :vartype video_encoder: ~azure.mgmt.videoanalyzer.models.VideoEncoderBase
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'audio_encoder': {'key': 'audioEncoder', 'type': 'AudioEncoderBase'},
-        'video_encoder': {'key': 'videoEncoder', 'type': 'VideoEncoderBase'},
+        "type": {"key": "@type", "type": "str"},
+        "audio_encoder": {"key": "audioEncoder", "type": "AudioEncoderBase"},
+        "video_encoder": {"key": "videoEncoder", "type": "VideoEncoderBase"},
     }
 
     def __init__(
         self,
         *,
-        audio_encoder: Optional["AudioEncoderBase"] = None,
-        video_encoder: Optional["VideoEncoderBase"] = None,
+        audio_encoder: Optional["_models.AudioEncoderBase"] = None,
+        video_encoder: Optional["_models.VideoEncoderBase"] = None,
         **kwargs
     ):
-        super(EncoderCustomPreset, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.EncoderCustomPreset'  # type: str
+        """
+        :keyword audio_encoder: Describes a custom preset for encoding audio.
+        :paramtype audio_encoder: ~azure.mgmt.videoanalyzer.models.AudioEncoderBase
+        :keyword video_encoder: Describes a custom preset for encoding video.
+        :paramtype video_encoder: ~azure.mgmt.videoanalyzer.models.VideoEncoderBase
+        """
+        super().__init__(**kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.EncoderCustomPreset"
         self.audio_encoder = audio_encoder
         self.video_encoder = video_encoder
 
 
-class NodeBase(msrest.serialization.Model):
+class NodeBase(_serialization.Model):
     """Base class for nodes.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: ProcessorNodeBase, SinkNodeBase, SourceNodeBase.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ProcessorNodeBase, SinkNodeBase, SourceNodeBase
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar name: Node name. Must be unique within the topology. Required.
+    :vartype name: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.ProcessorNodeBase': 'ProcessorNodeBase', '#Microsoft.VideoAnalyzer.SinkNodeBase': 'SinkNodeBase', '#Microsoft.VideoAnalyzer.SourceNodeBase': 'SourceNodeBase'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.ProcessorNodeBase": "ProcessorNodeBase",
+            "#Microsoft.VideoAnalyzer.SinkNodeBase": "SinkNodeBase",
+            "#Microsoft.VideoAnalyzer.SourceNodeBase": "SourceNodeBase",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
-        super(NodeBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, *, name: str, **kwargs):
+        """
+        :keyword name: Node name. Must be unique within the topology. Required.
+        :paramtype name: str
+        """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.name = name
 
 
 class ProcessorNodeBase(NodeBase):
     """Base class for topology processor nodes.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: EncoderProcessor.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    EncoderProcessor
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
-     inputs for this node.
-    :type inputs: list[~video_analyzer.models.NodeInput]
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar name: Node name. Must be unique within the topology. Required.
+    :vartype name: str
+    :ivar inputs: An array of upstream node references within the topology to be used as inputs for
+     this node. Required.
+    :vartype inputs: list[~azure.mgmt.videoanalyzer.models.NodeInput]
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.EncoderProcessor': 'EncoderProcessor'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.EncoderProcessor": "EncoderProcessor"}}
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["NodeInput"],
-        **kwargs
-    ):
-        super(ProcessorNodeBase, self).__init__(name=name, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.ProcessorNodeBase'  # type: str
+    def __init__(self, *, name: str, inputs: List["_models.NodeInput"], **kwargs):
+        """
+        :keyword name: Node name. Must be unique within the topology. Required.
+        :paramtype name: str
+        :keyword inputs: An array of upstream node references within the topology to be used as inputs
+         for this node. Required.
+        :paramtype inputs: list[~azure.mgmt.videoanalyzer.models.NodeInput]
+        """
+        super().__init__(name=name, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.ProcessorNodeBase"
         self.inputs = inputs
 
 
@@ -798,42 +825,45 @@ class EncoderProcessor(ProcessorNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
-     inputs for this node.
-    :type inputs: list[~video_analyzer.models.NodeInput]
-    :param preset: Required. The encoder preset, which defines the recipe or instructions on how
-     the input content should be processed.
-    :type preset: ~video_analyzer.models.EncoderPresetBase
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar name: Node name. Must be unique within the topology. Required.
+    :vartype name: str
+    :ivar inputs: An array of upstream node references within the topology to be used as inputs for
+     this node. Required.
+    :vartype inputs: list[~azure.mgmt.videoanalyzer.models.NodeInput]
+    :ivar preset: The encoder preset, which defines the recipe or instructions on how the input
+     content should be processed. Required.
+    :vartype preset: ~azure.mgmt.videoanalyzer.models.EncoderPresetBase
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'preset': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "preset": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'preset': {'key': 'preset', 'type': 'EncoderPresetBase'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "preset": {"key": "preset", "type": "EncoderPresetBase"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["NodeInput"],
-        preset: "EncoderPresetBase",
-        **kwargs
-    ):
-        super(EncoderProcessor, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.EncoderProcessor'  # type: str
+    def __init__(self, *, name: str, inputs: List["_models.NodeInput"], preset: "_models.EncoderPresetBase", **kwargs):
+        """
+        :keyword name: Node name. Must be unique within the topology. Required.
+        :paramtype name: str
+        :keyword inputs: An array of upstream node references within the topology to be used as inputs
+         for this node. Required.
+        :paramtype inputs: list[~azure.mgmt.videoanalyzer.models.NodeInput]
+        :keyword preset: The encoder preset, which defines the recipe or instructions on how the input
+         content should be processed. Required.
+        :paramtype preset: ~azure.mgmt.videoanalyzer.models.EncoderPresetBase
+        """
+        super().__init__(name=name, inputs=inputs, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.EncoderProcessor"
         self.preset = preset
 
 
@@ -842,119 +872,134 @@ class EncoderSystemPreset(EncoderPresetBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Name of the built-in encoding preset. Possible values include:
-     "SingleLayer_540p_H264_AAC", "SingleLayer_720p_H264_AAC", "SingleLayer_1080p_H264_AAC",
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar name: Name of the built-in encoding preset. Required. Known values are:
+     "SingleLayer_540p_H264_AAC", "SingleLayer_720p_H264_AAC", "SingleLayer_1080p_H264_AAC", and
      "SingleLayer_2160p_H264_AAC".
-    :type name: str or ~video_analyzer.models.EncoderSystemPresetType
+    :vartype name: str or ~azure.mgmt.videoanalyzer.models.EncoderSystemPresetType
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Union[str, "EncoderSystemPresetType"],
-        **kwargs
-    ):
-        super(EncoderSystemPreset, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.EncoderSystemPreset'  # type: str
+    def __init__(self, *, name: Union[str, "_models.EncoderSystemPresetType"], **kwargs):
+        """
+        :keyword name: Name of the built-in encoding preset. Required. Known values are:
+         "SingleLayer_540p_H264_AAC", "SingleLayer_720p_H264_AAC", "SingleLayer_1080p_H264_AAC", and
+         "SingleLayer_2160p_H264_AAC".
+        :paramtype name: str or ~azure.mgmt.videoanalyzer.models.EncoderSystemPresetType
+        """
+        super().__init__(**kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.EncoderSystemPreset"
         self.name = name
 
 
-class Endpoint(msrest.serialization.Model):
+class Endpoint(_serialization.Model):
     """The endpoint details.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param endpoint_url: The URL of the endpoint.
-    :type endpoint_url: str
-    :param type: Required. The type of the endpoint. Possible values include: "ClientApi".
-    :type type: str or ~video_analyzer.models.VideoAnalyzerEndpointType
+    :ivar endpoint_url: The URL of the endpoint.
+    :vartype endpoint_url: str
+    :ivar type: The type of the endpoint. Required. "ClientApi"
+    :vartype type: str or ~azure.mgmt.videoanalyzer.models.VideoAnalyzerEndpointType
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'endpoint_url': {'key': 'endpointUrl', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "endpoint_url": {"key": "endpointUrl", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        type: Union[str, "VideoAnalyzerEndpointType"],
-        endpoint_url: Optional[str] = None,
-        **kwargs
+        self, *, type: Union[str, "_models.VideoAnalyzerEndpointType"], endpoint_url: Optional[str] = None, **kwargs
     ):
-        super(Endpoint, self).__init__(**kwargs)
+        """
+        :keyword endpoint_url: The URL of the endpoint.
+        :paramtype endpoint_url: str
+        :keyword type: The type of the endpoint. Required. "ClientApi"
+        :paramtype type: str or ~azure.mgmt.videoanalyzer.models.VideoAnalyzerEndpointType
+        """
+        super().__init__(**kwargs)
         self.endpoint_url = endpoint_url
         self.type = type
 
 
-class EndpointBase(msrest.serialization.Model):
+class EndpointBase(_serialization.Model):
     """Base class for endpoints.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: TlsEndpoint, UnsecuredEndpoint.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    TlsEndpoint, UnsecuredEndpoint
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param credentials: Required. Credentials to be presented to the endpoint.
-    :type credentials: ~video_analyzer.models.CredentialsBase
-    :param url: Required. The endpoint URL for Video Analyzer to connect to.
-    :type url: str
-    :param tunnel: Describes the tunnel through which Video Analyzer can connect to the endpoint
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar credentials: Credentials to be presented to the endpoint. Required.
+    :vartype credentials: ~azure.mgmt.videoanalyzer.models.CredentialsBase
+    :ivar url: The endpoint URL for Video Analyzer to connect to. Required.
+    :vartype url: str
+    :ivar tunnel: Describes the tunnel through which Video Analyzer can connect to the endpoint
      URL. This is an optional property, typically used when the endpoint is behind a firewall.
-    :type tunnel: ~video_analyzer.models.TunnelBase
+    :vartype tunnel: ~azure.mgmt.videoanalyzer.models.TunnelBase
     """
 
     _validation = {
-        'type': {'required': True},
-        'credentials': {'required': True},
-        'url': {'required': True},
+        "type": {"required": True},
+        "credentials": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
-        'url': {'key': 'url', 'type': 'str'},
-        'tunnel': {'key': 'tunnel', 'type': 'TunnelBase'},
+        "type": {"key": "@type", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
+        "url": {"key": "url", "type": "str"},
+        "tunnel": {"key": "tunnel", "type": "TunnelBase"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.TlsEndpoint': 'TlsEndpoint', '#Microsoft.VideoAnalyzer.UnsecuredEndpoint': 'UnsecuredEndpoint'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.TlsEndpoint": "TlsEndpoint",
+            "#Microsoft.VideoAnalyzer.UnsecuredEndpoint": "UnsecuredEndpoint",
+        }
     }
 
     def __init__(
         self,
         *,
-        credentials: "CredentialsBase",
+        credentials: "_models.CredentialsBase",
         url: str,
-        tunnel: Optional["TunnelBase"] = None,
+        tunnel: Optional["_models.TunnelBase"] = None,
         **kwargs
     ):
-        super(EndpointBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        """
+        :keyword credentials: Credentials to be presented to the endpoint. Required.
+        :paramtype credentials: ~azure.mgmt.videoanalyzer.models.CredentialsBase
+        :keyword url: The endpoint URL for Video Analyzer to connect to. Required.
+        :paramtype url: str
+        :keyword tunnel: Describes the tunnel through which Video Analyzer can connect to the endpoint
+         URL. This is an optional property, typically used when the endpoint is behind a firewall.
+        :paramtype tunnel: ~azure.mgmt.videoanalyzer.models.TunnelBase
+        """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.credentials = credentials
         self.url = url
         self.tunnel = tunnel
 
 
-class ErrorAdditionalInfo(msrest.serialization.Model):
+class ErrorAdditionalInfo(_serialization.Model):
     """The resource management error additional info.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -962,29 +1007,27 @@ class ErrorAdditionalInfo(msrest.serialization.Model):
     :ivar type: The additional info type.
     :vartype type: str
     :ivar info: The additional info.
-    :vartype info: any
+    :vartype info: JSON
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'info': {'key': 'info', 'type': 'object'},
+        "type": {"key": "type", "type": "str"},
+        "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorAdditionalInfo, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.type = None
         self.info = None
 
 
-class ErrorDetail(msrest.serialization.Model):
+class ErrorDetail(_serialization.Model):
     """The error detail.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -996,32 +1039,30 @@ class ErrorDetail(msrest.serialization.Model):
     :ivar target: The error target.
     :vartype target: str
     :ivar details: The error details.
-    :vartype details: list[~video_analyzer.models.ErrorDetail]
+    :vartype details: list[~azure.mgmt.videoanalyzer.models.ErrorDetail]
     :ivar additional_info: The error additional info.
-    :vartype additional_info: list[~video_analyzer.models.ErrorAdditionalInfo]
+    :vartype additional_info: list[~azure.mgmt.videoanalyzer.models.ErrorAdditionalInfo]
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
-        'details': {'key': 'details', 'type': '[ErrorDetail]'},
-        'additional_info': {'key': 'additionalInfo', 'type': '[ErrorAdditionalInfo]'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "target": {"key": "target", "type": "str"},
+        "details": {"key": "details", "type": "[ErrorDetail]"},
+        "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ErrorDetail, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.message = None
         self.target = None
@@ -1029,84 +1070,83 @@ class ErrorDetail(msrest.serialization.Model):
         self.additional_info = None
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Common error response for all Azure Resource Manager APIs to return error details for failed operations. (This also follows the OData error response format.).
 
-    :param error: The error object.
-    :type error: ~video_analyzer.models.ErrorDetail
+    :ivar error: The error object.
+    :vartype error: ~azure.mgmt.videoanalyzer.models.ErrorDetail
     """
 
     _attribute_map = {
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        *,
-        error: Optional["ErrorDetail"] = None,
-        **kwargs
-    ):
-        super(ErrorResponse, self).__init__(**kwargs)
+    def __init__(self, *, error: Optional["_models.ErrorDetail"] = None, **kwargs):
+        """
+        :keyword error: The error object.
+        :paramtype error: ~azure.mgmt.videoanalyzer.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.error = error
 
 
-class GroupLevelAccessControl(msrest.serialization.Model):
+class GroupLevelAccessControl(_serialization.Model):
     """Group level network access control.
 
-    :param public_network_access: Whether or not public network access is allowed for specified
-     resources under the Video Analyzer account. Possible values include: "Enabled", "Disabled".
-    :type public_network_access: str or ~video_analyzer.models.PublicNetworkAccess
+    :ivar public_network_access: Whether or not public network access is allowed for specified
+     resources under the Video Analyzer account. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.videoanalyzer.models.PublicNetworkAccess
     """
 
     _attribute_map = {
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
-        **kwargs
-    ):
-        super(GroupLevelAccessControl, self).__init__(**kwargs)
+    def __init__(self, *, public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None, **kwargs):
+        """
+        :keyword public_network_access: Whether or not public network access is allowed for specified
+         resources under the Video Analyzer account. Known values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.videoanalyzer.models.PublicNetworkAccess
+        """
+        super().__init__(**kwargs)
         self.public_network_access = public_network_access
 
 
-class IotHub(msrest.serialization.Model):
+class IotHub(_serialization.Model):
     """The IoT Hub details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The IoT Hub resource identifier.
-    :type id: str
-    :param identity: Required. The IoT Hub identity.
-    :type identity: ~video_analyzer.models.ResourceIdentity
+    :ivar id: The IoT Hub resource identifier. Required.
+    :vartype id: str
+    :ivar identity: The IoT Hub identity. Required.
+    :vartype identity: ~azure.mgmt.videoanalyzer.models.ResourceIdentity
     :ivar status: The current status of the Iot Hub mapping.
     :vartype status: str
     """
 
     _validation = {
-        'id': {'required': True},
-        'identity': {'required': True},
-        'status': {'readonly': True},
+        "id": {"required": True},
+        "identity": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'status': {'key': 'status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "status": {"key": "status", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: str,
-        identity: "ResourceIdentity",
-        **kwargs
-    ):
-        super(IotHub, self).__init__(**kwargs)
+    def __init__(self, *, id: str, identity: "_models.ResourceIdentity", **kwargs):  # pylint: disable=redefined-builtin
+        """
+        :keyword id: The IoT Hub resource identifier. Required.
+        :paramtype id: str
+        :keyword identity: The IoT Hub identity. Required.
+        :paramtype identity: ~azure.mgmt.videoanalyzer.models.ResourceIdentity
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.identity = identity
         self.status = None
@@ -1117,33 +1157,33 @@ class JwtAuthentication(AuthenticationBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param issuers: List of expected token issuers. Token issuer is valid if it matches at least
-     one of the given values.
-    :type issuers: list[str]
-    :param audiences: List of expected token audiences. Token audience is valid if it matches at
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar issuers: List of expected token issuers. Token issuer is valid if it matches at least one
+     of the given values.
+    :vartype issuers: list[str]
+    :ivar audiences: List of expected token audiences. Token audience is valid if it matches at
      least one of the given values.
-    :type audiences: list[str]
-    :param claims: List of additional token claims to be validated. Token must contains all claims
+    :vartype audiences: list[str]
+    :ivar claims: List of additional token claims to be validated. Token must contains all claims
      and respective values for it to be valid.
-    :type claims: list[~video_analyzer.models.TokenClaim]
-    :param keys: List of keys which can be used to validate access tokens. Having multiple keys
+    :vartype claims: list[~azure.mgmt.videoanalyzer.models.TokenClaim]
+    :ivar keys: List of keys which can be used to validate access tokens. Having multiple keys
      allow for seamless key rotation of the token signing key. Token signature must match exactly
      one key.
-    :type keys: list[~video_analyzer.models.TokenKey]
+    :vartype keys: list[~azure.mgmt.videoanalyzer.models.TokenKey]
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'issuers': {'key': 'issuers', 'type': '[str]'},
-        'audiences': {'key': 'audiences', 'type': '[str]'},
-        'claims': {'key': 'claims', 'type': '[TokenClaim]'},
-        'keys': {'key': 'keys', 'type': '[TokenKey]'},
+        "type": {"key": "@type", "type": "str"},
+        "issuers": {"key": "issuers", "type": "[str]"},
+        "audiences": {"key": "audiences", "type": "[str]"},
+        "claims": {"key": "claims", "type": "[TokenClaim]"},
+        "keys": {"key": "keys", "type": "[TokenKey]"},
     }
 
     def __init__(
@@ -1151,81 +1191,98 @@ class JwtAuthentication(AuthenticationBase):
         *,
         issuers: Optional[List[str]] = None,
         audiences: Optional[List[str]] = None,
-        claims: Optional[List["TokenClaim"]] = None,
-        keys: Optional[List["TokenKey"]] = None,
+        claims: Optional[List["_models.TokenClaim"]] = None,
+        keys: Optional[List["_models.TokenKey"]] = None,
         **kwargs
     ):
-        super(JwtAuthentication, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.JwtAuthentication'  # type: str
+        """
+        :keyword issuers: List of expected token issuers. Token issuer is valid if it matches at least
+         one of the given values.
+        :paramtype issuers: list[str]
+        :keyword audiences: List of expected token audiences. Token audience is valid if it matches at
+         least one of the given values.
+        :paramtype audiences: list[str]
+        :keyword claims: List of additional token claims to be validated. Token must contains all
+         claims and respective values for it to be valid.
+        :paramtype claims: list[~azure.mgmt.videoanalyzer.models.TokenClaim]
+        :keyword keys: List of keys which can be used to validate access tokens. Having multiple keys
+         allow for seamless key rotation of the token signing key. Token signature must match exactly
+         one key.
+        :paramtype keys: list[~azure.mgmt.videoanalyzer.models.TokenKey]
+        """
+        super().__init__(**kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.JwtAuthentication"
         self.issuers = issuers
         self.audiences = audiences
         self.claims = claims
         self.keys = keys
 
 
-class KeyVaultProperties(msrest.serialization.Model):
+class KeyVaultProperties(_serialization.Model):
     """The details for accessing the encryption keys in Key Vault.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param key_identifier: Required. The URL of the Key Vault key used to encrypt the account. The
-     key may either be versioned (for example https://vault/keys/mykey/version1) or reference a key
-     without a version (for example https://vault/keys/mykey).
-    :type key_identifier: str
+    :ivar key_identifier: The URL of the Key Vault key used to encrypt the account. The key may
+     either be versioned (for example https://vault/keys/mykey/version1) or reference a key without
+     a version (for example https://vault/keys/mykey). Required.
+    :vartype key_identifier: str
     :ivar current_key_identifier: The current key used to encrypt Video Analyzer account, including
      the key version.
     :vartype current_key_identifier: str
     """
 
     _validation = {
-        'key_identifier': {'required': True},
-        'current_key_identifier': {'readonly': True},
+        "key_identifier": {"required": True},
+        "current_key_identifier": {"readonly": True},
     }
 
     _attribute_map = {
-        'key_identifier': {'key': 'keyIdentifier', 'type': 'str'},
-        'current_key_identifier': {'key': 'currentKeyIdentifier', 'type': 'str'},
+        "key_identifier": {"key": "keyIdentifier", "type": "str"},
+        "current_key_identifier": {"key": "currentKeyIdentifier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_identifier: str,
-        **kwargs
-    ):
-        super(KeyVaultProperties, self).__init__(**kwargs)
+    def __init__(self, *, key_identifier: str, **kwargs):
+        """
+        :keyword key_identifier: The URL of the Key Vault key used to encrypt the account. The key may
+         either be versioned (for example https://vault/keys/mykey/version1) or reference a key without
+         a version (for example https://vault/keys/mykey). Required.
+        :paramtype key_identifier: str
+        """
+        super().__init__(**kwargs)
         self.key_identifier = key_identifier
         self.current_key_identifier = None
 
 
-class ListProvisioningTokenInput(msrest.serialization.Model):
+class ListProvisioningTokenInput(_serialization.Model):
     """The input parameters to generate registration token for the Azure Video Analyzer IoT edge module.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param expiration_date: Required. The desired expiration date of the registration token. The
-     Azure Video Analyzer IoT edge module must be initialized and connected to the Internet prior to
-     the token expiration date.
-    :type expiration_date: ~datetime.datetime
+    :ivar expiration_date: The desired expiration date of the registration token. The Azure Video
+     Analyzer IoT edge module must be initialized and connected to the Internet prior to the token
+     expiration date. Required.
+    :vartype expiration_date: ~datetime.datetime
     """
 
     _validation = {
-        'expiration_date': {'required': True},
+        "expiration_date": {"required": True},
     }
 
     _attribute_map = {
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
     }
 
-    def __init__(
-        self,
-        *,
-        expiration_date: datetime.datetime,
-        **kwargs
-    ):
-        super(ListProvisioningTokenInput, self).__init__(**kwargs)
+    def __init__(self, *, expiration_date: datetime.datetime, **kwargs):
+        """
+        :keyword expiration_date: The desired expiration date of the registration token. The Azure
+         Video Analyzer IoT edge module must be initialized and connected to the Internet prior to the
+         token expiration date. Required.
+        :paramtype expiration_date: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.expiration_date = expiration_date
 
 
@@ -1244,48 +1301,48 @@ class LivePipeline(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param topology_name: The reference to an existing pipeline topology defined for real-time
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+    :ivar topology_name: The reference to an existing pipeline topology defined for real-time
      content processing. When activated, this live pipeline will process content according to the
      pipeline topology definition.
-    :type topology_name: str
-    :param description: An optional description for the pipeline.
-    :type description: str
-    :param bitrate_kbps: Maximum bitrate capacity in Kbps reserved for the live pipeline. The
+    :vartype topology_name: str
+    :ivar description: An optional description for the pipeline.
+    :vartype description: str
+    :ivar bitrate_kbps: Maximum bitrate capacity in Kbps reserved for the live pipeline. The
      allowed range is from 500 to 3000 Kbps in increments of 100 Kbps. If the RTSP camera exceeds
      this capacity, then the service will disconnect temporarily from the camera. It will retry to
      re-establish connection (with exponential backoff), checking to see if the camera bitrate is
      now below the reserved capacity. Doing so will ensure that one 'noisy neighbor' does not affect
      other live pipelines in your account.
-    :type bitrate_kbps: int
-    :ivar state: Current state of the pipeline (read-only). Possible values include: "Inactive",
-     "Activating", "Active", "Deactivating".
-    :vartype state: str or ~video_analyzer.models.LivePipelineState
-    :param parameters: List of the instance level parameter values for the user-defined topology
+    :vartype bitrate_kbps: int
+    :ivar state: Current state of the pipeline (read-only). Known values are: "Inactive",
+     "Activating", "Active", and "Deactivating".
+    :vartype state: str or ~azure.mgmt.videoanalyzer.models.LivePipelineState
+    :ivar parameters: List of the instance level parameter values for the user-defined topology
      parameters. A pipeline can only define or override parameters values for parameters which have
      been declared in the referenced topology. Topology parameters without a default value must be
      defined. Topology parameters with a default value can be optionally be overridden.
-    :type parameters: list[~video_analyzer.models.ParameterDefinition]
+    :vartype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDefinition]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'topology_name': {'key': 'properties.topologyName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'bitrate_kbps': {'key': 'properties.bitrateKbps', 'type': 'int'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDefinition]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "topology_name": {"key": "properties.topologyName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "bitrate_kbps": {"key": "properties.bitrateKbps", "type": "int"},
+        "state": {"key": "properties.state", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDefinition]"},
     }
 
     def __init__(
@@ -1294,10 +1351,30 @@ class LivePipeline(ProxyResource):
         topology_name: Optional[str] = None,
         description: Optional[str] = None,
         bitrate_kbps: Optional[int] = None,
-        parameters: Optional[List["ParameterDefinition"]] = None,
+        parameters: Optional[List["_models.ParameterDefinition"]] = None,
         **kwargs
     ):
-        super(LivePipeline, self).__init__(**kwargs)
+        """
+        :keyword topology_name: The reference to an existing pipeline topology defined for real-time
+         content processing. When activated, this live pipeline will process content according to the
+         pipeline topology definition.
+        :paramtype topology_name: str
+        :keyword description: An optional description for the pipeline.
+        :paramtype description: str
+        :keyword bitrate_kbps: Maximum bitrate capacity in Kbps reserved for the live pipeline. The
+         allowed range is from 500 to 3000 Kbps in increments of 100 Kbps. If the RTSP camera exceeds
+         this capacity, then the service will disconnect temporarily from the camera. It will retry to
+         re-establish connection (with exponential backoff), checking to see if the camera bitrate is
+         now below the reserved capacity. Doing so will ensure that one 'noisy neighbor' does not affect
+         other live pipelines in your account.
+        :paramtype bitrate_kbps: int
+        :keyword parameters: List of the instance level parameter values for the user-defined topology
+         parameters. A pipeline can only define or override parameters values for parameters which have
+         been declared in the referenced topology. Topology parameters without a default value must be
+         defined. Topology parameters with a default value can be optionally be overridden.
+        :paramtype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDefinition]
+        """
+        super().__init__(**kwargs)
         self.topology_name = topology_name
         self.description = description
         self.bitrate_kbps = bitrate_kbps
@@ -1305,34 +1382,37 @@ class LivePipeline(ProxyResource):
         self.parameters = parameters
 
 
-class LivePipelineCollection(msrest.serialization.Model):
+class LivePipelineCollection(_serialization.Model):
     """A collection of LivePipeline items.
 
-    :param value: A collection of LivePipeline items.
-    :type value: list[~video_analyzer.models.LivePipeline]
-    :param next_link: A link to the next page of the collection (when the collection contains too
+    :ivar value: A collection of LivePipeline items.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.LivePipeline]
+    :ivar next_link: A link to the next page of the collection (when the collection contains too
      many results to return in one response).
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[LivePipeline]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[LivePipeline]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["LivePipeline"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.LivePipeline"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(LivePipelineCollection, self).__init__(**kwargs)
+        """
+        :keyword value: A collection of LivePipeline items.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.LivePipeline]
+        :keyword next_link: A link to the next page of the collection (when the collection contains too
+         many results to return in one response).
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class LivePipelineOperationStatus(msrest.serialization.Model):
+class LivePipelineOperationStatus(_serialization.Model):
     """Used for tracking the status of an operation on the live pipeline.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1342,26 +1422,24 @@ class LivePipelineOperationStatus(msrest.serialization.Model):
     :ivar status: The status of the live pipeline operation.
     :vartype status: str
     :ivar error: The error details for the live pipeline operation.
-    :vartype error: ~video_analyzer.models.ErrorDetail
+    :vartype error: ~azure.mgmt.videoanalyzer.models.ErrorDetail
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'status': {'readonly': True},
-        'error': {'readonly': True},
+        "name": {"readonly": True},
+        "status": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LivePipelineOperationStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.status = None
         self.error = None
@@ -1382,48 +1460,48 @@ class LivePipelineUpdate(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param topology_name: The reference to an existing pipeline topology defined for real-time
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+    :ivar topology_name: The reference to an existing pipeline topology defined for real-time
      content processing. When activated, this live pipeline will process content according to the
      pipeline topology definition.
-    :type topology_name: str
-    :param description: An optional description for the pipeline.
-    :type description: str
-    :param bitrate_kbps: Maximum bitrate capacity in Kbps reserved for the live pipeline. The
+    :vartype topology_name: str
+    :ivar description: An optional description for the pipeline.
+    :vartype description: str
+    :ivar bitrate_kbps: Maximum bitrate capacity in Kbps reserved for the live pipeline. The
      allowed range is from 500 to 3000 Kbps in increments of 100 Kbps. If the RTSP camera exceeds
      this capacity, then the service will disconnect temporarily from the camera. It will retry to
      re-establish connection (with exponential backoff), checking to see if the camera bitrate is
      now below the reserved capacity. Doing so will ensure that one 'noisy neighbor' does not affect
      other live pipelines in your account.
-    :type bitrate_kbps: int
-    :ivar state: Current state of the pipeline (read-only). Possible values include: "Inactive",
-     "Activating", "Active", "Deactivating".
-    :vartype state: str or ~video_analyzer.models.LivePipelineState
-    :param parameters: List of the instance level parameter values for the user-defined topology
+    :vartype bitrate_kbps: int
+    :ivar state: Current state of the pipeline (read-only). Known values are: "Inactive",
+     "Activating", "Active", and "Deactivating".
+    :vartype state: str or ~azure.mgmt.videoanalyzer.models.LivePipelineState
+    :ivar parameters: List of the instance level parameter values for the user-defined topology
      parameters. A pipeline can only define or override parameters values for parameters which have
      been declared in the referenced topology. Topology parameters without a default value must be
      defined. Topology parameters with a default value can be optionally be overridden.
-    :type parameters: list[~video_analyzer.models.ParameterDefinition]
+    :vartype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDefinition]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'topology_name': {'key': 'properties.topologyName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'bitrate_kbps': {'key': 'properties.bitrateKbps', 'type': 'int'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDefinition]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "topology_name": {"key": "properties.topologyName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "bitrate_kbps": {"key": "properties.bitrateKbps", "type": "int"},
+        "state": {"key": "properties.state", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDefinition]"},
     }
 
     def __init__(
@@ -1432,10 +1510,30 @@ class LivePipelineUpdate(ProxyResource):
         topology_name: Optional[str] = None,
         description: Optional[str] = None,
         bitrate_kbps: Optional[int] = None,
-        parameters: Optional[List["ParameterDefinition"]] = None,
+        parameters: Optional[List["_models.ParameterDefinition"]] = None,
         **kwargs
     ):
-        super(LivePipelineUpdate, self).__init__(**kwargs)
+        """
+        :keyword topology_name: The reference to an existing pipeline topology defined for real-time
+         content processing. When activated, this live pipeline will process content according to the
+         pipeline topology definition.
+        :paramtype topology_name: str
+        :keyword description: An optional description for the pipeline.
+        :paramtype description: str
+        :keyword bitrate_kbps: Maximum bitrate capacity in Kbps reserved for the live pipeline. The
+         allowed range is from 500 to 3000 Kbps in increments of 100 Kbps. If the RTSP camera exceeds
+         this capacity, then the service will disconnect temporarily from the camera. It will retry to
+         re-establish connection (with exponential backoff), checking to see if the camera bitrate is
+         now below the reserved capacity. Doing so will ensure that one 'noisy neighbor' does not affect
+         other live pipelines in your account.
+        :paramtype bitrate_kbps: int
+        :keyword parameters: List of the instance level parameter values for the user-defined topology
+         parameters. A pipeline can only define or override parameters values for parameters which have
+         been declared in the referenced topology. Topology parameters without a default value must be
+         defined. Topology parameters with a default value can be optionally be overridden.
+        :paramtype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDefinition]
+        """
+        super().__init__(**kwargs)
         self.topology_name = topology_name
         self.description = description
         self.bitrate_kbps = bitrate_kbps
@@ -1443,7 +1541,7 @@ class LivePipelineUpdate(ProxyResource):
         self.parameters = parameters
 
 
-class LogSpecification(msrest.serialization.Model):
+class LogSpecification(_serialization.Model):
     """A diagnostic log emitted by service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1457,28 +1555,26 @@ class LogSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'blob_duration': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "blob_duration": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'blob_duration': {'key': 'blobDuration', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(LogSpecification, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.display_name = None
         self.blob_duration = None
 
 
-class MetricDimension(msrest.serialization.Model):
+class MetricDimension(_serialization.Model):
     """A metric dimension.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1492,28 +1588,26 @@ class MetricDimension(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'to_be_exported_for_shoebox': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "to_be_exported_for_shoebox": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'to_be_exported_for_shoebox': {'key': 'toBeExportedForShoebox', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "to_be_exported_for_shoebox": {"key": "toBeExportedForShoebox", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(MetricDimension, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.display_name = None
         self.to_be_exported_for_shoebox = None
 
 
-class MetricSpecification(msrest.serialization.Model):
+class MetricSpecification(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """A metric emitted by service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1524,18 +1618,18 @@ class MetricSpecification(msrest.serialization.Model):
     :vartype display_name: str
     :ivar display_description: The metric display description.
     :vartype display_description: str
-    :ivar unit: The metric unit. Possible values include: "Bytes", "Count", "Milliseconds".
-    :vartype unit: str or ~video_analyzer.models.MetricUnit
-    :ivar aggregation_type: The metric aggregation type. Possible values include: "Average",
-     "Count", "Total".
-    :vartype aggregation_type: str or ~video_analyzer.models.MetricAggregationType
-    :ivar lock_aggregation_type: The metric lock aggregation type. Possible values include:
-     "Average", "Count", "Total".
-    :vartype lock_aggregation_type: str or ~video_analyzer.models.MetricAggregationType
-    :param supported_aggregation_types: Supported aggregation types.
-    :type supported_aggregation_types: list[str]
+    :ivar unit: The metric unit. Known values are: "Bytes", "Count", and "Milliseconds".
+    :vartype unit: str or ~azure.mgmt.videoanalyzer.models.MetricUnit
+    :ivar aggregation_type: The metric aggregation type. Known values are: "Average", "Count", and
+     "Total".
+    :vartype aggregation_type: str or ~azure.mgmt.videoanalyzer.models.MetricAggregationType
+    :ivar lock_aggregation_type: The metric lock aggregation type. Known values are: "Average",
+     "Count", and "Total".
+    :vartype lock_aggregation_type: str or ~azure.mgmt.videoanalyzer.models.MetricAggregationType
+    :ivar supported_aggregation_types: Supported aggregation types.
+    :vartype supported_aggregation_types: list[str]
     :ivar dimensions: The metric dimensions.
-    :vartype dimensions: list[~video_analyzer.models.MetricDimension]
+    :vartype dimensions: list[~azure.mgmt.videoanalyzer.models.MetricDimension]
     :ivar enable_regional_mdm_account: Indicates whether regional MDM account is enabled.
     :vartype enable_regional_mdm_account: bool
     :ivar source_mdm_account: The source MDM account.
@@ -1547,41 +1641,40 @@ class MetricSpecification(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'display_name': {'readonly': True},
-        'display_description': {'readonly': True},
-        'unit': {'readonly': True},
-        'aggregation_type': {'readonly': True},
-        'lock_aggregation_type': {'readonly': True},
-        'dimensions': {'readonly': True},
-        'enable_regional_mdm_account': {'readonly': True},
-        'source_mdm_account': {'readonly': True},
-        'source_mdm_namespace': {'readonly': True},
-        'supported_time_grain_types': {'readonly': True},
+        "name": {"readonly": True},
+        "display_name": {"readonly": True},
+        "display_description": {"readonly": True},
+        "unit": {"readonly": True},
+        "aggregation_type": {"readonly": True},
+        "lock_aggregation_type": {"readonly": True},
+        "dimensions": {"readonly": True},
+        "enable_regional_mdm_account": {"readonly": True},
+        "source_mdm_account": {"readonly": True},
+        "source_mdm_namespace": {"readonly": True},
+        "supported_time_grain_types": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display_name': {'key': 'displayName', 'type': 'str'},
-        'display_description': {'key': 'displayDescription', 'type': 'str'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'aggregation_type': {'key': 'aggregationType', 'type': 'str'},
-        'lock_aggregation_type': {'key': 'lockAggregationType', 'type': 'str'},
-        'supported_aggregation_types': {'key': 'supportedAggregationTypes', 'type': '[str]'},
-        'dimensions': {'key': 'dimensions', 'type': '[MetricDimension]'},
-        'enable_regional_mdm_account': {'key': 'enableRegionalMdmAccount', 'type': 'bool'},
-        'source_mdm_account': {'key': 'sourceMdmAccount', 'type': 'str'},
-        'source_mdm_namespace': {'key': 'sourceMdmNamespace', 'type': 'str'},
-        'supported_time_grain_types': {'key': 'supportedTimeGrainTypes', 'type': '[str]'},
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "lock_aggregation_type": {"key": "lockAggregationType", "type": "str"},
+        "supported_aggregation_types": {"key": "supportedAggregationTypes", "type": "[str]"},
+        "dimensions": {"key": "dimensions", "type": "[MetricDimension]"},
+        "enable_regional_mdm_account": {"key": "enableRegionalMdmAccount", "type": "bool"},
+        "source_mdm_account": {"key": "sourceMdmAccount", "type": "str"},
+        "source_mdm_namespace": {"key": "sourceMdmNamespace", "type": "str"},
+        "supported_time_grain_types": {"key": "supportedTimeGrainTypes", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        supported_aggregation_types: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(MetricSpecification, self).__init__(**kwargs)
+    def __init__(self, *, supported_aggregation_types: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword supported_aggregation_types: Supported aggregation types.
+        :paramtype supported_aggregation_types: list[str]
+        """
+        super().__init__(**kwargs)
         self.name = None
         self.display_name = None
         self.display_description = None
@@ -1596,109 +1689,131 @@ class MetricSpecification(msrest.serialization.Model):
         self.supported_time_grain_types = None
 
 
-class NetworkAccessControl(msrest.serialization.Model):
+class NetworkAccessControl(_serialization.Model):
     """Network access control for video analyzer account.
 
-    :param integration: Public network access for integration group.
-    :type integration: ~video_analyzer.models.GroupLevelAccessControl
-    :param ingestion: Public network access for ingestion group.
-    :type ingestion: ~video_analyzer.models.GroupLevelAccessControl
-    :param consumption: Public network access for consumption group.
-    :type consumption: ~video_analyzer.models.GroupLevelAccessControl
+    :ivar integration: Public network access for integration group.
+    :vartype integration: ~azure.mgmt.videoanalyzer.models.GroupLevelAccessControl
+    :ivar ingestion: Public network access for ingestion group.
+    :vartype ingestion: ~azure.mgmt.videoanalyzer.models.GroupLevelAccessControl
+    :ivar consumption: Public network access for consumption group.
+    :vartype consumption: ~azure.mgmt.videoanalyzer.models.GroupLevelAccessControl
     """
 
     _attribute_map = {
-        'integration': {'key': 'integration', 'type': 'GroupLevelAccessControl'},
-        'ingestion': {'key': 'ingestion', 'type': 'GroupLevelAccessControl'},
-        'consumption': {'key': 'consumption', 'type': 'GroupLevelAccessControl'},
+        "integration": {"key": "integration", "type": "GroupLevelAccessControl"},
+        "ingestion": {"key": "ingestion", "type": "GroupLevelAccessControl"},
+        "consumption": {"key": "consumption", "type": "GroupLevelAccessControl"},
     }
 
     def __init__(
         self,
         *,
-        integration: Optional["GroupLevelAccessControl"] = None,
-        ingestion: Optional["GroupLevelAccessControl"] = None,
-        consumption: Optional["GroupLevelAccessControl"] = None,
+        integration: Optional["_models.GroupLevelAccessControl"] = None,
+        ingestion: Optional["_models.GroupLevelAccessControl"] = None,
+        consumption: Optional["_models.GroupLevelAccessControl"] = None,
         **kwargs
     ):
-        super(NetworkAccessControl, self).__init__(**kwargs)
+        """
+        :keyword integration: Public network access for integration group.
+        :paramtype integration: ~azure.mgmt.videoanalyzer.models.GroupLevelAccessControl
+        :keyword ingestion: Public network access for ingestion group.
+        :paramtype ingestion: ~azure.mgmt.videoanalyzer.models.GroupLevelAccessControl
+        :keyword consumption: Public network access for consumption group.
+        :paramtype consumption: ~azure.mgmt.videoanalyzer.models.GroupLevelAccessControl
+        """
+        super().__init__(**kwargs)
         self.integration = integration
         self.ingestion = ingestion
         self.consumption = consumption
 
 
-class NodeInput(msrest.serialization.Model):
+class NodeInput(_serialization.Model):
     """Describes an input signal to be used on a pipeline node.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param node_name: Required. The name of the upstream node in the pipeline which output is used
-     as input of the current node.
-    :type node_name: str
+    :ivar node_name: The name of the upstream node in the pipeline which output is used as input of
+     the current node. Required.
+    :vartype node_name: str
     """
 
     _validation = {
-        'node_name': {'required': True},
+        "node_name": {"required": True},
     }
 
     _attribute_map = {
-        'node_name': {'key': 'nodeName', 'type': 'str'},
+        "node_name": {"key": "nodeName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        node_name: str,
-        **kwargs
-    ):
-        super(NodeInput, self).__init__(**kwargs)
+    def __init__(self, *, node_name: str, **kwargs):
+        """
+        :keyword node_name: The name of the upstream node in the pipeline which output is used as input
+         of the current node. Required.
+        :paramtype node_name: str
+        """
+        super().__init__(**kwargs)
         self.node_name = node_name
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """An operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The operation name.
-    :type name: str
-    :param display: The operation display name.
-    :type display: ~video_analyzer.models.OperationDisplay
-    :param origin: Origin of the operation.
-    :type origin: str
-    :param properties: Operation properties format.
-    :type properties: ~video_analyzer.models.Properties
-    :param is_data_action: Whether the operation applies to data-plane.
-    :type is_data_action: bool
-    :param action_type: Indicates the action type. Possible values include: "Internal".
-    :type action_type: str or ~video_analyzer.models.ActionType
+    :ivar name: The operation name. Required.
+    :vartype name: str
+    :ivar display: The operation display name.
+    :vartype display: ~azure.mgmt.videoanalyzer.models.OperationDisplay
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar properties: Operation properties format.
+    :vartype properties: ~azure.mgmt.videoanalyzer.models.Properties
+    :ivar is_data_action: Whether the operation applies to data-plane.
+    :vartype is_data_action: bool
+    :ivar action_type: Indicates the action type. "Internal"
+    :vartype action_type: str or ~azure.mgmt.videoanalyzer.models.ActionType
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
-        'origin': {'key': 'origin', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'Properties'},
-        'is_data_action': {'key': 'isDataAction', 'type': 'bool'},
-        'action_type': {'key': 'actionType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "properties": {"key": "properties", "type": "Properties"},
+        "is_data_action": {"key": "isDataAction", "type": "bool"},
+        "action_type": {"key": "actionType", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        display: Optional["OperationDisplay"] = None,
+        display: Optional["_models.OperationDisplay"] = None,
         origin: Optional[str] = None,
-        properties: Optional["Properties"] = None,
+        properties: Optional["_models.Properties"] = None,
         is_data_action: Optional[bool] = None,
-        action_type: Optional[Union[str, "ActionType"]] = None,
+        action_type: Optional[Union[str, "_models.ActionType"]] = None,
         **kwargs
     ):
-        super(Operation, self).__init__(**kwargs)
+        """
+        :keyword name: The operation name. Required.
+        :paramtype name: str
+        :keyword display: The operation display name.
+        :paramtype display: ~azure.mgmt.videoanalyzer.models.OperationDisplay
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        :keyword properties: Operation properties format.
+        :paramtype properties: ~azure.mgmt.videoanalyzer.models.Properties
+        :keyword is_data_action: Whether the operation applies to data-plane.
+        :paramtype is_data_action: bool
+        :keyword action_type: Indicates the action type. "Internal"
+        :paramtype action_type: str or ~azure.mgmt.videoanalyzer.models.ActionType
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
         self.origin = origin
@@ -1707,45 +1822,44 @@ class Operation(msrest.serialization.Model):
         self.action_type = action_type
 
 
-class OperationCollection(msrest.serialization.Model):
+class OperationCollection(_serialization.Model):
     """A collection of Operation items.
 
-    :param value: A collection of Operation items.
-    :type value: list[~video_analyzer.models.Operation]
+    :ivar value: A collection of Operation items.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.Operation]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["Operation"]] = None,
-        **kwargs
-    ):
-        super(OperationCollection, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+        """
+        :keyword value: A collection of Operation items.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.Operation]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Operation details.
 
-    :param provider: The service provider.
-    :type provider: str
-    :param resource: Resource on which the operation is performed.
-    :type resource: str
-    :param operation: The operation type.
-    :type operation: str
-    :param description: The operation description.
-    :type description: str
+    :ivar provider: The service provider.
+    :vartype provider: str
+    :ivar resource: Resource on which the operation is performed.
+    :vartype resource: str
+    :ivar operation: The operation type.
+    :vartype operation: str
+    :ivar description: The operation description.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -1757,86 +1871,108 @@ class OperationDisplay(msrest.serialization.Model):
         description: Optional[str] = None,
         **kwargs
     ):
-        super(OperationDisplay, self).__init__(**kwargs)
+        """
+        :keyword provider: The service provider.
+        :paramtype provider: str
+        :keyword resource: Resource on which the operation is performed.
+        :paramtype resource: str
+        :keyword operation: The operation type.
+        :paramtype operation: str
+        :keyword description: The operation description.
+        :paramtype description: str
+        """
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
         self.description = description
 
 
-class ParameterDeclaration(msrest.serialization.Model):
+class ParameterDeclaration(_serialization.Model):
     """Single topology parameter declaration. Declared parameters can and must be referenced throughout the topology and can optionally have default values to be used when they are not defined in the pipelines.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the parameter.
-    :type name: str
-    :param type: Required. Type of the parameter. Possible values include: "String",
-     "SecretString", "Int", "Double", "Bool".
-    :type type: str or ~video_analyzer.models.ParameterType
-    :param description: Description of the parameter.
-    :type description: str
-    :param default: The default value for the parameter to be used if the pipeline does not specify
+    :ivar name: Name of the parameter. Required.
+    :vartype name: str
+    :ivar type: Type of the parameter. Required. Known values are: "String", "SecretString", "Int",
+     "Double", and "Bool".
+    :vartype type: str or ~azure.mgmt.videoanalyzer.models.ParameterType
+    :ivar description: Description of the parameter.
+    :vartype description: str
+    :ivar default: The default value for the parameter to be used if the pipeline does not specify
      a value.
-    :type default: str
+    :vartype default: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'type': {'required': True},
+        "name": {"required": True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'default': {'key': 'default', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "default": {"key": "default", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        type: Union[str, "ParameterType"],
+        type: Union[str, "_models.ParameterType"],
         description: Optional[str] = None,
         default: Optional[str] = None,
         **kwargs
     ):
-        super(ParameterDeclaration, self).__init__(**kwargs)
+        """
+        :keyword name: Name of the parameter. Required.
+        :paramtype name: str
+        :keyword type: Type of the parameter. Required. Known values are: "String", "SecretString",
+         "Int", "Double", and "Bool".
+        :paramtype type: str or ~azure.mgmt.videoanalyzer.models.ParameterType
+        :keyword description: Description of the parameter.
+        :paramtype description: str
+        :keyword default: The default value for the parameter to be used if the pipeline does not
+         specify a value.
+        :paramtype default: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
         self.description = description
         self.default = default
 
 
-class ParameterDefinition(msrest.serialization.Model):
+class ParameterDefinition(_serialization.Model):
     """Defines the parameter value of an specific pipeline topology parameter. See pipeline topology parameters for more information.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the parameter declared in the pipeline topology.
-    :type name: str
-    :param value: Parameter value to be applied on this specific pipeline.
-    :type value: str
+    :ivar name: Name of the parameter declared in the pipeline topology. Required.
+    :vartype name: str
+    :ivar value: Parameter value to be applied on this specific pipeline.
+    :vartype value: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: Optional[str] = None,
-        **kwargs
-    ):
-        super(ParameterDefinition, self).__init__(**kwargs)
+    def __init__(self, *, name: str, value: Optional[str] = None, **kwargs):
+        """
+        :keyword name: Name of the parameter declared in the pipeline topology. Required.
+        :paramtype name: str
+        :keyword value: Parameter value to be applied on this specific pipeline.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
@@ -1846,30 +1982,29 @@ class PemCertificateList(CertificateSource):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param certificates: Required. PEM formatted public certificates. One certificate per entry.
-    :type certificates: list[str]
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar certificates: PEM formatted public certificates. One certificate per entry. Required.
+    :vartype certificates: list[str]
     """
 
     _validation = {
-        'type': {'required': True},
-        'certificates': {'required': True},
+        "type": {"required": True},
+        "certificates": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'certificates': {'key': 'certificates', 'type': '[str]'},
+        "type": {"key": "@type", "type": "str"},
+        "certificates": {"key": "certificates", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificates: List[str],
-        **kwargs
-    ):
-        super(PemCertificateList, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.PemCertificateList'  # type: str
+    def __init__(self, *, certificates: List[str], **kwargs):
+        """
+        :keyword certificates: PEM formatted public certificates. One certificate per entry. Required.
+        :paramtype certificates: list[str]
+        """
+        super().__init__(**kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.PemCertificateList"
         self.certificates = certificates
 
 
@@ -1888,48 +2023,48 @@ class PipelineJob(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param topology_name: Reference to an existing pipeline topology. When activated, this pipeline
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+    :ivar topology_name: Reference to an existing pipeline topology. When activated, this pipeline
      job will process content according to the pipeline topology definition.
-    :type topology_name: str
-    :param description: An optional description for the pipeline.
-    :type description: str
-    :ivar state: Current state of the pipeline (read-only). Possible values include: "Processing",
-     "Canceled", "Completed", "Failed".
-    :vartype state: str or ~video_analyzer.models.PipelineJobState
+    :vartype topology_name: str
+    :ivar description: An optional description for the pipeline.
+    :vartype description: str
+    :ivar state: Current state of the pipeline (read-only). Known values are: "Processing",
+     "Canceled", "Completed", and "Failed".
+    :vartype state: str or ~azure.mgmt.videoanalyzer.models.PipelineJobState
     :ivar expiration: The date-time by when this pipeline job will be automatically deleted from
      your account.
     :vartype expiration: ~datetime.datetime
     :ivar error: Details about the error, in case the pipeline job fails.
-    :vartype error: ~video_analyzer.models.PipelineJobError
-    :param parameters: List of the instance level parameter values for the user-defined topology
+    :vartype error: ~azure.mgmt.videoanalyzer.models.PipelineJobError
+    :ivar parameters: List of the instance level parameter values for the user-defined topology
      parameters. A pipeline can only define or override parameters values for parameters which have
      been declared in the referenced topology. Topology parameters without a default value must be
      defined. Topology parameters with a default value can be optionally be overridden.
-    :type parameters: list[~video_analyzer.models.ParameterDefinition]
+    :vartype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDefinition]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'state': {'readonly': True},
-        'expiration': {'readonly': True},
-        'error': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "state": {"readonly": True},
+        "expiration": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'topology_name': {'key': 'properties.topologyName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'expiration': {'key': 'properties.expiration', 'type': 'iso-8601'},
-        'error': {'key': 'properties.error', 'type': 'PipelineJobError'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDefinition]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "topology_name": {"key": "properties.topologyName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "expiration": {"key": "properties.expiration", "type": "iso-8601"},
+        "error": {"key": "properties.error", "type": "PipelineJobError"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDefinition]"},
     }
 
     def __init__(
@@ -1937,10 +2072,22 @@ class PipelineJob(ProxyResource):
         *,
         topology_name: Optional[str] = None,
         description: Optional[str] = None,
-        parameters: Optional[List["ParameterDefinition"]] = None,
+        parameters: Optional[List["_models.ParameterDefinition"]] = None,
         **kwargs
     ):
-        super(PipelineJob, self).__init__(**kwargs)
+        """
+        :keyword topology_name: Reference to an existing pipeline topology. When activated, this
+         pipeline job will process content according to the pipeline topology definition.
+        :paramtype topology_name: str
+        :keyword description: An optional description for the pipeline.
+        :paramtype description: str
+        :keyword parameters: List of the instance level parameter values for the user-defined topology
+         parameters. A pipeline can only define or override parameters values for parameters which have
+         been declared in the referenced topology. Topology parameters without a default value must be
+         defined. Topology parameters with a default value can be optionally be overridden.
+        :paramtype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDefinition]
+        """
+        super().__init__(**kwargs)
         self.topology_name = topology_name
         self.description = description
         self.state = None
@@ -1949,60 +2096,63 @@ class PipelineJob(ProxyResource):
         self.parameters = parameters
 
 
-class PipelineJobCollection(msrest.serialization.Model):
+class PipelineJobCollection(_serialization.Model):
     """A collection of PipelineJob items.
 
-    :param value: A collection of PipelineJob items.
-    :type value: list[~video_analyzer.models.PipelineJob]
-    :param next_link: A link to the next page of the collection (when the collection contains too
+    :ivar value: A collection of PipelineJob items.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.PipelineJob]
+    :ivar next_link: A link to the next page of the collection (when the collection contains too
      many results to return in one response).
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PipelineJob]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PipelineJob]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["PipelineJob"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.PipelineJob"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(PipelineJobCollection, self).__init__(**kwargs)
+        """
+        :keyword value: A collection of PipelineJob items.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.PipelineJob]
+        :keyword next_link: A link to the next page of the collection (when the collection contains too
+         many results to return in one response).
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PipelineJobError(msrest.serialization.Model):
+class PipelineJobError(_serialization.Model):
     """Details about the error for a failed pipeline job.
 
-    :param code: The error code.
-    :type code: str
-    :param message: The error message.
-    :type message: str
+    :ivar code: The error code.
+    :vartype code: str
+    :ivar message: The error message.
+    :vartype message: str
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
-        super(PipelineJobError, self).__init__(**kwargs)
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
+        """
+        :keyword code: The error code.
+        :paramtype code: str
+        :keyword message: The error message.
+        :paramtype message: str
+        """
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class PipelineJobOperationStatus(msrest.serialization.Model):
+class PipelineJobOperationStatus(_serialization.Model):
     """Used for tracking the status of an operation on the pipeline job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2012,26 +2162,24 @@ class PipelineJobOperationStatus(msrest.serialization.Model):
     :ivar status: The status of the pipeline job operation.
     :vartype status: str
     :ivar error: The error details for the pipeline job operation.
-    :vartype error: ~video_analyzer.models.ErrorDetail
+    :vartype error: ~azure.mgmt.videoanalyzer.models.ErrorDetail
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'status': {'readonly': True},
-        'error': {'readonly': True},
+        "name": {"readonly": True},
+        "status": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PipelineJobOperationStatus, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
         self.status = None
         self.error = None
@@ -2052,48 +2200,48 @@ class PipelineJobUpdate(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param topology_name: Reference to an existing pipeline topology. When activated, this pipeline
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+    :ivar topology_name: Reference to an existing pipeline topology. When activated, this pipeline
      job will process content according to the pipeline topology definition.
-    :type topology_name: str
-    :param description: An optional description for the pipeline.
-    :type description: str
-    :ivar state: Current state of the pipeline (read-only). Possible values include: "Processing",
-     "Canceled", "Completed", "Failed".
-    :vartype state: str or ~video_analyzer.models.PipelineJobState
+    :vartype topology_name: str
+    :ivar description: An optional description for the pipeline.
+    :vartype description: str
+    :ivar state: Current state of the pipeline (read-only). Known values are: "Processing",
+     "Canceled", "Completed", and "Failed".
+    :vartype state: str or ~azure.mgmt.videoanalyzer.models.PipelineJobState
     :ivar expiration: The date-time by when this pipeline job will be automatically deleted from
      your account.
     :vartype expiration: ~datetime.datetime
     :ivar error: Details about the error, in case the pipeline job fails.
-    :vartype error: ~video_analyzer.models.PipelineJobError
-    :param parameters: List of the instance level parameter values for the user-defined topology
+    :vartype error: ~azure.mgmt.videoanalyzer.models.PipelineJobError
+    :ivar parameters: List of the instance level parameter values for the user-defined topology
      parameters. A pipeline can only define or override parameters values for parameters which have
      been declared in the referenced topology. Topology parameters without a default value must be
      defined. Topology parameters with a default value can be optionally be overridden.
-    :type parameters: list[~video_analyzer.models.ParameterDefinition]
+    :vartype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDefinition]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'state': {'readonly': True},
-        'expiration': {'readonly': True},
-        'error': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "state": {"readonly": True},
+        "expiration": {"readonly": True},
+        "error": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'topology_name': {'key': 'properties.topologyName', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'expiration': {'key': 'properties.expiration', 'type': 'iso-8601'},
-        'error': {'key': 'properties.error', 'type': 'PipelineJobError'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDefinition]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "topology_name": {"key": "properties.topologyName", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "expiration": {"key": "properties.expiration", "type": "iso-8601"},
+        "error": {"key": "properties.error", "type": "PipelineJobError"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDefinition]"},
     }
 
     def __init__(
@@ -2101,10 +2249,22 @@ class PipelineJobUpdate(ProxyResource):
         *,
         topology_name: Optional[str] = None,
         description: Optional[str] = None,
-        parameters: Optional[List["ParameterDefinition"]] = None,
+        parameters: Optional[List["_models.ParameterDefinition"]] = None,
         **kwargs
     ):
-        super(PipelineJobUpdate, self).__init__(**kwargs)
+        """
+        :keyword topology_name: Reference to an existing pipeline topology. When activated, this
+         pipeline job will process content according to the pipeline topology definition.
+        :paramtype topology_name: str
+        :keyword description: An optional description for the pipeline.
+        :paramtype description: str
+        :keyword parameters: List of the instance level parameter values for the user-defined topology
+         parameters. A pipeline can only define or override parameters values for parameters which have
+         been declared in the referenced topology. Topology parameters without a default value must be
+         defined. Topology parameters with a default value can be optionally be overridden.
+        :paramtype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDefinition]
+        """
+        super().__init__(**kwargs)
         self.topology_name = topology_name
         self.description = description
         self.state = None
@@ -2113,89 +2273,112 @@ class PipelineJobUpdate(ProxyResource):
         self.parameters = parameters
 
 
-class PipelineTopology(ProxyResource):
+class PipelineTopology(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Pipeline topology describes the processing steps to be applied when processing content for a particular outcome. The topology should be defined according to the scenario to be achieved and can be reused across many pipeline instances which share the same processing characteristics. For instance, a pipeline topology which captures content from a RTSP camera and archives the content can be reused across many different cameras, as long as the same processing is to be applied across all the cameras. Individual instance properties can be defined through the use of user-defined parameters, which allow for a topology to be parameterized. This allows  individual pipelines refer to different values, such as individual cameras' RTSP endpoints and credentials. Overall a topology is composed of the following:
 
 
-* Parameters: list of user defined parameters that can be references across the topology nodes.
-* Sources: list of one or more data sources nodes such as an RTSP source which allows for content to be ingested from cameras.
-* Processors: list of nodes which perform data analysis or transformations.
-* Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
+    * Parameters: list of user defined parameters that can be references across the topology nodes.
+    * Sources: list of one or more data sources nodes such as an RTSP source which allows for content to be ingested from cameras.
+    * Processors: list of nodes which perform data analysis or transformations.
+    * Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+        Variables are only populated by the server, and will be ignored when sending a request.
 
-    All required parameters must be populated in order to send to Azure.
+        All required parameters must be populated in order to send to Azure.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param kind: Required. Topology kind. Possible values include: "Live", "Batch".
-    :type kind: str or ~video_analyzer.models.Kind
-    :param sku: Required. Describes the properties of a SKU.
-    :type sku: ~video_analyzer.models.Sku
-    :param description: An optional description of the pipeline topology. It is recommended that
-     the expected use of the topology to be described here.
-    :type description: str
-    :param parameters: List of the topology parameter declarations. Parameters declared here can be
-     referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
-     Parameters can have optional default values and can later be defined in individual instances of
-     the pipeline.
-    :type parameters: list[~video_analyzer.models.ParameterDeclaration]
-    :param sources: List of the topology source nodes. Source nodes enable external data to be
-     ingested by the pipeline.
-    :type sources: list[~video_analyzer.models.SourceNodeBase]
-    :param processors: List of the topology processor nodes. Processor nodes enable pipeline data
-     to be analyzed, processed or transformed.
-    :type processors: list[~video_analyzer.models.ProcessorNodeBase]
-    :param sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
-     exported.
-    :type sinks: list[~video_analyzer.models.SinkNodeBase]
+        :ivar id: Fully qualified resource ID for the resource. Ex -
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+        :vartype id: str
+        :ivar name: The name of the resource.
+        :vartype name: str
+        :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+         "Microsoft.Storage/storageAccounts".
+        :vartype type: str
+        :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+         information.
+        :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+        :ivar kind: Topology kind. Required. Known values are: "Live" and "Batch".
+        :vartype kind: str or ~azure.mgmt.videoanalyzer.models.Kind
+        :ivar sku: Describes the properties of a SKU. Required.
+        :vartype sku: ~azure.mgmt.videoanalyzer.models.Sku
+        :ivar description: An optional description of the pipeline topology. It is recommended that the
+         expected use of the topology to be described here.
+        :vartype description: str
+        :ivar parameters: List of the topology parameter declarations. Parameters declared here can be
+         referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
+         Parameters can have optional default values and can later be defined in individual instances of
+         the pipeline.
+        :vartype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDeclaration]
+        :ivar sources: List of the topology source nodes. Source nodes enable external data to be
+         ingested by the pipeline.
+        :vartype sources: list[~azure.mgmt.videoanalyzer.models.SourceNodeBase]
+        :ivar processors: List of the topology processor nodes. Processor nodes enable pipeline data to
+         be analyzed, processed or transformed.
+        :vartype processors: list[~azure.mgmt.videoanalyzer.models.ProcessorNodeBase]
+        :ivar sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
+         exported.
+        :vartype sinks: list[~azure.mgmt.videoanalyzer.models.SinkNodeBase]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'kind': {'required': True},
-        'sku': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "kind": {"required": True},
+        "sku": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDeclaration]'},
-        'sources': {'key': 'properties.sources', 'type': '[SourceNodeBase]'},
-        'processors': {'key': 'properties.processors', 'type': '[ProcessorNodeBase]'},
-        'sinks': {'key': 'properties.sinks', 'type': '[SinkNodeBase]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "kind": {"key": "kind", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "description": {"key": "properties.description", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDeclaration]"},
+        "sources": {"key": "properties.sources", "type": "[SourceNodeBase]"},
+        "processors": {"key": "properties.processors", "type": "[ProcessorNodeBase]"},
+        "sinks": {"key": "properties.sinks", "type": "[SinkNodeBase]"},
     }
 
     def __init__(
         self,
         *,
-        kind: Union[str, "Kind"],
-        sku: "Sku",
+        kind: Union[str, "_models.Kind"],
+        sku: "_models.Sku",
         description: Optional[str] = None,
-        parameters: Optional[List["ParameterDeclaration"]] = None,
-        sources: Optional[List["SourceNodeBase"]] = None,
-        processors: Optional[List["ProcessorNodeBase"]] = None,
-        sinks: Optional[List["SinkNodeBase"]] = None,
+        parameters: Optional[List["_models.ParameterDeclaration"]] = None,
+        sources: Optional[List["_models.SourceNodeBase"]] = None,
+        processors: Optional[List["_models.ProcessorNodeBase"]] = None,
+        sinks: Optional[List["_models.SinkNodeBase"]] = None,
         **kwargs
     ):
-        super(PipelineTopology, self).__init__(**kwargs)
+        """
+        :keyword kind: Topology kind. Required. Known values are: "Live" and "Batch".
+        :paramtype kind: str or ~azure.mgmt.videoanalyzer.models.Kind
+        :keyword sku: Describes the properties of a SKU. Required.
+        :paramtype sku: ~azure.mgmt.videoanalyzer.models.Sku
+        :keyword description: An optional description of the pipeline topology. It is recommended that
+         the expected use of the topology to be described here.
+        :paramtype description: str
+        :keyword parameters: List of the topology parameter declarations. Parameters declared here can
+         be referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string
+         pattern. Parameters can have optional default values and can later be defined in individual
+         instances of the pipeline.
+        :paramtype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDeclaration]
+        :keyword sources: List of the topology source nodes. Source nodes enable external data to be
+         ingested by the pipeline.
+        :paramtype sources: list[~azure.mgmt.videoanalyzer.models.SourceNodeBase]
+        :keyword processors: List of the topology processor nodes. Processor nodes enable pipeline data
+         to be analyzed, processed or transformed.
+        :paramtype processors: list[~azure.mgmt.videoanalyzer.models.ProcessorNodeBase]
+        :keyword sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
+         exported.
+        :paramtype sinks: list[~azure.mgmt.videoanalyzer.models.SinkNodeBase]
+        """
+        super().__init__(**kwargs)
         self.kind = kind
         self.sku = sku
         self.description = description
@@ -2205,112 +2388,138 @@ class PipelineTopology(ProxyResource):
         self.sinks = sinks
 
 
-class PipelineTopologyCollection(msrest.serialization.Model):
+class PipelineTopologyCollection(_serialization.Model):
     """A collection of PipelineTopology items.
 
-    :param value: A collection of PipelineTopology items.
-    :type value: list[~video_analyzer.models.PipelineTopology]
-    :param next_link: A link to the next page of the collection (when the collection contains too
+    :ivar value: A collection of PipelineTopology items.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.PipelineTopology]
+    :ivar next_link: A link to the next page of the collection (when the collection contains too
      many results to return in one response).
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PipelineTopology]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[PipelineTopology]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["PipelineTopology"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.PipelineTopology"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(PipelineTopologyCollection, self).__init__(**kwargs)
+        """
+        :keyword value: A collection of PipelineTopology items.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.PipelineTopology]
+        :keyword next_link: A link to the next page of the collection (when the collection contains too
+         many results to return in one response).
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class PipelineTopologyUpdate(ProxyResource):
+class PipelineTopologyUpdate(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Pipeline topology describes the processing steps to be applied when processing content for a particular outcome. The topology should be defined according to the scenario to be achieved and can be reused across many pipeline instances which share the same processing characteristics. For instance, a pipeline topology which captures content from a RTSP camera and archives the content can be reused across many different cameras, as long as the same processing is to be applied across all the cameras. Individual instance properties can be defined through the use of user-defined parameters, which allow for a topology to be parameterized. This allows  individual pipelines refer to different values, such as individual cameras' RTSP endpoints and credentials. Overall a topology is composed of the following:
 
 
-* Parameters: list of user defined parameters that can be references across the topology nodes.
-* Sources: list of one or more data sources nodes such as an RTSP source which allows for content to be ingested from cameras.
-* Processors: list of nodes which perform data analysis or transformations.
-* Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
+    * Parameters: list of user defined parameters that can be references across the topology nodes.
+    * Sources: list of one or more data sources nodes such as an RTSP source which allows for content to be ingested from cameras.
+    * Processors: list of nodes which perform data analysis or transformations.
+    * Sinks: list of one or more data sinks which allow for data to be stored or exported to other destinations.
 
-    Variables are only populated by the server, and will be ignored when sending a request.
+        Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Fully qualified resource ID for the resource. Ex -
-     /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
-    :vartype id: str
-    :ivar name: The name of the resource.
-    :vartype name: str
-    :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
-     "Microsoft.Storage/storageAccounts".
-    :vartype type: str
-    :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
-     information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param kind: Topology kind. Possible values include: "Live", "Batch".
-    :type kind: str or ~video_analyzer.models.Kind
-    :param sku: Describes the properties of a SKU.
-    :type sku: ~video_analyzer.models.Sku
-    :param description: An optional description of the pipeline topology. It is recommended that
-     the expected use of the topology to be described here.
-    :type description: str
-    :param parameters: List of the topology parameter declarations. Parameters declared here can be
-     referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
-     Parameters can have optional default values and can later be defined in individual instances of
-     the pipeline.
-    :type parameters: list[~video_analyzer.models.ParameterDeclaration]
-    :param sources: List of the topology source nodes. Source nodes enable external data to be
-     ingested by the pipeline.
-    :type sources: list[~video_analyzer.models.SourceNodeBase]
-    :param processors: List of the topology processor nodes. Processor nodes enable pipeline data
-     to be analyzed, processed or transformed.
-    :type processors: list[~video_analyzer.models.ProcessorNodeBase]
-    :param sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
-     exported.
-    :type sinks: list[~video_analyzer.models.SinkNodeBase]
+        :ivar id: Fully qualified resource ID for the resource. Ex -
+         /subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{resourceProviderNamespace}/{resourceType}/{resourceName}.
+        :vartype id: str
+        :ivar name: The name of the resource.
+        :vartype name: str
+        :ivar type: The type of the resource. E.g. "Microsoft.Compute/virtualMachines" or
+         "Microsoft.Storage/storageAccounts".
+        :vartype type: str
+        :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
+         information.
+        :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+        :ivar kind: Topology kind. Known values are: "Live" and "Batch".
+        :vartype kind: str or ~azure.mgmt.videoanalyzer.models.Kind
+        :ivar sku: Describes the properties of a SKU.
+        :vartype sku: ~azure.mgmt.videoanalyzer.models.Sku
+        :ivar description: An optional description of the pipeline topology. It is recommended that the
+         expected use of the topology to be described here.
+        :vartype description: str
+        :ivar parameters: List of the topology parameter declarations. Parameters declared here can be
+         referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string pattern.
+         Parameters can have optional default values and can later be defined in individual instances of
+         the pipeline.
+        :vartype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDeclaration]
+        :ivar sources: List of the topology source nodes. Source nodes enable external data to be
+         ingested by the pipeline.
+        :vartype sources: list[~azure.mgmt.videoanalyzer.models.SourceNodeBase]
+        :ivar processors: List of the topology processor nodes. Processor nodes enable pipeline data to
+         be analyzed, processed or transformed.
+        :vartype processors: list[~azure.mgmt.videoanalyzer.models.ProcessorNodeBase]
+        :ivar sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
+         exported.
+        :vartype sinks: list[~azure.mgmt.videoanalyzer.models.SinkNodeBase]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'kind': {'key': 'kind', 'type': 'str'},
-        'sku': {'key': 'sku', 'type': 'Sku'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '[ParameterDeclaration]'},
-        'sources': {'key': 'properties.sources', 'type': '[SourceNodeBase]'},
-        'processors': {'key': 'properties.processors', 'type': '[ProcessorNodeBase]'},
-        'sinks': {'key': 'properties.sinks', 'type': '[SinkNodeBase]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "kind": {"key": "kind", "type": "str"},
+        "sku": {"key": "sku", "type": "Sku"},
+        "description": {"key": "properties.description", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "[ParameterDeclaration]"},
+        "sources": {"key": "properties.sources", "type": "[SourceNodeBase]"},
+        "processors": {"key": "properties.processors", "type": "[ProcessorNodeBase]"},
+        "sinks": {"key": "properties.sinks", "type": "[SinkNodeBase]"},
     }
 
     def __init__(
         self,
         *,
-        kind: Optional[Union[str, "Kind"]] = None,
-        sku: Optional["Sku"] = None,
+        kind: Optional[Union[str, "_models.Kind"]] = None,
+        sku: Optional["_models.Sku"] = None,
         description: Optional[str] = None,
-        parameters: Optional[List["ParameterDeclaration"]] = None,
-        sources: Optional[List["SourceNodeBase"]] = None,
-        processors: Optional[List["ProcessorNodeBase"]] = None,
-        sinks: Optional[List["SinkNodeBase"]] = None,
+        parameters: Optional[List["_models.ParameterDeclaration"]] = None,
+        sources: Optional[List["_models.SourceNodeBase"]] = None,
+        processors: Optional[List["_models.ProcessorNodeBase"]] = None,
+        sinks: Optional[List["_models.SinkNodeBase"]] = None,
         **kwargs
     ):
-        super(PipelineTopologyUpdate, self).__init__(**kwargs)
+        """
+        :keyword kind: Topology kind. Known values are: "Live" and "Batch".
+        :paramtype kind: str or ~azure.mgmt.videoanalyzer.models.Kind
+        :keyword sku: Describes the properties of a SKU.
+        :paramtype sku: ~azure.mgmt.videoanalyzer.models.Sku
+        :keyword description: An optional description of the pipeline topology. It is recommended that
+         the expected use of the topology to be described here.
+        :paramtype description: str
+        :keyword parameters: List of the topology parameter declarations. Parameters declared here can
+         be referenced throughout the topology nodes through the use of "${PARAMETER_NAME}" string
+         pattern. Parameters can have optional default values and can later be defined in individual
+         instances of the pipeline.
+        :paramtype parameters: list[~azure.mgmt.videoanalyzer.models.ParameterDeclaration]
+        :keyword sources: List of the topology source nodes. Source nodes enable external data to be
+         ingested by the pipeline.
+        :paramtype sources: list[~azure.mgmt.videoanalyzer.models.SourceNodeBase]
+        :keyword processors: List of the topology processor nodes. Processor nodes enable pipeline data
+         to be analyzed, processed or transformed.
+        :paramtype processors: list[~azure.mgmt.videoanalyzer.models.ProcessorNodeBase]
+        :keyword sinks: List of the topology sink nodes. Sink nodes allow pipeline data to be stored or
+         exported.
+        :paramtype sinks: list[~azure.mgmt.videoanalyzer.models.SinkNodeBase]
+        """
+        super().__init__(**kwargs)
         self.kind = kind
         self.sku = sku
         self.description = description
@@ -2320,7 +2529,7 @@ class PipelineTopologyUpdate(ProxyResource):
         self.sinks = sinks
 
 
-class PrivateEndpoint(msrest.serialization.Model):
+class PrivateEndpoint(_serialization.Model):
     """The Private Endpoint resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2330,18 +2539,16 @@ class PrivateEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(PrivateEndpoint, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
 
 
@@ -2360,68 +2567,78 @@ class PrivateEndpointConnection(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param private_endpoint: The resource of private end point.
-    :type private_endpoint: ~video_analyzer.models.PrivateEndpoint
-    :param private_link_service_connection_state: A collection of information about the state of
-     the connection between service consumer and provider.
-    :type private_link_service_connection_state:
-     ~video_analyzer.models.PrivateLinkServiceConnectionState
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+    :ivar private_endpoint: The resource of private end point.
+    :vartype private_endpoint: ~azure.mgmt.videoanalyzer.models.PrivateEndpoint
+    :ivar private_link_service_connection_state: A collection of information about the state of the
+     connection between service consumer and provider.
+    :vartype private_link_service_connection_state:
+     ~azure.mgmt.videoanalyzer.models.PrivateLinkServiceConnectionState
     :ivar provisioning_state: The provisioning state of the private endpoint connection resource.
-     Possible values include: "Succeeded", "Creating", "Deleting", "Failed".
+     Known values are: "Succeeded", "Creating", "Deleting", and "Failed".
     :vartype provisioning_state: str or
-     ~video_analyzer.models.PrivateEndpointConnectionProvisioningState
+     ~azure.mgmt.videoanalyzer.models.PrivateEndpointConnectionProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        private_endpoint: Optional["PrivateEndpoint"] = None,
-        private_link_service_connection_state: Optional["PrivateLinkServiceConnectionState"] = None,
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
+        private_link_service_connection_state: Optional["_models.PrivateLinkServiceConnectionState"] = None,
         **kwargs
     ):
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        """
+        :keyword private_endpoint: The resource of private end point.
+        :paramtype private_endpoint: ~azure.mgmt.videoanalyzer.models.PrivateEndpoint
+        :keyword private_link_service_connection_state: A collection of information about the state of
+         the connection between service consumer and provider.
+        :paramtype private_link_service_connection_state:
+         ~azure.mgmt.videoanalyzer.models.PrivateLinkServiceConnectionState
+        """
+        super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
         self.provisioning_state = None
 
 
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+class PrivateEndpointConnectionListResult(_serialization.Model):
     """List of private endpoint connection associated with the specified storage account.
 
-    :param value: Array of private endpoint connections.
-    :type value: list[~video_analyzer.models.PrivateEndpointConnection]
+    :ivar value: Array of private endpoint connections.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.PrivateEndpointConnection]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PrivateEndpointConnection"]] = None,
-        **kwargs
-    ):
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
+        """
+        :keyword value: Array of private endpoint connections.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.PrivateEndpointConnection]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
@@ -2440,150 +2657,157 @@ class PrivateLinkResource(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
     :ivar group_id: The private link resource group id.
     :vartype group_id: str
     :ivar required_members: The private link resource required member names.
     :vartype required_members: list[str]
-    :param required_zone_names: The private link resource Private link DNS zone name.
-    :type required_zone_names: list[str]
+    :ivar required_zone_names: The private link resource Private link DNS zone name.
+    :vartype required_zone_names: list[str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'properties.requiredZoneNames', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "properties.requiredZoneNames", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        *,
-        required_zone_names: Optional[List[str]] = None,
-        **kwargs
-    ):
-        super(PrivateLinkResource, self).__init__(**kwargs)
+    def __init__(self, *, required_zone_names: Optional[List[str]] = None, **kwargs):
+        """
+        :keyword required_zone_names: The private link resource Private link DNS zone name.
+        :paramtype required_zone_names: list[str]
+        """
+        super().__init__(**kwargs)
         self.group_id = None
         self.required_members = None
         self.required_zone_names = required_zone_names
 
 
-class PrivateLinkResourceListResult(msrest.serialization.Model):
+class PrivateLinkResourceListResult(_serialization.Model):
     """A list of private link resources.
 
-    :param value: Array of private link resources.
-    :type value: list[~video_analyzer.models.PrivateLinkResource]
+    :ivar value: Array of private link resources.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.PrivateLinkResource]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["PrivateLinkResource"]] = None,
-        **kwargs
-    ):
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
+        """
+        :keyword value: Array of private link resources.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.PrivateLinkResource]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+class PrivateLinkServiceConnectionState(_serialization.Model):
     """A collection of information about the state of the connection between service consumer and provider.
 
-    :param status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
-     of the service. Possible values include: "Pending", "Approved", "Rejected".
-    :type status: str or ~video_analyzer.models.PrivateEndpointServiceConnectionStatus
-    :param description: The reason for approval/rejection of the connection.
-    :type description: str
-    :param actions_required: A message indicating if changes on the service provider require any
+    :ivar status: Indicates whether the connection has been Approved/Rejected/Removed by the owner
+     of the service. Known values are: "Pending", "Approved", and "Rejected".
+    :vartype status: str or ~azure.mgmt.videoanalyzer.models.PrivateEndpointServiceConnectionStatus
+    :ivar description: The reason for approval/rejection of the connection.
+    :vartype description: str
+    :ivar actions_required: A message indicating if changes on the service provider require any
      updates on the consumer.
-    :type actions_required: str
+    :vartype actions_required: str
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status: Optional[Union[str, "PrivateEndpointServiceConnectionStatus"]] = None,
+        status: Optional[Union[str, "_models.PrivateEndpointServiceConnectionStatus"]] = None,
         description: Optional[str] = None,
         actions_required: Optional[str] = None,
         **kwargs
     ):
-        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        """
+        :keyword status: Indicates whether the connection has been Approved/Rejected/Removed by the
+         owner of the service. Known values are: "Pending", "Approved", and "Rejected".
+        :paramtype status: str or
+         ~azure.mgmt.videoanalyzer.models.PrivateEndpointServiceConnectionStatus
+        :keyword description: The reason for approval/rejection of the connection.
+        :paramtype description: str
+        :keyword actions_required: A message indicating if changes on the service provider require any
+         updates on the consumer.
+        :paramtype actions_required: str
+        """
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = actions_required
 
 
-class Properties(msrest.serialization.Model):
+class Properties(_serialization.Model):
     """Metric properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar service_specification: The service specifications.
-    :vartype service_specification: ~video_analyzer.models.ServiceSpecification
+    :vartype service_specification: ~azure.mgmt.videoanalyzer.models.ServiceSpecification
     """
 
     _validation = {
-        'service_specification': {'readonly': True},
+        "service_specification": {"readonly": True},
     }
 
     _attribute_map = {
-        'service_specification': {'key': 'serviceSpecification', 'type': 'ServiceSpecification'},
+        "service_specification": {"key": "serviceSpecification", "type": "ServiceSpecification"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(Properties, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.service_specification = None
 
 
-class ResourceIdentity(msrest.serialization.Model):
+class ResourceIdentity(_serialization.Model):
     """The user assigned managed identity to use when accessing a resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param user_assigned_identity: Required. The user assigned managed identity's resource
-     identifier to use when accessing a resource.
-    :type user_assigned_identity: str
+    :ivar user_assigned_identity: The user assigned managed identity's resource identifier to use
+     when accessing a resource. Required.
+    :vartype user_assigned_identity: str
     """
 
     _validation = {
-        'user_assigned_identity': {'required': True},
+        "user_assigned_identity": {"required": True},
     }
 
     _attribute_map = {
-        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'str'},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        user_assigned_identity: str,
-        **kwargs
-    ):
-        super(ResourceIdentity, self).__init__(**kwargs)
+    def __init__(self, *, user_assigned_identity: str, **kwargs):
+        """
+        :keyword user_assigned_identity: The user assigned managed identity's resource identifier to
+         use when accessing a resource. Required.
+        :paramtype user_assigned_identity: str
+        """
+        super().__init__(**kwargs)
         self.user_assigned_identity = user_assigned_identity
 
 
@@ -2592,47 +2816,51 @@ class RsaTokenKey(TokenKey):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param kid: Required. JWT token key id. Validation keys are looked up based on the key id
-     present on the JWT token header.
-    :type kid: str
-    :param alg: Required. RSA algorithm to be used: RS256, RS384 or RS512. Possible values include:
-     "RS256", "RS384", "RS512".
-    :type alg: str or ~video_analyzer.models.AccessPolicyRsaAlgo
-    :param n: Required. RSA public key modulus.
-    :type n: str
-    :param e: Required. RSA public key exponent.
-    :type e: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar kid: JWT token key id. Validation keys are looked up based on the key id present on the
+     JWT token header. Required.
+    :vartype kid: str
+    :ivar alg: RSA algorithm to be used: RS256, RS384 or RS512. Required. Known values are:
+     "RS256", "RS384", and "RS512".
+    :vartype alg: str or ~azure.mgmt.videoanalyzer.models.AccessPolicyRsaAlgo
+    :ivar n: RSA public key modulus. Required.
+    :vartype n: str
+    :ivar e: RSA public key exponent. Required.
+    :vartype e: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'kid': {'required': True},
-        'alg': {'required': True},
-        'n': {'required': True},
-        'e': {'required': True},
+        "type": {"required": True},
+        "kid": {"required": True},
+        "alg": {"required": True},
+        "n": {"required": True},
+        "e": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'kid': {'key': 'kid', 'type': 'str'},
-        'alg': {'key': 'alg', 'type': 'str'},
-        'n': {'key': 'n', 'type': 'str'},
-        'e': {'key': 'e', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "kid": {"key": "kid", "type": "str"},
+        "alg": {"key": "alg", "type": "str"},
+        "n": {"key": "n", "type": "str"},
+        "e": {"key": "e", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        kid: str,
-        alg: Union[str, "AccessPolicyRsaAlgo"],
-        n: str,
-        e: str,
-        **kwargs
-    ):
-        super(RsaTokenKey, self).__init__(kid=kid, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.RsaTokenKey'  # type: str
+    def __init__(self, *, kid: str, alg: Union[str, "_models.AccessPolicyRsaAlgo"], n: str, e: str, **kwargs):
+        """
+        :keyword kid: JWT token key id. Validation keys are looked up based on the key id present on
+         the JWT token header. Required.
+        :paramtype kid: str
+        :keyword alg: RSA algorithm to be used: RS256, RS384 or RS512. Required. Known values are:
+         "RS256", "RS384", and "RS512".
+        :paramtype alg: str or ~azure.mgmt.videoanalyzer.models.AccessPolicyRsaAlgo
+        :keyword n: RSA public key modulus. Required.
+        :paramtype n: str
+        :keyword e: RSA public key exponent. Required.
+        :paramtype e: str
+        """
+        super().__init__(kid=kid, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.RsaTokenKey"
         self.alg = alg
         self.n = n
         self.e = e
@@ -2641,39 +2869,41 @@ class RsaTokenKey(TokenKey):
 class SourceNodeBase(NodeBase):
     """Base class for topology source nodes.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: RtspSource, VideoSource.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    RtspSource, VideoSource
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar name: Node name. Must be unique within the topology. Required.
+    :vartype name: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.RtspSource': 'RtspSource', '#Microsoft.VideoAnalyzer.VideoSource': 'VideoSource'}
+        "type": {
+            "#Microsoft.VideoAnalyzer.RtspSource": "RtspSource",
+            "#Microsoft.VideoAnalyzer.VideoSource": "VideoSource",
+        }
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
-        super(SourceNodeBase, self).__init__(name=name, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SourceNodeBase'  # type: str
+    def __init__(self, *, name: str, **kwargs):
+        """
+        :keyword name: Node name. Must be unique within the topology. Required.
+        :paramtype name: str
+        """
+        super().__init__(name=name, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.SourceNodeBase"
 
 
 class RtspSource(SourceNodeBase):
@@ -2681,79 +2911,89 @@ class RtspSource(SourceNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param transport: Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar name: Node name. Must be unique within the topology. Required.
+    :vartype name: str
+    :ivar transport: Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When
      using TCP, the RTP packets are interleaved on the TCP RTSP connection. When using HTTP, the
      RTSP messages are exchanged through long lived HTTP connections, and the RTP packages are
-     interleaved in the HTTP connections alongside the RTSP messages. Possible values include:
-     "Http", "Tcp".
-    :type transport: str or ~video_analyzer.models.RtspTransport
-    :param endpoint: Required. RTSP endpoint information for Video Analyzer to connect to. This
-     contains the required information for Video Analyzer to connect to RTSP cameras and/or generic
-     RTSP servers.
-    :type endpoint: ~video_analyzer.models.EndpointBase
+     interleaved in the HTTP connections alongside the RTSP messages. Known values are: "Http" and
+     "Tcp".
+    :vartype transport: str or ~azure.mgmt.videoanalyzer.models.RtspTransport
+    :ivar endpoint: RTSP endpoint information for Video Analyzer to connect to. This contains the
+     required information for Video Analyzer to connect to RTSP cameras and/or generic RTSP servers.
+     Required.
+    :vartype endpoint: ~azure.mgmt.videoanalyzer.models.EndpointBase
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'endpoint': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "endpoint": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'transport': {'key': 'transport', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'EndpointBase'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "transport": {"key": "transport", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "EndpointBase"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        endpoint: "EndpointBase",
-        transport: Optional[Union[str, "RtspTransport"]] = None,
+        endpoint: "_models.EndpointBase",
+        transport: Optional[Union[str, "_models.RtspTransport"]] = None,
         **kwargs
     ):
-        super(RtspSource, self).__init__(name=name, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.RtspSource'  # type: str
+        """
+        :keyword name: Node name. Must be unique within the topology. Required.
+        :paramtype name: str
+        :keyword transport: Network transport utilized by the RTSP and RTP exchange: TCP or HTTP. When
+         using TCP, the RTP packets are interleaved on the TCP RTSP connection. When using HTTP, the
+         RTSP messages are exchanged through long lived HTTP connections, and the RTP packages are
+         interleaved in the HTTP connections alongside the RTSP messages. Known values are: "Http" and
+         "Tcp".
+        :paramtype transport: str or ~azure.mgmt.videoanalyzer.models.RtspTransport
+        :keyword endpoint: RTSP endpoint information for Video Analyzer to connect to. This contains
+         the required information for Video Analyzer to connect to RTSP cameras and/or generic RTSP
+         servers. Required.
+        :paramtype endpoint: ~azure.mgmt.videoanalyzer.models.EndpointBase
+        """
+        super().__init__(name=name, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.RtspSource"
         self.transport = transport
         self.endpoint = endpoint
 
 
-class TunnelBase(msrest.serialization.Model):
+class TunnelBase(_serialization.Model):
     """Base class for tunnel objects.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: SecureIotDeviceRemoteTunnel.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    SecureIotDeviceRemoteTunnel
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.SecureIotDeviceRemoteTunnel': 'SecureIotDeviceRemoteTunnel'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.SecureIotDeviceRemoteTunnel": "SecureIotDeviceRemoteTunnel"}}
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TunnelBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
 
 
 class SecureIotDeviceRemoteTunnel(TunnelBase):
@@ -2761,66 +3001,65 @@ class SecureIotDeviceRemoteTunnel(TunnelBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param iot_hub_name: Required. Name of the IoT Hub.
-    :type iot_hub_name: str
-    :param device_id: Required. The IoT device id to use when establishing the remote tunnel. This
-     string is case-sensitive.
-    :type device_id: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar iot_hub_name: Name of the IoT Hub. Required.
+    :vartype iot_hub_name: str
+    :ivar device_id: The IoT device id to use when establishing the remote tunnel. This string is
+     case-sensitive. Required.
+    :vartype device_id: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'iot_hub_name': {'required': True},
-        'device_id': {'required': True},
+        "type": {"required": True},
+        "iot_hub_name": {"required": True},
+        "device_id": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'iot_hub_name': {'key': 'iotHubName', 'type': 'str'},
-        'device_id': {'key': 'deviceId', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "iot_hub_name": {"key": "iotHubName", "type": "str"},
+        "device_id": {"key": "deviceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        iot_hub_name: str,
-        device_id: str,
-        **kwargs
-    ):
-        super(SecureIotDeviceRemoteTunnel, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SecureIotDeviceRemoteTunnel'  # type: str
+    def __init__(self, *, iot_hub_name: str, device_id: str, **kwargs):
+        """
+        :keyword iot_hub_name: Name of the IoT Hub. Required.
+        :paramtype iot_hub_name: str
+        :keyword device_id: The IoT device id to use when establishing the remote tunnel. This string
+         is case-sensitive. Required.
+        :paramtype device_id: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.SecureIotDeviceRemoteTunnel"
         self.iot_hub_name = iot_hub_name
         self.device_id = device_id
 
 
-class ServiceSpecification(msrest.serialization.Model):
+class ServiceSpecification(_serialization.Model):
     """The service metric specifications.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     :ivar log_specifications: List of log specifications.
-    :vartype log_specifications: list[~video_analyzer.models.LogSpecification]
+    :vartype log_specifications: list[~azure.mgmt.videoanalyzer.models.LogSpecification]
     :ivar metric_specifications: List of metric specifications.
-    :vartype metric_specifications: list[~video_analyzer.models.MetricSpecification]
+    :vartype metric_specifications: list[~azure.mgmt.videoanalyzer.models.MetricSpecification]
     """
 
     _validation = {
-        'log_specifications': {'readonly': True},
-        'metric_specifications': {'readonly': True},
+        "log_specifications": {"readonly": True},
+        "metric_specifications": {"readonly": True},
     }
 
     _attribute_map = {
-        'log_specifications': {'key': 'logSpecifications', 'type': '[LogSpecification]'},
-        'metric_specifications': {'key': 'metricSpecifications', 'type': '[MetricSpecification]'},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(ServiceSpecification, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.log_specifications = None
         self.metric_specifications = None
 
@@ -2828,163 +3067,186 @@ class ServiceSpecification(msrest.serialization.Model):
 class SinkNodeBase(NodeBase):
     """Base class for topology sink nodes.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: VideoSink.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VideoSink
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
-     inputs for this node.
-    :type inputs: list[~video_analyzer.models.NodeInput]
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar name: Node name. Must be unique within the topology. Required.
+    :vartype name: str
+    :ivar inputs: An array of upstream node references within the topology to be used as inputs for
+     this node. Required.
+    :vartype inputs: list[~azure.mgmt.videoanalyzer.models.NodeInput]
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.VideoSink': 'VideoSink'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.VideoSink": "VideoSink"}}
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        inputs: List["NodeInput"],
-        **kwargs
-    ):
-        super(SinkNodeBase, self).__init__(name=name, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.SinkNodeBase'  # type: str
+    def __init__(self, *, name: str, inputs: List["_models.NodeInput"], **kwargs):
+        """
+        :keyword name: Node name. Must be unique within the topology. Required.
+        :paramtype name: str
+        :keyword inputs: An array of upstream node references within the topology to be used as inputs
+         for this node. Required.
+        :paramtype inputs: list[~azure.mgmt.videoanalyzer.models.NodeInput]
+        """
+        super().__init__(name=name, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.SinkNodeBase"
         self.inputs = inputs
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The SKU details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. The SKU name. Possible values include: "Live_S1", "Batch_S1".
-    :type name: str or ~video_analyzer.models.SkuName
-    :ivar tier: The SKU tier. Possible values include: "Standard".
-    :vartype tier: str or ~video_analyzer.models.SkuTier
+    :ivar name: The SKU name. Required. Known values are: "Live_S1" and "Batch_S1".
+    :vartype name: str or ~azure.mgmt.videoanalyzer.models.SkuName
+    :ivar tier: The SKU tier. "Standard"
+    :vartype tier: str or ~azure.mgmt.videoanalyzer.models.SkuTier
     """
 
     _validation = {
-        'name': {'required': True},
-        'tier': {'readonly': True},
+        "name": {"required": True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Union[str, "SkuName"],
-        **kwargs
-    ):
-        super(Sku, self).__init__(**kwargs)
+    def __init__(self, *, name: Union[str, "_models.SkuName"], **kwargs):
+        """
+        :keyword name: The SKU name. Required. Known values are: "Live_S1" and "Batch_S1".
+        :paramtype name: str or ~azure.mgmt.videoanalyzer.models.SkuName
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.tier = None
 
 
-class StorageAccount(msrest.serialization.Model):
+class StorageAccount(_serialization.Model):
     """The details about the associated storage account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param id: Required. The ID of the storage account resource. Video Analyzer relies on tables,
-     queues, and blobs. The primary storage account must be a Standard Storage account (either
-     Microsoft.ClassicStorage or Microsoft.Storage).
-    :type id: str
-    :param identity: A managed identity that Video Analyzer will use to access the storage account.
-    :type identity: ~video_analyzer.models.ResourceIdentity
+    :ivar id: The ID of the storage account resource. Video Analyzer relies on tables, queues, and
+     blobs. The primary storage account must be a Standard Storage account (either
+     Microsoft.ClassicStorage or Microsoft.Storage). Required.
+    :vartype id: str
+    :ivar identity: A managed identity that Video Analyzer will use to access the storage account.
+    :vartype identity: ~azure.mgmt.videoanalyzer.models.ResourceIdentity
     :ivar status: The current status of the storage account mapping.
     :vartype status: str
     """
 
     _validation = {
-        'id': {'required': True},
-        'status': {'readonly': True},
+        "id": {"required": True},
+        "status": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'ResourceIdentity'},
-        'status': {'key': 'status', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "identity": {"key": "identity", "type": "ResourceIdentity"},
+        "status": {"key": "status", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: str,
-        identity: Optional["ResourceIdentity"] = None,
+        id: str,  # pylint: disable=redefined-builtin
+        identity: Optional["_models.ResourceIdentity"] = None,
         **kwargs
     ):
-        super(StorageAccount, self).__init__(**kwargs)
+        """
+        :keyword id: The ID of the storage account resource. Video Analyzer relies on tables, queues,
+         and blobs. The primary storage account must be a Standard Storage account (either
+         Microsoft.ClassicStorage or Microsoft.Storage). Required.
+        :paramtype id: str
+        :keyword identity: A managed identity that Video Analyzer will use to access the storage
+         account.
+        :paramtype identity: ~azure.mgmt.videoanalyzer.models.ResourceIdentity
+        """
+        super().__init__(**kwargs)
         self.id = id
         self.identity = identity
         self.status = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
-    :param created_by: The identity that created the resource.
-    :type created_by: str
-    :param created_by_type: The type of identity that created the resource. Possible values
-     include: "User", "Application", "ManagedIdentity", "Key".
-    :type created_by_type: str or ~video_analyzer.models.CreatedByType
-    :param created_at: The timestamp of resource creation (UTC).
-    :type created_at: ~datetime.datetime
-    :param last_modified_by: The identity that last modified the resource.
-    :type last_modified_by: str
-    :param last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
-    :type last_modified_by_type: str or ~video_analyzer.models.CreatedByType
-    :param last_modified_at: The timestamp of resource last modification (UTC).
-    :type last_modified_at: ~datetime.datetime
+    :ivar created_by: The identity that created the resource.
+    :vartype created_by: str
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
+    :vartype created_by_type: str or ~azure.mgmt.videoanalyzer.models.CreatedByType
+    :ivar created_at: The timestamp of resource creation (UTC).
+    :vartype created_at: ~datetime.datetime
+    :ivar last_modified_by: The identity that last modified the resource.
+    :vartype last_modified_by: str
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
+    :vartype last_modified_by_type: str or ~azure.mgmt.videoanalyzer.models.CreatedByType
+    :ivar last_modified_at: The timestamp of resource last modification (UTC).
+    :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
-        super(SystemData, self).__init__(**kwargs)
+        """
+        :keyword created_by: The identity that created the resource.
+        :paramtype created_by: str
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype created_by_type: str or ~azure.mgmt.videoanalyzer.models.CreatedByType
+        :keyword created_at: The timestamp of resource creation (UTC).
+        :paramtype created_at: ~datetime.datetime
+        :keyword last_modified_by: The identity that last modified the resource.
+        :paramtype last_modified_by: str
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
+        :paramtype last_modified_by_type: str or ~azure.mgmt.videoanalyzer.models.CreatedByType
+        :keyword last_modified_at: The timestamp of resource last modification (UTC).
+        :paramtype last_modified_at: ~datetime.datetime
+        """
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -2993,36 +3255,34 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TimeSequenceBase(msrest.serialization.Model):
+class TimeSequenceBase(_serialization.Model):
     """A sequence of datetime ranges as a string.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: VideoSequenceAbsoluteTimeMarkers.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VideoSequenceAbsoluteTimeMarkers
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
     }
 
     _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.VideoSequenceAbsoluteTimeMarkers': 'VideoSequenceAbsoluteTimeMarkers'}
+        "type": {"#Microsoft.VideoAnalyzer.VideoSequenceAbsoluteTimeMarkers": "VideoSequenceAbsoluteTimeMarkers"}
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(TimeSequenceBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
 
 
 class TlsEndpoint(EndpointBase):
@@ -3030,112 +3290,130 @@ class TlsEndpoint(EndpointBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param credentials: Required. Credentials to be presented to the endpoint.
-    :type credentials: ~video_analyzer.models.CredentialsBase
-    :param url: Required. The endpoint URL for Video Analyzer to connect to.
-    :type url: str
-    :param tunnel: Describes the tunnel through which Video Analyzer can connect to the endpoint
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar credentials: Credentials to be presented to the endpoint. Required.
+    :vartype credentials: ~azure.mgmt.videoanalyzer.models.CredentialsBase
+    :ivar url: The endpoint URL for Video Analyzer to connect to. Required.
+    :vartype url: str
+    :ivar tunnel: Describes the tunnel through which Video Analyzer can connect to the endpoint
      URL. This is an optional property, typically used when the endpoint is behind a firewall.
-    :type tunnel: ~video_analyzer.models.TunnelBase
-    :param trusted_certificates: List of trusted certificate authorities when authenticating a TLS
+    :vartype tunnel: ~azure.mgmt.videoanalyzer.models.TunnelBase
+    :ivar trusted_certificates: List of trusted certificate authorities when authenticating a TLS
      connection. A null list designates that Azure Video Analyzer's list of trusted authorities
      should be used.
-    :type trusted_certificates: ~video_analyzer.models.CertificateSource
-    :param validation_options: Validation options to use when authenticating a TLS connection. By
+    :vartype trusted_certificates: ~azure.mgmt.videoanalyzer.models.CertificateSource
+    :ivar validation_options: Validation options to use when authenticating a TLS connection. By
      default, strict validation is used.
-    :type validation_options: ~video_analyzer.models.TlsValidationOptions
+    :vartype validation_options: ~azure.mgmt.videoanalyzer.models.TlsValidationOptions
     """
 
     _validation = {
-        'type': {'required': True},
-        'credentials': {'required': True},
-        'url': {'required': True},
+        "type": {"required": True},
+        "credentials": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
-        'url': {'key': 'url', 'type': 'str'},
-        'tunnel': {'key': 'tunnel', 'type': 'TunnelBase'},
-        'trusted_certificates': {'key': 'trustedCertificates', 'type': 'CertificateSource'},
-        'validation_options': {'key': 'validationOptions', 'type': 'TlsValidationOptions'},
+        "type": {"key": "@type", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
+        "url": {"key": "url", "type": "str"},
+        "tunnel": {"key": "tunnel", "type": "TunnelBase"},
+        "trusted_certificates": {"key": "trustedCertificates", "type": "CertificateSource"},
+        "validation_options": {"key": "validationOptions", "type": "TlsValidationOptions"},
     }
 
     def __init__(
         self,
         *,
-        credentials: "CredentialsBase",
+        credentials: "_models.CredentialsBase",
         url: str,
-        tunnel: Optional["TunnelBase"] = None,
-        trusted_certificates: Optional["CertificateSource"] = None,
-        validation_options: Optional["TlsValidationOptions"] = None,
+        tunnel: Optional["_models.TunnelBase"] = None,
+        trusted_certificates: Optional["_models.CertificateSource"] = None,
+        validation_options: Optional["_models.TlsValidationOptions"] = None,
         **kwargs
     ):
-        super(TlsEndpoint, self).__init__(credentials=credentials, url=url, tunnel=tunnel, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.TlsEndpoint'  # type: str
+        """
+        :keyword credentials: Credentials to be presented to the endpoint. Required.
+        :paramtype credentials: ~azure.mgmt.videoanalyzer.models.CredentialsBase
+        :keyword url: The endpoint URL for Video Analyzer to connect to. Required.
+        :paramtype url: str
+        :keyword tunnel: Describes the tunnel through which Video Analyzer can connect to the endpoint
+         URL. This is an optional property, typically used when the endpoint is behind a firewall.
+        :paramtype tunnel: ~azure.mgmt.videoanalyzer.models.TunnelBase
+        :keyword trusted_certificates: List of trusted certificate authorities when authenticating a
+         TLS connection. A null list designates that Azure Video Analyzer's list of trusted authorities
+         should be used.
+        :paramtype trusted_certificates: ~azure.mgmt.videoanalyzer.models.CertificateSource
+        :keyword validation_options: Validation options to use when authenticating a TLS connection. By
+         default, strict validation is used.
+        :paramtype validation_options: ~azure.mgmt.videoanalyzer.models.TlsValidationOptions
+        """
+        super().__init__(credentials=credentials, url=url, tunnel=tunnel, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.TlsEndpoint"
         self.trusted_certificates = trusted_certificates
         self.validation_options = validation_options
 
 
-class TlsValidationOptions(msrest.serialization.Model):
+class TlsValidationOptions(_serialization.Model):
     """Options for controlling the validation of TLS endpoints.
 
-    :param ignore_hostname: When set to 'true' causes the certificate subject name validation to be
+    :ivar ignore_hostname: When set to 'true' causes the certificate subject name validation to be
      skipped. Default is 'false'.
-    :type ignore_hostname: str
-    :param ignore_signature: When set to 'true' causes the certificate chain trust validation to be
+    :vartype ignore_hostname: str
+    :ivar ignore_signature: When set to 'true' causes the certificate chain trust validation to be
      skipped. Default is 'false'.
-    :type ignore_signature: str
+    :vartype ignore_signature: str
     """
 
     _attribute_map = {
-        'ignore_hostname': {'key': 'ignoreHostname', 'type': 'str'},
-        'ignore_signature': {'key': 'ignoreSignature', 'type': 'str'},
+        "ignore_hostname": {"key": "ignoreHostname", "type": "str"},
+        "ignore_signature": {"key": "ignoreSignature", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ignore_hostname: Optional[str] = None,
-        ignore_signature: Optional[str] = None,
-        **kwargs
-    ):
-        super(TlsValidationOptions, self).__init__(**kwargs)
+    def __init__(self, *, ignore_hostname: Optional[str] = None, ignore_signature: Optional[str] = None, **kwargs):
+        """
+        :keyword ignore_hostname: When set to 'true' causes the certificate subject name validation to
+         be skipped. Default is 'false'.
+        :paramtype ignore_hostname: str
+        :keyword ignore_signature: When set to 'true' causes the certificate chain trust validation to
+         be skipped. Default is 'false'.
+        :paramtype ignore_signature: str
+        """
+        super().__init__(**kwargs)
         self.ignore_hostname = ignore_hostname
         self.ignore_signature = ignore_signature
 
 
-class TokenClaim(msrest.serialization.Model):
+class TokenClaim(_serialization.Model):
     """Properties for expected token claims.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Name of the claim which must be present on the token.
-    :type name: str
-    :param value: Required. Expected value of the claim to be present on the token.
-    :type value: str
+    :ivar name: Name of the claim which must be present on the token. Required.
+    :vartype name: str
+    :ivar value: Expected value of the claim to be present on the token. Required.
+    :vartype value: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'value': {'required': True},
+        "name": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        value: str,
-        **kwargs
-    ):
-        super(TokenClaim, self).__init__(**kwargs)
+    def __init__(self, *, name: str, value: str, **kwargs):
+        """
+        :keyword name: Name of the claim which must be present on the token. Required.
+        :paramtype name: str
+        :keyword value: Expected value of the claim to be present on the token. Required.
+        :paramtype value: str
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
 
@@ -3157,38 +3435,38 @@ class TrackedResource(Resource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
-        super(TrackedResource, self).__init__(**kwargs)
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
@@ -3198,43 +3476,52 @@ class UnsecuredEndpoint(EndpointBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param credentials: Required. Credentials to be presented to the endpoint.
-    :type credentials: ~video_analyzer.models.CredentialsBase
-    :param url: Required. The endpoint URL for Video Analyzer to connect to.
-    :type url: str
-    :param tunnel: Describes the tunnel through which Video Analyzer can connect to the endpoint
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar credentials: Credentials to be presented to the endpoint. Required.
+    :vartype credentials: ~azure.mgmt.videoanalyzer.models.CredentialsBase
+    :ivar url: The endpoint URL for Video Analyzer to connect to. Required.
+    :vartype url: str
+    :ivar tunnel: Describes the tunnel through which Video Analyzer can connect to the endpoint
      URL. This is an optional property, typically used when the endpoint is behind a firewall.
-    :type tunnel: ~video_analyzer.models.TunnelBase
+    :vartype tunnel: ~azure.mgmt.videoanalyzer.models.TunnelBase
     """
 
     _validation = {
-        'type': {'required': True},
-        'credentials': {'required': True},
-        'url': {'required': True},
+        "type": {"required": True},
+        "credentials": {"required": True},
+        "url": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'credentials': {'key': 'credentials', 'type': 'CredentialsBase'},
-        'url': {'key': 'url', 'type': 'str'},
-        'tunnel': {'key': 'tunnel', 'type': 'TunnelBase'},
+        "type": {"key": "@type", "type": "str"},
+        "credentials": {"key": "credentials", "type": "CredentialsBase"},
+        "url": {"key": "url", "type": "str"},
+        "tunnel": {"key": "tunnel", "type": "TunnelBase"},
     }
 
     def __init__(
         self,
         *,
-        credentials: "CredentialsBase",
+        credentials: "_models.CredentialsBase",
         url: str,
-        tunnel: Optional["TunnelBase"] = None,
+        tunnel: Optional["_models.TunnelBase"] = None,
         **kwargs
     ):
-        super(UnsecuredEndpoint, self).__init__(credentials=credentials, url=url, tunnel=tunnel, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.UnsecuredEndpoint'  # type: str
+        """
+        :keyword credentials: Credentials to be presented to the endpoint. Required.
+        :paramtype credentials: ~azure.mgmt.videoanalyzer.models.CredentialsBase
+        :keyword url: The endpoint URL for Video Analyzer to connect to. Required.
+        :paramtype url: str
+        :keyword tunnel: Describes the tunnel through which Video Analyzer can connect to the endpoint
+         URL. This is an optional property, typically used when the endpoint is behind a firewall.
+        :paramtype tunnel: ~azure.mgmt.videoanalyzer.models.TunnelBase
+        """
+        super().__init__(credentials=credentials, url=url, tunnel=tunnel, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.UnsecuredEndpoint"
 
 
-class UserAssignedManagedIdentity(msrest.serialization.Model):
+class UserAssignedManagedIdentity(_serialization.Model):
     """The details of the user assigned managed identity used by the Video Analyzer resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3246,20 +3533,18 @@ class UserAssignedManagedIdentity(msrest.serialization.Model):
     """
 
     _validation = {
-        'client_id': {'readonly': True},
-        'principal_id': {'readonly': True},
+        "client_id": {"readonly": True},
+        "principal_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'client_id': {'key': 'clientId', 'type': 'str'},
-        'principal_id': {'key': 'principalId', 'type': 'str'},
+        "client_id": {"key": "clientId", "type": "str"},
+        "principal_id": {"key": "principalId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(UserAssignedManagedIdentity, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.client_id = None
         self.principal_id = None
 
@@ -3269,42 +3554,44 @@ class UsernamePasswordCredentials(CredentialsBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param username: Required. Username to be presented as part of the credentials.
-    :type username: str
-    :param password: Required. Password to be presented as part of the credentials. It is
-     recommended that this value is parameterized as a secret string in order to prevent this value
-     to be returned as part of the resource on API requests.
-    :type password: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar username: Username to be presented as part of the credentials. Required.
+    :vartype username: str
+    :ivar password: Password to be presented as part of the credentials. It is recommended that
+     this value is parameterized as a secret string in order to prevent this value to be returned as
+     part of the resource on API requests. Required.
+    :vartype password: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'username': {'required': True},
-        'password': {'required': True},
+        "type": {"required": True},
+        "username": {"required": True},
+        "password": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'username': {'key': 'username', 'type': 'str'},
-        'password': {'key': 'password', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "username": {"key": "username", "type": "str"},
+        "password": {"key": "password", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        username: str,
-        password: str,
-        **kwargs
-    ):
-        super(UsernamePasswordCredentials, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.UsernamePasswordCredentials'  # type: str
+    def __init__(self, *, username: str, password: str, **kwargs):
+        """
+        :keyword username: Username to be presented as part of the credentials. Required.
+        :paramtype username: str
+        :keyword password: Password to be presented as part of the credentials. It is recommended that
+         this value is parameterized as a secret string in order to prevent this value to be returned as
+         part of the resource on API requests. Required.
+        :paramtype password: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.UsernamePasswordCredentials"
         self.username = username
         self.password = password
 
 
-class VideoAnalyzer(TrackedResource):
+class VideoAnalyzer(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """The Video Analyzer account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3321,61 +3608,65 @@ class VideoAnalyzer(TrackedResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param location: Required. The geo-location where the resource lives.
-    :type location: str
-    :param identity: The identities associated to the Video Analyzer resource.
-    :type identity: ~video_analyzer.models.VideoAnalyzerIdentity
-    :param storage_accounts: The storage accounts for this resource.
-    :type storage_accounts: list[~video_analyzer.models.StorageAccount]
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar location: The geo-location where the resource lives. Required.
+    :vartype location: str
+    :ivar identity: The identities associated to the Video Analyzer resource.
+    :vartype identity: ~azure.mgmt.videoanalyzer.models.VideoAnalyzerIdentity
+    :ivar storage_accounts: The storage accounts for this resource.
+    :vartype storage_accounts: list[~azure.mgmt.videoanalyzer.models.StorageAccount]
     :ivar endpoints: The endpoints associated with this resource.
-    :vartype endpoints: list[~video_analyzer.models.Endpoint]
-    :param encryption: The account encryption properties.
-    :type encryption: ~video_analyzer.models.AccountEncryption
-    :param iot_hubs: The IoT Hubs for this resource.
-    :type iot_hubs: list[~video_analyzer.models.IotHub]
-    :param public_network_access: Whether or not public network access is allowed for resources
-     under the Video Analyzer account. Possible values include: "Enabled", "Disabled".
-    :type public_network_access: str or ~video_analyzer.models.PublicNetworkAccess
-    :param network_access_control: Network access control for Video Analyzer.
-    :type network_access_control: ~video_analyzer.models.NetworkAccessControl
-    :ivar provisioning_state: Provisioning state of the Video Analyzer account. Possible values
-     include: "Failed", "InProgress", "Succeeded".
-    :vartype provisioning_state: str or ~video_analyzer.models.ProvisioningState
+    :vartype endpoints: list[~azure.mgmt.videoanalyzer.models.Endpoint]
+    :ivar encryption: The account encryption properties.
+    :vartype encryption: ~azure.mgmt.videoanalyzer.models.AccountEncryption
+    :ivar iot_hubs: The IoT Hubs for this resource.
+    :vartype iot_hubs: list[~azure.mgmt.videoanalyzer.models.IotHub]
+    :ivar public_network_access: Whether or not public network access is allowed for resources
+     under the Video Analyzer account. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.videoanalyzer.models.PublicNetworkAccess
+    :ivar network_access_control: Network access control for Video Analyzer.
+    :vartype network_access_control: ~azure.mgmt.videoanalyzer.models.NetworkAccessControl
+    :ivar provisioning_state: Provisioning state of the Video Analyzer account. Known values are:
+     "Failed", "InProgress", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.videoanalyzer.models.ProvisioningState
     :ivar private_endpoint_connections: Private Endpoint Connections created under Video Analyzer
      account.
-    :vartype private_endpoint_connections: list[~video_analyzer.models.PrivateEndpointConnection]
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.videoanalyzer.models.PrivateEndpointConnection]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'location': {'required': True},
-        'endpoints': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "location": {"required": True},
+        "endpoints": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'VideoAnalyzerIdentity'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
-        'endpoints': {'key': 'properties.endpoints', 'type': '[Endpoint]'},
-        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
-        'iot_hubs': {'key': 'properties.iotHubs', 'type': '[IotHub]'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'network_access_control': {'key': 'properties.networkAccessControl', 'type': 'NetworkAccessControl'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "VideoAnalyzerIdentity"},
+        "storage_accounts": {"key": "properties.storageAccounts", "type": "[StorageAccount]"},
+        "endpoints": {"key": "properties.endpoints", "type": "[Endpoint]"},
+        "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
+        "iot_hubs": {"key": "properties.iotHubs", "type": "[IotHub]"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "network_access_control": {"key": "properties.networkAccessControl", "type": "NetworkAccessControl"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
     def __init__(
@@ -3383,15 +3674,34 @@ class VideoAnalyzer(TrackedResource):
         *,
         location: str,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["VideoAnalyzerIdentity"] = None,
-        storage_accounts: Optional[List["StorageAccount"]] = None,
-        encryption: Optional["AccountEncryption"] = None,
-        iot_hubs: Optional[List["IotHub"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
-        network_access_control: Optional["NetworkAccessControl"] = None,
+        identity: Optional["_models.VideoAnalyzerIdentity"] = None,
+        storage_accounts: Optional[List["_models.StorageAccount"]] = None,
+        encryption: Optional["_models.AccountEncryption"] = None,
+        iot_hubs: Optional[List["_models.IotHub"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        network_access_control: Optional["_models.NetworkAccessControl"] = None,
         **kwargs
     ):
-        super(VideoAnalyzer, self).__init__(tags=tags, location=location, **kwargs)
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword location: The geo-location where the resource lives. Required.
+        :paramtype location: str
+        :keyword identity: The identities associated to the Video Analyzer resource.
+        :paramtype identity: ~azure.mgmt.videoanalyzer.models.VideoAnalyzerIdentity
+        :keyword storage_accounts: The storage accounts for this resource.
+        :paramtype storage_accounts: list[~azure.mgmt.videoanalyzer.models.StorageAccount]
+        :keyword encryption: The account encryption properties.
+        :paramtype encryption: ~azure.mgmt.videoanalyzer.models.AccountEncryption
+        :keyword iot_hubs: The IoT Hubs for this resource.
+        :paramtype iot_hubs: list[~azure.mgmt.videoanalyzer.models.IotHub]
+        :keyword public_network_access: Whether or not public network access is allowed for resources
+         under the Video Analyzer account. Known values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.videoanalyzer.models.PublicNetworkAccess
+        :keyword network_access_control: Network access control for Video Analyzer.
+        :paramtype network_access_control: ~azure.mgmt.videoanalyzer.models.NetworkAccessControl
+        """
+        super().__init__(tags=tags, location=location, **kwargs)
         self.identity = identity
         self.storage_accounts = storage_accounts
         self.endpoints = None
@@ -3403,103 +3713,124 @@ class VideoAnalyzer(TrackedResource):
         self.private_endpoint_connections = None
 
 
-class VideoAnalyzerCollection(msrest.serialization.Model):
+class VideoAnalyzerCollection(_serialization.Model):
     """A collection of VideoAnalyzer items.
 
-    :param value: A collection of VideoAnalyzer items.
-    :type value: list[~video_analyzer.models.VideoAnalyzer]
+    :ivar value: A collection of VideoAnalyzer items.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.VideoAnalyzer]
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VideoAnalyzer]'},
+        "value": {"key": "value", "type": "[VideoAnalyzer]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["VideoAnalyzer"]] = None,
-        **kwargs
-    ):
-        super(VideoAnalyzerCollection, self).__init__(**kwargs)
+    def __init__(self, *, value: Optional[List["_models.VideoAnalyzer"]] = None, **kwargs):
+        """
+        :keyword value: A collection of VideoAnalyzer items.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.VideoAnalyzer]
+        """
+        super().__init__(**kwargs)
         self.value = value
 
 
-class VideoAnalyzerIdentity(msrest.serialization.Model):
+class VideoAnalyzerIdentity(_serialization.Model):
     """The managed identity for the Video Analyzer resource.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The identity type.
-    :type type: str
-    :param user_assigned_identities: The User Assigned Managed Identities.
-    :type user_assigned_identities: dict[str, ~video_analyzer.models.UserAssignedManagedIdentity]
+    :ivar type: The identity type. Required.
+    :vartype type: str
+    :ivar user_assigned_identities: The User Assigned Managed Identities.
+    :vartype user_assigned_identities: dict[str,
+     ~azure.mgmt.videoanalyzer.models.UserAssignedManagedIdentity]
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{UserAssignedManagedIdentity}'},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedManagedIdentity}"},
     }
 
     def __init__(
         self,
         *,
         type: str,
-        user_assigned_identities: Optional[Dict[str, "UserAssignedManagedIdentity"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedManagedIdentity"]] = None,
         **kwargs
     ):
-        super(VideoAnalyzerIdentity, self).__init__(**kwargs)
+        """
+        :keyword type: The identity type. Required.
+        :paramtype type: str
+        :keyword user_assigned_identities: The User Assigned Managed Identities.
+        :paramtype user_assigned_identities: dict[str,
+         ~azure.mgmt.videoanalyzer.models.UserAssignedManagedIdentity]
+        """
+        super().__init__(**kwargs)
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class VideoAnalyzerOperationStatus(msrest.serialization.Model):
+class VideoAnalyzerOperationStatus(_serialization.Model):
     """Status of video analyzer operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Operation identifier.
-    :type name: str
-    :param id: Operation resource ID.
-    :type id: str
-    :param start_time: Operation start time.
-    :type start_time: str
-    :param end_time: Operation end time.
-    :type end_time: str
-    :param status: Operation status.
-    :type status: str
-    :param error: The error detail.
-    :type error: ~video_analyzer.models.ErrorDetail
+    :ivar name: Operation identifier. Required.
+    :vartype name: str
+    :ivar id: Operation resource ID.
+    :vartype id: str
+    :ivar start_time: Operation start time.
+    :vartype start_time: str
+    :ivar end_time: Operation end time.
+    :vartype end_time: str
+    :ivar status: Operation status.
+    :vartype status: str
+    :ivar error: The error detail.
+    :vartype error: ~azure.mgmt.videoanalyzer.models.ErrorDetail
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         status: Optional[str] = None,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
-        super(VideoAnalyzerOperationStatus, self).__init__(**kwargs)
+        """
+        :keyword name: Operation identifier. Required.
+        :paramtype name: str
+        :keyword id: Operation resource ID.
+        :paramtype id: str
+        :keyword start_time: Operation start time.
+        :paramtype start_time: str
+        :keyword end_time: Operation end time.
+        :paramtype end_time: str
+        :keyword status: Operation status.
+        :paramtype status: str
+        :keyword error: The error detail.
+        :paramtype error: ~azure.mgmt.videoanalyzer.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.id = id
         self.start_time = start_time
@@ -3508,50 +3839,64 @@ class VideoAnalyzerOperationStatus(msrest.serialization.Model):
         self.error = error
 
 
-class VideoAnalyzerPrivateEndpointConnectionOperationStatus(msrest.serialization.Model):
+class VideoAnalyzerPrivateEndpointConnectionOperationStatus(_serialization.Model):
     """Status of private endpoint connection operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param name: Required. Operation identifier.
-    :type name: str
-    :param id: Operation resource ID.
-    :type id: str
-    :param start_time: Operation start time.
-    :type start_time: str
-    :param end_time: Operation end time.
-    :type end_time: str
-    :param status: Operation status.
-    :type status: str
-    :param error: The error detail.
-    :type error: ~video_analyzer.models.ErrorDetail
+    :ivar name: Operation identifier. Required.
+    :vartype name: str
+    :ivar id: Operation resource ID.
+    :vartype id: str
+    :ivar start_time: Operation start time.
+    :vartype start_time: str
+    :ivar end_time: Operation end time.
+    :vartype end_time: str
+    :ivar status: Operation status.
+    :vartype status: str
+    :ivar error: The error detail.
+    :vartype error: ~azure.mgmt.videoanalyzer.models.ErrorDetail
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'str'},
-        'end_time': {'key': 'endTime', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorDetail'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "start_time": {"key": "startTime", "type": "str"},
+        "end_time": {"key": "endTime", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorDetail"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         start_time: Optional[str] = None,
         end_time: Optional[str] = None,
         status: Optional[str] = None,
-        error: Optional["ErrorDetail"] = None,
+        error: Optional["_models.ErrorDetail"] = None,
         **kwargs
     ):
-        super(VideoAnalyzerPrivateEndpointConnectionOperationStatus, self).__init__(**kwargs)
+        """
+        :keyword name: Operation identifier. Required.
+        :paramtype name: str
+        :keyword id: Operation resource ID.
+        :paramtype id: str
+        :keyword start_time: Operation start time.
+        :paramtype start_time: str
+        :keyword end_time: Operation end time.
+        :paramtype end_time: str
+        :keyword status: Operation status.
+        :paramtype status: str
+        :keyword error: The error detail.
+        :paramtype error: ~azure.mgmt.videoanalyzer.models.ErrorDetail
+        """
+        super().__init__(**kwargs)
         self.name = name
         self.id = id
         self.start_time = start_time
@@ -3560,68 +3905,89 @@ class VideoAnalyzerPrivateEndpointConnectionOperationStatus(msrest.serialization
         self.error = error
 
 
-class VideoAnalyzerUpdate(msrest.serialization.Model):
+class VideoAnalyzerUpdate(_serialization.Model):
     """The update operation for a Video Analyzer account.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :param tags: A set of tags. Resource tags.
-    :type tags: dict[str, str]
-    :param identity: The identities associated to the Video Analyzer resource.
-    :type identity: ~video_analyzer.models.VideoAnalyzerIdentity
-    :param storage_accounts: The storage accounts for this resource.
-    :type storage_accounts: list[~video_analyzer.models.StorageAccount]
+    :ivar tags: Resource tags.
+    :vartype tags: dict[str, str]
+    :ivar identity: The identities associated to the Video Analyzer resource.
+    :vartype identity: ~azure.mgmt.videoanalyzer.models.VideoAnalyzerIdentity
+    :ivar storage_accounts: The storage accounts for this resource.
+    :vartype storage_accounts: list[~azure.mgmt.videoanalyzer.models.StorageAccount]
     :ivar endpoints: The endpoints associated with this resource.
-    :vartype endpoints: list[~video_analyzer.models.Endpoint]
-    :param encryption: The account encryption properties.
-    :type encryption: ~video_analyzer.models.AccountEncryption
-    :param iot_hubs: The IoT Hubs for this resource.
-    :type iot_hubs: list[~video_analyzer.models.IotHub]
-    :param public_network_access: Whether or not public network access is allowed for resources
-     under the Video Analyzer account. Possible values include: "Enabled", "Disabled".
-    :type public_network_access: str or ~video_analyzer.models.PublicNetworkAccess
-    :param network_access_control: Network access control for Video Analyzer.
-    :type network_access_control: ~video_analyzer.models.NetworkAccessControl
-    :ivar provisioning_state: Provisioning state of the Video Analyzer account. Possible values
-     include: "Failed", "InProgress", "Succeeded".
-    :vartype provisioning_state: str or ~video_analyzer.models.ProvisioningState
+    :vartype endpoints: list[~azure.mgmt.videoanalyzer.models.Endpoint]
+    :ivar encryption: The account encryption properties.
+    :vartype encryption: ~azure.mgmt.videoanalyzer.models.AccountEncryption
+    :ivar iot_hubs: The IoT Hubs for this resource.
+    :vartype iot_hubs: list[~azure.mgmt.videoanalyzer.models.IotHub]
+    :ivar public_network_access: Whether or not public network access is allowed for resources
+     under the Video Analyzer account. Known values are: "Enabled" and "Disabled".
+    :vartype public_network_access: str or ~azure.mgmt.videoanalyzer.models.PublicNetworkAccess
+    :ivar network_access_control: Network access control for Video Analyzer.
+    :vartype network_access_control: ~azure.mgmt.videoanalyzer.models.NetworkAccessControl
+    :ivar provisioning_state: Provisioning state of the Video Analyzer account. Known values are:
+     "Failed", "InProgress", and "Succeeded".
+    :vartype provisioning_state: str or ~azure.mgmt.videoanalyzer.models.ProvisioningState
     :ivar private_endpoint_connections: Private Endpoint Connections created under Video Analyzer
      account.
-    :vartype private_endpoint_connections: list[~video_analyzer.models.PrivateEndpointConnection]
+    :vartype private_endpoint_connections:
+     list[~azure.mgmt.videoanalyzer.models.PrivateEndpointConnection]
     """
 
     _validation = {
-        'endpoints': {'readonly': True},
-        'provisioning_state': {'readonly': True},
-        'private_endpoint_connections': {'readonly': True},
+        "endpoints": {"readonly": True},
+        "provisioning_state": {"readonly": True},
+        "private_endpoint_connections": {"readonly": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'identity': {'key': 'identity', 'type': 'VideoAnalyzerIdentity'},
-        'storage_accounts': {'key': 'properties.storageAccounts', 'type': '[StorageAccount]'},
-        'endpoints': {'key': 'properties.endpoints', 'type': '[Endpoint]'},
-        'encryption': {'key': 'properties.encryption', 'type': 'AccountEncryption'},
-        'iot_hubs': {'key': 'properties.iotHubs', 'type': '[IotHub]'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'str'},
-        'network_access_control': {'key': 'properties.networkAccessControl', 'type': 'NetworkAccessControl'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "identity": {"key": "identity", "type": "VideoAnalyzerIdentity"},
+        "storage_accounts": {"key": "properties.storageAccounts", "type": "[StorageAccount]"},
+        "endpoints": {"key": "properties.endpoints", "type": "[Endpoint]"},
+        "encryption": {"key": "properties.encryption", "type": "AccountEncryption"},
+        "iot_hubs": {"key": "properties.iotHubs", "type": "[IotHub]"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "str"},
+        "network_access_control": {"key": "properties.networkAccessControl", "type": "NetworkAccessControl"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
     }
 
     def __init__(
         self,
         *,
         tags: Optional[Dict[str, str]] = None,
-        identity: Optional["VideoAnalyzerIdentity"] = None,
-        storage_accounts: Optional[List["StorageAccount"]] = None,
-        encryption: Optional["AccountEncryption"] = None,
-        iot_hubs: Optional[List["IotHub"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
-        network_access_control: Optional["NetworkAccessControl"] = None,
+        identity: Optional["_models.VideoAnalyzerIdentity"] = None,
+        storage_accounts: Optional[List["_models.StorageAccount"]] = None,
+        encryption: Optional["_models.AccountEncryption"] = None,
+        iot_hubs: Optional[List["_models.IotHub"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        network_access_control: Optional["_models.NetworkAccessControl"] = None,
         **kwargs
     ):
-        super(VideoAnalyzerUpdate, self).__init__(**kwargs)
+        """
+        :keyword tags: Resource tags.
+        :paramtype tags: dict[str, str]
+        :keyword identity: The identities associated to the Video Analyzer resource.
+        :paramtype identity: ~azure.mgmt.videoanalyzer.models.VideoAnalyzerIdentity
+        :keyword storage_accounts: The storage accounts for this resource.
+        :paramtype storage_accounts: list[~azure.mgmt.videoanalyzer.models.StorageAccount]
+        :keyword encryption: The account encryption properties.
+        :paramtype encryption: ~azure.mgmt.videoanalyzer.models.AccountEncryption
+        :keyword iot_hubs: The IoT Hubs for this resource.
+        :paramtype iot_hubs: list[~azure.mgmt.videoanalyzer.models.IotHub]
+        :keyword public_network_access: Whether or not public network access is allowed for resources
+         under the Video Analyzer account. Known values are: "Enabled" and "Disabled".
+        :paramtype public_network_access: str or ~azure.mgmt.videoanalyzer.models.PublicNetworkAccess
+        :keyword network_access_control: Network access control for Video Analyzer.
+        :paramtype network_access_control: ~azure.mgmt.videoanalyzer.models.NetworkAccessControl
+        """
+        super().__init__(**kwargs)
         self.tags = tags
         self.identity = identity
         self.storage_accounts = storage_accounts
@@ -3634,33 +4000,37 @@ class VideoAnalyzerUpdate(msrest.serialization.Model):
         self.private_endpoint_connections = None
 
 
-class VideoArchival(msrest.serialization.Model):
+class VideoArchival(_serialization.Model):
     """Video archival properties.
 
-    :param retention_period: Video retention period indicates the maximum age of the video archive
+    :ivar retention_period: Video retention period indicates the maximum age of the video archive
      segments which are intended to be kept in storage. It must be provided in the ISO8601 duration
      format in the granularity of days, up to a maximum of 10 years. For example, if this is set to
      P30D (30 days), content older than 30 days will be periodically deleted. This value can be
      updated at any time and the new desired retention period will be effective within 24 hours.
-    :type retention_period: str
+    :vartype retention_period: str
     """
 
     _attribute_map = {
-        'retention_period': {'key': 'retentionPeriod', 'type': 'str'},
+        "retention_period": {"key": "retentionPeriod", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        retention_period: Optional[str] = None,
-        **kwargs
-    ):
-        super(VideoArchival, self).__init__(**kwargs)
+    def __init__(self, *, retention_period: Optional[str] = None, **kwargs):
+        """
+        :keyword retention_period: Video retention period indicates the maximum age of the video
+         archive segments which are intended to be kept in storage. It must be provided in the ISO8601
+         duration format in the granularity of days, up to a maximum of 10 years. For example, if this
+         is set to P30D (30 days), content older than 30 days will be periodically deleted. This value
+         can be updated at any time and the new desired retention period will be effective within 24
+         hours.
+        :paramtype retention_period: str
+        """
+        super().__init__(**kwargs)
         self.retention_period = retention_period
 
 
-class VideoContentToken(msrest.serialization.Model):
-    """"Video content token grants access to the video content URLs.".
+class VideoContentToken(_serialization.Model):
+    """ "Video content token grants access to the video content URLs.".
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -3673,65 +4043,63 @@ class VideoContentToken(msrest.serialization.Model):
     """
 
     _validation = {
-        'expiration_date': {'readonly': True},
-        'token': {'readonly': True},
+        "expiration_date": {"readonly": True},
+        "token": {"readonly": True},
     }
 
     _attribute_map = {
-        'expiration_date': {'key': 'expirationDate', 'type': 'iso-8601'},
-        'token': {'key': 'token', 'type': 'str'},
+        "expiration_date": {"key": "expirationDate", "type": "iso-8601"},
+        "token": {"key": "token", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        super(VideoContentToken, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.expiration_date = None
         self.token = None
 
 
-class VideoContentUrls(msrest.serialization.Model):
+class VideoContentUrls(_serialization.Model):
     """Set of URLs to the video content.
 
-    :param download_url: Video file download URL. This URL can be used in conjunction with the
-     video content authorization token to download the video MP4 file. The resulting MP4 file can be
+    :ivar download_url: Video file download URL. This URL can be used in conjunction with the video
+     content authorization token to download the video MP4 file. The resulting MP4 file can be
      played on any standard media player. It is available when the video type is 'file' and video
      file is available for consumption.
-    :type download_url: str
-    :param archive_base_url: Video archive streaming base URL. The archived content can be
+    :vartype download_url: str
+    :ivar archive_base_url: Video archive streaming base URL. The archived content can be
      automatically played by the Azure Video Analyzer player widget. Alternatively, this URL can be
      used in conjunction with the video content authorization token on any compatible DASH or HLS
      players by appending the following to the base URL:
-    
+
      .. code-block::
-    
+
         - HLSv4:     /manifest(format=m3u8-aapl).m3u8
         - HLS CMAF:  /manifest(format=m3u8-cmaf)
         - DASH CMAF: /manifest(format=mpd-time-cmaf)
-    
+
         Moreover, an ongoing video recording can be played in "live mode" with latencies which are
      approximately double of the chosen video segment length. It is available when the video type is
      'archive' and video archiving is enabled.
-    :type archive_base_url: str
-    :param rtsp_tunnel_url: Video low-latency streaming URL. The live content can be automatically
+    :vartype archive_base_url: str
+    :ivar rtsp_tunnel_url: Video low-latency streaming URL. The live content can be automatically
      played by the Azure Video Analyzer player widget. Alternatively, this URL can be used in
      conjunction with the video content authorization token to expose a WebSocket tunneled RTSP
      stream. It is available when the video type is 'archive' and a live, low-latency feed is
      available from the source.
-    :type rtsp_tunnel_url: str
-    :param preview_image_urls: Video preview image URLs. These URLs can be used in conjunction with
+    :vartype rtsp_tunnel_url: str
+    :ivar preview_image_urls: Video preview image URLs. These URLs can be used in conjunction with
      the video content authorization token to download the most recent still image from the video
      archive in different resolutions. They are available when the video type is 'archive' and
      preview images are enabled.
-    :type preview_image_urls: ~video_analyzer.models.VideoPreviewImageUrls
+    :vartype preview_image_urls: ~azure.mgmt.videoanalyzer.models.VideoPreviewImageUrls
     """
 
     _attribute_map = {
-        'download_url': {'key': 'downloadUrl', 'type': 'str'},
-        'archive_base_url': {'key': 'archiveBaseUrl', 'type': 'str'},
-        'rtsp_tunnel_url': {'key': 'rtspTunnelUrl', 'type': 'str'},
-        'preview_image_urls': {'key': 'previewImageUrls', 'type': 'VideoPreviewImageUrls'},
+        "download_url": {"key": "downloadUrl", "type": "str"},
+        "archive_base_url": {"key": "archiveBaseUrl", "type": "str"},
+        "rtsp_tunnel_url": {"key": "rtspTunnelUrl", "type": "str"},
+        "preview_image_urls": {"key": "previewImageUrls", "type": "VideoPreviewImageUrls"},
     }
 
     def __init__(
@@ -3740,25 +4108,58 @@ class VideoContentUrls(msrest.serialization.Model):
         download_url: Optional[str] = None,
         archive_base_url: Optional[str] = None,
         rtsp_tunnel_url: Optional[str] = None,
-        preview_image_urls: Optional["VideoPreviewImageUrls"] = None,
+        preview_image_urls: Optional["_models.VideoPreviewImageUrls"] = None,
         **kwargs
     ):
-        super(VideoContentUrls, self).__init__(**kwargs)
+        """
+        :keyword download_url: Video file download URL. This URL can be used in conjunction with the
+         video content authorization token to download the video MP4 file. The resulting MP4 file can be
+         played on any standard media player. It is available when the video type is 'file' and video
+         file is available for consumption.
+        :paramtype download_url: str
+        :keyword archive_base_url: Video archive streaming base URL. The archived content can be
+         automatically played by the Azure Video Analyzer player widget. Alternatively, this URL can be
+         used in conjunction with the video content authorization token on any compatible DASH or HLS
+         players by appending the following to the base URL:
+
+         .. code-block::
+
+            - HLSv4:     /manifest(format=m3u8-aapl).m3u8
+            - HLS CMAF:  /manifest(format=m3u8-cmaf)
+            - DASH CMAF: /manifest(format=mpd-time-cmaf)
+
+            Moreover, an ongoing video recording can be played in "live mode" with latencies which are
+         approximately double of the chosen video segment length. It is available when the video type is
+         'archive' and video archiving is enabled.
+        :paramtype archive_base_url: str
+        :keyword rtsp_tunnel_url: Video low-latency streaming URL. The live content can be
+         automatically played by the Azure Video Analyzer player widget. Alternatively, this URL can be
+         used in conjunction with the video content authorization token to expose a WebSocket tunneled
+         RTSP stream. It is available when the video type is 'archive' and a live, low-latency feed is
+         available from the source.
+        :paramtype rtsp_tunnel_url: str
+        :keyword preview_image_urls: Video preview image URLs. These URLs can be used in conjunction
+         with the video content authorization token to download the most recent still image from the
+         video archive in different resolutions. They are available when the video type is 'archive' and
+         preview images are enabled.
+        :paramtype preview_image_urls: ~azure.mgmt.videoanalyzer.models.VideoPreviewImageUrls
+        """
+        super().__init__(**kwargs)
         self.download_url = download_url
         self.archive_base_url = archive_base_url
         self.rtsp_tunnel_url = rtsp_tunnel_url
         self.preview_image_urls = preview_image_urls
 
 
-class VideoCreationProperties(msrest.serialization.Model):
+class VideoCreationProperties(_serialization.Model):
     """Optional properties to be used in case a new video resource needs to be created on the service. These will not take effect if the video already exists.
 
-    :param title: Optional title provided by the user. Value can be up to 256 characters long.
-    :type title: str
-    :param description: Optional description provided by the user. Value can be up to 2048
+    :ivar title: Optional title provided by the user. Value can be up to 256 characters long.
+    :vartype title: str
+    :ivar description: Optional description provided by the user. Value can be up to 2048
      characters long.
-    :type description: str
-    :param segment_length: Segment length indicates the length of individual content files
+    :vartype description: str
+    :ivar segment_length: Segment length indicates the length of individual content files
      (segments) which are persisted to storage. Smaller segments provide lower archive playback
      latency but generate larger volume of storage transactions. Larger segments reduce the amount
      of storage transactions while increasing the archive playback latency. Value must be specified
@@ -3766,20 +4167,20 @@ class VideoCreationProperties(msrest.serialization.Model):
      5 minutes, in 30 seconds increments. Changing this value after the initial call to create the
      video resource can lead to errors when uploading content to the archive. Default value is 30
      seconds. This property is only allowed for topologies where "kind" is set to "live".
-    :type segment_length: str
-    :param retention_period: Video retention period indicates how long the video is kept in
-     storage. Value must be specified in ISO8601 duration format (i.e. "P1D" equals 1 day) and can
-     vary between 1 day to 10 years, in 1 day increments. When absent (null), all video content is
+    :vartype segment_length: str
+    :ivar retention_period: Video retention period indicates how long the video is kept in storage.
+     Value must be specified in ISO8601 duration format (i.e. "P1D" equals 1 day) and can vary
+     between 1 day to 10 years, in 1 day increments. When absent (null), all video content is
      retained indefinitely. This property is only allowed for topologies where "kind" is set to
      "live".
-    :type retention_period: str
+    :vartype retention_period: str
     """
 
     _attribute_map = {
-        'title': {'key': 'title', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'segment_length': {'key': 'segmentLength', 'type': 'str'},
-        'retention_period': {'key': 'retentionPeriod', 'type': 'str'},
+        "title": {"key": "title", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "segment_length": {"key": "segmentLength", "type": "str"},
+        "retention_period": {"key": "retentionPeriod", "type": "str"},
     }
 
     def __init__(
@@ -3791,61 +4192,94 @@ class VideoCreationProperties(msrest.serialization.Model):
         retention_period: Optional[str] = None,
         **kwargs
     ):
-        super(VideoCreationProperties, self).__init__(**kwargs)
+        """
+        :keyword title: Optional title provided by the user. Value can be up to 256 characters long.
+        :paramtype title: str
+        :keyword description: Optional description provided by the user. Value can be up to 2048
+         characters long.
+        :paramtype description: str
+        :keyword segment_length: Segment length indicates the length of individual content files
+         (segments) which are persisted to storage. Smaller segments provide lower archive playback
+         latency but generate larger volume of storage transactions. Larger segments reduce the amount
+         of storage transactions while increasing the archive playback latency. Value must be specified
+         in ISO8601 duration format (i.e. "PT30S" equals 30 seconds) and can vary between 30 seconds to
+         5 minutes, in 30 seconds increments. Changing this value after the initial call to create the
+         video resource can lead to errors when uploading content to the archive. Default value is 30
+         seconds. This property is only allowed for topologies where "kind" is set to "live".
+        :paramtype segment_length: str
+        :keyword retention_period: Video retention period indicates how long the video is kept in
+         storage. Value must be specified in ISO8601 duration format (i.e. "P1D" equals 1 day) and can
+         vary between 1 day to 10 years, in 1 day increments. When absent (null), all video content is
+         retained indefinitely. This property is only allowed for topologies where "kind" is set to
+         "live".
+        :paramtype retention_period: str
+        """
+        super().__init__(**kwargs)
         self.title = title
         self.description = description
         self.segment_length = segment_length
         self.retention_period = retention_period
 
 
-class VideoEncoderBase(msrest.serialization.Model):
+class VideoEncoderBase(_serialization.Model):
     """Base type for all video encoding presets, which define the recipe or instructions on how the input video should be processed.
 
-    You probably want to use the sub-classes and not this class directly. Known
-    sub-classes are: VideoEncoderH264.
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    VideoEncoderH264
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param bitrate_kbps: The maximum bitrate, in kilobits per second or Kbps, at which video should
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar bitrate_kbps: The maximum bitrate, in kilobits per second or Kbps, at which video should
      be encoded. If omitted, encoder sets it automatically to try and match the quality of the input
      video.
-    :type bitrate_kbps: str
-    :param frame_rate: The frame rate (in frames per second) of the encoded video. The value must
-     be greater than zero, and less than or equal to 300. If omitted, the encoder uses the average
+    :vartype bitrate_kbps: str
+    :ivar frame_rate: The frame rate (in frames per second) of the encoded video. The value must be
+     greater than zero, and less than or equal to 300. If omitted, the encoder uses the average
      frame rate of the input video.
-    :type frame_rate: str
-    :param scale: Describes the resolution of the encoded video. If omitted, the encoder uses the
+    :vartype frame_rate: str
+    :ivar scale: Describes the resolution of the encoded video. If omitted, the encoder uses the
      resolution of the input video.
-    :type scale: ~video_analyzer.models.VideoScale
+    :vartype scale: ~azure.mgmt.videoanalyzer.models.VideoScale
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'bitrate_kbps': {'key': 'bitrateKbps', 'type': 'str'},
-        'frame_rate': {'key': 'frameRate', 'type': 'str'},
-        'scale': {'key': 'scale', 'type': 'VideoScale'},
+        "type": {"key": "@type", "type": "str"},
+        "bitrate_kbps": {"key": "bitrateKbps", "type": "str"},
+        "frame_rate": {"key": "frameRate", "type": "str"},
+        "scale": {"key": "scale", "type": "VideoScale"},
     }
 
-    _subtype_map = {
-        'type': {'#Microsoft.VideoAnalyzer.VideoEncoderH264': 'VideoEncoderH264'}
-    }
+    _subtype_map = {"type": {"#Microsoft.VideoAnalyzer.VideoEncoderH264": "VideoEncoderH264"}}
 
     def __init__(
         self,
         *,
         bitrate_kbps: Optional[str] = None,
         frame_rate: Optional[str] = None,
-        scale: Optional["VideoScale"] = None,
+        scale: Optional["_models.VideoScale"] = None,
         **kwargs
     ):
-        super(VideoEncoderBase, self).__init__(**kwargs)
-        self.type = None  # type: Optional[str]
+        """
+        :keyword bitrate_kbps: The maximum bitrate, in kilobits per second or Kbps, at which video
+         should be encoded. If omitted, encoder sets it automatically to try and match the quality of
+         the input video.
+        :paramtype bitrate_kbps: str
+        :keyword frame_rate: The frame rate (in frames per second) of the encoded video. The value must
+         be greater than zero, and less than or equal to 300. If omitted, the encoder uses the average
+         frame rate of the input video.
+        :paramtype frame_rate: str
+        :keyword scale: Describes the resolution of the encoded video. If omitted, the encoder uses the
+         resolution of the input video.
+        :paramtype scale: ~azure.mgmt.videoanalyzer.models.VideoScale
+        """
+        super().__init__(**kwargs)
+        self.type: Optional[str] = None
         self.bitrate_kbps = bitrate_kbps
         self.frame_rate = frame_rate
         self.scale = scale
@@ -3856,30 +4290,30 @@ class VideoEncoderH264(VideoEncoderBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param bitrate_kbps: The maximum bitrate, in kilobits per second or Kbps, at which video should
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar bitrate_kbps: The maximum bitrate, in kilobits per second or Kbps, at which video should
      be encoded. If omitted, encoder sets it automatically to try and match the quality of the input
      video.
-    :type bitrate_kbps: str
-    :param frame_rate: The frame rate (in frames per second) of the encoded video. The value must
-     be greater than zero, and less than or equal to 300. If omitted, the encoder uses the average
+    :vartype bitrate_kbps: str
+    :ivar frame_rate: The frame rate (in frames per second) of the encoded video. The value must be
+     greater than zero, and less than or equal to 300. If omitted, the encoder uses the average
      frame rate of the input video.
-    :type frame_rate: str
-    :param scale: Describes the resolution of the encoded video. If omitted, the encoder uses the
+    :vartype frame_rate: str
+    :ivar scale: Describes the resolution of the encoded video. If omitted, the encoder uses the
      resolution of the input video.
-    :type scale: ~video_analyzer.models.VideoScale
+    :vartype scale: ~azure.mgmt.videoanalyzer.models.VideoScale
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'bitrate_kbps': {'key': 'bitrateKbps', 'type': 'str'},
-        'frame_rate': {'key': 'frameRate', 'type': 'str'},
-        'scale': {'key': 'scale', 'type': 'VideoScale'},
+        "type": {"key": "@type", "type": "str"},
+        "bitrate_kbps": {"key": "bitrateKbps", "type": "str"},
+        "frame_rate": {"key": "frameRate", "type": "str"},
+        "scale": {"key": "scale", "type": "VideoScale"},
     }
 
     def __init__(
@@ -3887,14 +4321,27 @@ class VideoEncoderH264(VideoEncoderBase):
         *,
         bitrate_kbps: Optional[str] = None,
         frame_rate: Optional[str] = None,
-        scale: Optional["VideoScale"] = None,
+        scale: Optional["_models.VideoScale"] = None,
         **kwargs
     ):
-        super(VideoEncoderH264, self).__init__(bitrate_kbps=bitrate_kbps, frame_rate=frame_rate, scale=scale, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.VideoEncoderH264'  # type: str
+        """
+        :keyword bitrate_kbps: The maximum bitrate, in kilobits per second or Kbps, at which video
+         should be encoded. If omitted, encoder sets it automatically to try and match the quality of
+         the input video.
+        :paramtype bitrate_kbps: str
+        :keyword frame_rate: The frame rate (in frames per second) of the encoded video. The value must
+         be greater than zero, and less than or equal to 300. If omitted, the encoder uses the average
+         frame rate of the input video.
+        :paramtype frame_rate: str
+        :keyword scale: Describes the resolution of the encoded video. If omitted, the encoder uses the
+         resolution of the input video.
+        :paramtype scale: ~azure.mgmt.videoanalyzer.models.VideoScale
+        """
+        super().__init__(bitrate_kbps=bitrate_kbps, frame_rate=frame_rate, scale=scale, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.VideoEncoderH264"
 
 
-class VideoEntity(ProxyResource):
+class VideoEntity(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Represents a video resource within Azure Video Analyzer. Videos can be ingested from RTSP cameras through live pipelines or can be created by exporting sequences from existing captured video through a pipeline job. Videos ingested through live pipelines can be streamed through Azure Video Analyzer Player Widget or compatible players. Exported videos can be downloaded as MP4 files.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3909,49 +4356,48 @@ class VideoEntity(ProxyResource):
     :vartype type: str
     :ivar system_data: Azure Resource Manager metadata containing createdBy and modifiedBy
      information.
-    :vartype system_data: ~video_analyzer.models.SystemData
-    :param title: Optional video title provided by the user. Value can be up to 256 characters
-     long.
-    :type title: str
-    :param description: Optional video description provided by the user. Value can be up to 2048
+    :vartype system_data: ~azure.mgmt.videoanalyzer.models.SystemData
+    :ivar title: Optional video title provided by the user. Value can be up to 256 characters long.
+    :vartype title: str
+    :ivar description: Optional video description provided by the user. Value can be up to 2048
      characters long.
-    :type description: str
+    :vartype description: str
     :ivar type_properties_type: Video content type. Different content types are suitable for
-     different applications and scenarios. Possible values include: "Archive", "File".
-    :vartype type_properties_type: str or ~video_analyzer.models.VideoType
+     different applications and scenarios. Known values are: "Archive" and "File".
+    :vartype type_properties_type: str or ~azure.mgmt.videoanalyzer.models.VideoType
     :ivar flags: Video flags contain information about the available video actions and its dynamic
      properties based on the current video state.
-    :vartype flags: ~video_analyzer.models.VideoFlags
+    :vartype flags: ~azure.mgmt.videoanalyzer.models.VideoFlags
     :ivar content_urls: Set of URLs to the video content.
-    :vartype content_urls: ~video_analyzer.models.VideoContentUrls
-    :param media_info: Contains information about the video and audio content.
-    :type media_info: ~video_analyzer.models.VideoMediaInfo
-    :param archival: Video archival properties.
-    :type archival: ~video_analyzer.models.VideoArchival
+    :vartype content_urls: ~azure.mgmt.videoanalyzer.models.VideoContentUrls
+    :ivar media_info: Contains information about the video and audio content.
+    :vartype media_info: ~azure.mgmt.videoanalyzer.models.VideoMediaInfo
+    :ivar archival: Video archival properties.
+    :vartype archival: ~azure.mgmt.videoanalyzer.models.VideoArchival
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'type_properties_type': {'readonly': True},
-        'flags': {'readonly': True},
-        'content_urls': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "type_properties_type": {"readonly": True},
+        "flags": {"readonly": True},
+        "content_urls": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'title': {'key': 'properties.title', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'type_properties_type': {'key': 'properties.type', 'type': 'str'},
-        'flags': {'key': 'properties.flags', 'type': 'VideoFlags'},
-        'content_urls': {'key': 'properties.contentUrls', 'type': 'VideoContentUrls'},
-        'media_info': {'key': 'properties.mediaInfo', 'type': 'VideoMediaInfo'},
-        'archival': {'key': 'properties.archival', 'type': 'VideoArchival'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "title": {"key": "properties.title", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "type_properties_type": {"key": "properties.type", "type": "str"},
+        "flags": {"key": "properties.flags", "type": "VideoFlags"},
+        "content_urls": {"key": "properties.contentUrls", "type": "VideoContentUrls"},
+        "media_info": {"key": "properties.mediaInfo", "type": "VideoMediaInfo"},
+        "archival": {"key": "properties.archival", "type": "VideoArchival"},
     }
 
     def __init__(
@@ -3959,11 +4405,23 @@ class VideoEntity(ProxyResource):
         *,
         title: Optional[str] = None,
         description: Optional[str] = None,
-        media_info: Optional["VideoMediaInfo"] = None,
-        archival: Optional["VideoArchival"] = None,
+        media_info: Optional["_models.VideoMediaInfo"] = None,
+        archival: Optional["_models.VideoArchival"] = None,
         **kwargs
     ):
-        super(VideoEntity, self).__init__(**kwargs)
+        """
+        :keyword title: Optional video title provided by the user. Value can be up to 256 characters
+         long.
+        :paramtype title: str
+        :keyword description: Optional video description provided by the user. Value can be up to 2048
+         characters long.
+        :paramtype description: str
+        :keyword media_info: Contains information about the video and audio content.
+        :paramtype media_info: ~azure.mgmt.videoanalyzer.models.VideoMediaInfo
+        :keyword archival: Video archival properties.
+        :paramtype archival: ~azure.mgmt.videoanalyzer.models.VideoArchival
+        """
+        super().__init__(**kwargs)
         self.title = title
         self.description = description
         self.type_properties_type = None
@@ -3973,183 +4431,206 @@ class VideoEntity(ProxyResource):
         self.archival = archival
 
 
-class VideoEntityCollection(msrest.serialization.Model):
+class VideoEntityCollection(_serialization.Model):
     """A collection of VideoEntity items.
 
-    :param value: A collection of VideoEntity items.
-    :type value: list[~video_analyzer.models.VideoEntity]
-    :param next_link: A link to the next page of the collection (when the collection contains too
+    :ivar value: A collection of VideoEntity items.
+    :vartype value: list[~azure.mgmt.videoanalyzer.models.VideoEntity]
+    :ivar next_link: A link to the next page of the collection (when the collection contains too
      many results to return in one response).
-    :type next_link: str
+    :vartype next_link: str
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[VideoEntity]'},
-        'next_link': {'key': '@nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[VideoEntity]"},
+        "next_link": {"key": "@nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["VideoEntity"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.VideoEntity"]] = None, next_link: Optional[str] = None, **kwargs
     ):
-        super(VideoEntityCollection, self).__init__(**kwargs)
+        """
+        :keyword value: A collection of VideoEntity items.
+        :paramtype value: list[~azure.mgmt.videoanalyzer.models.VideoEntity]
+        :keyword next_link: A link to the next page of the collection (when the collection contains too
+         many results to return in one response).
+        :paramtype next_link: str
+        """
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VideoFlags(msrest.serialization.Model):
+class VideoFlags(_serialization.Model):
     """Video flags contain information about the available video actions and its dynamic properties based on the current video state.
 
     All required parameters must be populated in order to send to Azure.
 
-    :param can_stream: Required. Value indicating whether or not the video can be streamed. Only
-     "archive" type videos can be streamed.
-    :type can_stream: bool
-    :param has_data: Required. Value indicating whether or not there has ever been data recorded or
-     uploaded into the video. Newly created videos have this value set to false.
-    :type has_data: bool
-    :param is_in_use: Required. Value indicating whether or not the video is currently being
-     referenced be an active pipeline. The fact that is being referenced, doesn't necessarily
-     indicate that data is being received. For example, video recording may be gated on events or
-     camera may not be accessible at the time.
-    :type is_in_use: bool
+    :ivar can_stream: Value indicating whether or not the video can be streamed. Only "archive"
+     type videos can be streamed. Required.
+    :vartype can_stream: bool
+    :ivar has_data: Value indicating whether or not there has ever been data recorded or uploaded
+     into the video. Newly created videos have this value set to false. Required.
+    :vartype has_data: bool
+    :ivar is_in_use: Value indicating whether or not the video is currently being referenced be an
+     active pipeline. The fact that is being referenced, doesn't necessarily indicate that data is
+     being received. For example, video recording may be gated on events or camera may not be
+     accessible at the time. Required.
+    :vartype is_in_use: bool
     """
 
     _validation = {
-        'can_stream': {'required': True},
-        'has_data': {'required': True},
-        'is_in_use': {'required': True},
+        "can_stream": {"required": True},
+        "has_data": {"required": True},
+        "is_in_use": {"required": True},
     }
 
     _attribute_map = {
-        'can_stream': {'key': 'canStream', 'type': 'bool'},
-        'has_data': {'key': 'hasData', 'type': 'bool'},
-        'is_in_use': {'key': 'isInUse', 'type': 'bool'},
+        "can_stream": {"key": "canStream", "type": "bool"},
+        "has_data": {"key": "hasData", "type": "bool"},
+        "is_in_use": {"key": "isInUse", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        can_stream: bool,
-        has_data: bool,
-        is_in_use: bool,
-        **kwargs
-    ):
-        super(VideoFlags, self).__init__(**kwargs)
+    def __init__(self, *, can_stream: bool, has_data: bool, is_in_use: bool, **kwargs):
+        """
+        :keyword can_stream: Value indicating whether or not the video can be streamed. Only "archive"
+         type videos can be streamed. Required.
+        :paramtype can_stream: bool
+        :keyword has_data: Value indicating whether or not there has ever been data recorded or
+         uploaded into the video. Newly created videos have this value set to false. Required.
+        :paramtype has_data: bool
+        :keyword is_in_use: Value indicating whether or not the video is currently being referenced be
+         an active pipeline. The fact that is being referenced, doesn't necessarily indicate that data
+         is being received. For example, video recording may be gated on events or camera may not be
+         accessible at the time. Required.
+        :paramtype is_in_use: bool
+        """
+        super().__init__(**kwargs)
         self.can_stream = can_stream
         self.has_data = has_data
         self.is_in_use = is_in_use
 
 
-class VideoMediaInfo(msrest.serialization.Model):
+class VideoMediaInfo(_serialization.Model):
     """Contains information about the video and audio content.
 
-    :param segment_length: Video segment length indicates the length of individual video files
+    :ivar segment_length: Video segment length indicates the length of individual video files
      (segments) which are persisted to storage. Smaller segments provide lower archive playback
      latency but generate larger volume of storage transactions. Larger segments reduce the amount
      of storage transactions while increasing the archive playback latency. Value must be specified
      in ISO8601 duration format (i.e. "PT30S" equals 30 seconds) and can vary between 30 seconds to
      5 minutes, in 30 seconds increments.
-    :type segment_length: str
+    :vartype segment_length: str
     """
 
     _attribute_map = {
-        'segment_length': {'key': 'segmentLength', 'type': 'str'},
+        "segment_length": {"key": "segmentLength", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        segment_length: Optional[str] = None,
-        **kwargs
-    ):
-        super(VideoMediaInfo, self).__init__(**kwargs)
+    def __init__(self, *, segment_length: Optional[str] = None, **kwargs):
+        """
+        :keyword segment_length: Video segment length indicates the length of individual video files
+         (segments) which are persisted to storage. Smaller segments provide lower archive playback
+         latency but generate larger volume of storage transactions. Larger segments reduce the amount
+         of storage transactions while increasing the archive playback latency. Value must be specified
+         in ISO8601 duration format (i.e. "PT30S" equals 30 seconds) and can vary between 30 seconds to
+         5 minutes, in 30 seconds increments.
+        :paramtype segment_length: str
+        """
+        super().__init__(**kwargs)
         self.segment_length = segment_length
 
 
-class VideoPreviewImageUrls(msrest.serialization.Model):
+class VideoPreviewImageUrls(_serialization.Model):
     """Video preview image URLs. These URLs can be used in conjunction with the video content authorization token to download the most recent still image from the video archive in different resolutions. They are available when the video type is 'archive' and preview images are enabled.
 
-    :param small: Low resolution preview image URL.
-    :type small: str
-    :param medium: Medium resolution preview image URL.
-    :type medium: str
-    :param large: High resolution preview image URL.
-    :type large: str
+    :ivar small: Low resolution preview image URL.
+    :vartype small: str
+    :ivar medium: Medium resolution preview image URL.
+    :vartype medium: str
+    :ivar large: High resolution preview image URL.
+    :vartype large: str
     """
 
     _attribute_map = {
-        'small': {'key': 'small', 'type': 'str'},
-        'medium': {'key': 'medium', 'type': 'str'},
-        'large': {'key': 'large', 'type': 'str'},
+        "small": {"key": "small", "type": "str"},
+        "medium": {"key": "medium", "type": "str"},
+        "large": {"key": "large", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        small: Optional[str] = None,
-        medium: Optional[str] = None,
-        large: Optional[str] = None,
-        **kwargs
+        self, *, small: Optional[str] = None, medium: Optional[str] = None, large: Optional[str] = None, **kwargs
     ):
-        super(VideoPreviewImageUrls, self).__init__(**kwargs)
+        """
+        :keyword small: Low resolution preview image URL.
+        :paramtype small: str
+        :keyword medium: Medium resolution preview image URL.
+        :paramtype medium: str
+        :keyword large: High resolution preview image URL.
+        :paramtype large: str
+        """
+        super().__init__(**kwargs)
         self.small = small
         self.medium = medium
         self.large = large
 
 
-class VideoPublishingOptions(msrest.serialization.Model):
+class VideoPublishingOptions(_serialization.Model):
     """Optional flags used to change how video is published. These are only allowed for topologies where "kind" is set to "live".
 
-    :param disable_archive: When set to 'true' content will not be archived or recorded. This is
+    :ivar disable_archive: When set to 'true' content will not be archived or recorded. This is
      used, for example, when the topology is used only for low latency video streaming. Default is
      'false'.  If set to 'true', then "disableRtspPublishing" must be set to 'false'.
-    :type disable_archive: str
-    :param disable_rtsp_publishing: When set to 'true' the RTSP playback URL will not be published,
+    :vartype disable_archive: str
+    :ivar disable_rtsp_publishing: When set to 'true' the RTSP playback URL will not be published,
      disabling low latency streaming. This is used, for example, when the topology is used only for
      archiving content. Default is 'false'.  If set to 'true', then "disableArchive" must be set to
      'false'.
-    :type disable_rtsp_publishing: str
+    :vartype disable_rtsp_publishing: str
     """
 
     _attribute_map = {
-        'disable_archive': {'key': 'disableArchive', 'type': 'str'},
-        'disable_rtsp_publishing': {'key': 'disableRtspPublishing', 'type': 'str'},
+        "disable_archive": {"key": "disableArchive", "type": "str"},
+        "disable_rtsp_publishing": {"key": "disableRtspPublishing", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        disable_archive: Optional[str] = None,
-        disable_rtsp_publishing: Optional[str] = None,
-        **kwargs
+        self, *, disable_archive: Optional[str] = None, disable_rtsp_publishing: Optional[str] = None, **kwargs
     ):
-        super(VideoPublishingOptions, self).__init__(**kwargs)
+        """
+        :keyword disable_archive: When set to 'true' content will not be archived or recorded. This is
+         used, for example, when the topology is used only for low latency video streaming. Default is
+         'false'.  If set to 'true', then "disableRtspPublishing" must be set to 'false'.
+        :paramtype disable_archive: str
+        :keyword disable_rtsp_publishing: When set to 'true' the RTSP playback URL will not be
+         published, disabling low latency streaming. This is used, for example, when the topology is
+         used only for archiving content. Default is 'false'.  If set to 'true', then "disableArchive"
+         must be set to 'false'.
+        :paramtype disable_rtsp_publishing: str
+        """
+        super().__init__(**kwargs)
         self.disable_archive = disable_archive
         self.disable_rtsp_publishing = disable_rtsp_publishing
 
 
-class VideoScale(msrest.serialization.Model):
+class VideoScale(_serialization.Model):
     """The video scaling information.
 
-    :param height: The desired output video height.
-    :type height: str
-    :param width: The desired output video width.
-    :type width: str
-    :param mode: Describes the video scaling mode to be applied. Default mode is 'Pad'. If the mode
+    :ivar height: The desired output video height.
+    :vartype height: str
+    :ivar width: The desired output video width.
+    :vartype width: str
+    :ivar mode: Describes the video scaling mode to be applied. Default mode is 'Pad'. If the mode
      is 'Pad' or 'Stretch' then both width and height must be specified. Else if the mode is
-     'PreserveAspectRatio' then only one of width or height need be provided. Possible values
-     include: "Pad", "PreserveAspectRatio", "Stretch".
-    :type mode: str or ~video_analyzer.models.VideoScaleMode
+     'PreserveAspectRatio' then only one of width or height need be provided. Known values are:
+     "Pad", "PreserveAspectRatio", and "Stretch".
+    :vartype mode: str or ~azure.mgmt.videoanalyzer.models.VideoScaleMode
     """
 
     _attribute_map = {
-        'height': {'key': 'height', 'type': 'str'},
-        'width': {'key': 'width', 'type': 'str'},
-        'mode': {'key': 'mode', 'type': 'str'},
+        "height": {"key": "height", "type": "str"},
+        "width": {"key": "width", "type": "str"},
+        "mode": {"key": "mode", "type": "str"},
     }
 
     def __init__(
@@ -4157,10 +4638,21 @@ class VideoScale(msrest.serialization.Model):
         *,
         height: Optional[str] = None,
         width: Optional[str] = None,
-        mode: Optional[Union[str, "VideoScaleMode"]] = None,
+        mode: Optional[Union[str, "_models.VideoScaleMode"]] = None,
         **kwargs
     ):
-        super(VideoScale, self).__init__(**kwargs)
+        """
+        :keyword height: The desired output video height.
+        :paramtype height: str
+        :keyword width: The desired output video width.
+        :paramtype width: str
+        :keyword mode: Describes the video scaling mode to be applied. Default mode is 'Pad'. If the
+         mode is 'Pad' or 'Stretch' then both width and height must be specified. Else if the mode is
+         'PreserveAspectRatio' then only one of width or height need be provided. Known values are:
+         "Pad", "PreserveAspectRatio", and "Stretch".
+        :paramtype mode: str or ~azure.mgmt.videoanalyzer.models.VideoScaleMode
+        """
+        super().__init__(**kwargs)
         self.height = height
         self.width = width
         self.mode = mode
@@ -4171,31 +4663,31 @@ class VideoSequenceAbsoluteTimeMarkers(TimeSequenceBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param ranges: Required. The sequence of datetime ranges. Example: '[["2021-10-05T03:30:00Z",
-     "2021-10-05T03:40:00Z"]]'.
-    :type ranges: str
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar ranges: The sequence of datetime ranges. Example: '[["2021-10-05T03:30:00Z",
+     "2021-10-05T03:40:00Z"]]'. Required.
+    :vartype ranges: str
     """
 
     _validation = {
-        'type': {'required': True},
-        'ranges': {'required': True},
+        "type": {"required": True},
+        "ranges": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'ranges': {'key': 'ranges', 'type': 'str'},
+        "type": {"key": "@type", "type": "str"},
+        "ranges": {"key": "ranges", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ranges: str,
-        **kwargs
-    ):
-        super(VideoSequenceAbsoluteTimeMarkers, self).__init__(**kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.VideoSequenceAbsoluteTimeMarkers'  # type: str
+    def __init__(self, *, ranges: str, **kwargs):
+        """
+        :keyword ranges: The sequence of datetime ranges. Example: '[["2021-10-05T03:30:00Z",
+         "2021-10-05T03:40:00Z"]]'. Required.
+        :paramtype ranges: str
+        """
+        super().__init__(**kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.VideoSequenceAbsoluteTimeMarkers"
         self.ranges = ranges
 
 
@@ -4204,53 +4696,70 @@ class VideoSink(SinkNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param inputs: Required. An array of upstream node references within the topology to be used as
-     inputs for this node.
-    :type inputs: list[~video_analyzer.models.NodeInput]
-    :param video_name: Required. Name of a new or existing video resource used to capture and
-     publish content. Note: if downstream of RTSP source, and if disableArchive is set to true, then
-     no content is archived.
-    :type video_name: str
-    :param video_creation_properties: Optional video properties to be used in case a new video
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar name: Node name. Must be unique within the topology. Required.
+    :vartype name: str
+    :ivar inputs: An array of upstream node references within the topology to be used as inputs for
+     this node. Required.
+    :vartype inputs: list[~azure.mgmt.videoanalyzer.models.NodeInput]
+    :ivar video_name: Name of a new or existing video resource used to capture and publish content.
+     Note: if downstream of RTSP source, and if disableArchive is set to true, then no content is
+     archived. Required.
+    :vartype video_name: str
+    :ivar video_creation_properties: Optional video properties to be used in case a new video
      resource needs to be created on the service.
-    :type video_creation_properties: ~video_analyzer.models.VideoCreationProperties
-    :param video_publishing_options: Options to change how the video sink publishes content via the
+    :vartype video_creation_properties: ~azure.mgmt.videoanalyzer.models.VideoCreationProperties
+    :ivar video_publishing_options: Options to change how the video sink publishes content via the
      video resource. This property is only allowed for topologies where "kind" is set to "live".
-    :type video_publishing_options: ~video_analyzer.models.VideoPublishingOptions
+    :vartype video_publishing_options: ~azure.mgmt.videoanalyzer.models.VideoPublishingOptions
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'inputs': {'required': True},
-        'video_name': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "inputs": {"required": True},
+        "video_name": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'inputs': {'key': 'inputs', 'type': '[NodeInput]'},
-        'video_name': {'key': 'videoName', 'type': 'str'},
-        'video_creation_properties': {'key': 'videoCreationProperties', 'type': 'VideoCreationProperties'},
-        'video_publishing_options': {'key': 'videoPublishingOptions', 'type': 'VideoPublishingOptions'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "inputs": {"key": "inputs", "type": "[NodeInput]"},
+        "video_name": {"key": "videoName", "type": "str"},
+        "video_creation_properties": {"key": "videoCreationProperties", "type": "VideoCreationProperties"},
+        "video_publishing_options": {"key": "videoPublishingOptions", "type": "VideoPublishingOptions"},
     }
 
     def __init__(
         self,
         *,
         name: str,
-        inputs: List["NodeInput"],
+        inputs: List["_models.NodeInput"],
         video_name: str,
-        video_creation_properties: Optional["VideoCreationProperties"] = None,
-        video_publishing_options: Optional["VideoPublishingOptions"] = None,
+        video_creation_properties: Optional["_models.VideoCreationProperties"] = None,
+        video_publishing_options: Optional["_models.VideoPublishingOptions"] = None,
         **kwargs
     ):
-        super(VideoSink, self).__init__(name=name, inputs=inputs, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.VideoSink'  # type: str
+        """
+        :keyword name: Node name. Must be unique within the topology. Required.
+        :paramtype name: str
+        :keyword inputs: An array of upstream node references within the topology to be used as inputs
+         for this node. Required.
+        :paramtype inputs: list[~azure.mgmt.videoanalyzer.models.NodeInput]
+        :keyword video_name: Name of a new or existing video resource used to capture and publish
+         content. Note: if downstream of RTSP source, and if disableArchive is set to true, then no
+         content is archived. Required.
+        :paramtype video_name: str
+        :keyword video_creation_properties: Optional video properties to be used in case a new video
+         resource needs to be created on the service.
+        :paramtype video_creation_properties: ~azure.mgmt.videoanalyzer.models.VideoCreationProperties
+        :keyword video_publishing_options: Options to change how the video sink publishes content via
+         the video resource. This property is only allowed for topologies where "kind" is set to "live".
+        :paramtype video_publishing_options: ~azure.mgmt.videoanalyzer.models.VideoPublishingOptions
+        """
+        super().__init__(name=name, inputs=inputs, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.VideoSink"
         self.video_name = video_name
         self.video_creation_properties = video_creation_properties
         self.video_publishing_options = video_publishing_options
@@ -4261,41 +4770,43 @@ class VideoSource(SourceNodeBase):
 
     All required parameters must be populated in order to send to Azure.
 
-    :param type: Required. The discriminator for derived types.Constant filled by server.
-    :type type: str
-    :param name: Required. Node name. Must be unique within the topology.
-    :type name: str
-    :param video_name: Required. Name of the Video Analyzer video resource to be used as the
-     source.
-    :type video_name: str
-    :param time_sequences: Required. Describes a sequence of datetime ranges. The video source only
-     picks up recorded media within these ranges.
-    :type time_sequences: ~video_analyzer.models.TimeSequenceBase
+    :ivar type: The discriminator for derived types. Required.
+    :vartype type: str
+    :ivar name: Node name. Must be unique within the topology. Required.
+    :vartype name: str
+    :ivar video_name: Name of the Video Analyzer video resource to be used as the source. Required.
+    :vartype video_name: str
+    :ivar time_sequences: Describes a sequence of datetime ranges. The video source only picks up
+     recorded media within these ranges. Required.
+    :vartype time_sequences: ~azure.mgmt.videoanalyzer.models.TimeSequenceBase
     """
 
     _validation = {
-        'type': {'required': True},
-        'name': {'required': True},
-        'video_name': {'required': True},
-        'time_sequences': {'required': True},
+        "type": {"required": True},
+        "name": {"required": True},
+        "video_name": {"required": True},
+        "time_sequences": {"required": True},
     }
 
     _attribute_map = {
-        'type': {'key': '@type', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'video_name': {'key': 'videoName', 'type': 'str'},
-        'time_sequences': {'key': 'timeSequences', 'type': 'TimeSequenceBase'},
+        "type": {"key": "@type", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "video_name": {"key": "videoName", "type": "str"},
+        "time_sequences": {"key": "timeSequences", "type": "TimeSequenceBase"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        video_name: str,
-        time_sequences: "TimeSequenceBase",
-        **kwargs
-    ):
-        super(VideoSource, self).__init__(name=name, **kwargs)
-        self.type = '#Microsoft.VideoAnalyzer.VideoSource'  # type: str
+    def __init__(self, *, name: str, video_name: str, time_sequences: "_models.TimeSequenceBase", **kwargs):
+        """
+        :keyword name: Node name. Must be unique within the topology. Required.
+        :paramtype name: str
+        :keyword video_name: Name of the Video Analyzer video resource to be used as the source.
+         Required.
+        :paramtype video_name: str
+        :keyword time_sequences: Describes a sequence of datetime ranges. The video source only picks
+         up recorded media within these ranges. Required.
+        :paramtype time_sequences: ~azure.mgmt.videoanalyzer.models.TimeSequenceBase
+        """
+        super().__init__(name=name, **kwargs)
+        self.type: str = "#Microsoft.VideoAnalyzer.VideoSource"
         self.video_name = video_name
         self.time_sequences = time_sequences

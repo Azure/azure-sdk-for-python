@@ -1,5 +1,11 @@
 # Release History
 
+## 1.0.0b5 (2022-11-25)
+
+### Breaking Changes
+
+  - Client name is changed from `VideoAnalyzer` to `VideoAnalyzerManagementClient`
+
 ## 1.0.0b4 (2022-05-13)
 
 - Deprecate the package
