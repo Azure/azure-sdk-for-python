@@ -16,6 +16,7 @@ from azure.ai.ml.entities._validation import MutableValidationResult, _Validatio
 
 from ._artifact_cache import ArtifactCache
 from .code import InternalComponentIgnoreFile
+from azure.ai.ml._utils._asset_utils import IgnoreFile
 
 ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
@@ -36,6 +37,7 @@ class _AdditionalIncludes:
 
         self._tmp_code_path = None
         self.__includes = None
+        self._artifact_includes = None
         self._artifact_validate_result = _ValidationResultBuilder.success()
 
     @property
@@ -45,6 +47,7 @@ class _AdditionalIncludes:
         if self.__includes is None:
             if self._is_yaml_format_additional_includes():
                 self.__includes = self._load_yaml_format_additional_includes()
+                self._artifact_includes = self.__includes
             else:
                 with open(self._additional_includes_file_path, "r") as f:
                     lines = f.readlines()
@@ -81,7 +84,7 @@ class _AdditionalIncludes:
     def code(self) -> Path:
         return self._tmp_code_path if self._tmp_code_path else self._code_path
 
-    def _copy(self, src: Path, dst: Path) -> None:
+    def _copy(self, src: Path, dst: Path, ignore_file=None) -> None:
         if src.is_file():
             _general_copy(src, dst)
         else:
@@ -91,10 +94,11 @@ class _AdditionalIncludes:
             for root, _, files in os.walk(src):
                 dst_root = Path(dst) / Path(root).relative_to(src)
                 dst_root_mkdir_flag = dst_root.is_dir()
-                for path, _ in traverse_directory(root, files, str(src), "", ignore_file=self._ignore_file):
+                for path, _ in traverse_directory(root, files, str(src), "",
+                                                  ignore_file=ignore_file or self._ignore_file):
                     # if there is nothing to copy under current dst_root, no need to create this folder
                     if dst_root_mkdir_flag is False:
-                        dst_root.mkdir()
+                        dst_root.mkdir(parents=True)
                         dst_root_mkdir_flag = True
                     _general_copy(path, dst_root / Path(path).name)
 
@@ -183,12 +187,14 @@ class _AdditionalIncludes:
         # additional includes
         base_path = self._additional_includes_file_path.parent
         for additional_include in self._includes:
-            src_path = (base_path / additional_include).resolve()
+            src_path = Path(additional_include)
+            if not src_path.is_absolute():
+                src_path = (base_path / additional_include).resolve()
             if self._is_folder_to_compress(src_path):
                 self._resolve_folder_to_compress(additional_include, Path(tmp_folder_path))
             else:
                 dst_path = (tmp_folder_path / src_path.name).resolve()
-                self._copy(src_path, dst_path)
+                self._copy(src_path, dst_path, ignore_file=IgnoreFile() if additional_include in self._artifact_includes else None)
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
         return
 
