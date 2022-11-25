@@ -1,7 +1,6 @@
 import os
 import shutil
 import sys
-from importlib import reload
 from io import StringIO
 from pathlib import Path
 from unittest.mock import patch
@@ -21,19 +20,6 @@ from azure.ai.ml.exceptions import UnexpectedKeywordError, ValidationException
 from azure.ai.ml.sweep import Choice
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
-
-
-@pytest.fixture()
-def enable_early_available_output() -> None:
-    """early_available is hidden under private preview, so need to patch and reload related classes."""
-    with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
-        from azure.ai.ml._schema.component import command_component as command_component_schema, input_output
-        from azure.ai.ml.entities._component import command_component as command_component_entity
-
-        reload(input_output)
-        reload(command_component_schema)
-        command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
-        yield
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
@@ -399,7 +385,7 @@ class TestCommandComponentEntity:
         assert not validation_result.passed
         assert "inputs.COMPONENT_IN_NUMBER" in validation_result.error_messages
 
-    @pytest.mark.usefixtures("enable_early_available_output")
+    @pytest.mark.usefixtures("enable_private_preview_command_component_schema")
     def test_primitive_output(self):
         expected_rest_component = {
             "command": "echo Hello World",
@@ -463,7 +449,7 @@ class TestCommandComponentEntity:
         )
         assert actual_component_dict2 == expected_rest_component
 
-    @pytest.mark.usefixtures("enable_early_available_output")
+    @pytest.mark.usefixtures("enable_private_preview_command_component_schema")
     def test_invalid_component_outputs(self) -> None:
         yaml_path = "./tests/test_configs/components/invalid/helloworld_component_invalid_early_available_output.yml"
         component = load_component(yaml_path)

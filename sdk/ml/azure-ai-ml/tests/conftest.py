@@ -4,6 +4,7 @@ import random
 import time
 import uuid
 from datetime import datetime
+from importlib import reload
 from os import getenv
 from pathlib import Path
 from typing import Callable, Tuple, Union
@@ -587,6 +588,18 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.entities._schedule.schedule.is_private_preview_enabled", return_value=True)
+
+
+@pytest.fixture()
+def enable_private_preview_command_component_schema(mocker: MockFixture):
+    """early_available is hidden under private preview, so need to patch and reload related classes."""
+    from azure.ai.ml._schema.component import command_component as command_component_schema, input_output
+    from azure.ai.ml.entities._component import command_component as command_component_entity
+
+    mocker.patch("azure.ai.ml._utils.utils.is_private_preview_enabled", return_value=True)
+    reload(input_output)
+    reload(command_component_schema)
+    command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
 
 
 @pytest.fixture()
