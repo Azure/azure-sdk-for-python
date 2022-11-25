@@ -26,8 +26,6 @@ if TYPE_CHECKING:
     from azure.core.async_paging import AsyncItemPaged
     from azure.core.polling import AsyncLROPoller
     from .._generated.models import (
-        AreaCodeItem,
-        PhoneNumberAdministrativeDivision,
         PhoneNumberCapabilities,
         PhoneNumberCountry,
         PhoneNumberOffering,
@@ -144,8 +142,6 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             phone_number_type, # type: str
             assignment_type, # type: str
             capabilities, # type: PhoneNumberCapabilities
-            locality, # type: PhoneNumberLocality
-            administrative_division, # type: PhoneNumberAdministrativeDivision
             **kwargs
     ):
         # type: (...) -> AsyncLROPoller[PhoneNumberSearchResult]
@@ -179,9 +175,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             assignment_type=assignment_type,
             capabilities=capabilities,
             quantity=kwargs.pop('quantity', None),
-            area_code=kwargs.pop('area_code', None),
-            locality=locality,
-            administrative_division=administrative_division
+            area_code=kwargs.pop('area_code', None)
         )
         return await self._phone_number_client.phone_numbers.begin_search_available_phone_numbers(
             country_code,
@@ -367,7 +361,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         **kwargs # type: Any
     ):
         if (locality == None):
-            # type: (...) -> ItemPaged[AreaCodeItem]
+            # type: (...) -> ItemPaged[PhoneNumberAreaCode]
             """Gets the list of available toll free area codes.
 
             Gets the list of available toll free area codes.
@@ -377,8 +371,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
             default value is 0. Default value is 0.
             :paramtype skip: int
-            :return: An iterator like instance of AreaCodeItem
-            :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeItem]
+            :return: An iterator like instance of PhoneNumberAreaCode
+            :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberAreaCode]
             :raises ~azure.core.exceptions.HttpResponseError:
             """
             return self._phone_number_client.phone_numbers.list_area_codes(
@@ -388,7 +382,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
                 **kwargs
             )
         else:
-            # type: (...) -> ItemPaged[AreaCodeItem]
+            # type: (...) -> ItemPaged[PhoneNumberAreaCode]
             """Gets the list of available geographic area codes.
 
             Gets the list of available geographic area codes.
@@ -407,8 +401,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
             default value is 0. Default value is 0.
             :paramtype skip: int
-            :return: An iterator like instance of AreaCodeItem
-            :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.AreaCodeItem]
+            :return: An iterator like instance of PhoneNumberAreaCode
+            :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberAreaCode]
             :raises ~azure.core.exceptions.HttpResponseError:
             """
             return self._phone_number_client.phone_numbers.list_area_codes(

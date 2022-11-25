@@ -68,28 +68,52 @@ class PhoneNumbersOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list_available_countries(
-        self, *, accept_language: Optional[str] = None, skip: int = 0, **kwargs: Any
-    ) -> AsyncIterable["_models.PhoneNumberCountry"]:
-        """Gets the list of supported countries.
+    def list_area_codes(
+        self,
+        country_code: str,
+        *,
+        phone_number_type: Union[str, _models.PhoneNumberType],
+        skip: int = 0,
+        assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
+        locality: Optional[str] = None,
+        administrative_division: Optional[str] = None,
+        accept_language: Optional[str] = None,
+        **kwargs: Any
+    ) -> AsyncIterable["_models.PhoneNumberAreaCode"]:
+        """Gets the list of available area codes.
 
-        Gets the list of supported countries.
+        Gets the list of available area codes.
 
-        :keyword accept_language: The locale to display in the localized fields in the response.
-         Default value is None.
-        :paramtype accept_language: str
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
+        :type country_code: str
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
+         "geographic" and "tollFree". Required.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
-        :return: An iterator like instance of PhoneNumberCountry
+        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+         "person" and "application". Default value is None.
+        :paramtype assignment_type: str or
+         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :keyword locality: The name of locality or town in which to search for the area code. This is
+         required if the number type is Geographic. Default value is None.
+        :paramtype locality: str
+        :keyword administrative_division: The name of the state or province in which to search for the
+         area code. Default value is None.
+        :paramtype administrative_division: str
+        :keyword accept_language: The locale to display in the localized fields in the response. e.g.
+         'en-US'. Default value is None.
+        :paramtype accept_language: str
+        :return: An iterator like instance of PhoneNumberAreaCode
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberCountry]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.PhoneNumberCountries]
+        cls: ClsType[_models._models.PhoneNumberAreaCodes] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -102,9 +126,14 @@ class PhoneNumbersOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_phone_numbers_list_available_countries_request(
-                    accept_language=accept_language,
+                request = build_phone_numbers_list_area_codes_request(
+                    country_code=country_code,
+                    phone_number_type=phone_number_type,
                     skip=skip,
+                    assignment_type=assignment_type,
+                    locality=locality,
+                    administrative_division=administrative_division,
+                    accept_language=accept_language,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -114,7 +143,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -134,7 +163,104 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+            return request
+
+        async def extract_data(pipeline_response):
+            deserialized = self._deserialize(
+                _models._models.PhoneNumberAreaCodes, pipeline_response  # pylint: disable=protected-access
+            )
+            list_of_elem = deserialized.area_codes
+            if cls:
+                list_of_elem = cls(list_of_elem)  # type: ignore
+            return deserialized.next_link or None, AsyncList(list_of_elem)
+
+        async def get_next(next_link=None):
+            request = prepare_request(next_link)
+
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+                request, stream=False, **kwargs
+            )
+            response = pipeline_response.http_response
+
+            if response.status_code not in [200]:
+                map_error(status_code=response.status_code, response=response, error_map=error_map)
+                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
+                raise HttpResponseError(response=response, model=error)
+
+            return pipeline_response
+
+        return AsyncItemPaged(get_next, extract_data)
+
+    @distributed_trace
+    def list_available_countries(
+        self, *, skip: int = 0, accept_language: Optional[str] = None, **kwargs: Any
+    ) -> AsyncIterable["_models.PhoneNumberCountry"]:
+        """Gets the list of supported countries.
+
+        Gets the list of supported countries.
+
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+         default value is 0. Default value is 0.
+        :paramtype skip: int
+        :keyword accept_language: The locale to display in the localized fields in the response. e.g.
+         'en-US'. Default value is None.
+        :paramtype accept_language: str
+        :return: An iterator like instance of PhoneNumberCountry
+        :rtype:
+         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberCountry]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls: ClsType[_models._models.PhoneNumberCountries] = kwargs.pop("cls", None)  # pylint: disable=protected-access
+
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        def prepare_request(next_link=None):
+            if not next_link:
+
+                request = build_phone_numbers_list_available_countries_request(
+                    skip=skip,
+                    accept_language=accept_language,
+                    api_version=self._config.api_version,
+                    headers=_headers,
+                    params=_params,
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
+
+            else:
+                # make call to next link with the client's api-version
+                _parsed_next_link = urllib.parse.urlparse(next_link)
+                _next_request_params = case_insensitive_dict(
+                    {
+                        key: [urllib.parse.quote(v) for v in value]
+                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
+                    }
+                )
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest(
+                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
+                )
+                path_format_arguments = {
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
+                }
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -144,13 +270,13 @@ class PhoneNumbersOperations:
             )
             list_of_elem = deserialized.countries
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -169,26 +295,26 @@ class PhoneNumbersOperations:
         self,
         country_code: str,
         *,
-        accept_language: Optional[str] = None,
         skip: int = 0,
         administrative_division: Optional[str] = None,
+        accept_language: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.PhoneNumberLocality"]:
         """Gets the list of cities or towns with available phone numbers.
 
         Gets the list of cities or towns with available phone numbers.
 
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
-        :keyword accept_language: The locale to display in the localized fields in the response.
-         Default value is None.
-        :paramtype accept_language: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
         :keyword administrative_division: An optional parameter for the name of the state or province
-         in which to search for the area code. e.g. California. Default value is None.
+         in which to search for the area code. Default value is None.
         :paramtype administrative_division: str
+        :keyword accept_language: The locale to display in the localized fields in the response. e.g.
+         'en-US'. Default value is None.
+        :paramtype accept_language: str
         :return: An iterator like instance of PhoneNumberLocality
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberLocality]
@@ -197,7 +323,9 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.PhoneNumberLocalities]
+        cls: ClsType[_models._models.PhoneNumberLocalities] = kwargs.pop(
+            "cls", None
+        )  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -212,9 +340,9 @@ class PhoneNumbersOperations:
 
                 request = build_phone_numbers_list_available_localities_request(
                     country_code=country_code,
-                    accept_language=accept_language,
                     skip=skip,
                     administrative_division=administrative_division,
+                    accept_language=accept_language,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -224,7 +352,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -244,7 +372,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -254,134 +382,13 @@ class PhoneNumbersOperations:
             )
             list_of_elem = deserialized.phone_number_localities
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-                request, stream=False, **kwargs
-            )
-            response = pipeline_response.http_response
-
-            if response.status_code not in [200]:
-                map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CommunicationErrorResponse, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
-
-            return pipeline_response
-
-        return AsyncItemPaged(get_next, extract_data)
-
-    @distributed_trace
-    def list_area_codes(
-        self,
-        country_code: str,
-        *,
-        skip: int = 0,
-        phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
-        assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
-        locality: Optional[str] = None,
-        administrative_division: Optional[str] = None,
-        **kwargs: Any
-    ) -> AsyncIterable["_models.AreaCodeItem"]:
-        """Gets the list of available area codes.
-
-        Gets the list of available area codes.
-
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type country_code: str
-        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-         default value is 0. Default value is 0.
-        :paramtype skip: int
-        :keyword phone_number_type: Filter by numberType, e.g. geographic, tollFree. Known values are:
-         "geographic" and "tollFree". Default value is None.
-        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
-        :keyword assignment_type: Filter by assignmentType, e.g. user, application. Known values are:
-         "person" and "application". Default value is None.
-        :paramtype assignment_type: str or
-         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
-        :keyword locality: The name of locality in which to search for the area code. e.g. Seattle.
-         This is required if the phone number type is Geographic. Default value is None.
-        :paramtype locality: str
-        :keyword administrative_division: The name of the state or province in which to search for the
-         area code. e.g. California. Default value is None.
-        :paramtype administrative_division: str
-        :return: An iterator like instance of AreaCodeItem
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.AreaCodeItem]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = kwargs.pop("params", {}) or {}
-
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.AreaCodes]
-
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        def prepare_request(next_link=None):
-            if not next_link:
-
-                request = build_phone_numbers_list_area_codes_request(
-                    country_code=country_code,
-                    skip=skip,
-                    phone_number_type=phone_number_type,
-                    assignment_type=assignment_type,
-                    locality=locality,
-                    administrative_division=administrative_division,
-                    api_version=self._config.api_version,
-                    headers=_headers,
-                    params=_params,
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-            else:
-                # make call to next link with the client's api-version
-                _parsed_next_link = urllib.parse.urlparse(next_link)
-                _next_request_params = case_insensitive_dict(
-                    {
-                        key: [urllib.parse.quote(v) for v in value]
-                        for key, value in urllib.parse.parse_qs(_parsed_next_link.query).items()
-                    }
-                )
-                _next_request_params["api-version"] = self._config.api_version
-                request = HttpRequest(
-                    "GET", urllib.parse.urljoin(next_link, _parsed_next_link.path), params=_next_request_params
-                )
-                path_format_arguments = {
-                    "endpoint": self._serialize.url(
-                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
-                    ),
-                }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-            return request
-
-        async def extract_data(pipeline_response):
-            deserialized = self._deserialize(
-                _models._models.AreaCodes, pipeline_response  # pylint: disable=protected-access
-            )
-            list_of_elem = deserialized.area_codes
-            if cls:
-                list_of_elem = cls(list_of_elem)
-            return deserialized.next_link or None, AsyncList(list_of_elem)
-
-        async def get_next(next_link=None):
-            request = prepare_request(next_link)
-
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -400,27 +407,31 @@ class PhoneNumbersOperations:
         self,
         country_code: str,
         *,
+        skip: int = 0,
         phone_number_type: Optional[Union[str, _models.PhoneNumberType]] = None,
         assignment_type: Optional[Union[str, _models.PhoneNumberAssignmentType]] = None,
-        skip: int = 0,
+        accept_language: Optional[str] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.PhoneNumberOffering"]:
-        """List available offerings of capabilities with rates for the given country/region.
+        """List available offerings of capabilities with rates for the given country.
 
-        List available offerings of capabilities with rates for the given country/region.
+        List available offerings of capabilities with rates for the given country.
 
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
-        :keyword phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
-         are: "geographic" and "tollFree". Default value is None.
-        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
-        :keyword assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
-         "person" and "application". Default value is None.
-        :paramtype assignment_type: str or
-         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
+        :keyword phone_number_type: Filter by numberType, e.g. Geographic, TollFree. Known values are:
+         "geographic" and "tollFree". Default value is None.
+        :paramtype phone_number_type: str or ~azure.communication.phonenumbers.models.PhoneNumberType
+        :keyword assignment_type: Filter by assignmentType, e.g. Person, Application. Known values are:
+         "person" and "application". Default value is None.
+        :paramtype assignment_type: str or
+         ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :keyword accept_language: The locale to display in the localized fields in the response. e.g.
+         'en-US'. Default value is None.
+        :paramtype accept_language: str
         :return: An iterator like instance of PhoneNumberOffering
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PhoneNumberOffering]
@@ -429,7 +440,7 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.PhoneNumberOfferings]
+        cls: ClsType[_models._models.OfferingsResponse] = kwargs.pop("cls", None)  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -444,9 +455,10 @@ class PhoneNumbersOperations:
 
                 request = build_phone_numbers_list_offerings_request(
                     country_code=country_code,
+                    skip=skip,
                     phone_number_type=phone_number_type,
                     assignment_type=assignment_type,
-                    skip=skip,
+                    accept_language=accept_language,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -456,7 +468,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -476,23 +488,23 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
         async def extract_data(pipeline_response):
             deserialized = self._deserialize(
-                _models._models.PhoneNumberOfferings, pipeline_response  # pylint: disable=protected-access
+                _models._models.OfferingsResponse, pipeline_response  # pylint: disable=protected-access
             )
             list_of_elem = deserialized.phone_number_offerings
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
@@ -520,8 +532,8 @@ class PhoneNumbersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PhoneNumberSearchResult]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PhoneNumberSearchResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -543,9 +555,9 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -578,11 +590,11 @@ class PhoneNumbersOperations:
         content_type: str = "application/json",
         **kwargs: Any
     ) -> AsyncLROPoller[_models.PhoneNumberSearchResult]:
-        """Searches for available phone numbers to purchase.
+        """Search for available phone numbers to purchase.
 
-        Searches for available phone numbers to purchase.
+        Search for available phone numbers to purchase.
 
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
         :param body: The phone number search request. Required.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberSearchRequest
@@ -606,11 +618,11 @@ class PhoneNumbersOperations:
     async def begin_search_available_phone_numbers(
         self, country_code: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
     ) -> AsyncLROPoller[_models.PhoneNumberSearchResult]:
-        """Searches for available phone numbers to purchase.
+        """Search for available phone numbers to purchase.
 
-        Searches for available phone numbers to purchase.
+        Search for available phone numbers to purchase.
 
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
         :param body: The phone number search request. Required.
         :type body: IO
@@ -634,11 +646,11 @@ class PhoneNumbersOperations:
     async def begin_search_available_phone_numbers(
         self, country_code: str, body: Union[_models.PhoneNumberSearchRequest, IO], **kwargs: Any
     ) -> AsyncLROPoller[_models.PhoneNumberSearchResult]:
-        """Searches for available phone numbers to purchase.
+        """Search for available phone numbers to purchase.
 
-        Searches for available phone numbers to purchase.
+        Search for available phone numbers to purchase.
 
-        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :param country_code: The ISO 3166-2 country code, e.g. US. Required.
         :type country_code: str
         :param body: The phone number search request. Is either a model type or a IO type. Required.
         :type body: ~azure.communication.phonenumbers.models.PhoneNumberSearchRequest or IO
@@ -660,13 +672,13 @@ class PhoneNumbersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PhoneNumberSearchResult]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PhoneNumberSearchResult] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._search_available_phone_numbers_initial(  # type: ignore
+            raw_result = await self._search_available_phone_numbers_initial(
                 country_code=country_code,
                 body=body,
                 content_type=content_type,
@@ -697,7 +709,7 @@ class PhoneNumbersOperations:
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncLROBasePolling(
                     lro_delay,
@@ -705,7 +717,7 @@ class PhoneNumbersOperations:
                     path_format_arguments=path_format_arguments,
                     **kwargs
                 ),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -717,7 +729,7 @@ class PhoneNumbersOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_search_result(self, search_id: str, **kwargs: Any) -> _models.PhoneNumberSearchResult:
@@ -742,7 +754,7 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PhoneNumberSearchResult]
+        cls: ClsType[_models.PhoneNumberSearchResult] = kwargs.pop("cls", None)
 
         request = build_phone_numbers_get_search_result_request(
             search_id=search_id,
@@ -753,9 +765,9 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -787,8 +799,8 @@ class PhoneNumbersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -809,9 +821,9 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -907,11 +919,11 @@ class PhoneNumbersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._purchase_phone_numbers_initial(  # type: ignore
                 body=body, content_type=content_type, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
@@ -927,10 +939,10 @@ class PhoneNumbersOperations:
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -942,7 +954,7 @@ class PhoneNumbersOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
     async def get_operation(self, operation_id: str, **kwargs: Any) -> _models.PhoneNumberOperation:
@@ -967,7 +979,7 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PhoneNumberOperation]
+        cls: ClsType[_models.PhoneNumberOperation] = kwargs.pop("cls", None)
 
         request = build_phone_numbers_get_operation_request(
             operation_id=operation_id,
@@ -978,9 +990,9 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1026,7 +1038,7 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_phone_numbers_cancel_operation_request(
             operation_id=operation_id,
@@ -1037,9 +1049,9 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1067,8 +1079,8 @@ class PhoneNumbersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PurchasedPhoneNumber]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PurchasedPhoneNumber] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/merge-patch+json"
         _json = None
@@ -1093,9 +1105,9 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1219,13 +1231,13 @@ class PhoneNumbersOperations:
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = kwargs.pop("params", {}) or {}
 
-        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PurchasedPhoneNumber]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.PurchasedPhoneNumber] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._update_capabilities_initial(  # type: ignore
+            raw_result = await self._update_capabilities_initial(
                 phone_number=phone_number,
                 body=body,
                 content_type=content_type,
@@ -1256,7 +1268,7 @@ class PhoneNumbersOperations:
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncLROBasePolling(
                     lro_delay,
@@ -1264,7 +1276,7 @@ class PhoneNumbersOperations:
                     path_format_arguments=path_format_arguments,
                     **kwargs
                 ),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1276,12 +1288,10 @@ class PhoneNumbersOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace_async
-    async def get_by_number(
-        self, phone_number: str, *, accept_language: Optional[str] = None, **kwargs: Any
-    ) -> _models.PurchasedPhoneNumber:
+    async def get_by_number(self, phone_number: str, **kwargs: Any) -> _models.PurchasedPhoneNumber:
         """Gets the details of the given purchased phone number.
 
         Gets the details of the given purchased phone number.
@@ -1289,9 +1299,6 @@ class PhoneNumbersOperations:
         :param phone_number: The purchased phone number whose details are to be fetched in E.164
          format, e.g. +11234567890. Required.
         :type phone_number: str
-        :keyword accept_language: The locale to display in the localized fields in the response.
-         Default value is None.
-        :paramtype accept_language: str
         :return: PurchasedPhoneNumber
         :rtype: ~azure.communication.phonenumbers.models.PurchasedPhoneNumber
         :raises ~azure.core.exceptions.HttpResponseError:
@@ -1307,11 +1314,10 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PurchasedPhoneNumber]
+        cls: ClsType[_models.PurchasedPhoneNumber] = kwargs.pop("cls", None)
 
         request = build_phone_numbers_get_by_number_request(
             phone_number=phone_number,
-            accept_language=accept_language,
             api_version=self._config.api_version,
             headers=_headers,
             params=_params,
@@ -1319,9 +1325,9 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1353,7 +1359,7 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        cls: ClsType[None] = kwargs.pop("cls", None)
 
         request = build_phone_numbers_release_phone_number_request(
             phone_number=phone_number,
@@ -1364,9 +1370,9 @@ class PhoneNumbersOperations:
         path_format_arguments = {
             "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+        request.url = self._client.format_url(request.url, **path_format_arguments)
 
-        pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
 
@@ -1407,10 +1413,10 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        cls: ClsType[None] = kwargs.pop("cls", None)
+        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
             raw_result = await self._release_phone_number_initial(  # type: ignore
                 phone_number=phone_number, cls=lambda x, y, z: x, headers=_headers, params=_params, **kwargs
@@ -1426,10 +1432,10 @@ class PhoneNumbersOperations:
         }
 
         if polling is True:
-            polling_method = cast(
+            polling_method: AsyncPollingMethod = cast(
                 AsyncPollingMethod,
                 AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
-            )  # type: AsyncPollingMethod
+            )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
         else:
@@ -1441,11 +1447,11 @@ class PhoneNumbersOperations:
                 client=self._client,
                 deserialization_callback=get_long_running_output,
             )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
+        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
     @distributed_trace
     def list_phone_numbers(
-        self, *, skip: int = 0, top: int = 100, accept_language: Optional[str] = None, **kwargs: Any
+        self, *, skip: int = 0, top: int = 100, **kwargs: Any
     ) -> AsyncIterable["_models.PurchasedPhoneNumber"]:
         """Gets the list of all purchased phone numbers.
 
@@ -1457,9 +1463,6 @@ class PhoneNumbersOperations:
         :keyword top: An optional parameter for how many entries to return, for pagination purposes.
          The default value is 100. Default value is 100.
         :paramtype top: int
-        :keyword accept_language: The locale to display in the localized fields in the response.
-         Default value is None.
-        :paramtype accept_language: str
         :return: An iterator like instance of PurchasedPhoneNumber
         :rtype:
          ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.PurchasedPhoneNumber]
@@ -1468,7 +1471,9 @@ class PhoneNumbersOperations:
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls = kwargs.pop("cls", None)  # type: ClsType[_models._models.PurchasedPhoneNumbers]
+        cls: ClsType[_models._models.PurchasedPhoneNumbers] = kwargs.pop(
+            "cls", None
+        )  # pylint: disable=protected-access
 
         error_map = {
             401: ClientAuthenticationError,
@@ -1484,7 +1489,6 @@ class PhoneNumbersOperations:
                 request = build_phone_numbers_list_phone_numbers_request(
                     skip=skip,
                     top=top,
-                    accept_language=accept_language,
                     api_version=self._config.api_version,
                     headers=_headers,
                     params=_params,
@@ -1494,7 +1498,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             else:
                 # make call to next link with the client's api-version
@@ -1514,7 +1518,7 @@ class PhoneNumbersOperations:
                         "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
                     ),
                 }
-                request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+                request.url = self._client.format_url(request.url, **path_format_arguments)
 
             return request
 
@@ -1524,13 +1528,13 @@ class PhoneNumbersOperations:
             )
             list_of_elem = deserialized.phone_numbers
             if cls:
-                list_of_elem = cls(list_of_elem)
+                list_of_elem = cls(list_of_elem)  # type: ignore
             return deserialized.next_link or None, AsyncList(list_of_elem)
 
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
                 request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
