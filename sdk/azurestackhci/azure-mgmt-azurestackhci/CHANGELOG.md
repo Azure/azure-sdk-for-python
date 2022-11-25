@@ -1,5 +1,55 @@
 # Release History
 
+## 8.0.0 (2022-11-25)
+
+### Features Added
+
+  - Added operation ClustersOperations.begin_extend_software_assurance_benefit
+  - Added operation group OffersOperations
+  - Added operation group PublishersOperations
+  - Added operation group SkusOperations
+  - Added operation group UpdateRunsOperations
+  - Added operation group UpdateSummariesOperations
+  - Added operation group UpdatesOperations
+  - Model ArcSetting has a new parameter system_data
+  - Model Cluster has a new parameter principal_id
+  - Model Cluster has a new parameter software_assurance_properties
+  - Model Cluster has a new parameter system_data
+  - Model Cluster has a new parameter tenant_id
+  - Model Cluster has a new parameter type_identity_type
+  - Model Cluster has a new parameter user_assigned_identities
+  - Model ClusterNode has a new parameter node_type
+  - Model ClusterNode has a new parameter os_display_version
+  - Model ClusterPatch has a new parameter principal_id
+  - Model ClusterPatch has a new parameter tenant_id
+  - Model ClusterPatch has a new parameter type
+  - Model ClusterPatch has a new parameter user_assigned_identities
+  - Model Extension has a new parameter system_data
+  - Model ProxyResource has a new parameter system_data
+  - Model Resource has a new parameter system_data
+  - Model TrackedResource has a new parameter system_data
+
+### Breaking Changes
+
+  - Model ArcSetting no longer has parameter created_at
+  - Model ArcSetting no longer has parameter created_by
+  - Model ArcSetting no longer has parameter created_by_type
+  - Model ArcSetting no longer has parameter last_modified_at
+  - Model ArcSetting no longer has parameter last_modified_by
+  - Model ArcSetting no longer has parameter last_modified_by_type
+  - Model Cluster no longer has parameter created_at
+  - Model Cluster no longer has parameter created_by
+  - Model Cluster no longer has parameter created_by_type
+  - Model Cluster no longer has parameter last_modified_at
+  - Model Cluster no longer has parameter last_modified_by
+  - Model Cluster no longer has parameter last_modified_by_type
+  - Model Extension no longer has parameter created_at
+  - Model Extension no longer has parameter created_by
+  - Model Extension no longer has parameter created_by_type
+  - Model Extension no longer has parameter last_modified_at
+  - Model Extension no longer has parameter last_modified_by
+  - Model Extension no longer has parameter last_modified_by_type
+
 ## 7.0.0 (2022-05-26)
 
 **Features**
