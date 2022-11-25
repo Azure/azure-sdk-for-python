@@ -8,6 +8,7 @@ from azure.ai.ml.constants._component import IOConstants
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationException
 
 from .input import Input
+from .output import Output
 from .utils import is_group
 
 
@@ -40,6 +41,10 @@ class GroupInput(Input):
         default_dict = {}
         # Note: no top-level group names at this time.
         for k, v in self.values.items():
+            # skip create default for outputs or port inputs
+            if isinstance(v, Output):
+                continue
+
             # Create PipelineInput object if not subgroup
             if not isinstance(v, GroupInput):
                 default_dict[k] = PipelineInput(name=k, data=v.default, meta=v)
@@ -54,19 +59,19 @@ class GroupInput(Input):
         """Check if all value in group is _Param type with unique name."""
         names = set()
         msg = (
-            f"Parameter {{!r}} with type {{!r}} is not supported in parameter group. "
-            f"Supported types are: {list(IOConstants.PRIMITIVE_STR_2_TYPE.keys())}"
+            f"Parameter {{!r}} with type {{!r}} is not supported in group. "
+            f"Supported types are: {list(IOConstants.INPUT_TYPE_COMBINATION.keys())}"
         )
         for key, value in values.items():
-            if not isinstance(value, Input):
+            if not isinstance(value, (Input, Output)):
                 raise ValueError(msg.format(key, type(value).__name__))
             if value.type is None:
                 # Skip check for parameter translated from pipeline job (lost type)
                 continue
-            if value.type not in IOConstants.PRIMITIVE_STR_2_TYPE and not isinstance(value, GroupInput):
+            if value.type not in IOConstants.INPUT_TYPE_COMBINATION and not isinstance(value, GroupInput):
                 raise UserErrorException(msg.format(key, value.type))
             if key in names:
-                raise ValueError(f"Duplicate parameter name {value.name!r} found in ParameterGroup values.")
+                raise ValueError(f"Duplicate parameter name {value.name!r} found in Group values.")
             names.add(key)
 
     def flatten(self, group_parameter_name):

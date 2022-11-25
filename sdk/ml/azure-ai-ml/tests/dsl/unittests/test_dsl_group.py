@@ -1,3 +1,4 @@
+import logging
 import sys
 from enum import Enum as PyEnum
 from io import StringIO
@@ -10,6 +11,7 @@ from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities._inputs_outputs import GroupInput, Output, is_group
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
+from azure.ai.ml.exceptions import UnexpectedAttributeError, UserErrorException
 from test_utilities.utils import omit_with_wildcard
 
 from .._util import _DSL_TIMEOUT_SECOND
@@ -76,8 +78,9 @@ class TestDSLGroup:
         sys.stdout = stdout_str_IO = StringIO()
         help(MixedGroup.__init__)
         assert (
-            "__init__(self,*,int_param:int=None,str_param:str=None,enum_param:str=None,"
-            "str_default_param:str='test',optional_int_param:int=5)->None" in stdout_str_IO.getvalue().replace(" ", "")
+                "__init__(self,*,int_param:int=None,str_param:str=None,enum_param:str=None,"
+                "str_default_param:str='test',optional_int_param:int=5)->None" in stdout_str_IO.getvalue().replace(" ",
+                                                                                                                   "")
         )
         sys.stdout = original_out
 
@@ -86,8 +89,8 @@ class TestDSLGroup:
             int_param=1, str_param="test-str", enum_param=EnumOps.Option1, str_default_param="op2", optional_int_param=4
         )
         assert (
-            "MixedGroup(int_param=1,str_param='test-str',enum_param=<EnumOps.Option1:'Option1'>,"
-            "str_default_param='op2',optional_int_param=4)".replace(" ", "") in var.__repr__().replace(" ", "")
+                "MixedGroup(int_param=1,str_param='test-str',enum_param=<EnumOps.Option1:'Option1'>,"
+                "str_default_param='op2',optional_int_param=4)".replace(" ", "") in var.__repr__().replace(" ", "")
         )
 
         # __set_attribute__ func test
@@ -126,7 +129,6 @@ class TestDSLGroup:
             param: int = 1
 
         with pytest.raises(ValueError) as e:
-
             @group
             class ItemGroup:
                 group_param: SubGroup = "str"
@@ -145,25 +147,37 @@ class TestDSLGroup:
         assert isinstance(var.group_param.param, PipelineInput)
         assert var.group_param.param._data == 2
 
-    def test_group_unsupported_types(self):
-        # Test 'Input is not supported in parameter group' limitation
-        with pytest.raises(Exception) as e:
+    def test_group_supported_types(self):
+        # Input Output are supported now
+        @group
+        class Group:
+            param: Input(type="uri_folder")
 
+        with pytest.raises(UserErrorException) as e:
+            @pipeline
+            def my_pipeline(param: Group):
+                pass
+
+        assert "Only primitive types can be used as input of group, got uri_folder" in str(e.value)
+
+        @group
+        class Group:
+            param: Output
+
+        with pytest.raises(UserErrorException) as e:
+            @pipeline
+            def my_pipeline(param: Group):
+                pass
+        assert "Output annotation cannot be used in @pipeline." in str(e.value)
+
+        class CustomizedObj:
+            pass
+
+        with pytest.raises(UserErrorException) as e:
             @group
             class Group:
-                param: Input
-
-            Group()
-        assert "Parameter 'param' with type 'uri_folder' is not supported in parameter group." in str(e)
-
-        with pytest.raises(Exception) as e:
-
-            @group
-            class Group:
-                param: Output
-
-            Group()
-        assert "Parameter 'param' with type 'Output' is not supported in parameter group." in str(e)
+                param: CustomizedObj
+        assert "Unsupported annotation type" in str(e.value)
 
     def test_group_inherit(self):
         @group
@@ -326,14 +340,115 @@ class TestDSLGroup:
         pipeline_job.inputs.str_param = ParamClass()
         # Note: this is the expected behavior.
         assert (
-            pipeline_job._to_dict()["inputs"]["str_param"]
-            == "TestDSLGroup.test_assign_group_invalid.<locals>.ParamClass(str_param='string_by_default')"
+                pipeline_job._to_dict()["inputs"]["str_param"]
+                == "TestDSLGroup.test_assign_group_invalid.<locals>.ParamClass(str_param='string_by_default')"
         )
 
         pipeline_job.inputs.str_param = "test"
         with pytest.raises(Exception) as e:
             pipeline_job.inputs.group = "test"
         assert "'group' is expected to be a parameter group, but got <class 'str'>." in str(e)
+
+    def test_group_outputs(self):
+        # can define group outputs object, but can not use in @pipeline
+        @group
+        class PortOutputs:
+            # TODO(2097468): automatically change it to Input when used in input annotation
+            output1: Output(type="uri_file")
+            output2: Output(type="uri_folder")
+
+        with pytest.raises(UserErrorException) as e:
+            @pipeline
+            def my_pipeline(my_inputs: PortOutputs):
+                pass
+        assert "Output annotation cannot be used in @pipeline." in str(e.value)
+
+        @group
+        class PrimitiveOutputs:
+            output1: Output(type="string")
+            output2: Output(type="integer")
+            output3: Output(type="number")
+            output4: Output(type="boolean", is_control=True)
+
+        with pytest.raises(UserErrorException) as e:
+            @pipeline
+            def my_pipeline(my_inputs: PrimitiveOutputs):
+                pass
+        assert "Output annotation cannot be used in @pipeline." in str(e.value)
+
+    def test_group_port_inputs(self):
+        @group
+        class PortInputs:
+            input1: Input(type="uri_file")
+            input2: Input(type="uri_folder")
+
+        with pytest.raises(UserErrorException) as e:
+            # TODO(2097478): support port type groups
+            @pipeline
+            def my_pipeline(my_inputs: PortInputs):
+                pass
+
+        assert "Only primitive types can be used as input of group, got uri_file" in str(e.value)
+
+    def test_group_defaults_with_outputs(self):
+        @group
+        class MixedGroup:
+            int_param: int
+            str_default_param: Input(type="string") = "test"
+            str_param: str
+            input_folder: Input(type="uri_folder")
+            optional_int_param: Input(type="integer", optional=True) = 5
+            output_folder: Output(type="uri_folder")
+
+        assert hasattr(MixedGroup, "__init__") is True
+        original_out = sys.stdout
+        sys.stdout = stdout_str_IO = StringIO()
+        help(MixedGroup.__init__)
+        assert (
+            "__init__(self,*,"
+            "int_param:int=None,"
+            "str_default_param:str='test',"
+            "str_param:str=None,"
+            "input_folder:{'type':'uri_folder','name':'input_folder'}=None,"
+            "optional_int_param:int=5,"
+            "output_folder:{'type':'uri_folder','name':'output_folder'}=None)"
+            "->None" in stdout_str_IO.getvalue().replace(" ", "")
+        )
+        sys.stdout = original_out
+
+        # __repr__ func test
+        var = MixedGroup(
+            int_param=1, str_param="test-str", input_folder=Input(path="input"), output_folder=Output(path="output")
+        )
+        assert (
+            "MixedGroup("
+            "int_param=1,"
+            "str_default_param='test',"
+            "str_param='test-str',"
+            "input_folder={'type':'uri_folder','path':'input'},"
+            "optional_int_param=5,"
+            "output_folder={'type':'uri_folder','path':'output'})" in var.__repr__().replace(" ", "")
+        )
+
+        # __set_attribute__ func test
+        var.input_folder = Input(path="new_input")
+        assert var.input_folder.path == "new_input"
+
+    def test_group_port_defaults(self):
+        # input
+        with pytest.raises(UserErrorException) as e:
+            @group
+            class SubGroup:
+                int_param0: Input
+                int_param1: Input = Input(path="in1")
+        assert "Default value of Input 'int_param1' cannot be set" in str(e.value)
+
+        with pytest.raises(UserErrorException) as e:
+            @group
+            class SubGroup:
+                out_param0: Output
+                out_param1: Output = Output(path="out2")
+        assert "Default value of Output 'out_param1' cannot be set" in str(e.value)
 
     @pytest.mark.skip(reason="Input group item .result() is not supported currently.")
     def test_input_group_result(self):
