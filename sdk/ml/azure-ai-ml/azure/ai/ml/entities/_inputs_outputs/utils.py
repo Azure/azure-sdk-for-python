@@ -126,6 +126,10 @@ def _get_param_with_standard_annotation(cls_or_func, is_func=False, skip_params=
                 # )
                 pass
             complete_annotation._update_default(default)
+        if isinstance(complete_annotation, Output) and default is not None:
+            msg = f"Default value of Output {complete_annotation.name!r} cannot be set: " \
+                  f"Output has no default value."
+            raise UserErrorException(msg)
         return complete_annotation
 
     def _update_fields_with_default(annotation_fields, defaults_dict):

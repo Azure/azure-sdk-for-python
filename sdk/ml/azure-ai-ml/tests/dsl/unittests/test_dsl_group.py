@@ -377,7 +377,7 @@ class TestDSLGroup:
 
         assert "Only primitive types can be used as input of group, got uri_file" in str(e.value)
 
-    def test_group_defaults(self):
+    def test_group_defaults_with_outputs(self):
         @group
         class MixedGroup:
             int_param: int
@@ -420,6 +420,22 @@ class TestDSLGroup:
         # __set_attribute__ func test
         var.input_folder = Input(path="new_input")
         assert var.input_folder.path == "new_input"
+
+    def test_group_port_defaults(self):
+        # input
+        with pytest.raises(UserErrorException) as e:
+            @group
+            class SubGroup:
+                int_param0: Input
+                int_param1: Input = Input(path="in1")
+        assert "Default value of Input 'int_param1' cannot be set" in str(e.value)
+
+        with pytest.raises(UserErrorException) as e:
+            @group
+            class SubGroup:
+                out_param0: Output
+                out_param1: Output = Output(path="out2")
+        assert "Default value of Output 'out_param1' cannot be set" in str(e.value)
 
     @pytest.mark.skip(reason="Input group item .result() is not supported currently.")
     def test_input_group_result(self):
