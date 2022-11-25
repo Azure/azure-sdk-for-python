@@ -10,13 +10,12 @@ from pathlib import Path
 from typing import Union
 
 import yaml
-from azure.ai.ml._utils._asset_utils import traverse_directory
+from azure.ai.ml._utils._asset_utils import IgnoreFile, traverse_directory
 from azure.ai.ml.entities._util import _general_copy
 from azure.ai.ml.entities._validation import MutableValidationResult, _ValidationResultBuilder
 
 from ._artifact_cache import ArtifactCache
 from .code import InternalComponentIgnoreFile
-from azure.ai.ml._utils._asset_utils import IgnoreFile
 
 ADDITIONAL_INCLUDES_SUFFIX = ".additional_includes"
 PLACEHOLDER_FILE_NAME = "_placeholder_spec.yaml"
