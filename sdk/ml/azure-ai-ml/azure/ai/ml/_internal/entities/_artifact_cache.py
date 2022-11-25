@@ -70,7 +70,7 @@ class ArtifactCache:
     def hash_files_content(file_list):
         """Hash the file content in the file list."""
         ordered_file_list = copy.copy(file_list)
-        hasher = hashlib.sha1()
+        hasher = hashlib.sha256()
         ordered_file_list.sort()
         for item in ordered_file_list:
             with open(item, "rb") as f:

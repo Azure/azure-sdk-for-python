@@ -9,7 +9,7 @@ from pytest_mock import MockFixture
 from test_utilities.utils import verify_entity_load_and_dump, omit_with_wildcard
 
 from azure.ai.ml import MLClient, load_job, load_component, dsl
-from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
@@ -1436,7 +1436,7 @@ class TestPipelineJobEntity:
     def test_pipeline_parameter_with_empty_value(self, client: MLClient) -> None:
         input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
 
-        @parameter_group
+        @group
         class InputGroup:
             group_empty_str: str = ""
             group_none_str: str = None

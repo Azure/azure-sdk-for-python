@@ -6,8 +6,8 @@ import os
 import shutil
 import tempfile
 import zipfile
-import yaml
 from pathlib import Path
+import yaml
 from typing import Union
 
 from azure.ai.ml.entities._util import _general_copy
@@ -254,7 +254,7 @@ class _AdditionalIncludes:
         def get_artifacts_by_config(artifact_config):
             artifact_cache = ArtifactCache()
             if any(item not in artifact_config for item in ["feed", "name", "version"]):
-                raise UserErrorException("Feed, name and version are required for artifacts config.")
+                raise RuntimeError("Feed, name and version are required for artifacts config.")
             artifact_path = artifact_cache.get(
                 organization=artifact_config.get("organization", None),
                 project=artifact_config.get("project", None),
