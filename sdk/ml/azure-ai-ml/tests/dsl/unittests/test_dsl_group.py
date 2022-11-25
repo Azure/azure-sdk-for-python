@@ -1,3 +1,4 @@
+import logging
 import sys
 from enum import Enum as PyEnum
 from io import StringIO
@@ -147,23 +148,36 @@ class TestDSLGroup:
         assert var.group_param.param._data == 2
 
     def test_group_supported_types(self):
-        # Input Outut is supported now
+        # Input Output are supported now
         @group
         class Group:
-            param: Input
+            param: Input(type="uri_folder")
 
-        with pytest.raises(TypeError) as e:
-            Group()
-        # no defaults for port types
-        assert "__init__() missing 1 required keyword-only argument: 'param'" in str(e)
+        with pytest.raises(UserErrorException) as e:
+            @pipeline
+            def my_pipeline(param: Group):
+                pass
+
+        assert "Only primitive types can be used as input of group, got uri_folder" in str(e.value)
 
         @group
         class Group:
             param: Output
-        with pytest.raises(TypeError) as e:
-            Group()
-        # no defaults for output
-        assert "__init__() missing 1 required keyword-only argument: 'param'" in str(e)
+
+        with pytest.raises(UserErrorException) as e:
+            @pipeline
+            def my_pipeline(param: Group):
+                pass
+        assert "Output annotation cannot be used in @pipeline." in str(e.value)
+
+        class CustomizedObj:
+            pass
+
+        with pytest.raises(UserErrorException) as e:
+            @group
+            class Group:
+                param: CustomizedObj
+        assert "Unsupported annotation type" in str(e.value)
 
     def test_group_inherit(self):
         @group
@@ -362,6 +376,50 @@ class TestDSLGroup:
                 pass
 
         assert "Only primitive types can be used as input of group, got uri_file" in str(e.value)
+
+    def test_group_defaults(self):
+        @group
+        class MixedGroup:
+            int_param: int
+            str_default_param: Input(type="string") = "test"
+            str_param: str
+            input_folder: Input(type="uri_folder")
+            optional_int_param: Input(type="integer", optional=True) = 5
+            output_folder: Output(type="uri_folder")
+
+        assert hasattr(MixedGroup, "__init__") is True
+        original_out = sys.stdout
+        sys.stdout = stdout_str_IO = StringIO()
+        help(MixedGroup.__init__)
+        assert (
+            "__init__(self,*,"
+            "int_param:int=None,"
+            "str_default_param:str='test',"
+            "str_param:str=None,"
+            "input_folder:{'type':'uri_folder','name':'input_folder'}=None,"
+            "optional_int_param:int=5,"
+            "output_folder:{'type':'uri_folder','name':'output_folder'}=None)"
+            "->None" in stdout_str_IO.getvalue().replace(" ", "")
+        )
+        sys.stdout = original_out
+
+        # __repr__ func test
+        var = MixedGroup(
+            int_param=1, str_param="test-str", input_folder=Input(path="input"), output_folder=Output(path="output")
+        )
+        assert (
+            "MixedGroup("
+            "int_param=1,"
+            "str_default_param='test',"
+            "str_param='test-str',"
+            "input_folder={'type':'uri_folder','path':'input'},"
+            "optional_int_param=5,"
+            "output_folder={'type':'uri_folder','path':'output'})" in var.__repr__().replace(" ", "")
+        )
+
+        # __set_attribute__ func test
+        var.input_folder = Input(path="new_input")
+        assert var.input_folder.path == "new_input"
 
     @pytest.mark.skip(reason="Input group item .result() is not supported currently.")
     def test_input_group_result(self):

@@ -162,27 +162,23 @@ def group(_cls):
                 # otherwise, keep original annotation
                 return anno
 
-        def _has_default(val):
-            # only if val has defaults or it's primitive inputs
-            if isinstance(val, Input) and val.type in IOConstants.PRIMITIVE_STR_2_TYPE:
-                return True
-            if hasattr(val, "default") and val.default is not None:
-                return True
-            return False
+        def _get_default(key):
+            # will set None as default value when default not exist so won't need to reorder the init params
+            val = fields[key]
+            if hasattr(val, "default"):
+                return val.default
+            return None
 
         locals = {f"_type_{key}": _get_data_type_from_annotation(val) for key, val in fields.items()}
         # Collect field defaults if val is parameter and is optional
         defaults = {
-            f"_default_{key}": fields[key].default for key, val in fields.items() if _has_default(val)
+            f"_default_{key}": _get_default(key) for key, val in fields.items()
         }
         locals.update(defaults)
         # Ban positional init as we reordered the parameter.
         _init_param = ["self", "*"]
-        for key, val in fields.items():
-            if _has_default(val):
-                _init_param.append(f"{key}:_type_{key}=_default_{key}")
-            else:
-                _init_param.append(f"{key}:_type_{key}")
+        for key in fields:
+            _init_param.append(f"{key}:_type_{key}=_default_{key}")
 
         body_lines = [f"self.{key}={key}" for key in fields]
         # If no body lines, use 'pass'.
