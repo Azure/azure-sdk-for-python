@@ -194,10 +194,7 @@ class _AdditionalIncludes:
                 self._resolve_folder_to_compress(additional_include, Path(tmp_folder_path))
             else:
                 dst_path = (tmp_folder_path / src_path.name).resolve()
-                self._copy(
-                    src_path, dst_path,
-                    ignore_file=IgnoreFile() if additional_include in self._is_artifact_includes else None
-                )
+                self._copy(src_path, dst_path, ignore_file=IgnoreFile() if self._is_artifact_includes else None)
         self._tmp_code_path = tmp_folder_path  # point code path to tmp folder
         return
 
