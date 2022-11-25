@@ -1,6 +1,12 @@
 # Release History
 
-## 1.1.2 (2022-11-21)
+## 1.2.0 (Unreleased)
+
+### Bugs Fixed
+- Fixed Sweep node not excluding optional input with value `None` in REST object. 
+- Fixed bool test for output in download operation.
+
+## 1.1.2 (Unreleased)
 
 ### Features Added
 - Restored idle_time_before_shutdown property for Compute Instances. 
