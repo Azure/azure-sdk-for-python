@@ -350,16 +350,29 @@ class TestDSLGroup:
         assert "'group' is expected to be a parameter group, but got <class 'str'>." in str(e)
 
     def test_group_outputs(self):
+        # can define group outputs object, but can not use in @pipeline
         @group
         class PortOutputs:
             # TODO(2097468): automatically change it to Input when used in input annotation
-            input1: Output(type="uri_file")
-            input2: Output(type="uri_folder")
-            input3: Input(type="uri_file")
+            output1: Output(type="uri_file")
+            output2: Output(type="uri_folder")
 
         with pytest.raises(UserErrorException) as e:
             @pipeline
             def my_pipeline(my_inputs: PortOutputs):
+                pass
+        assert "Output annotation cannot be used in @pipeline." in str(e.value)
+
+        @group
+        class PrimitiveOutputs:
+            output1: Output(type="string")
+            output2: Output(type="integer")
+            output3: Output(type="number")
+            output4: Output(type="boolean", is_control=True)
+
+        with pytest.raises(UserErrorException) as e:
+            @pipeline
+            def my_pipeline(my_inputs: PrimitiveOutputs):
                 pass
         assert "Output annotation cannot be used in @pipeline." in str(e.value)
 
