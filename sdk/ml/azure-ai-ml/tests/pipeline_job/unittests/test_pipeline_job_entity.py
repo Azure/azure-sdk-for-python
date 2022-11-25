@@ -8,7 +8,8 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 from test_utilities.utils import verify_entity_load_and_dump, omit_with_wildcard
 
-from azure.ai.ml import MLClient, load_job
+from azure.ai.ml import MLClient, load_job, load_component, dsl
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
@@ -1431,3 +1432,36 @@ class TestPipelineJobEntity:
                 'name': 'hello_world_component_3',
                 'type': 'command'}
         }
+
+    def test_pipeline_parameter_with_empty_value(self, client: MLClient) -> None:
+        input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
+
+        @group
+        class InputGroup:
+            group_empty_str: str = ""
+            group_none_str: str = None
+
+        # Construct pipeline
+        @dsl.pipeline(
+            default_compute="cpu-cluster",
+            description="This is the basic pipeline with empty_value",
+        )
+        def empty_value_pipeline(integer: int, boolean: bool, number: float,
+                                 str_param: str, empty_str: str, input_group: InputGroup):
+            input_types_func(component_in_string=str_param,
+                             component_in_ranged_integer=integer,
+                             component_in_boolean=boolean,
+                             component_in_ranged_number=number)
+            input_types_func(component_in_string=empty_str)
+            input_types_func(component_in_string=input_group.group_empty_str)
+            input_types_func(component_in_string=input_group.group_none_str)
+
+        pipeline = empty_value_pipeline(integer=0, boolean=False, number=0,
+                                        str_param="str_param", empty_str="", input_group=InputGroup())
+        rest_obj = pipeline._to_rest_object()
+        # Currently MFE not support pass empty str or None as pipeline input.
+        assert len(rest_obj.properties.inputs) == 4
+        assert "integer" in rest_obj.properties.inputs
+        assert "boolean" in rest_obj.properties.inputs
+        assert "number" in rest_obj.properties.inputs
+        assert "str_param" in rest_obj.properties.inputs
