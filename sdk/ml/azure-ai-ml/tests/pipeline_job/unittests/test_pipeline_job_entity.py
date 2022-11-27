@@ -8,8 +8,8 @@ from marshmallow import ValidationError
 from pytest_mock import MockFixture
 from test_utilities.utils import verify_entity_load_and_dump, omit_with_wildcard
 
-from azure.ai.ml import MLClient, load_job
-from azure.ai.ml._restclient.v2022_02_01_preview.models import JobBaseData as FebRestJob
+from azure.ai.ml import MLClient, load_job, load_component, dsl
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as RestJob
 from azure.ai.ml._schema.automl import AutoMLRegressionSchema
 from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml
@@ -196,18 +196,21 @@ class TestPipelineJobEntity:
         assert pipeline.jobs == {}
 
     def test_command_job_with_invalid_mode_type_in_pipeline_deserialize(self):
+        # this json file is to test whether the client can handle the dirty data of node type/mode of the originally
+        # submitted job due to API switching
         rest_job_file = "./tests/test_configs/pipeline_jobs/invalid/with_invalid_job_input_type_mode.json"
         with open(rest_job_file, "r") as f:
             job_dict = yaml.safe_load(f)
-        rest_obj = FebRestJob.from_dict(json.loads(json.dumps(job_dict)))
+        rest_obj = RestJob.from_dict(json.loads(json.dumps(job_dict)))
         pipeline = PipelineJob._from_rest_object(rest_obj)
         pipeline_dict = pipeline._to_dict()
         assert pydash.omit(pipeline_dict["jobs"], *["properties", "hello_python_world_job.properties"]) == {
             "hello_python_world_job": {
                 "inputs": {
                     "sample_input_data": {
+                        'mode': "ro_mount",
                         "type": "uri_folder",
-                        "path": "azureml://datastores/workspaceblobstore/paths/LocalUpload/553d1a28-7933-4017-8321-96c2a9f1fc44/data/",
+                        'path': "azureml://datastores/workspaceblobstore/paths/LocalUpload/22fd2a62-9759-4843-ab92-5bd79c35f6f0/data/",
                     },
                     "sample_input_string": {
                         "mode": "ro_mount",
@@ -215,7 +218,7 @@ class TestPipelineJobEntity:
                     },
                 },
                 "outputs": {"sample_output_data": "${{parent.outputs.pipeline_sample_output_data}}"},
-                "component": "azureml:/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/sdk/providers/Microsoft.MachineLearningServices/workspaces/sdk-master/components/azureml_anonymous/versions/6ffc3ff9-8801-4cc4-9285-9f8052b946fe",
+                'component': "azureml:/subscriptions/96aede12-2f73-41cb-b983-6d11a904839b/resourceGroups/chenyin-test-eastus/providers/Microsoft.MachineLearningServices/workspaces/sdk_vnext_cli/components/azureml_anonymous/versions/9904ff48-9cb2-4733-ad1c-eb1eb9940a19",
                 "type": "command",
                 "compute": "azureml:cpu-cluster",
             }
@@ -742,7 +745,7 @@ class TestPipelineJobEntity:
         assert isinstance(node, Spark)
 
         mocker.patch(
-            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value="xxx"
+            "azure.ai.ml.operations._operation_orchestrator.OperationOrchestrator.get_asset_arm_id", return_value=""
         )
         mocker.patch("azure.ai.ml.operations._job_operations._upload_and_generate_remote_uri", return_value="yyy")
         mock_machinelearning_client.jobs._resolve_arm_id_or_upload_dependencies(job)
@@ -754,8 +757,8 @@ class TestPipelineJobEntity:
         expected_dict = {
             "_source": "YAML.COMPONENT",
             "args": "--file_input ${{inputs.file_input}}",
-            "componentId": "xxx",
-            "computeId": "xxx",
+            "componentId": "",
+            "computeId": "",
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -769,6 +772,7 @@ class TestPipelineJobEntity:
             "inputs": {"file_input": {"job_input_type": "literal", "value": "${{parent.inputs.iris_data}}"}},
             "name": "add_greeting_column",
             "py_files": ["utils.zip"],
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
             "type": "spark",
         }
         assert actual_dict == expected_dict
@@ -778,8 +782,8 @@ class TestPipelineJobEntity:
         expected_dict = {
             "_source": "YAML.COMPONENT",
             "args": "--file_input ${{inputs.file_input}} --output ${{outputs.output}}",
-            "componentId": "xxx",
-            "computeId": "xxx",
+            "componentId": "",
+            "computeId": "",
             "conf": {
                 "spark.driver.cores": 2,
                 "spark.driver.memory": "1g",
@@ -794,12 +798,13 @@ class TestPipelineJobEntity:
             "jars": ["scalaproj.jar"],
             "name": "count_by_row",
             "outputs": {"output": {"type": "literal", "value": "${{parent.outputs.output}}"}},
+            'resources': {'instance_type': 'standard_e4s_v3', 'runtime_version': '3.1.0'},
             "type": "spark",
         }
         assert actual_dict == expected_dict
 
     def test_default_user_identity_if_empty_identity_input(self):
-        test_path = "./tests/test_configs/pipeline_jobs/shakespear-sample-and-word-count-using-spark/pipeline.yml"
+        test_path = "./tests/test_configs/pipeline_jobs/shakespear_sample/pipeline.yml"
         job = load_job(test_path)
         omit_fields = [
             "jobs.sample_word.componentId",
@@ -820,21 +825,21 @@ class TestPipelineJobEntity:
                 "count_word": {
                     "_source": "YAML.JOB",
                     "args": "--input1 ${{inputs.input1}}",
-                    "computeId": "spark31",
                     "conf": {
                         "spark.driver.cores": 1,
                         "spark.driver.memory": "2g",
                         "spark.executor.cores": 2,
                         "spark.executor.instances": 4,
                         "spark.executor.memory": "2g",
-                        "spark.yarn.dist.jars": "https://foobaradrama2.azurefd.net/latest/hadoop-azureml-fs.jar",
                     },
                     "entry": {"file": "wordcount.py", "spark_job_entry_type": "SparkJobPythonEntry"},
-                    "identity": {"identity_type": "Managed"},
+                    "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
                         "input1": {"job_input_type": "literal", "value": "${{parent.jobs.sample_word.outputs.output1}}"}
                     },
                     "name": "count_word",
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 },
                 "sample_word": {
@@ -860,7 +865,8 @@ class TestPipelineJobEntity:
                     },
                     "name": "sample_word",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.output1}}"}},
-                    "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 },
             },
@@ -884,9 +890,8 @@ class TestPipelineJobEntity:
     ):
         test_path = "./tests/test_configs/pipeline_jobs/invalid/pipeline_job_with_spark_job_with_invalid_code.yml"
         job = load_job(test_path)
-        with pytest.raises(ValidationException) as ve:
-            job._validate()
-            assert ve.message == "Entry doesn't exist"
+        result = job._validate()
+        assert 'jobs.hello_world.component.entry' in result.error_messages
 
     def test_spark_node_in_pipeline_with_git_code(
             self,
@@ -1321,14 +1326,6 @@ class TestPipelineJobEntity:
             },
         }
 
-    def test_pipeline_with_init_finalize(self) -> None:
-        pipeline_job = load_job("./tests/test_configs/pipeline_jobs/pipeline_job_init_finalize.yaml")
-        assert pipeline_job.settings.on_init == "a"
-        assert pipeline_job.settings.on_finalize == "c"
-        pipeline_job_dict = pipeline_job._to_rest_object().as_dict()
-        assert pipeline_job_dict["properties"]["settings"]["on_init"] == "a"
-        assert pipeline_job_dict["properties"]["settings"]["on_finalize"] == "c"
-
     def test_non_string_pipeline_node_input(self):
         test_path = "./tests/test_configs/pipeline_jobs/rest_non_string_input_pipeline.json"
         with open(test_path, "r") as f:
@@ -1434,3 +1431,36 @@ class TestPipelineJobEntity:
                 'name': 'hello_world_component_3',
                 'type': 'command'}
         }
+
+    def test_pipeline_parameter_with_empty_value(self, client: MLClient) -> None:
+        input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
+
+        @group
+        class InputGroup:
+            group_empty_str: str = ""
+            group_none_str: str = None
+
+        # Construct pipeline
+        @dsl.pipeline(
+            default_compute="cpu-cluster",
+            description="This is the basic pipeline with empty_value",
+        )
+        def empty_value_pipeline(integer: int, boolean: bool, number: float,
+                                 str_param: str, empty_str: str, input_group: InputGroup):
+            input_types_func(component_in_string=str_param,
+                             component_in_ranged_integer=integer,
+                             component_in_boolean=boolean,
+                             component_in_ranged_number=number)
+            input_types_func(component_in_string=empty_str)
+            input_types_func(component_in_string=input_group.group_empty_str)
+            input_types_func(component_in_string=input_group.group_none_str)
+
+        pipeline = empty_value_pipeline(integer=0, boolean=False, number=0,
+                                        str_param="str_param", empty_str="", input_group=InputGroup())
+        rest_obj = pipeline._to_rest_object()
+        # Currently MFE not support pass empty str or None as pipeline input.
+        assert len(rest_obj.properties.inputs) == 4
+        assert "integer" in rest_obj.properties.inputs
+        assert "boolean" in rest_obj.properties.inputs
+        assert "number" in rest_obj.properties.inputs
+        assert "str_param" in rest_obj.properties.inputs

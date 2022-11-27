@@ -7,13 +7,13 @@
 
 # This script is used to execute mypy within a tox environment.
 
-from subprocess import check_call
+from subprocess import check_call, CalledProcessError
 import argparse
 import os
 import logging
 import sys
 
-from environment_exclusion_list import (
+from ci_tools.environment_exclusions import (
     is_ignored_package,
     MYPY_OPT_OUT,
     TYPE_CHECK_SAMPLES_OPT_OUT,
@@ -42,16 +42,6 @@ if __name__ == "__main__":
         )
         exit(0)
 
-    paths = [
-        os.path.join(args.target_package, "azure"),
-        os.path.join(args.target_package, "samples"),
-    ]
-    if package_name in TYPE_CHECK_SAMPLES_OPT_OUT:
-        logging.info(
-            f"Package {package_name} opts-out of mypy check on samples."
-        )
-        paths = paths[:-1]
-
     commands = [
         sys.executable,
         "-m",
@@ -61,6 +51,45 @@ if __name__ == "__main__":
         "--show-error-codes",
         "--ignore-missing-imports",
     ]
-    commands.extend(paths)
-    check_call(commands)
-    print("See https://aka.ms/python/typing-guide for information.")
+    src_code = [*commands, os.path.join(args.target_package, "azure")]
+    src_code_error = None
+    sample_code_error = None
+    try:
+        logging.info(
+            f"Running mypy commands on src code: {src_code}"
+        )
+        check_call(src_code)
+    except CalledProcessError as src_err:
+        src_code_error = src_err
+
+    if package_name in TYPE_CHECK_SAMPLES_OPT_OUT:
+        logging.info(
+            f"Package {package_name} opts-out of mypy check on samples."
+        )
+    else:
+        sample_code = [
+            *commands,
+            "--check-untyped-defs",
+            "--follow-imports=silent",
+            os.path.join(args.target_package, "samples")
+        ]
+        try:
+            logging.info(
+                f"Running mypy commands on sample code: {sample_code}"
+            )
+            check_call(sample_code)
+        except CalledProcessError as sample_err:
+            sample_code_error = sample_err
+
+    print("See https://aka.ms/python/typing-guide for information.\n\n")
+    if src_code_error and sample_code_error:
+        raise Exception(
+            [
+                src_code_error,
+                sample_code_error,
+            ],
+        )
+    if src_code_error:
+        raise src_code_error
+    if sample_code_error:
+        raise sample_code_error

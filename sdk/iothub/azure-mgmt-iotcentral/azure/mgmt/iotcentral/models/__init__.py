@@ -14,74 +14,40 @@ from ._models_py3 import AppSkuInfo
 from ._models_py3 import AppTemplate
 from ._models_py3 import AppTemplateLocations
 from ._models_py3 import AppTemplatesResult
-from ._models_py3 import ErrorAdditionalInfo
-from ._models_py3 import ErrorDetail
-from ._models_py3 import ErrorResponse
-from ._models_py3 import NetworkRuleSetIpRule
-from ._models_py3 import NetworkRuleSets
+from ._models_py3 import CloudErrorBody
 from ._models_py3 import Operation
 from ._models_py3 import OperationDisplay
 from ._models_py3 import OperationInputs
 from ._models_py3 import OperationListResult
-from ._models_py3 import PrivateEndpoint
-from ._models_py3 import PrivateEndpointConnection
-from ._models_py3 import PrivateEndpointConnectionListResult
-from ._models_py3 import PrivateLinkResource
-from ._models_py3 import PrivateLinkResourceListResult
-from ._models_py3 import PrivateLinkServiceConnectionState
 from ._models_py3 import Resource
 from ._models_py3 import SystemAssignedServiceIdentity
-from ._models_py3 import SystemData
-from ._models_py3 import TrackedResource
 
-
-from ._iot_central_client_enums import (
-    AppSku,
-    AppState,
-    CreatedByType,
-    NetworkAction,
-    PrivateEndpointConnectionProvisioningState,
-    PrivateEndpointServiceConnectionStatus,
-    ProvisioningState,
-    PublicNetworkAccess,
-    SystemAssignedServiceIdentityType,
-)
+from ._iot_central_client_enums import AppSku
+from ._iot_central_client_enums import AppState
+from ._iot_central_client_enums import SystemAssignedServiceIdentityType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'App',
-    'AppAvailabilityInfo',
-    'AppListResult',
-    'AppPatch',
-    'AppSkuInfo',
-    'AppTemplate',
-    'AppTemplateLocations',
-    'AppTemplatesResult',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'NetworkRuleSetIpRule',
-    'NetworkRuleSets',
-    'Operation',
-    'OperationDisplay',
-    'OperationInputs',
-    'OperationListResult',
-    'PrivateEndpoint',
-    'PrivateEndpointConnection',
-    'PrivateEndpointConnectionListResult',
-    'PrivateLinkResource',
-    'PrivateLinkResourceListResult',
-    'PrivateLinkServiceConnectionState',
-    'Resource',
-    'SystemAssignedServiceIdentity',
-    'SystemData',
-    'TrackedResource',
-    'AppSku',
-    'AppState',
-    'CreatedByType',
-    'NetworkAction',
-    'PrivateEndpointConnectionProvisioningState',
-    'PrivateEndpointServiceConnectionStatus',
-    'ProvisioningState',
-    'PublicNetworkAccess',
-    'SystemAssignedServiceIdentityType',
+    "App",
+    "AppAvailabilityInfo",
+    "AppListResult",
+    "AppPatch",
+    "AppSkuInfo",
+    "AppTemplate",
+    "AppTemplateLocations",
+    "AppTemplatesResult",
+    "CloudErrorBody",
+    "Operation",
+    "OperationDisplay",
+    "OperationInputs",
+    "OperationListResult",
+    "Resource",
+    "SystemAssignedServiceIdentity",
+    "AppSku",
+    "AppState",
+    "SystemAssignedServiceIdentityType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

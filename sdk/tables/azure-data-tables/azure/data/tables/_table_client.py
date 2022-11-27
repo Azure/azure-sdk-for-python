@@ -28,8 +28,7 @@ from ._error import (
 )
 from ._generated.models import (
     SignedIdentifier,
-    TableProperties,
-    QueryOptions
+    TableProperties
 )
 from ._serialize import _get_match_headers, _add_entity_properties, _prepare_key
 from ._base_client import parse_connection_str, TablesBaseClient
@@ -611,7 +610,7 @@ class TableClient(TablesBaseClient): # pylint: disable=client-accepts-api-versio
                 table=self.table_name,
                 partition_key=_prepare_key(partition_key),
                 row_key=_prepare_key(row_key),
-                query_options=QueryOptions(select=user_select),
+                select=user_select,
                 **kwargs
             )
         except HttpResponseError as error:

@@ -26,16 +26,16 @@ from azure.mgmt.devcenter import DevCenterMgmtClient
 def main():
     client = DevCenterMgmtClient(
         credential=DefaultAzureCredential(),
-        subscription_id="{subscriptionId}",
+        subscription_id="0ac520ee-14c0-480f-b6c9-0a90c58ffff",
     )
 
-    response = client.network_connections.run_health_checks(
+    response = client.network_connections.begin_run_health_checks(
         resource_group_name="rg1",
         network_connection_name="uswest3network",
-    )
+    ).result()
     print(response)
 
 
-# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-10-12-preview/examples/NetworkConnections_RunHealthChecks.json
+# x-ms-original-file: specification/devcenter/resource-manager/Microsoft.DevCenter/preview/2022-11-11-preview/examples/NetworkConnections_RunHealthChecks.json
 if __name__ == "__main__":
     main()

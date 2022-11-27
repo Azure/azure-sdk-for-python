@@ -25,7 +25,6 @@ from azure.keyvault.keys import (
 from azure.keyvault.keys._generated.v7_3.models import KeyRotationPolicy as _KeyRotationPolicy
 from dateutil import parser as date_parse
 from devtools_testutils import recorded_by_proxy, set_bodiless_matcher
-from six import byte2int
 
 from _shared.test_case import KeyVaultTestCase
 from _test_case import KeysClientPreparer, get_attestation_token, get_decorator, get_release_policy, is_public_cloud
@@ -254,7 +253,7 @@ class TestKeyClient(KeyVaultTestCase, KeysTestCase):
 
         key_name = self.get_resource_name("rsa-key")
         key = self._create_rsa_key(client, key_name, hardware_protected=True, public_exponent=17)
-        public_exponent = byte2int(key.key.e)
+        public_exponent = key.key.e[0]
         assert public_exponent == 17
 
     @pytest.mark.parametrize("api_version,is_hsm",all_api_versions)
