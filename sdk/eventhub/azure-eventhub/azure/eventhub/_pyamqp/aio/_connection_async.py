@@ -88,6 +88,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._container_id = kwargs.pop("container_id", None) or str(
             uuid.uuid4()
         )  # type: str
+        self._network_trace = kwargs.get("network_trace", False)
+        self._network_trace_params = {"amqpConnection": self._container_id, "amqpSession": None, "amqpLink": None}
+
         transport = kwargs.get("transport")
         self._transport_type = kwargs.pop("transport_type", TransportType.Amqp)
         if transport:
@@ -103,13 +106,13 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 host=endpoint,
                 credential=kwargs["sasl_credential"],
                 custom_endpoint=custom_endpoint,
-                name=self._container_id,
+                network_trace_params=self._network_trace_params,
                 **kwargs,
             )
         else:
             self._transport = AsyncTransport(
                 parsed_url.netloc,
-                name=self._container_id,
+                network_trace_params=self._network_trace_params,
                 **kwargs)
 
         self._max_frame_size = kwargs.pop(
@@ -143,12 +146,6 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         self._last_frame_received_time = None  # type: Optional[float]
         self._last_frame_sent_time = None  # type: Optional[float]
         self._idle_wait_time = kwargs.get("idle_wait_time", 0.1)  # type: float
-        self._network_trace = kwargs.get("network_trace", False)
-        self._network_trace_params = {
-            "connection": self._container_id,
-            "session": None,
-            "link": None,
-        }
         self._error = None
         self._outgoing_endpoints = {}  # type: Dict[int, Session]
         self._incoming_endpoints = {}  # type: Dict[int, Session]
@@ -168,10 +165,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         previous_state = self.state
         self.state = new_state
         _LOGGER.info(
-            "Connection '%s' state changed: %r -> %r",
-            self._container_id,
+            "Connection state changed: %r -> %r",
             previous_state,
             new_state,
+            extra=self._network_trace_params
         )
         for session in self._outgoing_endpoints.values():
             await session._on_connection_state_change()  # pylint:disable=protected-access
@@ -286,7 +283,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     error=exc,
                 )
         else:
-            _LOGGER.warning("Cannot write frame in current state: %r", self.state)
+            _LOGGER.info("Cannot write frame in current state: %r", self.state, extra=self._network_trace_params)
 
     def _get_next_outgoing_channel(self):
         # type: () -> int
@@ -313,7 +310,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         # type: () -> None
         """Send an empty frame to prevent the connection from reaching an idle timeout."""
         if self._network_trace:
-            _LOGGER.info("-> empty()", extra=self._network_trace_params)
+            _LOGGER.debug("-> EmptyFrame()", extra=self._network_trace_params)
         try:
             raise self._error
         except TypeError:
@@ -334,16 +331,14 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """Send the AMQP protocol header to initiate the connection."""
         self._last_frame_sent_time = time.time()
         if self._network_trace:
-            _LOGGER.info(
-                "-> header(%r)", HEADER_FRAME, extra=self._network_trace_params
-            )
+            _LOGGER.debug("-> Header(%r)", HEADER_FRAME, extra=self._network_trace_params)
         await self._transport.write(HEADER_FRAME)
 
     async def _incoming_header(self, _, frame):
         # type: (int, bytes) -> None
         """Process an incoming AMQP protocol header and update the connection state."""
         if self._network_trace:
-            _LOGGER.info("<- header(%r)", frame, extra=self._network_trace_params)
+            _LOGGER.debug("<- Header(%r)", frame, extra=self._network_trace_params)
         if self.state == ConnectionState.START:
             await self._set_state(ConnectionState.HDR_RCVD)
         elif self.state == ConnectionState.HDR_SENT:
@@ -373,7 +368,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             properties=self._properties,
         )
         if self._network_trace:
-            _LOGGER.info("-> %r", open_frame, extra=self._network_trace_params)
+            _LOGGER.debug("-> %r", open_frame, extra=self._network_trace_params)
         await self._send_frame(0, open_frame)
 
     async def _incoming_open(self, channel, frame):
@@ -400,9 +395,9 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
         """
         # TODO: Add type hints for full frame tuple contents.
         if self._network_trace:
-            _LOGGER.info("<- %r", OpenFrame(*frame), extra=self._network_trace_params)
+            _LOGGER.debug("<- %r", OpenFrame(*frame), extra=self._network_trace_params)
         if channel != 0:
-            _LOGGER.error("OPEN frame received on a channel that is not 0.")
+            _LOGGER.error("OPEN frame received on a channel that is not 0.", extra=self._network_trace_params)
             await self.close(
                 error=AMQPError(
                     condition=ErrorCondition.NotAllowed,
@@ -411,7 +406,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             )
             await self._set_state(ConnectionState.END)
         if self.state == ConnectionState.OPENED:
-            _LOGGER.error("OPEN frame received in the OPENED state.")
+            _LOGGER.error("OPEN frame received in the OPENED state.", extra=self._network_trace_params)
             await self.close()
         if frame[4]:
             self._remote_idle_timeout = frame[4] / 1000  # Convert to seconds
@@ -430,7 +425,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 )
             )
             _LOGGER.error(
-                "Failed parsing OPEN frame: Max frame size is less than supported minimum."
+                "Failed parsing OPEN frame: Max frame size is less than supported minimum.",
+                extra=self._network_trace_params
             )
             return
         self._remote_max_frame_size = frame[2]
@@ -444,17 +440,17 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             await self.close(
                 error=AMQPError(
                     condition=ErrorCondition.IllegalState,
-                    description=f"connection is an illegal state: {self.state}",
+                    description=f"Connection is an illegal state: {self.state}",
                 )
             )
-            _LOGGER.error("connection is an illegal state: %r", self.state)
+            _LOGGER.error("Connection is an illegal state: %r", self.state, extra=self._network_trace_params)
 
     async def _outgoing_close(self, error=None):
         # type: (Optional[AMQPError]) -> None
         """Send a Close frame to shutdown connection with optional error information."""
         close_frame = CloseFrame(error=error)
         if self._network_trace:
-            _LOGGER.info("-> %r", close_frame, extra=self._network_trace_params)
+            _LOGGER.debug("-> %r", close_frame, extra=self._network_trace_params)
         await self._send_frame(0, close_frame)
 
     async def _incoming_close(self, channel, frame):
@@ -467,7 +463,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         """
         if self._network_trace:
-            _LOGGER.info("<- %r", CloseFrame(*frame), extra=self._network_trace_params)
+            _LOGGER.debug("<- %r", CloseFrame(*frame), extra=self._network_trace_params)
         disconnect_states = [
             ConnectionState.HDR_RCVD,
             ConnectionState.HDR_EXCH,
@@ -481,7 +477,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
 
         close_error = None
         if channel > self._channel_max:
-            _LOGGER.error("Invalid channel")
+            _LOGGER.error(
+                "CLOSE frame received on a channel greated than support max.",
+                extra=self._network_trace_params
+            )
             close_error = AMQPError(
                 condition=ErrorCondition.InvalidField,
                 description="Invalid channel",
@@ -497,7 +496,8 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 condition=frame[0][0], description=frame[0][1], info=frame[0][2]
             )
             _LOGGER.error(
-                "Connection error: %r",frame[0]
+                "Connection closed with error: %r", frame[0],
+                extra=self._network_trace_params
             )
 
     async def _incoming_begin(self, channel, frame):
@@ -555,6 +555,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     condition=ErrorCondition.ConnectionCloseForced,
                     description="Invalid channel number received"
                 ))
+            _LOGGER.error(
+                "END frame received on invalid channel. Closing connection.",
+                extra=self._network_trace_params
+            )
             return
 
     async def _process_incoming_frame(
@@ -621,7 +625,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                 return True
             if performative == 1:
                 return False  # TODO: incoming EMPTY
-            _LOGGER.error("Unrecognized incoming frame: %s", frame)
+            _LOGGER.error("Unrecognized incoming frame: %r", frame, extra=self._network_trace_params)
             return True
         except KeyError:
             return True  # TODO: channel error
@@ -649,6 +653,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             cast(float, self._idle_timeout),
             cast(float, self._last_frame_received_time),
         ) or (await self._get_remote_timeout(now)):
+            _LOGGER.info(
+                "No frame received for the idle timeout. Closing connection.",
+                extra=self._network_trace_params
+            )
             await self.close(
                 error=AMQPError(
                     condition=ErrorCondition.ConnectionCloseForced,
@@ -727,6 +735,10 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     cast(float, self._idle_timeout),
                     cast(float, self._last_frame_received_time),
                 ) or (await self._get_remote_timeout(now)):
+                    _LOGGER.info(
+                        "No frame received for the idle timeout. Closing connection.",
+                        extra=self._network_trace_params
+                    )
                     await self.close(
                         error=AMQPError(
                             condition=ErrorCondition.ConnectionCloseForced,
@@ -747,7 +759,11 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
                     if await self._read_frame(wait=wait, **kwargs):
                         break
                 else:
-                    _LOGGER.info("Connection cannot read frames in this state: %r", self.state)
+                    _LOGGER.info(
+                        "Connection cannot read frames in this state: %r",
+                        self.state,
+                        extra=self._network_trace_params
+                    )
                     break
         except (OSError, IOError, SSLError, socket.error) as exc:
             self._error = AMQPConnectionError(
@@ -848,7 +864,7 @@ class Connection(object):  # pylint:disable=too-many-instance-attributes
             await self._wait_for_response(wait, ConnectionState.END)
         except Exception as exc:  # pylint:disable=broad-except
             # If error happened during closing, ignore the error and set state to END
-            _LOGGER.info("An error occurred when closing the connection: %r", exc)
+            _LOGGER.info("An error occurred when closing the connection: %r", exc, extra=self._network_trace_params)
             await self._set_state(ConnectionState.END)
         finally:
             await self._disconnect()

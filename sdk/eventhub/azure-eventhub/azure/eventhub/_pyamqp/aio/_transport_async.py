@@ -76,7 +76,6 @@ class AsyncTransportMixin:
                 decoded = decode_empty_frame(header)
             else:
                 decoded = decode_frame(payload)
-            _LOGGER.info("ICH%d <- %r", channel, decoded)
             return channel, decoded
         except (
             TimeoutError,
@@ -104,7 +103,10 @@ class AsyncTransportMixin:
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
                     _LOGGER.debug(
-                        "Received invalid frame type: %r, expected: %r", frame_type, verify_frame_type
+                        "Received invalid frame type: %r, expected: %r",
+                        frame_type,
+                        verify_frame_type,
+                        extra=self.network_trace_params
                     )
                     raise ValueError(
                         f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
@@ -144,6 +146,7 @@ class AsyncTransportMixin:
                     raise socket.timeout()
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
+                _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
                 raise
             offset -= 2
         return frame_header, channel, payload[offset:]
@@ -155,6 +158,7 @@ class AsyncTransportMixin:
             except socket.timeout:
                 raise
             except (OSError, IOError, socket.error) as exc:
+                _LOGGER.debug("Transport write failed: %r", exc, extra=self.network_trace_params)
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
                 raise
@@ -168,7 +172,6 @@ class AsyncTransportMixin:
             data = header + encoded_channel + performative
 
         await self.write(data)
-        # _LOGGER.info("OCH%d -> %r", channel, frame)
 
     def _build_ssl_opts(self, sslopts):
         if sslopts in [True, False, None, {}]:
@@ -246,7 +249,7 @@ class AsyncTransport(
         self.socket_settings = socket_settings
         self.socket_lock = asyncio.Lock()
         self.sslopts = ssl_opts
-        self.name = kwargs.get('name')
+        self.network_trace_params = kwargs.get('network_trace_params')
 
     async def connect(self):
         try:
@@ -264,7 +267,8 @@ class AsyncTransport(
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
             # has _not_ been sent
             self.connected = True
-        except (OSError, IOError, SSLError):
+        except (OSError, IOError, SSLError) as e:
+            _LOGGER.info("Transport connect failed: %r", e, extra=self.network_trace_params)
             # if not fully connected, close socket, and reraise error
             if self.sock and not self.connected:
                 self.sock.close()
@@ -439,7 +443,7 @@ class AsyncTransport(
                     await self.writer.wait_closed()
             except Exception as e:  # pylint: disable=broad-except
                 # Sometimes SSL raises APPLICATION_DATA_AFTER_CLOSE_NOTIFY here on close.
-                _LOGGER.debug("Error shutting down socket: %r", e)
+                _LOGGER.debug("Error shutting down socket: %r", e, extra=self.network_trace_params)
             self.writer, self.reader = None, None
         self.sock = None
         self.connected = False
@@ -478,7 +482,7 @@ class WebSocketTransportAsync(
         self.session = None
         self._http_proxy = kwargs.get("http_proxy", None)
         self.connected = False
-        self.name = kwargs.get('name')
+        self.network_trace_params = kwargs.get('network_trace_params')
 
     async def connect(self):
         self.sslopts = self._build_ssl_opts(self.sslopts)
@@ -531,6 +535,7 @@ class WebSocketTransportAsync(
                     heartbeat=DEFAULT_WEBSOCKET_HEARTBEAT_SECONDS,
                 )
             except ClientConnectorError as exc:
+                _LOGGER.info("Websocket connect failed: %r", exc, extra=self.network_trace_params)
                 if self._custom_endpoint:
                     raise AuthenticationException(
                         ErrorCondition.ClientError,

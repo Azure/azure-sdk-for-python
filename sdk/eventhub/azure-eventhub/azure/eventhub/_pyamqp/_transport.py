@@ -165,7 +165,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
         self.raise_on_initial_eintr = raise_on_initial_eintr
         self._read_buffer = BytesIO()
         self.host, self.port = to_host_port(host, port)
-        self.name = kwargs.get('name')
+        self.network_trace_params = kwargs.get('network_trace_params')
 
         self.connect_timeout = connect_timeout or TIMEOUT_INTERVAL
         self.read_timeout = read_timeout or READ_TIMEOUT_INTERVAL
@@ -186,7 +186,8 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             # EINTR, EAGAIN, EWOULDBLOCK would signal that the banner
             # has _not_ been sent
             self.connected = True
-        except (OSError, IOError, SSLError):
+        except (OSError, IOError, SSLError) as e:
+            _LOGGER.info("Transport connection failed: %r", e, extra=self.network_trace_params)
             # if not fully connected, close socket, and reraise error
             if self.sock and not self.connected:
                 self.sock.close()
@@ -399,7 +400,11 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                 except Exception as exc:  # pylint: disable=broad-except
                     # TODO: shutdown could raise OSError, Transport endpoint is not connected if the endpoint is already
                     #  disconnected. can we safely ignore the errors since the close operation is initiated by us.
-                    _LOGGER.info("Transport endpoint is already disconnected: %r", exc)
+                    _LOGGER.debug(
+                        "Transport endpoint is already disconnected: %r",
+                        exc,
+                        extra=self.network_trace_params
+                    )
                 self.sock.close()
                 self.sock = None
             self.connected = False
@@ -421,7 +426,10 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                 frame_type = frame_header[5]
                 if verify_frame_type is not None and frame_type != verify_frame_type:
                     _LOGGER.debug(
-                        "Received invalid frame type: %r, expected: %r", frame_type, verify_frame_type
+                        "Received invalid frame type: %r, expected: %r",
+                        frame_type,
+                        verify_frame_type,
+                        extra=self.network_trace_params
                     )
                     raise ValueError(
                             f"Received invalid frame type: {frame_type}, expected: {verify_frame_type}"
@@ -450,6 +458,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
                     raise socket.timeout()
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
+                _LOGGER.debug("Transport read failed: %r", exc, extra=self.network_trace_params)
                 raise
             offset -= 2
         return frame_header, channel, payload[offset:]
@@ -461,6 +470,7 @@ class _AbstractTransport(object):  # pylint: disable=too-many-instance-attribute
             except socket.timeout:
                 raise
             except (OSError, IOError, socket.error) as exc:
+                _LOGGER.debug("Transport write failed: %r", exc, extra=self.network_trace_params)
                 if get_errno(exc) not in _UNAVAIL:
                     self.connected = False
                 raise
@@ -727,7 +737,8 @@ class WebSocketTransport(_AbstractTransport):
         except (WebSocketTimeoutException, SSLError, WebSocketConnectionClosedException) as exc:    # type: ignore
             self.close()
             raise ConnectionError("Websocket failed to establish connection: %r" % exc) from exc
-        except (OSError, IOError, SSLError):
+        except (OSError, IOError, SSLError) as e:
+            _LOGGER.info("Websocket connection failed: %r", e, extra=self.network_trace_params)
             self.close()
             raise
         except ImportError:
