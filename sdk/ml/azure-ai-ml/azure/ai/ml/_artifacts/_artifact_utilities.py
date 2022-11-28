@@ -456,12 +456,12 @@ def _check_and_upload_env_build_context(
     return environment
 
 
-@retry(
-    exceptions=HttpResponseError,
-    failure_msg="Artifact upload exceeded maximum retries. Try again.",
-    logger=module_logger,
-    max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
-)
+# @retry(
+#     exceptions=HttpResponseError,
+#     failure_msg="Artifact upload exceeded maximum retries. Try again.",
+#     logger=module_logger,
+#     max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
+# )
 def get_temporary_data_reference(
     operations: "DatastoreOperations",
     asset_name: str,
@@ -508,12 +508,12 @@ def get_temporary_data_reference(
     return sas_uri
 
 
-@retry(
-    exceptions=HttpResponseError,
-    failure_msg="Artifact upload exceeded maximum retries. Try again.",
-    logger=module_logger,
-    max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
-)
+# @retry(
+#     exceptions=HttpResponseError,
+#     failure_msg="Artifact upload exceeded maximum retries. Try again.",
+#     logger=module_logger,
+#     max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
+# )
 def get_asset_by_hash(
     operations: "DatastoreOperations",
     hash_str: str,
