@@ -6,44 +6,29 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class AsyncOperationState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The async operation state.
-    """
+class AsyncOperationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The async operation state."""
 
     IN_PROGRESS = "InProgress"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DaysOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class DaysOfWeek(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """DaysOfWeek."""
 
     MONDAY = "Monday"
     TUESDAY = "Tuesday"
@@ -53,13 +38,14 @@ class DaysOfWeek(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SATURDAY = "Saturday"
     SUNDAY = "Sunday"
 
-class DirectoryType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The directory type.
-    """
+
+class DirectoryType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The directory type."""
 
     ACTIVE_DIRECTORY = "ActiveDirectory"
 
-class FilterMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class FilterMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The filtering mode. Effectively this can enabling or disabling the VM sizes in a particular
     set.
     """
@@ -69,9 +55,9 @@ class FilterMode(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     RECOMMEND = "Recommend"
     DEFAULT = "Default"
 
-class HDInsightClusterProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state, which only appears in the response.
-    """
+
+class HDInsightClusterProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state, which only appears in the response."""
 
     IN_PROGRESS = "InProgress"
     FAILED = "Failed"
@@ -79,24 +65,24 @@ class HDInsightClusterProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta,
     CANCELED = "Canceled"
     DELETING = "Deleting"
 
-class JsonWebKeyEncryptionAlgorithm(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Algorithm identifier for encryption, default RSA-OAEP.
-    """
+
+class JsonWebKeyEncryptionAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Algorithm identifier for encryption, default RSA-OAEP."""
 
     RSA_OAEP = "RSA-OAEP"
     RSA_OAEP256 = "RSA-OAEP-256"
     RSA1_5 = "RSA1_5"
 
-class OSType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of operating system.
-    """
+
+class OSType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of operating system."""
 
     WINDOWS = "Windows"
     LINUX = "Linux"
 
-class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The provisioning state, which only appears in the response.
-    """
+
+class PrivateEndpointConnectionProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The provisioning state, which only appears in the response."""
 
     IN_PROGRESS = "InProgress"
     UPDATING = "Updating"
@@ -105,23 +91,23 @@ class PrivateEndpointConnectionProvisioningState(with_metaclass(_CaseInsensitive
     CANCELED = "Canceled"
     DELETING = "Deleting"
 
-class PrivateIPAllocationMethod(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The method that private IP address is allocated.
-    """
+
+class PrivateIPAllocationMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The method that private IP address is allocated."""
 
     DYNAMIC = "dynamic"
     STATIC = "static"
 
-class PrivateLink(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Indicates whether or not private link is enabled.
-    """
+
+class PrivateLink(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether or not private link is enabled."""
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class PrivateLinkConfigurationProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The private link configuration provisioning state, which only appears in the response.
-    """
+
+class PrivateLinkConfigurationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The private link configuration provisioning state, which only appears in the response."""
 
     IN_PROGRESS = "InProgress"
     FAILED = "Failed"
@@ -129,16 +115,17 @@ class PrivateLinkConfigurationProvisioningState(with_metaclass(_CaseInsensitiveE
     CANCELED = "Canceled"
     DELETING = "Deleting"
 
-class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The concrete private link service connection.
-    """
+
+class PrivateLinkServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The concrete private link service connection."""
 
     APPROVED = "Approved"
     REJECTED = "Rejected"
     PENDING = "Pending"
     REMOVED = "Removed"
 
-class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class ResourceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The type of identity used for the cluster. The type 'SystemAssigned, UserAssigned' includes
     both an implicitly created identity and a set of user assigned identities.
     """
@@ -148,20 +135,22 @@ class ResourceIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
     NONE = "None"
 
-class ResourceProviderConnection(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The direction for the resource provider connection.
-    """
+
+class ResourceProviderConnection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The direction for the resource provider connection."""
 
     INBOUND = "Inbound"
     OUTBOUND = "Outbound"
 
-class RoleName(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class RoleName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """RoleName."""
 
     WORKERNODE = "workernode"
 
-class Tier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The cluster tier.
-    """
+
+class Tier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The cluster tier."""
 
     STANDARD = "Standard"
     PREMIUM = "Premium"
