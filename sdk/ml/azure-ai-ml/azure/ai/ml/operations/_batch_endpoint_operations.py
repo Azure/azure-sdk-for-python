@@ -275,7 +275,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if (
             batch_job_property.output_dataset
             and batch_job_property.output_dataset.datastore_id
-            and (not is_ARM_id_for_resource(batch_job.output_dataset.datastore_id))
+            and (not is_ARM_id_for_resource(batch_job_property.output_dataset.datastore_id))
         ):
             batch_job_property.output_dataset.datastore_id = get_datastore_arm_id(
                 batch_job_property.output_dataset.datastore_id, self._operation_scope
@@ -311,7 +311,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     def list_jobs(self, endpoint_name: str) -> ItemPaged[BatchJob]:
         """List jobs under the provided batch endpoint deployment. This is only
         valid for batch endpoint.
-        
+
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
         :return: List of jobs

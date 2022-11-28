@@ -11,7 +11,7 @@ from azure.ai.ml.entities._deployment.data_version import DataVersion
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJob as BatchJobData
 
-
+# pylint: disable=too-many-instance-attributes
 class BatchJobProperty:
     """Batch Job Property entity
 
