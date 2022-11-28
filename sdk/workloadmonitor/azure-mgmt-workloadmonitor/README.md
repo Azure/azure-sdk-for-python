@@ -1,1 +1,1 @@
-The package has been deprecated. For mroe info, please see https://github.com/azure-deprecation/dashboard/issues/239
+The package has been deprecated. For more info, please see https://github.com/azure-deprecation/dashboard/issues/239
