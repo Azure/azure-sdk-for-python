@@ -633,6 +633,7 @@ def enable_internal_components():
     with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
         # need to call _try_init_internal_components manually as environment variable is set after _internal is imported
         try_enable_internal_components()
+        yield  # run test with env var overwritten
 
 
 @pytest.fixture()

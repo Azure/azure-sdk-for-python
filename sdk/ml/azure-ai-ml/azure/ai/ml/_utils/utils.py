@@ -769,11 +769,11 @@ def is_internal_components_enabled():
     return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
 
 
-def try_enable_internal_components():
+def try_enable_internal_components(*, force=False):
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
 
-        enable_internal_components_in_pipeline()
+        enable_internal_components_in_pipeline(force=force)
 
 
 def is_valid_node_name(name):
