@@ -11,11 +11,11 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Required for storage accounts where kind = BlobStorage. The access tier used for billing.
-    """
+    """Required for storage accounts where kind = BlobStorage. The access tier used for billing."""
 
     HOT = "Hot"
     COOL = "Cool"
+
 
 class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the status indicating whether the primary location of the storage account is available or
@@ -24,6 +24,7 @@ class AccountStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     AVAILABLE = "available"
     UNAVAILABLE = "unavailable"
+
 
 class Bypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies whether traffic is bypassed for Logging/Metrics/AzureServices. Possible values are
@@ -36,26 +37,33 @@ class Bypass(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     METRICS = "Metrics"
     AZURE_SERVICES = "AzureServices"
 
+
 class DefaultAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the default action of allow or deny when no other rules match.
-    """
+    """Specifies the default action of allow or deny when no other rules match."""
 
     ALLOW = "Allow"
     DENY = "Deny"
 
+
+class Enum13(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum13."""
+
+    DEFAULT = "default"
+
+
 class HttpProtocol(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The protocol permitted for a request made with the account SAS.
-    """
+    """The protocol permitted for a request made with the account SAS."""
 
     HTTPS_HTTP = "https,http"
     HTTPS = "https"
 
+
 class ImmutabilityPolicyState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The ImmutabilityPolicy state of a blob container, possible values include: Locked and Unlocked.
-    """
+    """The ImmutabilityPolicy state of a blob container, possible values include: Locked and Unlocked."""
 
     LOCKED = "Locked"
     UNLOCKED = "Unlocked"
+
 
 class ImmutabilityPolicyUpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The ImmutabilityPolicy update type of a blob container, possible values include: put, lock and
@@ -66,38 +74,40 @@ class ImmutabilityPolicyUpdateType(str, Enum, metaclass=CaseInsensitiveEnumMeta)
     LOCK = "lock"
     EXTEND = "extend"
 
+
 class KeyPermission(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Permissions for the key -- read-only or full permissions.
-    """
+    """Permissions for the key -- read-only or full permissions."""
 
     READ = "Read"
     FULL = "Full"
 
+
 class KeySource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The encryption keySource (provider). Possible values (case-insensitive):  Microsoft.Storage,
-    Microsoft.Keyvault
+    Microsoft.Keyvault.
     """
 
     MICROSOFT_STORAGE = "Microsoft.Storage"
     MICROSOFT_KEYVAULT = "Microsoft.Keyvault"
 
+
 class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Indicates the type of storage account.
-    """
+    """Indicates the type of storage account."""
 
     STORAGE = "Storage"
     STORAGE_V2 = "StorageV2"
     BLOB_STORAGE = "BlobStorage"
 
+
 class LeaseContainerRequestAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the lease action. Can be one of the available actions.
-    """
+    """Specifies the lease action. Can be one of the available actions."""
 
     ACQUIRE = "Acquire"
     RENEW = "Renew"
     CHANGE = "Change"
     RELEASE = "Release"
-    BREAK_ENUM = "Break"
+    BREAK = "Break"
+
 
 class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies whether the lease on a container is of infinite or fixed duration, only when the
@@ -107,9 +117,9 @@ class LeaseDuration(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     INFINITE = "Infinite"
     FIXED = "Fixed"
 
+
 class LeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Lease state of the container.
-    """
+    """Lease state of the container."""
 
     AVAILABLE = "Available"
     LEASED = "Leased"
@@ -117,16 +127,19 @@ class LeaseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     BREAKING = "Breaking"
     BROKEN = "Broken"
 
+
 class LeaseStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The lease status of the container.
-    """
+    """The lease status of the container."""
 
     LOCKED = "Locked"
     UNLOCKED = "Unlocked"
 
+
 class ManagementPolicyName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ManagementPolicyName."""
 
     DEFAULT = "default"
+
 
 class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed permissions for the account SAS. Possible values include: Read (r), Write (w),
@@ -142,21 +155,22 @@ class Permissions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     U = "u"
     P = "p"
 
+
 class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the status of the storage account at the time the operation was called.
-    """
+    """Gets the status of the storage account at the time the operation was called."""
 
     CREATING = "Creating"
     RESOLVING_DNS = "ResolvingDNS"
     SUCCEEDED = "Succeeded"
 
+
 class PublicAccess(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies whether data in the container may be accessed publicly and the level of access.
-    """
+    """Specifies whether data in the container may be accessed publicly and the level of access."""
 
     CONTAINER = "Container"
     BLOB = "Blob"
     NONE = "None"
+
 
 class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets the reason that a storage account name could not be used. The Reason element is only
@@ -165,6 +179,7 @@ class Reason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
     ACCOUNT_NAME_INVALID = "AccountNameInvalid"
     ALREADY_EXISTS = "AlreadyExists"
+
 
 class ReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The reason for the restriction. As of now this can be "QuotaId" or
@@ -176,6 +191,7 @@ class ReasonCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     QUOTA_ID = "QuotaId"
     NOT_AVAILABLE_FOR_SUBSCRIPTION = "NotAvailableForSubscription"
 
+
 class Services(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed services accessible with the account SAS. Possible values include: Blob (b), Queue
     (q), Table (t), File (f).
@@ -185,6 +201,7 @@ class Services(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     Q = "q"
     T = "t"
     F = "f"
+
 
 class SignedResource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed services accessible with the service SAS. Possible values include: Blob (b),
@@ -196,6 +213,7 @@ class SignedResource(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     F = "f"
     S = "s"
 
+
 class SignedResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The signed resource types that are accessible with the account SAS. Service (s): Access to
     service-level APIs; Container (c): Access to container-level APIs; Object (o): Access to
@@ -205,6 +223,7 @@ class SignedResourceTypes(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     S = "s"
     C = "c"
     O = "o"
+
 
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Gets or sets the sku name. Required for account creation; optional for update. Note that in
@@ -217,16 +236,16 @@ class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     STANDARD_ZRS = "Standard_ZRS"
     PREMIUM_LRS = "Premium_LRS"
 
+
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the sku tier. This is based on the SKU name.
-    """
+    """Gets the sku tier. This is based on the SKU name."""
 
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
+
 class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the state of virtual network rule.
-    """
+    """Gets the state of virtual network rule."""
 
     PROVISIONING = "provisioning"
     DEPROVISIONING = "deprovisioning"
@@ -234,9 +253,9 @@ class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     FAILED = "failed"
     NETWORK_SOURCE_DELETED = "networkSourceDeleted"
 
+
 class UsageUnit(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Gets the unit of measurement.
-    """
+    """Gets the unit of measurement."""
 
     COUNT = "Count"
     BYTES = "Bytes"

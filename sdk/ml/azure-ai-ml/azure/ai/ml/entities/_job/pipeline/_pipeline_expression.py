@@ -199,6 +199,14 @@ class PipelineExpressionMixin:
         As overloadable boolean operators PEP (refer to: https://www.python.org/dev/peps/pep-0335/)
         was rejected, logical operations are also not supported.
         """
+        from azure.ai.ml.dsl._pipeline_component_builder import _is_inside_dsl_pipeline_func
+
+        # note: unexpected bool test always be checking if the object is None;
+        # so for non-pipeline scenarios, directly return True to avoid unexpected breaking,
+        # and for pipeline scenarios, will use is not None to replace bool test.
+        if not _is_inside_dsl_pipeline_func():
+            return True
+
         error_message = f"Type {type(self)} is not supported for operation bool()."
         raise UserErrorException(message=error_message, no_personal_data_message=error_message)
 

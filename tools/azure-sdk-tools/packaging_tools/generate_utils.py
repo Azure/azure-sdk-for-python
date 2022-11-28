@@ -7,12 +7,13 @@ import re
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
 from subprocess import check_call
-from typing import List, Dict, Any
+from typing import Dict, Any
 from glob import glob
 import yaml
 
 from .swaggertosdk.autorest_tools import build_autorest_options, generate_code
 from .swaggertosdk.SwaggerToSdkCore import CONFIG_FILE_DPG, read_config
+from jinja2 import Environment, FileSystemLoader
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -326,6 +327,25 @@ def get_npm_package_version(package: str) -> Dict[any, any]:
     
     return data["dependencies"]
 
+def generate_ci(template_path: Path, folder_path: Path, package_name: str) -> None:
+    ci = Path(folder_path, "ci.yml")
+    service_name = folder_path.name
+    safe_name = package_name.replace("-", "")
+    if not ci.exists():
+        env = Environment(loader=FileSystemLoader(template_path), keep_trailing_newline=True)
+        template = env.get_template('ci.yml')
+        content = template.render(package_name=package_name, service_name=service_name, safe_name=safe_name)
+    else:
+        with open(ci, "r") as file_in:
+            content = file_in.readlines()
+            for line in content:
+                if package_name in line:
+                    return
+            content.append(f'    - name: {package_name}\n')
+            content.append(f'      safeName: {safe_name}\n')
+    with open(ci, "w") as file_out:
+        file_out.writelines(content)
+
 def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     # update config file
     cadl_python = "@azure-tools/cadl-python"
@@ -353,13 +373,20 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
 
     # generate code
     check_call(f"npx cadl compile . --emit {cadl_python}", shell=True)
-    if Path(output_path / "output.yaml").exists():
-        os.remove(Path(output_path / "output.yaml"))
+    if (output_path / "output.yaml").exists():
+        os.remove(output_path / "output.yaml")
 
     # get version of codegen used in generation
     npm_package_verstion = get_npm_package_version(autorest_python)
 
     # return to original folder
     os.chdir(origin_path)
+
+    # add ci.yaml
+    generate_ci(
+        template_path=Path("scripts/quickstart_tooling_dpg/template_ci"),
+        folder_path=output_path.parent,
+        package_name=project_yaml["emitters"][cadl_python]["package-name"]
+    )
 
     return npm_package_verstion

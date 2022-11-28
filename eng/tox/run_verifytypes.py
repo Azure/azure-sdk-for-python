@@ -15,7 +15,8 @@ import argparse
 import os
 import logging
 import sys
-from environment_exclusion_list import is_ignored_package, VERIFYTYPES_OPT_OUT
+
+from ci_tools.environment_exclusions import is_ignored_package, VERIFYTYPES_OPT_OUT
 
 logging.getLogger().setLevel(logging.INFO)
 

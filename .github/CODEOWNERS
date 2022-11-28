@@ -70,7 +70,7 @@
 /sdk/communication/azure-communication-jobrouter/                    @sarkar-rajarshi
 
 # PRLabel: %Communication - Phone Numbers
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
+/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @RoyHerrod @danielav7
 
 # PRLabel: %Communication - Rooms
 /sdk/communication/azure-communication-rooms/                        @shirleyqin-msft
@@ -79,13 +79,13 @@
 /sdk/communication/azure-communication-sms/                          @RoyHerrod @arifibrahim4
 
 # PRLabel: %Communication - Identity
-/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @ostoliarova-msft
+/sdk/communication/azure-communication-identity/                     @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @ostoliarova-msft @mjafferi-msft
 
 # PRLabel: %Communication - NetworkTraversal
 /sdk/communication/azure-communication-networktraversal/             @ajpeacock0 @nathpete-msft
 
 # PRLabel: %Communication - Common
-/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @ostoliarova-msft
+/sdk/communication/**/_shared/                                       @Azure/acs-identity-sdk @petrsvihlik @AikoBB @maximrytych-ms @ostoliarova-msft @mjafferi-msft
 
 # PRLabel: %Confidential Ledger
 sdk/confidentialledger/azure-confidentialledger                      @lynshi

@@ -2106,6 +2106,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                         assert context.length is not None
                     assert summary.text
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
@@ -2118,7 +2119,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             RecognizePiiEntitiesAction(),
             # RecognizeLinkedEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/15859145
             AnalyzeSentimentAction(),
-            # AnalyzeHealthcareEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
+            AnalyzeHealthcareEntitiesAction(),  # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
             ExtractSummaryAction(),
         ]
         async with client:
@@ -2131,10 +2132,15 @@ class TestAnalyzeAsync(TextAnalyticsTest):
             result = await poller.result()
             async for res in result:
                 for doc in res:
-                    if doc.id == "1":
-                        assert doc.detected_language.iso6391_name == "en"
+                    # https://dev.azure.com/msazure/Cognitive%20Services/_workitems/edit/16040765
+                    if doc.kind == "Healthcare":
+                        if doc.id == "1":
+                            assert doc.detected_language == "en"
                     else:
-                        assert doc.detected_language.iso6391_name == "es"
+                        if doc.id == "1":
+                            assert doc.detected_language.iso6391_name == "en"
+                        elif doc.id == "2" and not doc.is_error:
+                            assert doc.detected_language.iso6391_name == "es"
 
     @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
@@ -2183,6 +2189,7 @@ class TestAnalyzeAsync(TextAnalyticsTest):
                     else:
                         assert doc.detected_language.iso6391_name == "es"
 
+    @pytest.mark.skipif(not is_public_cloud(), reason='Usgov and China Cloud are not supported')
     @TextAnalyticsPreparer()
     @TextAnalyticsClientPreparer()
     @recorded_by_proxy_async
