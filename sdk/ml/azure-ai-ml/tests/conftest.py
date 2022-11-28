@@ -3,6 +3,7 @@ import os
 import random
 import time
 import uuid
+import json
 from datetime import datetime
 from os import getenv
 from pathlib import Path
@@ -148,6 +149,25 @@ def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
         subscription_id=Test_Subscription,
         resource_group_name=Test_Resource_Group,
         workspace_name=Test_Workspace_Name,
+    )
+
+
+@pytest.fixture
+def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
+    mock_response = json.dumps(
+        {
+            "registryName": "registry",
+            "primaryRegionResourceProviderUri": "uri",
+            "subscriptionId": "sub_id",
+            "resourceGroup": "rg",
+        }
+    )
+    mocker.patch("azure.ai.ml._utils._registry_utils.RegistryDiscovery._get_registry_details", return_value=mock_response)
+    yield MLClient(
+        credential=Mock(spec_set=DefaultAzureCredential),
+        subscription_id=Test_Subscription,
+        resource_group_name=Test_Resource_Group,
+        registry_name=Test_Registry_Name,
     )
 
 

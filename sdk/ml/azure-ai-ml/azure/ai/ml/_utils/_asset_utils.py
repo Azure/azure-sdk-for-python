@@ -742,7 +742,7 @@ def _archive_or_restore(
             error_category=ErrorCategory.USER_ERROR,
             error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
         )
-    if label: #bani
+    if label:
         version = _resolve_label_to_asset(asset_operations, name, label).version
 
     if version:
@@ -775,15 +775,24 @@ def _archive_or_restore(
         container_resource = container_operation.get(
             name=name,
             resource_group_name=resource_group_name,
+            registry_name=registry_name,
+        ) if registry_name else container_operation.get(
+            name=name,
+            resource_group_name=resource_group_name,
             workspace_name=workspace_name,
         )
         container_resource.properties.is_archived = is_archived
         container_operation.create_or_update(
             name=name,
             resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            body=version_resource,
+            ) if registry_name else container_operation.create_or_update(
+            name=name,
+            resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            body=container_resource,
-        )
+            body=version_resource,
+            )
 
 
 def _resolve_label_to_asset(
