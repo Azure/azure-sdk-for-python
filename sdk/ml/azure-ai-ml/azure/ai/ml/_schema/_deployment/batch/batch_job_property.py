@@ -56,14 +56,13 @@ class BatchJobPropertySchema(PathAwareSchema):
 
 
         if data.get(EndpointYamlFields.BATCH_JOB_INPUT_DATA, None):
-            input_data = data[EndpointYamlFields.BATCH_JOB_INPUT_DATA]["input_data"]
-            if isinstance(input_data, Input):
-                if input_data.type == AssetTypes.URI_FILE:
-                    data[EndpointYamlFields.BATCH_JOB_INPUT_DATA] = {"uriFile": UriFileJobInput(uri=input_data.path)}
-                elif input_data.type == AssetTypes.URI_FOLDER:
-                    data[EndpointYamlFields.BATCH_JOB_INPUT_DATA] = {
-                        "uriFolder": UriFolderJobInput(uri=input_data.path)
-                    }
+            if data.get(EndpointYamlFields.BATCH_JOB_INPUT_DATA, None):
+                for key, input_data in data[EndpointYamlFields.BATCH_JOB_INPUT_DATA].items():
+                    if isinstance(input_data, Input):
+                        if input_data.type == AssetTypes.URI_FILE:
+                            data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = UriFileJobInput(uri=input_data.path)
+                        elif input_data.type == AssetTypes.URI_FOLDER:
+                            data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = UriFolderJobInput(uri=input_data.path)
 
         if data.get(EndpointYamlFields.COMPUTE, None):
             data[EndpointYamlFields.COMPUTE] = ComputeConfiguration(

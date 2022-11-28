@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Dict
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
 from azure.ai.ml.entities._deployment.batch_job import BatchJob
+from azure.ai.ml.entities._deployment.batch_job_property import BatchJobProperty
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview import (
     AzureMachineLearningWorkspaces as ServiceClientDataPlanePreview
@@ -209,7 +210,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         deployment_name: str = None,
         inputs: Dict[str, Input] = None,
         **kwargs,
-    ) -> BatchJob:
+    ) -> BatchJobProperty:
         """Invokes the batch endpoint with the provided payload.
 
         :param endpoint_name: The endpoint name.
@@ -263,22 +264,21 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
-        # Batch job doesn't have a python class, loading a rest object using params override
         context = {
             BASE_PATH_CONTEXT_KEY: Path(".").parent,
             PARAMS_OVERRIDE_KEY: params_override,
         }
 
-        batch_job = BatchJobPropertySchema(context=context).load(data={})  # pylint: disable=no-member
+        batch_job_property = BatchJobPropertySchema(context=context).load(data={})  # pylint: disable=no-member
         # update output datastore to arm id if needed
         # TODO: Unify datastore name -> arm id logic, TASK: 1104172
         if (
-            batch_job.output_dataset
-            and batch_job.output_dataset.datastore_id
+            batch_job_property.output_dataset
+            and batch_job_property.output_dataset.datastore_id
             and (not is_ARM_id_for_resource(batch_job.output_dataset.datastore_id))
         ):
-            batch_job.output_dataset.datastore_id = get_datastore_arm_id(
-                batch_job.output_dataset.datastore_id, self._operation_scope
+            batch_job_property.output_dataset.datastore_id = get_datastore_arm_id(
+                batch_job_property.output_dataset.datastore_id, self._operation_scope
             )
 
         endpoint = self._batch_operation.get(
@@ -299,12 +299,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         response = self._requests_pipeline.post(
             endpoint.properties.scoring_uri,
-            json=BatchJob(properties=batch_job).serialize(),  # pylint: disable=no-member
+            json=BatchJob(properties=batch_job_property)._to_rest_object().serialize(),  # pylint: disable=no-member
             headers=headers,
         )
         validate_response(response)
         batch_job = json.loads(response.text())
-        return BatchJob.deserialize(batch_job)  # pylint: disable=no-member
+        return BatchJob._from_dict(batch_job)  # pylint: disable=no-member
 
     @distributed_trace
     # @monitor_with_activity(logger, "BatchEndpoint.ListJobs", ActivityType.PUBLICAPI)

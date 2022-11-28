@@ -7,8 +7,10 @@ from typing import Dict
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._deployment.compute_binding import ComputeBinding
+from azure.ai.ml.entities._deployment.batch_job_property import BatchJobProperty
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._system_data import SystemData
+from azure.ai.ml.entities._deployment.data_version import DataVersion
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource as RestBatchJobResource
 
 # pylint: disable=too-many-instance-attributes
@@ -54,30 +56,25 @@ class BatchJob:
         name: str = None,
         type: str = None, # pylint: disable=redefined-builtin
         system_data: SystemData = None,
-        compute: ComputeBinding = None,
-        dataset: str = None,
-        error_threshold: int = None,
-        input_data: Dict= None,
-        mini_batch_size: int = None,
-        batch_job_name: str = None,
-        output_file_name: str = None,
-        retry_setting: BatchRetrySettings = None,
-        status: str = None,
+        properties: BatchJobProperty = None,
         **kwargs,
     ):  # pylint: disable=unused-argument
         self.id = id
         self.name = name
         self.type = type
         self.system_data = system_data
-        self.compute = compute
-        self.dataset = dataset
-        self.error_threshold = error_threshold
-        self.input_data = input_data
-        self.mini_batch_size = mini_batch_size
-        self.batch_job_name = batch_job_name
-        self.retry_setting = retry_setting
-        self.output_file_name = output_file_name
-        self.status = status
+        self.properties = properties
+        self.compute = properties.compute
+        self.dataset = properties.dataset
+        self.error_threshold = properties.error_threshold
+        self.input_data = properties.input_data
+        self.mini_batch_size = properties.mini_batch_size
+        self.batch_job_name = properties.name
+        self.retry_setting = properties.retry_settings
+        self.output_file_name = properties.output_file_name
+        self.status = properties.status
+        self.output_data = properties.output_data
+        self.output_dataset = properties.output_dataset
 
     # pylint: disable=protected-access
     @classmethod
@@ -87,14 +84,23 @@ class BatchJob:
             id=job.id,
             name=job.name,
             type=job.type,
-            dataset = job_property.dataset,
-            error_threshold = job_property.error_threshold,
-            input_data = job_property.input_data,
-            mini_batch_size = job_property.mini_batch_size,
-            batch_job_name = job_property.name,
-            retry_setting = job_property.retry_settings,
+            properties = job_property,
             system_data= SystemData._from_rest_object(job.system_data),
-            status = job_property.status
+        )
+
+    @classmethod
+    def _from_dict(cls, job: Dict) -> "BatchJob":
+        return cls(
+        id=job.get("id"),
+        name=job.get("name"),
+        type=job.get("type"),
+        properties = BatchJobProperty._from_dict(job.get("properties")),
+        system_data= job.get("system_data"),
+        )
+
+    def _to_rest_object(self) -> RestBatchJobResource:
+        return RestBatchJobResource(
+            properties= self.properties._to_rest_object()
         )
 
     def _to_dict(self) -> Dict:
