@@ -32,6 +32,7 @@ def update_pipeline_schema():
     "recorded_test",
     "mock_code_hash",
     "enable_pipeline_private_preview_features",
+    "enable_private_preview_schema_features",
     "update_pipeline_schema",
     "mock_asset_name",
     "mock_component_hash",
