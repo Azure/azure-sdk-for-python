@@ -74,7 +74,7 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
 
     @acr_preparer()
     @recorded_by_proxy
-    def test_delete_repository(self, containerregistry_endpoint, containerregistry_resource_group):
+    def test_delete_repository(self, containerregistry_endpoint):
         self.import_image(containerregistry_endpoint, HELLO_WORLD, [TO_BE_DELETED])
         client = self.create_registry_client(containerregistry_endpoint)
 
@@ -604,7 +604,8 @@ class TestContainerRegistryClient(ContainerRegistryTestClass):
     # Live only, the fake credential doesn't check auth scope the same way
     @pytest.mark.live_test_only
     @acr_preparer()
-    def test_construct_container_registry_client(self, containerregistry_endpoint):
+    def test_construct_container_registry_client(self, **kwargs):
+        containerregistry_endpoint = kwargs.pop("containerregistry_endpoint")
         authority = get_authority(containerregistry_endpoint)
         credential = self.get_credential(authority)
 
