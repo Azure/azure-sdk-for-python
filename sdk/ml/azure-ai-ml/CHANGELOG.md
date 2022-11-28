@@ -5,6 +5,10 @@
 ### Features Added
 - Added OS Patching Parameters to Compute Instance.
 
+### Bugs Fixed
+- Fixed Sweep node not excluding optional input with value `None` in REST object. 
+- Fixed bool test for output in download operation.
+
 ## 1.1.2 (2022-11-21)
 
 ### Features Added

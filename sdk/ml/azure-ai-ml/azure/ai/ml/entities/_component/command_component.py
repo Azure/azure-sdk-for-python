@@ -182,7 +182,10 @@ class CommandComponent(Component, ParameterizedCommand):
         return CommandComponentSchema(context=context)
 
     def _customized_validate(self):
-        return super(CommandComponent, self)._customized_validate().merge_with(self._validate_command())
+        validation_result = super(CommandComponent, self)._customized_validate()
+        validation_result.merge_with(self._validate_command())
+        validation_result.merge_with(self._validate_early_available_output())
+        return validation_result
 
     def _validate_command(self) -> MutableValidationResult:
         validation_result = self._create_empty_validation_result()
@@ -198,6 +201,14 @@ class CommandComponent(Component, ParameterizedCommand):
                     yaml_path="command",
                     message="Invalid data binding expression: {}".format(", ".join(invalid_expressions)),
                 )
+        return validation_result
+
+    def _validate_early_available_output(self) -> MutableValidationResult:
+        validation_result = self._create_empty_validation_result()
+        for name, output in self.outputs.items():
+            if output.early_available is True and output.is_control is not True:
+                msg = f"Early available output {name!r} requires is_control as True, got {output.is_control!r}."
+                validation_result.append_error(message=msg, yaml_path=f"outputs.{name}")
         return validation_result
 
     def _is_valid_data_binding_expression(self, data_binding_expression: str) -> bool:
