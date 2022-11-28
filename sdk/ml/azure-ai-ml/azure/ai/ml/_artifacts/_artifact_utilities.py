@@ -497,6 +497,7 @@ def get_temporary_data_reference(
     request_url = f"{SERVICE_URL.format(workspace_location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
     response = s.post(request_url, data=data_encoded, headers=request_headers)
     if response.status_code != 200:
+        print("It's failing to get the temporary data reference")
         raise HttpResponseError(response=response)
 
     response_json = json.loads(response.text)
@@ -547,6 +548,7 @@ def get_asset_by_hash(
     if response.status_code == 404:
         return None
     if response.status_code != 200:
+        print("it's failing trying to get the asset by hash")
         raise HttpResponseError(response=response)
 
     response_json = json.loads(response.text)
