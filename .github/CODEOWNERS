@@ -70,7 +70,7 @@
 /sdk/communication/azure-communication-jobrouter/                    @sarkar-rajarshi
 
 # PRLabel: %Communication - Phone Numbers
-/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @lucasrsant @RoyHerrod @danielav7
+/sdk/communication/azure-communication-phonenumbers/                 @miguhern @whisper6284 @RoyHerrod @danielav7
 
 # PRLabel: %Communication - Rooms
 /sdk/communication/azure-communication-rooms/                        @shirleyqin-msft
