@@ -12,8 +12,7 @@ from devtools_testutils import AzureRecordedTestCase, is_live
 from devtools_testutils.aio import recorded_by_proxy_async
 from _shared.utils import get_http_logging_policy
 from devtools_testutils.fake_credentials_async import AsyncFakeCredential
-from utils import is_token_expiration_within_allowed_deviation, generate_teams_user_aad_token, \
-    skip_get_token_for_teams_user_test
+from utils import is_token_expiration_within_allowed_deviation
 from azure.identity.aio import DefaultAzureCredential
 from acs_identity_test_case import ACSIdentityTestCase
 
@@ -375,7 +374,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_from_managed_identity(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         if not is_live():
             credential = AsyncFakeCredential()
@@ -387,7 +386,7 @@ class TestClientAsync(ACSIdentityTestCase):
             http_logging_policy=get_http_logging_policy()
         )
         async with identity_client:
-            aad_token, user_object_id = generate_teams_user_aad_token(self)
+            aad_token, user_object_id = self.generate_teams_user_aad_token()
             token_response = await identity_client.get_token_for_teams_user(aad_token, self.m365_client_id,
                                                                             user_object_id)
 
@@ -395,14 +394,14 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_valid_params(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
         async with identity_client:
-            aad_token, user_object_id = generate_teams_user_aad_token(self)
+            aad_token, user_object_id = self.generate_teams_user_aad_token()
             token_response = await identity_client.get_token_for_teams_user(aad_token, self.m365_client_id,
                                                                             user_object_id)
 
@@ -410,7 +409,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_invalid_token(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
@@ -425,7 +424,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_empty_token(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
@@ -440,7 +439,7 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_expired_token(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
@@ -448,7 +447,7 @@ class TestClientAsync(ACSIdentityTestCase):
         )
         async with identity_client:
             with pytest.raises(Exception) as ex:
-                _, user_object_id = generate_teams_user_aad_token(self)
+                _, user_object_id = self.generate_teams_user_aad_token()
                 await identity_client.get_token_for_teams_user(self.expired_teams_token, self.m365_client_id,
                                                                user_object_id)
 
@@ -457,13 +456,13 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_empty_client_id(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_object_id = generate_teams_user_aad_token(self)
+        aad_token, user_object_id = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.get_token_for_teams_user(aad_token, "", user_object_id)
@@ -473,13 +472,13 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_invalid_client_id(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_object_id = generate_teams_user_aad_token(self)
+        aad_token, user_object_id = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.get_token_for_teams_user(aad_token, "invalid", user_object_id)
@@ -489,13 +488,13 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_wrong_client_id(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, user_object_id = generate_teams_user_aad_token(self)
+        aad_token, user_object_id = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.get_token_for_teams_user(aad_token, user_object_id, user_object_id)
@@ -505,13 +504,13 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_invalid_user_object_id(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, _ = generate_teams_user_aad_token(self)
+        aad_token, _ = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, "invalid")
@@ -521,13 +520,13 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_empty_user_object_id(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, _ = generate_teams_user_aad_token(self)
+        aad_token, _ = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, "")
@@ -537,13 +536,13 @@ class TestClientAsync(ACSIdentityTestCase):
 
     @recorded_by_proxy_async
     async def test_get_token_for_teams_user_with_wrong_user_object_id(self):
-        if skip_get_token_for_teams_user_test(self.skip_get_token_for_teams_user_tests):
+        if self.skip_get_token_for_teams_user_test():
             return
         identity_client = CommunicationIdentityClient.from_connection_string(
             self.connection_str,
             http_logging_policy=get_http_logging_policy()
         )
-        aad_token, _ = generate_teams_user_aad_token(self)
+        aad_token, _ = self.generate_teams_user_aad_token()
         async with identity_client:
             with pytest.raises(Exception) as ex:
                 await identity_client.get_token_for_teams_user(aad_token, self.m365_client_id, self.m365_client_id)
