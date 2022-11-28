@@ -268,7 +268,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_toll_free_area_codes(self):
         async with self.phone_number_client:
-            area_codes = self.phone_number_client.list_available_area_codes("US")
+            area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
                 items.append(item)
@@ -279,7 +279,7 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         async with self.phone_number_client:
             localities = self.phone_number_client.list_available_localities("US")
             async for first_locality in localities:
-                area_codes = self.phone_number_client.list_available_area_codes("US", "person", first_locality.localized_name)
+                area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name)
                 items = []
                 async for item in area_codes:
                     items.append(item)

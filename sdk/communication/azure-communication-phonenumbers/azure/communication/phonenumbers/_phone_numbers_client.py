@@ -354,6 +354,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     def list_available_area_codes(
         self,
         country_code, # type: str
+        phone_number_type, #type: PhoneNumberType
         assignment_type=None, #type: PhoneNumberAssignmentType
         locality=None, # type: str
         **kwargs # type: Any
@@ -365,6 +366,9 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
+        :param phone_number_type: Filter by phone number type, e.g. Geographic, TollFree. Known values are:
+        "geographic" and "tollFree". Required.
+        :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
         :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
         "person" and "application". Default value is None.
         :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
@@ -381,17 +385,9 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        if (locality == None):
-            return self._phone_number_client.phone_numbers.list_area_codes(
+        return self._phone_number_client.phone_numbers.list_area_codes(
                 country_code,
-                phone_number_type=PhoneNumberType.TOLL_FREE,
-                assignment_type=PhoneNumberAssignmentType.APPLICATION,
-                **kwargs
-            )
-        else:
-            return self._phone_number_client.phone_numbers.list_area_codes(
-                country_code,
-                phone_number_type=PhoneNumberType.GEOGRAPHIC,
+                phone_number_type=phone_number_type,
                 assignment_type= assignment_type,
                 locality=locality,
                 administrative_division= kwargs.pop("administrative_division", None),

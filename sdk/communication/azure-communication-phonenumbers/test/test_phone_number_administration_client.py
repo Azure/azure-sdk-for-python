@@ -233,12 +233,12 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         assert ex.value.message is not None
 
     def test_list_toll_free_area_codes(self):
-        area_codes = self.phone_number_client.list_available_area_codes("US")
+        area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
         assert area_codes.next()    
 
     def test_list_geographic_area_codes(self):
         first_locality = self.phone_number_client.list_available_localities("US")
-        area_codes = self.phone_number_client.list_available_area_codes("US", "person", first_locality.next().localized_name)
+        area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.next().localized_name)
         assert area_codes.next()  
 
     def test_list_countries(self):
