@@ -12,13 +12,14 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
 from .. import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -344,7 +345,8 @@ class ErrorResponse(_serialization.Model):
 
 
 class InnerErrorModel(_serialization.Model):
-    """An object containing more specific information about the error. As per Microsoft One API guidelines -
+    """An object containing more specific information about the error. As per Microsoft One API
+    guidelines -
     https://github.com/Microsoft/api-guidelines/blob/vNext/Guidelines.md#7102-error-condition-responses.
 
     All required parameters must be populated in order to send to Azure.

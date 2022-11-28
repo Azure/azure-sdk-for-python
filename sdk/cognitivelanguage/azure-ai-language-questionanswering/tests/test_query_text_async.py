@@ -6,7 +6,8 @@
 import pytest
 
 from azure.ai.language.questionanswering.aio import QuestionAnsweringClient
-from azure.ai.language.questionanswering._operations._operations import build_get_answers_from_text_request
+from azure.ai.language.questionanswering._operations._operations import \
+    build_question_answering_get_answers_from_text_request as build_get_answers_from_text_request
 from azure.ai.language.questionanswering.models import AnswersFromTextOptions, TextDocument
 from azure.core.credentials import AzureKeyCredential
 

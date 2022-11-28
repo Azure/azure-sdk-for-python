@@ -11,7 +11,7 @@ from ._models import (
     MetadataFilter as MetadataFilterGenerated,
     AnswersFromTextOptions as AnswersFromTextOptionsGenerated,
     TextDocument,
-    JSON
+    JSON,
 )
 
 
