@@ -22,9 +22,11 @@ USAGE:
 """
 
 import os
+import pandas as pd
+
 from azure.ai.anomalydetector import AnomalyDetectorClient
 from azure.core.credentials import AzureKeyCredential
-import pandas as pd
+from azure.ai.anomalydetector.models import *
 
 
 class DetectChangePointsSample(object):
@@ -46,16 +48,16 @@ class DetectChangePointsSample(object):
         series = []
         data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding='utf-8', parse_dates=[0])
         for index, row in data_file.iterrows():
-            series.append({"timestamp": row[0], "value": row[1]})
+            series.append(TimeSeriesPoint(timestamp = row[0], value = row[1]))
         # </loadDataFile>
 
         # Create a request from the data file
 
         # <request>
-        request = {
-            "series": series,
-            "granularity": "daily"
-        }
+        request = ChangePointDetectRequest(
+            series = series,
+            granularity = TimeGranularity.DAILY,
+        )
         # </request>
 
         # detect change points throughout the entire time series
@@ -69,9 +71,9 @@ class DetectChangePointsSample(object):
         except Exception as e:
             print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
 
-        if any(response['isChangePoint']):
+        if any(response.is_change_point):
             print('An change point was detected at index:')
-            for i, value in enumerate(response['isChangePoint']):
+            for i, value in enumerate(response.is_change_point):
                 if value:
                     print(i)
         else:

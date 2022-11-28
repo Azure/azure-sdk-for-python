@@ -18,6 +18,7 @@ from azure.core.utils._utils import _FixedOffset
 from collections.abc import MutableMapping
 from azure.core.exceptions import DeserializationError
 from azure.core import CaseInsensitiveEnumMeta
+from azure.core.pipeline import PipelineResponse
 import copy
 
 _LOGGER = logging.getLogger(__name__)
@@ -253,9 +254,11 @@ _DESERIALIZE_MAPPING = {
 
 
 def _get_model(module_name: str, model_name: str):
+    models = {k: v for k, v in sys.modules[module_name].__dict__.items() if isinstance(v, type)}
     module_end = module_name.rsplit(".", 1)[0]
     module = sys.modules[module_end]
-    models = {k: v for k, v in module.__dict__.items() if isinstance(v, type)}
+    models.update({k: v for k, v in module.__dict__.items() if isinstance(v, type)})
+    model_name = model_name.split(".")[-1]
     if model_name not in models:
         return model_name
     return models[model_name]
@@ -488,7 +491,7 @@ def _get_deserialize_callable_from_annotation(
             def _deserialize_with_union(union_annotation: typing._GenericAlias, obj):
                 for t in union_annotation.__args__:
                     try:
-                        return _deserialize(t, obj)
+                        return _deserialize(t, obj, module)
                     except DeserializationError:
                         pass
                 raise DeserializationError()
@@ -535,7 +538,10 @@ def _get_deserialize_callable_from_annotation(
             ):
                 if obj is None:
                     return obj
-                return {_deserialize(key_deserializer, k): _deserialize(value_deserializer, v) for k, v in obj.items()}
+                return {
+                    _deserialize(key_deserializer, k, module): _deserialize(value_deserializer, v, module)
+                    for k, v in obj.items()
+                }
 
             return functools.partial(
                 _deserialize_dict,
@@ -554,7 +560,8 @@ def _get_deserialize_callable_from_annotation(
                     if obj is None:
                         return obj
                     return type(obj)(
-                        _deserialize(deserializer, entry) for entry, deserializer in zip(obj, entry_deserializers)
+                        _deserialize(deserializer, entry, module)
+                        for entry, deserializer in zip(obj, entry_deserializers)
                     )
 
                 entry_deserializers = [
@@ -569,7 +576,7 @@ def _get_deserialize_callable_from_annotation(
             ):
                 if obj is None:
                     return obj
-                return type(obj)(_deserialize(deserializer, entry) for entry in obj)
+                return type(obj)(_deserialize(deserializer, entry, module) for entry in obj)
 
             return functools.partial(_deserialize_sequence, deserializer)
     except (TypeError, IndexError, AttributeError, SyntaxError):
@@ -610,8 +617,12 @@ def _deserialize_with_callable(
         raise DeserializationError() from e
 
 
-def _deserialize(deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]], value: typing.Any):
-    deserializer = _get_deserialize_callable_from_annotation(deserializer, "")
+def _deserialize(
+    deserializer: typing.Optional[typing.Callable[[typing.Any], typing.Any]], value: typing.Any, module: str = ""
+):
+    if isinstance(value, PipelineResponse):
+        value = value.http_response.json()
+    deserializer = _get_deserialize_callable_from_annotation(deserializer, module)
     return _deserialize_with_callable(deserializer, value)
 
 
