@@ -33,11 +33,11 @@ class AzureAppConfigurationProvider:
         """
         Loads configuration settings from Azure App Configuration into a Python application.
 
-        :param connection_string: Connection string (one of connection_string or endpoint and credential must be set)
+        :keyword connection_string: Connection string (one of connection_string or endpoint and credential must be set)
         :type connection_string: str
-        :param endpoint: Endpoint (one of connection_string or endpoint and credential must be set)
+        :keyword endpoint: Endpoint (one of connection_string or endpoint and credential must be set)
         :type endpoint: str
-        :param credential: Credential (one of connection_string or endpoint and credential must be set)
+        :keyword credential: Credential (one of connection_string or endpoint and credential must be set)
         :type credential: Union[AppConfigConnectionStringCredential, TokenCredential]
         :keyword selects: List of setting selectors to filter configuration settings
         :type selects: list[~azure.appconfigurationprovider.SettingSelector]
