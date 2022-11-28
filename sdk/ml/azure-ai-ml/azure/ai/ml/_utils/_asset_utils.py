@@ -652,6 +652,33 @@ def _create_or_update_autoincrement(
     return result
 
 
+def _get_next_version_from_container(
+    name: str,
+    container_operation: Any,
+    resource_group_name: str,
+    workspace_name: str,
+    registry_name: str,
+    **kwargs,
+) -> str:
+    try:
+        container = container_operation.get(
+            name=name,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            **kwargs,
+        ) if registry_name else container_operation.get(
+            name=name,
+            resource_group_name=resource_group_name,
+            workspace_name=workspace_name,
+            **kwargs,
+        )
+        version = container.properties.next_version
+
+    except ResourceNotFoundError:
+        version = "1"
+    
+    return version
+
 def _get_latest(
     asset_name: str,
     version_operation: Any,
