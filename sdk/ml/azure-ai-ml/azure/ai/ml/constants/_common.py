@@ -68,7 +68,6 @@ COMPUTE_UPDATE_ERROR = (
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
 MAX_ASSET_STORE_API_CALL_ATTEMPTS = 3
-REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"
