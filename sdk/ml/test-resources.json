@@ -404,6 +404,14 @@
       "type": "bool",
       "defaultValue": "[bool('false')]"
     },
+    "assignUAIRoles": {
+      "type": "bool",
+      "defaultValue": "[bool('false')]"
+    },
+    "guidValue": {
+      "type": "string",
+      "defaultValue": "[newGuid()]"
+    },
     "uaiNames": {
       "type": "array",
       "defaultValue": [
@@ -772,6 +780,25 @@
         "name": "uaicopy",
         "count": "[length(parameters('uaiNames'))]"
       }
+    },
+    {
+      "type": "Microsoft.Authorization/roleAssignments",
+      "apiVersion": "2022-04-01",
+      "name": "[concat(parameters('uaiNames')[copyIndex()], '-', parameters('guidValue'))]",
+      "scope": "[concat('/subscriptions/', subscription().id)]",
+      "dependsOn": [
+          "[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('uaiNames')[copyIndex()])]"
+      ],
+      "properties": {
+          "roleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+          "principalId": "[reference(resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', parameters('uaiNames')[copyIndex()]), '2022-01-31-preview').principalId]",
+          "principalType": "ServicePrincipal"
+      },
+      "copy": {
+        "name": "uainamecopy",
+        "count": "[length(parameters('uaiNames'))]"
+      },
+      "condition": "[parameters('assignUAIRoles')]"
     },
     {
       "type": "Microsoft.MachineLearningServices/workspaces/computes",
