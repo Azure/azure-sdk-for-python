@@ -173,33 +173,38 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
     @staticmethod
     async def _receive_task(consumer):
-        max_retries = consumer._client._config.max_retries  # pylint:disable=protected-access
+        # pylint:disable=protected-access
+        max_retries = consumer._client._config.max_retries
         retried_times = 0
-        while retried_times <= max_retries and consumer._callback_task_run: # pylint: disable=protected-access
-            try:
-                await consumer._open() # pylint: disable=protected-access
-                await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch) # pylint: disable=protected-access
-            except asyncio.CancelledError:  # pylint: disable=try-except-raise
-                raise
-            except Exception as exception:  # pylint: disable=broad-except
-                if (
-                    isinstance(exception, errors.AMQPLinkError)
-                    and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
-                ):
-                    raise await consumer._handle_exception(exception) # pylint: disable=protected-access
-                if not consumer.running:  # exit by close
-                    return
-                if consumer._last_received_event: # pylint: disable=protected-access
-                    consumer._offset = consumer._last_received_event.offset # pylint: disable=protected-access
-                last_exception = await consumer._handle_exception(exception) # pylint: disable=protected-access
-                retried_times += 1
-                if retried_times > max_retries:
-                    _LOGGER.info(
-                        "%r operation has exhausted retry. Last exception: %r.",
-                        consumer._name, # pylint: disable=protected-access
-                        last_exception,
-                    )
-                    raise last_exception
+        running = True
+        try:
+            while retried_times <= max_retries and running and consumer._callback_task_run:
+                try:
+                    await consumer._open() # pylint: disable=protected-access
+                    running = await cast(ReceiveClientAsync, consumer._handler).do_work_async(batch=consumer._prefetch)
+                except asyncio.CancelledError:  # pylint: disable=try-except-raise
+                    raise
+                except Exception as exception:  # pylint: disable=broad-except
+                    if (
+                        isinstance(exception, errors.AMQPLinkError)
+                        and exception.condition == errors.ErrorCondition.LinkStolen  # pylint: disable=no-member
+                    ):
+                        raise await consumer._handle_exception(exception)
+                    if not consumer.running:  # exit by close
+                        return
+                    if consumer._last_received_event:
+                        consumer._offset = consumer._last_received_event.offset
+                    last_exception = await consumer._handle_exception(exception)
+                    retried_times += 1
+                    if retried_times > max_retries:
+                        _LOGGER.info(
+                            "%r operation has exhausted retry. Last exception: %r.",
+                            consumer._name,
+                            last_exception,
+                        )
+                        raise last_exception
+        finally:
+            consumer._callback_task_run = False
 
     @staticmethod
     async def message_received_async(consumer, message: Message) -> None:
@@ -225,19 +230,12 @@ class PyamqpTransportAsync(PyamqpTransport, AmqpTransportAsync):
 
         tasks = [callback_task, receive_task]
         try:
-            for task in asyncio.as_completed(tasks):
-                try:
-                    await task
-                    await asyncio.sleep(0)
-                except Exception: # pylint: disable=broad-except
-                    consumer._callback_task_run = False
-            for task in tasks:
-                if task.done() and task.exception():
-                    raise task.exception()
-        except asyncio.CancelledError:
+            await asyncio.gather(*tasks)
+        finally:
             consumer._callback_task_run = False
-            await asyncio.sleep(0)
-            raise
+            for t in tasks:
+                if not t.done():
+                    await asyncio.wait([t], timeout=1)
 
     @staticmethod
     async def create_token_auth_async(auth_uri, get_token, token_type, config, **kwargs):
