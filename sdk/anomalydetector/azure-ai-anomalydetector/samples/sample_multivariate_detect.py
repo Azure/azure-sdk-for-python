@@ -29,8 +29,8 @@ from azure.core.credentials import AzureKeyCredential
 from azure.core.exceptions import HttpResponseError
 from azure.ai.anomalydetector.models import *
 
-class MultivariateSample:
 
+class MultivariateSample:
     def __init__(self, subscription_key, anomaly_detector_endpoint):
         self.sub_key = subscription_key
         self.end_point = anomaly_detector_endpoint
@@ -68,7 +68,7 @@ class MultivariateSample:
                 model_info = self.ad_client.get_multivariate_model(trained_model_id)
                 print(model_info)
                 model_status = model_info.model_info.status
-                #model_status = model_info.model_info.status
+                # model_status = model_info.model_info.status
                 print("Model is {}".format(model_status))
                 time.sleep(30)
 
@@ -76,7 +76,11 @@ class MultivariateSample:
                 print("Creating model failed.")
                 print("Errors:")
                 if len(model_info.model_info.errors) > 0:
-                    print("Error code: {}. Message: {}".format(model_info.model_info.errors[0].code, model_info.model_info.errors[0].message))
+                    print(
+                        "Error code: {}. Message: {}".format(
+                            model_info.model_info.errors[0].code, model_info.model_info.errors[0].message
+                        )
+                    )
                 else:
                     print("None")
 
@@ -90,12 +94,11 @@ class MultivariateSample:
                 # Return the latest model id
             return trained_model_id
         except HttpResponseError as e:
-            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
+            print("Error code: {}".format(e.error.code), "Error message: {}".format(e.error.message))
         except Exception as e:
             raise e
 
         return None
-
 
     def batch_detect(self, model_id, body):
 
@@ -122,13 +125,13 @@ class MultivariateSample:
                     print("None")
                 return None
 
-            return r 
+            return r
 
         except HttpResponseError as e:
-            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
+            print("Error code: {}".format(e.error.code), "Error message: {}".format(e.error.message))
         except Exception as e:
             raise e
-        
+
         return None
 
     def delete_model(self, model_id):
@@ -138,7 +141,6 @@ class MultivariateSample:
         model_list = self.list_models()
         print("{:d} available models after deletion.".format(len(model_list)))
 
-
     def last_detect(self, model_id, variables):
 
         # Detect anomaly by sync api
@@ -146,34 +148,32 @@ class MultivariateSample:
         print("Get last detection result")
         return r
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
     ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
 
     ## Create a new sample and client
     sample = MultivariateSample(SUBSCRIPTION_KEY, ANOMALY_DETECTOR_ENDPOINT)
 
-
     # Train a new model
     time_format = "%Y-%m-%dT%H:%M:%SZ"
-    blob_url = '{Your Blob Url}'
+    blob_url = "{Your Blob Url}"
     train_body = ModelInfo(
-        data_source = blob_url,
-        start_time = datetime.strptime("2021-01-02T00:00:00Z", time_format),
-        end_time = datetime.strptime("2021-01-02T05:00:00Z", time_format),
-        data_schema = DataSchema.MULTI_TABLE,
-        display_name = "sample",
-        sliding_window = 200,
-        align_policy = AlignPolicy(
-            align_mode = AlignMode.OUTER, fill_n_a_method = FillNAMethod.LINEAR, padding_value = 0
-        ),
+        data_source=blob_url,
+        start_time=datetime.strptime("2021-01-02T00:00:00Z", time_format),
+        end_time=datetime.strptime("2021-01-02T05:00:00Z", time_format),
+        data_schema=DataSchema.MULTI_TABLE,
+        display_name="sample",
+        sliding_window=200,
+        align_policy=AlignPolicy(align_mode=AlignMode.OUTER, fill_n_a_method=FillNAMethod.LINEAR, padding_value=0),
     )
     model_id = sample.train(train_body)
 
     # Batch Inference
     batch_inference_body = DetectionRequest(
-        data_source = blobUrl,
-        top_contributor_count = 10,
+        data_source=blobUrl,
+        top_contributor_count=10,
         start_time=datetime.strptime("2021-01-02T00:00:00Z", time_format),
         end_time=datetime.strptime("2021-01-02T05:00:00Z", time_format),
     )
@@ -186,11 +186,22 @@ if __name__ == '__main__':
 
     # See detailed inference result
     for r in result.results:
-        print("timestamp: {}, is_anomaly: {:<5}, anomaly score: {:.4f}, severity: {:.4f}, contributor count: {:<4d}".format(r.timestamp, r.value.is_anomaly, r.value.score, r.value.severity, len(r.value.interpretation) if r.value.is_anomaly else 0))
+        print(
+            "timestamp: {}, is_anomaly: {:<5}, anomaly score: {:.4f}, severity: {:.4f}, contributor count: {:<4d}".format(
+                r.timestamp,
+                r.value.is_anomaly,
+                r.value.score,
+                r.value.severity,
+                len(r.value.interpretation) if r.value.is_anomaly else 0,
+            )
+        )
         if r.value.interpretation:
             for contributor in r.value.interpretation:
-                print("\tcontributor variable: {:<10}, contributor score: {:.4f}".format(contributor.variable, contributor.contribution_score))
-
+                print(
+                    "\tcontributor variable: {:<10}, contributor score: {:.4f}".format(
+                        contributor.variable, contributor.contribution_score
+                    )
+                )
 
     # *******************************************************************************************************************
     # use your own inference data sending to last detection api, you should define your own variables and detectingPoints
@@ -207,23 +218,25 @@ if __name__ == '__main__':
     #        "timestamps": ['2021-01-01T00:00:00Z', '2021-01-01T00:01:00Z', ...],
     #        "values": [0, 0, ...]
     #    }
-    #]
+    # ]
 
     # Last detection
-    with open('./sample_data/multivariate_sample_data.json') as f:
+    with open("./sample_data/multivariate_sample_data.json") as f:
         variables_data = json.load(f)
 
     variables = []
-    for item in variables_data['variables']:
-        variables.append(VariableValues(
-            variable = item['variable'],
-            timestamps = item['timestamps'],
-            values = item['values'],
-        ))
+    for item in variables_data["variables"]:
+        variables.append(
+            VariableValues(
+                variable=item["variable"],
+                timestamps=item["timestamps"],
+                values=item["values"],
+            )
+        )
 
     last_inference_body = LastDetectionRequest(
-        variables = variables,
-        top_contributor_count = 10,
+        variables=variables,
+        top_contributor_count=10,
     )
     last_detect_result = sample.last_detect(model_id, last_inference_body)
 
