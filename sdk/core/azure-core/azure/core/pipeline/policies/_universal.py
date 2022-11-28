@@ -360,8 +360,8 @@ class _HiddenClassProperties(type):
         return cls.DEFAULT_HEADERS_ALLOWLIST
 
     @DEFAULT_HEADERS_WHITELIST.setter
-    def DEFAULT_HEADERS_WHITELIST(self, value):
-        self.DEFAULT_HEADERS_ALLOWLIST = value
+    def DEFAULT_HEADERS_WHITELIST(cls, value):
+        cls.DEFAULT_HEADERS_ALLOWLIST = value
 
 class HttpLoggingPolicy(SansIOHTTPPolicy, metaclass=_HiddenClassProperties):
     """The Pipeline policy that handles logging of HTTP requests and responses.
