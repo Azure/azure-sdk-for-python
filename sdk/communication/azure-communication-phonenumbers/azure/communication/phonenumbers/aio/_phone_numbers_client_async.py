@@ -361,22 +361,24 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         **kwargs # type: Any
     ):
         # type: (...) -> ItemPaged[PhoneNumberAreaCode]
-        """Gets the list of available toll free area codes.
+        """Gets the list of available area codes.
 
-        Gets the list of available area codes.
-        If receives a locality it lists the geographic area codes, otherwise it gets the toll free ones.
+        If it receives a locality it lists the geographic area codes, otherwise it gets the toll free ones.
 
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
-        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-        default value is 0. Default value is 0.
-        :paramtype skip: int
+        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        "person" and "application". Default value is None.
+        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :param locality: The name of locality in which to search for the area code. e.g. Seattle.
         This is required if the phone number type is Geographic. Default value is None.
         :type locality: str
-        :param administrative_division: The name of the state or province in which to search for the
+        :keyword administrative_division: The name of the state or province in which to search for the
         area code. e.g. California. Default value is None.
         :type administrative_division: str
+        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
+        default value is 0. Default value is 0.
+        :paramtype skip: int
         :return: An iterator like instance of PhoneNumberAreaCode
         :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
