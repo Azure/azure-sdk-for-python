@@ -162,7 +162,7 @@ def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
             "resourceGroup": "rg",
         }
     )
-    mocker.patch("azure.ai.ml._utils._registry_utils.RegistryDiscovery._get_registry_details", return_value=mock_response)
+    mocker.patch("azure.ai.ml._utils._registry_utils.RegistryDiscovery.get_registry_service_client", return_value=mock_response)
     yield MLClient(
         credential=Mock(spec_set=DefaultAzureCredential),
         subscription_id=Test_Subscription,
