@@ -48,9 +48,9 @@ def _register_node(_type, node_cls, schema_cls):
     )
 
 
-def enable_internal_components_in_pipeline():
+def enable_internal_components_in_pipeline(*, force=False):
     global _registered  # pylint: disable=global-statement
-    if _registered:
+    if _registered and not force:
         return  # already registered
 
     _enable_internal_components()
