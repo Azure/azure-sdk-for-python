@@ -595,22 +595,15 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 def enable_private_preview_schema_features():
     """Schemas will be imported at the very beginning, so need to reload related classes."""
     from azure.ai.ml._schema.component import command_component as command_component_schema, input_output
-    from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
-    from azure.ai.ml.entities._component import (
-        command_component as command_component_entity,
-        pipeline_component as pipeline_component_entity,
-    )
+    from azure.ai.ml.entities._component import command_component as command_component_entity
 
     def _reload_related_classes():
         reload(input_output)
         reload(command_component_schema)
-        reload(pipeline_component_schema)
         command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
-        pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
 
     with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
         _reload_related_classes()
-        yield
     _reload_related_classes()
 
 
