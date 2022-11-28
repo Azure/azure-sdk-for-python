@@ -325,8 +325,6 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         Override this method to add customized validation logic.
         """
         validate_result = self._validate_inputs(raise_error=False)
-        if isinstance(self._component, SchemaValidatableMixin):
-            validate_result.merge_with(self._component._validate(), field_name=self._get_component_attr_name())
         return validate_result
 
     @classmethod
@@ -337,7 +335,6 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             "name",
             "display_name",
             "experiment_name",  # name is not part of schema but may be set in dsl/yml file
-            cls._get_component_attr_name(),  # processed separately
             "kwargs",
         ]
 

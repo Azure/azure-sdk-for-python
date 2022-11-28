@@ -453,7 +453,33 @@ class SchemaValidatableMixin:
         for skip_field in self._get_skip_fields_in_schema_validation():
             if skip_field in messages:
                 del messages[skip_field]
-        return _ValidationResultBuilder.from_validation_messages(messages, data=data)
+
+        extra_validatable_children = {}
+        for error_field in messages:
+            obj = try_get_non_arbitrary_attr_for_potential_attr_dict(self, error_field)
+            from azure.ai.ml.entities import Resource
+            if isinstance(obj, Resource):
+                # Resource has its own base path, which will be dropped when dumping to dict.
+                if isinstance(obj, SchemaValidatableMixin):
+                    # for SchemaValidatableMixin, we can validate it with its own base path.
+                    extra_validatable_children[error_field] = obj
+                elif obj.base_path != self.__base_path_for_validation:
+                    # for non-SchemaValidatableMixin, we can only keep
+                    # errors from objects with the same base path as self.
+                    extra_validatable_children[error_field] = None
+
+        for error_field, child in extra_validatable_children.items():
+            del messages[error_field]
+
+        result = _ValidationResultBuilder.from_validation_messages(messages, data=data)
+
+        for error_field, child in extra_validatable_children.items():
+            if child is not None:
+                result.merge_with(
+                    child._validate(),
+                    field_name=error_field,
+                )
+        return result
 
 
 class _ValidationResultBuilder:
