@@ -1,5 +1,9 @@
 # Release History
 
+## 0.0.0 (it should be stable) (2022-11-28)
+
+
+
 ## 1.1.0 (2022-06-07)
 
 **Features**
