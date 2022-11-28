@@ -456,19 +456,19 @@ def _check_and_upload_env_build_context(
     return environment
 
 
-# @retry(
-#     exceptions=HttpResponseError,
-#     failure_msg="Artifact upload exceeded maximum retries. Try again.",
-#     logger=module_logger,
-#     max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
-# )
+@retry(
+    exceptions=HttpResponseError,
+    failure_msg="Artifact upload exceeded maximum retries. Try again.",
+    logger=module_logger,
+    max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
+)
 def get_temporary_data_reference(
     operations: "DatastoreOperations",
     asset_name: str,
     asset_version: str,
     request_headers: Dict[str, str],
     asset_type: str = "codes",
-    ) -> str:
+    ) -> Tuple[str, str]:
     # create temporary data reference
     temporary_data_reference_id = str(uuid.uuid4())
 
@@ -497,23 +497,17 @@ def get_temporary_data_reference(
     request_url = f"{SERVICE_URL.format(workspace_location)}/assetstore/v1.0/temporaryDataReference/createOrGet"
     response = s.post(request_url, data=data_encoded, headers=request_headers)
     if response.status_code != 200:
-        print("It's failing to get the temporary data reference")
         raise HttpResponseError(response=response)
 
     response_json = json.loads(response.text)
 
-    # get SAS uri for upload
+    # get SAS uri for upload and blob uri for asset creation
+    blob_uri = response_json['blobReferenceForConsumption']['blobUri']
     sas_uri = response_json['blobReferenceForConsumption']['credential']['sasUri']
 
-    return sas_uri
+    return sas_uri, blob_uri
 
 
-# @retry(
-#     exceptions=HttpResponseError,
-#     failure_msg="Artifact upload exceeded maximum retries. Try again.",
-#     logger=module_logger,
-#     max_attempts=MAX_ASSET_STORE_API_CALL_ATTEMPTS,
-# )
 def get_asset_by_hash(
     operations: "DatastoreOperations",
     hash_str: str,
@@ -548,8 +542,8 @@ def get_asset_by_hash(
     if response.status_code == 404:
         return None
     if response.status_code != 200:
-        print("it's failing trying to get the asset by hash")
-        raise HttpResponseError(response=response)
+        # If API is unresponsive, create new asset
+        return None
 
     response_json = json.loads(response.text)
     existing_asset["name"] = response_json['name']
@@ -617,7 +611,7 @@ def _upload_snapshot_to_datastore(
     request_headers['Content-Type'] = 'application/json; charset=UTF-8'
 
     if not sas_uri:
-        sas_uri = get_temporary_data_reference(
+        sas_uri, blob_uri = get_temporary_data_reference(
             operations=datastore_operation,
             asset_name=asset_name,
             asset_version=asset_version,
@@ -636,6 +630,7 @@ def _upload_snapshot_to_datastore(
         ignore_file=ignore_file,
         sas_uri=sas_uri,
     )
+    artifact.storage_account_url = blob_uri
 
     return artifact
 
@@ -678,4 +673,5 @@ def _check_and_upload_snapshot(
         )
     # Pass all of the upload information to the assets, and they will each construct the URLs that they support
     artifact._update_path(uploaded_artifact)
+
     return artifact
