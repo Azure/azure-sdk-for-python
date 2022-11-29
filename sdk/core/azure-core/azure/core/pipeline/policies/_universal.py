@@ -352,7 +352,7 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
             _LOGGER.debug("Failed to log response: %s", repr(err))
 
 class _HiddenClassProperties(type):
-    # Backward compatible for DEFAULT_HEADERS_WHITELIST but no documentation needed
+    # Backward compatible for DEFAULT_HEADERS_WHITELIST
     # https://github.com/Azure/azure-sdk-for-python/issues/26331
 
     @property
