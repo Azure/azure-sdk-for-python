@@ -4,5 +4,8 @@
   "reportTypeCommentUsage": true,
   "pythonVersion": "3.10",
   "reportMissingImports": false,
-  "exclude": ["**/samples/sample_authentication.py", "**/samples/async/sample_authentication_async.py"]
+  "exclude": [
+    "**/samples/async/authoring/sample_assign_deployment_resources_async.py",
+    "**/samples/async/sample_authentication_async.py"
+  ]
 }
