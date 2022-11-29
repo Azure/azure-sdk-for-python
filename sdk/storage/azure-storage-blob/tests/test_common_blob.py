@@ -391,11 +391,25 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
 
+        # Create a blob to download with requests using SAS
+        data = b'a' * 1024 * 1024
+        blob = self._create_blob(data=data)
+
+        sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
         # Act
-        uri = "https://www.gutenberg.org/files/59466/59466-0.txt"
+        uri = blob.url + '?' + sas
         data = requests.get(uri, stream=True)
-        blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
-        resp = blob.upload_blob(data=data.raw)
+        blob2 = self.bsc.get_blob_client(self.container_name, blob.blob_name + '_copy')
+        resp = blob2.upload_blob(data=data.raw)
 
         assert resp.get('etag') is not None
 

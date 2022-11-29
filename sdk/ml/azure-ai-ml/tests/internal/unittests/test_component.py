@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import copy
 import os
+import tempfile
 import shutil
 from pathlib import Path
 from typing import Dict
@@ -11,6 +12,7 @@ from zipfile import ZipFile
 import pydash
 import pytest
 import yaml
+from pytest_mock import MockFixture
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
@@ -469,6 +471,42 @@ class TestComponent:
                 },
                 "os": "Linux",
             }
+
+    def test_artifacts_in_additional_includes(self, mocker: MockFixture):
+        with tempfile.TemporaryDirectory() as temp_dir:
+
+            def mock_get_artifacts(**kwargs):
+                version = kwargs.get("version")
+                artifact = Path(temp_dir) / version
+                if version in ["version_1", "version_3"]:
+                    version = "version_1"
+                artifact.mkdir(parents=True, exist_ok=True)
+                (artifact / version).mkdir(exist_ok=True)
+                (artifact / version / "file").touch(exist_ok=True)
+                (artifact / f"file_{version}").touch(exist_ok=True)
+                return str(artifact)
+
+            mocker.patch("azure.ai.ml._internal.entities._artifact_cache.ArtifactCache.get",
+                         side_effect=mock_get_artifacts)
+            from azure.ai.ml._internal.entities._artifact_cache import ArtifactCache
+            yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
+            component: InternalComponent = load_component(source=yaml_path)
+            assert component._validate().passed, repr(component._validate())
+            with component._resolve_local_code() as code:
+                code_path = code.path
+                assert code_path.is_dir()
+                for path in ['version_1/', 'version_1/file', 'version_2/', 'version_2/file',
+                             'file_version_1', 'file_version_2', 'DockerFile']:
+                    assert (code_path / path).exists()
+
+            yaml_path = "./tests/test_configs/internal/component_with_additional_includes/" \
+                        "artifacts_additional_includes_with_conflict.yml"
+            component: InternalComponent = load_component(source=yaml_path)
+            validation_result = component._validate()
+            assert validation_result.passed is False
+            assert "There are conflict files in additional include" in validation_result.error_messages["*"]
+            assert 'test_additional_include:version_1 in component-sdk-test-feed' in validation_result.error_messages["*"]
+            assert 'test_additional_include:version_3 in component-sdk-test-feed' in validation_result.error_messages["*"]
 
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",

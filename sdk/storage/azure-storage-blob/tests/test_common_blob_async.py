@@ -596,13 +596,28 @@ class TestStorageCommonBlobAsync(AsyncStorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         await self._setup(storage_account_name, storage_account_key)
-        blob = self.bsc.get_blob_client(self.container_name, "gutenberg_async")
+
+        # Create a blob to download with aiohttp using SAS
+        data = b'a' * 1024 * 1024
+        blob = await self._create_blob(data=data)
+
+        sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
         # Act
-        uri = "https://www.gutenberg.org/files/59466/59466-0.txt"
+        uri = blob.url + '?' + sas
         async with aiohttp.ClientSession() as session:
             async with session.get(uri) as data:
                 async for text, _ in data.content.iter_chunks():
-                    resp = await blob.upload_blob(data=text, overwrite=True)
+                    blob2 = self.bsc.get_blob_client(self.container_name, blob.blob_name + '_copy')
+                    resp = await blob2.upload_blob(data=text, overwrite=True)
                     assert resp.get('etag') is not None
 
     @BlobPreparer()

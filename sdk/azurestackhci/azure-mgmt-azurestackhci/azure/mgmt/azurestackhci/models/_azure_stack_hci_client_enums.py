@@ -7,19 +7,17 @@
 # --------------------------------------------------------------------------
 
 from enum import Enum
-from six import with_metaclass
 from azure.core import CaseInsensitiveEnumMeta
 
 
-class ActionType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs.
-    """
+class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum. Indicates the action type. "Internal" refers to actions that are for internal only APIs."""
 
     INTERNAL = "Internal"
 
-class ArcSettingAggregateState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Aggregate state of Arc agent across the nodes in this HCI cluster.
-    """
+
+class ArcSettingAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Aggregate state of Arc agent across the nodes in this HCI cluster."""
 
     NOT_SPECIFIED = "NotSpecified"
     ERROR = "Error"
@@ -37,26 +35,41 @@ class ArcSettingAggregateState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum
     PARTIALLY_CONNECTED = "PartiallyConnected"
     IN_PROGRESS = "InProgress"
 
-class CreatedByType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class AvailabilityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates the way the update content can be downloaded."""
+
+    LOCAL = "Local"
+    ONLINE = "Online"
+    NOTIFY = "Notify"
+
+
+class ClusterNodeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of the cluster node hardware."""
+
+    FIRST_PARTY = "FirstParty"
+    THIRD_PARTY = "ThirdParty"
+
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class DiagnosticLevel(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Desired level of diagnostic data emitted by the cluster.
-    """
+
+class DiagnosticLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Desired level of diagnostic data emitted by the cluster."""
 
     OFF = "Off"
     BASIC = "Basic"
     ENHANCED = "Enhanced"
 
-class ExtensionAggregateState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Aggregate state of Arc Extensions across the nodes in this HCI cluster.
-    """
+
+class ExtensionAggregateState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Aggregate state of Arc Extensions across the nodes in this HCI cluster."""
 
     NOT_SPECIFIED = "NotSpecified"
     ERROR = "Error"
@@ -74,16 +87,27 @@ class ExtensionAggregateState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)
     PARTIALLY_CONNECTED = "PartiallyConnected"
     IN_PROGRESS = "InProgress"
 
-class ImdsAttestation(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """IMDS attestation status of the cluster.
-    """
+
+class ImdsAttestation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """IMDS attestation status of the cluster."""
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
 
-class NodeArcState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of Arc agent in this node.
+
+class ManagedServiceIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of managed service identity (where both SystemAssigned and UserAssigned types are
+    allowed).
     """
+
+    NONE = "None"
+    SYSTEM_ASSIGNED = "SystemAssigned"
+    USER_ASSIGNED = "UserAssigned"
+    SYSTEM_ASSIGNED_USER_ASSIGNED = "SystemAssigned, UserAssigned"
+
+
+class NodeArcState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of Arc agent in this node."""
 
     NOT_SPECIFIED = "NotSpecified"
     ERROR = "Error"
@@ -98,9 +122,9 @@ class NodeArcState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETING = "Deleting"
     MOVING = "Moving"
 
-class NodeExtensionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """State of Arc Extension in this node.
-    """
+
+class NodeExtensionState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of Arc Extension in this node."""
 
     NOT_SPECIFIED = "NotSpecified"
     ERROR = "Error"
@@ -115,18 +139,19 @@ class NodeExtensionState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DELETING = "Deleting"
     MOVING = "Moving"
 
-class Origin(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+
+class Origin(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The intended executor of the operation; as in Resource Based Access Control (RBAC) and audit
-    logs UX. Default value is "user,system"
+    logs UX. Default value is "user,system".
     """
 
     USER = "user"
     SYSTEM = "system"
     USER_SYSTEM = "user,system"
 
-class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the ArcSetting proxy resource.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the ArcSetting proxy resource."""
 
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
@@ -134,9 +159,46 @@ class ProvisioningState(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     ACCEPTED = "Accepted"
     PROVISIONING = "Provisioning"
 
-class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the cluster agent.
-    """
+
+class SoftwareAssuranceIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Customer Intent for Software Assurance Benefit."""
+
+    ENABLE = "Enable"
+    DISABLE = "Disable"
+
+
+class SoftwareAssuranceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the Software Assurance for the cluster."""
+
+    ENABLED = "Enabled"
+    DISABLED = "Disabled"
+
+
+class State(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the update as it relates to this stamp."""
+
+    HAS_PREREQUISITE = "HasPrerequisite"
+    OBSOLETE = "Obsolete"
+    READY = "Ready"
+    NOT_APPLICABLE_BECAUSE_ANOTHER_UPDATE_IS_IN_PROGRESS = "NotApplicableBecauseAnotherUpdateIsInProgress"
+    PREPARING = "Preparing"
+    INSTALLING = "Installing"
+    INSTALLED = "Installed"
+    PREPARATION_FAILED = "PreparationFailed"
+    INSTALLATION_FAILED = "InstallationFailed"
+    INVALID = "Invalid"
+    RECALLED = "Recalled"
+    DOWNLOADING = "Downloading"
+    DOWNLOAD_FAILED = "DownloadFailed"
+    HEALTH_CHECKING = "HealthChecking"
+    HEALTH_CHECK_FAILED = "HealthCheckFailed"
+    READY_TO_INSTALL = "ReadyToInstall"
+    SCAN_IN_PROGRESS = "ScanInProgress"
+    SCAN_FAILED = "ScanFailed"
+
+
+class Status(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the cluster agent."""
 
     NOT_YET_REGISTERED = "NotYetRegistered"
     CONNECTED_RECENTLY = "ConnectedRecently"
@@ -144,9 +206,31 @@ class Status(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DISCONNECTED = "Disconnected"
     ERROR = "Error"
 
-class WindowsServerSubscription(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
-    """Desired state of Windows Server Subscription.
-    """
+
+class UpdateRunPropertiesState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """State of the update run."""
+
+    UNKNOWN = "Unknown"
+    SUCCEEDED = "Succeeded"
+    IN_PROGRESS = "InProgress"
+    FAILED = "Failed"
+
+
+class UpdateSummariesPropertiesState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Overall update state of the stamp."""
+
+    UNKNOWN = "Unknown"
+    APPLIED_SUCCESSFULLY = "AppliedSuccessfully"
+    UPDATE_AVAILABLE = "UpdateAvailable"
+    UPDATE_IN_PROGRESS = "UpdateInProgress"
+    UPDATE_FAILED = "UpdateFailed"
+    NEEDS_ATTENTION = "NeedsAttention"
+    PREPARATION_IN_PROGRESS = "PreparationInProgress"
+    PREPARATION_FAILED = "PreparationFailed"
+
+
+class WindowsServerSubscription(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Desired state of Windows Server Subscription."""
 
     DISABLED = "Disabled"
     ENABLED = "Enabled"
