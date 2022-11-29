@@ -324,4 +324,4 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
             created_job = client.jobs.create_or_update(pipeline)
 
         assert '{\n  "result": "Failed",\n  "errors": [\n    {\n      "message": "Missing data for required field.",' \
-               '\n      "path": "entry",\n      "value": null\n    }\n  ]\n}' in ex.value.args[0].message
+               '\n      "path": "entry",\n      "value": null\n    }\n  ]\n}' in ex.value.message
