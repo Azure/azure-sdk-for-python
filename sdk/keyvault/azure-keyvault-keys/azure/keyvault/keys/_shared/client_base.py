@@ -2,10 +2,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 # ------------------------------------
-# pylint:skip-file (avoids crash due to six.with_metaclass https://github.com/PyCQA/astroid/issues/713)
 from typing import TYPE_CHECKING
 from enum import Enum
-from six import with_metaclass
 
 from azure.core import CaseInsensitiveEnumMeta
 from azure.core.pipeline.policies import HttpLoggingPolicy
@@ -20,10 +18,11 @@ if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
 
 
-class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
+class ApiVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Key Vault API versions supported by this package"""
 
     #: this is the default version
+    V7_4_PREVIEW_1 = "7.4-preview.1"
     V7_3 = "7.3"
     V7_2 = "7.2"
     V7_1 = "7.1"
@@ -31,7 +30,7 @@ class ApiVersion(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     V2016_10_01 = "2016-10-01"
 
 
-DEFAULT_VERSION = ApiVersion.V7_3
+DEFAULT_VERSION = ApiVersion.V7_4_PREVIEW_1
 
 
 class KeyVaultClientBase(object):
@@ -47,6 +46,9 @@ class KeyVaultClientBase(object):
 
         try:
             self.api_version = kwargs.pop("api_version", DEFAULT_VERSION)
+            # If API version was provided as an enum value, need to make a plain string for 3.11 compatibility
+            if hasattr(self.api_version, "value"):
+                self.api_version = self.api_version.value
             self._vault_url = vault_url.strip(" /")
 
             client = kwargs.get("generated_client")

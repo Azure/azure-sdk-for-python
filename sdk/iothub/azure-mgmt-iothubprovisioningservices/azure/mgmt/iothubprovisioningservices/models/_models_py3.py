@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,47 +8,42 @@
 # --------------------------------------------------------------------------
 
 import datetime
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
 
-from ._iot_dps_client_enums import *
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 
 
-class AsyncOperationResult(msrest.serialization.Model):
+class AsyncOperationResult(_serialization.Model):
     """Result of a long running operation.
 
     :ivar status: current status of a long running operation.
     :vartype status: str
     :ivar error: Error message containing code, description and details.
-    :vartype error: ~azure.mgmt.iothubprovisioningservices.models.ErrorMesssage
+    :vartype error: ~azure.mgmt.iothubprovisioningservices.models.ErrorMessage
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'ErrorMesssage'},
+        "status": {"key": "status", "type": "str"},
+        "error": {"key": "error", "type": "ErrorMessage"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: Optional[str] = None,
-        error: Optional["ErrorMesssage"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, status: Optional[str] = None, error: Optional["_models.ErrorMessage"] = None, **kwargs):
         """
         :keyword status: current status of a long running operation.
         :paramtype status: str
         :keyword error: Error message containing code, description and details.
-        :paramtype error: ~azure.mgmt.iothubprovisioningservices.models.ErrorMesssage
+        :paramtype error: ~azure.mgmt.iothubprovisioningservices.models.ErrorMessage
         """
-        super(AsyncOperationResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.error = error
 
 
-class CertificateBodyDescription(msrest.serialization.Model):
+class CertificateBodyDescription(_serialization.Model):
     """The JSON-serialized X509 Certificate.
 
     :ivar certificate: Base-64 representation of the X509 leaf certificate .cer file or just .pem
@@ -59,17 +55,11 @@ class CertificateBodyDescription(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'certificate': {'key': 'certificate', 'type': 'str'},
-        'is_verified': {'key': 'isVerified', 'type': 'bool'},
+        "certificate": {"key": "certificate", "type": "str"},
+        "is_verified": {"key": "isVerified", "type": "bool"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificate: Optional[str] = None,
-        is_verified: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, certificate: Optional[str] = None, is_verified: Optional[bool] = None, **kwargs):
         """
         :keyword certificate: Base-64 representation of the X509 leaf certificate .cer file or just
          .pem file content.
@@ -78,12 +68,12 @@ class CertificateBodyDescription(msrest.serialization.Model):
          proof of possession will not be required.
         :paramtype is_verified: bool
         """
-        super(CertificateBodyDescription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.certificate = certificate
         self.is_verified = is_verified
 
 
-class CertificateListDescription(msrest.serialization.Model):
+class CertificateListDescription(_serialization.Model):
     """The JSON-serialized array of Certificate objects.
 
     :ivar value: The array of Certificate objects.
@@ -91,24 +81,19 @@ class CertificateListDescription(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[CertificateResponse]'},
+        "value": {"key": "value", "type": "[CertificateResponse]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["CertificateResponse"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.CertificateResponse"]] = None, **kwargs):
         """
         :keyword value: The array of Certificate objects.
         :paramtype value: list[~azure.mgmt.iothubprovisioningservices.models.CertificateResponse]
         """
-        super(CertificateListDescription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class CertificateProperties(msrest.serialization.Model):
+class CertificateProperties(_serialization.Model):
     """The description of an X509 CA Certificate.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -123,7 +108,7 @@ class CertificateProperties(msrest.serialization.Model):
     :vartype is_verified: bool
     :ivar certificate: base-64 representation of X509 certificate .cer file or just .pem file
      content.
-    :vartype certificate: bytearray
+    :vartype certificate: bytes
     :ivar created: The certificate's creation date and time.
     :vartype created: ~datetime.datetime
     :ivar updated: The certificate's last update date and time.
@@ -131,42 +116,42 @@ class CertificateProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'subject': {'readonly': True},
-        'expiry': {'readonly': True},
-        'thumbprint': {'readonly': True},
-        'is_verified': {'readonly': True},
-        'certificate': {'readonly': True},
-        'created': {'readonly': True},
-        'updated': {'readonly': True},
+        "subject": {"readonly": True},
+        "expiry": {"readonly": True},
+        "thumbprint": {"readonly": True},
+        "created": {"readonly": True},
+        "updated": {"readonly": True},
     }
 
     _attribute_map = {
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiry': {'key': 'expiry', 'type': 'rfc-1123'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'is_verified': {'key': 'isVerified', 'type': 'bool'},
-        'certificate': {'key': 'certificate', 'type': 'bytearray'},
-        'created': {'key': 'created', 'type': 'rfc-1123'},
-        'updated': {'key': 'updated', 'type': 'rfc-1123'},
+        "subject": {"key": "subject", "type": "str"},
+        "expiry": {"key": "expiry", "type": "rfc-1123"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "is_verified": {"key": "isVerified", "type": "bool"},
+        "certificate": {"key": "certificate", "type": "bytearray"},
+        "created": {"key": "created", "type": "rfc-1123"},
+        "updated": {"key": "updated", "type": "rfc-1123"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
+    def __init__(self, *, is_verified: Optional[bool] = None, certificate: Optional[bytes] = None, **kwargs):
         """
+        :keyword is_verified: Determines whether certificate has been verified.
+        :paramtype is_verified: bool
+        :keyword certificate: base-64 representation of X509 certificate .cer file or just .pem file
+         content.
+        :paramtype certificate: bytes
         """
-        super(CertificateProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.subject = None
         self.expiry = None
         self.thumbprint = None
-        self.is_verified = None
-        self.certificate = None
+        self.is_verified = is_verified
+        self.certificate = certificate
         self.created = None
         self.updated = None
 
 
-class CertificateResponse(msrest.serialization.Model):
+class CertificateResponse(_serialization.Model):
     """The X509 Certificate.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -186,33 +171,28 @@ class CertificateResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'etag': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "etag": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'properties': {'key': 'properties', 'type': 'CertificateProperties'},
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "properties": {"key": "properties", "type": "CertificateProperties"},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["CertificateProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.CertificateProperties"] = None, **kwargs):
         """
         :keyword properties: properties of a certificate.
         :paramtype properties: ~azure.mgmt.iothubprovisioningservices.models.CertificateProperties
         """
-        super(CertificateResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.properties = properties
         self.id = None
         self.name = None
@@ -221,7 +201,7 @@ class CertificateResponse(msrest.serialization.Model):
         self.system_data = None
 
 
-class ErrorDetails(msrest.serialization.Model):
+class ErrorDetails(_serialization.Model):
     """Error details.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -237,33 +217,29 @@ class ErrorDetails(msrest.serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'http_status_code': {'readonly': True},
-        'message': {'readonly': True},
-        'details': {'readonly': True},
+        "code": {"readonly": True},
+        "http_status_code": {"readonly": True},
+        "message": {"readonly": True},
+        "details": {"readonly": True},
     }
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'http_status_code': {'key': 'httpStatusCode', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "http_status_code": {"key": "httpStatusCode", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ErrorDetails, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.code = None
         self.http_status_code = None
         self.message = None
         self.details = None
 
 
-class ErrorMesssage(msrest.serialization.Model):
+class ErrorMessage(_serialization.Model):
     """Error response containing message and code.
 
     :ivar code: standard error code.
@@ -275,18 +251,13 @@ class ErrorMesssage(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
-        'details': {'key': 'details', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
+        "details": {"key": "details", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        details: Optional[str] = None,
-        **kwargs
+        self, *, code: Optional[str] = None, message: Optional[str] = None, details: Optional[str] = None, **kwargs
     ):
         """
         :keyword code: standard error code.
@@ -296,13 +267,13 @@ class ErrorMesssage(msrest.serialization.Model):
         :keyword details: detailed summary of error.
         :paramtype details: str
         """
-        super(ErrorMesssage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
         self.details = details
 
 
-class GroupIdInformation(msrest.serialization.Model):
+class GroupIdInformation(_serialization.Model):
     """The group information for creating a private endpoint on a provisioning service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -315,43 +286,38 @@ class GroupIdInformation(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :ivar properties: Required. The properties for a group information object.
+    :ivar properties: The properties for a group information object. Required.
     :vartype properties: ~azure.mgmt.iothubprovisioningservices.models.GroupIdInformationProperties
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
-        'type': {'readonly': True},
-        'properties': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True, "pattern": r"^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$"},
+        "type": {"readonly": True},
+        "properties": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'GroupIdInformationProperties'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "GroupIdInformationProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: "GroupIdInformationProperties",
-        **kwargs
-    ):
+    def __init__(self, *, properties: "_models.GroupIdInformationProperties", **kwargs):
         """
-        :keyword properties: Required. The properties for a group information object.
+        :keyword properties: The properties for a group information object. Required.
         :paramtype properties:
          ~azure.mgmt.iothubprovisioningservices.models.GroupIdInformationProperties
         """
-        super(GroupIdInformation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
         self.properties = properties
 
 
-class GroupIdInformationProperties(msrest.serialization.Model):
+class GroupIdInformationProperties(_serialization.Model):
     """The properties for a group information object.
 
     :ivar group_id: The group id.
@@ -363,9 +329,9 @@ class GroupIdInformationProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'group_id': {'key': 'groupId', 'type': 'str'},
-        'required_members': {'key': 'requiredMembers', 'type': '[str]'},
-        'required_zone_names': {'key': 'requiredZoneNames', 'type': '[str]'},
+        "group_id": {"key": "groupId", "type": "str"},
+        "required_members": {"key": "requiredMembers", "type": "[str]"},
+        "required_zone_names": {"key": "requiredZoneNames", "type": "[str]"},
     }
 
     def __init__(
@@ -384,23 +350,23 @@ class GroupIdInformationProperties(msrest.serialization.Model):
         :keyword required_zone_names: The required DNS zones for a specific group id.
         :paramtype required_zone_names: list[str]
         """
-        super(GroupIdInformationProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.group_id = group_id
         self.required_members = required_members
         self.required_zone_names = required_zone_names
 
 
-class IotDpsPropertiesDescription(msrest.serialization.Model):
+class IotDpsPropertiesDescription(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """the service specific properties of a provisioning service, including keys, linked iot hubs, current state, and system generated properties such as hostname and idScope.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar state: Current state of the provisioning service. Possible values include: "Activating",
+    :ivar state: Current state of the provisioning service. Known values are: "Activating",
      "Active", "Deleting", "Deleted", "ActivationFailed", "DeletionFailed", "Transitioning",
-     "Suspending", "Suspended", "Resuming", "FailingOver", "FailoverFailed".
+     "Suspending", "Suspended", "Resuming", "FailingOver", and "FailoverFailed".
     :vartype state: str or ~azure.mgmt.iothubprovisioningservices.models.State
-    :ivar public_network_access: Whether requests from Public Network are allowed. Possible values
-     include: "Enabled", "Disabled".
+    :ivar public_network_access: Whether requests from Public Network are allowed. Known values
+     are: "Enabled" and "Disabled".
     :vartype public_network_access: str or
      ~azure.mgmt.iothubprovisioningservices.models.PublicNetworkAccess
     :ivar ip_filter_rules: The IP filter rules.
@@ -413,8 +379,8 @@ class IotDpsPropertiesDescription(msrest.serialization.Model):
     :ivar iot_hubs: List of IoT hubs associated with this provisioning service.
     :vartype iot_hubs:
      list[~azure.mgmt.iothubprovisioningservices.models.IotHubDefinitionDescription]
-    :ivar allocation_policy: Allocation policy to be used by this provisioning service. Possible
-     values include: "Hashed", "GeoLatency", "Static".
+    :ivar allocation_policy: Allocation policy to be used by this provisioning service. Known
+     values are: "Hashed", "GeoLatency", and "Static".
     :vartype allocation_policy: str or
      ~azure.mgmt.iothubprovisioningservices.models.AllocationPolicy
     :ivar service_operations_host_name: Service endpoint for provisioning service.
@@ -433,47 +399,52 @@ class IotDpsPropertiesDescription(msrest.serialization.Model):
     """
 
     _validation = {
-        'service_operations_host_name': {'readonly': True},
-        'device_provisioning_host_name': {'readonly': True},
-        'id_scope': {'readonly': True},
+        "service_operations_host_name": {"readonly": True},
+        "device_provisioning_host_name": {"readonly": True},
+        "id_scope": {"readonly": True},
     }
 
     _attribute_map = {
-        'state': {'key': 'state', 'type': 'str'},
-        'public_network_access': {'key': 'publicNetworkAccess', 'type': 'str'},
-        'ip_filter_rules': {'key': 'ipFilterRules', 'type': '[IpFilterRule]'},
-        'private_endpoint_connections': {'key': 'privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'provisioning_state': {'key': 'provisioningState', 'type': 'str'},
-        'iot_hubs': {'key': 'iotHubs', 'type': '[IotHubDefinitionDescription]'},
-        'allocation_policy': {'key': 'allocationPolicy', 'type': 'str'},
-        'service_operations_host_name': {'key': 'serviceOperationsHostName', 'type': 'str'},
-        'device_provisioning_host_name': {'key': 'deviceProvisioningHostName', 'type': 'str'},
-        'id_scope': {'key': 'idScope', 'type': 'str'},
-        'authorization_policies': {'key': 'authorizationPolicies', 'type': '[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]'},
-        'enable_data_residency': {'key': 'enableDataResidency', 'type': 'bool'},
+        "state": {"key": "state", "type": "str"},
+        "public_network_access": {"key": "publicNetworkAccess", "type": "str"},
+        "ip_filter_rules": {"key": "ipFilterRules", "type": "[IpFilterRule]"},
+        "private_endpoint_connections": {"key": "privateEndpointConnections", "type": "[PrivateEndpointConnection]"},
+        "provisioning_state": {"key": "provisioningState", "type": "str"},
+        "iot_hubs": {"key": "iotHubs", "type": "[IotHubDefinitionDescription]"},
+        "allocation_policy": {"key": "allocationPolicy", "type": "str"},
+        "service_operations_host_name": {"key": "serviceOperationsHostName", "type": "str"},
+        "device_provisioning_host_name": {"key": "deviceProvisioningHostName", "type": "str"},
+        "id_scope": {"key": "idScope", "type": "str"},
+        "authorization_policies": {
+            "key": "authorizationPolicies",
+            "type": "[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]",
+        },
+        "enable_data_residency": {"key": "enableDataResidency", "type": "bool"},
     }
 
     def __init__(
         self,
         *,
-        state: Optional[Union[str, "State"]] = None,
-        public_network_access: Optional[Union[str, "PublicNetworkAccess"]] = None,
-        ip_filter_rules: Optional[List["IpFilterRule"]] = None,
-        private_endpoint_connections: Optional[List["PrivateEndpointConnection"]] = None,
+        state: Optional[Union[str, "_models.State"]] = None,
+        public_network_access: Optional[Union[str, "_models.PublicNetworkAccess"]] = None,
+        ip_filter_rules: Optional[List["_models.IpFilterRule"]] = None,
+        private_endpoint_connections: Optional[List["_models.PrivateEndpointConnection"]] = None,
         provisioning_state: Optional[str] = None,
-        iot_hubs: Optional[List["IotHubDefinitionDescription"]] = None,
-        allocation_policy: Optional[Union[str, "AllocationPolicy"]] = None,
-        authorization_policies: Optional[List["SharedAccessSignatureAuthorizationRuleAccessRightsDescription"]] = None,
+        iot_hubs: Optional[List["_models.IotHubDefinitionDescription"]] = None,
+        allocation_policy: Optional[Union[str, "_models.AllocationPolicy"]] = None,
+        authorization_policies: Optional[
+            List["_models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription"]
+        ] = None,
         enable_data_residency: Optional[bool] = None,
         **kwargs
     ):
         """
-        :keyword state: Current state of the provisioning service. Possible values include:
-         "Activating", "Active", "Deleting", "Deleted", "ActivationFailed", "DeletionFailed",
-         "Transitioning", "Suspending", "Suspended", "Resuming", "FailingOver", "FailoverFailed".
+        :keyword state: Current state of the provisioning service. Known values are: "Activating",
+         "Active", "Deleting", "Deleted", "ActivationFailed", "DeletionFailed", "Transitioning",
+         "Suspending", "Suspended", "Resuming", "FailingOver", and "FailoverFailed".
         :paramtype state: str or ~azure.mgmt.iothubprovisioningservices.models.State
-        :keyword public_network_access: Whether requests from Public Network are allowed. Possible
-         values include: "Enabled", "Disabled".
+        :keyword public_network_access: Whether requests from Public Network are allowed. Known values
+         are: "Enabled" and "Disabled".
         :paramtype public_network_access: str or
          ~azure.mgmt.iothubprovisioningservices.models.PublicNetworkAccess
         :keyword ip_filter_rules: The IP filter rules.
@@ -486,8 +457,8 @@ class IotDpsPropertiesDescription(msrest.serialization.Model):
         :keyword iot_hubs: List of IoT hubs associated with this provisioning service.
         :paramtype iot_hubs:
          list[~azure.mgmt.iothubprovisioningservices.models.IotHubDefinitionDescription]
-        :keyword allocation_policy: Allocation policy to be used by this provisioning service. Possible
-         values include: "Hashed", "GeoLatency", "Static".
+        :keyword allocation_policy: Allocation policy to be used by this provisioning service. Known
+         values are: "Hashed", "GeoLatency", and "Static".
         :paramtype allocation_policy: str or
          ~azure.mgmt.iothubprovisioningservices.models.AllocationPolicy
         :keyword authorization_policies: List of authorization keys for a provisioning service.
@@ -498,7 +469,7 @@ class IotDpsPropertiesDescription(msrest.serialization.Model):
          recovery.
         :paramtype enable_data_residency: bool
         """
-        super(IotDpsPropertiesDescription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.state = state
         self.public_network_access = public_network_access
         self.ip_filter_rules = ip_filter_rules
@@ -513,32 +484,27 @@ class IotDpsPropertiesDescription(msrest.serialization.Model):
         self.enable_data_residency = enable_data_residency
 
 
-class IotDpsSkuDefinition(msrest.serialization.Model):
+class IotDpsSkuDefinition(_serialization.Model):
     """Available SKUs of tier and units.
 
-    :ivar name: Sku name. Possible values include: "S1".
+    :ivar name: Sku name. "S1"
     :vartype name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "IotDpsSku"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[Union[str, "_models.IotDpsSku"]] = None, **kwargs):
         """
-        :keyword name: Sku name. Possible values include: "S1".
+        :keyword name: Sku name. "S1"
         :paramtype name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
         """
-        super(IotDpsSkuDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class IotDpsSkuDefinitionListResult(msrest.serialization.Model):
+class IotDpsSkuDefinitionListResult(_serialization.Model):
     """List of available SKUs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -550,72 +516,63 @@ class IotDpsSkuDefinitionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[IotDpsSkuDefinition]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[IotDpsSkuDefinition]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["IotDpsSkuDefinition"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.IotDpsSkuDefinition"]] = None, **kwargs):
         """
         :keyword value: The list of SKUs.
         :paramtype value: list[~azure.mgmt.iothubprovisioningservices.models.IotDpsSkuDefinition]
         """
-        super(IotDpsSkuDefinitionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class IotDpsSkuInfo(msrest.serialization.Model):
+class IotDpsSkuInfo(_serialization.Model):
     """List of possible provisioning service SKUs.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar name: Sku name. Possible values include: "S1".
+    :ivar name: Sku name. "S1"
     :vartype name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
     :ivar tier: Pricing tier name of the provisioning service.
     :vartype tier: str
     :ivar capacity: The number of units to provision.
-    :vartype capacity: long
+    :vartype capacity: int
     """
 
     _validation = {
-        'tier': {'readonly': True},
+        "tier": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tier': {'key': 'tier', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "tier": {"key": "tier", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[Union[str, "IotDpsSku"]] = None,
-        capacity: Optional[int] = None,
-        **kwargs
+        self, *, name: Optional[Union[str, "_models.IotDpsSku"]] = None, capacity: Optional[int] = None, **kwargs
     ):
         """
-        :keyword name: Sku name. Possible values include: "S1".
+        :keyword name: Sku name. "S1"
         :paramtype name: str or ~azure.mgmt.iothubprovisioningservices.models.IotDpsSku
         :keyword capacity: The number of units to provision.
-        :paramtype capacity: long
+        :paramtype capacity: int
         """
-        super(IotDpsSkuInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tier = None
         self.capacity = capacity
 
 
-class IotHubDefinitionDescription(msrest.serialization.Model):
+class IotHubDefinitionDescription(_serialization.Model):
     """Description of the IoT hub.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -628,24 +585,24 @@ class IotHubDefinitionDescription(msrest.serialization.Model):
     :vartype allocation_weight: int
     :ivar name: Host name of the IoT hub.
     :vartype name: str
-    :ivar connection_string: Required. Connection string of the IoT hub.
+    :ivar connection_string: Connection string of the IoT hub. Required.
     :vartype connection_string: str
-    :ivar location: Required. ARM region of the IoT hub.
+    :ivar location: ARM region of the IoT hub. Required.
     :vartype location: str
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'connection_string': {'required': True},
-        'location': {'required': True},
+        "name": {"readonly": True},
+        "connection_string": {"required": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'apply_allocation_policy': {'key': 'applyAllocationPolicy', 'type': 'bool'},
-        'allocation_weight': {'key': 'allocationWeight', 'type': 'int'},
-        'name': {'key': 'name', 'type': 'str'},
-        'connection_string': {'key': 'connectionString', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
+        "apply_allocation_policy": {"key": "applyAllocationPolicy", "type": "bool"},
+        "allocation_weight": {"key": "allocationWeight", "type": "int"},
+        "name": {"key": "name", "type": "str"},
+        "connection_string": {"key": "connectionString", "type": "str"},
+        "location": {"key": "location", "type": "str"},
     }
 
     def __init__(
@@ -663,12 +620,12 @@ class IotHubDefinitionDescription(msrest.serialization.Model):
         :paramtype apply_allocation_policy: bool
         :keyword allocation_weight: weight to apply for a given iot h.
         :paramtype allocation_weight: int
-        :keyword connection_string: Required. Connection string of the IoT hub.
+        :keyword connection_string: Connection string of the IoT hub. Required.
         :paramtype connection_string: str
-        :keyword location: Required. ARM region of the IoT hub.
+        :keyword location: ARM region of the IoT hub. Required.
         :paramtype location: str
         """
-        super(IotHubDefinitionDescription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.apply_allocation_policy = apply_allocation_policy
         self.allocation_weight = allocation_weight
         self.name = None
@@ -676,72 +633,72 @@ class IotHubDefinitionDescription(msrest.serialization.Model):
         self.location = location
 
 
-class IpFilterRule(msrest.serialization.Model):
+class IpFilterRule(_serialization.Model):
     """The IP filter rules for a provisioning Service.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar filter_name: Required. The name of the IP filter rule.
+    :ivar filter_name: The name of the IP filter rule. Required.
     :vartype filter_name: str
-    :ivar action: Required. The desired action for requests captured by this rule. Possible values
-     include: "Accept", "Reject".
+    :ivar action: The desired action for requests captured by this rule. Required. Known values
+     are: "Accept" and "Reject".
     :vartype action: str or ~azure.mgmt.iothubprovisioningservices.models.IpFilterActionType
-    :ivar ip_mask: Required. A string that contains the IP address range in CIDR notation for the
-     rule.
+    :ivar ip_mask: A string that contains the IP address range in CIDR notation for the rule.
+     Required.
     :vartype ip_mask: str
-    :ivar target: Target for requests captured by this rule. Possible values include: "all",
-     "serviceApi", "deviceApi".
+    :ivar target: Target for requests captured by this rule. Known values are: "all", "serviceApi",
+     and "deviceApi".
     :vartype target: str or ~azure.mgmt.iothubprovisioningservices.models.IpFilterTargetType
     """
 
     _validation = {
-        'filter_name': {'required': True},
-        'action': {'required': True},
-        'ip_mask': {'required': True},
+        "filter_name": {"required": True},
+        "action": {"required": True},
+        "ip_mask": {"required": True},
     }
 
     _attribute_map = {
-        'filter_name': {'key': 'filterName', 'type': 'str'},
-        'action': {'key': 'action', 'type': 'str'},
-        'ip_mask': {'key': 'ipMask', 'type': 'str'},
-        'target': {'key': 'target', 'type': 'str'},
+        "filter_name": {"key": "filterName", "type": "str"},
+        "action": {"key": "action", "type": "str"},
+        "ip_mask": {"key": "ipMask", "type": "str"},
+        "target": {"key": "target", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         filter_name: str,
-        action: Union[str, "IpFilterActionType"],
+        action: Union[str, "_models.IpFilterActionType"],
         ip_mask: str,
-        target: Optional[Union[str, "IpFilterTargetType"]] = None,
+        target: Optional[Union[str, "_models.IpFilterTargetType"]] = None,
         **kwargs
     ):
         """
-        :keyword filter_name: Required. The name of the IP filter rule.
+        :keyword filter_name: The name of the IP filter rule. Required.
         :paramtype filter_name: str
-        :keyword action: Required. The desired action for requests captured by this rule. Possible
-         values include: "Accept", "Reject".
+        :keyword action: The desired action for requests captured by this rule. Required. Known values
+         are: "Accept" and "Reject".
         :paramtype action: str or ~azure.mgmt.iothubprovisioningservices.models.IpFilterActionType
-        :keyword ip_mask: Required. A string that contains the IP address range in CIDR notation for
-         the rule.
+        :keyword ip_mask: A string that contains the IP address range in CIDR notation for the rule.
+         Required.
         :paramtype ip_mask: str
-        :keyword target: Target for requests captured by this rule. Possible values include: "all",
-         "serviceApi", "deviceApi".
+        :keyword target: Target for requests captured by this rule. Known values are: "all",
+         "serviceApi", and "deviceApi".
         :paramtype target: str or ~azure.mgmt.iothubprovisioningservices.models.IpFilterTargetType
         """
-        super(IpFilterRule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.filter_name = filter_name
         self.action = action
         self.ip_mask = ip_mask
         self.target = target
 
 
-class NameAvailabilityInfo(msrest.serialization.Model):
+class NameAvailabilityInfo(_serialization.Model):
     """Description of name availability.
 
     :ivar name_available: specifies if a name is available or not.
     :vartype name_available: bool
-    :ivar reason: specifies the reason a name is unavailable. Possible values include: "Invalid",
+    :ivar reason: specifies the reason a name is unavailable. Known values are: "Invalid" and
      "AlreadyExists".
     :vartype reason: str or ~azure.mgmt.iothubprovisioningservices.models.NameUnavailabilityReason
     :ivar message: message containing a detailed reason name is unavailable.
@@ -749,36 +706,36 @@ class NameAvailabilityInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name_available': {'key': 'nameAvailable', 'type': 'bool'},
-        'reason': {'key': 'reason', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "name_available": {"key": "nameAvailable", "type": "bool"},
+        "reason": {"key": "reason", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         name_available: Optional[bool] = None,
-        reason: Optional[Union[str, "NameUnavailabilityReason"]] = None,
+        reason: Optional[Union[str, "_models.NameUnavailabilityReason"]] = None,
         message: Optional[str] = None,
         **kwargs
     ):
         """
         :keyword name_available: specifies if a name is available or not.
         :paramtype name_available: bool
-        :keyword reason: specifies the reason a name is unavailable. Possible values include:
-         "Invalid", "AlreadyExists".
+        :keyword reason: specifies the reason a name is unavailable. Known values are: "Invalid" and
+         "AlreadyExists".
         :paramtype reason: str or
          ~azure.mgmt.iothubprovisioningservices.models.NameUnavailabilityReason
         :keyword message: message containing a detailed reason name is unavailable.
         :paramtype message: str
         """
-        super(NameAvailabilityInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name_available = name_available
         self.reason = reason
         self.message = message
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Provisioning Service REST API operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -790,30 +747,25 @@ class Operation(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
     }
 
-    def __init__(
-        self,
-        *,
-        display: Optional["OperationDisplay"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, display: Optional["_models.OperationDisplay"] = None, **kwargs):
         """
         :keyword display: The object that represents the operation.
         :paramtype display: ~azure.mgmt.iothubprovisioningservices.models.OperationDisplay
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.display = display
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """The object that represents the operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -827,61 +779,52 @@ class OperationDisplay(msrest.serialization.Model):
     """
 
     _validation = {
-        'provider': {'readonly': True},
-        'resource': {'readonly': True},
-        'operation': {'readonly': True},
+        "provider": {"readonly": True},
+        "resource": {"readonly": True},
+        "operation": {"readonly": True},
     }
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationDisplay, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.provider = None
         self.resource = None
         self.operation = None
 
 
-class OperationInputs(msrest.serialization.Model):
+class OperationInputs(_serialization.Model):
     """Input values for operation results call.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. The name of the Provisioning Service to check.
+    :ivar name: The name of the Provisioning Service to check. Required.
     :vartype name: str
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, **kwargs):
         """
-        :keyword name: Required. The name of the Provisioning Service to check.
+        :keyword name: The name of the Provisioning Service to check. Required.
         :paramtype name: str
         """
-        super(OperationInputs, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """Result of the request to list provisioning service operations. It contains a list of operations and a URL link to get the next set of results.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -894,27 +837,23 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'value': {'readonly': True},
-        'next_link': {'readonly': True},
+        "value": {"readonly": True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Operation]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(OperationListResult, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.value = None
         self.next_link = None
 
 
-class PrivateEndpoint(msrest.serialization.Model):
+class PrivateEndpoint(_serialization.Model):
     """The private endpoint property of a private endpoint connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -924,24 +863,20 @@ class PrivateEndpoint(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PrivateEndpoint, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
 
 
-class PrivateEndpointConnection(msrest.serialization.Model):
+class PrivateEndpointConnection(_serialization.Model):
     """The private endpoint connection of a provisioning service.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -954,7 +889,7 @@ class PrivateEndpointConnection(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :ivar properties: Required. The properties of a private endpoint connection.
+    :ivar properties: The properties of a private endpoint connection. Required.
     :vartype properties:
      ~azure.mgmt.iothubprovisioningservices.models.PrivateEndpointConnectionProperties
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
@@ -962,33 +897,28 @@ class PrivateEndpointConnection(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
-        'type': {'readonly': True},
-        'properties': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True, "pattern": r"^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$"},
+        "type": {"readonly": True},
+        "properties": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'PrivateEndpointConnectionProperties'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "PrivateEndpointConnectionProperties"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: "PrivateEndpointConnectionProperties",
-        **kwargs
-    ):
+    def __init__(self, *, properties: "_models.PrivateEndpointConnectionProperties", **kwargs):
         """
-        :keyword properties: Required. The properties of a private endpoint connection.
+        :keyword properties: The properties of a private endpoint connection. Required.
         :paramtype properties:
          ~azure.mgmt.iothubprovisioningservices.models.PrivateEndpointConnectionProperties
         """
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -996,49 +926,52 @@ class PrivateEndpointConnection(msrest.serialization.Model):
         self.system_data = None
 
 
-class PrivateEndpointConnectionProperties(msrest.serialization.Model):
+class PrivateEndpointConnectionProperties(_serialization.Model):
     """The properties of a private endpoint connection.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar private_endpoint: The private endpoint property of a private endpoint connection.
     :vartype private_endpoint: ~azure.mgmt.iothubprovisioningservices.models.PrivateEndpoint
-    :ivar private_link_service_connection_state: Required. The current state of a private endpoint
-     connection.
+    :ivar private_link_service_connection_state: The current state of a private endpoint
+     connection. Required.
     :vartype private_link_service_connection_state:
      ~azure.mgmt.iothubprovisioningservices.models.PrivateLinkServiceConnectionState
     """
 
     _validation = {
-        'private_link_service_connection_state': {'required': True},
+        "private_link_service_connection_state": {"required": True},
     }
 
     _attribute_map = {
-        'private_endpoint': {'key': 'privateEndpoint', 'type': 'PrivateEndpoint'},
-        'private_link_service_connection_state': {'key': 'privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionState'},
+        "private_endpoint": {"key": "privateEndpoint", "type": "PrivateEndpoint"},
+        "private_link_service_connection_state": {
+            "key": "privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionState",
+        },
     }
 
     def __init__(
         self,
         *,
-        private_link_service_connection_state: "PrivateLinkServiceConnectionState",
-        private_endpoint: Optional["PrivateEndpoint"] = None,
+        private_link_service_connection_state: "_models.PrivateLinkServiceConnectionState",
+        private_endpoint: Optional["_models.PrivateEndpoint"] = None,
         **kwargs
     ):
         """
         :keyword private_endpoint: The private endpoint property of a private endpoint connection.
         :paramtype private_endpoint: ~azure.mgmt.iothubprovisioningservices.models.PrivateEndpoint
-        :keyword private_link_service_connection_state: Required. The current state of a private
-         endpoint connection.
+        :keyword private_link_service_connection_state: The current state of a private endpoint
+         connection. Required.
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.iothubprovisioningservices.models.PrivateLinkServiceConnectionState
         """
-        super(PrivateEndpointConnectionProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.private_link_service_connection_state = private_link_service_connection_state
 
 
-class PrivateLinkResources(msrest.serialization.Model):
+class PrivateLinkResources(_serialization.Model):
     """The available private link resources for a provisioning service.
 
     :ivar value: The list of available private link resources for a provisioning service.
@@ -1046,76 +979,71 @@ class PrivateLinkResources(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[GroupIdInformation]'},
+        "value": {"key": "value", "type": "[GroupIdInformation]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["GroupIdInformation"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.GroupIdInformation"]] = None, **kwargs):
         """
         :keyword value: The list of available private link resources for a provisioning service.
         :paramtype value: list[~azure.mgmt.iothubprovisioningservices.models.GroupIdInformation]
         """
-        super(PrivateLinkResources, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PrivateLinkServiceConnectionState(msrest.serialization.Model):
+class PrivateLinkServiceConnectionState(_serialization.Model):
     """The current state of a private endpoint connection.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar status: Required. The status of a private endpoint connection. Possible values include:
-     "Pending", "Approved", "Rejected", "Disconnected".
+    :ivar status: The status of a private endpoint connection. Required. Known values are:
+     "Pending", "Approved", "Rejected", and "Disconnected".
     :vartype status: str or
      ~azure.mgmt.iothubprovisioningservices.models.PrivateLinkServiceConnectionStatus
-    :ivar description: Required. The description for the current state of a private endpoint
-     connection.
+    :ivar description: The description for the current state of a private endpoint connection.
+     Required.
     :vartype description: str
     :ivar actions_required: Actions required for a private endpoint connection.
     :vartype actions_required: str
     """
 
     _validation = {
-        'status': {'required': True},
-        'description': {'required': True},
+        "status": {"required": True},
+        "description": {"required": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        status: Union[str, "PrivateLinkServiceConnectionStatus"],
+        status: Union[str, "_models.PrivateLinkServiceConnectionStatus"],
         description: str,
         actions_required: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword status: Required. The status of a private endpoint connection. Possible values
-         include: "Pending", "Approved", "Rejected", "Disconnected".
+        :keyword status: The status of a private endpoint connection. Required. Known values are:
+         "Pending", "Approved", "Rejected", and "Disconnected".
         :paramtype status: str or
          ~azure.mgmt.iothubprovisioningservices.models.PrivateLinkServiceConnectionStatus
-        :keyword description: Required. The description for the current state of a private endpoint
-         connection.
+        :keyword description: The description for the current state of a private endpoint connection.
+         Required.
         :paramtype description: str
         :keyword actions_required: Actions required for a private endpoint connection.
         :paramtype actions_required: str
         """
-        super(PrivateLinkServiceConnectionState, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = actions_required
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The common properties of an Azure resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1128,41 +1056,35 @@ class Resource(msrest.serialization.Model):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :ivar location: Required. The resource location.
+    :ivar location: The resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
-        'type': {'readonly': True},
-        'location': {'required': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True, "pattern": r"^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$"},
+        "type": {"readonly": True},
+        "location": {"required": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        location: str,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, location: str, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword location: Required. The resource location.
+        :keyword location: The resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. The resource tags.
+        :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(Resource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1183,75 +1105,75 @@ class ProvisioningServiceDescription(Resource):
     :vartype name: str
     :ivar type: The resource type.
     :vartype type: str
-    :ivar location: Required. The resource location.
+    :ivar location: The resource location. Required.
     :vartype location: str
-    :ivar tags: A set of tags. The resource tags.
+    :ivar tags: The resource tags.
     :vartype tags: dict[str, str]
     :ivar etag: The Etag field is *not* required. If it is provided in the response body, it must
      also be provided as a header per the normal ETag convention.
     :vartype etag: str
-    :ivar properties: Required. Service specific properties for a provisioning service.
+    :ivar properties: Service specific properties for a provisioning service. Required.
     :vartype properties: ~azure.mgmt.iothubprovisioningservices.models.IotDpsPropertiesDescription
-    :ivar sku: Required. Sku info for a provisioning Service.
+    :ivar sku: Sku info for a provisioning Service. Required.
     :vartype sku: ~azure.mgmt.iothubprovisioningservices.models.IotDpsSkuInfo
     :ivar system_data: Metadata pertaining to creation and last modification of the resource.
     :vartype system_data: ~azure.mgmt.iothubprovisioningservices.models.SystemData
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True, 'pattern': r'^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$'},
-        'type': {'readonly': True},
-        'location': {'required': True},
-        'properties': {'required': True},
-        'sku': {'required': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True, "pattern": r"^(?![0-9]+$)(?!-)[a-zA-Z0-9-]{2,49}[a-zA-Z0-9]$"},
+        "type": {"readonly": True},
+        "location": {"required": True},
+        "properties": {"required": True},
+        "sku": {"required": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'IotDpsPropertiesDescription'},
-        'sku': {'key': 'sku', 'type': 'IotDpsSkuInfo'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "etag": {"key": "etag", "type": "str"},
+        "properties": {"key": "properties", "type": "IotDpsPropertiesDescription"},
+        "sku": {"key": "sku", "type": "IotDpsSkuInfo"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
     }
 
     def __init__(
         self,
         *,
         location: str,
-        properties: "IotDpsPropertiesDescription",
-        sku: "IotDpsSkuInfo",
+        properties: "_models.IotDpsPropertiesDescription",
+        sku: "_models.IotDpsSkuInfo",
         tags: Optional[Dict[str, str]] = None,
         etag: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword location: Required. The resource location.
+        :keyword location: The resource location. Required.
         :paramtype location: str
-        :keyword tags: A set of tags. The resource tags.
+        :keyword tags: The resource tags.
         :paramtype tags: dict[str, str]
         :keyword etag: The Etag field is *not* required. If it is provided in the response body, it
          must also be provided as a header per the normal ETag convention.
         :paramtype etag: str
-        :keyword properties: Required. Service specific properties for a provisioning service.
+        :keyword properties: Service specific properties for a provisioning service. Required.
         :paramtype properties:
          ~azure.mgmt.iothubprovisioningservices.models.IotDpsPropertiesDescription
-        :keyword sku: Required. Sku info for a provisioning Service.
+        :keyword sku: Sku info for a provisioning Service. Required.
         :paramtype sku: ~azure.mgmt.iothubprovisioningservices.models.IotDpsSkuInfo
         """
-        super(ProvisioningServiceDescription, self).__init__(location=location, tags=tags, **kwargs)
+        super().__init__(location=location, tags=tags, **kwargs)
         self.etag = etag
         self.properties = properties
         self.sku = sku
         self.system_data = None
 
 
-class ProvisioningServiceDescriptionListResult(msrest.serialization.Model):
+class ProvisioningServiceDescriptionListResult(_serialization.Model):
     """List of provisioning service descriptions.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1264,88 +1186,83 @@ class ProvisioningServiceDescriptionListResult(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ProvisioningServiceDescription]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ProvisioningServiceDescription]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["ProvisioningServiceDescription"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ProvisioningServiceDescription"]] = None, **kwargs):
         """
         :keyword value: List of provisioning service descriptions.
         :paramtype value:
          list[~azure.mgmt.iothubprovisioningservices.models.ProvisioningServiceDescription]
         """
-        super(ProvisioningServiceDescriptionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class SharedAccessSignatureAuthorizationRuleAccessRightsDescription(msrest.serialization.Model):
+class SharedAccessSignatureAuthorizationRuleAccessRightsDescription(_serialization.Model):
     """Description of the shared access key.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_name: Required. Name of the key.
+    :ivar key_name: Name of the key. Required.
     :vartype key_name: str
     :ivar primary_key: Primary SAS key value.
     :vartype primary_key: str
     :ivar secondary_key: Secondary SAS key value.
     :vartype secondary_key: str
-    :ivar rights: Required. Rights that this key has. Possible values include: "ServiceConfig",
-     "EnrollmentRead", "EnrollmentWrite", "DeviceConnect", "RegistrationStatusRead",
+    :ivar rights: Rights that this key has. Required. Known values are: "ServiceConfig",
+     "EnrollmentRead", "EnrollmentWrite", "DeviceConnect", "RegistrationStatusRead", and
      "RegistrationStatusWrite".
     :vartype rights: str or ~azure.mgmt.iothubprovisioningservices.models.AccessRightsDescription
     """
 
     _validation = {
-        'key_name': {'required': True},
-        'rights': {'required': True},
+        "key_name": {"required": True},
+        "rights": {"required": True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'primary_key': {'key': 'primaryKey', 'type': 'str'},
-        'secondary_key': {'key': 'secondaryKey', 'type': 'str'},
-        'rights': {'key': 'rights', 'type': 'str'},
+        "key_name": {"key": "keyName", "type": "str"},
+        "primary_key": {"key": "primaryKey", "type": "str"},
+        "secondary_key": {"key": "secondaryKey", "type": "str"},
+        "rights": {"key": "rights", "type": "str"},
     }
 
     def __init__(
         self,
         *,
         key_name: str,
-        rights: Union[str, "AccessRightsDescription"],
+        rights: Union[str, "_models.AccessRightsDescription"],
         primary_key: Optional[str] = None,
         secondary_key: Optional[str] = None,
         **kwargs
     ):
         """
-        :keyword key_name: Required. Name of the key.
+        :keyword key_name: Name of the key. Required.
         :paramtype key_name: str
         :keyword primary_key: Primary SAS key value.
         :paramtype primary_key: str
         :keyword secondary_key: Secondary SAS key value.
         :paramtype secondary_key: str
-        :keyword rights: Required. Rights that this key has. Possible values include: "ServiceConfig",
-         "EnrollmentRead", "EnrollmentWrite", "DeviceConnect", "RegistrationStatusRead",
+        :keyword rights: Rights that this key has. Required. Known values are: "ServiceConfig",
+         "EnrollmentRead", "EnrollmentWrite", "DeviceConnect", "RegistrationStatusRead", and
          "RegistrationStatusWrite".
         :paramtype rights: str or ~azure.mgmt.iothubprovisioningservices.models.AccessRightsDescription
         """
-        super(SharedAccessSignatureAuthorizationRuleAccessRightsDescription, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_name = key_name
         self.primary_key = primary_key
         self.secondary_key = secondary_key
         self.rights = rights
 
 
-class SharedAccessSignatureAuthorizationRuleListResult(msrest.serialization.Model):
+class SharedAccessSignatureAuthorizationRuleListResult(_serialization.Model):
     """List of shared access keys.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1358,18 +1275,18 @@ class SharedAccessSignatureAuthorizationRuleListResult(msrest.serialization.Mode
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SharedAccessSignatureAuthorizationRuleAccessRightsDescription]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["SharedAccessSignatureAuthorizationRuleAccessRightsDescription"]] = None,
+        value: Optional[List["_models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription"]] = None,
         **kwargs
     ):
         """
@@ -1377,25 +1294,25 @@ class SharedAccessSignatureAuthorizationRuleListResult(msrest.serialization.Mode
         :paramtype value:
          list[~azure.mgmt.iothubprovisioningservices.models.SharedAccessSignatureAuthorizationRuleAccessRightsDescription]
         """
-        super(SharedAccessSignatureAuthorizationRuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
-    :ivar created_by_type: The type of identity that created the resource. Possible values include:
-     "User", "Application", "ManagedIdentity", "Key".
+    :ivar created_by_type: The type of identity that created the resource. Known values are:
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.iothubprovisioningservices.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
-    :ivar last_modified_by_type: The type of identity that last modified the resource. Possible
-     values include: "User", "Application", "ManagedIdentity", "Key".
+    :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or
      ~azure.mgmt.iothubprovisioningservices.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
@@ -1403,43 +1320,43 @@ class SystemData(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
         self,
         *,
         created_by: Optional[str] = None,
-        created_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        created_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         created_at: Optional[datetime.datetime] = None,
         last_modified_by: Optional[str] = None,
-        last_modified_by_type: Optional[Union[str, "CreatedByType"]] = None,
+        last_modified_by_type: Optional[Union[str, "_models.CreatedByType"]] = None,
         last_modified_at: Optional[datetime.datetime] = None,
         **kwargs
     ):
         """
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
-        :keyword created_by_type: The type of identity that created the resource. Possible values
-         include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword created_by_type: The type of identity that created the resource. Known values are:
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.iothubprovisioningservices.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
-        :keyword last_modified_by_type: The type of identity that last modified the resource. Possible
-         values include: "User", "Application", "ManagedIdentity", "Key".
+        :keyword last_modified_by_type: The type of identity that last modified the resource. Known
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or
          ~azure.mgmt.iothubprovisioningservices.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -1448,32 +1365,27 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TagsResource(msrest.serialization.Model):
+class TagsResource(_serialization.Model):
     """A container holding only the Tags for a resource, allowing the user to update the tags on a Provisioning Service instance.
 
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         """
-        super(TagsResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class VerificationCodeRequest(msrest.serialization.Model):
+class VerificationCodeRequest(_serialization.Model):
     """The JSON-serialized leaf certificate.
 
     :ivar certificate: base-64 representation of X509 certificate .cer file or just .pem file
@@ -1482,25 +1394,20 @@ class VerificationCodeRequest(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'certificate': {'key': 'certificate', 'type': 'str'},
+        "certificate": {"key": "certificate", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        certificate: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, certificate: Optional[str] = None, **kwargs):
         """
         :keyword certificate: base-64 representation of X509 certificate .cer file or just .pem file
          content.
         :paramtype certificate: str
         """
-        super(VerificationCodeRequest, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.certificate = certificate
 
 
-class VerificationCodeResponse(msrest.serialization.Model):
+class VerificationCodeResponse(_serialization.Model):
     """Description of the response of the verification code.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1519,32 +1426,27 @@ class VerificationCodeResponse(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'etag': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
+        "name": {"readonly": True},
+        "etag": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'VerificationCodeResponseProperties'},
+        "name": {"key": "name", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "properties": {"key": "properties", "type": "VerificationCodeResponseProperties"},
     }
 
-    def __init__(
-        self,
-        *,
-        properties: Optional["VerificationCodeResponseProperties"] = None,
-        **kwargs
-    ):
+    def __init__(self, *, properties: Optional["_models.VerificationCodeResponseProperties"] = None, **kwargs):
         """
         :keyword properties:
         :paramtype properties:
          ~azure.mgmt.iothubprovisioningservices.models.VerificationCodeResponseProperties
         """
-        super(VerificationCodeResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.etag = None
         self.id = None
@@ -1552,7 +1454,7 @@ class VerificationCodeResponse(msrest.serialization.Model):
         self.properties = properties
 
 
-class VerificationCodeResponseProperties(msrest.serialization.Model):
+class VerificationCodeResponseProperties(_serialization.Model):
     """VerificationCodeResponseProperties.
 
     :ivar verification_code: Verification code.
@@ -1567,7 +1469,7 @@ class VerificationCodeResponseProperties(msrest.serialization.Model):
     :vartype is_verified: bool
     :ivar certificate: base-64 representation of X509 certificate .cer file or just .pem file
      content.
-    :vartype certificate: bytearray
+    :vartype certificate: bytes
     :ivar created: Certificate created time.
     :vartype created: str
     :ivar updated: Certificate updated time.
@@ -1575,14 +1477,14 @@ class VerificationCodeResponseProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'verification_code': {'key': 'verificationCode', 'type': 'str'},
-        'subject': {'key': 'subject', 'type': 'str'},
-        'expiry': {'key': 'expiry', 'type': 'str'},
-        'thumbprint': {'key': 'thumbprint', 'type': 'str'},
-        'is_verified': {'key': 'isVerified', 'type': 'bool'},
-        'certificate': {'key': 'certificate', 'type': 'bytearray'},
-        'created': {'key': 'created', 'type': 'str'},
-        'updated': {'key': 'updated', 'type': 'str'},
+        "verification_code": {"key": "verificationCode", "type": "str"},
+        "subject": {"key": "subject", "type": "str"},
+        "expiry": {"key": "expiry", "type": "str"},
+        "thumbprint": {"key": "thumbprint", "type": "str"},
+        "is_verified": {"key": "isVerified", "type": "bool"},
+        "certificate": {"key": "certificate", "type": "bytearray"},
+        "created": {"key": "created", "type": "str"},
+        "updated": {"key": "updated", "type": "str"},
     }
 
     def __init__(
@@ -1593,7 +1495,7 @@ class VerificationCodeResponseProperties(msrest.serialization.Model):
         expiry: Optional[str] = None,
         thumbprint: Optional[str] = None,
         is_verified: Optional[bool] = None,
-        certificate: Optional[bytearray] = None,
+        certificate: Optional[bytes] = None,
         created: Optional[str] = None,
         updated: Optional[str] = None,
         **kwargs
@@ -1611,13 +1513,13 @@ class VerificationCodeResponseProperties(msrest.serialization.Model):
         :paramtype is_verified: bool
         :keyword certificate: base-64 representation of X509 certificate .cer file or just .pem file
          content.
-        :paramtype certificate: bytearray
+        :paramtype certificate: bytes
         :keyword created: Certificate created time.
         :paramtype created: str
         :keyword updated: Certificate updated time.
         :paramtype updated: str
         """
-        super(VerificationCodeResponseProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.verification_code = verification_code
         self.subject = subject
         self.expiry = expiry

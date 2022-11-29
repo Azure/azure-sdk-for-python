@@ -1,7 +1,6 @@
 import logging
 from io import StringIO
 from pathlib import Path
-from time import sleep
 from typing import Callable
 from unittest.mock import patch
 
@@ -16,25 +15,24 @@ from azure.ai.ml import (
     TensorFlowDistribution,
     command,
     dsl,
-    load_component,
+    load_component, AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration,
 )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._load_import import to_component
-from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
 from azure.ai.ml.entities import Data, PipelineJob
 from azure.ai.ml.exceptions import ValidationException
 from azure.ai.ml.parallel import ParallelJob, RunFunction, parallel_run_function
-from azure.core.exceptions import HttpResponseError
-from azure.core.polling import LROPoller
 from devtools_testutils import AzureRecordedTestCase
 from pipeline_job.e2etests.test_pipeline_job import assert_job_input_output_types
-from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard
+from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel, sleep_if_live
 
+from devtools_testutils import is_live
 from .._util import _DSL_TIMEOUT_SECOND
 
 tests_root_dir = Path(__file__).parent.parent.parent
@@ -54,18 +52,8 @@ common_omit_fields = [
     "jobs.*.properties",
     "settings._source",
     "source_job_id",
+    "services",
 ]
-
-
-def assert_job_cancel(pipeline, client: MLClient):
-    job = client.jobs.create_or_update(pipeline)
-    try:
-        cancel_poller = client.jobs.begin_cancel(job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
-    except HttpResponseError:
-        pass
-    return job
 
 
 @pytest.mark.usefixtures(
@@ -214,10 +202,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         omit_fields = ["componentId", "_source", "properties"]
         component_job_dict = pydash.omit(component_job_dict, *omit_fields)
         assert component_job_dict == {
-            "computeId": None,
-            "display_name": None,
-            "distribution": None,
-            "environment_variables": {},
             "inputs": {
                 "component_in_number": {"job_input_type": "literal", "value": "10"},
                 "component_in_path": {
@@ -225,15 +209,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "uri": "https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
                 },
             },
-            "limits": None,
-            "name": None,
-            "outputs": {},
-            "resources": {"instance_count": 1, "properties": {}},
-            "tags": {},
+            "resources": {"instance_count": 1},
             "type": "command",
         }
 
-    @pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
     def test_distribution_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         mpi_func = load_component(source=str(components_dir / "helloworld_component_mpi.yml"))
         pytorch_func = load_component(source=str(components_dir / "helloworld_component_pytorch.yml"))
@@ -451,10 +430,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "jobs": {
                 "node1": {
                     "type": "command",
-                    "computeId": None,
-                    "display_name": None,
-                    "distribution": None,
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {
                             "job_input_type": "literal",
@@ -462,18 +437,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         },
                         "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
                     },
-                    "limits": None,
                     "name": "node1",
-                    "outputs": {},
-                    "resources": None,
-                    "tags": {},
                 },
                 "node2": {
                     "type": "command",
-                    "computeId": None,
-                    "display_name": None,
                     "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {"job_input_type": "literal", "value": "2"},
                         "component_in_path": {
@@ -481,14 +449,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
                             "value": "${{parent.jobs.node1.outputs.component_out_path}}",
                         },
                     },
-                    "limits": None,
                     "name": "node2",
-                    "outputs": {},
-                    "resources": {"instance_count": 2, "properties": {}},
-                    "tags": {},
+                    "resources": {"instance_count": 2},
                 },
                 "node3": {
-                    "computeId": None,
                     "display_name": "command-function-job",
                     "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
                     "environment_variables": {"environ": "val"},
@@ -499,13 +463,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
                             "value": "${{parent.jobs.node2.outputs.component_out_path}}",
                         },
                     },
-                    "limits": None,
                     "name": "node3",
                     "outputs": {
                         "component_out_path": {"type": "literal", "value": "${{parent.outputs.pipeline_job_out}}"}
                     },
-                    "resources": {"instance_count": 2, "properties": {}},
-                    "tags": {},
+                    "resources": {"instance_count": 2},
                     "type": "command",
                 },
             },
@@ -588,22 +550,13 @@ class TestDSLPipeline(AzureRecordedTestCase):
             },
             "jobs": {
                 "node1": {
-                    "computeId": None,
-                    "display_name": None,
-                    "distribution": None,
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_file}}"}
                     },
-                    "limits": None,
                     "name": "node1",
-                    "outputs": {},
-                    "resources": None,
-                    "tags": {},
                     "type": "command",
                 },
                 "node2": {
-                    "computeId": None,
                     "display_name": "command_with_optional_inputs",
                     "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
                     "environment_variables": {"environ": "val"},
@@ -613,13 +566,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
                             "value": "${{parent.jobs.node1.outputs.component_out_path}}",
                         }
                     },
-                    "limits": None,
                     "name": "node2",
                     "outputs": {
                         "component_out_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}
                     },
-                    "resources": {"instance_count": 2, "properties": {}},
-                    "tags": {},
+                    "resources": {"instance_count": 2},
                     "type": "command",
                 },
             },
@@ -628,21 +579,18 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     def test_spark_with_optional_inputs(self, randstr: Callable[[str], str], client: MLClient):
         component_yaml = "./tests/test_configs/dsl_pipeline/spark_job_in_pipeline/component_with_optional_inputs.yml"
         spark_with_optional_inputs_component_func = load_component(source=component_yaml)
-        synapse_compute_name = "spark31"
 
         @dsl.pipeline(
             name=f"test_optional_input_component_pipeline_" + randstr("pipeline_name"),
             description="The spark node with optional inputs",
             tags={"owner": "sdkteam", "tag": "tagvalue"},
-            compute=synapse_compute_name,
         )
         def sample_pipeline(job_in_file, sample_rate):
             node1 = spark_with_optional_inputs_component_func(input1=job_in_file, sample_rate=sample_rate)
-            node1.compute = synapse_compute_name
+            node1.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
             return {"pipeline_output": node1.outputs.output1}
 
         pipeline = sample_pipeline(
@@ -660,7 +608,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         expected_job = {
             "description": "The spark node with optional inputs",
             "tags": {"owner": "sdkteam", "tag": "tagvalue"},
-            "compute_id": "spark31",
             "is_archived": False,
             "job_type": "Pipeline",
             "inputs": {
@@ -669,12 +616,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             },
             "jobs": {
                 "node1": {
-                    "archives": None,
                     "args": "--input1 ${{inputs.input1}} --output2 "
                     "${{outputs.output1}} --my_sample_rate "
                     "${{inputs.sample_rate}} $[[--input_optional "
                     "${{inputs.input_optional}}]]",
-                    "computeId": "spark31",
                     "conf": {
                         "spark.driver.cores": 1,
                         "spark.driver.memory": "2g",
@@ -685,23 +630,19 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         "spark.executor.instances": 1,
                         "spark.executor.memory": "2g",
                     },
-                    "display_name": None,
                     "entry": {
                         "file": "sampleword_with_optional_input.py",
                         "spark_job_entry_type": "SparkJobPythonEntry",
                     },
-                    "files": None,
-                    "identity": {"identity_type": "Managed"},
+                    "identity": {"identity_type": "UserIdentity"},
                     "inputs": {
                         "input1": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_file}}"},
                         "sample_rate": {"job_input_type": "literal", "value": "${{parent.inputs.sample_rate}}"},
                     },
-                    "jars": None,
                     "name": "node1",
                     "outputs": {"output1": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                    "py_files": None,
-                    "resources": None,
-                    "tags": {},
+                    'resources': {'instance_type': 'standard_e4s_v3',
+                                  'runtime_version': '3.1.0'},
                     "type": "spark",
                 }
             },
@@ -754,10 +695,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "jobs": {
                 "node1": {
                     "type": "command",
-                    "computeId": None,
-                    "display_name": None,
-                    "distribution": None,
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {
                             "job_input_type": "literal",
@@ -765,19 +702,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         },
                         "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
                     },
-                    "limits": None,
                     "name": "node1",
                     "new_field": "val",
-                    "outputs": {},
-                    "resources": None,
-                    "tags": {},
                 },
                 "node2": {
                     "type": "command",
-                    "computeId": None,
-                    "display_name": None,
-                    "distribution": None,
-                    "environment_variables": {},
                     "inputs": {
                         "component_in_number": {
                             "job_input_type": "literal",
@@ -785,11 +714,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         },
                         "component_in_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_in_path}}"},
                     },
-                    "limits": None,
                     "name": "node2",
-                    "outputs": {},
-                    "resources": None,
-                    "tags": {},
                 },
             },
             "outputs": {},
@@ -1062,6 +987,36 @@ class TestDSLPipeline(AzureRecordedTestCase):
             in e.value.message
         )
 
+        @dsl.pipeline(non_pipeline_inputs=['param'])
+        def pipeline_with_non_pipeline_inputs(
+            required_input: Input,
+            required_param: str,
+            param: str,
+        ):
+            default_optional_func(
+                required_input=required_input,
+                required_param=required_param,
+            )
+
+        with pytest.raises(ValidationException) as e:
+            client.components.create_or_update(pipeline_with_non_pipeline_inputs)
+        assert "Cannot register pipeline component 'pipeline_with_non_pipeline_inputs' with non_pipeline_inputs." in e.value.message
+
+        @dsl.pipeline()
+        def pipeline_with_variable_inputs(
+            required_input: Input,
+            required_param: str,
+            *args, **kwargs
+        ):
+            default_optional_func(
+                required_input=required_input,
+                required_param=required_param,
+            )
+
+        with pytest.raises(ValidationException) as e:
+            client.components.create_or_update(pipeline_with_variable_inputs)
+        assert "Cannot register the component pipeline_with_variable_inputs with variable inputs ['args', 'kwargs']" in e.value.message
+
     def test_create_pipeline_component_by_dsl(self, caplog, client: MLClient):
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
@@ -1081,7 +1036,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             )
             node2.compute = node_compute
 
-        component = valid_pipeline_func._pipeline_builder.build()
+        component = valid_pipeline_func._pipeline_builder.build(user_provided_kwargs={})
         assert component._auto_increment_version is True
         # Set original module_logger with pkg name to 'Operation' to enable caplog capture logs
         from azure.ai.ml.operations import _component_operations
@@ -1104,11 +1059,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
     def test_create_pipeline_with_parameter_group(self, client: MLClient) -> None:
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
-        @parameter_group
+        @group
         class SubGroup:
             required_param: str
 
-        @parameter_group
+        @group
         class Group:
             sub: SubGroup
             node_compute: str = "cpu-cluster"
@@ -1336,6 +1291,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # assert "optional_param_with_default" not in pipeline_job.inputs
         # assert "optional_param_with_default" not in next(pipeline_job.jobs.values().__iter__()).inputs
 
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_reuse(self, client: MLClient) -> None:
         path = "./tests/test_configs/components/helloworld_component.yml"
         component_func1 = load_component(source=path)
@@ -1363,7 +1320,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         assert len(component_ids) == 1, f"Got multiple component id: {component_ids} for same anon component."
 
-    @pytest.mark.skip(reason="migration skip: need to discuss reuse in current test mechanism.")
+    @pytest.mark.disable_mock_code_hash
+    @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_pipeline_reuse(self, client: MLClient, randstr: Callable[[str], str], randint: Callable) -> None:
         component_yaml = components_dir / "helloworld_component.yml"
         component_func1 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
@@ -1385,7 +1343,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline = pipeline(input_number, input_number, job_input)
         job = client.jobs.create_or_update(pipeline)
         while True:
-            sleep(30)
+            sleep_if_live(30)
             children = client.jobs.list(parent_job_name=job.name)
             children = list(children)
             if len(children) == 2:
@@ -1478,7 +1436,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             _ = client.jobs.create_or_update(dsl_pipeline)
             mock_logging.assert_called_with("Warnings: [jobs.node1.jeff_special_option: Unknown field.]")
 
-    @pytest.mark.skip(reason="migration skip: gpu-cluster is not available yet.")
     def test_anon_component_in_pipeline(
         self, client: MLClient, randstr: Callable[[str], str], hello_world_component: Component
     ) -> None:
@@ -1580,13 +1537,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
             ),
         )
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="parallel_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
+
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
-        expected_keys = ["status", "properties", "tags", "creation_context"]
+        expected_keys = ["status", "properties", "creation_context"]
         for k in expected_keys:
             assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
 
@@ -1613,13 +1568,10 @@ class TestDSLPipeline(AzureRecordedTestCase):
             ),
         )
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="parallel_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
-        expected_keys = ["status", "properties", "tags", "creation_context"]
+        expected_keys = ["status", "properties", "creation_context"]
         for k in expected_keys:
             assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
 
@@ -1700,7 +1652,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             },
             "jobs": {
                 "node1": {
-                    "computeId": None,
                     "input_data": "${{inputs.job_data_path}}",
                     "display_name": "my-evaluate-job",
                     "inputs": {
@@ -1711,13 +1662,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     },
                     "name": "node1",
                     "mini_batch_size": 5,
-                    "retry_settings": None,
                     "logging_level": "DEBUG",
                     "max_concurrency_per_instance": 1,
                     "error_threshold": 1,
                     "mini_batch_error_threshold": 1,
                     "outputs": {"job_output_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
-                    "resources": {"instance_count": 2, "properties": {}},
+                    "resources": {"instance_count": 2},
                     "type": "parallel",
                     "task": {
                         "type": "run_function",
@@ -1726,8 +1676,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         "program_arguments": "--job_output_path ${{outputs.job_output_path}}",
                         "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
                     },
-                    "tags": {},
-                    "environment_variables": {},
                 },
             },
             "outputs": {
@@ -1742,7 +1690,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
-        expected_keys = ["status", "properties", "tags", "creation_context"]
+        expected_keys = ["status", "properties", "creation_context"]
         for k in expected_keys:
             assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
 
@@ -1750,7 +1698,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert_job_input_output_types(pipeline_job)
         assert pipeline_job.settings.default_compute == "cpu-cluster"
 
-    @pytest.mark.skip("TODO: re-record since job is in terminal state before cancel")
     def test_parallel_job(self, randstr: Callable[[str], str], client: MLClient):
         environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
         inputs = {
@@ -1780,7 +1727,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
             name=randstr("pipeline_name"),
             description="The pipeline job with parallel function",
             tags={"owner": "sdkteam", "tag": "tagvalue"},
-            default_compute="cpu-cluster",
         )
         def parallel_in_pipeline(job_data_path):
             parallel_job = ParallelJob(
@@ -1811,14 +1757,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 mode=InputOutputModes.EVAL_MOUNT,
             ),
         )
+        pipeline.settings.default_compute = "cpu-cluster"
         # submit job to workspace
-        pipeline_job = client.jobs.create_or_update(
-            pipeline,
-            experiment_name="parallel_in_pipeline",
-        )
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
         omit_fields = [
             "jobs.parallel_node.task.code",
             "jobs.parallel_node.task.environment",
@@ -1834,9 +1775,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             },
             "jobs": {
                 "parallel_node": {
-                    "computeId": None,
                     "input_data": "${{inputs.job_data_path}}",
-                    "display_name": None,
                     "inputs": {
                         "job_data_path": {
                             "job_input_type": "literal",
@@ -1844,24 +1783,19 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         }
                     },
                     "mini_batch_size": 5,
-                    "retry_settings": None,
-                    "logging_level": None,
                     "max_concurrency_per_instance": 1,
-                    "error_threshold": None,
                     "mini_batch_error_threshold": 1,
                     "name": "parallel_node",
                     "outputs": {
                         "job_output_path": {"value": "${{parent.outputs.pipeline_job_out}}", "type": "literal"}
                     },
-                    "resources": {"instance_count": 2, "properties": {}},
+                    "resources": {"instance_count": 2},
                     "type": "parallel",
                     "task": {
                         "type": "run_function",
                         "entry_script": "score.py",
                         "program_arguments": "--job_output_path ${{outputs.job_output_path}}",
                     },
-                    "tags": {},
-                    "environment_variables": {},
                 },
             },
             "outputs": {
@@ -1875,8 +1809,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         assert expected_job == actual_job
 
     def test_multi_parallel_components_with_file_input_pipeline_output(
-        self, client: MLClient, randstr: Callable[[str], str]
-    ) -> None:
+        self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/parallel_component_with_file_input"
         batch_inference1 = load_component(source=str(components_dir / "score.yml"))
         batch_inference2 = load_component(source=str(components_dir / "score.yml"))
@@ -1903,10 +1836,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.job_out_data.mode = "upload"
 
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="parallel_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="parallel_in_pipeline")
 
         omit_fields = [
             "jobs.*.task.code",
@@ -1922,13 +1852,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
                 "batch_inference_node1": {
                     "type": "parallel",
                     "name": "batch_inference_node1",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
                     "inputs": {
                         "job_data_path": {"job_input_type": "literal", "value": "${{parent.inputs.job_data_path}}"}
                     },
-                    "outputs": {},
                     "mini_batch_size": 1,
                     "task": {
                         "type": "run_function",
@@ -1936,20 +1862,12 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         "program_arguments": "--job_output_path ${{outputs.job_output_path}}",
                     },
                     "input_data": "${{inputs.job_data_path}}",
-                    "retry_settings": None,
-                    "logging_level": None,
-                    "resources": {"instance_count": 2, "properties": {}},
+                    "resources": {"instance_count": 2},
                     "max_concurrency_per_instance": 1,
-                    "error_threshold": None,
                     "mini_batch_error_threshold": 1,
-                    "environment_variables": {},
                 },
                 "convert_data_node": {
-                    "environment_variables": {},
                     "name": "convert_data_node",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
                     "inputs": {
                         "input_data": {
                             "job_input_type": "literal",
@@ -1957,17 +1875,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         }
                     },
                     "outputs": {"file_output_data": {"job_output_type": "mltable"}},
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
                     "type": "command",
                 },
                 "batch_inference_node2": {
                     "type": "parallel",
                     "name": "batch_inference_node2",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
                     "inputs": {
                         "job_data_path": {
                             "job_input_type": "literal",
@@ -1983,13 +1895,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
                         "program_arguments": "--job_output_path ${{outputs.job_output_path}}",
                     },
                     "input_data": "${{inputs.job_data_path}}",
-                    "retry_settings": None,
-                    "logging_level": None,
-                    "resources": {"instance_count": 2, "properties": {}},
+                    "resources": {"instance_count": 2},
                     "max_concurrency_per_instance": 1,
-                    "error_threshold": None,
                     "mini_batch_error_threshold": 1,
-                    "environment_variables": {},
                 },
             },
             "outputs": {"job_out_data": {"mode": "Upload", "job_output_type": "uri_folder"}},
@@ -2048,14 +1956,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "jobs": {
                 "train_with_sample_data": {
                     "type": "command",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_with_sample_data",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
                     "inputs": {
                         "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
                         "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
@@ -2076,7 +1977,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    def test_dsl_pipeline_with_only_setting_pipeline_level(self, client: MLClient) -> None:
+    def test_dsl_pipeline_with_only_setting_pipeline_level(self, client: MLClient):
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_only_setting_pipeline_level,
         )
@@ -2100,14 +2001,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "jobs": {
                 "train_with_sample_data": {
                     "type": "command",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_with_sample_data",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
                     "inputs": {
                         "training_data": {"job_input_type": "literal", "value": "${{parent.inputs.training_input}}"},
                         "max_epochs": {"job_input_type": "literal", "value": "${{parent.inputs.training_max_epochs}}"},
@@ -2128,7 +2022,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    def test_dsl_pipeline_with_only_setting_binding_node(self, client: MLClient) -> None:
+    def test_dsl_pipeline_with_only_setting_binding_node(self, client: MLClient):
         # Todo: checkout run priority when backend is ready
         from test_configs.dsl_pipeline.pipeline_with_set_binding_output_input.pipeline import (
             pipeline_with_only_setting_binding_node,
@@ -2153,14 +2047,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "jobs": {
                 "train_with_sample_data": {
                     "type": "command",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_with_sample_data",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
                     "inputs": {
                         "training_data": {
                             "mode": "ReadOnlyMount",
@@ -2215,14 +2102,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "jobs": {
                 "train_with_sample_data": {
                     "type": "command",
-                    "resources": None,
-                    "distribution": None,
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_with_sample_data",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
                     "inputs": {
                         "training_data": {
                             "mode": "ReadOnlyMount",
@@ -2278,14 +2158,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "jobs": {
                 "train_with_sample_data": {
                     "type": "command",
-                    "resources": None,
                     "distribution": {"distribution_type": "PyTorch", "process_count_per_instance": 2},
-                    "limits": None,
-                    "environment_variables": {},
                     "name": "train_with_sample_data",
-                    "display_name": None,
-                    "tags": {},
-                    "computeId": None,
                     "inputs": {
                         "training_data": {
                             "mode": "ReadOnlyMount",
@@ -2316,20 +2190,18 @@ class TestDSLPipeline(AzureRecordedTestCase):
         }
         assert expected_job == actual_job
 
-    @pytest.mark.skip("Skip for compute resource not ready.")
     def test_spark_components(self, client: MLClient, randstr: Callable[[str], str]) -> None:
         components_dir = tests_root_dir / "test_configs/dsl_pipeline/spark_job_in_pipeline"
-        synapse_compute_name = "spark31"
         add_greeting_column = load_component(str(components_dir / "add_greeting_column_component.yml"))
         count_by_row = load_component(str(components_dir / "count_by_row_component.yml"))
 
         # Construct pipeline
-        @dsl.pipeline(compute=synapse_compute_name)
+        @dsl.pipeline()
         def spark_pipeline_from_yaml(iris_data):
             add_greeting_column_node = add_greeting_column(file_input=iris_data)
-            add_greeting_column_node.compute = synapse_compute_name
+            add_greeting_column_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
             count_by_row_node = count_by_row(file_input=iris_data)
-            count_by_row_node.compute = synapse_compute_name
+            count_by_row_node.resources = {"instance_type": "standard_e4s_v3", "runtime_version": "3.1.0"}
             return {"output": count_by_row_node.outputs.output}
 
         pipeline = spark_pipeline_from_yaml(
@@ -2343,19 +2215,15 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline.outputs.output.type = "uri_file"
 
         # submit pipeline job
-        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="spark_in_pipeline")
-        cancel_poller = client.jobs.begin_cancel(pipeline_job.name)
-        assert isinstance(cancel_poller, LROPoller)
-        assert cancel_poller.result() is None
+        pipeline_job = assert_job_cancel(pipeline, client, experiment_name="spark_in_pipeline")
         # check required fields in job dict
         job_dict = pipeline_job._to_dict()
-        expected_keys = ["status", "properties", "tags", "creation_context"]
+        expected_keys = ["status", "properties", "creation_context"]
         for k in expected_keys:
             assert k in job_dict.keys(), f"failed to get {k} in {job_dict}"
 
         # original job did not change
         assert_job_input_output_types(pipeline_job)
-        assert pipeline_job.compute == synapse_compute_name
 
     def test_pipeline_with_group(self, client: MLClient):
         from enum import Enum
@@ -2366,9 +2234,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
         hello_world_component_func = load_component(hello_world_component_yaml)
-        from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
+        from azure.ai.ml.dsl._group_decorator import group
 
-        @parameter_group
+        @group
         class ParamClass:
             int_param: Input(min=1.0, max=5.0, type="integer")
             enum_param: EnumOps
@@ -2433,3 +2301,83 @@ class TestDSLPipeline(AzureRecordedTestCase):
         pipeline_job = client.jobs.create_or_update(pipeline_with_default_component())
         created_pipeline_job: PipelineJob = client.jobs.get(pipeline_job.name)
         assert created_pipeline_job.jobs["node1"].component == f"{component_name}@default"
+
+    def test_pipeline_node_identity_with_component(self, client: MLClient):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func = load_component(path)
+
+        @dsl.pipeline
+        def pipeline_func(component_in_path):
+            node1 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node1.identity = AmlTokenConfiguration()
+
+            node2 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node2.identity = UserIdentityConfiguration()
+
+            node3 = component_func(
+                component_in_number=1, component_in_path=component_in_path
+            )
+            node3.identity = ManagedIdentityConfiguration()
+
+        pipeline = pipeline_func(component_in_path=job_input)
+        pipeline_job = client.jobs.create_or_update(pipeline, compute="cpu-cluster")
+        omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source"
+        ]
+        actual_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict()["properties"], *omit_fields)
+        assert actual_dict["jobs"] == {
+            'node1': {'identity': {'type': 'aml_token'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'name': 'node1',
+                      'type': 'command'},
+            'node2': {'identity': {'type': 'user_identity'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'name': 'node2',
+                      'type': 'command'},
+            'node3': {'identity': {'type': 'managed_identity'},
+                      'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                         'value': '1'},
+                                 'component_in_path': {'job_input_type': 'literal',
+                                                       'value': '${{parent.inputs.component_in_path}}'}},
+                      'name': 'node3',
+                      'type': 'command'}
+        }
+
+    def test_default_pipeline_job_services(self, client: MLClient, randstr: Callable[[str], str]) -> None:
+        component_yaml = components_dir / "helloworld_component.yml"
+        component_func1 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
+        component_func2 = load_component(source=component_yaml, params_override=[{"name": randstr("component_name")}])
+
+        @dsl.pipeline(
+            name=randstr("pipeline_name"),
+            description="The hello world pipeline job",
+            tags={"owner": "sdkteam", "tag": "tagvalue"},
+            compute="cpu-cluster",
+            experiment_name=experiment_name,
+            continue_on_step_failure=True,
+        )
+        def pipeline(job_in_number, job_in_other_number, job_in_path):
+            component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
+            component_func2(component_in_number=job_in_other_number, component_in_path=job_in_path)
+
+        pipeline = pipeline(10, 15, job_input)
+        job = client.jobs.create_or_update(pipeline)
+        # check required fields in job dict
+        default_services = job._to_dict()["services"]
+        assert "Studio" in default_services
+        assert "Tracking" in default_services
+        assert default_services["Studio"]["endpoint"].startswith("https://ml.azure.com/runs/")
+        assert default_services["Studio"]["job_service_type"] == "Studio"
+        assert default_services["Tracking"]["endpoint"].startswith("azureml://")
+        assert default_services["Tracking"]["job_service_type"] == "Tracking"

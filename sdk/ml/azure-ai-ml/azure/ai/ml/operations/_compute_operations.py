@@ -6,8 +6,9 @@
 
 from typing import Any, Dict, Iterable
 
-from azure.ai.ml._restclient.v2022_01_01_preview import AzureMachineLearningWorkspaces as ServiceClient012022Preview
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope, _ScopeDependentOperations
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml.constants._common import COMPUTE_UPDATE_ERROR
 from azure.ai.ml.constants._compute import ComputeType
@@ -31,7 +32,7 @@ class ComputeOperations(_ScopeDependentOperations):
         self,
         operation_scope: OperationScope,
         operation_config: OperationConfig,
-        service_client: ServiceClient012022Preview,
+        service_client: ServiceClient102022Preview,
         **kwargs: Dict,
     ):
         super(ComputeOperations, self).__init__(operation_scope, operation_config)

@@ -14,6 +14,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
@@ -73,12 +74,12 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
 
         :param deployment: The deployment entity.
         :type deployment: ~azure.ai.ml.entities.BatchDeployment
-        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if OnlineDeployment cannot be
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if BatchDeployment cannot be
             successfully validated. Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.AssetException: Raised if OnlineDeployment assets
+        :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchDeployment assets
             (e.g. Data, Code, Model, Environment) cannot be successfully validated.
             Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.ModelException: Raised if OnlineDeployment model
+        :raises ~azure.ai.ml.exceptions.ModelException: Raised if BatchDeployment model
             cannot be successfully validated. Details will be provided in the error message.
         :return: A poller to track the operation status.
         :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchDeployment]
@@ -133,7 +134,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :param endpoint_name: The name of the endpoint
         :type endpoint_name: str
-        :return: a deployment entity
+        :return: A deployment entity
         :rtype: ~azure.ai.ml.entities.BatchDeployment
         """
 
@@ -212,7 +213,7 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         :type name: str
         :raise: Exception if endpoint_type is not BATCH_ENDPOINT_TYPE
         :return: List of jobs
-        :rtype: ItemPaged[BatchJob]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]

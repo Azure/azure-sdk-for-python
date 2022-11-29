@@ -67,7 +67,6 @@ COMPUTE_UPDATE_ERROR = (
     "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
-REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"
@@ -571,3 +570,9 @@ class RollingRate:
 class Scope:
     SUBSCRIPTION="subscription"
     RESOURCE_GROUP="resource_group"
+
+
+class IdentityType:
+    AML_TOKEN = "aml_token"
+    USER_IDENTITY = "user_identity"
+    MANAGED_IDENTITY = "managed_identity"

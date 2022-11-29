@@ -10,8 +10,6 @@ from functools import partial
 from pathlib import Path
 from typing import Dict, Union
 
-from marshmallow import Schema
-
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase
 from azure.ai.ml._restclient.v2022_10_01_preview.models import PipelineJob as RestPipelineJob
 from azure.ai.ml._schema import PathAwareSchema
@@ -42,15 +40,17 @@ from azure.ai.ml.entities._job._input_output_helpers import (
     to_rest_data_outputs,
     to_rest_dataset_literal_inputs,
 )
+
 # from azure.ai.ml.entities._job.identity import AmlToken, Identity, ManagedIdentity, UserIdentity
 from azure.ai.ml.entities._credentials import (
     AmlTokenConfiguration,
     ManagedIdentityConfiguration,
     UserIdentityConfiguration,
-    _BaseJobIdentityConfiguration
+    _BaseJobIdentityConfiguration,
 )
 from azure.ai.ml.entities._job.import_job import ImportJob
 from azure.ai.ml.entities._job.job import Job
+from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, PipelineIOMixin
 from azure.ai.ml.entities._job.pipeline.pipeline_job_settings import PipelineJobSettings
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
@@ -111,10 +111,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         experiment_name: str = None,
         jobs: Dict[str, BaseNode] = None,
         settings: PipelineJobSettings = None,
-        identity: Union[
-            ManagedIdentityConfiguration,
-            AmlTokenConfiguration,
-            UserIdentityConfiguration] = None,
+        identity: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration] = None,
         compute: str = None,
         tags: Dict[str, str] = None,
         **kwargs,
@@ -219,7 +216,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         return ErrorTarget.PIPELINE
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         # import this to ensure that nodes are registered before schema is created.
 
         return PipelineJobSchema(context=context)
@@ -272,7 +269,8 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             itertools.chain(
                 *[
                     self.component._get_input_binding_dict(node if not isinstance(node, LoopNode) else node.body)[0]
-                    for node in self.jobs.values() if not isinstance(node, ConditionNode)
+                    for node in self.jobs.values()
+                    if not isinstance(node, ConditionNode)
                     # condition node has no inputs
                 ]
             )
@@ -286,7 +284,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
                 continue
             # raise error when required input with no default value not set
             if (
-                not self.inputs.get(key, None)  # input not provided
+                self.inputs.get(key, None) is None  # input not provided
                 and meta.optional is not True  # and it's required
                 and meta.default is None  # and it does not have default
             ):
@@ -331,21 +329,26 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             validation_result.append_error(yaml_path="jobs", message="No other job except for on_init/on_finalize job.")
 
         def _is_isolated_job(_validate_job_name: str) -> bool:
+            def _try_get_data_binding(_input_output_data) -> Union[str, None]:
+                """Try to get data binding from input/output data, return None if not found."""
+                if isinstance(_input_output_data, str):
+                    return _input_output_data
+                if not hasattr(_input_output_data, "_data_binding"):
+                    return None
+                return _input_output_data._data_binding()
+
             _validate_job = self.jobs[_validate_job_name]
             # no input to validate job
             for _input_name in _validate_job.inputs:
-                if not hasattr(_validate_job.inputs[_input_name]._data, "_data_binding"):
-                    continue
-                _data_binding = _validate_job.inputs[_input_name]._data._data_binding()
-                if is_data_binding_expression(_data_binding, ["parent", "jobs"]):
+                _data_binding = _try_get_data_binding(_validate_job.inputs[_input_name]._data)
+                if _data_binding is not None and is_data_binding_expression(_data_binding, ["parent", "jobs"]):
                     return False
             # no output from validate job
             for _job_name, _job in self.jobs.items():
                 for _input_name in _job.inputs:
-                    if not hasattr(_job.inputs[_input_name]._data, "_data_binding"):
-                        continue
-                    _data_binding = _job.inputs[_input_name]._data._data_binding()
-                    if is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
+                    _data_binding = _try_get_data_binding(_job.inputs[_input_name]._data)
+                    if _data_binding is not None \
+                            and is_data_binding_expression(_data_binding, ["parent", "jobs", _validate_job_name]):
                         return False
             return True
 
@@ -467,6 +470,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         # This will be resolved in job_operations _resolve_arm_id_or_upload_dependencies.
         component_id = self.component if isinstance(self.component, str) else self.component.id
 
+        # TODO remove it in the future.
+        # MFE not support pass None or empty input value. Remove the empty inputs in pipeline job.
+        built_inputs = {k: v for k, v in built_inputs.items() if v is not None and v != ""}
+
         pipeline_job = RestPipelineJob(
             compute_id=rest_compute,
             component_id=component_id,
@@ -479,8 +486,10 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             inputs=to_rest_dataset_literal_inputs(built_inputs, job_type=self.type),
             outputs=to_rest_data_outputs(built_outputs),
             settings=settings_dict,
+            services={k: v._to_rest_object() for k, v in self.services.items()} if self.services else None,
             identity=self.identity._to_job_rest_object() if self.identity else None,
         )
+
         rest_job = JobBase(properties=pipeline_job)
         rest_job.name = self.name
         return rest_job
@@ -497,13 +506,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
         from_rest_inputs = from_rest_inputs_to_dataset_literal(properties.inputs) or {}
         from_rest_outputs = from_rest_data_outputs(properties.outputs) or {}
         # Unpack the component jobs
-        sub_nodes = {}
-        if properties.jobs:
-            for node_name, node in properties.jobs.items():
-                if LoopNode._is_loop_node_dict(node):
-                    sub_nodes[node_name] = LoopNode._from_rest_object(node, reference_node_list=sub_nodes)
-                else:
-                    sub_nodes[node_name] = BaseNode._from_rest_object(node)
+        sub_nodes = PipelineComponent._resolve_sub_nodes(properties.jobs) if properties.jobs else {}
         # backend may still store Camel settings, eg: DefaultDatastore, translate them to snake when load back
         settings_dict = transform_dict_keys(properties.settings, camel_to_snake) if properties.settings else None
         settings_sdk = PipelineJobSettings(**settings_dict) if settings_dict else PipelineJobSettings()
@@ -534,11 +537,12 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             experiment_name=properties.experiment_name,
             status=properties.status,
             creation_context=SystemData._from_rest_object(obj.system_data) if obj.system_data else None,
-            services=properties.services,
+            services=JobService._from_rest_job_services(properties.services) if properties.services else None,
             compute=get_resource_name_from_arm_id_safe(properties.compute_id),
             settings=settings_sdk,
-            identity=_BaseJobIdentityConfiguration._from_rest_object(
-                properties.identity) if properties.identity else None,
+            identity=_BaseJobIdentityConfiguration._from_rest_object(properties.identity)
+            if properties.identity
+            else None,
         )
 
         return job

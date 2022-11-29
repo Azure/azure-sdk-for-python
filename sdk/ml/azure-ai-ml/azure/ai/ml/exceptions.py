@@ -504,8 +504,9 @@ class UnsupportedParameterKindError(UserErrorException):
     """Exception raised when a user try setting attributes of
     inputs/outputs."""
 
-    def __init__(self, func_name):
-        msg = "%r: dsl pipeline does not accept *args or **kwargs as parameters." % func_name
+    def __init__(self, func_name, parameter_kind=None):
+        parameter_kind = parameter_kind or "*args or **kwargs"
+        msg = "%r: dsl pipeline does not accept %s as parameters." % (func_name, parameter_kind)
         super(UnsupportedParameterKindError, self).__init__(message=msg, no_personal_data_message=msg)
 
 
@@ -568,6 +569,15 @@ class MultipleValueError(KeywordError):
 
     def __init__(self, func_name, keyword):
         message = "%s() got multiple values for argument %r." % (func_name, keyword)
+        super().__init__(message=message, no_personal_data_message=message)
+
+
+class ParamValueNotExistsError(KeywordError):
+    """Exception raised when items in non_pipeline_inputs not in keyword parameters in
+    dynamic functions."""
+
+    def __init__(self, func_name, keywords):
+        message = "%s() got unexpected params in non_pipeline_inputs %r." % (func_name, keywords)
         super().__init__(message=message, no_personal_data_message=message)
 
 

@@ -1,5 +1,19 @@
 # Release History
 
+## 2.0.0b1 (2022-10-28)
+
+### Features Added
+
+  - Added operation group PrivateEndpointConnectionsOperations
+  - Model AttestationProvider has a new parameter private_endpoint_connections
+  - Model AttestationProvider has a new parameter system_data
+  - Model AttestationProviderListResult has a new parameter system_data
+  - Model OperationList has a new parameter system_data
+
+### Breaking Changes
+
+  - Model AttestationServiceCreationSpecificParams no longer has parameter attestation_policy
+
 ## 1.0.0 (2021-03-16)
 
 * GA release

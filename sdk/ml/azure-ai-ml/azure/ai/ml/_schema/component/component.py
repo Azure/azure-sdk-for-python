@@ -2,11 +2,11 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-from marshmallow import fields, post_load, pre_load
+from marshmallow import fields, pre_load
 
 from azure.ai.ml._schema.component.input_output import InputPortSchema, OutputPortSchema, ParameterSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, NestedField, PythonFuncNameStr, UnionField
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType
 
 from ..assets.asset import AssetSchema
 from ..core.fields import RegistryStr
@@ -48,11 +48,6 @@ class ComponentSchema(AssetSchema):
         # Remove schema_ignored to enable serialize and deserialize schema.
         self._declared_fields.pop("schema_ignored", None)  # pylint: disable=no-member
         super().__init__(*args, **kwargs)
-
-    @post_load
-    def make(self, data, **kwargs):  # pylint: disable=unused-argument,
-        data[BASE_PATH_CONTEXT_KEY] = self.context[BASE_PATH_CONTEXT_KEY]
-        return data
 
     @pre_load
     def convert_version_to_str(self, data, **kwargs):  # pylint: disable=unused-argument, no-self-use

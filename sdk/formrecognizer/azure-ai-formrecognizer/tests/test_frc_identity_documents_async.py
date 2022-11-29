@@ -17,6 +17,7 @@ from azure.ai.formrecognizer import FormRecognizerApiVersion
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import FormRecognizerPreparer
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 FormRecognizerClientPreparer = functools.partial(_GlobalClientPreparer, FormRecognizerClient)
 
@@ -81,6 +82,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
                     my_file
                 )
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -121,6 +123,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
         # Check page metadata
         self.assertFormPagesTransformCorrect(id_document.pages, read_results, page_results)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async
@@ -146,6 +149,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
                 self.assertFieldElementsHasValues(field.value_data.field_elements, id_document.page_range.first_page_number)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     async def test_identity_document_continuation_token(self, **kwargs):
@@ -171,6 +175,7 @@ class TestIdDocumentsAsync(AsyncFormRecognizerTest):
                 await client.begin_recognize_identity_documents(id_document)
         assert "Method 'begin_recognize_identity_documents' is only available for API version V2_1 and up" in str(e.value)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @FormRecognizerClientPreparer()
     @recorded_by_proxy_async

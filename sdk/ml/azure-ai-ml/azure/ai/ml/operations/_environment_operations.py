@@ -21,6 +21,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
     _create_or_update_autoincrement,
@@ -71,7 +72,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         """Returns created or updated environment asset.
 
         :param environment: Environment object
-        :type environment: Environment
+        :type environment: ~azure.ai.ml.entities._assets.Environment
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Environment cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
@@ -286,7 +287,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Archive an environment or an environment version.
 
         :param name: Name of the environment.
@@ -308,7 +309,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Restore an archived environment version.
 
         :param name: Name of the environment.
