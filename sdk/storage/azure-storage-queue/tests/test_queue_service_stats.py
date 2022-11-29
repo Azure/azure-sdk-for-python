@@ -54,7 +54,7 @@ class TestQueueServiceStats(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         # Arrange
-        qsc = QueueServiceClient(QueueServiceClient, self.account_url(storage_account_name, "queue"), storage_account_key)
+        qsc = QueueServiceClient(self.account_url(storage_account_name, "queue"), storage_account_key)
 
         # Act
         stats = qsc.get_service_stats()
