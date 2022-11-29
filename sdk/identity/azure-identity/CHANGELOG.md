@@ -1,5 +1,15 @@
 # Release History
 
+## 1.13.0b1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.12.0 (2022-11-08)
 
 ### Bugs Fixed
@@ -15,6 +25,10 @@
   re-enabled in the `DefaultAzureCredential` flow once a fix is in place. 
   Issue [#25713](https://github.com/Azure/azure-sdk-for-python/issues/25713) tracks this. In the meantime 
   Visual Studio Code users can authenticate their development environment using the [Azure CLI](https://learn.microsoft.com/cli/azure/).
+
+### Other Changes
+
+- Added Python 3.11 support and stopped supporting Python 3.6.
 
 ## 1.12.0b2 (2022-10-11)
 

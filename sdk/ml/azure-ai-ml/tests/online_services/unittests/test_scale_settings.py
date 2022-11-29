@@ -8,7 +8,7 @@ from azure.ai.ml.entities import DefaultScaleSettings, TargetUtilizationScaleSet
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestScaleSettings:
     def test_target_utilization_scale_settings_from_object(self) -> None:
         rest_scale_settings = RestTargetUtilizationScaleSettings(

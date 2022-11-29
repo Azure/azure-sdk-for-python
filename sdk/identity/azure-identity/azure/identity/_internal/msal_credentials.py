@@ -3,18 +3,14 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import os
-from typing import TYPE_CHECKING, List, Union, Dict
+from typing import Any, List, Union, Dict
 
 import msal
 
 from .msal_client import MsalClient
+from .utils import get_default_authority, normalize_authority, resolve_tenant, validate_tenant_id
 from .._constants import EnvironmentVariables
-from .._internal import get_default_authority, normalize_authority, resolve_tenant, validate_tenant_id
 from .._persistent_cache import _load_persistent_cache
-
-if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports,unused-import
-    from typing import Any
 
 
 class MsalCredential(object):

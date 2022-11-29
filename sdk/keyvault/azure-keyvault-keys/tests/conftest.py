@@ -11,8 +11,20 @@ import pytest
 from devtools_testutils import (add_general_regex_sanitizer,
                                 add_oauth_response_sanitizer, is_live,
                                 test_proxy)
+from azure.keyvault.keys._shared.client_base import DEFAULT_VERSION, ApiVersion
 
 os.environ['PYTHONHASHSEED'] = '0'
+ALL_API_VERSIONS = "--all-api-versions"
+
+def pytest_addoption(parser):
+    parser.addoption(ALL_API_VERSIONS, action="store_true", default=False,
+                     help="Test all api version in live mode. Not applicable in playback mode.")
+
+def pytest_configure(config):
+    if is_live() and not config.getoption(ALL_API_VERSIONS):
+        pytest.api_version = [DEFAULT_VERSION]
+    else:
+        pytest.api_version = ApiVersion
 
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):

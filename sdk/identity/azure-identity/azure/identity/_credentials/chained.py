@@ -3,20 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-
+from typing import Any, Optional, TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._internal import within_credential_chain
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
     from azure.core.credentials import AccessToken, TokenCredential
 
 _LOGGER = logging.getLogger(__name__)

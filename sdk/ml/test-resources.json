@@ -399,6 +399,10 @@
         "ManualApproval",
         "none"
       ]
+    },
+    "provisionGPUCluster": {
+      "type": "bool",
+      "defaultValue": "[bool('false')]"
     }
   },
   "variables": {
@@ -598,6 +602,7 @@
           "keySource": "Microsoft.Storage"
         },
         "supportsHttpsTrafficOnly": true,
+        "allowBlobPublicAccess": false,
         "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
       }
     },
@@ -738,6 +743,7 @@
       "dependsOn": [
         "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaceName'))]"
       ],
+      "condition": "[parameters('provisionGPUCluster')]",
       "properties": {
         "computeType": "AmlCompute",
         "properties": {
@@ -745,7 +751,7 @@
             "minNodeCount": "[parameters('computeMinNodeCount')]",
             "maxNodeCount": "[parameters('computeMaxNodeCount')]"
           },
-          "vmSize": "STANDARD_ND6S",
+          "vmSize": "[if(equals(parameters('location'), 'eastus2euap'), 'STANDARD_DS2_V2', 'STANDARD_NC6')]",
           "remoteLoginPortPublicAccess": "[parameters('remoteLoginPortPublicAccess')]"
         }
       }

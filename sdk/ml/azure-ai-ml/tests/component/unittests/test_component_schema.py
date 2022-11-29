@@ -48,6 +48,7 @@ def load_component_entity_from_yaml(
     internal_representation.__init__(
         **data,
     )
+    internal_representation._base_path = context[BASE_PATH_CONTEXT_KEY]
 
     def mock_get_asset_arm_id(*args, **kwargs):
         if len(args) > 0:
@@ -125,7 +126,7 @@ class TestCommandComponent:
         test_path = "./tests/test_configs/components/helloworld_component_alt1.yml"
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
 
-        assert component_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu"
+        assert component_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
 
     def test_serialize_deserialize_input_types(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/input_types_component.yml"
@@ -303,6 +304,20 @@ class TestCommandComponent:
 
         validation_result = component_entity._validate()
         assert validation_result.passed is True
+
+    def test_component_factory(self):
+        test_path = "./tests/test_configs/components/helloworld_component_with_properties.yml"
+        component_entity = load_component(source=test_path)
+        recreated_component = component_factory.load_from_dict(
+            data=component_entity._to_dict(),
+            context={
+                "source_path": test_path,
+            }
+        )
+        assert recreated_component._to_dict() == component_entity._to_dict()
+
+        recreated_component = component_factory.load_from_rest(obj=component_entity._to_rest_object())
+        assert recreated_component._to_dict() == component_entity._to_dict()
 
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
