@@ -105,7 +105,7 @@ class ServiceBusSession(BaseSession):
             REQUEST_RESPONSE_SET_SESSION_STATE_OPERATION,
             {
                 MGMT_REQUEST_SESSION_ID: self._session_id,
-                MGMT_REQUEST_SESSION_STATE: bytearray(state),
+                MGMT_REQUEST_SESSION_STATE: bytearray(state) if state else state,
             },
             mgmt_handlers.default,
             timeout=timeout,
