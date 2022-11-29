@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
+import tempfile
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
@@ -41,7 +42,6 @@ from settings.testcase import DataLakePreparer
 
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
-FILE_PATH = 'file_output.temp.dat'
 
 # ------------------------------------------------------------------------------
 
@@ -749,15 +749,17 @@ class TestFile(StorageRecordedTestCase):
         file_client.append_data(data, 0, len(data))
         file_client.flush_data(len(data))
 
+        temp_file = tempfile.NamedTemporaryFile(delete=False)
         # download the data into a file and make sure it is the same as uploaded data
-        with open(FILE_PATH, 'wb') as stream:
+        with open(temp_file.name, 'wb') as stream:
             download = file_client.download_file()
             download.readinto(stream)
 
         # Assert
-        with open(FILE_PATH, 'rb') as stream:
+        with open(temp_file.name, 'rb') as stream:
             actual = stream.read()
             assert data == actual
+        temp_file.close()
 
     @DataLakePreparer()
     @recorded_by_proxy
