@@ -694,17 +694,16 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await file_client.append_data(data, 0, len(data))
         await file_client.flush_data(len(data))
 
-        temp_file = tempfile.NamedTemporaryFile(delete=False)
         # download the data into a file and make sure it is the same as uploaded data
-        with open(temp_file.name, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             download = await file_client.download_file()
-            await download.readinto(stream)
+            await download.readinto(temp_file)
 
-        # Assert
-        with open(temp_file.name, 'rb') as stream:
-            actual = stream.read()
+            temp_file.seek(0)
+
+            # Assert
+            actual = temp_file.read()
             assert data == actual
-        temp_file.close()
 
     @DataLakePreparer()
     @recorded_by_proxy_async
