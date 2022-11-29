@@ -1,6 +1,8 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.3.0 (Unreleased)
+
+## 1.2.0 (2022-12-05)
 
 ### Features Added
 - Added OS Patching Parameters to Compute Instance.
