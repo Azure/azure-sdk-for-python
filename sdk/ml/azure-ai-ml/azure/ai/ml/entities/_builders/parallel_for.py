@@ -6,15 +6,18 @@ from typing import Dict, Union
 
 from azure.ai.ml import Output
 from azure.ai.ml._schema import PathAwareSchema
+from azure.ai.ml._schema.component.input_output import SUPPORTED_PORT_TYPES, SUPPORTED_PARAM_TYPES
 from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
-from azure.ai.ml.constants._component import ControlFlowType
+from azure.ai.ml.constants import AssetTypes
+from azure.ai.ml.constants._component import ControlFlowType, ComponentParameterTypes
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
 from azure.ai.ml.entities._util import validate_attribute_type
+from azure.ai.ml.exceptions import UserErrorException
 
 
 class ParallelFor(LoopNode, NodeIOMixin):
@@ -55,11 +58,24 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # parallel for node shares output meta with body
         try:
             outputs = self.body._component.outputs
-        except AttributeError:
-            outputs = {}
+        except AttributeError as e:
+            # when body output not available, parallel_for node outputs can not be created
+            raise UserErrorException("Failed to get body outputs definition.") from e
 
-        # TODO: handle when body don't have component or component.outputs
-        self._outputs = self._build_outputs_dict_without_meta(outputs, none_data=True)
+        # transform body outputs to aggregate types
+        aggregate_outputs = {}
+        for name, output in outputs.items():
+            if output.type in SUPPORTED_PORT_TYPES:
+                new_type = AssetTypes.MLTABLE
+            elif output.type in SUPPORTED_PARAM_TYPES:
+                new_type = ComponentParameterTypes.STRING
+            else:
+                raise UserErrorException("Unsupported output type {}.".format(output.type))
+            out_dict = output._to_dict()
+            out_dict["type"] = new_type
+            aggregate_outputs[name] = Output(**out_dict)
+
+        self._outputs = self._build_outputs_dict(output_definition_dict=aggregate_outputs, outputs={})
 
         self._items = items
         self._validate_items(raise_error=True)

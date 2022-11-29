@@ -234,3 +234,28 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
         rest_job = my_job._to_rest_object().as_dict()
         rest_items = rest_job["properties"]["jobs"]["parallelfor"]["items"]
         assert rest_items == '[{"component_in_number": 1}, {"component_in_number": 2}]'
+
+    def test_parallel_for_outputs(self):
+        basic_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+
+        @pipeline
+        def my_pipeline():
+            body = basic_component(component_in_path=Input(path="test_path1"))
+
+            foreach_node = parallel_for(
+                body=body,
+                items={
+                    "iter1": {"component_in_number": 1},
+                    "iter2": {"component_in_number": 2}
+                }
+            )
+            return {
+                "output": foreach_node.outputs.component_out_path
+            }
+
+        my_job = my_pipeline()
+        rest_job = my_job._to_rest_object().as_dict()
+        rest_outputs = rest_job["properties"]["outputs"]
+        assert rest_outputs == {}
