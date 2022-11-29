@@ -38,14 +38,18 @@ class DetectLastAnomalySample(object):
         # Create an Anomaly Detector client
 
         # <client>
-        client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
+        client = AnomalyDetectorClient(
+            ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY)
+        )
         # </client>
 
         # Load in the time series data file
 
         # <loadDataFile>
         series = []
-        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
+        data_file = pd.read_csv(
+            TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0]
+        )
         for index, row in data_file.iterrows():
             series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
         # </loadDataFile>
@@ -67,7 +71,10 @@ class DetectLastAnomalySample(object):
         try:
             response = client.detect_univariate_last_point(request)
         except Exception as e:
-            print("Error code: {}".format(e.error.code), "Error message: {}".format(e.error.message))
+            print(
+                "Error code: {}".format(e.error.code),
+                "Error message: {}".format(e.error.message),
+            )
 
         if response.is_anomaly:
             print("The latest point is detected as anomaly.")
