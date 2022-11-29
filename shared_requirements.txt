@@ -217,6 +217,7 @@ yarl<2.0,>=1.0
 #override azure-schemaregistry-avroencoder typing-extensions>=4.0.1
 opencensus>=0.6.0
 opencensus-ext-threading
+#override azure-mgmt-network typing-extensions>=4.3.0; python_version<'3.8.0'
 opencensus-ext-azure>=0.3.1
 opentelemetry-api<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-maintenance azure-mgmt-core>=1.3.2,<2.0.0
