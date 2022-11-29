@@ -12,13 +12,14 @@ from typing import Any, List, Optional, TYPE_CHECKING, Union
 
 from ... import _serialization
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from .. import models as _models
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
 else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+
+if TYPE_CHECKING:
+    # pylint: disable=unused-import,ungrouped-imports
+    from .. import models as _models
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
@@ -130,7 +131,7 @@ class ApplicationCondition(_serialization.Model):
     :ivar value: The application Condition's Value like IDs that contain some string, see examples.
     :vartype value: str
     :ivar operator: The application Condition's Operator, for example Contains for id or In for
-     list of possible IDs, see examples. Known values are: "Contains" and "In".
+     list of possible IDs, see examples. Known values are: "Contains", "Equals", and "In".
     :vartype operator: str or
      ~azure.mgmt.security.v2022_07_01_preview.models.ApplicationConditionOperator
     """
@@ -156,7 +157,7 @@ class ApplicationCondition(_serialization.Model):
          examples.
         :paramtype value: str
         :keyword operator: The application Condition's Operator, for example Contains for id or In for
-         list of possible IDs, see examples. Known values are: "Contains" and "In".
+         list of possible IDs, see examples. Known values are: "Contains", "Equals", and "In".
         :paramtype operator: str or
          ~azure.mgmt.security.v2022_07_01_preview.models.ApplicationConditionOperator
         """

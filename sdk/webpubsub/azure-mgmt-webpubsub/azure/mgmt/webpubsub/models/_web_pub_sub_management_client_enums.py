@@ -6,59 +6,55 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-from enum import Enum, EnumMeta
-from six import with_metaclass
-
-class _CaseInsensitiveEnumMeta(EnumMeta):
-    def __getitem__(self, name):
-        return super().__getitem__(name.upper())
-
-    def __getattr__(cls, name):
-        """Return the enum member matching `name`
-        We use __getattr__ instead of descriptors or inserting into the enum
-        class' __dict__ in order to support `name` and `value` being both
-        properties for enum members (which live in the class' __dict__) and
-        enum members themselves.
-        """
-        try:
-            return cls._member_map_[name.upper()]
-        except KeyError:
-            raise AttributeError(name)
+from enum import Enum
+from azure.core import CaseInsensitiveEnumMeta
 
 
-class ACLAction(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Default action when no other rule matches
-    """
+class ACLAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Azure Networking ACL Action."""
 
     ALLOW = "Allow"
     DENY = "Deny"
 
-class CreatedByType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The type of identity that created the resource.
-    """
+
+class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
-class KeyType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The keyType to regenerate. Must be either 'primary' or 'secondary'(case-insensitive).
-    """
+
+class EventListenerEndpointDiscriminator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """EventListenerEndpointDiscriminator."""
+
+    EVENT_HUB = "EventHub"
+
+
+class EventListenerFilterDiscriminator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """EventListenerFilterDiscriminator."""
+
+    EVENT_NAME = "EventName"
+
+
+class KeyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of access key."""
 
     PRIMARY = "Primary"
     SECONDARY = "Secondary"
     SALT = "Salt"
 
-class ManagedIdentityType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Represent the identity type: systemAssigned, userAssigned, None
-    """
+
+class ManagedIdentityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Represents the identity type: systemAssigned, userAssigned, None."""
 
     NONE = "None"
     SYSTEM_ASSIGNED = "SystemAssigned"
     USER_ASSIGNED = "UserAssigned"
 
-class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class PrivateLinkServiceConnectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates whether the connection has been Approved/Rejected/Removed by the owner of the
     service.
     """
@@ -68,9 +64,9 @@ class PrivateLinkServiceConnectionStatus(with_metaclass(_CaseInsensitiveEnumMeta
     REJECTED = "Rejected"
     DISCONNECTED = "Disconnected"
 
-class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Provisioning state of the resource.
-    """
+
+class ProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provisioning state of the resource."""
 
     UNKNOWN = "Unknown"
     SUCCEEDED = "Succeeded"
@@ -82,17 +78,17 @@ class ProvisioningState(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
     DELETING = "Deleting"
     MOVING = "Moving"
 
-class ScaleType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """The scale type applicable to the sku.
-    """
+
+class ScaleType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The scale type applicable to the sku."""
 
     NONE = "None"
     MANUAL = "Manual"
     AUTOMATIC = "Automatic"
 
-class SharedPrivateLinkResourceStatus(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Status of the shared private link resource
-    """
+
+class SharedPrivateLinkResourceStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status of the shared private link resource."""
 
     PENDING = "Pending"
     APPROVED = "Approved"
@@ -100,26 +96,26 @@ class SharedPrivateLinkResourceStatus(with_metaclass(_CaseInsensitiveEnumMeta, s
     DISCONNECTED = "Disconnected"
     TIMEOUT = "Timeout"
 
-class UpstreamAuthType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Gets or sets the type of auth. None or ManagedIdentity is supported now.
-    """
+
+class UpstreamAuthType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Upstream auth type enum."""
 
     NONE = "None"
     MANAGED_IDENTITY = "ManagedIdentity"
 
-class WebPubSubRequestType(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
-    """Allowed request types. The value can be one or more of: ClientConnection, ServerConnection,
-    RESTAPI.
-    """
+
+class WebPubSubRequestType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The incoming request type to the service."""
 
     CLIENT_CONNECTION = "ClientConnection"
     SERVER_CONNECTION = "ServerConnection"
     RESTAPI = "RESTAPI"
     TRACE = "Trace"
 
-class WebPubSubSkuTier(with_metaclass(_CaseInsensitiveEnumMeta, str, Enum)):
+
+class WebPubSubSkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Optional tier of this particular SKU. 'Standard' or 'Free'.
-    
+
     ``Basic`` is deprecated, use ``Standard`` instead.
     """
 

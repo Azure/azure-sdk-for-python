@@ -25,6 +25,11 @@ outputs:
   component_out_number:
     description: A ranged number
     type: number
+  component_out_early_available_string:
+    description: A early available string
+    type: string
+    is_control: True
+    early_available: True
 
 command: >-
   echo Hello World
