@@ -146,7 +146,6 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         events = list(change_feed)
         assert len(events) == 0
 
-    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_read_change_feed_tail_where_3_shards_have_data(self, **kwargs):
@@ -155,8 +154,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
 
-        start_time = datetime(2022, 11, 2)
-        end_time = datetime(2022, 11, 3)
+        start_time = datetime(2022, 11, 27)
+        end_time = datetime(2022, 11, 29)
 
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time).by_page()
 
@@ -206,7 +205,6 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
             events3.append(event)
         assert events2 != 0
 
-    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_read_change_feed_tail_where_only_1_shard_has_data(self, **kwargs):
@@ -215,8 +213,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
 
-        start_time = datetime(2022, 11, 2)
-        end_time = datetime(2022, 11, 9)
+        start_time = datetime(2022, 11, 27)
+        end_time = datetime(2022, 11, 29)
 
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=3).by_page()
 
@@ -235,11 +233,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         assert dict_token['CurrentSegmentCursor']['SegmentPath'] is not None
         assert dict_token['CurrentSegmentCursor']['CurrentShardPath'] is not None
 
-        # if self.is_live:
-        #     sleep(120)
         print("continue printing events")
 
-        # restart using the continuation token after waiting for 2 minutes
         change_feed2 = cf_client.list_changes(results_per_page=5).by_page(continuation_token=token)
         events2 = []
         for page in change_feed2:
@@ -248,7 +243,6 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
 
         assert len(events2) != 0
 
-    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_read_change_feed_with_3_shards_in_a_time_range(self, **kwargs):
@@ -258,8 +252,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
 
         # to get continuation token
-        start_time = datetime(2022, 11, 2, 15)
-        end_time = datetime(2022, 11, 2, 17)
+        start_time = datetime(2022, 11, 27)
+        end_time = datetime(2022, 11, 29)
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=16).by_page()
 
         page = next(change_feed)
@@ -282,7 +276,6 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         end_time_str = (end_time + timedelta(hours=1)).isoformat()
         assert events[len(events) - 1]['eventTime'] < end_time_str
 
-    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_read_3_shards_change_feed_during_a_time_range_in_multiple_times_gives_same_result_as_reading_all(self, **kwargs):
@@ -291,8 +284,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
 
         # to read until the end
-        start_time = datetime(2022, 11, 2)
-        end_time = datetime(2022, 11, 9)
+        start_time = datetime(2022, 11, 27)
+        end_time = datetime(2022, 11, 29)
 
         all_events = list(cf_client.list_changes(start_time=start_time, end_time=end_time))
         change_feed = cf_client.list_changes(start_time=start_time, end_time=end_time, results_per_page=50).by_page()
@@ -319,7 +312,6 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         with pytest.raises(ValueError):
             cf_client.list_changes(results_per_page=50, start_time=datetime.now()).by_page(continuation_token=token)
 
-        # restart using the continuation token after waiting for 2 minutes
         change_feed2 = cf_client.list_changes(results_per_page=50).by_page(continuation_token=token)
         events2 = list()
         for _ in (0, 2):
@@ -347,7 +339,6 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         assert len(dict_token3['CurrentSegmentCursor']['ShardCursors']) == 3
         assert len(events)+len(events2)+len(events3) == len(all_events)
 
-    @pytest.mark.skip(reason="Feature not enabled in production. Re-record when enabled.")
     @ChangeFeedPreparer()
     @recorded_by_proxy
     def test_list_3_shards_events_works_with_1_shard_cursor(self, **kwargs):
@@ -355,8 +346,8 @@ class TestStorageChangeFeed(StorageRecordedTestCase):
         storage_account_key = kwargs.pop("storage_account_key")
 
         cf_client = ChangeFeedClient(self.account_url(storage_account_name, "blob"), storage_account_key)
-        start_time = datetime(2022, 11, 2)
-        end_time = datetime(2022, 11, 9)
+        start_time = datetime(2022, 11, 27)
+        end_time = datetime(2022, 11, 29)
         change_feed = cf_client.list_changes(results_per_page=1, start_time=start_time, end_time=end_time).by_page()
         next(change_feed)
         token_with_1_shard = change_feed.continuation_token
