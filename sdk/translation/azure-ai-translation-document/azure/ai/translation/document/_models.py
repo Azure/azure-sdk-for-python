@@ -3,7 +3,8 @@
 # Licensed under the MIT License.
 # ------------------------------------
 
-from typing import Any, List, Optional, Union
+import datetime
+from typing import List, Optional, Union
 from ._generated.models import (
     BatchRequest as _BatchRequest,
     SourceInput as _SourceInput,
@@ -90,7 +91,7 @@ class TranslationGlossary:
             for glossary in glossaries
         ]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             "TranslationGlossary(glossary_url={}, "
             "file_format={}, format_version={}, storage_source={})".format(
@@ -169,7 +170,7 @@ class TranslationTarget:
             for target in targets
         ]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             "TranslationTarget(target_url={}, language={}, "
             "category_id={}, glossaries={}, storage_source={})".format(
@@ -271,7 +272,7 @@ class DocumentTranslationInput:
             for batch_document_input in batch_document_inputs
         ]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             "DocumentTranslationInput(source_url={}, targets={}, "
             "source_language={}, storage_type={}, "
@@ -317,29 +318,37 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
     :ivar int total_characters_charged: Total characters charged across all documents within the translation operation.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.id = kwargs.get("id")
-        self.created_on = kwargs.get("created_on")
-        self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.status = kwargs.get("status", None)
-        self.error = kwargs.get("error", None)
-        self.documents_total_count = kwargs.get("documents_total_count", None)
-        self.documents_failed_count = kwargs.get("documents_failed_count", None)
-        self.documents_succeeded_count = kwargs.get("documents_succeeded_count", None)
-        self.documents_in_progress_count = kwargs.get(
-            "documents_in_progress_count", None
-        )
-        self.documents_not_started_count = kwargs.get(
-            "documents_not_started_count", None
-        )
-        self.documents_canceled_count = kwargs.get("documents_canceled_count", None)
-        self.total_characters_charged = kwargs.get("total_characters_charged", None)
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        created_on: Optional[datetime.datetime] = None,
+        last_updated_on: Optional[datetime.datetime] = None,
+        status: Optional[str] = None,
+        documents_total_count: Optional[int] = None,
+        documents_failed_count: Optional[int] = None,
+        documents_succeeded_count: Optional[int] = None,
+        documents_in_progress_count: Optional[int] = None,
+        documents_not_started_count: Optional[int] = None,
+        documents_canceled_count: Optional[int] = None,
+        total_characters_charged: Optional[int] = None,
+        error: Optional["DocumentTranslationError"] = None,
+    ) -> None:
+        self.id = id
+        self.created_on = created_on
+        self.last_updated_on = last_updated_on
+        self.status = status
+        self.error = error
+        self.documents_total_count = documents_total_count
+        self.documents_failed_count = documents_failed_count
+        self.documents_succeeded_count = documents_succeeded_count
+        self.documents_in_progress_count = documents_in_progress_count
+        self.documents_not_started_count = documents_not_started_count
+        self.documents_canceled_count = documents_canceled_count
+        self.total_characters_charged = total_characters_charged
 
     @classmethod
     def _from_generated(cls, batch_status_details):
-        if not batch_status_details:
-            return cls()
-
         return cls(
             id=batch_status_details.id,
             created_on=batch_status_details.created_date_time_utc,
@@ -359,7 +368,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
             total_characters_charged=batch_status_details.summary.total_character_charged,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             "TranslationStatus(id={}, created_on={}, "
             "last_updated_on={}, status={}, error={}, documents_total_count={}, "
@@ -412,17 +421,30 @@ class DocumentStatus:
     :ivar int characters_charged: Characters charged for the document.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.source_document_url = kwargs.get("source_document_url", None)
-        self.translated_document_url = kwargs.get("translated_document_url", None)
-        self.created_on = kwargs["created_on"]
-        self.last_updated_on = kwargs["last_updated_on"]
-        self.status = kwargs["status"]
-        self.translated_to = kwargs["translated_to"]
-        self.error = kwargs.get("error", None)
-        self.translation_progress = kwargs.get("translation_progress", None)
-        self.id = kwargs.get("id", None)
-        self.characters_charged = kwargs.get("characters_charged", None)
+    def __init__(
+        self,
+        *,
+        id: str,  # pylint: disable=redefined-builtin
+        source_document_url: str,
+        created_on: datetime.datetime,
+        last_updated_on: datetime.datetime,
+        status: str,
+        translated_to: str,
+        translation_progress: float,
+        translated_document_url: Optional[str] = None,
+        characters_charged: Optional[int] = None,
+        error: Optional["DocumentTranslationError"] = None,
+    ) -> None:
+        self.source_document_url = source_document_url
+        self.translated_document_url = translated_document_url
+        self.created_on = created_on
+        self.last_updated_on = last_updated_on
+        self.status = status
+        self.translated_to = translated_to
+        self.error = error
+        self.translation_progress = translation_progress
+        self.id = id
+        self.characters_charged = characters_charged
 
     @classmethod
     def _from_generated(cls, doc_status):
@@ -443,7 +465,7 @@ class DocumentStatus:
             characters_charged=doc_status.character_charged,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             "DocumentStatus(id={}, source_document_url={}, "
             "translated_document_url={}, created_on={}, last_updated_on={}, "
@@ -475,10 +497,16 @@ class DocumentTranslationError:
         For example it would be "documents" or "document id" in case of invalid document.
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
-        self.target = kwargs.get("target", None)
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        target: Optional[str] = None
+    ) -> None:
+        self.code = code
+        self.message = message
+        self.target = target
 
     @classmethod
     def _from_generated(cls, error):
@@ -493,7 +521,7 @@ class DocumentTranslationError:
             )
         return cls(code=error.code, message=error.message, target=error.target)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "DocumentTranslationError(code={}, message={}, target={}".format(
             self.code, self.message, self.target
         )[:1024]
@@ -514,12 +542,20 @@ class DocumentTranslationFileFormat:
     :vartype default_format_version: str
     """
 
-    def __init__(self, **kwargs: Any) -> None:
-        self.file_format = kwargs.get("file_format", None)
-        self.file_extensions = kwargs.get("file_extensions", None)
-        self.content_types = kwargs.get("content_types", None)
-        self.format_versions = kwargs.get("format_versions", None)
-        self.default_format_version = kwargs.get("default_format_version", None)
+    def __init__(
+        self,
+        *,
+        file_format: str,
+        file_extensions: List[str],
+        content_types: List[str],
+        format_versions: List[str],
+        default_format_version: Optional[str] = None
+    ) -> None:
+        self.file_format = file_format
+        self.file_extensions = file_extensions
+        self.content_types = content_types
+        self.format_versions = format_versions
+        self.default_format_version = default_format_version
 
     @classmethod
     def _from_generated(cls, file_format):
@@ -537,7 +573,7 @@ class DocumentTranslationFileFormat:
             DocumentTranslationFileFormat._from_generated(file_formats) for file_formats in file_formats
         ]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             "DocumentTranslationFileFormat(file_format={}, file_extensions={}, "
             "content_types={}, format_versions={}, default_format_version={}".format(
