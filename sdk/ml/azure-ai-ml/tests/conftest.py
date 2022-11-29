@@ -156,13 +156,16 @@ def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
 def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
     mock_response = json.dumps(
         {
-            "registryName": "registry",
-            "primaryRegionResourceProviderUri": "uri",
-            "subscriptionId": "sub_id",
-            "resourceGroup": "rg",
+            "registryName": "testFeed",
+            "primaryRegionResourceProviderUri": "https://cert-master.experiments.azureml-test.net/",
+            "resourceGroup": "resourceGroup",
+            "subscriptionId": "subscriptionId"
         }
     )
-    mocker.patch("azure.ai.ml._utils._registry_utils.RegistryDiscovery.get_registry_service_client", return_value=mock_response)
+    mocker.patch(
+        "azure.ai.ml._restclient.registry_discovery.operations._registry_management_non_workspace_operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace",
+        return_val=mock_response,
+    )
     yield MLClient(
         credential=Mock(spec_set=DefaultAzureCredential),
         subscription_id=Test_Subscription,
@@ -194,6 +197,11 @@ def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2021_10_01_dataplanepreview")
 
 
 @pytest.fixture

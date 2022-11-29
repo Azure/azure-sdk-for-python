@@ -786,12 +786,12 @@ def _archive_or_restore(
             name=name,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
-            body=version_resource,
+            body=container_resource,
             ) if registry_name else container_operation.create_or_update(
             name=name,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
-            body=version_resource,
+            body=container_resource,
             )
 
 

@@ -20,13 +20,13 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 def mock_component_operation(
     mock_workspace_scope: OperationScope,
     mock_operation_config: OperationConfig,
-    mock_aml_services_2022_05_01: Mock,
+    mock_aml_services_2021_10_01_dataplanepreview: Mock,
     mock_machinelearning_registry_client: Mock
 ) -> ComponentOperations:
     yield ComponentOperations(
         operation_scope=mock_workspace_scope,
         operation_config=mock_operation_config,
-        service_client=mock_aml_services_2022_05_01,
+        service_client=mock_aml_services_2021_10_01_dataplanepreview,
         all_operations=mock_machinelearning_registry_client._operation_container,
     )
 
@@ -88,18 +88,6 @@ class TestComponentOperation:
             resource_group_name=mock_component_operation._resource_group_name,
         )
 
-    def test_archive_container(self, mock_component_operation: ComponentOperations):
-        name = "random_name"
-        component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
-        mock_component_operation._container_operation.get.return_value = component
-        mock_component_operation.archive(name=name)
-
-        mock_component_operation._container_operation.create_or_update.assert_called_with(
-            name=name,
-            workspace_name=mock_component_operation._workspace_name,
-            body=component,
-            resource_group_name=mock_component_operation._resource_group_name,
-        )
 
     def test_restore_version(self, mock_component_operation: ComponentOperations):
         name = "random_name"
@@ -116,15 +104,32 @@ class TestComponentOperation:
             resource_group_name=mock_component_operation._resource_group_name,
         )
 
-    def test_restore_container(self, mock_component_operation: ComponentOperations):
-        name = "random_name"
-        component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
-        mock_component_operation._container_operation.get.return_value = component
-        mock_component_operation.restore(name=name)
 
-        mock_component_operation._container_operation.create_or_update.assert_called_with(
-            name=name,
-            workspace_name=mock_component_operation._workspace_name,
-            body=component,
-            resource_group_name=mock_component_operation._resource_group_name,
-        )
+# These are still waiting for the backend implementations
+    # def test_archive_container(self, mock_component_operation: ComponentOperations):
+    #     name = "random_name"
+    #     component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
+    #     mock_component_operation._container_operation.get.return_value = component
+    #     mock_component_operation.archive(name=name)
+
+    #     mock_component_operation._container_operation.create_or_update.assert_called_with(
+    #         name=name,
+    #         workspace_name=mock_component_operation._workspace_name,
+    #         body=component,
+    #         resource_group_name=mock_component_operation._resource_group_name,
+    #     )
+
+
+
+    # def test_restore_container(self, mock_component_operation: ComponentOperations):
+    #     name = "random_name"
+    #     component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
+    #     mock_component_operation._container_operation.get.return_value = component
+    #     mock_component_operation.restore(name=name)
+
+    #     mock_component_operation._container_operation.create_or_update.assert_called_with(
+    #         name=name,
+    #         workspace_name=mock_component_operation._workspace_name,
+    #         body=component,
+    #         resource_group_name=mock_component_operation._resource_group_name,
+    #     )
