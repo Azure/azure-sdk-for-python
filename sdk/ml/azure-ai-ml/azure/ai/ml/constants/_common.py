@@ -103,7 +103,7 @@ EXPERIMENTAL_FIELD_MESSAGE = "This is an experimental field,"
 EXPERIMENTAL_LINK_MESSAGE = (
     "and may change at any time. Please see https://aka.ms/azuremlexperimental for more information."
 )
-REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "Visit this link to refer to the {} schema if needed: {}."
+REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT = "\nVisit this link to refer to the {} schema if needed: {}."
 STORAGE_AUTH_MISMATCH_ERROR = "AuthorizationPermissionMismatch"
 SWEEP_JOB_BEST_CHILD_RUN_ID_PROPERTY_NAME = "best_child_run_id"
 BATCH_JOB_CHILD_RUN_NAME = "batchscoring"
@@ -138,15 +138,16 @@ DEFAULT_COMPONENT_VERSION = "azureml_default"
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
 SCHEMA_VALIDATION_ERROR_TEMPLATE = (
-    "\n\nError: {description}\n{error_msg}\n\n"
+    "\n{text_color}Error: {description}\n{error_msg}{reset}\n\n"
     "Details: {parsed_error_details}\n"
-    "Resolutions:\n{resolutions}"
+    "Resolutions: {resolutions}"
     "If using the CLI, you can also check the full log in debug mode for more details by adding --debug "
     "to the end of your command\n"
-    "Additional Resources: The easiest way to author a yaml specification file is using IntelliSense and "
+    "\nAdditional Resources: The easiest way to author a yaml specification file is using IntelliSense and "
     "auto-completion Azure ML VS code extension provides: "
-    "https://code.visualstudio.com/docs/datascience/azure-machine-learning. "
-    "To set up VS Code, visit https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-code\n"
+    "{link_color}https://code.visualstudio.com/docs/datascience/azure-machine-learning.{reset} "
+    "To set up VS Code, visit {link_color}https://docs.microsoft.com/azure/machine-learning/how-to-setup-vs-"
+    "code{reset}\n"
 )
 
 YAML_CREATION_ERROR_DESCRIPTION = (
