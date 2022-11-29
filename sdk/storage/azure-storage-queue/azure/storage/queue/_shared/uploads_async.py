@@ -8,8 +8,10 @@
 import asyncio
 import threading
 from asyncio import Lock
+from io import UnsupportedOperation
 from itertools import islice
 from math import ceil
+from typing import AsyncGenerator, Union
 
 import six
 
@@ -421,3 +423,41 @@ class FileChunkUploader(_ChunkUploader):  # pylint: disable=abstract-method
     # TODO: Implement this method.
     async def _upload_substream_block(self, index, block_stream):
         pass
+
+
+class AsyncIterStreamer():
+    """
+    File-like streaming object for AsyncGenerators.
+    """
+    def __init__(self, generator: AsyncGenerator[Union[bytes, str], None], encoding: str = "UTF-8"):
+        self.iterator = generator.__aiter__()
+        self.leftover = b""
+        self.encoding = encoding
+
+    def seekable(self):
+        return False
+
+    def tell(self, *args, **kwargs):
+        raise UnsupportedOperation("Data generator does not support tell.")
+
+    def seek(self, *args, **kwargs):
+        raise UnsupportedOperation("Data generator is not seekable.")
+
+    async def read(self, size: int) -> bytes:
+        data = self.leftover
+        count = len(self.leftover)
+        try:
+            while count < size:
+                chunk = await self.iterator.__anext__()
+                if isinstance(chunk, str):
+                    chunk = chunk.encode(self.encoding)
+                data += chunk
+                count += len(chunk)
+        # This means count < size and what's leftover will be returned in this call.
+        except StopAsyncIteration:
+            self.leftover = b""
+
+        if count >= size:
+            self.leftover = data[size:]
+
+        return data[:size]
