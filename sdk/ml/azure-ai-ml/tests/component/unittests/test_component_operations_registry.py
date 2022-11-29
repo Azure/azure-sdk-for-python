@@ -105,31 +105,29 @@ class TestComponentOperation:
         )
 
 
-# These are still waiting for the backend implementations
-    # def test_archive_container(self, mock_component_operation: ComponentOperations):
-    #     name = "random_name"
-    #     component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
-    #     mock_component_operation._container_operation.get.return_value = component
-    #     mock_component_operation.archive(name=name)
+    def test_archive_container(self, mock_component_operation: ComponentOperations):
+        name = "random_name"
+        component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
+        mock_component_operation._container_operation.get.return_value = component
+        mock_component_operation.archive(name=name)
 
-    #     mock_component_operation._container_operation.create_or_update.assert_called_with(
-    #         name=name,
-    #         workspace_name=mock_component_operation._workspace_name,
-    #         body=component,
-    #         resource_group_name=mock_component_operation._resource_group_name,
-    #     )
-
+        mock_component_operation._container_operation.create_or_update.assert_called_with(
+            name=name,
+            workspace_name=mock_component_operation._workspace_name,
+            body=component,
+            resource_group_name=mock_component_operation._resource_group_name,
+        )
 
 
-    # def test_restore_container(self, mock_component_operation: ComponentOperations):
-    #     name = "random_name"
-    #     component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
-    #     mock_component_operation._container_operation.get.return_value = component
-    #     mock_component_operation.restore(name=name)
+    def test_restore_container(self, mock_component_operation: ComponentOperations):
+        name = "random_name"
+        component = Mock(ComponentContainerData(properties=Mock(ComponentContainerDetails())))
+        mock_component_operation._container_operation.get.return_value = component
+        mock_component_operation.restore(name=name)
 
-    #     mock_component_operation._container_operation.create_or_update.assert_called_with(
-    #         name=name,
-    #         workspace_name=mock_component_operation._workspace_name,
-    #         body=component,
-    #         resource_group_name=mock_component_operation._resource_group_name,
-    #     )
+        mock_component_operation._container_operation.create_or_update.assert_called_with(
+            name=name,
+            workspace_name=mock_component_operation._workspace_name,
+            body=component,
+            resource_group_name=mock_component_operation._resource_group_name,
+        )
