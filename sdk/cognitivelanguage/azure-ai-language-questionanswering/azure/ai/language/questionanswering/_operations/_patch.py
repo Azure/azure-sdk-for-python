@@ -123,8 +123,10 @@ def _get_answers_from_text_prepare_options(
     )
     try:
         options = cast(JSON, options)
+        # pylint: disable=unsubscriptable-object,unsupported-assignment-operation
         options["records"] = _validate_text_records(options["records"])
-        options["language"] = options.get("language", None) or default_language  # pylint: disable=no-member
+        # pylint: disable=no-member,unsupported-assignment-operation
+        options["language"] = options.get("language", None) or default_language
     except TypeError:
         options = cast(AnswersFromTextOptions, options)
         options.text_documents = _validate_text_records(options.text_documents)
