@@ -597,6 +597,34 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
 
     @DataLakePreparer()
     @recorded_by_proxy_async
+    async def test_upload_data_from_async_generator(self, **kwargs):
+        datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
+        datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
+
+        await self._setUp(datalake_storage_account_name, datalake_storage_account_key)
+
+        # Create a directory to put the file under
+        directory_name = self._get_directory_reference()
+        directory_client = self.dsc.get_directory_client(self.file_system_name, directory_name)
+        await directory_client.create_directory()
+
+        data = b'Hello Async World!'
+
+        async def data_generator():
+            for _ in range(3):
+                yield data
+                await asyncio.sleep(0.1)
+
+        # Act
+        file_client = directory_client.get_file_client('filename')
+        await file_client.upload_data(data_generator(), length=len(data*3), overwrite=True)
+
+        # Assert
+        result = await (await file_client.download_file()).readall()
+        assert result == data*3
+
+    @DataLakePreparer()
+    @recorded_by_proxy_async
     async def test_read_file(self, **kwargs):
         datalake_storage_account_name = kwargs.pop("datalake_storage_account_name")
         datalake_storage_account_key = kwargs.pop("datalake_storage_account_key")
