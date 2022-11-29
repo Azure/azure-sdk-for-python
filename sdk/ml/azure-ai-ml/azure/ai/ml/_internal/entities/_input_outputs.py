@@ -111,13 +111,6 @@ class InternalOutput(Output):
         self.is_link_mode = is_link_mode
         super().__init__(**kwargs)
 
-    def _to_dict(self, remove_name=True):
-        """Convert the Output object to a dict."""
-        result = super()._to_dict(remove_name)
-        if self.is_link_mode is not None:
-            result["is_link_mode"] = self.is_link_mode
-        return result
-
     @classmethod
     def _from_base(cls, _output: Union[Output, Dict]) -> Optional["InternalOutput"]:
         if _output is None:

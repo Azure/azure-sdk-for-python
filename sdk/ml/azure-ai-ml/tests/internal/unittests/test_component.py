@@ -581,9 +581,18 @@ class TestComponent:
                 # yes will be converted to true in YAML 1.2, users may use "yes" as a workaround
                 "param_string_with_yes_value": {"default": "True", "type": "string"},
                 "param_string_with_quote_yes_value": {"default": "yes", "type": "string"},
+            },
+            "outputs": {
+                'output_data_path': {
+                    'datastore_mode': 'mount',
+                    'description': 'Path to the data',
+                    'is_link_mode': True,
+                    'type': 'path'
+                }
             }
         }
         assert component._to_rest_object().properties.component_spec["inputs"] == expected_inputs["inputs"]
+        assert component._to_rest_object().properties.component_spec["outputs"] == expected_inputs["outputs"]
         assert component._validate().passed is True, repr(component._validate())
 
         regenerated_component = Component._from_rest_object(component._to_rest_object())
