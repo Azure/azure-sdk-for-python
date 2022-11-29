@@ -68,7 +68,7 @@ class Output(_InputOutputBase):
         :type description: str
         """
 
-    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, **kwargs):
+    def __init__(self, *, type=AssetTypes.URI_FOLDER, path=None, mode=None, description=None, is_link_mode=None, **kwargs):
         super(Output, self).__init__(type=type)
         # As an annotation, it is not allowed to initialize the name.
         # The name will be updated by the annotated variable name.
@@ -78,6 +78,7 @@ class Output(_InputOutputBase):
 
         self.path = path
         self.mode = mode
+        self.is_link_mode = is_link_mode
         # use this field to determine the Output is control or not, currently hide in kwargs
         self.is_control = kwargs.pop("is_control", None)
 
@@ -87,7 +88,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self, remove_name=True):
         """Convert the Output object to a dict."""
-        keys = ["name", "path", "type", "mode", "description", "is_control"]
+        keys = ["name", "path", "type", "mode", "description", "is_control", "is_link_mode"]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}
