@@ -9,12 +9,7 @@ import pytest
 import time
 
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._helpers import(
-    _is_tag,
-    AZURE_RESOURCE_MANAGER_CHINA,
-    AZURE_RESOURCE_MANAGER_GOVERNMENT,
-    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
-)
+from azure.containerregistry._helpers import _is_tag
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
 
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
@@ -130,6 +125,7 @@ class ContainerRegistryTestClass(AzureRecordedTestCase):
     def get_test_directory(self):
         return os.path.join(os.getcwd(), "tests")
 
+
 def get_authority(endpoint):
     if ".azurecr.io" in endpoint:
         logger.warning("Public cloud Authority:")
@@ -142,17 +138,6 @@ def get_authority(endpoint):
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
 
-def get_audience(authority):
-    if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-        logger.warning("Public cloud audience")
-        return AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
-    if authority == AzureAuthorityHosts.AZURE_CHINA:
-        logger.warning("China cloud audience")
-        return AZURE_RESOURCE_MANAGER_CHINA
-    if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
-        logger.warning("US Gov cloud audience")
-        return AZURE_RESOURCE_MANAGER_GOVERNMENT
-
 def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
         logger.warning("Public auth scope")
@@ -163,6 +148,9 @@ def get_base_url(authority):
     if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
         logger.warning("US Gov scope")
         return AZURE_US_GOV_CLOUD
+
+def get_audience(authority):
+    return get_base_url(authority).endpoints.resource_manager
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(authority, repository, tags):
@@ -175,35 +163,14 @@ def import_image(authority, repository, tags):
     )
     sub_id = os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
     base_url = get_base_url(authority)
-    audience = [base_url.endpoints.resource_manager + "/.default"]
+    scope = [base_url.endpoints.resource_manager + "/.default"]
     mgmt_client = ContainerRegistryManagementClient(
-        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=audience
+        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=scope
     )
     logger.warning("LOGGING: {}{}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
     registry_uri = "registry.hub.docker.com"
     rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
     registry_name = os.environ["CONTAINERREGISTRY_REGISTRY_NAME"]
-
-    import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
-
-    import_params = ImportImageParameters(mode=ImportMode.Force, source=import_source, target_tags=tags)
-
-    result = mgmt_client.registries.begin_import_image(
-        rg_name,
-        registry_name,
-        parameters=import_params,
-    )
-
-    while not result.done():
-        pass
-
-    # Do the same for anonymous
-    mgmt_client = ContainerRegistryManagementClient(
-        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=audience
-    )
-    registry_uri = "registry.hub.docker.com"
-    rg_name = os.environ["CONTAINERREGISTRY_RESOURCE_GROUP"]
-    registry_name = os.environ["CONTAINERREGISTRY_ANONREGISTRY_NAME"]
 
     import_source = ImportSource(source_image=repository, registry_uri=registry_uri)
 
