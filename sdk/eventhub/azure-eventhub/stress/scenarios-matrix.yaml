@@ -1,9 +1,6 @@
 matrix:
   image:
     - Dockerfile38
-    # - dockerfiles/Dockerfile39
-    # - dockerfiles/Dockerfile310
-    # - dockerfiles/Dockerfile311
   scenarios:
     event-async:
       testTarget: event-async
