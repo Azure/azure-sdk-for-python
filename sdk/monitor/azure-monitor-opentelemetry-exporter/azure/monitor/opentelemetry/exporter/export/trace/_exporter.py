@@ -558,6 +558,11 @@ def _is_sql_db(db_system: str) -> bool:
 
 
 def _check_instrumentation_span(span: ReadableSpan) -> None:
+    # Special use-case for spans generated from azure-sdk services
+    # Identified by having az.namespace as a span attribute
+    if "az.namespace" in span.attributes:
+        _utils.add_instrumentation("azure-sdk")
+        return
     if span.instrumentation_scope is None:
         return
     # All instrumentation scope names from OpenTelemetry instrumentations have
