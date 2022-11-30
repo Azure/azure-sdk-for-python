@@ -26,6 +26,7 @@ from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
 from .code import InternalCode, InternalComponentIgnoreFile
+from ..._utils._arm_id_utils import parse_name_label
 from ...entities._job.distribution import DistributionConfiguration
 
 
@@ -95,9 +96,7 @@ class InternalComponent(Component):
         launcher: Dict = None,
         **kwargs,
     ):
-        self._type_label = None
-        if "@" in type:
-            type, self._type_label = type.split("@")
+        type, self._type_label = parse_name_label(type)
         super().__init__(
             name=name,
             version=version,
