@@ -11,7 +11,6 @@ from devtools_testutils import (
     AzureRecordedTestCase,
     PowerShellPreparer,
     recorded_by_proxy,
-    EnvironmentVariableLoader,
 )
 from azure.ai.anomalydetector import AnomalyDetectorClient
 from azure.ai.anomalydetector.models import *
@@ -19,14 +18,20 @@ from azure.core.credentials import AzureKeyCredential
 
 from test_data import get_test_data
 
+AnomalyDetectorEnvPreparer = functools.partial(
+    PowerShellPreparer, 
+    "anomaly_detector",
+    anomaly_detector_endpoint="https://fake_ad_resource.cognitiveservices.azure.com/",
+    anomaly_detector_key="00000000000000000000000000000000"
+)
 
 class TestAnomalyDetector(AzureRecordedTestCase):
+    
+    @AnomalyDetectorEnvPreparer()
     @recorded_by_proxy
-    def test_entire_detect(self, **kwargs):
-        end_point = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
-        sub_key = os.environ["ANOMALY_DETECTOR_KEY"]
+    def test_entire_detect(self, anomaly_detector_endpoint, anomaly_detector_key):
 
-        ad_client = AnomalyDetectorClient(end_point, AzureKeyCredential(sub_key))
+        ad_client = AnomalyDetectorClient(anomaly_detector_endpoint, AzureKeyCredential(anomaly_detector_key))
         assert ad_client is not None
 
         data = get_test_data()
