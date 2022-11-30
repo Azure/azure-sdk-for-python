@@ -22,6 +22,7 @@ from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.exceptions import ValidationException
+from test_utilities.utils import parse_local_path
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
 
@@ -207,6 +208,10 @@ class TestComponent:
             # optional will be dropped if it's False
             if "optional" in input_port and input_port["optional"] is False:
                 del input_port["optional"]
+
+        # code will be dumped as absolute path
+        if "code" in expected_dict:
+            expected_dict["code"] = parse_local_path(expected_dict["code"], entity.base_path)
 
         assert entity._to_dict() == expected_dict
         rest_obj = entity._to_rest_object()

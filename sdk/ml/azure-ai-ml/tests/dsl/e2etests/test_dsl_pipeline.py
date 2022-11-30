@@ -1628,6 +1628,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
         def parallel_in_pipeline(job_data_path):
             node1 = parallel_function(job_data_path=job_data_path)
+            # TODO 2104247: node1.task will be kept as a local path when submitting the pipeline job.
+            node1.task = None
             return {
                 "pipeline_output": node1.outputs.job_output_path,
             }
@@ -1663,13 +1665,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "outputs": {"job_output_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
                     "resources": {"instance_count": 2},
                     "type": "parallel",
-                    "task": {
-                        "type": "run_function",
-                        "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
-                        "entry_script": "score.py",
-                        "program_arguments": "--job_output_path ${{outputs.job_output_path}}",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
-                    },
                 },
             },
             "outputs": {
