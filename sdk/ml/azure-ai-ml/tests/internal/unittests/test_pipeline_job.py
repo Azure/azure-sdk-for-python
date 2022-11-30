@@ -35,6 +35,7 @@ from azure.ai.ml.constants._common import AssetTypes
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
+from test_utilities.utils import parse_local_path
 
 from .._utils import (
     DATA_VERSION,
@@ -402,9 +403,12 @@ class TestPipelineJob:
         scope_internal_func = load_component(source=yaml_path)
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
+
+        # handle some known difference in yaml_dict
         for _input in yaml_dict["inputs"].values():
             if "optional" in _input and _input["optional"] is False:
                 del _input["optional"]
+        yaml_dict["code"] = parse_local_path(yaml_dict["code"], scope_internal_func.base_path)
 
         command_func = load_component("./tests/test_configs/components/helloworld_component.yml")
 
