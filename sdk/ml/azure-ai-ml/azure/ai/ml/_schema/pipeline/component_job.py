@@ -5,7 +5,6 @@
 # pylint: disable=no-self-use,protected-access
 
 import logging
-from pathlib import Path
 
 from marshmallow import INCLUDE, ValidationError, fields, post_dump, post_load, pre_dump
 
@@ -124,6 +123,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         ],
         required=True,
     )
+    # code is directly linked to component.code, so no need to validate it
+    code = fields.Str(allow_none=True)
     type = StringTransformedEnum(allowed_values=[NodeType.COMMAND])
     compute = ComputeField()
     # do not promote it as CommandComponent has no field named 'limits'
@@ -171,27 +172,11 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
 
-    @post_dump(pass_original=True)
-    def resolve_code_path(self, data, original_data, **kwargs):
-        # Command.code is relative to pipeline instead of Command.component after serialization,
-        # so we need to transform it. Not sure if this is the best way to do it
-        # maybe move this logic to LocalPathField
-        if (
-            hasattr(original_data.component, "code")
-            and original_data.component.code is not None
-            and original_data.component.base_path != original_data._base_path
-        ):
-            try:
-                code_path = Path(original_data.component.base_path) / original_data.component.code
-                if code_path.exists():
-                    # relative path can't be calculated if component.base_path & pipeline.base_path are in different
-                    # drive, so just use absolute path
-                    rebased_path = code_path.resolve().absolute().as_posix()
-                    data["code"], data["component"]["code"] = rebased_path, rebased_path
-            except OSError:
-                # OSError will be raised when _base_path or code is an arm_str or an invalid path,
-                # then just return the origin value to avoid blocking serialization
-                pass
+    @post_dump
+    def resolve_code_path(self, data, **kwargs):
+        # component.code has been rebased from component.base_path to base_path, need to set current code to it.
+        if "component" in data and "code" in data["component"]:
+            data["code"] = data["component"]["code"]
         return data
 
 
@@ -357,25 +342,9 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
 
-    @post_dump(pass_original=True)
-    def resolve_code_path(self, data, original_data, **kwargs):
-        # Command.code is relative to pipeline instead of Command.component after serialization,
-        # so we need to transform it. Not sure if this is the best way to do it
-        # maybe move this logic to LocalPathField
-        if (
-            hasattr(original_data.component, "code")
-            and original_data.component.code is not None
-            and original_data.component.base_path != original_data._base_path
-        ):
-            try:
-                code_path = Path(original_data.component.base_path) / original_data.component.code
-                if code_path.exists():
-                    # relative path can't be calculated if component.base_path & pipeline.base_path are in different
-                    # drive, so just use absolute path
-                    rebased_path = code_path.resolve().absolute().as_posix()
-                    data["code"], data["component"]["code"] = rebased_path, rebased_path
-            except OSError:
-                # OSError will be raised when _base_path or code is an arm_str or an invalid path,
-                # then just return the origin value to avoid blocking serialization
-                pass
+    @post_dump
+    def resolve_code_path(self, data, **kwargs):
+        # component.code has been rebased from component.base_path to base_path, need to set current code to it.
+        if "component" in data and "code" in data["component"]:
+            data["code"] = data["component"]["code"]
         return data

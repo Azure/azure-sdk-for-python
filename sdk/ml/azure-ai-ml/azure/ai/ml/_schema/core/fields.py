@@ -41,6 +41,7 @@ from azure.ai.ml.constants._common import (
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
     AzureMLResourceType,
+    ROOT_BASE_PATH_CONTEXT_KEY,
 )
 from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
 from azure.ai.ml.exceptions import ValidationException
@@ -109,17 +110,28 @@ class LocalPathField(fields.Str):
         if value is None:
             return None
         self._validate(value)
+        # rebase value from base_path to root_base_path as base_path will be dropped after serialization
+        # root_base_path is only set in SchemaValidatableMixin._dump_for_validation for now
+        if ROOT_BASE_PATH_CONTEXT_KEY in self.context:
+            root_base_path = Path(self.context[ROOT_BASE_PATH_CONTEXT_KEY])
+            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            if not root_base_path.samefile(base_path):
+                value = os.path.relpath(self.__resolve_path(value).as_posix(), root_base_path.as_posix())
         return super(LocalPathField, self)._serialize(value, attr, obj, **kwargs)
+
+    def __resolve_path(self, value):
+        path = Path(value)
+        base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
+        if not path.is_absolute():
+            path = base_path / path
+            path = path.resolve()
+        return path
 
     def _validate(self, value):
         base_path_err_msg = ""
         try:
-            path = Path(value)
-            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
-            if not path.is_absolute():
-                path = base_path / path
-                path.resolve()
-                base_path_err_msg = f" Resolved absolute path: {path.absolute()}"
+            path = self.__resolve_path(value)
+            base_path_err_msg = f" Resolved absolute path: {path.absolute()}"
             if (self._allow_dir and path.is_dir()) or (self._allow_file and path.is_file()):
                 return super(LocalPathField, self)._validate(value)
         except OSError:

@@ -196,11 +196,10 @@ class TestPipelineJobValidate:
         # return rebased path after serialization
         assert_the_same_path(pipeline_job_dict["jobs"]["command_node"]["code"], code_path)
         assert_the_same_path(pipeline_job_dict["jobs"]["command_node"]["component"]["code"], code_path)
-        # can't resolve pipeline_job.jobs.command_node.component.environment.build.path for now
-        # assert_the_same_path(
-        #     pipeline_job_dict["jobs"]["command_node"]["component"]["environment"]["build"]["path"],
-        #     "./tests/test_configs/environment/environment_files",
-        # )
+        assert_the_same_path(
+            pipeline_job_dict["jobs"]["command_node"]["component"]["environment"]["build"]["path"],
+            "../../environment/environment_files",
+        )
 
     def test_pipeline_job_base_path_resolution(self, mocker: MockFixture):
         job: PipelineJob = load_job("./tests/test_configs/pipeline_jobs/my_exp/azureml-job.yaml")
@@ -576,6 +575,10 @@ class TestDSLPipelineJobValidate:
             mock_logging.assert_not_called()
 
     def test_node_base_path_resolution(self):
+        # load with a different root_base_path first as nested.schema will be initialized only once by default
+        test_path = "./tests/test_configs/pipeline_jobs/inline_file_comp_base_path_sensitive/pipeline.yml"
+        load_job(test_path)
+
         component_path = (
             "./tests/test_configs/pipeline_jobs/inline_file_comp_base_path_sensitive/component/component.yml"
         )
