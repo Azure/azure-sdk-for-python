@@ -46,6 +46,13 @@ inputs:
     type: Enum
     enum: [minimal, reuse, expiry, policies]
 
+outputs:
+  output_data_path:
+    type: path
+    description: Path to the data
+    is_link_mode: True
+    datastore_mode: mount
+
 environment: azureml:AzureEnv:1
 
 scope:
