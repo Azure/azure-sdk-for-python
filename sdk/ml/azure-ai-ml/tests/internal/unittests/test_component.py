@@ -189,12 +189,8 @@ class TestComponent:
         entity = load_component(yaml_path)
 
         expected_dict = copy.deepcopy(yaml_dict)
-        type_value = (
-            expected_dict["type"].rsplit("@", 1)[0]
-            if expected_dict["type"].endswith("@1-legacy")
-            else expected_dict["type"]
-        )
-        pydash.set_(expected_dict, "type", type_value)
+
+        # Linux is the default value of os in InternalEnvironment
         if "environment" in expected_dict:
             expected_dict["environment"]["os"] = "Linux"
 
@@ -221,6 +217,17 @@ class TestComponent:
         assert InternalComponent._from_rest_object(rest_obj)._to_dict() == expected_dict
         result = entity._validate()
         assert result._to_dict() == {"result": "Succeeded"}
+
+    @pytest.mark.parametrize(
+        "yaml_path,label",
+        [
+            ("preview_command_component.yaml", "1-preview"),
+            ("legacy_distributed_component.yaml", "1-legacy"),
+        ]
+    )
+    def test_command_mode_command_component(self, yaml_path: str, label: str):
+        component = load_component("./tests/test_configs/internal/command-mode/{}".format(yaml_path))
+        assert component._to_rest_object().properties.component_spec["type"] == f"{component.type}@{label}"
 
     def test_ipp_component_serialization(self):
         yaml_path = "./tests/test_configs/internal/ipp-component/spec.yaml"
