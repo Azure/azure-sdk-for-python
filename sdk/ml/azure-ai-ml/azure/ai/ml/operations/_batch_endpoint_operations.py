@@ -10,8 +10,11 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING, Dict
 
+from marshmallow.exceptions import ValidationError as SchemaValidationError
+
 from azure.ai.ml._artifacts._artifact_utilities import _upload_and_generate_remote_uri
 from azure.ai.ml._azure_environments import _get_aml_resource_id_from_metadata, _resource_to_scopes
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import BatchJobResource
 from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
 from azure.ai.ml._schema._deployment.batch.batch_job import BatchJobSchema
@@ -21,6 +24,7 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
@@ -41,7 +45,7 @@ from azure.ai.ml.constants._common import (
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities import BatchEndpoint, BatchJob
 from azure.ai.ml.entities._inputs_outputs import Input
-from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationException
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MlException, ValidationErrorType, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.paging import ItemPaged
@@ -113,9 +117,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
     ) -> BatchEndpoint:
         """Get a Endpoint resource.
 
-        :param str name: Name of the endpoint.
+        :param name: Name of the endpoint.
+        :type name: str
         :return: Endpoint object retrieved from the service.
-        :rtype: BatchEndpoint
+        :rtype: ~azure.ai.ml.entities.BatchEndpoint
         """
         # first get the endpoint
         endpoint = self._batch_operation.get(
@@ -166,7 +171,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :param endpoint: The endpoint entity.
         :type endpoint: ~azure.ai.ml.entities.BatchEndpoint
         :return: A poller to track the operation status.
-        :rtype:  ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchEndpoint]
+        :rtype: ~azure.core.polling.LROPoller[~azure.ai.ml.entities.BatchEndpoint]
         """
 
         try:
@@ -184,6 +189,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             return poller
 
         except Exception as ex:
+            if isinstance(ex, (ValidationException, SchemaValidationError)):
+                log_and_raise_error(ex)
             raise ex
 
     @distributed_trace
@@ -200,9 +207,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
 
         :param endpoint_name: The endpoint name.
         :type endpoint_name: str
-        :param deployment_name: The name of a specific deployment to invoke. This is optional.
+        :param deployment_name: (Optional) The name of a specific deployment to invoke. This is optional.
             By default requests are routed to any of the deployments according to the traffic rules.
-        :type deployment_name: Optional[str]
+        :type deployment_name: str
         :param inputs: (Optional) A dictionary of existing data asset, public uri file or folder
             to use with the deployment
         :type inputs: Dict[str, Input]
@@ -215,7 +222,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.EmptyDirectoryError: Raised if local path provided points to an empty directory.
         :return: The invoked batch deployment job.
-        :rtype: BatchJob
+        :rtype: ~azure.ai.ml.entities.BatchJob
         """
         params_override = kwargs.get("params_override", None) or []
         input = kwargs.get("input", None) # pylint: disable=redefined-builtin
@@ -247,6 +254,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 target=ErrorTarget.BATCH_ENDPOINT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         # Batch job doesn't have a python class, loading a rest object using params override
@@ -301,7 +309,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :param endpoint_name: The endpoint name
         :type endpoint_name: str
         :return: List of jobs
-        :rtype: ItemPaged[BatchJob]
+        :rtype: ~azure.core.paging.ItemPaged[~azure.ai.ml.entities.BatchJob]
         """
 
         workspace_operations = self._all_operations.all_operations[AzureMLResourceType.WORKSPACE]
@@ -339,6 +347,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     no_personal_data_message=msg.format("[deployment_name]"),
                     target=ErrorTarget.DEPLOYMENT,
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
                 )
         else:
             msg = "No deployment exists for this endpoint"
@@ -347,6 +356,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
                 target=ErrorTarget.DEPLOYMENT,
+                error_type=ValidationErrorType.RESOURCE_NOT_FOUND,
             )
 
     def _resolve_input(self, entry: Input, base_path: str) -> None:
@@ -365,6 +375,7 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                         message="Invalid input path",
                         target=ErrorTarget.BATCH_ENDPOINT,
                         no_personal_data_message="Invalid input path",
+                        error_type=ValidationErrorType.INVALID_VALUE,
                     )
             elif os.path.isabs(entry.path):  # absolute local path, upload, transform to remote url
                 if entry.type == AssetTypes.URI_FOLDER and not os.path.isdir(entry.path):
@@ -372,12 +383,14 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                         message="There is no folder on target path: {}".format(entry.path),
                         target=ErrorTarget.BATCH_ENDPOINT,
                         no_personal_data_message="There is no folder on target path",
+                        error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
                     )
                 if entry.type == AssetTypes.URI_FILE and not os.path.isfile(entry.path):
                     raise ValidationException(
                         message="There is no file on target path: {}".format(entry.path),
                         target=ErrorTarget.BATCH_ENDPOINT,
                         no_personal_data_message="There is no file on target path",
+                        error_type=ValidationErrorType.FILE_OR_FOLDER_NOT_FOUND,
                     )
                 # absolute local path
                 entry.path = _upload_and_generate_remote_uri(
@@ -418,4 +431,5 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 no_personal_data_message="Supported input path value are: path on the datastore, "
                 "public URI, a registered data asset, or a local folder path.",
                 error=e,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )

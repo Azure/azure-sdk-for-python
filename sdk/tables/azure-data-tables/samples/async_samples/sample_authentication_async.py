@@ -73,7 +73,7 @@ class TableAuthSamples(object):
         from azure.data.tables import generate_account_sas, ResourceTypes, AccountSasPermissions
 
         print("Account name: {}".format(self.account_name))
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key) # type: ignore[arg-type]
         sas_token = generate_account_sas(
             credential,
             resource_types=ResourceTypes(service=True),

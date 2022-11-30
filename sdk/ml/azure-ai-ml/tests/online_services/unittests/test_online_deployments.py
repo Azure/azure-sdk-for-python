@@ -135,6 +135,7 @@ def mock_online_deployment_operations(
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestOnlineDeploymentOperations:
     @pytest.mark.skipif(
         condition=platform.python_implementation == "PyPy",

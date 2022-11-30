@@ -28,7 +28,7 @@ def is_public_cloud():
 TextAnalyticsPreparer = functools.partial(
     PowerShellPreparer,
     'textanalytics',
-    textanalytics_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com",
+    textanalytics_test_endpoint="https://fakeendpoint.cognitiveservices.azure.com/",
     textanalytics_test_api_key="fakeZmFrZV9hY29jdW50X2tleQ==",
 )
 

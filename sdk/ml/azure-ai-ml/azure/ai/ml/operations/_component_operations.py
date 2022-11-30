@@ -20,6 +20,11 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+# from azure.ai.ml._telemetry import (
+#     ActivityType,
+#     monitor_with_activity,
+#     monitor_with_telemetry_mixin,
+# )
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
@@ -30,13 +35,15 @@ from azure.ai.ml._utils._asset_utils import (
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations
+from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, DEFAULT_LABEL_NAME, \
+    DEFAULT_COMPONENT_VERSION
 from azure.ai.ml.entities import Component, ValidationResult
 from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget, ValidationException
 
 from .._utils._experimental import experimental
 from .._utils.utils import is_data_binding_expression
+from ..entities._builders.condition_node import ConditionNode
 from ..entities._component.automl_component import AutoMLComponent
 from ..entities._component.pipeline_component import PipelineComponent
 from ._code_operations import CodeOperations
@@ -65,8 +72,7 @@ class ComponentOperations(_ScopeDependentOperations):
         **kwargs: Dict,
     ):
         super(ComponentOperations, self).__init__(operation_scope, operation_config)
-        # if "app_insights_handler" in kwargs:
-        #     logger.addHandler(kwargs.pop("app_insights_handler"))
+        # ops_logger.update_info(kwargs)
         self._version_operation = service_client.component_versions
         self._container_operation = service_client.component_containers
         self._all_operations = all_operations
@@ -171,17 +177,16 @@ class ComponentOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+        if not version and not label:
+            label = DEFAULT_LABEL_NAME
+
+        if label == DEFAULT_LABEL_NAME:
+            label = None
+            version = DEFAULT_COMPONENT_VERSION
+
         if label:
             return _resolve_label_to_asset(self, name, label)
 
-        if not version:
-            msg = "Must provide either version or label."
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.COMPONENT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-            )
         result = (
             self._version_operation.get(
                 name=name,
@@ -353,7 +358,7 @@ class ComponentOperations(_ScopeDependentOperations):
         return component
 
     # @monitor_with_telemetry_mixin(logger, "Component.Archive", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None) -> None:
+    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Archive a component.
 
         :param name: Name of the component.
@@ -374,7 +379,7 @@ class ComponentOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_telemetry_mixin(logger, "Component.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None) -> None:
+    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
         """Restore an archived component.
 
         :param name: Name of the component.
@@ -531,6 +536,8 @@ class ComponentOperations(_ScopeDependentOperations):
                 self._job_operations._resolve_arm_id_for_automl_job(job_instance, resolver, inside_pipeline=True)
             elif isinstance(job_instance, BaseNode):
                 resolve_base_node(key, job_instance)
+            elif isinstance(job_instance, ConditionNode):
+                pass
             else:
                 msg = f"Non supported job type in Pipeline: {type(job_instance)}"
                 raise ComponentException(
@@ -561,7 +568,18 @@ def _refine_component(component_func: types.FunctionType) -> Component:
         """Check all parameter is annotated or has a default value with
         clear type(not None)."""
         annotations = getattr(f, "__annotations__", {})
-        defaults_dict = {key: val.default for key, val in signature(f).parameters.items()}
+        func_parameters = signature(f).parameters
+        defaults_dict = {key: val.default for key, val in func_parameters.items()}
+        variable_inputs = [key for key, val in func_parameters.items()
+                           if val.kind in [val.VAR_POSITIONAL, val.VAR_KEYWORD]]
+        if variable_inputs:
+            msg = "Cannot register the component {} with variable inputs {!r}."
+            raise ValidationException(
+                message=msg.format(f.__name__, variable_inputs),
+                no_personal_data_message=msg.format("[keys]", "[name]"),
+                target=ErrorTarget.COMPONENT,
+                error_category=ErrorCategory.USER_ERROR,
+            )
         unknown_type_keys = [
             key for key, val in defaults_dict.items() if key not in annotations and val is Parameter.empty
         ]
@@ -574,9 +592,21 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 error_category=ErrorCategory.USER_ERROR,
             )
 
+    def check_non_pipeline_inputs(f):
+        """Check whether non_pipeline_inputs exist in pipeline builder."""
+        if f._pipeline_builder.non_pipeline_parameter_names:
+            msg = "Cannot register pipeline component {!r} with non_pipeline_inputs."
+            raise ValidationException(
+                message=msg.format(f.__name__),
+                no_personal_data_message=msg.format(""),
+                target=ErrorTarget.COMPONENT,
+                error_category=ErrorCategory.USER_ERROR,
+            )
+
     if hasattr(component_func, "_is_mldesigner_component") and component_func._is_mldesigner_component:
         return component_func.component
     if hasattr(component_func, "_is_dsl_func") and component_func._is_dsl_func:
+        check_non_pipeline_inputs(component_func)
         check_parameter_type(component_func)
         if component_func._job_settings:
             module_logger.warning(
@@ -584,7 +614,10 @@ def _refine_component(component_func: types.FunctionType) -> Component:
                 component_func._job_settings,
                 component_func.__name__,
             )
-        return component_func._pipeline_builder.build()
+        # Normally pipeline component are created when dsl.pipeline inputs are provided
+        # so pipeline input .result() can resolve to correct value.
+        # When pipeline component created without dsl.pipeline inputs, pipeline input .result() won't work.
+        return component_func._pipeline_builder.build(user_provided_kwargs={})
     msg = "Function must be a dsl or mldesigner component function： {!r}"
     raise ValidationException(
         message=msg.format(component_func),
@@ -601,9 +634,15 @@ def _try_resolve_code_for_component(component: Component, get_arm_id_and_fill_ba
             pass
         elif isinstance(component.code, Code) or is_registry_id_for_resource(component.code):
             # Code object & registry id need to be resolved into arm id
+            # note that:
+            # 1. Code & CodeOperation are not public for now
+            # 2. AnonymousCodeSchema is not supported in Component for now
+            # So isinstance(component.code, Code) will always be true, or an exception will be raised
+            # in validation stage.
             component.code = get_arm_id_and_fill_back(component.code, azureml_type=AzureMLResourceType.CODE)
+        elif isinstance(component.code, str) and component.code.startswith("git+"):
+            # git also need to be resolved into arm id
+            component.code = get_arm_id_and_fill_back(Code(path=component.code), azureml_type=AzureMLResourceType.CODE)
         else:
-            with component._resolve_local_code() as code_path:
-                component.code = get_arm_id_and_fill_back(
-                    Code(base_path=component._base_path, path=code_path), azureml_type=AzureMLResourceType.CODE
-                )
+            with component._resolve_local_code() as code:
+                component.code = get_arm_id_and_fill_back(code, azureml_type=AzureMLResourceType.CODE)

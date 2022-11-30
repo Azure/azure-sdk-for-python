@@ -111,6 +111,7 @@
           "RegistryManagement"
         ],
         "summary": "Delete registry.",
+        "x-ms-long-running-operation": true,
         "operationId": "Registries_Delete",
         "produces": [
           "application/json"
@@ -142,9 +143,27 @@
           },
           "200": {
             "description": "Success"
-          },
+          },         
           "202": {
-            "description": "Success"
+            "description": "Accepted",
+            "headers": {
+              "x-ms-async-operation-timeout": {
+                "description": "Timeout for the client to use when polling the asynchronous operation.",
+                "type": "string",
+                "format": "duration"
+              },
+              "Location": {
+                "description": "URI to poll for asynchronous operation result.",
+                "type": "string"
+              },
+              "Retry-After": {
+                "description": "Duration the client should wait between requests, in seconds.",
+                "type": "integer",
+                "format": "int32",
+                "maximum": 600,
+                "minimum": 10
+              }
+            }
           },
           "204": {
             "description": "No Content"
@@ -516,6 +535,14 @@
           },
           "x-ms-identifiers": [],
           "x-nullable": true
+        },
+        "managedResourceGroupTags": {
+          "description": "Tags to be applied to the managed resource group associated with this registry.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "x-nullable": true
+          }
         }
       },
       "x-ms-client-name": "RegistryProperties",

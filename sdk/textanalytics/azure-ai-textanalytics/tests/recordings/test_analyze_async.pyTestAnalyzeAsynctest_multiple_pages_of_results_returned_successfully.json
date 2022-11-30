@@ -1,14 +1,14 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-05-01",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs?api-version=2022-10-01-preview",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Content-Length": "1889",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -178,87 +178,52 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "53dcefd6-fda1-484a-b82c-1227efb34a53",
+        "apim-request-id": "7c61c7b8-676f-4239-b0d9-214f73268d45",
         "Content-Length": "0",
-        "Date": "Thu, 09 Jun 2022 17:42:08 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/42526f61-ce63-4c0f-a0b4-a1557058bc11?api-version=2022-05-01",
+        "Date": "Mon, 17 Oct 2022 18:53:01 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3647f6a3-9f63-49a4-87ea-5583b1cf73ec?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "956"
+        "x-envoy-upstream-service-time": "838"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/42526f61-ce63-4c0f-a0b4-a1557058bc11?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3647f6a3-9f63-49a4-87ea-5583b1cf73ec?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "72395220-9a53-4312-b44d-78d41a810f2c",
-        "Content-Length": "280",
+        "apim-request-id": "6b15f59d-6417-4f94-8e65-261e1dfdaeb3",
+        "Content-Length": "9794",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:42:13 GMT",
+        "Date": "Mon, 17 Oct 2022 18:53:07 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "8"
+        "x-envoy-upstream-service-time": "395"
       },
       "ResponseBody": {
-        "jobId": "42526f61-ce63-4c0f-a0b4-a1557058bc11",
-        "lastUpdatedDateTime": "2022-06-09T17:42:09Z",
-        "createdDateTime": "2022-06-09T17:42:08Z",
-        "expirationDateTime": "2022-06-10T17:42:08Z",
+        "jobId": "3647f6a3-9f63-49a4-87ea-5583b1cf73ec",
+        "lastUpdateDateTime": "2022-10-17T18:53:07Z",
+        "createdDateTime": "2022-10-17T18:53:01Z",
+        "expirationDateTime": "2022-10-18T18:53:01Z",
         "status": "running",
         "errors": [],
         "tasks": {
-          "completed": 0,
+          "completed": 2,
           "failed": 0,
-          "inProgress": 5,
-          "total": 5,
-          "items": []
-        }
-      }
-    },
-    {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/42526f61-ce63-4c0f-a0b4-a1557058bc11?api-version=2022-05-01\u0026showStats=True",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "apim-request-id": "eef3cb20-deec-46ee-ae2e-73cc26996ac7",
-        "Content-Length": "2707",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:42:18 GMT",
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
-        "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "229"
-      },
-      "ResponseBody": {
-        "jobId": "42526f61-ce63-4c0f-a0b4-a1557058bc11",
-        "lastUpdatedDateTime": "2022-06-09T17:42:19Z",
-        "createdDateTime": "2022-06-09T17:42:08Z",
-        "expirationDateTime": "2022-06-10T17:42:08Z",
-        "status": "running",
-        "errors": [],
-        "tasks": {
-          "completed": 1,
-          "failed": 0,
-          "inProgress": 4,
+          "inProgress": 3,
           "total": 5,
           "items": [
             {
-              "kind": "EntityLinkingLROResults",
-              "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:42:15.9991618Z",
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-10-17T18:53:07.4358149Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -270,218 +235,816 @@
                 "documents": [
                   {
                     "id": "0",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "1",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "2",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "3",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "4",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "5",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "6",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "7",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "8",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "9",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "10",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "11",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "12",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "13",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "14",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "15",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "16",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "17",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "18",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "19",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
+              }
+            },
+            {
+              "kind": "SentimentAnalysisLROResults",
+              "taskName": "4",
+              "lastUpdateDateTime": "2022-10-17T18:53:05.8113887Z",
+              "status": "succeeded",
+              "results": {
+                "statistics": {
+                  "documentsCount": 20,
+                  "validDocumentsCount": 20,
+                  "erroneousDocumentsCount": 0,
+                  "transactionsCount": 20
+                },
+                "documents": [
+                  {
+                    "id": "0",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "1",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "2",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "3",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "4",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "5",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "6",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "7",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "8",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "9",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "10",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "11",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "12",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "13",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "14",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "15",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "16",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "17",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "18",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  },
+                  {
+                    "id": "19",
+                    "sentiment": "neutral",
+                    "statistics": {
+                      "charactersCount": 11,
+                      "transactionsCount": 1
+                    },
+                    "confidenceScores": {
+                      "positive": 0.48,
+                      "neutral": 0.51,
+                      "negative": 0.01
+                    },
+                    "sentences": [
+                      {
+                        "sentiment": "neutral",
+                        "confidenceScores": {
+                          "positive": 0.48,
+                          "neutral": 0.51,
+                          "negative": 0.01
+                        },
+                        "offset": 0,
+                        "length": 11,
+                        "text": "hello world"
+                      }
+                    ],
+                    "warnings": []
+                  }
+                ],
+                "errors": [],
+                "modelVersion": "2022-10-01"
               }
             }
           ]
         },
-        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/42526f61-ce63-4c0f-a0b4-a1557058bc11?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-05-01"
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3647f6a3-9f63-49a4-87ea-5583b1cf73ec?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-10-01-preview"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/42526f61-ce63-4c0f-a0b4-a1557058bc11?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3647f6a3-9f63-49a4-87ea-5583b1cf73ec?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "9cddda12-0e52-44bb-966a-334ab9662853",
-        "Content-Length": "14873",
+        "apim-request-id": "35ff9c1d-eba3-4e6b-950f-6dff1adc5c04",
+        "Content-Length": "14298",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:42:25 GMT",
+        "Date": "Mon, 17 Oct 2022 18:53:13 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "945"
+        "x-envoy-upstream-service-time": "805"
       },
       "ResponseBody": {
-        "jobId": "42526f61-ce63-4c0f-a0b4-a1557058bc11",
-        "lastUpdatedDateTime": "2022-06-09T17:42:22Z",
-        "createdDateTime": "2022-06-09T17:42:08Z",
-        "expirationDateTime": "2022-06-10T17:42:08Z",
+        "jobId": "3647f6a3-9f63-49a4-87ea-5583b1cf73ec",
+        "lastUpdateDateTime": "2022-10-17T18:53:08Z",
+        "createdDateTime": "2022-10-17T18:53:01Z",
+        "expirationDateTime": "2022-10-18T18:53:01Z",
         "status": "running",
         "errors": [],
         "tasks": {
@@ -491,9 +1054,9 @@
           "total": 5,
           "items": [
             {
-              "kind": "KeyPhraseExtractionLROResults",
-              "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:42:22.2985605Z",
+              "kind": "EntityRecognitionLROResults",
+              "taskName": "0",
+              "lastUpdateDateTime": "2022-10-17T18:53:08.5055462Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -505,222 +1068,182 @@
                 "documents": [
                   {
                     "id": "0",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "1",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "2",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "3",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "4",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "5",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "6",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "7",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "8",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "9",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "10",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "11",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "12",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "13",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "14",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "15",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "16",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "17",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "18",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   },
                   {
                     "id": "19",
-                    "keyPhrases": [
-                      "hello world"
-                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
+                    "entities": [],
                     "warnings": []
                   }
                 ],
@@ -729,9 +1252,9 @@
               }
             },
             {
-              "kind": "PiiEntityRecognitionLROResults",
-              "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:42:20.165833Z",
+              "kind": "KeyPhraseExtractionLROResults",
+              "taskName": "1",
+              "lastUpdateDateTime": "2022-10-17T18:53:07.4358149Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -742,214 +1265,234 @@
                 },
                 "documents": [
                   {
-                    "redactedText": "hello world",
                     "id": "0",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "1",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "2",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "3",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "4",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "5",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "6",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "7",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "8",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "9",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "10",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "11",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "12",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "13",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "14",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "15",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "16",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "17",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "18",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   },
                   {
-                    "redactedText": "hello world",
                     "id": "19",
+                    "keyPhrases": [
+                      "hello world"
+                    ],
                     "statistics": {
                       "charactersCount": 11,
                       "transactionsCount": 1
                     },
-                    "entities": [],
                     "warnings": []
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-01-15"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:42:15.9991618Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:08.5983772Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1147,7 +1690,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-06-09T17:42:20.5666889Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:05.8113887Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1165,16 +1708,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1192,16 +1735,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1219,16 +1762,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1246,16 +1789,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1273,16 +1816,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1300,16 +1843,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1327,16 +1870,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1354,16 +1897,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1381,16 +1924,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1408,16 +1951,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1435,16 +1978,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1462,16 +2005,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1489,16 +2032,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1516,16 +2059,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1543,16 +2086,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1570,16 +2113,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1597,16 +2140,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1624,16 +2167,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1651,16 +2194,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1678,16 +2221,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -1699,38 +2242,38 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
         },
-        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/42526f61-ce63-4c0f-a0b4-a1557058bc11?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-05-01"
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3647f6a3-9f63-49a4-87ea-5583b1cf73ec?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-10-01-preview"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/42526f61-ce63-4c0f-a0b4-a1557058bc11?api-version=2022-05-01\u0026showStats=True",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3647f6a3-9f63-49a4-87ea-5583b1cf73ec?api-version=2022-10-01-preview\u0026showStats=True",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "03e92e39-93d3-42bc-9221-2aa49708cc28",
-        "Content-Length": "17129",
+        "apim-request-id": "7bc9bcf0-1a53-4e3e-87a5-c36d729f4563",
+        "Content-Length": "17136",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:42:31 GMT",
+        "Date": "Mon, 17 Oct 2022 18:53:19 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "1060"
+        "x-envoy-upstream-service-time": "1014"
       },
       "ResponseBody": {
-        "jobId": "42526f61-ce63-4c0f-a0b4-a1557058bc11",
-        "lastUpdatedDateTime": "2022-06-09T17:42:30Z",
-        "createdDateTime": "2022-06-09T17:42:08Z",
-        "expirationDateTime": "2022-06-10T17:42:08Z",
+        "jobId": "3647f6a3-9f63-49a4-87ea-5583b1cf73ec",
+        "lastUpdateDateTime": "2022-10-17T18:53:14Z",
+        "createdDateTime": "2022-10-17T18:53:01Z",
+        "expirationDateTime": "2022-10-18T18:53:01Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -1742,7 +2285,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:42:30.1222082Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:08.5055462Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -1940,7 +2483,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:42:22.2985605Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:07.4358149Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2172,13 +2715,13 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:42:20.165833Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:14.938178Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2396,7 +2939,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:42:15.9991618Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:08.5983772Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2594,7 +3137,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-06-09T17:42:20.5666889Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:05.8113887Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -2612,16 +3155,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2639,16 +3182,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2666,16 +3209,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2693,16 +3236,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2720,16 +3263,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2747,16 +3290,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2774,16 +3317,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2801,16 +3344,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2828,16 +3371,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2855,16 +3398,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2882,16 +3425,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2909,16 +3452,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2936,16 +3479,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2963,16 +3506,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -2990,16 +3533,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3017,16 +3560,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3044,16 +3587,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3071,16 +3614,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3098,16 +3641,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3125,16 +3668,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3146,38 +3689,38 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
         },
-        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/42526f61-ce63-4c0f-a0b4-a1557058bc11?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-05-01"
+        "nextLink": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3647f6a3-9f63-49a4-87ea-5583b1cf73ec?showStats=True\u0026top=5\u0026skip=20\u0026api-version=2022-10-01-preview"
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/42526f61-ce63-4c0f-a0b4-a1557058bc11?api-version=2022-05-01\u0026showStats=true\u0026top=5\u0026skip=20",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3647f6a3-9f63-49a4-87ea-5583b1cf73ec?api-version=2022-10-01-preview\u0026showStats=true\u0026top=5\u0026skip=20",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.2.0b5 Python/3.10.0 (Windows-10-10.0.22000-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "ed6ae102-1f26-4171-860e-36693a2f889f",
-        "Content-Length": "5586",
+        "apim-request-id": "49f7f143-4222-41fa-b70a-f354b63e453c",
+        "Content-Length": "5585",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 09 Jun 2022 17:42:31 GMT",
+        "Date": "Mon, 17 Oct 2022 18:53:19 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "412"
+        "x-envoy-upstream-service-time": "294"
       },
       "ResponseBody": {
-        "jobId": "42526f61-ce63-4c0f-a0b4-a1557058bc11",
-        "lastUpdatedDateTime": "2022-06-09T17:42:30Z",
-        "createdDateTime": "2022-06-09T17:42:08Z",
-        "expirationDateTime": "2022-06-10T17:42:08Z",
+        "jobId": "3647f6a3-9f63-49a4-87ea-5583b1cf73ec",
+        "lastUpdateDateTime": "2022-10-17T18:53:14Z",
+        "createdDateTime": "2022-10-17T18:53:01Z",
+        "expirationDateTime": "2022-10-18T18:53:01Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -3189,7 +3732,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-06-09T17:42:30.1222082Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:08.5055462Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3252,7 +3795,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-06-09T17:42:22.2985605Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:07.4358149Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3319,13 +3862,13 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2021-06-01"
+                "modelVersion": "2022-10-01"
               }
             },
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-06-09T17:42:20.165833Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:14.938178Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3393,7 +3936,7 @@
             {
               "kind": "EntityLinkingLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-06-09T17:42:15.9991618Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:08.5983772Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3456,7 +3999,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-06-09T17:42:20.5666889Z",
+              "lastUpdateDateTime": "2022-10-17T18:53:05.8113887Z",
               "status": "succeeded",
               "results": {
                 "statistics": {
@@ -3474,16 +4017,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3501,16 +4044,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3528,16 +4071,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3555,16 +4098,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3582,16 +4125,16 @@
                       "transactionsCount": 1
                     },
                     "confidenceScores": {
-                      "positive": 0.02,
-                      "neutral": 0.97,
+                      "positive": 0.48,
+                      "neutral": 0.51,
                       "negative": 0.01
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.02,
-                          "neutral": 0.97,
+                          "positive": 0.48,
+                          "neutral": 0.51,
                           "negative": 0.01
                         },
                         "offset": 0,
@@ -3603,7 +4146,7 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2020-04-01"
+                "modelVersion": "2022-10-01"
               }
             }
           ]
