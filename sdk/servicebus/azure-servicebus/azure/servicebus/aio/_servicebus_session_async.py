@@ -73,7 +73,7 @@ class ServiceBusSession(BaseSession):
         return session_state
 
     async def set_state(
-        self, state: Union[str, bytes, bytearray, None], *, timeout: Optional[float] = None, **kwargs: Any
+        self, state: Optional[Union[str, bytes, bytearray]], *, timeout: Optional[float] = None, **kwargs: Any
     ) -> None:
         """Set the session state.
 

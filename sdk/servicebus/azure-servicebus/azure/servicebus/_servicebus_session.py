@@ -122,7 +122,7 @@ class ServiceBusSession(BaseSession):
         return session_state
 
     def set_state(
-        self, state: Union[str, bytes, bytearray, None], *, timeout: Optional[float] = None, **kwargs: Any
+        self, state: Optional[Union[str, bytes, bytearray]], *, timeout: Optional[float] = None, **kwargs: Any
     ) -> None:
         # pylint: disable=protected-access
         """Set the session state.
