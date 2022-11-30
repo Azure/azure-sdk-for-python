@@ -25,7 +25,6 @@ from ._helpers import (
     _validate_digest,
     OCI_MANIFEST_MEDIA_TYPE,
     SUPPORTED_API_VERSIONS,
-    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
 )
 from ._models import (
     RepositoryProperties,
@@ -34,6 +33,7 @@ from ._models import (
     DownloadBlobResult,
     DownloadManifestResult,
 )
+from msrestazure.azure_cloud import AZURE_PUBLIC_CLOUD
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -44,20 +44,24 @@ def _return_response(pipeline_response, deserialized, response_headers):
 
 
 class ContainerRegistryClient(ContainerRegistryBaseClient):
-    def __init__(self, endpoint, credential=None, audience=AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD, **kwargs):
-        # type: (str, Optional[TokenCredential], Optional[str], **Any) -> None
+    def __init__(
+        self,
+        endpoint: str,
+        credential: "Optional[TokenCredential]"=None,
+        **kwargs: "Any"
+    ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
         :param str endpoint: An ACR endpoint.
         :param credential: The credential with which to authenticate.
         :type credential: ~azure.core.credentials.TokenCredential
-        :param audience: URL to use for credential authentication with AAD. Its value could be
-         "https://management.azure.com", "https://management.chinacloudapi.cn", "https://management.microsoftazure.de"
-         or "https://management.usgovcloudapi.net".
-        :param audience: str
         :keyword api_version: API Version. The default value is "2021-07-01". Note that overriding this default value
          may result in unsupported behavior.
         :paramtype api_version: str
+        :keyword audience: URL to use for credential authentication with AAD. Its value could be
+         "https://management.azure.com", "https://management.chinacloudapi.cn" or "https://management.usgovcloudapi.net".
+         The default value is "https://management.azure.com".
+        :paramtype audience: str
         :returns: None
         :rtype: None
         :raises ValueError: If the provided api_version keyword-only argument isn't supported.
@@ -79,6 +83,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
                     api_version, supported_versions
                 )
             )
+        audience = kwargs.pop("audience", None)
+        if not audience:
+            audience = AZURE_PUBLIC_CLOUD.endpoints.resource_manager
         defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint
