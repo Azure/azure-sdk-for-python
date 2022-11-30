@@ -1,7 +1,7 @@
 import pytest
 
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 from azure.ai.ml.dsl._parallel_for import parallel_for
 from azure.ai.ml.dsl._do_while import do_while
@@ -256,6 +256,11 @@ class TestIfElse(TestControlFlowPipeline):
         }
 
 
+@pytest.mark.skipif(
+    condition=is_live(),
+    # TODO: reopen live test when parallel_for deployed to canary
+    reason="parallel_for is not available in canary."
+)
 class TestParallelForPipeline(TestControlFlowPipeline):
     def test_simple_dsl_parallel_for_pipeline(self, client: MLClient):
         hello_world_component = load_component(

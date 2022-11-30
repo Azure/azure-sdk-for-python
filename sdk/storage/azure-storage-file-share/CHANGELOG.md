@@ -3,6 +3,7 @@
 ## 12.10.2 (Unreleased)
 
 ### Features Added
+- Added support for `AsyncIterable` as data type for async file upload.
 
 ### Breaking Changes
 
