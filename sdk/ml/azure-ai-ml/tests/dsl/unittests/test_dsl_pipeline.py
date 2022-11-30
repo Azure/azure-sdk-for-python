@@ -180,8 +180,8 @@ class TestDSLPipeline:
 
         assert pipeline1._build_inputs().keys() == {"number", "path"}
 
-        # un-configured output is None
-        assert pipeline1._build_outputs() == {"pipeline_output": None}
+        # un-configured output will have type of bounded node output
+        assert pipeline1._build_outputs() == {"pipeline_output": Output(type="uri_folder")}
 
         # after setting mode, default output with type Input is built
         pipeline1.outputs.pipeline_output.mode = "download"
@@ -211,6 +211,25 @@ class TestDSLPipeline:
             "component_in_number": Input(path="${{parent.inputs.number}}", type="uri_folder", mode=None),
             "component_in_path": Input(path="${{parent.inputs.path}}", type="uri_folder", mode=None),
         }
+
+    @pytest.mark.parametrize(
+        "output_type",
+        ["uri_file", "mltable", "mlflow_model", "triton_model", "custom_model"]
+    )
+    def test_dsl_pipeline_output_type(self, output_type):
+        yaml_file = "./tests/test_configs/components/helloworld_component.yml"
+
+        @dsl.pipeline()
+        def pipeline(number, path):
+            component_func = load_component(source=yaml_file, params_override=[
+                {"outputs.component_out_path.type": output_type}
+            ])
+            node1 = component_func(component_in_number=number, component_in_path=path)
+            return {"pipeline_output": node1.outputs.component_out_path}
+
+        pipeline1 = pipeline(10, Input(path="/a/path/on/ds"))
+        # un-configured output will have type of bound output
+        assert pipeline1._build_outputs() == {"pipeline_output": Output(type=output_type)}
 
     def test_dsl_pipeline_complex_input_output(self) -> None:
         yaml_file = "./tests/test_configs/components/helloworld_component_multiple_data.yml"
@@ -1463,6 +1482,7 @@ class TestDSLPipeline:
                     "type": "pipeline",
                 },
             },
+            'outputs': {'sub_pipeline_out': {'type': 'uri_folder'}}
         }
         actual_dict = pipeline._to_dict()
         actual_dict = pydash.omit(actual_dict, *omit_fields)
@@ -1734,6 +1754,7 @@ class TestDSLPipeline:
                     "type": "pipeline",
                 },
             },
+            'outputs': {'sub_pipeline_out': {'type': 'uri_folder'}}
         }
         actual_dict = pydash.omit(pipeline._to_dict(), *omit_fields)
         assert actual_dict == expected_root_dict
@@ -1809,6 +1830,7 @@ class TestDSLPipeline:
                     "type": "pipeline",
                 },
             },
+            'outputs': {'sub_pipeline_out': {'type': 'uri_folder'}}
         }
         actual_dict = pydash.omit(
             pipeline._to_dict(),

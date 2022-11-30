@@ -537,6 +537,17 @@ class PipelineOutput(NodeOutput):
         if isinstance(self._data, Output):
             # For pipeline output with type Output, always pass to backend.
             return self._data
+        if self._data is None:
+            if not self._meta or not self._meta.type:
+                msg = "Unknown type of pipeline output: {}"
+                raise ValidationException(
+                    message=msg.format(self),
+                    target=ErrorTarget.PIPELINE,
+                    no_personal_data_message=msg.format("[data]"),
+                )
+            # For un-configured pipeline output, we need to return Output with accurate type,
+            # so it won't default to uri_folder.
+            return Output(type=self._meta.type)
         return super(PipelineOutput, self)._to_job_output()
 
     def _data_binding(self):
