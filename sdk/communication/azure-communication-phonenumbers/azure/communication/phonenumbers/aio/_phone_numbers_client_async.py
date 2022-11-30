@@ -364,8 +364,6 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         # type: (...) -> ItemPaged[PhoneNumberAreaCode]
         """Gets the list of available area codes.
 
-        If it receives a locality it lists the geographic area codes, otherwise it gets the toll free ones.
-
         :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
         :type country_code: str
         :param phone_number_type: Filter by phone number type, e.g. Geographic, TollFree. Known values are:
