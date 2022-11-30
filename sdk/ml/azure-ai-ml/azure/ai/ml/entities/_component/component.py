@@ -348,6 +348,7 @@ class Component(
             # Set this field to None as it hold a default True in init.
             is_deterministic=None,
         )
+        component.latest_version = component_container_details.latest_version
         return component
 
     @classmethod

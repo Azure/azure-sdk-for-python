@@ -18,7 +18,9 @@ from azure.ai.ml.dsl._component_func import to_component_func
 from azure.ai.ml.dsl._overrides_definition import OverrideDefinition
 from azure.ai.ml.entities._builders import BaseNode, Command, Import, Parallel, Spark, Sweep
 from azure.ai.ml.entities._builders.condition_node import ConditionNode
+from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
 from azure.ai.ml.entities._builders.do_while import DoWhile
+from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
@@ -88,6 +90,12 @@ class _PipelineNodeFactory:
             load_from_rest_object_func=ConditionNode._from_rest_object,
             nested_schema=None,
         )
+        self.register_type(
+            _type=ControlFlowType.PARALLEL_FOR,
+            create_instance_func=None,
+            load_from_rest_object_func=ParallelFor._from_rest_object,
+            nested_schema=None,
+        )
 
     @classmethod
     def _get_func(cls, _type: str, funcs):
@@ -121,7 +129,9 @@ class _PipelineNodeFactory:
         """
         return self._get_func(_type, self._create_instance_funcs)
 
-    def get_load_from_rest_object_func(self, _type: str) -> Callable[[Any], BaseNode]:
+    def get_load_from_rest_object_func(
+            self, _type: str
+    ) -> Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]]:
         """Get the function to load a node from a rest object.
 
         param _type: The type of the node. type _type: str
@@ -133,7 +143,7 @@ class _PipelineNodeFactory:
         _type: str,
         *,
         create_instance_func: Callable[..., Union[BaseNode, AutoMLJob]] = None,
-        load_from_rest_object_func: Callable[[Any], Union[BaseNode, AutoMLJob]] = None,
+        load_from_rest_object_func: Callable[[Any], Union[BaseNode, AutoMLJob, ControlFlowNode]] = None,
         nested_schema: Union[NestedField, List[NestedField]] = None,
     ):
         """Register a type of node.
@@ -193,7 +203,9 @@ class _PipelineNodeFactory:
         new_instance.__init__(**data)
         return new_instance
 
-    def load_from_rest_object(self, *, obj: dict, _type: str = None) -> Union[BaseNode, AutoMLJob]:
+    def load_from_rest_object(
+            self, *, obj: dict, _type: str = None, **kwargs
+    ) -> Union[BaseNode, AutoMLJob, ControlFlowNode]:
         """Load a node from a rest object.
 
         param obj: A rest object containing the node's data. type obj:
@@ -210,7 +222,7 @@ class _PipelineNodeFactory:
         else:
             obj[CommonYamlFields.TYPE] = _type
 
-        return self.get_load_from_rest_object_func(_type)(obj)
+        return self.get_load_from_rest_object_func(_type)(obj, **kwargs)
 
     @classmethod
     def _automl_from_rest_object(cls, node: Dict) -> AutoMLJob:

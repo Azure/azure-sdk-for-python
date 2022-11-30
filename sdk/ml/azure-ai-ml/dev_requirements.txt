@@ -15,5 +15,3 @@ azure-mgmt-msi
 pywin32==304 ; sys_platform == 'win32'
 numpy;platform.python_implementation!="PyPy"
 scikit-image;platform.python_implementation!="PyPy"
-# comment this line as simplification is not supported in Python 3.11
-# simplification;platform.python_implementation!="PyPy"

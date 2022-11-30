@@ -1,5 +1,3 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
@@ -3038,5 +3036,60 @@ class TestStorageBlobAccessConditionsAsync(AsyncStorageRecordedTestCase):
             await blob.upload_blob(data, blob_type=BlobType.AppendBlob, etag=test_etag, match_condition=MatchConditions.IfModified)
 
         assert StorageErrorCode.condition_not_met == e.value.error_code
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_header_metadata_sort_in_upload_blob_fails(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup()
+        data = b'hello world'
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        try:
+            container_client = await bsc.create_container(self.container_name)
+        except:
+            container_client = bsc.get_container_client(self.container_name)
+        blob_client = container_client.get_blob_client('blob1')
+
+        # Relevant ASCII characters (excluding 'Bad Request' values)
+        ascii_subset = "!#$%&*+.-^_~0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz|~"
+
+        # Build out metadata
+        metadata = dict()
+        for c in ascii_subset:
+            metadata[c] = 'a'
+
+        # Act
+        # If we hit invalid metadata error, that means we have successfully sorted headers properly to pass auth error
+        with pytest.raises(HttpResponseError) as e:
+            await blob_client.upload_blob(data, length=len(data), metadata=metadata)
+
+        # Assert
+        assert StorageErrorCode.invalid_metadata == e.value.error_code
+
+    @BlobPreparer()
+    @recorded_by_proxy_async
+    async def test_header_metadata_sort_in_upload_blob(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup()
+        data = b'hello world'
+        bsc = BlobServiceClient(self.account_url(storage_account_name, "blob"), storage_account_key)
+        try:
+            container_client = await bsc.create_container(self.container_name)
+        except:
+            container_client = bsc.get_container_client(self.container_name)
+        blob_client = container_client.get_blob_client('blob1')
+
+        # Hand-picked metadata examples as Python & service don't sort '_' with the same weight
+        metadata = {'a0': 'a', 'a1': 'a', 'a2': 'a', 'a3': 'a', 'a4': 'a', 'a5': 'a', 'a6': 'a', 'a7': 'a', 'a8': 'a',
+                    'a9': 'a', '_': 'a', '_a': 'a', 'a_': 'a', '__': 'a', '_a_': 'a', 'b': 'a', 'c': 'a', 'y': 'a',
+                    'z': 'z_', '_z': 'a', '_F': 'a', 'F': 'a', 'F_': 'a', '_F_': 'a', '__F': 'a', '__a': 'a', 'a__': 'a'
+                    }
+
+        # Act
+        await blob_client.upload_blob(data, length=len(data), metadata=metadata)
 
 # ------------------------------------------------------------------------------

@@ -42,9 +42,9 @@ class AuthenticationDetailsProperties(_serialization.Model):
     """
 
     _validation = {
-        'authentication_provisioning_state': {'readonly': True},
-        'granted_permissions': {'readonly': True},
-        'authentication_type': {'required': True},
+        "authentication_provisioning_state": {"readonly": True},
+        "granted_permissions": {"readonly": True},
+        "authentication_type": {"required": True},
     }
 
     _attribute_map = {
@@ -54,15 +54,15 @@ class AuthenticationDetailsProperties(_serialization.Model):
     }
 
     _subtype_map = {
-        'authentication_type': {'awsAssumeRole': 'AwAssumeRoleAuthenticationDetailsProperties', 'awsCreds': 'AwsCredsAuthenticationDetailsProperties', 'gcpCredentials': 'GcpCredentialsDetailsProperties'}
+        "authentication_type": {
+            "awsAssumeRole": "AwAssumeRoleAuthenticationDetailsProperties",
+            "awsCreds": "AwsCredsAuthenticationDetailsProperties",
+            "gcpCredentials": "GcpCredentialsDetailsProperties",
+        }
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.authentication_provisioning_state = None
         self.granted_permissions = None
@@ -99,12 +99,12 @@ class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsPropertie
     """
 
     _validation = {
-        'authentication_provisioning_state': {'readonly': True},
-        'granted_permissions': {'readonly': True},
-        'authentication_type': {'required': True},
-        'account_id': {'readonly': True},
-        'aws_assume_role_arn': {'required': True},
-        'aws_external_id': {'required': True},
+        "authentication_provisioning_state": {"readonly": True},
+        "granted_permissions": {"readonly": True},
+        "authentication_type": {"required": True},
+        "account_id": {"readonly": True},
+        "aws_assume_role_arn": {"required": True},
+        "aws_external_id": {"required": True},
     }
 
     _attribute_map = {
@@ -116,13 +116,7 @@ class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsPropertie
         "aws_external_id": {"key": "awsExternalId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        aws_assume_role_arn: str,
-        aws_external_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, aws_assume_role_arn: str, aws_external_id: str, **kwargs):
         """
         :keyword aws_assume_role_arn: Assumed role ID is an identifier that you can use to create
          temporary security credentials. Required.
@@ -132,7 +126,7 @@ class AwAssumeRoleAuthenticationDetailsProperties(AuthenticationDetailsPropertie
         :paramtype aws_external_id: str
         """
         super().__init__(**kwargs)
-        self.authentication_type = 'awsAssumeRole'  # type: str
+        self.authentication_type = "awsAssumeRole"  # type: str
         self.account_id = None
         self.aws_assume_role_arn = aws_assume_role_arn
         self.aws_external_id = aws_external_id
@@ -168,12 +162,12 @@ class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
     """
 
     _validation = {
-        'authentication_provisioning_state': {'readonly': True},
-        'granted_permissions': {'readonly': True},
-        'authentication_type': {'required': True},
-        'account_id': {'readonly': True},
-        'aws_access_key_id': {'required': True},
-        'aws_secret_access_key': {'required': True},
+        "authentication_provisioning_state": {"readonly": True},
+        "granted_permissions": {"readonly": True},
+        "authentication_type": {"required": True},
+        "account_id": {"readonly": True},
+        "aws_access_key_id": {"required": True},
+        "aws_secret_access_key": {"required": True},
     }
 
     _attribute_map = {
@@ -185,13 +179,7 @@ class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
         "aws_secret_access_key": {"key": "awsSecretAccessKey", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        aws_access_key_id: str,
-        aws_secret_access_key: str,
-        **kwargs
-    ):
+    def __init__(self, *, aws_access_key_id: str, aws_secret_access_key: str, **kwargs):
         """
         :keyword aws_access_key_id: Public key element of the AWS credential object (write only).
          Required.
@@ -201,7 +189,7 @@ class AwsCredsAuthenticationDetailsProperties(AuthenticationDetailsProperties):
         :paramtype aws_secret_access_key: str
         """
         super().__init__(**kwargs)
-        self.authentication_type = 'awsCreds'  # type: str
+        self.authentication_type = "awsCreds"  # type: str
         self.account_id = None
         self.aws_access_key_id = aws_access_key_id
         self.aws_secret_access_key = aws_secret_access_key
@@ -226,11 +214,11 @@ class CloudErrorBody(_serialization.Model):
     """
 
     _validation = {
-        'code': {'readonly': True},
-        'message': {'readonly': True},
-        'target': {'readonly': True},
-        'details': {'readonly': True},
-        'additional_info': {'readonly': True},
+        "code": {"readonly": True},
+        "message": {"readonly": True},
+        "target": {"readonly": True},
+        "details": {"readonly": True},
+        "additional_info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -241,12 +229,8 @@ class CloudErrorBody(_serialization.Model):
         "additional_info": {"key": "additionalInfo", "type": "[ErrorAdditionalInfo]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.code = None
         self.message = None
@@ -269,9 +253,9 @@ class Resource(_serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
@@ -280,12 +264,8 @@ class Resource(_serialization.Model):
         "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.id = None
         self.name = None
@@ -314,17 +294,23 @@ class ConnectorSetting(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
         "id": {"key": "id", "type": "str"},
         "name": {"key": "name", "type": "str"},
         "type": {"key": "type", "type": "str"},
-        "hybrid_compute_settings": {"key": "properties.hybridComputeSettings", "type": "HybridComputeSettingsProperties"},
-        "authentication_details": {"key": "properties.authenticationDetails", "type": "AuthenticationDetailsProperties"},
+        "hybrid_compute_settings": {
+            "key": "properties.hybridComputeSettings",
+            "type": "HybridComputeSettingsProperties",
+        },
+        "authentication_details": {
+            "key": "properties.authenticationDetails",
+            "type": "AuthenticationDetailsProperties",
+        },
     }
 
     def __init__(
@@ -361,7 +347,7 @@ class ConnectorSettingList(_serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
@@ -369,12 +355,7 @@ class ConnectorSettingList(_serialization.Model):
         "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ConnectorSetting"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.ConnectorSetting"]] = None, **kwargs):
         """
         :keyword value: List of all the cloud account connector settings.
         :paramtype value: list[~azure.mgmt.security.v2020_01_01_preview.models.ConnectorSetting]
@@ -396,8 +377,8 @@ class ErrorAdditionalInfo(_serialization.Model):
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'info': {'readonly': True},
+        "type": {"readonly": True},
+        "info": {"readonly": True},
     }
 
     _attribute_map = {
@@ -405,12 +386,8 @@ class ErrorAdditionalInfo(_serialization.Model):
         "info": {"key": "info", "type": "object"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
+    def __init__(self, **kwargs):
+        """ """
         super().__init__(**kwargs)
         self.type = None
         self.info = None
@@ -462,20 +439,20 @@ class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):  # pylin
     """
 
     _validation = {
-        'authentication_provisioning_state': {'readonly': True},
-        'granted_permissions': {'readonly': True},
-        'authentication_type': {'required': True},
-        'organization_id': {'required': True},
-        'type': {'required': True},
-        'project_id': {'required': True},
-        'private_key_id': {'required': True},
-        'private_key': {'required': True},
-        'client_email': {'required': True},
-        'client_id': {'required': True},
-        'auth_uri': {'required': True},
-        'token_uri': {'required': True},
-        'auth_provider_x509_cert_url': {'required': True},
-        'client_x509_cert_url': {'required': True},
+        "authentication_provisioning_state": {"readonly": True},
+        "granted_permissions": {"readonly": True},
+        "authentication_type": {"required": True},
+        "organization_id": {"required": True},
+        "type": {"required": True},
+        "project_id": {"required": True},
+        "private_key_id": {"required": True},
+        "private_key": {"required": True},
+        "client_email": {"required": True},
+        "client_id": {"required": True},
+        "auth_uri": {"required": True},
+        "token_uri": {"required": True},
+        "auth_provider_x509_cert_url": {"required": True},
+        "client_x509_cert_url": {"required": True},
     }
 
     _attribute_map = {
@@ -538,7 +515,7 @@ class GcpCredentialsDetailsProperties(AuthenticationDetailsProperties):  # pylin
         :paramtype client_x509_cert_url: str
         """
         super().__init__(**kwargs)
-        self.authentication_type = 'gcpCredentials'  # type: str
+        self.authentication_type = "gcpCredentials"  # type: str
         self.organization_id = organization_id
         self.type = type
         self.project_id = project_id
@@ -580,8 +557,8 @@ class HybridComputeSettingsProperties(_serialization.Model):
     """
 
     _validation = {
-        'hybrid_compute_provisioning_state': {'readonly': True},
-        'auto_provision': {'required': True},
+        "hybrid_compute_provisioning_state": {"readonly": True},
+        "auto_provision": {"required": True},
     }
 
     _attribute_map = {
@@ -643,13 +620,7 @@ class ProxyServerProperties(_serialization.Model):
         "port": {"key": "port", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        ip: Optional[str] = None,
-        port: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, ip: Optional[str] = None, port: Optional[str] = None, **kwargs):
         """
         :keyword ip: Proxy server IP.
         :paramtype ip: str
@@ -676,13 +647,7 @@ class ServicePrincipalProperties(_serialization.Model):
         "secret": {"key": "secret", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        application_id: Optional[str] = None,
-        secret: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, application_id: Optional[str] = None, secret: Optional[str] = None, **kwargs):
         """
         :keyword application_id: Application ID of service principal.
         :paramtype application_id: str
