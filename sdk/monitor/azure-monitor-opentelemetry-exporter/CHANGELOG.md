@@ -7,7 +7,7 @@
 - Add pre-aggregated standard metrics - requests/duration, dependencies/duration
     ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
 - Add azure-sdk usage to instrumentations statsbeat
-    ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+    ([#27756](https://github.com/Azure/azure-sdk-for-python/pull/27756))
 
 ### Breaking Changes
 
