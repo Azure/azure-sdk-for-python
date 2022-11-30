@@ -4,6 +4,7 @@
 # license information.
 # -------------------------------------------------------------------------
 from azure.core.exceptions import HttpResponseError, ServiceRequestError
+import io
 import pytest
 from azure.core.rest import HttpRequest
 from azure.core.exceptions import StreamClosedError, StreamConsumedError, ResponseNotReadError
@@ -245,3 +246,10 @@ async def test_decompress_compressed_header_stream_body_content(client):
     await response.read()
     content = response.content
     assert content == response.body()
+
+@pytest.mark.asyncio
+async def test_request_stream_not_close_after_send(port, client):
+    b = io.BytesIO(b'test')
+    request = HttpRequest('GET', 'http://localhost:{}/basic/anything'.format(port), content=b)
+    await client.send_request(request)
+    assert not b.closed
