@@ -6485,7 +6485,6 @@ class ComputeInstanceProperties(msrest.serialization.Model):
         'errors': {'readonly': True},
         'state': {'readonly': True},
         'last_operation': {'readonly': True},
-        'schedules': {'readonly': True},
         'containers': {'readonly': True},
         'data_disks': {'readonly': True},
         'data_mounts': {'readonly': True},
