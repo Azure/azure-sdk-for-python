@@ -104,21 +104,27 @@ async def create_container(db, id):
 
     print("\n2.2 Create Container - With custom index policy")
 
-    coll = {
-        "id": id + "_container_custom_index_policy",
-        "indexingPolicy": {
-            "automatic": False
+    try:
+        coll = {
+            "id": id+"_container_custom_index_policy",
+            "indexingPolicy": {
+                "automatic": False
+            }
         }
-    }
 
-    container = await db.create_container_if_not_exists(
-        id=coll['id'],
-        partition_key=partition_key,
-    )
-    properties = await container.read()
-    print('Container with id \'{0}\' created'.format(container.id))
-    print('IndexPolicy Mode - \'{0}\''.format(properties['indexingPolicy']['indexingMode']))
-    print('IndexPolicy Automatic - \'{0}\''.format(properties['indexingPolicy']['automatic']))
+        container = await db.create_container(
+            id=coll['id'],
+            partition_key=partition_key,
+            indexing_policy=coll['indexingPolicy']
+        )
+
+        properties = await container.read()
+        print('Container with id \'{0}\' created'.format(container.id))
+        print('IndexPolicy Mode - \'{0}\''.format(properties['indexingPolicy']['indexingMode']))
+        print('IndexPolicy Automatic - \'{0}\''.format(properties['indexingPolicy']['automatic']))
+
+    except exceptions.CosmosResourceExistsError:
+        print('A container with id \'{0}\' already exists'.format(coll['id']))
 
     print("\n2.3 Create Container - With custom provisioned throughput")
 
