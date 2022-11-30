@@ -574,7 +574,7 @@ class TestComponent:
                 "param_bool": {"type": "boolean"},
                 "param_enum_cap": {"enum": ["minimal", "reuse", "expiry", "policies"], "type": "enum"},
                 "param_enum_with_int_values": {"default": "3", "enum": ["1", "2.0", "3", "4"], "type": "enum"},
-                "param_float": {"type": "float"},
+                "param_float": {"type": "float", "default": "0.15", "max": "1.0", "min": "-1.0"},
                 "param_int": {"type": "integer"},
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},

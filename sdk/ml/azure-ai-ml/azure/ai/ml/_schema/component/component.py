@@ -60,7 +60,7 @@ class ComponentSchema(AssetSchema):
         if isinstance(data, dict) and data.get("inputs", None):
             input_dict = data["inputs"]
             for name, input in input_dict.items():
-                if input.get("type", None) == "Float":
+                if input.get("type", "").lower() == "float":
                     # Convert number to string to avoid precision issue
                     for key in ["default", "min", "max"]:
                         if input.get(key, None) is not None:

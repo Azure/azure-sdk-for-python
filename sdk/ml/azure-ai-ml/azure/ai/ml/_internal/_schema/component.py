@@ -116,7 +116,7 @@ class InternalComponentSchema(ComponentSchema):
 
         # hack, to match current serialization match expectation
         for port_name, port_definition in data["inputs"].items():
-            is_float_type = port_definition.get("type", None) == "Float"
+            is_float_type = port_definition.get("type", "").lower() == "float"
             for key in ["default", "min", "max"]:
                 if key in port_definition:
                     value = getattr(original.inputs[port_name], key)
