@@ -368,6 +368,7 @@ opentelemetry-sdk<2.0.0,>=1.5.0,!=1.10a0
 #override azure-mgmt-desktopvirtualization typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-azurestackhci typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-redis msrest>=0.7.1
+#override azure-mgmt-consumption typing-extensions>=4.3.0; python_version<'3.8.0'
 #override azure-mgmt-recoveryservicesbackup msrest>=0.7.1
 #override azure-mgmt-datafactory msrest>=0.7.1
 #override azure-mgmt-hdinsight msrest>=0.7.1
