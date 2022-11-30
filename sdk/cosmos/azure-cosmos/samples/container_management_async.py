@@ -64,12 +64,10 @@ async def find_container(db, id):
     # to cast this object into a list directly will throw an error; instead, iterate over the containers
     # to populate your list using an async for loop like shown here or in the list_containers() method
     query_containers_response = db.query_containers(
-        {
-            "query": "SELECT * FROM r WHERE r.id=@id",
-            "parameters": [
-                {"name": "@id", "value": id}
-            ]
-        }
+        query="SELECT * FROM r WHERE r.id=@id",
+        parameters=[
+            {"name": "@id", "value": id}
+        ]
     )
     containers = [container async for container in query_containers_response]
 
