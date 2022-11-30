@@ -1144,6 +1144,20 @@
       ]
     },
     {
+      "filename": "sdk/confidentialledger/azure-security-confidentialledgerbugbash/**",
+      "words": [
+        "cadl",
+        "Confiential",
+        "mros",
+        "deserializers",
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize"
+      ]
+    },
+    {
       "filename": "sdk/devcenter/azure-developer-devcenter/azure/developer/devcenter/*.py",
       "words": [
         "Nify",
