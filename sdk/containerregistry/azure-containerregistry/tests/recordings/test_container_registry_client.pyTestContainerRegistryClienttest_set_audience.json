@@ -21,7 +21,7 @@
         "Connection": "keep-alive",
         "Content-Length": "196",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:54 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:47 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -30,7 +30,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022registry:catalog:*\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "dc4bbc55-1a1c-4451-8de4-17336cef6f7a"
+        "X-Ms-Correlation-Request-Id": "fd6a2905-18f2-4c81-8acb-60fe9263f7d1"
       },
       "ResponseBody": {
         "errors": [
@@ -64,19 +64,18 @@
         "Access-Control-Allow-Origin": "*",
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "1753",
-        "Content-Security-Policy-Report-Only": "script-src \u0027self\u0027 \u0027nonce-dv2SEdP7LUyw5PDIbJkrOA\u0027 \u0027unsafe-eval\u0027 \u0027unsafe-inline\u0027; object-src \u0027none\u0027; base-uri \u0027self\u0027; report-uri https://csp.microsoft.com/report/ESTS-UX-All",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:54 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:47 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjsDaOEUSjxIh5Mu4iwTnu8; expires=Wed, 21-Dec-2022 22:02:55 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrGP5xEWbY4tTTIK2SzA6240wzCb7Y95_FZ3Yvno5tDJA4b6jUKPJJ6mov1hvTIoarOGwRMsigcODmJzdF3tiAmxj_XHHcF1kScFFRhxeIFxlLZkDUFKcjDLEHvtoJVmvALevjOtFdVjcgqRIYyBvS6Nsi3AvFT09pJe_RGd7nBjIn4Kgq8rkb8vfclG2hlz228eMdMmMmVnMb_5B0NUIis15OV1mGQoO2XqiUAVBvXu4gAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=ArzjSYjDqe5Dp9AyIyAS-vM; expires=Fri, 30-Dec-2022 01:11:48 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrSA3nciX1wJTtZ09DcpBkIW2F51_m0qIYXIk9hzE0pUVWHtCU0QbQseHXA9XQ6U565bbUroC2kaN8cBcFcLKB9AIxutg9zfv38pKrPF83ZN_DdKobBy_mIKoF1FI1EzkThDaRpn_1VKVikz3GUKtPmXQ1MD44clASTmYYvsmRfvdiDPSGLKR55Up6OHVS7occ4yrimLjDwny3lJoXhtq26PhXRZUt9U2QJdH26yfRO4sgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
           "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14167.14 - WUS2 ProdSlices",
+        "x-ms-ests-server": "2.1.14167.14 - EUS ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -154,7 +153,7 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Cookie": "fpc=AjsDaOEUSjxIh5Mu4iwTnu8; x-ms-gateway-slice=estsfd; stsservicecookie=estsfd",
+        "Cookie": "fpc=ArzjSYjDqe5Dp9AyIyAS-vM; x-ms-gateway-slice=estsfd; stsservicecookie=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.1 Python/3.11.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
@@ -165,15 +164,15 @@
         "Cache-Control": "max-age=86400, private",
         "Content-Length": "945",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:54 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:47 GMT",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Set-Cookie": [
-          "fpc=AjsDaOEUSjxIh5Mu4iwTnu8; expires=Wed, 21-Dec-2022 22:02:55 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=ArzjSYjDqe5Dp9AyIyAS-vM; expires=Fri, 30-Dec-2022 01:11:48 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14167.14 - SCUS ProdSlices",
+        "x-ms-ests-server": "2.1.14167.14 - WUS2 ProdSlices",
         "X-XSS-Protection": "0"
       },
       "ResponseBody": {
@@ -229,11 +228,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "0b71437e-1d78-4ea2-a0e1-93c90a62cce3",
+        "client-request-id": "bd2ba61c-7f99-4d25-ba85-f3c75ff96967",
         "Connection": "keep-alive",
-        "Content-Length": "238",
+        "Content-Length": "241",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AjsDaOEUSjxIh5Mu4iwTnu8; x-ms-gateway-slice=estsfd; stsservicecookie=estsfd",
+        "Cookie": "fpc=ArzjSYjDqe5Dp9AyIyAS-vM; x-ms-gateway-slice=estsfd; stsservicecookie=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.1 Python/3.11.0 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -243,19 +242,19 @@
         "x-client-ver": "1.20.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=client-id\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=client-secret\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
+      "RequestBody": "client_id=client-id\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=client-secret\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "0b71437e-1d78-4ea2-a0e1-93c90a62cce3",
+        "client-request-id": "bd2ba61c-7f99-4d25-ba85-f3c75ff96967",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:54 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:48 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AjsDaOEUSjxIh5Mu4iwTnu8vTLx9AQAAAI_sDdsOAAAA; expires=Wed, 21-Dec-2022 22:02:55 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=ArzjSYjDqe5Dp9AyIyAS-vNsj9KcAQAAANOkGNsOAAAA; expires=Fri, 30-Dec-2022 01:11:48 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -288,12 +287,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:55 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:48 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "c347024a-a9c0-4bfe-94fb-614f0052e827",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.65"
+        "X-Ms-Correlation-Request-Id": "5da7c155-9ef3-42b3-8480-1bcdece62912",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.616667"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -315,12 +314,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:55 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:48 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "68fd8d42-5670-40c4-a46a-793fd3e1fe2f",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.633333"
+        "X-Ms-Correlation-Request-Id": "72d502dc-a8b6-4cf1-9895-f979415f2ac6",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.6"
       },
       "ResponseBody": {
         "access_token": "access_token"
@@ -347,7 +346,7 @@
         "Connection": "keep-alive",
         "Content-Length": "76",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:55 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:48 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -355,7 +354,7 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "e81a0095-5163-4edc-8815-4267477d5484"
+        "X-Ms-Correlation-Request-Id": "5c1c0a86-c003-4922-b62d-8bb0bd3ff57f"
       },
       "ResponseBody": {
         "repositories": [
@@ -386,7 +385,7 @@
         "Connection": "keep-alive",
         "Content-Length": "196",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:55 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:48 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -395,7 +394,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022registry:catalog:*\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "48ae2d4b-d70b-45ed-b959-390784fd38d5"
+        "X-Ms-Correlation-Request-Id": "36049d0b-5b92-4ee7-9964-d21d2bd8de59"
       },
       "ResponseBody": {
         "errors": [
@@ -429,12 +428,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:56 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:48 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "dad09e4a-b9bf-4ef3-8abc-58ee30bfa718",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.616667"
+        "X-Ms-Correlation-Request-Id": "cdd15bbe-8116-446a-850c-3e0b07238d5c",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.583333"
       },
       "ResponseBody": {
         "refresh_token": "refresh_token"
@@ -456,12 +455,12 @@
       "ResponseHeaders": {
         "Connection": "keep-alive",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:56 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:48 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
-        "X-Ms-Correlation-Request-Id": "ff68e83b-63e9-4a15-9e3e-549de89f0638",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.6"
+        "X-Ms-Correlation-Request-Id": "fbdc0b13-fa9c-42e4-a014-48c990a84ac0",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.566667"
       },
       "ResponseBody": {
         "access_token": "access_token"
@@ -488,7 +487,7 @@
         "Connection": "keep-alive",
         "Content-Length": "76",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:56 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:49 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -496,7 +495,7 @@
           "max-age=31536000; includeSubDomains"
         ],
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "3611aacb-6dba-4abd-946a-cf6da4cb8ac9"
+        "X-Ms-Correlation-Request-Id": "a154183c-0a9a-48d0-9767-fa22c5e7df06"
       },
       "ResponseBody": {
         "repositories": [
@@ -527,7 +526,7 @@
         "Connection": "keep-alive",
         "Content-Length": "196",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:56 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:49 GMT",
         "Docker-Distribution-Api-Version": "registry/2.0",
         "Server": "openresty",
         "Strict-Transport-Security": [
@@ -536,7 +535,7 @@
         ],
         "WWW-Authenticate": "Bearer realm=\u0022https://fake_url.azurecr.io/oauth2/token\u0022,service=\u0022yallacrtests.azurecr.io\u0022,scope=\u0022registry:catalog:*\u0022",
         "X-Content-Type-Options": "nosniff",
-        "X-Ms-Correlation-Request-Id": "abb0d471-6d5b-4b44-b579-378fd5ce03f8"
+        "X-Ms-Correlation-Request-Id": "1c0d9199-ad9d-4a3a-b4ce-0d36b4e5192a"
       },
       "ResponseBody": {
         "errors": [
@@ -560,11 +559,11 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "6a2e7aa8-ee4b-4d6c-9099-1dab74b6d59d",
+        "client-request-id": "69bf021e-d693-40ac-9d6b-a68d93d39f7d",
         "Connection": "keep-alive",
-        "Content-Length": "246",
+        "Content-Length": "249",
         "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AjsDaOEUSjxIh5Mu4iwTnu8vTLx9AQAAAI_sDdsOAAAA; x-ms-gateway-slice=estsfd; stsservicecookie=estsfd",
+        "Cookie": "fpc=ArzjSYjDqe5Dp9AyIyAS-vNsj9KcAQAAANOkGNsOAAAA; x-ms-gateway-slice=estsfd; stsservicecookie=estsfd",
         "User-Agent": "azsdk-python-identity/1.12.1 Python/3.11.0 (Windows-10-10.0.22621-SP0)",
         "x-client-cpu": "x64",
         "x-client-current-telemetry": "4|730,0|",
@@ -574,19 +573,19 @@
         "x-client-ver": "1.20.0",
         "x-ms-lib-capability": "retry-after, h429"
       },
-      "RequestBody": "client_id=client-id\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=client-secret\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.usgovcloudapi.net%2F.default",
+      "RequestBody": "client_id=client-id\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=client-secret\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.usgovcloudapi.net%2F%2F.default",
       "StatusCode": 200,
       "ResponseHeaders": {
         "Cache-Control": "no-store, no-cache",
-        "client-request-id": "6a2e7aa8-ee4b-4d6c-9099-1dab74b6d59d",
+        "client-request-id": "69bf021e-d693-40ac-9d6b-a68d93d39f7d",
         "Content-Length": "114",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 21 Nov 2022 22:02:55 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:48 GMT",
         "Expires": "-1",
         "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
         "Pragma": "no-cache",
         "Set-Cookie": [
-          "fpc=AjsDaOEUSjxIh5Mu4iwTnu8vTLx9AQAAAI_sDdsOAAAArlbIXgEAAACP7A3bDgAAAA; expires=Wed, 21-Dec-2022 22:02:56 GMT; path=/; secure; HttpOnly; SameSite=None",
+          "fpc=ArzjSYjDqe5Dp9AyIyAS-vNsj9KcAQAAANOkGNsOAAAAPZtWCAEAAADUpBjbDgAAAA; expires=Fri, 30-Dec-2022 01:11:49 GMT; path=/; secure; HttpOnly; SameSite=None",
           "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
         ],
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
@@ -620,11 +619,11 @@
         "Connection": "keep-alive",
         "Content-Length": "78",
         "Content-Type": "application/json",
-        "Date": "Mon, 21 Nov 2022 22:02:56 GMT",
+        "Date": "Wed, 30 Nov 2022 01:11:49 GMT",
         "Server": "openresty",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Ms-Correlation-Request-Id": "39b1c523-0f1b-45e8-b69a-e277d8736679",
-        "x-ms-ratelimit-remaining-calls-per-second": "166.583333"
+        "X-Ms-Correlation-Request-Id": "a3408c30-8e0b-4964-aba1-d6b5a6bb65fe",
+        "x-ms-ratelimit-remaining-calls-per-second": "166.55"
       },
       "ResponseBody": {
         "errors": [

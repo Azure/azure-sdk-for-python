@@ -15,15 +15,10 @@ from azure.containerregistry import (
     ArtifactTagOrder,
 )
 from azure.containerregistry.aio import ContainerRegistryClient
-from azure.containerregistry._helpers import (
-    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
-    AZURE_RESOURCE_MANAGER_GOVERNMENT,
-)
-from azure.identity import AzureAuthorityHosts
 from azure.core.exceptions import ResourceNotFoundError, ClientAuthenticationError
 from azure.core.async_paging import AsyncItemPaged
-
-from asynctestcase import AsyncContainerRegistryTestClass, get_authority
+from azure.identity import AzureAuthorityHosts
+from asynctestcase import AsyncContainerRegistryTestClass, get_authority, get_audience
 from constants import TO_BE_DELETED, HELLO_WORLD, ALPINE, BUSYBOX, DOES_NOT_EXIST
 from preparer import acr_preparer
 from devtools_testutils.aio import recorded_by_proxy_async
@@ -620,26 +615,31 @@ class TestContainerRegistryClientAsync(AsyncContainerRegistryTestClass):
     @recorded_by_proxy_async
     async def test_set_audience(self, containerregistry_endpoint):
         authority = get_authority(containerregistry_endpoint)
-        assert authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-
         credential = self.get_credential(authority=authority)
+        valid_audience = get_audience(authority)
 
         client = ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, credential=credential, audience=AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+            endpoint=containerregistry_endpoint, credential=credential, audience=valid_audience
         )
         async for repo in client.list_repository_names():
             pass
         
         client = ContainerRegistryClient(endpoint=containerregistry_endpoint, credential=credential)
-        async for repo in client.list_repository_names():
-            pass
-
-        invalid_client = ContainerRegistryClient(
-            endpoint=containerregistry_endpoint, credential=credential, audience=AZURE_RESOURCE_MANAGER_GOVERNMENT
-        )
-        with pytest.raises(ClientAuthenticationError):
-            async for repo in invalid_client.list_repository_names():
+        if valid_audience == get_audience(AzureAuthorityHosts.AZURE_PUBLIC_CLOUD):
+            async for repo in client.list_repository_names():
                 pass
+
+            invalid_audience = get_audience(AzureAuthorityHosts.AZURE_GOVERNMENT)
+            invalid_client = ContainerRegistryClient(
+                endpoint=containerregistry_endpoint, credential=credential, audience=invalid_audience
+            )
+            with pytest.raises(ClientAuthenticationError):
+                async for repo in invalid_client.list_repository_names():
+                    pass
+        else:
+            with pytest.raises(ClientAuthenticationError):
+                async for repo in client.list_repository_names():
+                    pass
 
 
 def test_set_api_version():
