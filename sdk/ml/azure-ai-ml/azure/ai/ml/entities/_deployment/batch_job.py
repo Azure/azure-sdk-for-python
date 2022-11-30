@@ -60,14 +60,13 @@ class BatchJob:
         self.name = name
         self.type = type
         self.system_data = system_data
-        self.properties = properties
         self.compute = properties.compute
         self.dataset = properties.dataset
         self.error_threshold = properties.error_threshold
         self.input_data = properties.input_data
         self.mini_batch_size = properties.mini_batch_size
         self.batch_job_name = properties.name
-        self.retry_setting = properties.retry_settings
+        self.retry_settings = properties.retry_settings
         self.output_file_name = properties.output_file_name
         self.status = properties.status
         self.output_data = properties.output_data
@@ -96,8 +95,21 @@ class BatchJob:
         )
 
     def _to_rest_object(self) -> RestBatchJobResource:
+        batch_job_property = BatchJobProperty(
+            compute = self.compute,
+            dataset = self.dataset,
+            error_threshold= self.error_threshold,
+            input_data = self.input_data,
+            mini_batch_size= self.mini_batch_size,
+            name = self.batch_job_name,
+            retry_settings = self.retry_settings,
+            output_file_name = self.output_file_name,
+            status = self.status,
+            output_data = self.output_data,
+            output_dataset = self.output_dataset
+        )
         return RestBatchJobResource(
-            properties= self.properties._to_rest_object()
+            properties= batch_job_property._to_rest_object()
         )
 
     def _to_dict(self) -> Dict:

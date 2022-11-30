@@ -25,7 +25,6 @@ class BatchJobSchema(PathAwareSchema):
     id = fields.Str()
     name = fields.Str()
     type = fields.Str()
-    properties = NestedField(BatchJobPropertySchema)
     system_data = NestedField(SystemDataSchema)
     compute = NestedField(ComputeBindingSchema)
     dataset = fields.Str()
