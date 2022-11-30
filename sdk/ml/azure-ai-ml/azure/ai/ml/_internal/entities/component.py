@@ -95,6 +95,9 @@ class InternalComponent(Component):
         launcher: Dict = None,
         **kwargs,
     ):
+        self._type_label = None
+        if "@" in type:
+            type, self._type_label = type.split("@")
         super().__init__(
             name=name,
             version=version,

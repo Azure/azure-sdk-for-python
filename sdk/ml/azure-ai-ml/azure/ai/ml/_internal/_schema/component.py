@@ -78,6 +78,7 @@ class InternalComponentSchema(ComponentSchema):
     type = StringTransformedEnum(
         allowed_values=NodeType.all_values(),
         casing_transform=lambda x: x.rsplit("@", 1)[0],
+        pass_original=True,
     )
 
     # need to resolve as it can be a local field
@@ -121,4 +122,11 @@ class InternalComponentSchema(ComponentSchema):
             if "mode" in port_definition:
                 del port_definition["mode"]
 
+        return data
+
+    @post_dump(pass_original=True)
+    def add_back_type_label(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
+        type_label = original._type_label  # pylint:disable=protected-access
+        if type_label:
+            data["type"] = f"{data['type']}@{type_label}"
         return data
