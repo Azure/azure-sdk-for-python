@@ -6,9 +6,9 @@ from typing import Any, Union, Optional, TYPE_CHECKING
 import logging
 from weakref import WeakSet
 from typing_extensions import Literal
-import certifi
 
-from ._pyamqp._connection import Connection
+import uamqp
+
 from ._base_handler import (
     _parse_conn_str,
     ServiceBusSharedKeyCredential,
@@ -131,8 +131,6 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         # Internal flag for switching whether to apply connection sharing, pending fix in uamqp library
         self._connection_sharing = False
         self._handlers = WeakSet()  # type: WeakSet
-        self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
-        self._connection_verify = kwargs.get("connection_verify")
 
         self._custom_endpoint_address = kwargs.get('custom_endpoint_address')
         self._connection_verify = kwargs.get("connection_verify")
@@ -147,14 +145,10 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
 
     def _create_uamqp_connection(self):
         auth = create_authentication(self)
-        self._connection = Connection(
-            endpoint=self.fully_qualified_namespace,
-            sasl_credential=auth.sasl,
-            network_trace=self._config.logging_enable,
-            custom_endpoint_address=self._custom_endpoint_address,
-            ssl_opts={'ca_certs':self._connection_verify or certifi.where()},
-            transport_type=self._config.transport_type,
-            http_proxy=self._config.http_proxy,
+        self._connection = uamqp.Connection(
+            hostname=self.fully_qualified_namespace,
+            sasl=auth,
+            debug=self._config.logging_enable,
         )
 
     def close(self):
@@ -178,7 +172,7 @@ class ServiceBusClient(object): # pylint: disable=client-accepts-api-version-key
         self._handlers.clear()
 
         if self._connection_sharing and self._connection:
-            self._connection.close()
+            self._connection.destroy()
 
     @classmethod
     def from_connection_string(

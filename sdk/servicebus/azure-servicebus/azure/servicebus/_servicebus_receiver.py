@@ -10,15 +10,13 @@ import functools
 import uuid
 import datetime
 import warnings
-from enum import Enum
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
-#from uamqp.authentication.common import AMQPAuth
-from ._pyamqp.message import Message
-from ._pyamqp.constants import SenderSettleMode
-from ._pyamqp.client import ReceiveClient as ReceiveClientSync
-from ._pyamqp import utils
-from ._pyamqp.error import AMQPError
+import six
+
+from uamqp import ReceiveClient, types, Message
+from uamqp.constants import SenderSettleMode
+from uamqp.authentication.common import AMQPAuth
 
 from .exceptions import ServiceBusError
 from ._base_handler import BaseHandler
@@ -52,21 +50,14 @@ from ._common.constants import (
     MGMT_REQUEST_DEAD_LETTER_REASON,
     MGMT_REQUEST_DEAD_LETTER_ERROR_DESCRIPTION,
     MGMT_RESPONSE_MESSAGE_EXPIRATION,
-    RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION,
-    RECEIVER_LINK_DEAD_LETTER_REASON,
-    DEADLETTERNAME,
-    DATETIMEOFFSET_EPOCH,
-    SESSION_LOCKED_UNTIL,
-    SESSION_FILTER,
-    ServiceBusToAMQPReceiveModeMap
+    ServiceBusToAMQPReceiveModeMap,
 )
 from ._common import mgmt_handlers
 from ._common.receiver_mixins import ReceiverMixin
-from ._common.utils import utc_from_timestamp, utc_now
+from ._common.utils import utc_from_timestamp
 from ._servicebus_session import ServiceBusSession
 
 if TYPE_CHECKING:
-    from ._pyamqp.authentication import JWTTokenAuth
     from ._common.auto_lock_renewer import AutoLockRenewer
     from azure.core.credentials import (
         TokenCredential,
@@ -158,7 +149,6 @@ class ServiceBusReceiver(
         prefetch_count: int = 0,
         **kwargs: Any,
     ) -> None:
-        self._session_id = None
         self._message_iter = None  # type: Optional[Iterator[ServiceBusReceivedMessage]]
         if kwargs.get("entity_name"):
             super(ServiceBusReceiver, self).__init__(
@@ -215,10 +205,9 @@ class ServiceBusReceiver(
         self._session = (
             None
             if self._session_id is None
-            else ServiceBusSession(cast(str, self._session_id), self)
+            else ServiceBusSession(self._session_id, self)
         )
         self._receive_context = threading.Event()
-        self._handler: ReceiveClientSync
 
     def __iter__(self):
         return self._iter_contextual_wrapper()
@@ -232,9 +221,8 @@ class ServiceBusReceiver(
             # This is not threadsafe, but gives us a way to handle if someone passes
             # different max_wait_times to different iterators and uses them in concert.
             if max_wait_time:
-                # _timeout to _idle_timeout
-                original_timeout = self._handler._idle_timeout
-                self._handler._idle_timeout = max_wait_time * 1000
+                original_timeout = self._handler._timeout
+                self._handler._timeout = max_wait_time * 1000
             try:
                 message = self._inner_next()
                 links = get_receive_links(message)
@@ -276,9 +264,8 @@ class ServiceBusReceiver(
         try:
             self._receive_context.set()
             self._open()
-            # TODO: Add in Recieve Message Iterator
-            # if not self._message_iter:
-            #     self._message_iter = self._handler.receive_messages_iter()
+            if not self._message_iter:
+                self._message_iter = self._handler.receive_messages_iter()
             uamqp_message = next(self._message_iter)
             message = self._build_message(uamqp_message)
             if (
@@ -353,30 +340,23 @@ class ServiceBusReceiver(
         return cls(**constructor_args)
 
     def _create_handler(self, auth):
-        # type: (JWTTokenAuth) -> None
-
-        custom_endpoint_address = self._config.custom_endpoint_address # pylint:disable=protected-access
-        transport_type = self._config.transport_type # pylint:disable=protected-access
-        hostname = self.fully_qualified_namespace
-        if transport_type.name == 'AmqpOverWebsocket':
-            hostname += '/$servicebus/websocket/'
-            if custom_endpoint_address:
-                custom_endpoint_address += '/$servicebus/websocket/'
-        self._handler = ReceiveClientSync(
-            hostname,
+        # type: (AMQPAuth) -> None
+        self._handler = ReceiveClient(
             self._get_source(),
             auth=auth,
-            network_trace=self._config.logging_enable,
+            debug=self._config.logging_enable,
             properties=self._properties,
-            retry_policy=self._error_policy,
+            error_policy=self._error_policy,
             client_name=self._name,
             on_attach=self._on_attach,
+            auto_complete=False,
+            encoding=self._config.encoding,
             receive_settle_mode=ServiceBusToAMQPReceiveModeMap[self._receive_mode],
             send_settle_mode=SenderSettleMode.Settled
             if self._receive_mode == ServiceBusReceiveMode.RECEIVE_AND_DELETE
-            else SenderSettleMode.Unsettled,
+            else None,
             timeout=self._max_wait_time * 1000 if self._max_wait_time else 0,
-            link_credit=self._prefetch_count,
+            prefetch=self._prefetch_count,
             # If prefetch is 1, then keep_alive coroutine serves as keep receiving for releasing messages
             keep_alive_interval=self._config.keep_alive
             if self._prefetch_count != 1
@@ -385,8 +365,7 @@ class ServiceBusReceiver(
             link_properties={CONSUMER_IDENTIFIER: self._name},
         )
         if self._prefetch_count == 1:
-            # pylint: disable=protected-access
-            self._handler._message_received = self._enhanced_message_received  # type: ignore
+            self._handler._message_received = self._enhanced_message_received  # pylint: disable=protected-access
 
     def _open(self):
         # pylint: disable=protected-access
@@ -419,14 +398,14 @@ class ServiceBusReceiver(
             amqp_receive_client = self._handler
             received_messages_queue = amqp_receive_client._received_messages
             max_message_count = max_message_count or self._prefetch_count
-            timeout_seconds = (
-                timeout or self._max_wait_time
+            timeout_ms = (
+                1000 * (timeout or self._max_wait_time)
                 if (timeout or self._max_wait_time)
                 else 0
             )
-            abs_timeout = (
-                time.time() + timeout_seconds
-                if (timeout_seconds)
+            abs_timeout_ms = (
+                amqp_receive_client._counter.get_current_ms() + timeout_ms
+                if timeout_ms
                 else 0
             )
             batch = []  # type: List[Message]
@@ -445,15 +424,18 @@ class ServiceBusReceiver(
                 and max_message_count > 1
             ):
                 link_credit_needed = max_message_count - len(batch)
-                amqp_receive_client._link.flow(link_credit=link_credit_needed)
+                amqp_receive_client.message_handler.reset_link_credit(
+                    link_credit_needed
+                )
 
             first_message_received = expired = False
             receiving = True
             while receiving and not expired and len(batch) < max_message_count:
                 while receiving and received_messages_queue.qsize() < max_message_count:
                     if (
-                        abs_timeout
-                        and time.time() > abs_timeout
+                        abs_timeout_ms
+                        and amqp_receive_client._counter.get_current_ms()
+                        > abs_timeout_ms
                     ):
                         expired = True
                         break
@@ -467,7 +449,10 @@ class ServiceBusReceiver(
                     ):
                         # first message(s) received, continue receiving for some time
                         first_message_received = True
-                        abs_timeout = time.time() + self._further_pull_receive_timeout
+                        abs_timeout_ms = (
+                            amqp_receive_client._counter.get_current_ms()
+                            + self._further_pull_receive_timeout_ms
+                        )
                 while (
                     not received_messages_queue.empty()
                     and len(batch) < max_message_count
@@ -535,7 +520,7 @@ class ServiceBusReceiver(
                         settle_operation,
                         dead_letter_reason=dead_letter_reason,
                         dead_letter_error_description=dead_letter_error_description,
-                    )
+                    )()
                     return
                 except RuntimeError as exception:
                     _LOGGER.info(
@@ -572,7 +557,7 @@ class ServiceBusReceiver(
         # type: (str, List[Union[uuid.UUID, str]], Optional[Dict[str, Any]]) -> Any
         message = {
             MGMT_REQUEST_DISPOSITION_STATUS: settlement,
-            MGMT_REQUEST_LOCK_TOKENS: utils.amqp_array_value(lock_tokens),
+            MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens),
         }
 
         self._populate_message_properties(message)
@@ -584,66 +569,10 @@ class ServiceBusReceiver(
             REQUEST_RESPONSE_UPDATE_DISPOSTION_OPERATION, message, mgmt_handlers.default
         )
 
-    def _on_attach(self, attach_frame):
-        # pylint: disable=protected-access, unused-argument
-        if self._session and attach_frame.source.address.decode(self._config.encoding) == self._entity_uri:
-            # This has to live on the session object so that autorenew has access to it.
-            self._session._session_start = utc_now()
-            expiry_in_seconds = attach_frame.properties.get(SESSION_LOCKED_UNTIL)
-            if expiry_in_seconds:
-                expiry_in_seconds = (
-                    expiry_in_seconds - DATETIMEOFFSET_EPOCH
-                ) / 10000000
-                self._session._locked_until_utc = utc_from_timestamp(expiry_in_seconds)
-            session_filter = attach_frame.source.filters[SESSION_FILTER]
-            self._session_id = session_filter.decode(self._config.encoding)
-            self._session._session_id = self._session_id
-
-    def _settle_message_via_receiver_link(
-        self,
-        message,
-        settle_operation,
-        dead_letter_reason=None,
-        dead_letter_error_description=None,
-    ):
-        # type: (ServiceBusReceivedMessage, str, Optional[str], Optional[str]) -> None
-        if settle_operation == MESSAGE_COMPLETE:
-            return self._handler.settle_messages(message.delivery_id, 'accepted')
-        if settle_operation == MESSAGE_ABANDON:
-            return self._handler.settle_messages(
-                message.delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=False
-            )
-        if settle_operation == MESSAGE_DEAD_LETTER:
-            return self._handler.settle_messages(
-                message.delivery_id,
-                'rejected',
-                error=AMQPError(
-                    condition=DEADLETTERNAME,
-                    description=dead_letter_error_description,
-                    info={
-                        RECEIVER_LINK_DEAD_LETTER_REASON: dead_letter_reason,
-                        RECEIVER_LINK_DEAD_LETTER_ERROR_DESCRIPTION: dead_letter_error_description,
-                    }
-                )
-            )
-        if settle_operation == MESSAGE_DEFER:
-            return self._handler.settle_messages(
-                message.delivery_id,
-                'modified',
-                delivery_failed=True,
-                undeliverable_here=True
-            )
-        raise ValueError(
-            "Unsupported settle operation type: {}".format(settle_operation)
-        )
-
     def _renew_locks(self, *lock_tokens, **kwargs):
         # type: (str, Any) -> Any
         timeout = kwargs.pop("timeout", None)
-        message = {MGMT_REQUEST_LOCK_TOKENS: utils.amqp_array_value(lock_tokens)}
+        message = {MGMT_REQUEST_LOCK_TOKENS: types.AMQPArray(lock_tokens)}
         return self._mgmt_request_response_with_retry(
             REQUEST_RESPONSE_RENEWLOCK_OPERATION,
             message,
@@ -799,7 +728,7 @@ class ServiceBusReceiver(
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if isinstance(sequence_numbers, int):
+        if isinstance(sequence_numbers, six.integer_types):
             sequence_numbers = [sequence_numbers]
         sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:
@@ -807,14 +736,14 @@ class ServiceBusReceiver(
         self._open()
         uamqp_receive_mode = ServiceBusToAMQPReceiveModeMap[self._receive_mode]
         try:
-            receive_mode = cast(Enum, uamqp_receive_mode).value
+            receive_mode = uamqp_receive_mode.value.value
         except AttributeError:
-            receive_mode = int(uamqp_receive_mode)
+            receive_mode = int(uamqp_receive_mode.value)
         message = {
-            MGMT_REQUEST_SEQUENCE_NUMBERS: utils.amqp_array_value(
-                [utils.amqp_long_value(s) for s in sequence_numbers]
+            MGMT_REQUEST_SEQUENCE_NUMBERS: types.AMQPArray(
+                [types.AMQPLong(s) for s in sequence_numbers]
             ),
-            MGMT_REQUEST_RECEIVER_SETTLE_MODE: utils.amqp_uint_value(receive_mode),
+            MGMT_REQUEST_RECEIVER_SETTLE_MODE: types.AMQPuInt(receive_mode),
         }
 
         self._populate_message_properties(message)
@@ -886,7 +815,7 @@ class ServiceBusReceiver(
 
         self._open()
         message = {
-            MGMT_REQUEST_FROM_SEQUENCE_NUMBER: utils.amqp_long_value(sequence_number),
+            MGMT_REQUEST_FROM_SEQUENCE_NUMBER: types.AMQPLong(sequence_number),
             MGMT_REQUEST_MAX_MESSAGE_COUNT: max_message_count,
         }
 

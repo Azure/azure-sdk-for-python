@@ -31,10 +31,11 @@ try:
 except ImportError:
     from urllib.parse import urlparse
 
+from uamqp import authentication, types
+
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
 
-from .._pyamqp import authentication
 from .._version import VERSION
 from .constants import (
     JWT_TOKEN_SCOPE,
@@ -98,7 +99,7 @@ def build_uri(address, entity):
 
 
 def create_properties(user_agent=None):
-    # type: (Optional[str]) -> Dict[str, str]
+    # type: (Optional[str]) -> Dict[types.AMQPSymbol, str]
     """
     Format the properties with which to instantiate the connection.
     This acts like a user agent over HTTP.
@@ -109,14 +110,14 @@ def create_properties(user_agent=None):
     :rtype: dict
     """
     properties = {}
-    properties["product"] = USER_AGENT_PREFIX
-    properties["version"] = VERSION
+    properties[types.AMQPSymbol("product")] = USER_AGENT_PREFIX
+    properties[types.AMQPSymbol("version")] = VERSION
     framework = "Python/{}.{}.{}".format(
         sys.version_info[0], sys.version_info[1], sys.version_info[2]
     )
-    properties["framework"] = framework
+    properties[types.AMQPSymbol("framework")] = framework
     platform_str = platform.platform()
-    properties["platform"] = platform_str
+    properties[types.AMQPSymbol("platform")] = platform_str
 
     final_user_agent = "{}/{} {} ({})".format(
         USER_AGENT_PREFIX, VERSION, framework, platform_str
@@ -124,7 +125,7 @@ def create_properties(user_agent=None):
     if user_agent:
         final_user_agent = "{} {}".format(user_agent, final_user_agent)
 
-    properties["user-agent"] = final_user_agent
+    properties[types.AMQPSymbol("user-agent")] = final_user_agent
     return properties
 
 
@@ -164,20 +165,29 @@ def create_authentication(client):
     except AttributeError:
         token_type = TOKEN_TYPE_JWT
     if token_type == TOKEN_TYPE_SASTOKEN:
-        return authentication.JWTTokenAuth(
+        auth = authentication.JWTTokenAuth(
             client._auth_uri,
             client._auth_uri,
             functools.partial(client._credential.get_token, client._auth_uri),
+            token_type=token_type,
+            timeout=client._config.auth_timeout,
+            http_proxy=client._config.http_proxy,
+            transport_type=client._config.transport_type,
             custom_endpoint_hostname=client._config.custom_endpoint_hostname,
             port=client._config.connection_port,
             verify=client._config.connection_verify
         )
+        auth.update_token()
+        return auth
     return authentication.JWTTokenAuth(
         client._auth_uri,
         client._auth_uri,
         functools.partial(client._credential.get_token, JWT_TOKEN_SCOPE),
         token_type=token_type,
         timeout=client._config.auth_timeout,
+        http_proxy=client._config.http_proxy,
+        transport_type=client._config.transport_type,
+        refresh_window=300,
         custom_endpoint_hostname=client._config.custom_endpoint_hostname,
         port=client._config.connection_port,
         verify=client._config.connection_verify
@@ -296,9 +306,10 @@ def trace_message(message, parent_span=None):
             })
             with current_span.span(name=SPAN_NAME_MESSAGE, kind=SpanKind.PRODUCER, links=[link]) as message_span:
                 message_span.add_attribute(TRACE_NAMESPACE_PROPERTY, TRACE_NAMESPACE)
-                if not message.application_properties:
-                    message.application_properties = dict()
-                message.application_properties.setdefault(
+                # TODO: Remove intermediary message; this is standin while this var is being renamed in a concurrent PR
+                if not message.message.application_properties:
+                    message.message.application_properties = dict()
+                message.message.application_properties.setdefault(
                     TRACE_PARENT_PROPERTY,
                     message_span.get_trace_parent().encode(TRACE_PROPERTY_ENCODING),
                 )
@@ -315,14 +326,14 @@ def get_receive_links(messages):
     links = []
     try:
         for message in trace_messages:  # type: ignore
-            if message.application_properties:
-                traceparent = message.application_properties.get(
+            if message.message.application_properties:
+                traceparent = message.message.application_properties.get(
                     TRACE_PARENT_PROPERTY, ""
                 ).decode(TRACE_PROPERTY_ENCODING)
                 if traceparent:
                     links.append(Link({'traceparent': traceparent},
                         {
-                            SPAN_ENQUEUED_TIME_PROPERTY: message.raw_amqp_message.annotations.get(
+                            SPAN_ENQUEUED_TIME_PROPERTY: message.message.annotations.get(
                                 TRACE_ENQUEUED_TIME_PROPERTY
                             )
                         }))

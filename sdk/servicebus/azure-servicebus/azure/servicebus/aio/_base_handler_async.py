@@ -6,13 +6,14 @@ import logging
 import asyncio
 import uuid
 import time
-from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union, cast
+from typing import TYPE_CHECKING, Any, Callable, Optional, Dict, Union
+
+import uamqp
+from uamqp import compat
+from uamqp.message import MessageProperties
 
 from azure.core.credentials import AccessToken, AzureSasCredential, AzureNamedKeyCredential
 
-from .._pyamqp.utils import amqp_string_value
-from .._pyamqp.message import Message, Properties
-from .._pyamqp.aio._client_async import AMQPClientAsync
 from .._base_handler import _generate_sas_token, BaseHandler as BaseHandlerSync, _get_backoff_time
 from .._common._configuration import Configuration
 from .._common.utils import create_properties, strip_protocol_from_uri, parse_sas_credential
@@ -144,7 +145,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         self._container_id = CONTAINER_PREFIX + str(uuid.uuid4())[:8]
         self._config = Configuration(**kwargs)
         self._running = False
-        self._handler = cast(AMQPClientAsync, None)  # type: AMQPClientAsync
+        self._handler = None  # type: uamqp.AMQPClientAsync
         self._auth_uri = None
         self._properties = create_properties(self._config.user_agent)
         self._shutdown = asyncio.Event()
@@ -299,7 +300,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         timeout=None,
         **kwargs
     ):
-        # type: (bytes, Message, Callable, bool, Optional[float], Any) -> Message
+        # type: (bytes, uamqp.Message, Callable, bool, Optional[float], Any) -> uamqp.Message
         """
         Execute an amqp management operation.
 
@@ -322,26 +323,29 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         if keep_alive_associated_link:
             try:
                 application_properties = {
-                    ASSOCIATEDLINKPROPERTYNAME: self._handler._link.name  # pylint: disable=protected-access
+                    ASSOCIATEDLINKPROPERTYNAME: self._handler.message_handler.name
                 }
             except AttributeError:
                 pass
-        mgmt_msg = Message( # type: ignore  # TODO: fix mypy
-            value=message,
-            properties=Properties(reply_to=self._mgmt_target, **kwargs),
+
+        mgmt_msg = uamqp.Message(
+            body=message,
+            properties=MessageProperties(
+                reply_to=self._mgmt_target, encoding=self._config.encoding, **kwargs
+            ),
             application_properties=application_properties,
         )
         try:
-            status, description, response = await self._handler.mgmt_request_async(
+            return await self._handler.mgmt_request_async(
                 mgmt_msg,
-                operation=amqp_string_value(mgmt_operation),
-                operation_type=amqp_string_value(MGMT_REQUEST_OP_TYPE_ENTITY_MGMT),
+                mgmt_operation,
+                op_type=MGMT_REQUEST_OP_TYPE_ENTITY_MGMT,
                 node=self._mgmt_target.encode(self._config.encoding),
-                timeout=timeout,  # TODO: check if this should be seconds * 1000 if timeout else None,
+                timeout=timeout * 1000 if timeout else None,
+                callback=callback,
             )
-            return callback(status, response, description)
         except Exception as exp:  # pylint: disable=broad-except
-            if isinstance(exp, TimeoutError): #TODO: was compat.TimeoutException
+            if isinstance(exp, compat.TimeoutException):
                 raise OperationTimeoutError(error=exp)
             raise
 
@@ -351,7 +355,7 @@ class BaseHandler:  # pylint:disable=too-many-instance-attributes
         # type: (bytes, Dict[str, Any], Callable, Optional[float], Any) -> Any
         return await self._do_retryable_operation(
             self._mgmt_request_response,
-            mgmt_operation=mgmt_operation.decode("UTF-8"),
+            mgmt_operation=mgmt_operation,
             message=message,
             callback=callback,
             timeout=timeout,

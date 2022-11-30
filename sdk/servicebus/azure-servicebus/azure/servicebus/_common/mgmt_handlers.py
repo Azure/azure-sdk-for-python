@@ -5,9 +5,7 @@
 # -------------------------------------------------------------------------
 
 import logging
-
-from .._pyamqp._decode import decode_payload
-
+import uamqp
 from .message import ServiceBusReceivedMessage
 from ..exceptions import _handle_amqp_mgmt_error
 from .constants import ServiceBusReceiveMode, MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
@@ -22,7 +20,7 @@ def default(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        return message.value
+        return message.get_data()
 
     _handle_amqp_mgmt_error(
         _LOGGER, "Service request failed.", condition, description, status_code
@@ -36,7 +34,7 @@ def session_lock_renew_op(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        return message.value
+        return message.get_data()
 
     _handle_amqp_mgmt_error(
         _LOGGER, "Session lock renew failed.", condition, description, status_code
@@ -50,7 +48,7 @@ def message_lock_renew_op(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        return message.value
+        return message.get_data()
 
     _handle_amqp_mgmt_error(
         _LOGGER, "Message lock renew failed.", condition, description, status_code
@@ -65,8 +63,8 @@ def peek_op(  # pylint: disable=inconsistent-return-statements
     )
     if status_code == 200:
         parsed = []
-        for m in message.value[b"messages"]:
-            wrapped = decode_payload(memoryview(m[b"message"]))
+        for m in message.get_data()[b"messages"]:
+            wrapped = uamqp.Message.decode_from_bytes(bytearray(m[b"message"]))
             parsed.append(
                 ServiceBusReceivedMessage(
                     wrapped, is_peeked_message=True, receiver=receiver
@@ -89,7 +87,7 @@ def list_sessions_op(  # pylint: disable=inconsistent-return-statements
     )
     if status_code == 200:
         parsed = []
-        for m in message.value[b"sessions-ids"]:
+        for m in message.get_data()[b"sessions-ids"]:
             parsed.append(m.decode("UTF-8"))
         return parsed
     if status_code in [202, 204]:
@@ -113,8 +111,8 @@ def deferred_message_op(  # pylint: disable=inconsistent-return-statements
     )
     if status_code == 200:
         parsed = []
-        for m in message.value[b"messages"]:
-            wrapped = decode_payload(memoryview(m[b"message"]))
+        for m in message.get_data()[b"messages"]:
+            wrapped = uamqp.Message.decode_from_bytes(bytearray(m[b"message"]))
             parsed.append(
                 message_type(
                     wrapped, receive_mode, is_deferred_message=True, receiver=receiver
@@ -140,7 +138,7 @@ def schedule_op(  # pylint: disable=inconsistent-return-statements
         MGMT_RESPONSE_MESSAGE_ERROR_CONDITION
     )
     if status_code == 200:
-        return message.value[b"sequence-numbers"]
+        return message.get_data()[b"sequence-numbers"]
 
     _handle_amqp_mgmt_error(
         _LOGGER, "Scheduling messages failed.", condition, description, status_code
