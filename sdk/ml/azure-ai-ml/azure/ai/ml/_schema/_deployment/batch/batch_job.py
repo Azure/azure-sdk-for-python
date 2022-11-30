@@ -13,7 +13,6 @@ from azure.ai.ml._schema.core.fields import  NestedField, PathAwareSchema
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml._schema._deployment.batch.batch_job_property import OutputDataSchema
 from azure.ai.ml._schema._deployment.batch.system_data_schema import SystemDataSchema
-from azure.ai.ml._schema._deployment.batch.batch_job_property import BatchJobPropertySchema
 from .batch_deployment_settings import BatchRetrySettingsSchema
 from .compute_binding import ComputeBindingSchema
 
