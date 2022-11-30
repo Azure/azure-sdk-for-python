@@ -41,8 +41,6 @@ TEST_SHARE_PREFIX = 'share'
 TEST_BLOB_PREFIX = 'blob'
 TEST_DIRECTORY_PREFIX = 'dir'
 TEST_FILE_PREFIX = 'file'
-INPUT_FILE_PATH = 'file_input.temp.{}.dat'.format(str(uuid.uuid4()))
-OUTPUT_FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 LARGE_FILE_SIZE = 64 * 1024 + 5
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
                         '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
