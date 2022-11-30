@@ -9,8 +9,6 @@
 - Operation `get_client_access_token` has a new optional parameter `group`
 - Added operation `removeConnectionFromAllGroups`
 
-### Other Changes
-
 ## 1.0.1 (2022-02-15)
 
 ### Bugs Fixed
