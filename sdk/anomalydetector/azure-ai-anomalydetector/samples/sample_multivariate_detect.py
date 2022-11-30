@@ -38,7 +38,9 @@ class MultivariateSample:
         # Create an Anomaly Detector client
 
         # <client>
-        self.ad_client = AnomalyDetectorClient(self.end_point, AzureKeyCredential(self.sub_key))
+        self.ad_client = AnomalyDetectorClient(
+            self.end_point, AzureKeyCredential(self.sub_key)
+        )
         # </client>
 
     def list_models(self):
@@ -64,7 +66,9 @@ class MultivariateSample:
             model_status = None
             model_info = None
 
-            while model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
+            while (
+                model_status != ModelStatus.READY and model_status != ModelStatus.FAILED
+            ):
                 model_info = self.ad_client.get_multivariate_model(trained_model_id)
                 print(model_info)
                 model_status = model_info.model_info.status
@@ -78,7 +82,8 @@ class MultivariateSample:
                 if len(model_info.model_info.errors) > 0:
                     print(
                         "Error code: {}. Message: {}".format(
-                            model_info.model_info.errors[0].code, model_info.model_info.errors[0].message
+                            model_info.model_info.errors[0].code,
+                            model_info.model_info.errors[0].message,
                         )
                     )
                 else:
@@ -94,7 +99,10 @@ class MultivariateSample:
                 # Return the latest model id
             return trained_model_id
         except HttpResponseError as e:
-            print("Error code: {}".format(e.error.code), "Error message: {}".format(e.error.message))
+            print(
+                "Error code: {}".format(e.error.code),
+                "Error message: {}".format(e.error.message),
+            )
         except Exception as e:
             raise e
 
@@ -111,7 +119,10 @@ class MultivariateSample:
             r = self.ad_client.get_multivariate_batch_detection_result(result_id)
             print("Get detection result...(it may take a few seconds)")
 
-            while r.summary.status != DetectionStatus.READY and r.summary.status != DetectionStatus.FAILED:
+            while (
+                r.summary.status != DetectionStatus.READY
+                and r.summary.status != DetectionStatus.FAILED
+            ):
                 r = self.ad_client.get_multivariate_batch_detection_result(result_id)
                 print("Detection is {}".format(r.summary.status))
                 time.sleep(15)
@@ -120,7 +131,11 @@ class MultivariateSample:
                 print("Detection failed.")
                 print("Errors:")
                 if len(r.summary.errors) > 0:
-                    print("Error code: {}. Message: {}".format(r.summary.errors[0].code, r.summary.errors[0].message))
+                    print(
+                        "Error code: {}. Message: {}".format(
+                            r.summary.errors[0].code, r.summary.errors[0].message
+                        )
+                    )
                 else:
                     print("None")
                 return None
@@ -128,7 +143,10 @@ class MultivariateSample:
             return r
 
         except HttpResponseError as e:
-            print("Error code: {}".format(e.error.code), "Error message: {}".format(e.error.message))
+            print(
+                "Error code: {}".format(e.error.code),
+                "Error message: {}".format(e.error.message),
+            )
         except Exception as e:
             raise e
 
@@ -166,7 +184,11 @@ if __name__ == "__main__":
         data_schema=DataSchema.MULTI_TABLE,
         display_name="sample",
         sliding_window=200,
-        align_policy=AlignPolicy(align_mode=AlignMode.OUTER, fill_n_a_method=FillNAMethod.LINEAR, padding_value=0),
+        align_policy=AlignPolicy(
+            align_mode=AlignMode.OUTER,
+            fill_n_a_method=FillNAMethod.LINEAR,
+            padding_value=0,
+        ),
     )
     model_id = sample.train(train_body)
 
