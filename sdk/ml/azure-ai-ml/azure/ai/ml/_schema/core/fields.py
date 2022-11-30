@@ -41,7 +41,6 @@ from azure.ai.ml.constants._common import (
     REGISTRY_URI_FORMAT,
     RESOURCE_ID_FORMAT,
     AzureMLResourceType,
-    ROOT_BASE_PATH_CONTEXT_KEY,
 )
 from azure.ai.ml.entities._job.pipeline._attr_dict import try_get_non_arbitrary_attr_for_potential_attr_dict
 from azure.ai.ml.exceptions import ValidationException
@@ -110,14 +109,13 @@ class LocalPathField(fields.Str):
         if value is None:
             return None
         self._validate(value)
-        # rebase value from base_path to root_base_path as base_path will be dropped after serialization
-        # root_base_path is only set in SchemaValidatableMixin._dump_for_validation for now
-        if ROOT_BASE_PATH_CONTEXT_KEY in self.context:
-            root_base_path = Path(self.context[ROOT_BASE_PATH_CONTEXT_KEY])
-            base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
-            if not root_base_path.samefile(base_path):
-                value = os.path.relpath(self.__resolve_path(value).as_posix(), root_base_path.as_posix())
-        return super(LocalPathField, self)._serialize(value, attr, obj, **kwargs)
+        # always dump path as absolute path as base_path will be dropped after serialization
+        return super(LocalPathField, self)._serialize(
+            self.__resolve_path(value).as_posix(),
+            attr,
+            obj,
+            **kwargs
+        )
 
     def __resolve_path(self, value):
         path = Path(value)

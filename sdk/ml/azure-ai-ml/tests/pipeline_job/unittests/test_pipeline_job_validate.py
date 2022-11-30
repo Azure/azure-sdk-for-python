@@ -198,7 +198,7 @@ class TestPipelineJobValidate:
         assert_the_same_path(pipeline_job_dict["jobs"]["command_node"]["component"]["code"], code_path)
         assert_the_same_path(
             pipeline_job_dict["jobs"]["command_node"]["component"]["environment"]["build"]["path"],
-            "../../environment/environment_files",
+            "./tests/test_configs/environment/environment_files",
         )
 
     def test_pipeline_job_base_path_resolution(self, mocker: MockFixture):

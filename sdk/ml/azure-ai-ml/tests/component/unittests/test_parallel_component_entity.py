@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import pydash
 import pytest
 
@@ -95,7 +97,7 @@ class TestParallelComponentEntity:
                 "append_row_to": "${{outputs.scoring_summary}}",
                 "program_arguments": "--label ${{inputs.label}} --model ${{inputs.model}} "
                 "--output ${{outputs.scored_result}}",
-                "code": "../python",
+                "code": Path("./tests/test_configs/python").absolute().as_posix(),
                 "entry_script": "score.py",
                 "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
                 "type": "run_function",

@@ -14,8 +14,7 @@ from pydash import objects
 
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta, PatchedBaseSchema
 from azure.ai.ml._utils.utils import load_yaml
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY, \
-    ROOT_BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, FILE_PREFIX, PARAMS_OVERRIDE_KEY
 
 module_logger = logging.getLogger(__name__)
 
@@ -31,8 +30,6 @@ class PathAwareSchema(PatchedBaseSchema, metaclass=PatchedSchemaMeta):
         # set old base path, note it's an Path object and point to the same object with
         # self.context.get(BASE_PATH_CONTEXT_KEY)
         self.old_base_path = self.context.get(BASE_PATH_CONTEXT_KEY)
-        if ROOT_BASE_PATH_CONTEXT_KEY not in self.context:
-            self.context[ROOT_BASE_PATH_CONTEXT_KEY] = self.old_base_path
         super().__init__(*args, **kwargs)
 
     @pre_load

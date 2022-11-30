@@ -18,7 +18,7 @@ import strictyaml
 from marshmallow import Schema, ValidationError
 
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus, ROOT_BASE_PATH_CONTEXT_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, OperationStatus
 from azure.ai.ml.entities._job.pipeline._attr_dict import (
     try_get_non_arbitrary_attr_for_potential_attr_dict,
 )
@@ -356,15 +356,10 @@ class SchemaValidatableMixin:
 
     @classmethod
     def _create_schema_for_validation_with_base_path(cls, base_path=None):
-        # note that, although context can be passed here, it won't be used by most children schemas
-        # for example, nested.schema will be initialized only once
-        # So we nearly always need to maintain context inside Schema classes
-        base_path = Path(base_path).resolve() if base_path else Path.cwd()
+        # Note that, although context can be passed here, nested.schema will be initialized only once
+        # base_path works well because it's fixed after loaded
         return cls._create_schema_for_validation(
-            context={
-                BASE_PATH_CONTEXT_KEY: base_path,
-                ROOT_BASE_PATH_CONTEXT_KEY: base_path,
-            }
+            context={BASE_PATH_CONTEXT_KEY: base_path or Path.cwd()}
         )
 
     @classmethod
