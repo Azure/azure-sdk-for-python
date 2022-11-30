@@ -770,7 +770,7 @@ def _archive_or_restore(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             body=version_resource,
-        )
+        ) # pylint: disable=expression-not-assigned
     else:
         container_resource = container_operation.get(
             name=name,
@@ -792,7 +792,7 @@ def _archive_or_restore(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             body=container_resource,
-            )
+            ) # pylint: disable=expression-not-assigned
 
 
 def _resolve_label_to_asset(

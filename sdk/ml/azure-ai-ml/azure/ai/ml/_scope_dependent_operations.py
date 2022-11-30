@@ -4,9 +4,8 @@
 
 # pylint: disable=protected-access
 
-import functools
 import logging
-from typing import Any, Callable, Dict, Optional, TypeVar, cast
+from typing import Callable, Dict, Optional, TypeVar, cast
 
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
