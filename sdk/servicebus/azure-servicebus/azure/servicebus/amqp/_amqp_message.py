@@ -9,13 +9,24 @@ import time
 import uuid
 from datetime import datetime
 import warnings
-from typing import Optional, Any, Tuple, cast, Mapping, Union, Dict, List
+from typing import Optional, Any, cast, Mapping, Union, Dict, Iterable, List, Tuple
 
 from msrest.serialization import TZ_UTC
-import uamqp
+from .._pyamqp.message import Message, Header, Properties
+from .._pyamqp.utils import normalized_data_body, normalized_sequence_body, amqp_long_value
 
-from ._constants import AMQP_MESSAGE_BODY_TYPE_MAP, AmqpMessageBodyType
-from .._common.constants import MAX_DURATION_VALUE, MAX_ABSOLUTE_EXPIRY_TIME
+from ._constants import AmqpMessageBodyType
+from .._common.constants import (
+    MAX_DURATION_VALUE,
+    MAX_ABSOLUTE_EXPIRY_TIME,
+    _X_OPT_ENQUEUED_TIME,
+    _X_OPT_LOCKED_UNTIL
+)
+
+_LONG_ANNOTATIONS = (
+    _X_OPT_ENQUEUED_TIME,
+    _X_OPT_LOCKED_UNTIL
+)
 
 
 class DictMixin(object):
@@ -114,6 +125,10 @@ class AmqpAnnotatedMessage(object):
     ) -> None:
         self._message = kwargs.pop("message", None)
         self._encoding = kwargs.pop("encoding", "UTF-8")
+        self._data_body = None
+        self._sequence_body = None
+        self._value_body = None
+        self.body_type = None
 
         # internal usage only for service bus received message
         if self._message:
@@ -128,30 +143,33 @@ class AmqpAnnotatedMessage(object):
                 "or value_body being set as the body of the AmqpAnnotatedMessage."
             )
 
-        self._body = None
-        self._body_type = None
         if "data_body" in kwargs:
-            self._body = kwargs.get("data_body")
-            self._body_type = uamqp.MessageBodyType.Data
+            self._data_body = normalized_data_body(kwargs.get("data_body"))
+            self.body_type = AmqpMessageBodyType.DATA
         elif "sequence_body" in kwargs:
-            self._body = kwargs.get("sequence_body")
-            self._body_type = uamqp.MessageBodyType.Sequence
+            self._sequence_body = normalized_sequence_body(kwargs.get("sequence_body"))
+            self.body_type = AmqpMessageBodyType.SEQUENCE
         elif "value_body" in kwargs:
-            self._body = kwargs.get("value_body")
-            self._body_type = uamqp.MessageBodyType.Value
+            self._value_body = kwargs.get("value_body")
+            self.body_type = AmqpMessageBodyType.VALUE
 
-        self._message = uamqp.message.Message(body=self._body, body_type=self._body_type)
         header_dict = cast(Mapping, header)
         self._header = AmqpMessageHeader(**header_dict) if header else None
         self._footer = footer
         properties_dict = cast(Mapping, properties)
         self._properties = AmqpMessageProperties(**properties_dict) if properties else None
-        self._application_properties = application_properties
-        self._annotations = annotations
-        self._delivery_annotations = delivery_annotations
+        self._application_properties = cast(Optional[Dict[Union[str, bytes], Any]], application_properties)
+        self._annotations = cast(Optional[Dict[Union[str, bytes], Any]], annotations)
+        self._delivery_annotations = cast(Optional[Dict[Union[str, bytes], Any]], delivery_annotations)
 
     def __str__(self) -> str:
-        return str(self._message)
+        if self.body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
+            return "".join(d.decode(self._encoding) for d in cast(Iterable[bytes], self._data_body))
+        elif self.body_type == AmqpMessageBodyType.SEQUENCE:
+            return str(self._sequence_body)
+        elif self.body_type == AmqpMessageBodyType.VALUE:
+            return str(self._value_body)
+        return ""
 
     def __repr__(self) -> str:
         # pylint: disable=bare-except
@@ -186,7 +204,17 @@ class AmqpAnnotatedMessage(object):
         return "AmqpAnnotatedMessage({})".format(message_repr)[:1024]
 
     def _from_amqp_message(self, message):
-        # populate the properties from an uamqp message
+        # populate the properties from an pyamqp message
+        if message[5]:
+            self.body_type = AmqpMessageBodyType.DATA
+            self._data_body = message[5]
+        elif message[6]:
+            self.body_type = AmqpMessageBodyType.SEQUENCE
+            self._sequence_body = message[6]
+        else:
+            self.body_type = AmqpMessageBodyType.VALUE
+            self._value_body = message[7]
+
         self._properties = AmqpMessageProperties(
             message_id=message.properties.message_id,
             user_id=message.properties.user_id,
@@ -204,13 +232,13 @@ class AmqpAnnotatedMessage(object):
         ) if message.properties else None
         self._header = AmqpMessageHeader(
             delivery_count=message.header.delivery_count,
-            time_to_live=message.header.time_to_live,
+            time_to_live=message.header.ttl,
             first_acquirer=message.header.first_acquirer,
             durable=message.header.durable,
             priority=message.header.priority
         ) if message.header else None
         self._footer = message.footer
-        self._annotations = message.annotations
+        self._annotations = message.message_annotations
         self._delivery_annotations = message.delivery_annotations
         self._application_properties = message.application_properties
 
@@ -218,12 +246,14 @@ class AmqpAnnotatedMessage(object):
         message_header = None
         ttl_set = False
         if self.header:
-            message_header = uamqp.message.MessageHeader()
-            message_header.delivery_count = self.header.delivery_count
-            message_header.time_to_live = self.header.time_to_live
-            message_header.first_acquirer = self.header.first_acquirer
-            message_header.durable = self.header.durable
-            message_header.priority = self.header.priority
+            message_header = Header(
+                durable=self.header.durable,
+                priority=self.header.priority,
+                ttl=self.header.time_to_live,
+                first_acquirer=self.header.first_acquirer,
+                delivery_count=self.header.delivery_count if self.header.delivery_count is not None else 0
+            )
+
             if self.header.time_to_live and self.header.time_to_live != MAX_DURATION_VALUE:
                 ttl_set = True
                 creation_time_from_ttl = int(time.mktime(datetime.now(TZ_UTC).timetuple()) * 1000)
@@ -245,7 +275,7 @@ class AmqpAnnotatedMessage(object):
                 if self.properties.absolute_expiry_time:
                     absolute_expiry_time = int(self.properties.absolute_expiry_time)
 
-            message_properties = uamqp.message.MessageProperties(
+            message_properties = Properties(
                 message_id=self.properties.message_id,
                 user_id=self.properties.user_id,
                 to=self.properties.to,
@@ -258,41 +288,35 @@ class AmqpAnnotatedMessage(object):
                 absolute_expiry_time=absolute_expiry_time,
                 group_id=self.properties.group_id,
                 group_sequence=self.properties.group_sequence,
-                reply_to_group_id=self.properties.reply_to_group_id,
-                encoding=self._encoding
+                reply_to_group_id=self.properties.reply_to_group_id
             )
         elif ttl_set:
-            message_properties = uamqp.message.MessageProperties(
+            message_properties = Properties(
                 creation_time=creation_time_from_ttl if ttl_set else None,
                 absolute_expiry_time=absolute_expiry_time_from_ttl if ttl_set else None,
             )
-
-        amqp_body = self._message._body  # pylint: disable=protected-access
-        if isinstance(amqp_body, uamqp.message.DataBody):
-            amqp_body_type = uamqp.MessageBodyType.Data
-            amqp_body = list(amqp_body.data)
-        elif isinstance(amqp_body, uamqp.message.SequenceBody):
-            amqp_body_type = uamqp.MessageBodyType.Sequence
-            amqp_body = list(amqp_body.data)
-        else:
-            # amqp_body is type of uamqp.message.ValueBody
-            amqp_body_type = uamqp.MessageBodyType.Value
-            amqp_body = amqp_body.data
-
-        return uamqp.message.Message(
-            body=amqp_body,
-            body_type=amqp_body_type,
+        annotations = None
+        if self.annotations:
+            # TODO: Investigate how we originally encoded annotations.
+            annotations = dict(self.annotations)
+            for key in _LONG_ANNOTATIONS:
+                if key in self.annotations:
+                    annotations[key] = amqp_long_value(self.annotations[key])
+        return Message(
             header=message_header,
+            delivery_annotations=self.delivery_annotations,
+            message_annotations=annotations,
             properties=message_properties,
             application_properties=self.application_properties,
-            annotations=self.annotations,
-            delivery_annotations=self.delivery_annotations,
+            data=self._data_body,
+            sequence=self._sequence_body,
+            value=self._value_body,
             footer=self.footer
         )
 
     def _to_outgoing_message(self, message_type):
         # convert to an outgoing ServiceBusMessage
-        return message_type(body=None, message=self._to_outgoing_amqp_message(), raw_amqp_message=self)
+        return message_type(body=None, raw_amqp_message=self)
 
     @property
     def body(self) -> Any:
@@ -307,20 +331,16 @@ class AmqpAnnotatedMessage(object):
 
         :rtype: Any
         """
-        return self._message.get_data()
+        if self.body_type == AmqpMessageBodyType.DATA: # pylint:disable=no-else-return
+            return (i for i in cast(Iterable, self._data_body))
+        elif self.body_type == AmqpMessageBodyType.SEQUENCE:
+            return (i for i in cast(Iterable, self._sequence_body))
+        elif self.body_type == AmqpMessageBodyType.VALUE:
+            return self._value_body
+        return None
 
     @property
-    def body_type(self) -> AmqpMessageBodyType:
-        """The body type of the underlying AMQP message.
-
-        :rtype: ~azure.servicebus.amqp.AmqpMessageBodyType
-        """
-        return AMQP_MESSAGE_BODY_TYPE_MAP.get(
-            self._message._body.type, AmqpMessageBodyType.VALUE  # pylint: disable=protected-access
-        )
-
-    @property
-    def properties(self) -> Optional[AmqpMessageProperties]:
+    def properties(self) -> Optional["AmqpMessageProperties"]:
         """
         Properties to add to the message.
 
@@ -329,11 +349,11 @@ class AmqpAnnotatedMessage(object):
         return self._properties
 
     @properties.setter
-    def properties(self, value: AmqpMessageProperties) -> None:
+    def properties(self, value: "AmqpMessageProperties") -> None:
         self._properties = value
 
     @property
-    def application_properties(self) -> Optional[Dict]:
+    def application_properties(self) -> Optional[Dict[Union[str, bytes], Any]]:
         """
         Service specific application properties.
 
@@ -342,11 +362,11 @@ class AmqpAnnotatedMessage(object):
         return self._application_properties
 
     @application_properties.setter
-    def application_properties(self, value: Dict) -> None:
+    def application_properties(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
         self._application_properties = value
 
     @property
-    def annotations(self) -> Optional[Dict]:
+    def annotations(self) -> Optional[Dict[Union[str, bytes], Any]]:
         """
         Service specific message annotations.
 
@@ -355,11 +375,11 @@ class AmqpAnnotatedMessage(object):
         return self._annotations
 
     @annotations.setter
-    def annotations(self, value: Dict) -> None:
+    def annotations(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
         self._annotations = value
 
     @property
-    def delivery_annotations(self) -> Optional[Dict]:
+    def delivery_annotations(self) -> Optional[Dict[Union[str, bytes], Any]]:
         """
         Delivery-specific non-standard properties at the head of the message.
         Delivery annotations convey information from the sending peer to the receiving peer.
@@ -369,11 +389,11 @@ class AmqpAnnotatedMessage(object):
         return self._delivery_annotations
 
     @delivery_annotations.setter
-    def delivery_annotations(self, value: Dict) -> None:
+    def delivery_annotations(self, value: Optional[Dict[Union[str, bytes], Any]]) -> None:
         self._delivery_annotations = value
 
     @property
-    def header(self) -> Optional[AmqpMessageHeader]:
+    def header(self) -> Optional["AmqpMessageHeader"]:
         """
         The message header.
 
@@ -382,11 +402,11 @@ class AmqpAnnotatedMessage(object):
         return self._header
 
     @header.setter
-    def header(self, value: AmqpMessageHeader) -> None:
+    def header(self, value: "AmqpMessageHeader") -> None:
         self._header = value
 
     @property
-    def footer(self) -> Optional[Dict]:
+    def footer(self) -> Optional[Dict[Any, Any]]:
         """
         The message footer.
 
@@ -395,7 +415,7 @@ class AmqpAnnotatedMessage(object):
         return self._footer
 
     @footer.setter
-    def footer(self, value: Dict) -> None:
+    def footer(self, value: Dict[Any, Any]) -> None:
         self._footer = value
 
 

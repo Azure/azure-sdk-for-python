@@ -42,7 +42,6 @@ logging.getLogger().setLevel(logging.INFO)
 
 
 
-
 def log_file(file_location, is_error=False):
     with open(file_location, "r") as file:
         for line in file:

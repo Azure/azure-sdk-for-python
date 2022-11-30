@@ -3,6 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 
+from __future__ import annotations
 from datetime import datetime
 from contextlib import contextmanager
 from typing import (
@@ -27,8 +28,10 @@ if TYPE_CHECKING:
     from azure.core.tracing import AbstractSpan
     from .._common import EventData
     from .._consumer import EventHubConsumer
+    from ..aio._consumer_async import (
+        EventHubConsumer as EventHubConsumerAsync
+    )
     from .._consumer_client import EventHubConsumerClient
-    from ..aio._consumer_async import EventHubConsumer as EventHubConsumerAsync
     from ..aio._consumer_client_async import (
         EventHubConsumerClient as EventHubConsumerClientAsync,
     )
@@ -36,9 +39,7 @@ if TYPE_CHECKING:
 
 class EventProcessorMixin(object):
 
-    _eventhub_client = (
-        None
-    )  # type: Optional[Union[EventHubConsumerClient, EventHubConsumerClientAsync]]
+    _eventhub_client: Optional[Union[EventHubConsumerClient, EventHubConsumerClientAsync]] = None
     _consumer_group = ""  # type: str
     _owner_level = None  # type: Optional[int]
     _prefetch = None  # type: Optional[int]
@@ -78,7 +79,7 @@ class EventProcessorMixin(object):
         initial_event_position,  # type: Union[str, int, datetime]
         initial_event_position_inclusive,  # type: bool
         on_event_received,  # type: Callable[[Union[Optional[EventData], List[EventData]]], None]
-        **kwargs  # type: Any
+        **kwargs,  # type: Any
     ):
         # type: (...) -> Union[EventHubConsumer, EventHubConsumerAsync]
         consumer = self._eventhub_client._create_consumer(  # type: ignore  # pylint: disable=protected-access
@@ -90,7 +91,7 @@ class EventProcessorMixin(object):
             owner_level=self._owner_level,
             track_last_enqueued_event_properties=self._track_last_enqueued_event_properties,
             prefetch=self._prefetch,
-            **kwargs
+            **kwargs,
         )
         return consumer
 

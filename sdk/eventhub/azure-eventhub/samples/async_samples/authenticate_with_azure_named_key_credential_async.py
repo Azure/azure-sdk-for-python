@@ -9,6 +9,8 @@
 Example to demonstrate utilizing AzureNamedKeyCredential to authenticate with Event Hubs asynchronously.
 """
 
+# pylint: disable=C0111
+
 import os
 import asyncio
 import time

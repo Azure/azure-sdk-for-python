@@ -4,7 +4,8 @@ stages:
   - template: ../../eng/pipelines/templates/stages/archetype-sdk-tests.yml
     parameters:
       ServiceDirectory: eventhub
-      BuildTargetingString: azure-eventhub*
+      TestTimeoutInMinutes: 240
+      BuildTargetingString: azure-eventhub
       MatrixReplace:
         - TestSamples=.*/true
       MatrixFilters:
