@@ -5,12 +5,12 @@
 # -------------------------------------------------------------------------
 import asyncio
 import time
-from urllib.parse import urlparse
 from typing import TYPE_CHECKING
 
 from azure.core.pipeline.policies import AsyncHTTPPolicy
 from azure.core.pipeline.policies._authentication import _BearerTokenCredentialPolicyBase
 
+from ._utils import DomainUtils
 from .._tools_async import await_result
 
 if TYPE_CHECKING:
@@ -35,7 +35,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         self._lock = asyncio.Lock()
         self._scopes = scopes
         self._token = None  # type: Optional[AccessToken]
-        self._original_domain = None
+        self._domain_util = DomainUtils()
         self._always_adding_header = kwargs.pop('always_adding_header', False)
 
     async def on_request(self, request: "PipelineRequest") -> None:  # pylint:disable=invalid-overridden-method
@@ -47,7 +47,7 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
         """
         _BearerTokenCredentialPolicyBase._enforce_https(request)  # pylint:disable=protected-access
 
-        if self._always_adding_header or not self._domain_changed(request.http_request.url):
+        if self._always_adding_header or not self._domain_util.subdomain_changed(request.http_request.url):
             if self._token is None or self._need_new_token():
                 async with self._lock:
                     # double check because another coroutine may have acquired a token

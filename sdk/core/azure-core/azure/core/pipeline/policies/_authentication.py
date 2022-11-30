@@ -4,10 +4,10 @@
 # license information.
 # -------------------------------------------------------------------------
 import time
-from urllib.parse import urlparse
 from typing import TYPE_CHECKING, Any, Dict, Optional  # pylint:disable=unused-import
 
 from . import HTTPPolicy, SansIOHTTPPolicy
+from ._utils import DomainUtils
 from ...exceptions import ServiceRequestError
 
 if TYPE_CHECKING:
@@ -31,7 +31,7 @@ class _BearerTokenCredentialPolicyBase(object):
         self._scopes = scopes
         self._credential = credential
         self._token = None  # type: Optional[AccessToken]
-        self._original_domain = None
+        self._domain_util = DomainUtils()
         self._always_adding_header = kwargs.pop('always_adding_header', False)
 
     @staticmethod
@@ -68,16 +68,6 @@ class _BearerTokenCredentialPolicyBase(object):
         return not self._token or self._token.expires_on - time.time() < 300
 
 
-    def _domain_changed(self, url):
-        domain = str(urlparse(url).netloc).lower()
-        if not self._original_domain:
-            self._original_domain = domain
-            return False
-        if self._original_domain == domain:
-            return False
-        return True
-
-
 class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
     """Adds a bearer token Authorization header to requests.
 
@@ -97,7 +87,7 @@ class BearerTokenCredentialPolicy(_BearerTokenCredentialPolicyBase, HTTPPolicy):
         """
         self._enforce_https(request)
 
-        if self._always_adding_header or not self._domain_changed(request.http_request.url):
+        if self._always_adding_header or not self._domain_util.subdomain_changed(request.http_request.url):
             if self._token is None or self._need_new_token:
                 self._token = self._credential.get_token(*self._scopes)
             self._update_headers(request.http_request.headers, self._token.token)

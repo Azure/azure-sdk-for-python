@@ -25,15 +25,18 @@
 # --------------------------------------------------------------------------
 import datetime
 import email.utils
+from urllib.parse import urlparse
 from ...utils._utils import _FixedOffset, case_insensitive_dict
+
 
 def _parse_http_date(text):
     """Parse a HTTP date format into datetime."""
     parsed_date = email.utils.parsedate_tz(text)
     return datetime.datetime(
         *parsed_date[:6],
-        tzinfo=_FixedOffset(parsed_date[9]/60)
+        tzinfo=_FixedOffset(parsed_date[9] / 60)
     )
+
 
 def parse_retry_after(retry_after):
     """Helper to parse Retry-After and get value in seconds.
@@ -48,6 +51,7 @@ def parse_retry_after(retry_after):
         retry_date = _parse_http_date(retry_after)
         delay = (retry_date - datetime.datetime.now(retry_date.tzinfo)).total_seconds()
     return max(0, delay)
+
 
 def get_retry_after(response):
     """Get the value of Retry-After in seconds.
@@ -67,3 +71,24 @@ def get_retry_after(response):
             parsed_retry_after = parse_retry_after(retry_after)
             return parsed_retry_after / 1000.0
     return None
+
+
+class DomainUtils:
+    """Helper class to detect is submain is changed for redirect scenarios"""
+
+    def __init__(self):
+        self._original_domain = None
+
+    def subdomain_changed(self, url):
+        subdomain = str(urlparse(url).netloc).lower()
+        segments = subdomain.split('.')
+        if len(segments) > 1:
+            domain = '.'.join(segments[1:])
+        else:
+            domain = subdomain
+        if not self._original_domain:
+            self._original_domain = domain
+            return False
+        if self._original_domain == domain:
+            return False
+        return True
