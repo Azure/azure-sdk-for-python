@@ -35,6 +35,7 @@ class VersionedObject:
         self.name = name
         self.added_on = added_on or ""
         self.removed_on = ""
+        self.replaced_by = ""
 
 
 T = TypeVar("T", bound=VersionedObject)
@@ -60,23 +61,33 @@ def _combine_helper(
 
         prev_counter = 0
         curr_counter = 0
-        while prev_counter < len(objs) and curr_counter < len(curr_names):
-            if objs[prev_counter].name < curr_names[curr_counter]:
-                while prev_counter < len(objs) and objs[prev_counter].name < curr_names[curr_counter]:
-                    objs[prev_counter].removed_on = curr_api_version
+        obj_names = [obj.name for obj in objs]
+        while prev_counter < len(obj_names) and curr_counter < len(curr_names):
+            if obj_names[prev_counter] != curr_names[curr_counter]:
+                removed = False
+                added = False
+                while prev_counter < len(obj_names) and obj_names[prev_counter] not in curr_names:
+                    if not objs[prev_counter].removed_on:
+                        removed = True
+                        objs[prev_counter].removed_on = curr_api_version
                     prev_counter += 1
-            elif objs[prev_counter].name > curr_names[curr_counter]:
-                while objs[prev_counter].name > curr_names[curr_counter]:
-                    new_objs.append(
-                        get_cls(
-                            code_model,
-                            curr_names[curr_counter],
-                            curr_api_version, # added on
+                while curr_counter < len(curr_names) and curr_names[curr_counter] not in obj_names:
+                    if not any(o for o in new_objs if o.name == curr_names[curr_counter]):
+                        added = True
+                        new_objs.append(
+                            get_cls(
+                                code_model,
+                                curr_names[curr_counter],
+                                curr_api_version, # added on
+                            )
                         )
-                    )
                     curr_counter += 1
-            prev_counter += 1
-            curr_counter += 1
+                    if removed and added:
+                        # in this case we consider it a replace
+                        objs[prev_counter - 1].replaced_by = curr_names[curr_counter - 1]
+            else:
+                prev_counter += 1
+                curr_counter += 1
         new_objs.extend(
             [  # add the remaining objs if there are any to new_objs
                 get_cls(code_model, name, curr_api_version) for name in curr_names[curr_counter + 1 :]
@@ -133,7 +144,10 @@ class Operation(VersionedObject):
     def _get_op(self, api_version: str, async_mode: bool = False):
         module = importlib.import_module(f"{self.code_model.module_name}.{api_version}{'.aio' if async_mode else ''}")
         operation_group = getattr(module.operations, self.operation_group.name)
-        return getattr(operation_group, self.name)
+        try:
+            return getattr(operation_group, self.name)
+        except AttributeError:
+            a = "b"
 
     def combine_parameters(self) -> None:
         # don't want api versions if my operation group isn't in them
@@ -243,15 +257,17 @@ class CodeModel:
                     name=f"{initial_metadata['client']['name']}OperationsMixin",
                 )
             )
-        # for operation_group in [og for og in ogs if not og.removed_on]:
-        #     operation_group.combine_operations()
-        #     for operation in [o for o in operation_group.operations if not o.removed_on]:
-        #         operation.combine_parameters()
+        for operation_group in ogs:
+            operation_group.combine_operations()
+            for operation in operation_group.operations:
+                operation.combine_parameters()
 
+        with open("errors.csv", "w") as fd:
+            fd.write("name,addedOn,removedOn,replacedBy\n")
         for operation_group in ogs:
             if operation_group.removed_on:
-                with open("errors.txt", "a") as fd:
-                    fd.write(f"{operation_group.name} was added on {operation_group.added_on} and removed on {operation_group.removed_on}\n")
+                with open("errors.csv", "a") as fd:
+                    fd.write(f"{operation_group.name},{operation_group.added_on or self.sorted_api_versions[0]},{operation_group.removed_on},{operation_group.replaced_by or 'N/A'}\n")
                 continue
             for operation in operation_group.operations:
                 if operation.removed_on:
@@ -371,4 +387,4 @@ def get_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     code_model = CodeModel(Path(get_args().pkg_path))
-    Serializer(code_model).serialize()
+    # Serializer(code_model).serialize()
