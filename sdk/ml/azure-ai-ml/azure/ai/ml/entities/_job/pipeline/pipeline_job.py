@@ -140,7 +140,7 @@ class PipelineJob(Job, YamlTranslatableMixin, PipelineIOMixin, SchemaValidatable
             )
 
         # If component is Pipeline component, jobs will be component.jobs
-        self._jobs = (jobs or {}) if isinstance(component, str) else {}
+        self._jobs = (jobs or {}) if isinstance(component, str) else component.jobs
 
         self.component = component
         if "type" not in kwargs.keys():
