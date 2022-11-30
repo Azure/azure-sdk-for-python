@@ -22,7 +22,7 @@ try:
     import uamqp
     from uamqp import compat
     from azure.eventhub._transport._uamqp_transport import UamqpTransport
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     UamqpTransport = None
 
 

@@ -17,7 +17,8 @@ try:
     import uamqp
     from uamqp import compat
     from azure.eventhub._transport._uamqp_transport import UamqpTransport
-except ImportError:
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
     UamqpTransport = None
 
 from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
