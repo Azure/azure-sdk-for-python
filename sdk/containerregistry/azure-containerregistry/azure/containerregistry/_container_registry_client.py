@@ -25,6 +25,7 @@ from ._helpers import (
     _validate_digest,
     OCI_MANIFEST_MEDIA_TYPE,
     SUPPORTED_API_VERSIONS,
+    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
 )
 from ._models import (
     RepositoryProperties,
@@ -33,7 +34,6 @@ from ._models import (
     DownloadBlobResult,
     DownloadManifestResult,
 )
-from msrestazure.azure_cloud import AZURE_PUBLIC_CLOUD
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -47,7 +47,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
         self,
         endpoint: str,
-        credential: "Optional[TokenCredential]"=None,
+        credential: Optional["TokenCredential"] = None,
         **kwargs: "Any"
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
@@ -59,8 +59,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
          may result in unsupported behavior.
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
-         "https://management.azure.com", "https://management.chinacloudapi.cn" or "https://management.usgovcloudapi.net".
-         The default value is "https://management.azure.com".
+         "https://management.azure.com", "https://management.chinacloudapi.cn" or
+         "https://management.usgovcloudapi.net". The default value is "https://management.azure.com".
         :paramtype audience: str
         :returns: None
         :rtype: None
@@ -85,7 +85,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
             )
         audience = kwargs.pop("audience", None)
         if not audience:
-            audience = AZURE_PUBLIC_CLOUD.endpoints.resource_manager
+            audience = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
         defaultScope = [audience + "/.default"]
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint

@@ -15,11 +15,10 @@ from azure.core.exceptions import (
 )
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.tracing.decorator_async import distributed_trace_async
-from msrestazure.azure_cloud import AZURE_PUBLIC_CLOUD
 
 from ._async_base_client import ContainerRegistryBaseClient
 from .._generated.models import AcrErrors
-from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS
+from .._helpers import _is_tag, _parse_next_link, SUPPORTED_API_VERSIONS, AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
 from .._models import RepositoryProperties, ArtifactManifestProperties, ArtifactTagProperties
 
 if TYPE_CHECKING:
@@ -31,9 +30,9 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
     def __init__(
         self,
         endpoint: str,
-        credential: "Optional['AsyncTokenCredential']"=None,
+        credential: Optional["AsyncTokenCredential"] = None,
         *,
-        audience: str=AZURE_PUBLIC_CLOUD.endpoints.resource_manager,
+        audience: str = AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
         **kwargs: "Any"
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
@@ -45,8 +44,8 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
          may result in unsupported behavior.
         :paramtype api_version: str
         :keyword audience: URL to use for credential authentication with AAD. Its value could be
-         "https://management.azure.com", "https://management.chinacloudapi.cn" or "https://management.usgovcloudapi.net".
-         The default value is "https://management.azure.com".
+         "https://management.azure.com", "https://management.chinacloudapi.cn" or
+         "https://management.usgovcloudapi.net". The default value is "https://management.azure.com".
         :paramtype audience: str
         :returns: None
         :rtype: None

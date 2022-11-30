@@ -9,7 +9,12 @@ import pytest
 import time
 
 from azure.containerregistry import ContainerRegistryClient
-from azure.containerregistry._helpers import _is_tag
+from azure.containerregistry._helpers import (
+    _is_tag,
+    AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD,
+    AZURE_RESOURCE_MANAGER_GOVERNMENT,
+    AZURE_RESOURCE_MANAGER_CHINA,
+)
 from azure.containerregistry._generated.models import Annotations, Descriptor, OCIManifest
 
 from azure.mgmt.containerregistry import ContainerRegistryManagementClient
@@ -17,8 +22,6 @@ from azure.mgmt.containerregistry.models import ImportImageParameters, ImportSou
 from azure.identity import DefaultAzureCredential, AzureAuthorityHosts, ClientSecretCredential
 
 from devtools_testutils import AzureRecordedTestCase, is_live, FakeTokenCredential
-from msrestazure.azure_cloud import AZURE_CHINA_CLOUD, AZURE_US_GOV_CLOUD, AZURE_PUBLIC_CLOUD
-
 
 REDACTED = "REDACTED"
 logger = logging.getLogger()
@@ -138,19 +141,16 @@ def get_authority(endpoint):
         return AzureAuthorityHosts.AZURE_GOVERNMENT
     raise ValueError("Endpoint ({}) could not be understood".format(endpoint))
 
-def get_base_url(authority):
-    if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
-        logger.warning("Public auth scope")
-        return AZURE_PUBLIC_CLOUD
-    if authority == AzureAuthorityHosts.AZURE_CHINA:
-        logger.warning("China scope")
-        return AZURE_CHINA_CLOUD
-    if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
-        logger.warning("US Gov scope")
-        return AZURE_US_GOV_CLOUD
-
 def get_audience(authority):
-    return get_base_url(authority).endpoints.resource_manager
+    if authority == AzureAuthorityHosts.AZURE_PUBLIC_CLOUD:
+        logger.warning("Public cloud auth audience")
+        return AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD
+    if authority == AzureAuthorityHosts.AZURE_CHINA:
+        logger.warning("China cloud auth audience")
+        return AZURE_RESOURCE_MANAGER_CHINA
+    if authority == AzureAuthorityHosts.AZURE_GOVERNMENT:
+        logger.warning("US Gov cloud auth audience")
+        return AZURE_RESOURCE_MANAGER_GOVERNMENT
 
 # Moving this out of testcase so the fixture and individual tests can use it
 def import_image(authority, repository, tags):
@@ -162,10 +162,10 @@ def import_image(authority, repository, tags):
         authority=authority
     )
     sub_id = os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"]
-    base_url = get_base_url(authority)
-    scope = [base_url.endpoints.resource_manager + "/.default"]
+    audience = get_audience(authority)
+    scope = [audience + "/.default"]
     mgmt_client = ContainerRegistryManagementClient(
-        credential, sub_id, api_version="2019-05-01", base_url=base_url.endpoints.resource_manager, credential_scopes=scope
+        credential, sub_id, api_version="2019-05-01", base_url=audience, credential_scopes=scope
     )
     logger.warning("LOGGING: {}{}".format(os.environ["CONTAINERREGISTRY_SUBSCRIPTION_ID"], os.environ["CONTAINERREGISTRY_TENANT_ID"]))
     registry_uri = "registry.hub.docker.com"
