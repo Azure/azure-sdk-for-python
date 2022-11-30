@@ -146,35 +146,42 @@ class EventData(object):
         # pylint: disable=bare-except
         try:
             body_str = self.body_as_str()
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message body read error: %r", e)
             body_str = "<read-error>"
         event_repr = f"body='{body_str}'"
         try:
             event_repr += f", properties={self.properties}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message properties read error: %r", e)
             event_repr += ", properties=<read-error>"
         try:
             event_repr += f", offset={self.offset}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message offset read error: %r", e)
             event_repr += ", offset=<read-error>"
         try:
             event_repr += f", sequence_number={self.sequence_number}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message sequence number read error: %r", e)
             event_repr += ", sequence_number=<read-error>"
         try:
             event_repr += f", partition_key={self.partition_key!r}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message partition key read error: %r", e)
             event_repr += ", partition_key=<read-error>"
         try:
             event_repr += f", enqueued_time={self.enqueued_time!r}"
-        except:
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message enqueued time read error: %r", e)
             event_repr += ", enqueued_time=<read-error>"
         return f"EventData({event_repr})"
 
     def __str__(self) -> str:
         try:
             body_str = self.body_as_str()
-        except:  # pylint: disable=bare-except
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message body read error: %r", e)
             body_str = "<read-error>"
         event_str = f"{{ body: '{body_str}'"
         try:
@@ -187,8 +194,8 @@ class EventData(object):
                 event_str += f", partition_key={self.partition_key!r}"
             if self.enqueued_time:
                 event_str += f", enqueued_time={self.enqueued_time!r}"
-        except:  # pylint: disable=bare-except
-            pass
+        except Exception as e:  # pylint: disable=broad-except
+            _LOGGER.debug("Message metadata read error: %r", e)
         event_str += " }"
         return event_str
 
@@ -416,9 +423,11 @@ class EventData(object):
             if self.body_type != AmqpMessageBodyType.DATA:
                 return self._decode_non_data_body_as_str(encoding=encoding)
             return "".join(b.decode(encoding) for b in cast(Iterable[bytes], data))
-        except TypeError:
+        except UnicodeDecodeError as e:
+            raise TypeError(f"Message data is not compatible with string type: {e}")
+        except TypeError as e:
             return str(data)
-        except:  # pylint: disable=bare-except
+        except Exception:  # pylint: disable=broad-except
             pass
         try:
             return cast(bytes, data).decode(encoding)
