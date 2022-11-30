@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 # pylint: disable=protected-access
-
+import copy
 import decimal
 import hashlib
 import json
@@ -667,6 +667,18 @@ def transform_dict_keys(data: Dict, casing_transform: Callable[[str], str], excl
     return transformed_dict
 
 
+def merge_dict(origin, delta, dep=0):
+    result = copy.deepcopy(origin) if dep == 0 else origin
+    for key, val in delta.items():
+        origin_val = origin.get(key)
+        # Merge delta dict with original dict
+        if isinstance(origin_val, dict) and isinstance(val, dict):
+            result[key] = merge_dict(origin_val, val, dep + 1)
+            continue
+        result[key] = copy.deepcopy(val)
+    return result
+
+
 def retry(
     exceptions: Union[Tuple[Exception], Exception],
     failure_msg: str,
@@ -757,11 +769,11 @@ def is_internal_components_enabled():
     return os.getenv(AZUREML_INTERNAL_COMPONENTS_ENV_VAR) in ["True", "true", True]
 
 
-def try_enable_internal_components():
+def try_enable_internal_components(*, force=False):
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
 
-        enable_internal_components_in_pipeline()
+        enable_internal_components_in_pipeline(force=force)
 
 
 def is_valid_node_name(name):

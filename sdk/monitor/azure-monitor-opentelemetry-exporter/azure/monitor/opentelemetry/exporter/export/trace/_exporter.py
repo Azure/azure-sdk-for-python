@@ -467,6 +467,11 @@ def _convert_span_events_to_envelopes(span: ReadableSpan) -> Sequence[TelemetryI
             envelope.tags["ai.operation.parentId"] = "{:016x}".format(
                 span.context.span_id
             )
+
+        # sampleRate
+        if _SAMPLE_RATE_KEY in span.attributes:
+            envelope.sample_rate = span.attributes[_SAMPLE_RATE_KEY]
+
         properties = _utils._filter_custom_properties(
             event.attributes,
             lambda key, val: not _is_standard_attribute(key)

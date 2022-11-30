@@ -3,6 +3,7 @@
 ## 12.14.2 (Unreleased)
 
 ### Features Added
+- Added support for `AsyncIterable` as data type for async blob upload.
 
 ### Breaking Changes
 

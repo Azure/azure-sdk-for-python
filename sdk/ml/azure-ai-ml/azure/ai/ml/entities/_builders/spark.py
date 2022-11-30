@@ -6,11 +6,14 @@
 import copy
 import logging
 from enum import Enum
-from os import PathLike
+from os import PathLike, path
 from typing import Dict, List, Optional, Union
+from pathlib import Path
 
 from marshmallow import INCLUDE, Schema
 
+from azure.ai.ml._utils.utils import is_url
+from azure.ai.ml.constants._common import ARM_ID_PREFIX, REGISTRY_URI_FORMAT
 from azure.ai.ml._restclient.v2022_10_01_preview.models import IdentityConfiguration
 from azure.ai.ml._restclient.v2022_10_01_preview.models import JobBase as JobBaseData
 from azure.ai.ml._restclient.v2022_10_01_preview.models import SparkJob as RestSparkJob
@@ -41,7 +44,9 @@ from azure.ai.ml.entities._credentials import (
 )
 from azure.ai.ml.entities._job.spark_job import SparkJob
 from azure.ai.ml.entities._job.spark_resource_configuration import SparkResourceConfiguration
+from azure.ai.ml.entities._job.spark_job_entry import SparkJobEntryType
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.entities._validation import MutableValidationResult
 
 from ..._schema import NestedField, PathAwareSchema, UnionField
 from .._job.pipeline._io import NodeOutput
@@ -463,7 +468,6 @@ class Spark(BaseNode, SparkJobEntryMixin):
         return built_inputs
 
     def _customized_validate(self):
-        self._validate_entry_exist()
         result = super()._customized_validate()
         if (
             isinstance(self.component, SparkComponent)
@@ -474,7 +478,43 @@ class Spark(BaseNode, SparkJobEntryMixin):
                 yaml_path="environment.image",
                 message=SPARK_ENVIRONMENT_WARNING_MESSAGE,
             )
+        result.merge_with(self._validate_entry_exist(raise_error=False))
         return result
+
+    def _validate_entry_exist(self, raise_error=False) -> MutableValidationResult:
+        is_remote_code = isinstance(self.code, str) and (
+            self.code.startswith("git+")
+            or self.code.startswith(REGISTRY_URI_FORMAT)
+            or self.code.startswith(ARM_ID_PREFIX)
+            or is_url(self.code)
+            or bool(self.CODE_ID_RE_PATTERN.match(self.code))
+        )
+        validation_result = self._create_empty_validation_result()
+        # validate whether component entry exists to ensure code path is correct, especially when code is default value
+        if self.code is None or is_remote_code or  not isinstance(self.entry, SparkJobEntry):
+            # skip validate when code is not a local path or code is None, or self.entry is not SparkJobEntry object
+            pass
+        else:
+            if not path.isabs(self.code):
+                code_path = Path(self.component.base_path) / self.code
+                if code_path.exists():
+                    code_path = code_path.resolve().absolute()
+                else:
+                    validation_result.append_error(
+                        message=f"Code path {code_path} doesn't exist.", yaml_path="component.code"
+                    )
+                entry_path = code_path / self.entry.entry
+            else:
+                entry_path = Path(self.code) / self.entry.entry
+
+            if isinstance(self.entry, SparkJobEntry) and self.entry.entry_type == \
+                    SparkJobEntryType.SPARK_JOB_FILE_ENTRY:
+                if not entry_path.exists():
+                    validation_result.append_error(
+                        message=f"Entry {entry_path} doesn't exist.", yaml_path="component.entry"
+                    )
+        return validation_result.try_raise(error_target=self._get_validation_error_target(),
+                                           raise_error=raise_error)
 
     def _validate_fields(self) -> None:
         _validate_compute_or_resources(self.compute, self.resources)

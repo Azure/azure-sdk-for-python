@@ -1,5 +1,18 @@
 # Release History
 
+## 1.2.0b1 (2022-11-22)
+
+### Features Added
+
+  - Model DicomService has a new parameter cors_configuration
+  - Model FhirService has a new parameter import_configuration
+  - Model MetricSpecification has a new parameter enable_regional_mdm_account
+  - Model MetricSpecification has a new parameter is_internal
+  - Model MetricSpecification has a new parameter metric_filter_pattern
+  - Model MetricSpecification has a new parameter resource_id_dimension_name_override
+  - Model MetricSpecification has a new parameter source_mdm_account
+  - Model ServicesProperties has a new parameter import_configuration
+
 ## 1.1.0 (2022-03-31)
 
 **Features**
