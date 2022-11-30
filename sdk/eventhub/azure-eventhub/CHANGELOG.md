@@ -635,5 +635,3 @@ Version 5.0.0b1 is a preview of our efforts to create a client library that is u
 ## 0.2.0a2 (2018-04-02)
 
 - Updated uAQMP dependency.
-
-

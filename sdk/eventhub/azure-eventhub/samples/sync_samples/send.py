@@ -8,6 +8,7 @@
 """
 Examples to show sending events with different options to an Event Hub partition.
 """
+
 import time
 import os
 from azure.eventhub import EventHubProducerClient, EventData
@@ -15,6 +16,7 @@ from azure.eventhub.exceptions import EventHubError
 
 CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
 EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+
 
 def send_event_data_batch(producer):
     # Without specifying partition_id or partition_key
@@ -80,12 +82,10 @@ def send_event_data_list(producer):
         print("Sending error: ", eh_err)
 
 
-
 producer = EventHubProducerClient.from_connection_string(
     conn_str=CONNECTION_STR,
     eventhub_name=EVENTHUB_NAME
 )
-
 
 start_time = time.time()
 with producer:

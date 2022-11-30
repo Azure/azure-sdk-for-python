@@ -9,8 +9,6 @@
 Examples to show sending events with different options to an Event Hub asynchronously.
 """
 
-# pylint: disable=C0111
-
 import time
 import asyncio
 import os
