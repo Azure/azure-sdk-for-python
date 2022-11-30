@@ -26,7 +26,7 @@ INT_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers setting SMS capability does n
 SKIP_UPDATE_CAPABILITIES_TESTS = os.getenv("COMMUNICATION_SKIP_CAPABILITIES_LIVE_TEST", "false") == "true"
 SKIP_UPDATE_CAPABILITIES_TESTS_REASON = "Phone number capabilities are skipped."
 
-API_VERSION = "2022-01-11-preview2"
+API_VERSION = "2022-12-01"
 
 def get_test_phone_number():
     if SKIP_UPDATE_CAPABILITIES_TESTS:
@@ -231,3 +231,29 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
+
+    def test_list_toll_free_area_codes(self):
+        area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+        assert area_codes.next()    
+
+    def test_list_geographic_area_codes(self):
+        first_locality = self.phone_number_client.list_available_localities("US")
+        area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.next().localized_name)
+        assert area_codes.next()  
+
+    def test_list_countries(self):
+        countries = self.phone_number_client.list_available_countries()
+        assert countries.next()    
+
+    def test_list_localities(self):
+        localities = self.phone_number_client.list_available_localities("US")
+        assert localities.next()  
+
+    def test_list_localities_with_administrative_division(self):
+        first_locality = self.phone_number_client.list_available_localities("US")
+        localities = self.phone_number_client.list_available_localities("US", administrative_division=first_locality.next().administrative_division.abbreviated_name)
+        assert localities.next()       
+
+    def test_list_offerings(self):
+        offerings = self.phone_number_client.list_available_offerings("US")
+        assert offerings.next()               

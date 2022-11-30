@@ -28,40 +28,40 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         self._sip_routing_client.set_routes([])
         self._sip_routing_client.set_trunks(self.TRUNKS)
     
-    def test_get_trunks_from_managed_identity(self):
+    def test_list_trunks_from_managed_identity(self):
         client = self._get_sip_client_managed_identity()
-        trunks = client.get_trunks()
+        trunks = client.list_trunks()
         assert trunks is not None, "No trunks were returned."
         self._trunks_are_equal(trunks,self.TRUNKS)
 
-    def test_get_trunks(self):
-        trunks = self._sip_routing_client.get_trunks()
+    def test_list_trunks(self):
+        trunks = self._sip_routing_client.list_trunks()
         assert trunks is not None, "No trunks were returned."
         self._trunks_are_equal(trunks,self.TRUNKS)
 
-    def test_get_trunks_from_managed_identity(self):
+    def test_list_trunks_from_managed_identity(self):
         client = self._get_sip_client_managed_identity()
-        trunks = client.get_trunks()
+        trunks = client.list_trunks()
         assert trunks is not None, "No trunks were returned."
         self._trunks_are_equal(trunks,self.TRUNKS)
 
-    def test_get_routes(self):
+    def test_list_routes(self):
         self._sip_routing_client.set_routes(self.ROUTES)
-        routes = self._sip_routing_client.get_routes()
+        routes = self._sip_routing_client.list_routes()
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES)
 
-    def test_get_routes_from_managed_identity(self):
+    def test_list_routes_from_managed_identity(self):
         client = self._get_sip_client_managed_identity()
         client.set_routes(self.ROUTES)
-        routes = client.get_routes()
+        routes = client.list_routes()
         assert routes is not None, "No routes were returned."
         self._routes_are_equal(routes,self.ROUTES)
 
     def test_set_trunks(self):
         new_trunks = [SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)]
         self._sip_routing_client.set_trunks(new_trunks)
-        result_trunks = self._sip_routing_client.get_trunks()
+        result_trunks = self._sip_routing_client.list_trunks()
         assert result_trunks is not None, "No trunks were returned."
         self._trunks_are_equal(result_trunks,new_trunks)
 
@@ -69,7 +69,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         new_trunks = [SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)]
         client = self._get_sip_client_managed_identity()
         client.set_trunks(new_trunks)
-        result_trunks = client.get_trunks()
+        result_trunks = client.list_trunks()
         assert result_trunks is not None, "No trunks were returned."
         self._trunks_are_equal(result_trunks,new_trunks)
 
@@ -77,7 +77,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         new_routes = [SipTrunkRoute(name="Alternative rule", description="Handle numbers starting with '+999'", number_pattern="\\+999[0-9]+", trunks=["sbs2.sipconfigtest.com"])]
         self._sip_routing_client.set_routes(self.ROUTES)
         self._sip_routing_client.set_routes(new_routes)
-        result_routes = self._sip_routing_client.get_routes()
+        result_routes = self._sip_routing_client.list_routes()
         assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes)
 
@@ -86,34 +86,34 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         client = self._get_sip_client_managed_identity()
         client.set_routes(self.ROUTES)
         client.set_routes(new_routes)
-        result_routes = client.get_routes()
+        result_routes = client.list_routes()
         assert result_routes is not None, "No routes were returned."
         self._routes_are_equal(result_routes,new_routes)
 
     def test_delete_trunk(self):
         trunk_to_delete = self.TRUNKS[1].fqdn
         self._sip_routing_client.delete_trunk(trunk_to_delete)
-        new_trunks = self._sip_routing_client.get_trunks()
+        new_trunks = self._sip_routing_client.list_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0]])
 
     def test_delete_trunk_from_managed_identity(self):
         trunk_to_delete = self.TRUNKS[1].fqdn
         client = self._get_sip_client_managed_identity()
         client.delete_trunk(trunk_to_delete)
-        new_trunks = client.get_trunks()
+        new_trunks = client.list_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0]])
 
     def test_add_trunk(self):
         new_trunk = SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)
         self._sip_routing_client.set_trunk(new_trunk)
-        new_trunks = self._sip_routing_client.get_trunks()
+        new_trunks = self._sip_routing_client.list_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],self.TRUNKS[1],new_trunk])
 
     def test_add_trunk_from_managed_identity(self):
         new_trunk = SipTrunk(fqdn="sbs3.sipconfigtest.com", sip_signaling_port=2222)
         client = self._get_sip_client_managed_identity()
         client.set_trunk(new_trunk)
-        new_trunks = client.get_trunks()
+        new_trunks = client.list_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],self.TRUNKS[1],new_trunk])
 
     def test_get_trunk(self):
@@ -130,14 +130,14 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
     def test_set_trunk(self):
         modified_trunk = SipTrunk(fqdn=self.TRUNKS[1].fqdn,sip_signaling_port=7777)
         self._sip_routing_client.set_trunk(modified_trunk)
-        new_trunks = self._sip_routing_client.get_trunks()
+        new_trunks = self._sip_routing_client.list_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],modified_trunk])
     
     def test_set_trunk_from_managed_identity(self):
         modified_trunk = SipTrunk(fqdn=self.TRUNKS[1].fqdn,sip_signaling_port=7777)
         client = self._get_sip_client_managed_identity()
         client.set_trunk(modified_trunk)
-        new_trunks = client.get_trunks()
+        new_trunks = client.list_trunks()
         self._trunks_are_equal(new_trunks,[self.TRUNKS[0],modified_trunk])
 
     def _get_sip_client_managed_identity(self):

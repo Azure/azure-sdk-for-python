@@ -26,10 +26,10 @@ if TYPE_CHECKING:
     from azure.core.async_paging import AsyncItemPaged
     from azure.core.polling import AsyncLROPoller
     from .._generated.models import (
-        AreaCodeResult,
-        PhoneNumberLocality,
+        PhoneNumberCapabilities,
         PhoneNumberCountry,
         PhoneNumberOffering,
+        PhoneNumberLocality,
         PhoneNumberSearchResult,
         PurchasedPhoneNumber,
     )
@@ -47,6 +47,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
                 self,
                 endpoint, # type: str
                 credential, # type: AsyncTokenCredential
+                accepted_language=None,
                 **kwargs # type: Any
         ):
         # type: (...) -> None
@@ -61,7 +62,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
                 "You need to provide account shared key to authenticate.")
 
         self._endpoint = endpoint
-        self._accepted_language = kwargs.pop("accepted_language", None)
+        self._accepted_language = accepted_language
         self._phone_number_client = PhoneNumbersClientGen(
             self._endpoint,
             authentication_policy=get_authentication_policy(endpoint, credential, is_async=True),
@@ -140,7 +141,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
             country_code, # type: str
             phone_number_type, # type: str
             assignment_type, # type: str
-            capabilities,
+            capabilities, # type: PhoneNumberCapabilities
             **kwargs
     ):
         # type: (...) -> AsyncLROPoller[PhoneNumberSearchResult]
@@ -289,8 +290,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     @distributed_trace
     def list_available_localities(
         self,
-        two_letter_iso_country_name, # type: str
-        administrative_division = None, # type: str
+        country_code, # type: str
         **kwargs # type: Any
     ):
         # type: (...) -> AsyncItemPaged[PhoneNumberLocality]
@@ -298,8 +298,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         Gets the list of cities or towns with available phone numbers.
 
-        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type two_letter_iso_country_name: str
+        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type country_code: str
         :param administrative_division: An optional parameter for the name of the state or province
          in which to search for the area code. e.g. California. Default value is None.
         :type administrative_division: str
@@ -312,8 +312,8 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_available_localities(
-            two_letter_iso_country_name,
-            administrative_division=administrative_division,
+            country_code,
+            administrative_division=kwargs.pop("administrative_division", None),
             accept_language=self._accepted_language,
             **kwargs
         )
@@ -321,9 +321,7 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
     @distributed_trace
     def list_available_offerings(
         self,
-        two_letter_iso_country_name, # type: str
-        phone_number_type = None, # type: PhoneNumberType
-        phone_number_assignment_type = None, # type: PhoneNumberAssignmentType
+        country_code, # type: str
         **kwargs
     ):
         # type: (...) -> AsyncItemPaged[PhoneNumberOffering]
@@ -331,14 +329,14 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
 
         List available offerings of capabilities with rates for the given country/region.
 
-        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type two_letter_iso_country_name: str
+        :param country_code: The ISO 3166-2 country/region code, e.g. US. Required.
+        :type country_code: str
         :param phone_number_type: Filter by phoneNumberType, e.g. Geographic, TollFree. Known values
          are: "geographic" and "tollFree". Default value is None.
         :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
-        :param phone_number_assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
          "person" and "application". Default value is None.
-        :type phone_number_assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
          default value is 0. Default value is 0.
         :paramtype skip: int
@@ -348,81 +346,54 @@ class PhoneNumbersClient(object): # pylint: disable=client-accepts-api-version-k
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         return self._phone_number_client.phone_numbers.list_offerings(
-            two_letter_iso_country_name,
-            phone_number_type=phone_number_type,
-            phone_number_assignment_type=phone_number_assignment_type,
+            country_code,
+            phone_number_type=kwargs.pop("phone_number_type", None),
+            assignment_type=kwargs.pop("assignment_type", None),
             **kwargs
         )
 
     @distributed_trace
-    def list_available_toll_free_area_codes(
+    def list_available_area_codes(
         self,
-        two_letter_iso_country_name, # type: str
+        country_code, # type: str
+        phone_number_type, #type: PhoneNumberType
+        assignment_type=None, #type: PhoneNumberAssignmentType
+        locality=None, # type: str
         **kwargs # type: Any
     ):
-        # type: (...) -> AsyncItemPaged[AreaCodeResult]
-        """Gets the list of available toll free area codes.
+        # type: (...) -> ItemPaged[PhoneNumberAreaCode]
+        """Gets the list of available area codes.
 
-        Gets the list of available toll free area codes.
-
-        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type two_letter_iso_country_name: str
-        :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-         default value is 0. Default value is 0.
-        :paramtype skip: int
-        :return: An iterator like instance of AreaCodeResult
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.AreaCodeResult]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        return self._phone_number_client.phone_numbers.list_area_codes(
-            two_letter_iso_country_name,
-            phone_number_type=PhoneNumberType.GEOGRAPHIC,
-            assignment_type= PhoneNumberAssignmentType.APPLICATION,
-            **kwargs
-        )
-
-    @distributed_trace
-    def list_available_geographic_area_codes(
-        self,
-        two_letter_iso_country_name, # type: str
-        phone_number_assignment_type, #type: PhoneNumberAssignmentType
-        locality, # type: str
-        administrative_division = None, # type: str
-        **kwargs # type: Any
-    ):
-        # type: (...) -> AsyncItemPaged[AreaCodeResult]
-        """Gets the list of available geographic area codes.
-
-        Gets the list of available geographic area codes.
-
-        :param two_letter_iso_country_name: The ISO 3166-2 country/region code, e.g. US. Required.
-        :type two_letter_iso_country_name: str
-        :param phone_number_assignment_type: Filter by assignmentType, e.g. user, application. Known values are:
-         "person" and "application". Default value is None.
-        :type phone_number_assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
+        :param country_code: The ISO 3166-2 country/region two letter code, e.g. US. Required.
+        :type country_code: str
+        :param phone_number_type: Filter by phone number type, e.g. Geographic, TollFree. Known values are:
+        "geographic" and "tollFree". Required.
+        :type phone_number_type: ~azure.communication.phonenumbers.models.PhoneNumberType
+        :param assignment_type: Filter by assignmentType, e.g. User, Application. Known values are:
+        "person" and "application". Default value is None.
+        :type assignment_type: ~azure.communication.phonenumbers.models.PhoneNumberAssignmentType
         :param locality: The name of locality in which to search for the area code. e.g. Seattle.
-         This is required if the phone number type is Geographic. Default value is None.
+        This is required if the phone number type is Geographic. Default value is None.
         :type locality: str
-        :param administrative_division: The name of the state or province in which to search for the
-         area code. e.g. California. Default value is None.
+        :keyword administrative_division: The name of the state or province in which to search for the
+        area code. e.g. California. Default value is None.
         :type administrative_division: str
         :keyword skip: An optional parameter for how many entries to skip, for pagination purposes. The
-         default value is 0. Default value is 0.
+        default value is 0. Default value is 0.
         :paramtype skip: int
-        :return: An iterator like instance of AreaCodeResult
-        :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.communication.phonenumbers.models.AreaCodeResult]
+        :return: An iterator like instance of PhoneNumberAreaCode
+        :rtype: ~azure.core.paging.ItemPaged[~azure.communication.phonenumbers.models.PhoneNumberAreaCode]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
+        
         return self._phone_number_client.phone_numbers.list_area_codes(
-            two_letter_iso_country_name,
-            phone_number_type=PhoneNumberType.GEOGRAPHIC,
-            assignment_type= phone_number_assignment_type,
-            locality=locality,
-            administrative_division=administrative_division,
-            **kwargs
-        )
+                country_code,
+                phone_number_type=phone_number_type,
+                assignment_type= assignment_type,
+                locality=locality,
+                administrative_division= kwargs.pop("administrative_division", None),
+                **kwargs
+            )
 
     async def __aenter__(self) -> "PhoneNumbersClient":
         await self._phone_number_client.__aenter__()
