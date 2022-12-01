@@ -8,6 +8,8 @@
 ### Bugs Fixed
 - Fixed Sweep node not excluding optional input with value `None` in REST object. 
 - Fixed bool test for output in download operation.
+- Fixed Compute Instance schedule not being created
+- Removed erroneous experimental warning from Compute Schedules
 
 ## 1.1.2 (2022-11-21)
 
