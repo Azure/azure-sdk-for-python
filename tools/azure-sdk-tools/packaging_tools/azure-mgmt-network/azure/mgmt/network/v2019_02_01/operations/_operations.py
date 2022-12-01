@@ -207,7 +207,7 @@ class NewOneOperations:
 class NetworkManagementClientOperationsMixin(MixinABC):
     @distributed_trace
     def check_dns_name_availability(
-        self, location: str, domain_name_label: Optional[str] = None, **kwargs: Any
+        self, location: str, domain_name_label: Optional[str] = None, new_param: Optional[str] = None, **kwargs: Any
     ) -> _models.DnsNameAvailabilityResult:
         """Checks whether a domain name in the cloudapp.net zone is available for use.
 

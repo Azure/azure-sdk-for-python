@@ -240,22 +240,20 @@ class CodeModel:
         with open("errors.csv", "w") as fd:
             fd.write("name,addedOn,removedOn\n")
         for operation_group in ogs:
-            if operation_group.removed_on:
-                with open("errors.csv", "a") as fd:
-                    added_on = operation_group.added_on or self.sorted_api_versions[0]
-                    fd.write(f"{operation_group.name},{added_on},{operation_group.removed_on}\n")
-                continue
+            operation_group_added_on = operation_group.added_on
+            with open("errors.csv", "a") as fd:
+                added_on = operation_group_added_on or self.sorted_api_versions[0]
+                fd.write(f"{operation_group.name},{added_on},{operation_group.removed_on or 'N/A'}\n")
             for operation in operation_group.operations:
-                if operation.removed_on:
+                operation_added_on = operation.added_on or operation_group_added_on
+                with open("errors.csv", "a") as fd:
+                    added_on = operation_added_on or self.sorted_api_versions[0]
+                    fd.write(f"{operation_group.name}.{operation.name},{added_on},{operation.removed_on or 'N/A'}\n")
+                for parameter in operation.parameters:
+                    parameter_added_on = parameter.added_on or operation_added_on
                     with open("errors.csv", "a") as fd:
-                        added_on = operation.added_on or operation_group.added_on or self.sorted_api_versions[0]
-                        fd.write(f"{operation_group.name}.{operation.name},{added_on},{operation.removed_on}\n")
-                    continue
-                # for parameter in operation.parameters:
-                #     if parameter.removed_on:
-                #         with open("errors.txt", "a") as fd:
-                #             fd.write(f"{operation_group.name}.{operation.name}.{parameter.name} removed on {parameter.removed_on}\n")
-                #         continue
+                        added_on = parameter_added_on or self.sorted_api_versions[0]
+                        fd.write(f"{operation_group.name}.{operation.name}.{parameter.name},{added_on},{parameter.removed_on or 'N/A'}\n")
         return ogs
 
 
