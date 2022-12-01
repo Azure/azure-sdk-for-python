@@ -82,3 +82,4 @@ def __getattr__(name):
     if name == 'HandleItem':
         from ._generated.models import HandleItem
         return HandleItem
+    raise AttributeError(f"module 'azure.storage.fileshare' has no attribute {name}")
