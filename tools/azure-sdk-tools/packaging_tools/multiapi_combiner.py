@@ -32,8 +32,6 @@ class VersionedObject:
         self.code_model = code_model
         self.name = name
         self.api_versions = []
-        self.removed_on = ""
-        self.replaced_by = ""
 
 
 T = TypeVar("T", bound=VersionedObject)
@@ -82,6 +80,10 @@ class Parameter(VersionedObject):
         super().__init__(code_model, name)
         self.operation = operation
 
+    @property
+    def need_decorator(self) -> bool:
+        return any(a for a in self.operation.api_versions if a not in self.api_versions)
+
 
 class Operation(VersionedObject):
     def __init__(
@@ -95,29 +97,49 @@ class Operation(VersionedObject):
         self.parameters: List[Parameter] = []
 
     def source_code(self, async_mode: bool) -> str:
-        return inspect.getsource(self._get_op(self.code_model.default_api_version, async_mode))
+        return inspect.getsource(self._get_op(self.api_versions[-1], async_mode))
+
+    @property
+    def _need_method_api_version_check(self) -> bool:
+        """Whether we need to check the api version of the method"""
+        return any(a for a in self.operation_group.api_versions if a not in self.api_versions)
+
+    @property
+    def _need_params_api_version_check(self) -> bool:
+        """Whether we need to check the api versions of any params"""
+        return any(p for p in self.parameters if p.need_decorator)
+
+    @property
+    def need_decorator(self) -> bool:
+        """Whether we need to decorate the method with a decorator
+
+        Since this decorator handles both method-level and parameter-level
+        checks, we need a decorator if any of them need a check
+        """
+        return self.name[0] != "_" and (self._need_method_api_version_check or self._need_params_api_version_check)
 
     @property
     def decorator(self) -> str:
-        retval: List[str] = []
-        if not (self.added_on or any(p for p in self.parameters if p.added_on)) or self.name[0] == "_":
-            return ""
-        retval.append("    @api_version_validation(")
-        if self.added_on:
-            retval.append(f'        method_added_on="{self.added_on}",')
-        params_added_on = {f'"{p.name}"': f'"{p.added_on}"' for p in self.parameters if p.added_on}
-        if params_added_on:
-            retval.append(f"        params_added_on={params_added_on}")
+        retval: List[str] = ["    @api_version_validation("]
+        # only need to validate operations that don't include
+        # all of the api versions of the operation group
+        # because the operation group handles first round of validation
+        if self._need_method_api_version_check:
+            retval.append(f"        api_versions={self.api_versions},")
+        if self._need_params_api_version_check:
+            retval.append("        params={")
+            retval.extend([
+                f'            "{p.name}": {p.api_versions},'
+                for p in self.parameters if p.need_decorator
+            ])
+            retval.append("        }")
         retval.append("    )")
         return "\n".join(retval)
 
     def _get_op(self, api_version: str, async_mode: bool = False):
         module = importlib.import_module(f"{self.code_model.module_name}.{api_version}{'.aio' if async_mode else ''}")
         operation_group = getattr(module.operations, self.operation_group.name)
-        try:
-            return getattr(operation_group, self.name)
-        except AttributeError:
-            a = "b"
+        return getattr(operation_group, self.name)
 
     def combine_parameters(self) -> None:
         # don't want api versions if my operation group isn't in them
@@ -150,12 +172,19 @@ class OperationGroup(VersionedObject):
     ):
         super().__init__(code_model, name=name)
         self.operations: List[Operation] = []
-        # self.generated_class = self._get_og(self.code_model.default_api_version)
         self.is_mixin = self.name.endswith("OperationsMixin")
 
     def _get_og(self, api_version: str):
         module = importlib.import_module(f"{self.code_model.module_name}.{api_version}")
         return getattr(module.operations, self.name)
+
+    @property
+    def generated_class(self):
+        return self._get_og(self.api_versions[-1])
+
+    @property
+    def need_decorator(self) -> bool:
+        return any(a for a in self.code_model.sorted_api_versions if a not in self.api_versions)
 
     def combine_operations(self) -> None:
         # chose api versions greater than when I was added
@@ -221,18 +250,6 @@ class CodeModel:
             operation_group.combine_operations()
             for operation in operation_group.operations:
                 operation.combine_parameters()
-
-        with open("errors.csv", "w") as fd:
-            fd.write("name,apiVersions\n")
-        for operation_group in ogs:
-            with open("errors.csv", "a") as fd:
-                fd.write(f"{operation_group.name},{operation_group.api_versions}\n")
-            for operation in operation_group.operations:
-                with open("errors.csv", "a") as fd:
-                    fd.write(f"{operation_group.name}.{operation.name},{operation.api_versions}\n")
-                for parameter in operation.parameters:
-                    with open("errors.csv", "a") as fd:
-                        fd.write(f"{operation_group.name}.{operation.name}.{parameter.name},{parameter.api_versions}\n")
         return ogs
 
 
@@ -322,13 +339,13 @@ class Serializer:
             fd.write(self.env.get_template("validation.py.jinja2").render())
 
         # async
-        self._serialize_general_helper(async_mode=True)
+        # self._serialize_general_helper(async_mode=True)
 
     def serialize(self):
         self.serialize_operations_folder(async_mode=False)
-        self.serialize_operations_folder(async_mode=True)
+        # self.serialize_operations_folder(async_mode=True)
         self.serialize_client(async_mode=False)
-        self.serialize_client(async_mode=True)
+        # self.serialize_client(async_mode=True)
         # self.serialize_models_file()
         self.serialize_general()
 
@@ -341,4 +358,4 @@ def get_args() -> argparse.Namespace:
 
 if __name__ == "__main__":
     code_model = CodeModel(Path(get_args().pkg_path))
-    # Serializer(code_model).serialize()
+    Serializer(code_model).serialize()
