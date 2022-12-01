@@ -146,7 +146,7 @@ class RegistryRegionDetails:
             can either be a single string representing the arm_resource_id of
             a user-created storage account, or an entire
             SystemCreatedStorageAccount object.
-        :type storage_account_details: Union[str, SystemCreatedStorageAccount]
+        :type storage_account_details: Union[List[str], SystemCreatedStorageAccount]
         """
         self.acr_config = acr_config
         self.location = location
