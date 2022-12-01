@@ -10,9 +10,7 @@ from typing import Any, Tuple, Union, Sequence, Dict, List, TYPE_CHECKING
 from azure.core.tracing.decorator_async import distributed_trace_async
 from azure.core.exceptions import HttpResponseError
 
-from .._generated.aio._monitor_query_client import MonitorQueryClient
-
-from .._generated.models import BatchRequest, QueryBody as LogsQueryBody
+from .._generated.aio._client import MonitorQueryClient
 from .._helpers import construct_iso8601, order_results, process_error, process_prefer
 from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryPartialResult
 from ._helpers_async import get_authentication_policy
@@ -45,7 +43,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         self._client = MonitorQueryClient(
             credential=credential,
             authentication_policy=get_authentication_policy(credential, endpoint),
-            base_url=self._endpoint.rstrip('/') + "/v1",
+            endpoint=self._endpoint.rstrip('/') + "/v1",
             **kwargs
         )
         self._query_op = self._client.query
@@ -98,9 +96,11 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
             server_timeout, include_statistics, include_visualization
         )
 
-        body = LogsQueryBody(
-            query=query, timespan=timespan, workspaces=additional_workspaces, **kwargs
-        )
+        body = {
+            "query": query,
+            "timespan": timespan,
+            "workspaces": additional_workspaces
+        }
 
         try:
             generated_response = (
@@ -111,7 +111,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         except HttpResponseError as err:
             process_error(err, LogsQueryError)
         response = None
-        if not generated_response.error:
+        if not generated_response.get("error"):
             response = LogsQueryResult._from_generated( # pylint: disable=protected-access
                 generated_response
             )
@@ -141,19 +141,16 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
         :raises: ~azure.core.exceptions.HttpResponseError
         """
         try:
-            queries = [LogsBatchQuery(**q) for q in queries]  # type: ignore
+            queries = [LogsBatchQuery(**q) for q in queries]
         except (KeyError, TypeError):
             pass
         queries = [
             q._to_generated() for q in queries # pylint: disable=protected-access
         ]
-        try:
-            request_order = [req.id for req in queries]
-        except AttributeError:
-            request_order = [req["id"] for req in queries]
-        batch = BatchRequest(requests=queries)
+        request_order = [req["id"] for req in queries]
+        batch = {"requests": queries}
         generated = await self._query_op.batch(batch, **kwargs)
-        mapping = {item.id: item for item in generated.responses}
+        mapping = {item["id"]: item for item in generated["responses"]}
         return order_results(
             request_order,
             mapping,

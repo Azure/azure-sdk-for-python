@@ -6,9 +6,11 @@
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
 from typing import TYPE_CHECKING, List, Dict, Any
-from msrest import Serializer, Deserializer
+
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
+
+from ._generated._serialization import Serializer, Deserializer
 
 if TYPE_CHECKING:
     from azure.core.credentials import TokenCredential
@@ -17,8 +19,7 @@ if TYPE_CHECKING:
 def get_authentication_policy(
     credential,  # type: "TokenCredential"
     audience=None # type: str
-):
-    # type: (...) -> BearerTokenCredentialPolicy
+) -> BearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
     if not audience:
         audience = "https://api.loganalytics.io/"
@@ -36,8 +37,7 @@ def get_authentication_policy(
 def get_metrics_authentication_policy(
     credential,  # type: TokenCredential
     audience=None # type: str
-):
-    # type: (...) -> BearerTokenCredentialPolicy
+) -> BearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
     if not audience:
         audience = "https://management.azure.com/"
@@ -52,20 +52,19 @@ def get_metrics_authentication_policy(
     raise TypeError("Unsupported credential")
 
 
-def order_results(request_order, mapping, **kwargs):
-    # type: (List, Dict, Any) -> List
+def order_results(request_order: List, mapping: Dict[str, Any], **kwargs: Any) -> List:
     ordered = [mapping[id] for id in request_order]
     results = []
     for item in ordered:
-        if not item.body.error:
+        if not item["body"].get("error"):
             results.append(
-                kwargs.get("obj")._from_generated(item.body) # pylint: disable=protected-access
+                kwargs.get("obj")._from_generated(item["body"]) # pylint: disable=protected-access
             )
         else:
-            error = item.body.error
-            if error.code == "PartialError":
+            error = item["body"]["error"]
+            if error.get("code") == "PartialError":
                 res = kwargs.get("partial_err")._from_generated(  # pylint: disable=protected-access
-                    item.body, kwargs.get("raise_with")
+                    item["body"], kwargs.get("raise_with")
                 )
                 results.append(res)
             else:
