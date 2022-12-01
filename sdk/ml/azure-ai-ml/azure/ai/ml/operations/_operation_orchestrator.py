@@ -50,7 +50,7 @@ from azure.ai.ml.exceptions import (
     EmptyDirectoryError,
     ErrorCategory,
     ErrorTarget,
-    MlException,
+    MLException,
     ModelException,
     ValidationErrorType,
     ValidationException,
@@ -268,7 +268,7 @@ class OperationOrchestrator(object):
                 code_asset.version,
             )
             return uploaded_code_asset
-        except (MlException, HttpResponseError) as e:
+        except (MLException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise AssetException(
@@ -317,7 +317,7 @@ class OperationOrchestrator(object):
                 model.version,
             )
             return uploaded_model
-        except (MlException, HttpResponseError) as e:
+        except (MLException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ModelException(
