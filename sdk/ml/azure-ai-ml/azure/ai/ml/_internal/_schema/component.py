@@ -118,8 +118,13 @@ class InternalComponentSchema(ComponentSchema):
 
         # hack, to match current serialization match expectation
         for port_name, port_definition in data["inputs"].items():
-            if "default" in port_definition:
-                data["inputs"][port_name]["default"] = original.inputs[port_name].default
+            input_type = port_definition.get("type", None)
+            is_float_type = isinstance(input_type, str) and input_type.lower() == "float"
+            for key in ["default", "min", "max"]:
+                if key in port_definition:
+                    value = getattr(original.inputs[port_name], key)
+                    # Keep value in float input as string to avoid precision issue.
+                    data["inputs"][port_name][key] = str(value) if is_float_type else value
             if "mode" in port_definition:
                 del port_definition["mode"]
 
