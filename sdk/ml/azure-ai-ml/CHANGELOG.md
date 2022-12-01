@@ -25,7 +25,6 @@
 ### Bugs Fixed
 - Update the upper bound dependencies version for tqdm, strictyaml, colorama and opencensus-ext-azure.
 - Added missing "properties" to batch deployment.
-- Fixed spark job status show in az ml job command.
 - Retain the cases for the names of system job services (Tracking and Studio).
 - Fixed Sweep node not excluding optional input with value `None` in REST object. 
 - Update registry begin_delete method return type.
@@ -33,6 +32,8 @@
 - Added private preview flag for on_init and on_finalize in pipeline settings schema to hide them in YAML spec.
 - Convert mldesigner primitive annotation to Input type in Pipeline.
 - Fixed bool test for output in download operation.
+- Fixed Compute Instance schedule not being created
+- Removed erroneous experimental warning from Compute Schedules
 
 ## 1.1.2 (2022-11-21)
 
