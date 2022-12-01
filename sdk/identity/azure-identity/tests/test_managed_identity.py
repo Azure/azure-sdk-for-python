@@ -142,7 +142,7 @@ def test_tenant_id(environ):
         credential = ManagedIdentityCredential(
             transport=transport, raw_request_hook=request_hook, raw_response_hook=response_hook
         )
-    credential.get_token(scope, tenant_id="tenant_id")
+    credential.get_token(scope)
 
     if environ:
         # some environment variables are set, so we're not mocking IMDS and should expect 1 request

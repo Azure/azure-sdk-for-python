@@ -14,7 +14,6 @@ from azure.data.tables import TableAnalyticsLogging, TableMetrics, TableRetentio
 from azure.data.tables.aio import TableServiceClient
 from azure.core.exceptions import HttpResponseError
 
-from _shared.testcase import SLEEP_DELAY
 from _shared.asynctestcase import AsyncTableTestCase
 from async_preparers import cosmos_decorator_async
 # ------------------------------------------------------------------------------
@@ -44,6 +43,39 @@ class TestTableServicePropertiesCosmosAsync(AzureRecordedTestCase, AsyncTableTes
         # Assert
         with pytest.raises(HttpResponseError):
             await tsc.set_service_properties(minute_metrics=minute_metrics)
+
+    @cosmos_decorator_async
+    @recorded_by_proxy_async
+    async def test_client_with_url_ends_with_table_name(self, tables_cosmos_account_name, tables_primary_cosmos_account_key):
+        url = self.account_url(tables_cosmos_account_name, "table")
+        table_name = self.get_resource_name("mytable")
+        invalid_url = url + "/" + table_name
+        tsc = TableServiceClient(invalid_url, credential=tables_primary_cosmos_account_key)
+
+        with pytest.raises(HttpResponseError) as exc:
+            await tsc.create_table(table_name)
+        assert ("Server failed to authenticate the request") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        with pytest.raises(HttpResponseError) as exc:
+            await tsc.create_table_if_not_exists(table_name)
+        assert ("Server failed to authenticate the request") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        with pytest.raises(HttpResponseError) as exc:
+            await tsc.set_service_properties(analytics_logging=TableAnalyticsLogging(write=True))
+        assert ("Server failed to authenticate the request") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        with pytest.raises(HttpResponseError) as exc:
+            await tsc.get_service_properties()
+        assert ("Server failed to authenticate the request") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
+
+        with pytest.raises(HttpResponseError) as exc:
+            await tsc.delete_table(table_name)
+        assert ("Server failed to authenticate the request") in str(exc.value)
+        assert ("Please check your account URL.") in str(exc.value)
 
 
 class TestTableUnitTest(AsyncTableTestCase):

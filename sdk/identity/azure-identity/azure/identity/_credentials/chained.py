@@ -3,20 +3,13 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import logging
-
+from typing import Any, Optional, TYPE_CHECKING
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
 from .._internal import within_credential_chain
 
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
     from azure.core.credentials import AccessToken, TokenCredential
 
 _LOGGER = logging.getLogger(__name__)
@@ -74,6 +67,8 @@ class ChainedTokenCredential(object):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         within_credential_chain.set(True)

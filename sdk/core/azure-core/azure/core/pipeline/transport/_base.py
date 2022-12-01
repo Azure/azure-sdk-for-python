@@ -23,20 +23,13 @@
 # IN THE SOFTWARE.
 #
 # --------------------------------------------------------------------------
-from __future__ import absolute_import
 import abc
 from email.message import Message
 import json
 import logging
 import time
 import copy
-
-try:
-    binary_type = str
-    from urlparse import urlparse  # type: ignore
-except ImportError:
-    binary_type = bytes  # type: ignore
-    from urllib.parse import urlparse
+from urllib.parse import urlparse  # type: ignore
 import xml.etree.ElementTree as ET
 
 from typing import (
@@ -55,7 +48,7 @@ from typing import (
     Type
 )
 
-from six.moves.http_client import HTTPResponse as _HTTPResponse
+from http.client import HTTPResponse as _HTTPResponse
 
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline import (
@@ -84,6 +77,7 @@ PipelineType = TypeVar("PipelineType")
 
 _LOGGER = logging.getLogger(__name__)
 
+binary_type = str
 
 def _format_url_section(template, **kwargs):
     """String format the template with the kwargs, auto-skip sections of the template that are NOT in the kwargs.
@@ -417,7 +411,7 @@ class _HttpResponseBase(object):
         """Assuming this body is multipart, return the iterator or parts.
 
         If parts are application/http use http_response_type or HttpClientTransportResponse
-        as enveloppe.
+        as envelope.
         """
         return _get_raw_parts_helper(self, http_response_type or HttpClientTransportResponse)
 

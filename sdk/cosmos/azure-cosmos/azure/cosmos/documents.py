@@ -313,7 +313,7 @@ class ProxyConfiguration(object):
 
 
 class ConnectionPolicy(object):  # pylint: disable=too-many-instance-attributes
-    """Represents the Connection policy assocated with a CosmosClientConnection.
+    """Represents the Connection policy associated with a CosmosClientConnection.
 
     :ivar int RequestTimeout:
         Gets or sets the request timeout (time to wait for a response from a

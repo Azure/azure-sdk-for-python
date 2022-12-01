@@ -5,12 +5,11 @@
 import logging
 import os
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 import six
 
 if TYPE_CHECKING:
-    from typing import Any
     import msal_extensions
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,6 +29,8 @@ class TokenCachePersistenceOptions(object):
 
     .. warning:: The cache contains authentication secrets. If the cache is not encrypted, protecting it is the
        application's responsibility. A breach of its contents will fully compromise accounts.
+
+    .. admonition:: Example:
 
         .. literalinclude:: ../tests/test_persistent_cache.py
             :start-after: [START snippet]

@@ -16,24 +16,26 @@ from ._models_py3 import ErrorDetail
 from ._models_py3 import ErrorResponse
 from ._models_py3 import Resource
 
-
-from ._changes_client_enums import (
-    ChangeCategory,
-    ChangeType,
-    PropertyChangeType,
-)
+from ._changes_client_enums import ChangeCategory
+from ._changes_client_enums import ChangeType
+from ._changes_client_enums import PropertyChangeType
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'ChangeAttributes',
-    'ChangeBase',
-    'ChangeProperties',
-    'ChangeResourceListResult',
-    'ChangeResourceResult',
-    'ErrorAdditionalInfo',
-    'ErrorDetail',
-    'ErrorResponse',
-    'Resource',
-    'ChangeCategory',
-    'ChangeType',
-    'PropertyChangeType',
+    "ChangeAttributes",
+    "ChangeBase",
+    "ChangeProperties",
+    "ChangeResourceListResult",
+    "ChangeResourceResult",
+    "ErrorAdditionalInfo",
+    "ErrorDetail",
+    "ErrorResponse",
+    "Resource",
+    "ChangeCategory",
+    "ChangeType",
+    "PropertyChangeType",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

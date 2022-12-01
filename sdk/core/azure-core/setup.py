@@ -53,6 +53,7 @@ setup(
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
         'License :: OSI Approved :: MIT License',
     ],
     zip_safe=False,
@@ -70,4 +71,9 @@ setup(
         'six>=1.11.0',
         "typing-extensions>=4.0.1",
     ],
+    extras_require={
+        "aio": [
+            "aiohttp>=3.0",
+        ],
+    },
 )

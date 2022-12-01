@@ -1,5 +1,17 @@
 # Release History
 
+## 10.0.0 (2022-08-29)
+
+### Features Added
+
+  - Added operation group SubnetServiceAssociationLinkOperations
+  - Model IpAddress has a new parameter auto_generated_domain_name_label_scope
+  - Model Usage has a new parameter id
+
+### Breaking Changes
+
+  - Model IpAddress no longer has parameter dns_name_label_reuse_policy
+
 ## 9.2.0 (2022-04-15)
 
 **Features**

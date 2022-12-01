@@ -14,13 +14,14 @@ import os
 import logging
 import sys
 from prep_sphinx_env import should_build_docs
-from tox_helper_tasks import get_package_details
 from pkg_resources import Requirement
 import ast
 import os
 import textwrap
 import io
 import shutil
+
+from ci_tools.parsing import ParsedSetup
 
 logging.getLogger().setLevel(logging.INFO)
 
@@ -107,12 +108,12 @@ if __name__ == "__main__":
     target_dir = os.path.abspath(args.working_directory)
     package_dir = os.path.abspath(args.package_root)
 
-    package_name, _, pkg_version, _, _ = get_package_details(os.path.join(package_dir, 'setup.py'))
+    pkg_details = ParsedSetup.from_path(package_dir)
 
-    if should_build_docs(package_name):
+    if should_build_docs(pkg_details.name):
         sphinx_build(target_dir, output_dir)
 
         if in_ci() or args.in_ci:
-            move_output_and_zip(output_dir, package_dir, package_name)
+            move_output_and_zip(output_dir, package_dir, pkg_details.name)
     else:
-        logging.info("Skipping sphinx build for {}".format(package_name))
+        logging.info("Skipping sphinx build for {}".format(pkg_details.name))

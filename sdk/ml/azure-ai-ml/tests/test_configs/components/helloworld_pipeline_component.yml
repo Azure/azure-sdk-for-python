@@ -19,7 +19,9 @@ inputs:
   component_in_path:
     description: A path
     type: uri_folder
-
+outputs:
+  output_path:
+    type: uri_folder
 
 jobs:
   component_a_job:
@@ -28,3 +30,5 @@ jobs:
     inputs:
       component_in_number: ${{parent.inputs.component_in_number}}
       component_in_path: ${{parent.inputs.component_in_path}}
+    outputs:
+      component_out_path: ${{parent.outputs.output_path}}

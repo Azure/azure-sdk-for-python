@@ -223,7 +223,7 @@ class ContainerSamplesAsync(object):
 
         async with blob_service_client:
             # [START get_container_client_from_blob_client]
-            container_client1 = blob_service_client.get_container_client("blobcontainerasync")
+            container_client1 = blob_service_client.get_container_client("blobcontainer1async")
             await container_client1.create_container()
             print(await container_client1.get_container_properties())
             blob_client1 = container_client1.get_blob_client("blob1")
@@ -246,5 +246,4 @@ async def main():
     await sample.get_container_client_from_blob_client()
 
 if __name__ == '__main__':
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

@@ -12,10 +12,11 @@ from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, 
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.formrecognizer.aio import DocumentAnalysisClient
 from azure.ai.formrecognizer import AnalyzeResult
-from azure.ai.formrecognizer._generated.v2022_06_30_preview.models import AnalyzeResultOperation
+from azure.ai.formrecognizer._generated.v2022_08_31.models import AnalyzeResultOperation
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 
 DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, DocumentAnalysisClient)
@@ -23,6 +24,7 @@ DocumentAnalysisClientPreparer = functools.partial(_GlobalClientPreparer, Docume
 
 class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -78,11 +80,19 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         assert business_card.fields.get("Faxes").value[0].content == "+44 (0) 20 6789 2345"
 
         assert len(business_card.fields.get("Addresses").value) == 1
-        assert business_card.fields.get("Addresses").value[0].value == "2 Kingdom Street\nPaddington, London, W2 6BD"
+        assert business_card.fields.get("Addresses").value[0].value.house_number == "2"
+        assert business_card.fields.get("Addresses").value[0].value.po_box == None
+        assert business_card.fields.get("Addresses").value[0].value.road == "Kingdom Street"
+        assert business_card.fields.get("Addresses").value[0].value.city == "London"
+        assert business_card.fields.get("Addresses").value[0].value.state == None
+        assert business_card.fields.get("Addresses").value[0].value.postal_code == "W2 6BD"
+        assert business_card.fields.get("Addresses").value[0].value.country_region == None
+        assert business_card.fields.get("Addresses").value[0].value.street_address == "2 Kingdom Street"
 
         assert len(business_card.fields.get("CompanyNames").value) == 1
         assert business_card.fields.get("CompanyNames").value[0].value == "Contoso"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -105,6 +115,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
             assert passport["Sex"].value == "F"
             assert passport["CountryRegion"].value == "CAN"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -123,10 +134,18 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         assert id_document.fields.get("DateOfBirth").value == date(1958,1,6)
         assert id_document.fields.get("DateOfExpiration").value == date(2020,8,12)
         assert id_document.fields.get("Sex").value == "M"
-        assert id_document.fields.get("Address").value == "123 STREET ADDRESS\nYOUR CITY WA 99999-1234"
+        assert id_document.fields.get("Address").value.house_number == None
+        assert id_document.fields.get("Address").value.po_box == None
+        assert id_document.fields.get("Address").value.road == "123 STREET ADDRESS"
+        assert id_document.fields.get("Address").value.city == "YOUR CITY"
+        assert id_document.fields.get("Address").value.state == "WA"
+        assert id_document.fields.get("Address").value.postal_code == "99999-1234"
+        assert id_document.fields.get("Address").value.country_region == None
+        assert id_document.fields.get("Address").value.street_address == "123 STREET ADDRESS"
         assert id_document.fields.get("CountryRegion").value == "USA"
         assert id_document.fields.get("Region").value == "Washington"
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -150,6 +169,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         assert invoice.fields.get("Items").value[0].value["Amount"].value.symbol ==  "$"
         assert invoice.fields.get("DueDate").value, date(2017, 6 ==  24)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @recorded_by_proxy_async
     async def test_polling_interval(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
@@ -165,6 +185,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
             assert poller2._polling_method._timeout ==  7  # goes back to client default
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     async def test_active_directory_auth_async(self):
         token = self.generate_oauth_token()
@@ -187,10 +208,9 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", "https://fakeuri.com/blank%20space")
         assert "https://fakeuri.com/blank%20space" in  e.value.response.request.body
 
-    @pytest.mark.skip()
     @FormRecognizerPreparer()
-    @recorded_by_proxy_async
-    async def test_receipt_url_bad_endpoint(self, formrecognizer_test_endpoint, formrecognizer_test_api_key, **kwargs):
+    async def test_receipt_url_bad_endpoint(self, **kwargs):
+        formrecognizer_test_api_key = kwargs.get("formrecognizer_test_api_key", None)
         with pytest.raises(ServiceRequestError):
             client = DocumentAnalysisClient("http://notreal.azure.com", AzureKeyCredential(formrecognizer_test_api_key))
             async with client:
@@ -223,17 +243,18 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
-    @recorded_by_proxy_async
-    async def test_receipt_url_pass_stream(self, client):
+    async def test_receipt_url_pass_stream(self, **kwargs):
+        client = kwargs.get("client", None)
         
         with open(self.receipt_png, "rb") as fd:
             receipt = fd.read(4)  # makes the recording smaller
 
-        with pytest.raises(HttpResponseError):
+        with pytest.raises(ValueError) as e:
             async with client:
                 poller = await client.begin_analyze_document_from_url("prebuilt-receipt", receipt)
-                result = await poller.result()
+        assert str(e.value) == "'document_url' needs to be of type 'str'. Please see `begin_analyze_document()` to pass a byte stream."
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -272,6 +293,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -294,6 +316,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
         assert len(result.pages) == 1
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -327,6 +350,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
 
         assert len(result.pages) == 2
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -366,6 +390,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
     @pytest.mark.live_test_only
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     async def test_receipt_continuation_token(self, **kwargs):
@@ -379,6 +404,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
             assert result is not None
             await initial_poller.wait()  # necessary so azure-devtools doesn't throw assertion error
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async
@@ -398,6 +424,7 @@ class TestDACAnalyzePrebuiltsFromUrlAsync(AsyncFormRecognizerTest):
                 await client.begin_analyze_document_from_url("prebuilt-receipt", self.receipt_url_jpg, locale="not a locale")
         assert "InvalidArgument" == e.value.error.code
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentAnalysisClientPreparer()
     @recorded_by_proxy_async

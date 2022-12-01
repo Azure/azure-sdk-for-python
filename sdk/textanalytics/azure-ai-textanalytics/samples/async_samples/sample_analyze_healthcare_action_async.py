@@ -9,7 +9,7 @@ FILE: sample_analyze_healthcare_action_async.py
 
 DESCRIPTION:
     This sample demonstrates how to submit a collection of text documents for analysis, which uses the
-    AnalyzeHealthcareEntitiesAction and RecognizePiiEntitiesAction to recognize healthcare entities,
+    AnalyzeHealthcareEntitiesAction (plus FHIR feature) and RecognizePiiEntitiesAction to recognize healthcare entities,
     along with any PII entities.
     The response will contain results from each of the individual actions specified in the request.
 
@@ -57,7 +57,7 @@ async def sample_analyze_healthcare_action() -> None:
             documents,
             display_name="Sample Text Analysis",
             actions=[
-                AnalyzeHealthcareEntitiesAction(),
+                AnalyzeHealthcareEntitiesAction(fhir_version="4.0.1"),
                 RecognizePiiEntitiesAction(domain_filter="phi"),
             ],
         )
@@ -98,6 +98,7 @@ async def sample_analyze_healthcare_action() -> None:
                         print(f"Relation of type: {relation.relation_type} has the following roles")
                         for role in relation.roles:
                             print(f"...Role '{role.name}' with entity '{role.entity.text}'")
+                    print(f"......FHIR object: {result.fhir_bundle}")
 
                 elif result.kind == "PiiEntityRecognition":
                     print("Results of Recognize PII Entities action:")

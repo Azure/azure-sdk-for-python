@@ -16,10 +16,12 @@ from ._shared.models import (
     CommunicationIdentifierKind,
     CommunicationUserIdentifier,
     CommunicationUserProperties,
+    identifier_from_raw_id,
     MicrosoftTeamsUserIdentifier,
+    MicrosoftTeamsUserProperties,
     PhoneNumberIdentifier,
-    UnknownIdentifier,
-    identifier_from_raw_id
+    PhoneNumberProperties,
+    UnknownIdentifier
 )
 
 __all__ = [
@@ -34,8 +36,10 @@ __all__ = [
     'CommunicationIdentifierKind',
     'CommunicationUserIdentifier',
     'CommunicationUserProperties',
+    'identifier_from_raw_id',
     'MicrosoftTeamsUserIdentifier',
+    'MicrosoftTeamsUserProperties',
     'PhoneNumberIdentifier',
-    'UnknownIdentifier',
-    'identifier_from_raw_id'
+    'PhoneNumberProperties',
+    'UnknownIdentifier'
 ]

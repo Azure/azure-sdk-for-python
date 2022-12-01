@@ -9,20 +9,32 @@
 from copy import deepcopy
 from typing import Any, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import HttpRequest, HttpResponse
 from azure.mgmt.core import ARMPipelineClient
 
 from . import models
 from ._configuration import RecoveryServicesBackupPassiveClientConfiguration
-from .operations import AadPropertiesOperations, BackupCrrJobDetailsOperations, BackupCrrJobsOperations, BackupProtectedItemsCrrOperations, BackupResourceStorageConfigsOperations, BackupUsageSummariesCRROperations, CrossRegionRestoreOperations, CrrOperationResultsOperations, CrrOperationStatusOperations, RecoveryPointsCrrOperations, RecoveryPointsOperations
+from ._serialization import Deserializer, Serializer
+from .operations import (
+    AadPropertiesOperations,
+    BackupCrrJobDetailsOperations,
+    BackupCrrJobsOperations,
+    BackupProtectedItemsCrrOperations,
+    BackupResourceStorageConfigsOperations,
+    BackupUsageSummariesCRROperations,
+    CrossRegionRestoreOperations,
+    CrrOperationResultsOperations,
+    CrrOperationStatusOperations,
+    RecoveryPointsCrrOperations,
+    RecoveryPointsOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials import TokenCredential
 
-class RecoveryServicesBackupPassiveClient:    # pylint: disable=too-many-instance-attributes
+
+class RecoveryServicesBackupPassiveClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Open API 2.0 Specs for Azure RecoveryServices Backup service.
 
     :ivar backup_usage_summaries_crr: BackupUsageSummariesCRROperations operations
@@ -58,9 +70,9 @@ class RecoveryServicesBackupPassiveClient:    # pylint: disable=too-many-instanc
     :ivar backup_protected_items_crr: BackupProtectedItemsCrrOperations operations
     :vartype backup_protected_items_crr:
      azure.mgmt.recoveryservicesbackup.passivestamp.operations.BackupProtectedItemsCrrOperations
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials.TokenCredential
-    :param subscription_id: The subscription Id.
+    :param subscription_id: The subscription Id. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
@@ -78,31 +90,44 @@ class RecoveryServicesBackupPassiveClient:    # pylint: disable=too-many-instanc
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = RecoveryServicesBackupPassiveClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = RecoveryServicesBackupPassiveClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = ARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
-        self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_usage_summaries_crr = BackupUsageSummariesCRROperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.aad_properties = AadPropertiesOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.cross_region_restore = CrossRegionRestoreOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_crr_job_details = BackupCrrJobDetailsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.cross_region_restore = CrossRegionRestoreOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_crr_job_details = BackupCrrJobDetailsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.backup_crr_jobs = BackupCrrJobsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.crr_operation_results = CrrOperationResultsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.crr_operation_status = CrrOperationStatusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.crr_operation_results = CrrOperationResultsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.crr_operation_status = CrrOperationStatusOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
         self.recovery_points = RecoveryPointsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_resource_storage_configs = BackupResourceStorageConfigsOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.recovery_points_crr = RecoveryPointsCrrOperations(self._client, self._config, self._serialize, self._deserialize)
-        self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.backup_resource_storage_configs = BackupResourceStorageConfigsOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.recovery_points_crr = RecoveryPointsCrrOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.backup_protected_items_crr = BackupProtectedItemsCrrOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> HttpResponse:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> HttpResponse:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -111,7 +136,7 @@ class RecoveryServicesBackupPassiveClient:    # pylint: disable=too-many-instanc
         >>> response = client._send_request(request)
         <HttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

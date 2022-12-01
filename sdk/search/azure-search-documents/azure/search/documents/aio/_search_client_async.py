@@ -9,9 +9,9 @@ import six
 from azure.core.credentials import AzureKeyCredential
 from azure.core.tracing.decorator_async import distributed_trace_async
 from ._paging import AsyncSearchItemPaged, AsyncSearchPageIterator
-from ._utils_async import get_async_authentication_policy
-from .._generated.aio import SearchClient as SearchIndexClient
-from .._generated.models import IndexingResult
+from .._utils import get_authentication_policy
+from .._generated.aio import SearchIndexClient
+from .._generated.models import IndexingResult, IndexBatch
 from .._search_documents_error import RequestEntityTooLargeError
 from .._index_documents_batch import IndexDocumentsBatch
 from .._queries import AutocompleteQuery, SearchQuery, SuggestQuery
@@ -35,6 +35,9 @@ class SearchClient(HeadersMixin):
     :param credential: A credential to authorize search client requests
     :type credential: ~azure.core.credentials.AzureKeyCredential or ~azure.core.credentials_async.AsyncTokenCredential
     :keyword str api_version: The Search API version to use for requests.
+    :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
+     audience is not considered when using a shared key. If audience is not provided, the public cloud audience
+     will be assumed.
 
     .. admonition:: Example:
 
@@ -60,6 +63,7 @@ class SearchClient(HeadersMixin):
         self._endpoint = endpoint  # type: str
         self._index_name = index_name  # type: str
         self._credential = credential
+        audience = kwargs.pop("audience", None)
         if isinstance(credential, AzureKeyCredential):
             self._aad = False
             self._client = SearchIndexClient(
@@ -71,7 +75,7 @@ class SearchClient(HeadersMixin):
             )  # type: SearchIndexClient
         else:
             self._aad = True
-            authentication_policy = get_async_authentication_policy(credential)
+            authentication_policy = get_authentication_policy(credential, audience=audience, is_async=True)
             self._client = SearchIndexClient(
                 endpoint=endpoint,
                 index_name=index_name,
@@ -605,9 +609,10 @@ class SearchClient(HeadersMixin):
         error_map = {413: RequestEntityTooLargeError}
 
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        batch = IndexBatch(actions=actions)
         try:
             batch_response = await self._client.documents.index(
-                actions=actions, error_map=error_map, **kwargs
+                batch=batch, error_map=error_map, **kwargs
             )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:

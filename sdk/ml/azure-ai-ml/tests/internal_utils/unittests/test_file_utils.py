@@ -1,10 +1,12 @@
 from pathlib import Path
+
 import pytest
 
 from azure.ai.ml._file_utils.file_utils import traverse_up_path_and_find_file
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestFileUtils:
     def test_traverse_up_path_and_find_file_multi_layers(self, tmp_path: Path):
         filename = "hello.txt"

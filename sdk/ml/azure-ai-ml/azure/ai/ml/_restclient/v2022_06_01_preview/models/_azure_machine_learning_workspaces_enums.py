@@ -105,7 +105,7 @@ class ClassificationModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     DECISION_TREE = "DecisionTree"
     #: Random forest is a supervised learning algorithm.
     #: The "forest"\\   it builds, is an ensemble of decision trees, usually trained with the
-    #: ��bagging��\\   method.
+    #: �bagging�\\   method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -187,7 +187,6 @@ class CredentialsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SAS = "Sas"
     SERVICE_PRINCIPAL = "ServicePrincipal"
     KERBEROS_KEYTAB = "KerberosKeytab"
-    KERBEROS_PASSWORD = "KerberosPassword"
 
 class DatastoreType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     """Enum to determine the datastore contents type.
@@ -378,7 +377,7 @@ class ForecastingModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SGD = "SGD"
     #: Random forest is a supervised learning algorithm.
     #: The "forest"\\   it builds, is an ensemble of decision trees, usually trained with the
-    #: ��bagging��\\   method.
+    #: �bagging�\\   method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -721,7 +720,7 @@ class RegressionModels(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SGD = "SGD"
     #: Random forest is a supervised learning algorithm.
     #: The "forest"\\   it builds, is an ensemble of decision trees, usually trained with the
-    #: ��bagging��\\   method.
+    #: �bagging�\\   method.
     #: The general idea of the bagging method is that a combination of learning models increases the
     #: overall result.
     RANDOM_FOREST = "RandomForest"
@@ -793,7 +792,6 @@ class SecretsType(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
     SAS = "Sas"
     SERVICE_PRINCIPAL = "ServicePrincipal"
     KERBEROS_KEYTAB = "KerberosKeytab"
-    KERBEROS_PASSWORD = "KerberosPassword"
 
 class ServiceDataAccessAuthIdentity(with_metaclass(CaseInsensitiveEnumMeta, str, Enum)):
 

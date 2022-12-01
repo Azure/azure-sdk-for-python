@@ -55,6 +55,9 @@ async def create_authentication(client):
             timeout=client._config.auth_timeout,
             http_proxy=client._config.http_proxy,
             transport_type=client._config.transport_type,
+            custom_endpoint_hostname=client._config.custom_endpoint_hostname,
+            port=client._config.connection_port,
+            verify=client._config.connection_verify
         )
         await auth.update_token()
         return auth
@@ -67,6 +70,9 @@ async def create_authentication(client):
         http_proxy=client._config.http_proxy,
         transport_type=client._config.transport_type,
         refresh_window=300,
+        custom_endpoint_hostname=client._config.custom_endpoint_hostname,
+        port=client._config.connection_port,
+        verify=client._config.connection_verify
     )
 
 

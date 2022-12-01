@@ -631,7 +631,6 @@ class FormRecognizerTest(AzureRecordedTestCase):
 
     def assertDocumentPagesTransformCorrect(self, transformed_pages, raw_pages, **kwargs):
         for page, expected_page in zip(transformed_pages, raw_pages):
-            assert page.kind == expected_page.kind
             assert page.page_number == expected_page.page_number
             if page.angle:
                 assert page.angle == adjust_text_angle(expected_page.angle)
@@ -658,7 +657,6 @@ class FormRecognizerTest(AzureRecordedTestCase):
             self.assertSpanTransformCorrect(transformed_span, span)
 
     def assertDocumentWordTransformCorrect(self, word, expected):
-        assert word.kind == "word"
         assert word.content == expected.content
         self.assertBoundingPolygonTransformCorrect(word.polygon, expected.polygon)
         self.assertSpanTransformCorrect(word.span, expected.span)
@@ -670,7 +668,6 @@ class FormRecognizerTest(AzureRecordedTestCase):
         assert span.length == expected.length
 
     def assertDocumentSelectionMarkTransformCorrect(self, selection_mark, expected):
-        assert selection_mark.kind == "selectionMark"
         assert selection_mark.confidence == adjust_confidence(expected.confidence)
         assert selection_mark.state == expected.state
         self.assertBoundingPolygonTransformCorrect(selection_mark.polygon, expected.polygon)

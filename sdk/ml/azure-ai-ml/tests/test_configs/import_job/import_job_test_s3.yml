@@ -1,0 +1,11 @@
+type: import
+name: "test1"
+description: "test_description"
+display_name: "test_display_name"
+source:
+  type: s3
+  connection: azureml:my_username_password
+  path: test1/*
+output:
+  type: uri_folder
+  path: azureml://datastores/workspaceblobstore/paths/output_dir/

@@ -9,7 +9,14 @@
 import datetime
 from typing import Any, Callable, Dict, Optional, TypeVar
 
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +27,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._predictive_metric_operations import build_get_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class PredictiveMetricOperations:
     """
@@ -42,7 +51,6 @@ class PredictiveMetricOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace_async
     async def get(
         self,
@@ -58,50 +66,53 @@ class PredictiveMetricOperations:
         """get predictive autoscale metric future data.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param autoscale_setting_name: The autoscale setting name.
+        :param autoscale_setting_name: The autoscale setting name. Required.
         :type autoscale_setting_name: str
         :param timespan: The timespan of the query. It is a string with the following format
-         'startDateTime_ISO/endDateTime_ISO'.
+         'startDateTime_ISO/endDateTime_ISO'. Required.
         :type timespan: str
-        :param interval: The interval (i.e. timegrain) of the query.
+        :param interval: The interval (i.e. timegrain) of the query. Required.
         :type interval: ~datetime.timedelta
-        :param metric_namespace: Metric namespace to query metric definitions for.
+        :param metric_namespace: Metric namespace to query metric definitions for. Required.
         :type metric_namespace: str
         :param metric_name: The names of the metrics (comma separated) to retrieve. Special case: If a
          metricname itself has a comma in it then use %2 to indicate it. Eg: 'Metric,Name1' should be
-         **'Metric%2Name1'**.
+         **'Metric%2Name1'**. Required.
         :type metric_name: str
-        :param aggregation: The list of aggregation types (comma separated) to retrieve.
+        :param aggregation: The list of aggregation types (comma separated) to retrieve. Required.
         :type aggregation: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: PredictiveResponse, or the result of cls(response)
+        :return: PredictiveResponse or the result of cls(response)
         :rtype: ~$(python-base-namespace).v2021_05_01_preview.models.PredictiveResponse
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-05-01-preview"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.PredictiveResponse]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-05-01-preview"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.PredictiveResponse]
 
-        
         request = build_get_request(
-            subscription_id=self._config.subscription_id,
             resource_group_name=resource_group_name,
             autoscale_setting_name=autoscale_setting_name,
-            api_version=api_version,
+            subscription_id=self._config.subscription_id,
             timespan=timespan,
             interval=interval,
             metric_namespace=metric_namespace,
             metric_name=metric_name,
             aggregation=aggregation,
-            template_url=self.get.metadata['url'],
+            api_version=api_version,
+            template_url=self.get.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -109,10 +120,9 @@ class PredictiveMetricOperations:
         request.url = self._client.format_url(request.url)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -120,12 +130,11 @@ class PredictiveMetricOperations:
             error = self._deserialize.failsafe_deserialize(_models.AutoscaleErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize('PredictiveResponse', pipeline_response)
+        deserialized = self._deserialize("PredictiveResponse", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {'url': "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics"}  # type: ignore
-
+    get.metadata = {"url": "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.Insights/autoscalesettings/{autoscaleSettingName}/predictiveMetrics"}  # type: ignore

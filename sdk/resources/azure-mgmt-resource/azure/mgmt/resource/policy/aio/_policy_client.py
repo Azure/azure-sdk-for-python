@@ -11,17 +11,15 @@
 
 from typing import Any, Optional, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.mgmt.core import AsyncARMPipelineClient
 from azure.profiles import KnownProfiles, ProfileDefinition
 from azure.profiles.multiapiclient import MultiApiClientMixin
 
+from .._serialization import Deserializer, Serializer
 from ._configuration import PolicyClientConfiguration
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    from azure.core.credentials import TokenCredential
     from azure.core.credentials_async import AsyncTokenCredential
 
 class _SDKClient(object):
@@ -42,9 +40,9 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
     The api-version parameter sets the default API version if the operation
     group is not described in the profile.
 
-    :param credential: Credential needed for the client to connect to Azure.
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param api_version: API version to use if no profile is provided, or if missing in profile.
     :type api_version: str
@@ -148,6 +146,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_06_01.aio.operations import DataPolicyManifestsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'data_policy_manifests'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -191,6 +190,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_06_01.aio.operations import PolicyAssignmentsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'policy_assignments'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -234,6 +234,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_06_01.aio.operations import PolicyDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'policy_definitions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -250,6 +251,7 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_06_01.aio.operations import PolicyExemptionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'policy_exemptions'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     @property
@@ -284,6 +286,35 @@ class PolicyClient(MultiApiClientMixin, _SDKClient):
             from ..v2021_06_01.aio.operations import PolicySetDefinitionsOperations as OperationClass
         else:
             raise ValueError("API version {} does not have operation group 'policy_set_definitions'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def variable_values(self):
+        """Instance depends on the API version:
+
+           * 2021-06-01: :class:`VariableValuesOperations<azure.mgmt.resource.policy.v2021_06_01.aio.operations.VariableValuesOperations>`
+        """
+        api_version = self._get_api_version('variable_values')
+        if api_version == '2021-06-01':
+            from ..v2021_06_01.aio.operations import VariableValuesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'variable_values'".format(api_version))
+        self._config.api_version = api_version
+        return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+
+    @property
+    def variables(self):
+        """Instance depends on the API version:
+
+           * 2021-06-01: :class:`VariablesOperations<azure.mgmt.resource.policy.v2021_06_01.aio.operations.VariablesOperations>`
+        """
+        api_version = self._get_api_version('variables')
+        if api_version == '2021-06-01':
+            from ..v2021_06_01.aio.operations import VariablesOperations as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation group 'variables'".format(api_version))
+        self._config.api_version = api_version
         return OperationClass(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
 
     async def close(self):

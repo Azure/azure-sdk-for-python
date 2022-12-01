@@ -19,6 +19,7 @@ class DataStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     PRESENT = "present"
     NOT_PRESENT = "notPresent"
 
+
 class OnboardingStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The onboarding status for the resource. Note that, a higher level scope, e.g., resource group
     or subscription, is considered onboarded if at least one resource under it is onboarded.

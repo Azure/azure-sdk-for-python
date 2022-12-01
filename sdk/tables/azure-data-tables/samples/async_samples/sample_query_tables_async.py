@@ -17,7 +17,9 @@ USAGE:
     python sample_query_tables_async.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 import asyncio
@@ -31,7 +33,6 @@ class QueryTables(object):
         self.access_key = os.getenv("TABLES_PRIMARY_STORAGE_ACCOUNT_KEY")
         self.endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX")
         self.account_name = os.getenv("TABLES_STORAGE_ACCOUNT_NAME")
-        self.endpoint = "{}.table.{}".format(self.account_name, self.endpoint_suffix)
         self.connection_string = "DefaultEndpointsProtocol=https;AccountName={};AccountKey={};EndpointSuffix={}".format(
             self.account_name, self.access_key, self.endpoint_suffix
         )
@@ -78,24 +79,11 @@ class QueryTables(object):
                 except:
                     pass
 
-    async def clean_up(self):
-        from azure.data.tables.aio import TableServiceClient
-
-        tsc = TableServiceClient.from_connection_string(self.connection_string)
-        async with tsc:
-            async for table in tsc.list_tables():
-                await tsc.delete_table(table.name)
-
-            print("Cleaned up")
-
 
 async def main():
     sample = QueryTables()
-    await sample.delete_tables()
     await sample.tables_in_account()
-    await sample.clean_up()
 
 
 if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
+    asyncio.run(main())

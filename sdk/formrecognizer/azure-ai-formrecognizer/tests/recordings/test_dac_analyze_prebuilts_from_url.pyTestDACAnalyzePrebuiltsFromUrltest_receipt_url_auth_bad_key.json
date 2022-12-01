@@ -1,7 +1,7 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-06-30-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/formrecognizer/documentModels/prebuilt-receipt:analyze?stringIndexType=unicodeCodePoint\u0026api-version=2022-08-31",
       "RequestMethod": "POST",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -9,17 +9,17 @@
         "Connection": "keep-alive",
         "Content-Length": "36",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b6 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
+        "User-Agent": "azsdk-python-ai-formrecognizer/3.2.0b7 Python/3.8.5 (Windows-10-10.0.19041-SP0)"
       },
       "RequestBody": {
         "urlSource": "https://blob_sas_url"
       },
       "StatusCode": 401,
       "ResponseHeaders": {
-        "apim-request-id": "c7653290-e52b-4e95-9137-d32def811aeb",
+        "apim-request-id": "40af9a4f-af5d-4d7b-aee1-160d93841816",
         "Content-Length": "224",
         "Content-Type": "application/json",
-        "Date": "Thu, 23 Jun 2022 23:55:22 GMT"
+        "Date": "Wed, 17 Aug 2022 01:44:15 GMT"
       },
       "ResponseBody": {
         "error": {

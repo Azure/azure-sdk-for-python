@@ -2,7 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
-# pylint: disable=protected-access
+# pylint: disable=protected-access,no-member
 
 from base64 import b64encode
 from pathlib import Path
@@ -12,7 +12,7 @@ from azure.ai.ml._restclient.v2022_02_01_preview.models import DatastoreData, Da
 from azure.ai.ml._restclient.v2022_02_01_preview.models import HdfsDatastore as RestHdfsDatastore
 from azure.ai.ml._schema._datastore._on_prem import HdfsSchema
 from azure.ai.ml._utils._experimental import experimental
-from azure.ai.ml.constants import BASE_PATH_CONTEXT_KEY, TYPE
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, TYPE
 from azure.ai.ml.entities._datastore.datastore import Datastore
 from azure.ai.ml.entities._datastore.utils import _from_rest_datastore_credentials_preview
 from azure.ai.ml.entities._util import load_from_dict
@@ -29,7 +29,8 @@ class HdfsDatastore(Datastore):
     :type name: str
     :param name_node_address: IP Address or DNS HostName.
     :type name_node_address: str
-    :param hdfs_server_certificate: The TLS cert of the HDFS server (optional). Needs to be a local path on create and will be a base64 encoded string on get.
+    :param hdfs_server_certificate: The TLS cert of the HDFS server (optional).
+        Needs to be a local path on create and will be a base64 encoded string on get.
     :type hdfs_server_certificate: str
     :param protocol: http or https
     :type protocol: str

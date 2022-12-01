@@ -2,6 +2,7 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
+from __future__ import annotations
 import time
 import queue
 import logging
@@ -14,6 +15,7 @@ from .._common import EventDataBatch
 from ..exceptions import OperationTimeoutError
 
 if TYPE_CHECKING:
+    from .._transport._base import AmqpTransport
     from .._producer_client import SendEventTypes
 
 _LOGGER = logging.getLogger(__name__)
@@ -30,8 +32,8 @@ class BufferedProducer:
         max_message_size_on_link: int,
         executor: ThreadPoolExecutor,
         *,
-        max_wait_time: float = 1,
-        max_buffer_length: int
+        max_buffer_length: int,
+        max_wait_time: float = 1
     ):
         self._buffered_queue: queue.Queue = queue.Queue()
         self._max_buffer_len = max_buffer_length
@@ -163,7 +165,10 @@ class BufferedProducer:
                             self.partition_id,
                             len(batch),
                         )
-                        self._on_success(batch._internal_events, self.partition_id)
+                        try:
+                            self._on_success(batch._internal_events, self.partition_id)
+                        except AttributeError:
+                            self._on_success(batch, self.partition_id)
                     except Exception as exc:  # pylint: disable=broad-except
                         _LOGGER.info(
                             "Partition %r sending %r events failed due to exception: %r ",
@@ -171,7 +176,10 @@ class BufferedProducer:
                             len(batch),
                             exc,
                         )
-                        self._on_error(batch._internal_events, self.partition_id, exc)
+                        try:
+                            self._on_error(batch._internal_events, self.partition_id, exc)
+                        except AttributeError:
+                            self._on_error(batch, self.partition_id, exc)
                     finally:
                         self._cur_buffered_len -= len(batch)
                 else:

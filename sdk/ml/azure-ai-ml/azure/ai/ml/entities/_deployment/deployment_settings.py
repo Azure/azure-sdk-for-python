@@ -2,6 +2,8 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 
+# pylint: disable=arguments-renamed
+
 import logging
 
 from azure.ai.ml._restclient.v2021_10_01.models import BatchRetrySettings as RestBatchRetrySettings

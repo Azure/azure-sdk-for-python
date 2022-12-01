@@ -1,0 +1,291 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainere7982e15?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 23:40:30 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 12 Aug 2022 23:40:30 GMT",
+        "ETag": "\u00220x8DA7CBC0B10B123\u0022",
+        "Last-Modified": "Fri, 12 Aug 2022 23:40:30 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainersourcee7982e15?restype=container",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 23:40:30 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 201,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 12 Aug 2022 23:40:30 GMT",
+        "ETag": "\u00220x8DA7CBC0B1E43B5\u0022",
+        "Last-Modified": "Fri, 12 Aug 2022 23:40:30 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainere7982e15/59466-0.txt",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-copy-source": "https://www.gutenberg.org/files/59466/59466-0.txt",
+        "x-ms-date": "Fri, 12 Aug 2022 23:40:30 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 12 Aug 2022 23:40:32 GMT",
+        "ETag": "\u00220x8DA7CBC0C5FAC93\u0022",
+        "Last-Modified": "Fri, 12 Aug 2022 23:40:32 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-copy-id": "76e3483a-8487-4332-835f-70161785ae21",
+        "x-ms-copy-status": "pending",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainere7982e15/59466-0.txt?comp=copy\u0026copyid=76e3483a-8487-4332-835f-70161785ae21",
+      "RequestMethod": "PUT",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "0",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-copy-action": "abort",
+        "x-ms-date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 204,
+      "ResponseHeaders": {
+        "Content-Length": "0",
+        "Date": "Fri, 12 Aug 2022 23:40:32 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainere7982e15/59466-0.txt",
+      "RequestMethod": "HEAD",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "0",
+        "Content-Type": "text/plain",
+        "Date": "Fri, 12 Aug 2022 23:40:32 GMT",
+        "ETag": "\u00220x8DA7CBC0C8704F4\u0022",
+        "Last-Modified": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Vary": "Origin",
+        "x-ms-access-tier": "Hot",
+        "x-ms-access-tier-inferred": "true",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-copy-completion-time": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "x-ms-copy-id": "76e3483a-8487-4332-835f-70161785ae21",
+        "x-ms-copy-progress": "0/439274",
+        "x-ms-copy-source": "https://www.gutenberg.org/files/59466/59466-0.txt",
+        "x-ms-copy-status": "aborted",
+        "x-ms-creation-time": "Fri, 12 Aug 2022 23:40:32 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainere7982e15/59466-0.txt",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "x-ms-range": "bytes=0-33554431",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Vary": "Origin",
+        "x-ms-error-code": "InvalidRange",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:f602a38b-801e-0058-4ea4-ae029d000000\n",
+        "Time:2022-08-12T23:40:33.3810705Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainere7982e15/59466-0.txt",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "0",
+        "Content-Type": "text/plain",
+        "Date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "ETag": "\u00220x8DA7CBC0C8704F4\u0022",
+        "Last-Modified": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Vary": "Origin",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-copy-completion-time": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "x-ms-copy-id": "76e3483a-8487-4332-835f-70161785ae21",
+        "x-ms-copy-progress": "0/439274",
+        "x-ms-copy-source": "https://www.gutenberg.org/files/59466/59466-0.txt",
+        "x-ms-copy-status": "aborted",
+        "x-ms-creation-time": "Fri, 12 Aug 2022 23:40:32 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainere7982e15/59466-0.txt",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "x-ms-range": "bytes=0-33554431",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 416,
+      "ResponseHeaders": {
+        "Content-Length": "249",
+        "Content-Range": "bytes */0",
+        "Content-Type": "application/xml",
+        "Date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Vary": "Origin",
+        "x-ms-error-code": "InvalidRange",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": [
+        "\uFEFF\u003C?xml version=\u00221.0\u0022 encoding=\u0022utf-8\u0022?\u003E\u003CError\u003E\u003CCode\u003EInvalidRange\u003C/Code\u003E\u003CMessage\u003EThe range specified is invalid for the current size of the resource.\n",
+        "RequestId:f602a3db-801e-0058-13a4-ae029d000000\n",
+        "Time:2022-08-12T23:40:33.5609671Z\u003C/Message\u003E\u003C/Error\u003E"
+      ]
+    },
+    {
+      "RequestUri": "https://storagename.blob.core.windows.net/utcontainere7982e15/59466-0.txt",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/xml",
+        "Accept-Encoding": "gzip, deflate",
+        "User-Agent": "azsdk-python-storage-blob/12.14.0b1 Python/3.10.5 (Windows-10-10.0.22000-SP0)",
+        "x-ms-date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "x-ms-version": "2021-08-06"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "Accept-Ranges": "bytes",
+        "Content-Length": "0",
+        "Content-Type": "text/plain",
+        "Date": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "ETag": "\u00220x8DA7CBC0C8704F4\u0022",
+        "Last-Modified": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "Server": [
+          "Windows-Azure-Blob/1.0",
+          "Microsoft-HTTPAPI/2.0"
+        ],
+        "Vary": "Origin",
+        "x-ms-blob-type": "BlockBlob",
+        "x-ms-copy-completion-time": "Fri, 12 Aug 2022 23:40:33 GMT",
+        "x-ms-copy-id": "76e3483a-8487-4332-835f-70161785ae21",
+        "x-ms-copy-progress": "0/439274",
+        "x-ms-copy-source": "https://www.gutenberg.org/files/59466/59466-0.txt",
+        "x-ms-copy-status": "aborted",
+        "x-ms-creation-time": "Fri, 12 Aug 2022 23:40:32 GMT",
+        "x-ms-lease-state": "available",
+        "x-ms-lease-status": "unlocked",
+        "x-ms-server-encrypted": "true",
+        "x-ms-version": "2021-08-06"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

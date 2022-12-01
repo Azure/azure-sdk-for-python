@@ -8,35 +8,36 @@ import functools
 import pytest
 from unittest import mock
 
+from aiohttp.client_exceptions import ClientPayloadError, ServerTimeoutError
+from aiohttp.streams import StreamReader
 from azure.core.exceptions import (
     AzureError,
     ClientAuthenticationError,
     HttpResponseError,
-    ResourceExistsError
+    ResourceExistsError,
+    ServiceResponseError
 )
 from azure.core.pipeline.transport import AioHttpTransport
 from azure.storage.blob import LocationMode
 from azure.storage.blob._shared.policies_async import ExponentialRetry, LinearRetry
 from azure.storage.blob.aio import BlobServiceClient
 
-from aiohttp.client_exceptions import ClientPayloadError
-from aiohttp.streams import StreamReader
 from devtools_testutils import ResponseCallback, RetryCounter
 from devtools_testutils.aio import recorded_by_proxy_async
 from devtools_testutils.storage.aio import AsyncStorageRecordedTestCase
 from settings.testcase import BlobPreparer
 
-class AiohttpRetryTestTransport(AioHttpTransport):
-    """Mock transport for testing retry
-    """
+
+class TimeoutAioHttpTransport(AioHttpTransport):
+    """Transport to test read timeout"""
     def __init__(self, *args, **kwargs):
-        super(AiohttpRetryTestTransport, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.count = 0
 
     async def send(self, request, **config):
         self.count += 1
-        response = await super(AiohttpRetryTestTransport, self).send(request, **config)
-        return response
+        timeout_error = ServerTimeoutError("Timeout on reading data from socket")
+        raise ServiceResponseError(timeout_error, error=timeout_error) from timeout_error
 
 
 # --Test Class -----------------------------------------------------------------
@@ -118,7 +119,6 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
             assert kwargs.get('response') is not None
             assert kwargs['response'].status_code == 408
 
-
         # Act
         try:
             # The initial create will return 201, but we overwrite it and retry.
@@ -142,31 +142,30 @@ class TestStorageRetryAsync(AsyncStorageRecordedTestCase):
         # Upload a blob that can be downloaded to test read timeout
         service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
         container = await service.create_container(container_name)
-        await container.upload_blob(blob_name, b'a' * 5 * 1025, overwrite=True)
+        await container.upload_blob(blob_name, b'Hello World', overwrite=True)
 
         retry = LinearRetry(backoff=1, random_jitter_range=1)
-        retry_transport = AiohttpRetryTestTransport(connection_timeout=11, read_timeout=0.000000000001)
-        # make the connect timeout reasonable, but packet timeout truly small, to make sure the request always times out
-        service = self._create_storage_service(
-            BlobServiceClient, storage_account_name, storage_account_key, retry_policy=retry, transport=retry_transport)
-        blob = service.get_blob_client(container_name, blob_name)
-
-        assert service._client._client._pipeline._transport.connection_config.timeout == 11
-        assert service._client._client._pipeline._transport.connection_config.read_timeout == 0.000000000001
+        timeout_transport = TimeoutAioHttpTransport()
+        timeout_service = self._create_storage_service(
+            BlobServiceClient,
+            storage_account_name,
+            storage_account_key,
+            retry_policy=retry,
+            transport=timeout_transport)
+        blob = timeout_service.get_blob_client(container_name, blob_name)
 
         # Act
         try:
-            with pytest.raises(AzureError) as error:
+            with pytest.raises(AzureError):
                 await blob.download_blob()
             # Assert
             # 3 retries + 1 original == 4
-            assert retry_transport.count == 4
-            # This call should succeed on the server side, but fail on the client side due to socket timeout
-            assert 'Timeout on reading data from socket' in str(error.value.args[0]), 'Expected socket timeout but got different exception.'
+            assert timeout_transport.count == 4
 
         finally:
-            # we must make the timeout normal again to let the delete operation succeed
-            await service.delete_container(container_name, connection_timeout=11, read_timeout=11)
+            # Recreate client with normal timeouts
+            service = self._create_storage_service(BlobServiceClient, storage_account_name, storage_account_key)
+            service.delete_container(container_name)
 
     @BlobPreparer()
     @recorded_by_proxy_async

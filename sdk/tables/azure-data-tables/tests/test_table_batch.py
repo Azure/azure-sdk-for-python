@@ -5,12 +5,9 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-import pytest
-
 from datetime import datetime, timedelta
 import os
-import sys
+import pytest
 
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy, set_custom_default_matcher
 
@@ -35,16 +32,12 @@ from azure.data.tables import (
     TableErrorCode,
     TableClient
 )
-
+from azure.data.tables._constants import DEFAULT_STORAGE_ENDPOINT_SUFFIX
 from _shared.testcase import TableTestCase
 from preparers import tables_decorator
 
-#------------------------------------------------------------------------------
-TEST_TABLE_PREFIX = 'table'
-#------------------------------------------------------------------------------
 
 class TestTableBatch(AzureRecordedTestCase, TableTestCase):
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_single_insert(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -81,7 +74,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_single_update(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -122,7 +114,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_update(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -165,7 +156,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -210,7 +200,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_update_if_match(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -244,7 +233,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_update_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -278,7 +266,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_single_op_if_doesnt_match(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -328,7 +315,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_insert_replace(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -364,7 +350,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_insert_merge(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -400,7 +385,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_delete(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -438,7 +422,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_inserts(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -479,7 +462,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_all_operations_together(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -555,7 +537,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_reuse(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -600,7 +581,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_same_row_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -634,7 +614,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_different_partition_operations_fail(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -665,7 +644,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_too_many_ops(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -694,7 +672,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_different_partition_keys(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -717,7 +694,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_new_non_existent_table(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -741,7 +717,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_new_invalid_key(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -764,7 +739,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         with pytest.raises(ClientAuthenticationError):
             resp = self.table.submit_transaction(batch)
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_new_delete_nonexistent_entity(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -786,7 +760,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_delete_batch_with_bad_kwarg(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -820,7 +793,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only
     @tables_decorator
     def test_batch_sas_auth(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -875,7 +847,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @pytest.mark.live_test_only  # Request bodies are very large
     @tables_decorator
     def test_batch_request_too_large(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -905,7 +876,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_with_mode(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -955,7 +925,6 @@ class TestTableBatch(AzureRecordedTestCase, TableTestCase):
         finally:
             self._tear_down()
 
-    @pytest.mark.skipif(sys.version_info < (3, 0), reason="requires Python3")
     @tables_decorator
     @recorded_by_proxy
     def test_batch_with_specialchar_partitionkey(self, tables_storage_account_name, tables_primary_storage_account_key):
@@ -1083,28 +1052,13 @@ class TestBatchUnitTests(TableTestCase):
         with pytest.raises(RequestCorrect):
             table.submit_transaction(self.batch)
 
-    def test_batch_url_china(self):
-        url = self.account_url(self.tables_storage_account_name, "table").replace('core.windows.net', 'core.chinacloudapi.cn')
-        table = TableClient(
-            url,
-            credential=self.credential,
-            table_name='foo',
-            per_call_policies=[CheckBatchURL(url, "foo")])
-
-        # Assert
-        assert table.account_name == self.tables_storage_account_name
-        assert table.url.startswith('https://{}.{}.core.chinacloudapi.cn'.format(self.tables_storage_account_name, "table"))
-        assert table.scheme == 'https'
-
-        with pytest.raises(RequestCorrect):
-            table.submit_transaction(self.batch)
-
     def test_batch_url_with_connection_string_key(self):
         conn_string = 'AccountName={};AccountKey={};'.format(self.tables_storage_account_name, self.tables_primary_storage_account_key)
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         table = TableClient.from_connection_string(
             conn_string,
             table_name='foo',
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name), "foo")]
+            per_call_policies=[CheckBatchURL("https://{}.table.{}".format(self.tables_storage_account_name, endpoint_suffix), "foo")]
         )
         assert table.scheme == 'https'
         with pytest.raises(RequestCorrect):
@@ -1113,43 +1067,15 @@ class TestBatchUnitTests(TableTestCase):
     def test_batch_url_with_connection_string_sas(self):
         token = AzureSasCredential(self.generate_sas_token())
         conn_string = 'AccountName={};SharedAccessSignature={};'.format(self.tables_storage_account_name, token.signature)
-
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         table = TableClient.from_connection_string(
             conn_string,
             table_name='foo',
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net".format(self.tables_storage_account_name), "foo")]
+            per_call_policies=[CheckBatchURL("https://{}.table.{}".format(self.tables_storage_account_name, endpoint_suffix), "foo")]
         )
 
         assert table.account_name == self.tables_storage_account_name
-        assert table.url.startswith('https://' + self.tables_storage_account_name + '.table.core.windows.net')
-        with pytest.raises(RequestCorrect):
-            table.submit_transaction(self.batch)
-
-    def test_batch_url_with_connection_string_cosmos(self):
-        conn_string = 'DefaultEndpointsProtocol=https;AccountName={0};AccountKey={1};TableEndpoint=https://{0}.table.cosmos.azure.com:443/;'.format(
-            self.tables_storage_account_name, self.tables_primary_storage_account_key)
-        table = TableClient.from_connection_string(
-            conn_string,
-            table_name='foo',
-            per_call_policies=[CheckBatchURL("https://{}.table.cosmos.azure.com:443".format(self.tables_storage_account_name), "foo")]
-        )
-        assert table.account_name == self.tables_storage_account_name
-        assert table.url.startswith('https://' + self.tables_storage_account_name + '.table.cosmos.azure.com')
-        assert table.scheme == 'https'
-        with pytest.raises(RequestCorrect):
-            table.submit_transaction(self.batch)
-
-    def test_batch_url_with_connection_string_endpoint_protocol(self):
-        # Arrange
-        conn_string = 'AccountName={};AccountKey={};DefaultEndpointsProtocol=http;EndpointSuffix=core.chinacloudapi.cn;'.format(
-            self.tables_storage_account_name, self.tables_primary_storage_account_key)
-        table = TableClient.from_connection_string(
-            conn_string,
-            table_name="foo",
-            per_call_policies=[CheckBatchURL("http://{}.table.core.chinacloudapi.cn".format(self.tables_storage_account_name), "foo")]
-        )
-        assert table.account_name == self.tables_storage_account_name
-        assert table.scheme == 'http'
+        assert table.url.startswith('https://' + self.tables_storage_account_name + '.table.' + endpoint_suffix)
         with pytest.raises(RequestCorrect):
             table.submit_transaction(self.batch)
 
@@ -1223,11 +1149,12 @@ class TestBatchUnitTests(TableTestCase):
 
     def test_batch_url_with_complete_table_url(self):
         table_url = self.account_url(self.tables_storage_account_name, "table") + "/foo"
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
         table = TableClient(
             table_url,
             table_name='bar',
             credential=self.credential,
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net/foo".format(self.tables_storage_account_name), "bar")]
+            per_call_policies=[CheckBatchURL("https://{}.table.{}/foo".format(self.tables_storage_account_name, endpoint_suffix), "bar")]
         )
 
         assert table.scheme == 'https'
@@ -1238,12 +1165,13 @@ class TestBatchUnitTests(TableTestCase):
 
     def test_batch_url_with_complete_url(self):
         # Arrange
-        table_url = "https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name)
+        endpoint_suffix = os.getenv("TABLES_STORAGE_ENDPOINT_SUFFIX", DEFAULT_STORAGE_ENDPOINT_SUFFIX)
+        table_url = "https://{}.table.{}:443/foo".format(self.tables_storage_account_name, endpoint_suffix)
         table = TableClient(
             endpoint=table_url,
             table_name='bar',
             credential=self.credential,
-            per_call_policies=[CheckBatchURL("https://{}.table.core.windows.net:443/foo".format(self.tables_storage_account_name), "bar")]
+            per_call_policies=[CheckBatchURL("https://{}.table.{}:443/foo".format(self.tables_storage_account_name, endpoint_suffix), "bar")]
         )
 
         # Assert

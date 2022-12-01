@@ -16,10 +16,9 @@ USAGE:
     python sample_create_client.py
 
     Set the environment variables with your own values before running the sample:
-    1) AZURE_STORAGE_CONNECTION_STRING - the connection string to your storage account
-    2) AZURE_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
-    3) AZURE_STORAGE_ACCOUNT_NAME - the name of the storage account
-    4) AZURE_STORAGE_ACCESS_KEY - the storage account access key
+    1) TABLES_STORAGE_ENDPOINT_SUFFIX - the Table service account URL suffix
+    2) TABLES_STORAGE_ACCOUNT_NAME - the name of the storage account
+    3) TABLES_PRIMARY_STORAGE_ACCOUNT_KEY - the storage account access key
 """
 
 from dotenv import find_dotenv, load_dotenv
@@ -38,7 +37,7 @@ class CreateClients(object):
         )
 
     def create_table_client(self):
-        # Instantiate a TableServiceClient using a connection string
+        # Instantiate a TableClient using a connection string
         # [START create_table_client]
         from azure.data.tables import TableClient
 
@@ -54,7 +53,7 @@ class CreateClients(object):
         from azure.data.tables import TableServiceClient
         from azure.core.credentials import AzureNamedKeyCredential
 
-        credential = AzureNamedKeyCredential(self.account_name, self.access_key)
+        credential = AzureNamedKeyCredential(self.account_name, self.access_key) # type: ignore[arg-type]
         with TableServiceClient(endpoint=self.endpoint, credential=credential) as table_service:
             properties = table_service.get_service_properties()
             print("Properties: {}".format(properties))

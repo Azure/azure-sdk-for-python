@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 from .azure_recorded_testcase import AzureRecordedTestCase
 
+
 class AzureMgmtRecordedTestCase(AzureRecordedTestCase):
     """Test class for use by management-plane tests that use the azure-sdk-tools test proxy.
 

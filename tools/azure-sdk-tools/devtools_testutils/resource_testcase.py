@@ -11,7 +11,10 @@ import logging
 
 from azure_devtools.scenario_tests import AzureTestError, ReservedResourceNameError
 
-from azure.mgmt.resource import ResourceManagementClient
+try:
+    from azure.mgmt.resource import ResourceManagementClient
+except ImportError:
+    pass
 
 from . import AzureMgmtPreparer
 from .sanitizers import add_general_regex_sanitizer
@@ -63,7 +66,7 @@ class ResourceGroupPreparer(AzureMgmtPreparer):
         self.delete_after_tag_timedelta = delete_after_tag_timedelta
 
     def _prefix_name(self, name):
-        name = u"rgpy-" + name
+        name = "rgpy-" + name
         if len(name) > 90:
             name = name[:90]
         return name
