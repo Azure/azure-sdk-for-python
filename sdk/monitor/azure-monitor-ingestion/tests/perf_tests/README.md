@@ -49,5 +49,5 @@ The tests currently written for the T2 SDK:
 ## Example command
 
 ```cmd
-(env) ~/azure-monitor-ingestion/tests> perfstress UploadLogsTest --num-logs=1000
+(env) ~/azure-monitor-ingestion> perfstress UploadLogsTest --num-logs=1000
 ```
