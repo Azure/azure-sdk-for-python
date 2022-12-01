@@ -758,7 +758,7 @@ def _archive_or_restore(
             workspace_name=workspace_name,
         )
         version_resource.properties.is_archived = is_archived
-        version_operation.begin_create_or_update(
+        version_operation.begin_create_or_update( # pylint: disable=expression-not-assigned
             name=name,
             version=version,
             resource_group_name=resource_group_name,
@@ -770,7 +770,7 @@ def _archive_or_restore(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             body=version_resource,
-        ) # pylint: disable=expression-not-assigned
+        )
     else:
         container_resource = container_operation.get(
             name=name,
@@ -782,7 +782,7 @@ def _archive_or_restore(
             workspace_name=workspace_name,
         )
         container_resource.properties.is_archived = is_archived
-        container_operation.create_or_update(
+        container_operation.create_or_update( # pylint: disable=expression-not-assigned
             name=name,
             resource_group_name=resource_group_name,
             registry_name=registry_name,
@@ -792,7 +792,7 @@ def _archive_or_restore(
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             body=container_resource,
-            ) # pylint: disable=expression-not-assigned
+            )
 
 
 def _resolve_label_to_asset(
