@@ -16,7 +16,7 @@ from azure.ai.ml._scope_dependent_operations import (
 )
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
-from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
+from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId, parse_prefixed_name_version
 from azure.ai.ml._utils._endpoint_utils import upload_dependencies, validate_scoring_script
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -278,5 +278,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 azureml_type=AzureMLResourceType.COMPONENT
             )
             if not deployment.job_definition.name:
-                deployment.job_definition.name = deployment.job_definition.component.split(":")[0]
+                name, _ = parse_prefixed_name_version(deployment.job_definition.component)
+                deployment.job_definition.name = name
             deployment.job_definition.component_id = component_id

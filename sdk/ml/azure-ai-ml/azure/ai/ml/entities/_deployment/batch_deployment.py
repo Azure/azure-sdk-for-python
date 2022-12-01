@@ -236,7 +236,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             if deployment.properties.code_configuration
             else None
         )
-        deployment =  BatchDeployment(
+        deployment = BatchDeployment(
             name=deployment.name,
             description=deployment.properties.description,
             id=deployment.id,
