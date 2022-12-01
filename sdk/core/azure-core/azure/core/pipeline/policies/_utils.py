@@ -79,7 +79,7 @@ class DomainUtils:
     def __init__(self):
         self._original_domain = None
 
-    def subdomain_changed(self, url):
+    def domain_changed(self, url):
         subdomain = str(urlparse(url).netloc).lower()
         segments = subdomain.split('.')
         if len(segments) > 1:
