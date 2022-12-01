@@ -16,7 +16,7 @@
 - Support parallel-for pipeline with subgraph as body in Pipelines.
 - Additional includes support azure devops artifacts for Component.
 - Added component latest_version when running 'az ml component list -o table'.
-- Added support for fairfax and MoonCake cloud for the registry discovery baseurl.
+- Added support for Fairfax and MoonCake cloud for the registry discovery baseurl.
 - Added support for schedule in spark job.
 - Added support for foreach node in SDK & CLI.
 - Added support for variable args as pipeline input in DSL Pipeline.
