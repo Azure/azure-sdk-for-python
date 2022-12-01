@@ -31,7 +31,7 @@ class VersionedObject:
     ) -> None:
         self.code_model = code_model
         self.name = name
-        self.api_versions = []
+        self.api_versions = []  # api versions this object exists for
 
 
 T = TypeVar("T", bound=VersionedObject)
@@ -185,6 +185,14 @@ class OperationGroup(VersionedObject):
     @property
     def need_decorator(self) -> bool:
         return any(a for a in self.code_model.sorted_api_versions if a not in self.api_versions)
+
+    @property
+    def decorator(self) -> str:
+        return "\n".join([
+            "@api_version_validation(",
+            f"    api_versions={self.api_versions}",
+            ")"
+        ])
 
     def combine_operations(self) -> None:
         # chose api versions greater than when I was added
