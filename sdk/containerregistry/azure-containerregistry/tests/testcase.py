@@ -28,10 +28,10 @@ logger = logging.getLogger()
 
 
 class ContainerRegistryTestClass(AzureRecordedTestCase):
-    def sleep(self, t):
-        if self.is_live:
-            time.sleep(t)
-
+    def __init__(self) -> None:
+        super().__init__()
+        self.sleep(10)
+    
     def import_image(self, endpoint, repository, tags):
         # repository must be a docker hub repository
         # tags is a List of repository/tag combos in the format <repository>:<tag>
