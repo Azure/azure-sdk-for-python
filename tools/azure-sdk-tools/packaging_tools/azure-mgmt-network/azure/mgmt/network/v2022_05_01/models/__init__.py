@@ -405,9 +405,6 @@ from ._network_management_client_enums import CircuitConnectionStatus
 from ._network_management_client_enums import ConnectionMonitorSourceStatus
 from ._network_management_client_enums import ConnectionState
 from ._network_management_client_enums import ConnectionStatus
-from ._network_management_client_enums import DdosCustomPolicyProtocol
-from ._network_management_client_enums import DdosCustomPolicyTriggerSensitivityOverride
-from ._network_management_client_enums import DdosSettingsProtectionCoverage
 from ._network_management_client_enums import DhGroup
 from ._network_management_client_enums import Direction
 from ._network_management_client_enums import EffectiveRouteSource
@@ -885,9 +882,6 @@ __all__ = [
     "ConnectionMonitorSourceStatus",
     "ConnectionState",
     "ConnectionStatus",
-    "DdosCustomPolicyProtocol",
-    "DdosCustomPolicyTriggerSensitivityOverride",
-    "DdosSettingsProtectionCoverage",
     "DhGroup",
     "Direction",
     "EffectiveRouteSource",

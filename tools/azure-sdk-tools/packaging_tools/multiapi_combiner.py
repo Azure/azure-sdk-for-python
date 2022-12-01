@@ -46,54 +46,30 @@ def _combine_helper(
     sorted_api_versions: List[str],
     get_cls: Callable[["CodeModel", str, Optional[str]], T],
     get_names_by_api_version: Callable[[str], List[str]],
-    *,
-    sort: bool = True,
 ) -> List[T]:
     """Helper to combine operation groups, operations, and parameters"""
+
+    # objs is union of all operation groups we've seen
     objs: List[T] = [get_cls(code_model, name, None) for name in get_names_by_api_version(sorted_api_versions[0])]
+
+    curr_objs = [o for o in objs] # operation groups we see for our current api version
     for idx in range(1, len(sorted_api_versions)):
-        if sort:
-            objs = sorted(objs, key=lambda x: x.name)
-        curr_api_version = sorted_api_versions[idx]
-        curr_names = get_names_by_api_version(curr_api_version)
 
-        new_objs: List[T] = []
+        next_api_version = sorted_api_versions[idx]
+        next_names = get_names_by_api_version(next_api_version)
+        curr_obj_names = [obj.name for obj in curr_objs]
 
-        prev_counter = 0
-        curr_counter = 0
-        obj_names = [obj.name for obj in objs]
-        while prev_counter < len(obj_names) and curr_counter < len(curr_names):
-            if obj_names[prev_counter] != curr_names[curr_counter]:
-                removed = False
-                added = False
-                while prev_counter < len(obj_names) and obj_names[prev_counter] not in curr_names:
-                    if not objs[prev_counter].removed_on:
-                        removed = True
-                        objs[prev_counter].removed_on = curr_api_version
-                    prev_counter += 1
-                while curr_counter < len(curr_names) and curr_names[curr_counter] not in obj_names:
-                    if not any(o for o in new_objs if o.name == curr_names[curr_counter]):
-                        added = True
-                        new_objs.append(
-                            get_cls(
-                                code_model,
-                                curr_names[curr_counter],
-                                curr_api_version, # added on
-                            )
-                        )
-                    curr_counter += 1
-                    if removed and added:
-                        # in this case we consider it a replace
-                        objs[prev_counter - 1].replaced_by = curr_names[curr_counter - 1]
-            else:
-                prev_counter += 1
-                curr_counter += 1
-        new_objs.extend(
-            [  # add the remaining objs if there are any to new_objs
-                get_cls(code_model, name, curr_api_version) for name in curr_names[curr_counter + 1 :]
-            ]
-        )
+        removed_objs = [o for o in curr_objs if o.name not in next_names]
+        for ro in removed_objs:
+            if not ro.removed_on:
+                ro.removed_on = next_api_version
 
+        added_next_names = [n for n in next_names if n not in curr_obj_names]
+        new_objs: List[T] = [
+            get_cls(code_model, name, next_api_version) for name in added_next_names
+        ]
+        curr_objs = [o for o in objs if o.removed_on != next_api_version]
+        curr_objs.extend(new_objs)
         objs.extend(new_objs)
     return objs
 
@@ -174,7 +150,6 @@ class Operation(VersionedObject):
             sorted_api_versions=api_versions,
             get_cls=_get_parameter,
             get_names_by_api_version=_get_names_by_api_version,
-            sort=False,
         )
 
 
@@ -263,22 +238,24 @@ class CodeModel:
                 operation.combine_parameters()
 
         with open("errors.csv", "w") as fd:
-            fd.write("name,addedOn,removedOn,replacedBy\n")
+            fd.write("name,addedOn,removedOn\n")
         for operation_group in ogs:
             if operation_group.removed_on:
                 with open("errors.csv", "a") as fd:
-                    fd.write(f"{operation_group.name},{operation_group.added_on or self.sorted_api_versions[0]},{operation_group.removed_on},{operation_group.replaced_by or 'N/A'}\n")
+                    added_on = operation_group.added_on or self.sorted_api_versions[0]
+                    fd.write(f"{operation_group.name},{added_on},{operation_group.removed_on}\n")
                 continue
             for operation in operation_group.operations:
                 if operation.removed_on:
-                    with open("errors.txt", "a") as fd:
-                        fd.write(f"{operation_group.name}.{operation.name} removed on {operation.removed_on}\n")
+                    with open("errors.csv", "a") as fd:
+                        added_on = operation.added_on or operation_group.added_on or self.sorted_api_versions[0]
+                        fd.write(f"{operation_group.name}.{operation.name},{added_on},{operation.removed_on}\n")
                     continue
-                for parameter in operation.parameters:
-                    if parameter.removed_on:
-                        with open("errors.txt", "a") as fd:
-                            fd.write(f"{operation_group.name}.{operation.name}.{parameter.name} removed on {parameter.removed_on}\n")
-                        continue
+                # for parameter in operation.parameters:
+                #     if parameter.removed_on:
+                #         with open("errors.txt", "a") as fd:
+                #             fd.write(f"{operation_group.name}.{operation.name}.{parameter.name} removed on {parameter.removed_on}\n")
+                #         continue
         return ogs
 
 
