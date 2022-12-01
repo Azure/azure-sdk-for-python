@@ -7,6 +7,8 @@ from unittest.mock import patch
 
 import pydash
 import pytest
+
+from azure.ai.ml.dsl._utils import persistent_locals
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
@@ -2318,3 +2320,34 @@ class TestDSLPipeline:
 
         validate_result = pipeline_job._validate()
         assert validate_result.passed
+
+    def test_persistent_locals(self):
+        def mock_function(mock_arg):
+            mock_local_variable = 1
+            return mock_local_variable, mock_arg
+
+        def mock_error_exception():
+            mock_local_variable = 1
+            return mock_local_variable / 0
+
+        class MockClass:
+            def __init__(self, mock_arg):
+                self.mock_arg = mock_arg
+
+            def mock_func(self, arg):
+                result = self.mock_arg + arg
+                return result
+
+        persistent_func = persistent_locals(mock_function)
+        assert persistent_func(mock_arg=1) == (1, 1)
+        assert set(persistent_func._locals.keys()) == {'mock_arg', 'mock_local_variable'}
+
+        persistent_func = persistent_locals(mock_error_exception)
+        with pytest.raises(ZeroDivisionError):
+            persistent_func()
+        assert list(persistent_func._locals.keys()) == ['mock_local_variable']
+
+        mock_obj = MockClass(1)
+        persistent_func = persistent_locals(mock_obj.mock_func)
+        assert persistent_func(mock_obj, 1) == 2
+        assert set(persistent_func._locals.keys()) == {'result', 'arg', 'self'}

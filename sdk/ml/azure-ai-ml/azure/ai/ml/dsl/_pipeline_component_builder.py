@@ -4,11 +4,11 @@
 
 # pylint: disable=protected-access
 import copy
-import sys
+import inspect
 import typing
 from collections import OrderedDict
-from contextlib import contextmanager
 from inspect import Parameter, signature
+from types import FunctionType
 from typing import Callable, Union
 
 from azure.ai.ml._utils.utils import (
@@ -19,7 +19,7 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource, IOConstants
-from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
+from azure.ai.ml.dsl._utils import _sanitize_python_variable_name, persistent_locals
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
@@ -114,17 +114,6 @@ def get_func_variable_tracer(_locals_data, func_code):
     return tracer
 
 
-@contextmanager
-def replace_sys_profiler(profiler):
-    """A context manager which replaces sys profiler to given profiler."""
-    original_profiler = sys.getprofile()
-    sys.setprofile(profiler)
-    try:
-        yield
-    finally:
-        sys.setprofile(original_profiler)
-
-
 class PipelineComponentBuilder:
     # map from python built-in type to component type
     # pylint: disable=too-many-instance-attributes
@@ -203,17 +192,9 @@ class PipelineComponentBuilder:
             non_pipeline_inputs=non_pipeline_inputs
         )
         kwargs.update(non_pipeline_inputs_dict or {})
-        # We use this stack to store the dsl pipeline definition hierarchy
-        _definition_builder_stack.push(self)
 
         # Use a dict to store all variables in self.func
-        _locals = {}
-        func_variable_profiler = get_func_variable_tracer(_locals, self.func.__code__)
-        try:
-            with replace_sys_profiler(func_variable_profiler):
-                outputs = self.func(**kwargs)
-        finally:
-            _definition_builder_stack.pop()
+        outputs, _locals = self._get_outputs_and_locals(kwargs)
 
         if outputs is None:
             outputs = {}
@@ -234,6 +215,40 @@ class PipelineComponentBuilder:
         # exception will be raised in component.build_validate_io().
         pipeline_component._outputs = self._build_pipeline_outputs(outputs)
         return pipeline_component
+
+    def _get_outputs_and_locals(
+        self,
+        _all_kwargs: typing.Dict[str, typing.Any]
+    ) -> typing.Tuple[typing.Dict, typing.Dict]:
+        """Get outputs and locals from self.func.
+        Locals will be used to update node variable names.
+
+        :param _all_kwargs: All kwargs to call self.func.
+        :type _all_kwargs: typing.Dict[str, typing.Any]
+        :return: A tuple of outputs and locals.
+        :rtype: typing.Tuple[typing.Dict, typing.Dict]
+        """
+        # We use this stack to store the dsl pipeline definition hierarchy
+        _definition_builder_stack.push(self)
+
+        try:
+            func = self.func
+            if not isinstance(self.func, FunctionType):
+                # If user pass a callable class instance, we will try to get the __call__ method of it, which
+                # will have __code__.
+                # Maybe raise error here if the instance is not callable?
+                func = self.func.__call__
+
+            # Use bytecode injection to add try...finally around code to persistent the locals in the function.
+            persistent_func = persistent_locals(func)
+            if inspect.ismethod(func):
+                # When func is the method of class, it will set the object to params.
+                outputs = persistent_func(func.__self__, **_all_kwargs)
+            else:
+                outputs = persistent_func(**_all_kwargs)
+            return outputs, persistent_func._locals
+        finally:
+            _definition_builder_stack.pop()
 
     def _validate_group_annotation(self, name:str, val:GroupInput):
         for k, v in val.values.items():
