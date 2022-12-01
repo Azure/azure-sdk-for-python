@@ -277,4 +277,6 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
                 deployment.job_definition.component,
                 azureml_type=AzureMLResourceType.COMPONENT
             )
+            if not deployment.job_definition.name:
+                deployment.job_definition.name = deployment.job_definition.component.split(":")[0]
             deployment.job_definition.component_id = component_id

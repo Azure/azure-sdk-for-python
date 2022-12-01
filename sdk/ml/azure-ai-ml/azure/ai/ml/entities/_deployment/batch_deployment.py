@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as Rest
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml._utils.utils import is_private_preview_enabled
+from azure.ai.ml._utils.utils import is_private_preview_enabled, camel_to_snake
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
@@ -263,18 +263,30 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
 
         # Job definition is in private preview. If private preview environment is
         # not enable we need to remove job definition from properties.
-        if not is_private_preview_enabled():
-            del_key = []
+        if is_private_preview_enabled():
+            snake_dict = {}
             for k in deployment.properties:
                 if k.startswith("ComponentDeployment"):
-                    del_key.append(k)
-            if len(del_key) > 0:
-                for k in del_key:
-                    del deployment.properties[k]
-        else:
+                    k_array = k.split(".")
+                    k_snake_array = []
+                    for i in k_array:
+                        k_snake_array.append(camel_to_snake(i))
+                    k_snake = ".".join(k_snake_array)
+                    snake_dict[k_snake] = deployment.properties[k]
+            if len(snake_dict) > 0:
+                for k in snake_dict:
+                    deployment.properties[k] = snake_dict[k]
             unflat_data = unflatten(deployment.properties, ".")
             if unflat_data.get("component_deployment", None):
                 deployment.job_definition = unflat_data.get("component_deployment")
+
+        del_key = []
+        for k in deployment.properties:
+            if k.startswith("ComponentDeployment") or k.startswith("component_deployment"):
+                del_key.append(k)
+        if len(del_key) > 0:
+            for k in del_key:
+                del deployment.properties[k]
         return deployment
     @classmethod
     def _load(
@@ -319,3 +331,9 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
+
+    # def _convert_properties_to_snake_case(properties) -> None:
+    #     for k in properties:
+    #         if k.startswith("ComponentDeployment"):
+    #             k_snake = camel_to_snake(k)
+    #             properties[k_snake] = properties[k]
