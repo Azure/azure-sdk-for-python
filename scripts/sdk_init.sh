@@ -15,7 +15,7 @@ export VIRTUAL_ENV
 PATH="$VIRTUAL_ENV/bin:$PATH"
 export PATH
 echo "$PATH"
-python3.11 -m venv $TMPDIR/venv-sdk
+python3.10 -m venv $TMPDIR/venv-sdk
 python -m pip install -U pip
 python scripts/dev_setup.py -p azure-core
 
