@@ -7,7 +7,7 @@ from marshmallow import fields, post_dump, INCLUDE, EXCLUDE
 from azure.ai.ml._schema import NestedField, StringTransformedEnum, UnionField
 from azure.ai.ml._schema.component.component import ComponentSchema
 from azure.ai.ml._schema.core.fields import ArmVersionedStr, CodeField
-from azure.ai.ml.constants._common import AzureMLResourceType
+from azure.ai.ml.constants._common import AzureMLResourceType, LABELLED_RESOURCE_NAME
 
 from .environment import InternalEnvironmentSchema
 from .input_output import (
@@ -17,6 +17,7 @@ from .input_output import (
     InternalParameterSchema,
     InternalPrimitiveOutputSchema,
 )
+from ..._utils._arm_id_utils import parse_name_label
 
 
 class NodeType:
@@ -77,7 +78,8 @@ class InternalComponentSchema(ComponentSchema):
     # type field is required for registration
     type = StringTransformedEnum(
         allowed_values=NodeType.all_values(),
-        casing_transform=lambda x: x.rsplit("@", 1)[0],
+        casing_transform=lambda x: parse_name_label(x)[0],
+        pass_original=True,
     )
 
     # need to resolve as it can be a local field
@@ -121,4 +123,11 @@ class InternalComponentSchema(ComponentSchema):
             if "mode" in port_definition:
                 del port_definition["mode"]
 
+        return data
+
+    @post_dump(pass_original=True)
+    def add_back_type_label(self, data, original, **kwargs):  # pylint:disable=unused-argument, no-self-use
+        type_label = original._type_label  # pylint:disable=protected-access
+        if type_label:
+            data["type"] = LABELLED_RESOURCE_NAME.format(data['type'], type_label)
         return data
