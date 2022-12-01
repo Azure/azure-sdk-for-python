@@ -197,7 +197,7 @@ class TestComponent:
         for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum"]:
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
@@ -581,7 +581,7 @@ class TestComponent:
                 "param_bool": {"type": "boolean"},
                 "param_enum_cap": {"enum": ["minimal", "reuse", "expiry", "policies"], "type": "enum"},
                 "param_enum_with_int_values": {"default": "3", "enum": ["1", "2.0", "3", "4"], "type": "enum"},
-                "param_float": {"type": "float"},
+                "param_float": {"type": "float", "default": "0.15", "max": "1.0", "min": "-1.0"},
                 "param_int": {"type": "integer"},
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},
