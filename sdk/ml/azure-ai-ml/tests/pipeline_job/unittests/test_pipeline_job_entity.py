@@ -1467,7 +1467,7 @@ class TestPipelineJobEntity:
         assert "str_param" in rest_obj.properties.inputs
 
     def test_pipeline_input_as_runsettings_value(self, client: MLClient) -> None:
-        input_types_func = load_component(source=r"D:\Project\azure-sdk-for-python\sdk\ml\azure-ai-ml\tests/test_configs/components/input_types_component.yml")
+        input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
 
         @dsl.pipeline(
             default_compute="cpu-cluster",
