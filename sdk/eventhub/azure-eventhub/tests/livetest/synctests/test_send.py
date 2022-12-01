@@ -24,7 +24,8 @@ try:
     import uamqp
     from uamqp.constants import TransportType as uamqp_TransportType, MessageState
     from uamqp.message import MessageProperties
-except ImportError:
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
     uamqp_TransportType = TransportType
     MessageProperties = None
 from azure.eventhub._pyamqp.message import Properties

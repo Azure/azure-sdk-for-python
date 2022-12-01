@@ -13,8 +13,12 @@ from ._constants import TransportType
 if TYPE_CHECKING:
     from ._pyamqp.authentication import JWTTokenAuth
     from ._pyamqp._connection import Connection
-    from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
-    from uamqp import Connection as uamqp_Connection
+    try:
+        from uamqp.authentication import JWTTokenAuth as uamqp_JWTTokenAuth
+        from uamqp import Connection as uamqp_Connection
+    except ImportError:
+        uamqp_JWTTokenAuth = None
+        uamqp_Connection = None
     from ._transport._base import AmqpTransport
 
     try:

@@ -8,7 +8,10 @@ from typing import Tuple, Union, TYPE_CHECKING
 from typing_extensions import Literal
 
 if TYPE_CHECKING:
-    from uamqp import types as uamqp_types
+    try:
+        from uamqp import types as uamqp_types
+    except ImportError:
+        uamqp_types = None
 
 class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     """

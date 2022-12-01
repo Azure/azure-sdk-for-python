@@ -11,9 +11,9 @@ from packaging import version
 try:
     import uamqp
     from azure.eventhub._transport._uamqp_transport import UamqpTransport 
-except ImportError:
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
     UamqpTransport = None
-    pass
 from azure.eventhub._transport._pyamqp_transport import PyamqpTransport
 from azure.eventhub._pyamqp.message import Message, Properties, Header
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageHeader, AmqpMessageProperties

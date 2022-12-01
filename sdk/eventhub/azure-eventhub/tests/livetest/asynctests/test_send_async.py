@@ -10,7 +10,6 @@ import asyncio
 import pytest
 import time
 import json
-import uamqp
 
 from azure.eventhub import EventData, TransportType, EventDataBatch
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
@@ -25,7 +24,8 @@ try:
     import uamqp
     from uamqp.constants import TransportType as uamqp_TransportType, MessageState
     from uamqp.message import MessageProperties
-except ImportError:
+except (ModuleNotFoundError, ImportError):
+    uamqp = None
     uamqp_TransportType = TransportType
     MessageProperties = None
 from azure.eventhub._pyamqp.message import Properties

@@ -22,7 +22,7 @@ try:
     import uamqp
     uamqp_transport_params = [True, False]
     uamqp_transport_ids = ["uamqp", "pyamqp"]
-except ImportError:
+except (ModuleNotFoundError, ImportError):
     uamqp_transport_params = [False]
     uamqp_transport_ids = ["pyamqp"]
 
