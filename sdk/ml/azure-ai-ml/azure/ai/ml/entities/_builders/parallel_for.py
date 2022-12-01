@@ -67,22 +67,12 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # parallel for node shares output meta with body
         try:
             outputs = self.body._component.outputs
-        except AttributeError as e:
-            # when body output not available, parallel_for node outputs can not be created
-            raise UserErrorException("Failed to get body outputs definition.") from e
-
-        # transform body outputs to aggregate types
-        aggregate_outputs = {}
-        for name, output in outputs.items():
-            if output.type in self.OUT_TYPE_MAPPING:
-                new_type = self.OUT_TYPE_MAPPING[output.type]
-            else:
-                raise UserErrorException("Unsupported output type: {}.".format(output.type))
-            out_dict = output._to_dict()
-            out_dict["type"] = new_type
-            aggregate_outputs[name] = Output(**out_dict)
-
-        self._outputs = self._build_outputs_dict(output_definition_dict=aggregate_outputs, outputs={})
+            # transform body outputs to aggregate types when available
+            self._outputs = self._build_outputs_dict(output_definition_dict=self._convert_output_meta(outputs),
+                                                     outputs={})
+        except AttributeError:
+            # when body output not available, create default output builder without meta
+            self._outputs = self._build_outputs_dict_without_meta(outputs={}, none_data=True)
 
         self._items = items
         self._validate_items(raise_error=True)
@@ -130,6 +120,26 @@ class ParallelFor(LoopNode, NodeIOMixin):
         return cls(
             **loaded_data
         )
+
+    def _convert_output_meta(self, outputs):
+        """Convert output meta to aggregate types."""
+        # pylint: disable=protected-access
+        aggregate_outputs = {}
+        for name, output in outputs.items():
+            if output.type in self.OUT_TYPE_MAPPING:
+                new_type = self.OUT_TYPE_MAPPING[output.type]
+            else:
+                raise UserErrorException("Unsupported output type: {}.".format(output.type))
+            if isinstance(output, NodeOutput):
+                output = output._to_job_output()
+            if isinstance(output, Output):
+                out_dict = output._to_dict()
+                out_dict["type"] = new_type
+                resolved_output = Output(**out_dict)
+            else:
+                resolved_output = Output(type=new_type)
+            aggregate_outputs[name] = resolved_output
+        return aggregate_outputs
 
     def _validate_items(self, raise_error=True):
         validation_result = self._create_empty_validation_result()
