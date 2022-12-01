@@ -307,4 +307,4 @@ class TestParallelForPipelineUT(TestControlFlowPipelineUT):
 
         with pytest.raises(UserErrorException) as e:
             my_pipeline()
-        assert f"Unsupported output type: {out_type}" in str(e.value)
+        assert f"Referencing output with type {out_type} is not supported" in str(e.value)

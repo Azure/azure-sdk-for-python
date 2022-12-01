@@ -129,7 +129,9 @@ class ParallelFor(LoopNode, NodeIOMixin):
             if output.type in self.OUT_TYPE_MAPPING:
                 new_type = self.OUT_TYPE_MAPPING[output.type]
             else:
-                raise UserErrorException("Unsupported output type: {}.".format(output.type))
+                raise UserErrorException(
+                    "Referencing output with type {} is not supported in parallel_for node.".format(output.type)
+                )
             if isinstance(output, NodeOutput):
                 output = output._to_job_output()
             if isinstance(output, Output):
