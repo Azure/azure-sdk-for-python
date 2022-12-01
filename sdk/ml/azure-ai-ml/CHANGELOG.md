@@ -6,13 +6,15 @@
 - Added OS Patching Parameters to Compute Instance.
 
 ### Bugs Fixed
-- Fixed Sweep node not excluding optional input with value `None` in REST object. 
+- Fixed Sweep node not excluding optional input with value `None` in REST object.
 - Fixed bool test for output in download operation.
+- Fixed Compute Instance schedule not being created
+- Removed erroneous experimental warning from Compute Schedules
 
 ## 1.1.2 (2022-11-21)
 
 ### Features Added
-- Restored idle_time_before_shutdown property for Compute Instances. 
+- Restored idle_time_before_shutdown property for Compute Instances.
 - Deprecated idle_time_before_shutdown property in favor of idle_time_before_shutdown_minutes.
 
 ### Bugs Fixed
