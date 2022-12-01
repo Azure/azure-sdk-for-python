@@ -239,9 +239,9 @@ def get_rest_dict_for_node_attrs(target_obj, clear_empty_value=False):
     """Convert object to dict and convert OrderedDict to dict.
     Allow data binding expression as value, disregarding of the type defined in rest object.
     """
+    # pylint: disable=too-many-return-statements
     from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
-    # pylint: disable=too-many-return-statements
     if target_obj is None:
         return None
     if isinstance(target_obj, dict):
