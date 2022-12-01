@@ -9,9 +9,6 @@ import os
 import re
 import sys
 from pathlib import Path
-from types import MethodType, FunctionType
-
-from bytecode import Label, Instr, Bytecode
 
 from azure.ai.ml.dsl._constants import VALID_NAME_CHARS
 from azure.ai.ml.exceptions import ComponentException, ErrorCategory, ErrorTarget
@@ -178,96 +175,3 @@ def environment_variable_overwrite(key, val):
             os.environ[key] = backup_value
         else:
             os.environ.pop(key)
-
-
-def persistent_locals(func):
-    """
-    Use bytecode injection to add try...finally statement around code to persistent the locals in the function.
-
-    It will change the func bytecode like this:
-        def func(__self, *func_args):
-            try:
-               the func code...
-            finally:
-               __self._locals = locals().copy()
-               del __self._locals['__self']
-
-    You can get the locals in func by this code:
-        persistent_locals_func = persistent_locals(your_func)
-        # Execute your func
-        result = persistent_locals_func(*args)
-        # Get the locals in the func.
-        func_locals = persistent_locals_func._locals
-    """
-    bytecode = Bytecode.from_code(func.__code__)
-
-    # Add `try` at the begining of the code
-    finally_label = Label()
-    bytecode.insert(0, Instr("SETUP_FINALLY", finally_label))
-    # Add `final` at the end of the code
-    added_param = '__self'
-
-    copy_locals_instructions = [
-        # __self._locals = locals().copy()
-        Instr("LOAD_GLOBAL", 'locals'),
-        Instr("CALL_FUNCTION", 0),
-        Instr("LOAD_ATTR", 'copy'),
-        Instr("CALL_FUNCTION", 0),
-        Instr("LOAD_FAST", added_param),
-        Instr("STORE_ATTR", '_locals'),
-    ]
-
-    remove_param_instructions = [
-        # del __self._locals['__self']
-        Instr("LOAD_FAST", added_param),
-        Instr("LOAD_ATTR", '_locals'),
-        Instr("LOAD_CONST", added_param),
-        Instr("DELETE_SUBSCR"),
-    ]
-
-    if sys.version_info < (3, 8):
-        # python 3.6 and 3.7
-        bytecode.extend([finally_label] + copy_locals_instructions + remove_param_instructions +
-                        [Instr("END_FINALLY"), Instr("LOAD_CONST", None), Instr("RETURN_VALUE")])
-    elif sys.version_info < (3, 9):
-        # In python 3.8, add new instruction CALL_FINALLY
-        # https://docs.python.org/3.8/library/dis.html?highlight=call_finally#opcode-CALL_FINALLY
-        bytecode.insert(-1, Instr("CALL_FINALLY", finally_label))
-        bytecode.extend(
-            [finally_label] + copy_locals_instructions + remove_param_instructions +
-            [Instr("END_FINALLY"), Instr("LOAD_CONST", None), Instr("RETURN_VALUE")])
-    elif sys.version_info < (3, 10):
-        # In python 3.9, add new instruction RERAISE and CALL_FINALLY is removed.
-        # https://docs.python.org/3.9/library/dis.html#opcode-RERAISE
-        raise_error = Label()
-        extend_instructions = \
-            copy_locals_instructions + remove_param_instructions + \
-            [Instr("JUMP_FORWARD", raise_error), finally_label] + \
-            copy_locals_instructions + remove_param_instructions + [Instr("RERAISE"), raise_error]
-        bytecode[-1:-1] = extend_instructions
-    else:
-        # python 3.10
-        bytecode[-1:-1] = copy_locals_instructions + remove_param_instructions
-        bytecode.extend([finally_label] + copy_locals_instructions + remove_param_instructions + [Instr("RERAISE", 0)])
-    # Add __self to function args
-    bytecode.argnames.insert(0, added_param)
-    bytecode.argcount = bytecode.argcount + 1
-    code = bytecode.to_code()
-    func = FunctionType(code, func.__globals__, func.__name__, func.__defaults__, func.__closure__)
-    return PersistentLocalsFunction(func)
-
-
-class PersistentLocalsFunction(object):
-    """Wrapper class for the 'persistent_locals' decorator.
-
-    Refer to the docstring of instances for help about the wrapped
-    function.
-    """
-
-    def __init__(self, func):
-        self._locals = {}
-        # make function an instance method
-        self._func = MethodType(func, self)
-
-    def __call__(self, *args, **kwargs):
-        return self._func(*args, **kwargs)  # pylint: disable=not-callable

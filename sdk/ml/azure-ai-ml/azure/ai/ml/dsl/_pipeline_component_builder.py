@@ -8,9 +8,9 @@ import inspect
 import typing
 from collections import OrderedDict
 from inspect import Parameter, signature
-from types import FunctionType
 from typing import Callable, Union
 
+from azure.ai.ml._utils._func_utils import persistent_locals
 from azure.ai.ml._utils.utils import (
     get_all_enum_values_iter,
     is_private_preview_enabled,
@@ -19,7 +19,7 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._component import ComponentSource, IOConstants
-from azure.ai.ml.dsl._utils import _sanitize_python_variable_name, persistent_locals
+from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import ControlFlowNode
@@ -233,11 +233,6 @@ class PipelineComponentBuilder:
 
         try:
             func = self.func
-            if not isinstance(self.func, FunctionType):
-                # If user pass a callable class instance, we will try to get the __call__ method of it, which
-                # will have __code__.
-                # Maybe raise error here if the instance is not callable?
-                func = self.func.__call__
 
             # Use bytecode injection to add try...finally around code to persistent the locals in the function.
             persistent_func = persistent_locals(func)
