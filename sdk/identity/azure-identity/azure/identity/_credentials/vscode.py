@@ -147,7 +147,7 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
-            For more information about scopes, please visit
+            For more information about scopes, see
             https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
