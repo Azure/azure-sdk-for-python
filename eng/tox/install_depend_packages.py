@@ -44,7 +44,10 @@ MINIMUM_VERSION_GENERIC_OVERRIDES = {
 }
 
 # this array contains overrides ONLY IF the package being processed the key of each item
-MINIMUM_VERSION_SPECIFIC_OVERRIDES = {"azure-eventhub": {"azure-core": "1.25.0"}}
+MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
+    "azure-eventhub": {"azure-core": "1.25.0"},
+    "azure-eventhub-checkpointstoreblob-aio": {"azure-core": "1.25.0"},
+}
 
 MAXIMUM_VERSION_GENERIC_OVERRIDES = {"cryptography": "4.0.0"}
 
