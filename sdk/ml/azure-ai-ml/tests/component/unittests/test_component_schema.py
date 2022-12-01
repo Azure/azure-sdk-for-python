@@ -146,6 +146,9 @@ class TestCommandComponent:
         )
         assert component_dict == expected_dict
 
+        rest_component_resource = component_entity._to_rest_object()
+        assert rest_component_resource.properties.component_spec["inputs"] == expected_dict["inputs"]
+
     def test_override_params(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
         context = {
