@@ -6,7 +6,6 @@ from typing import Dict, Union
 
 from azure.ai.ml import Output
 from azure.ai.ml._schema import PathAwareSchema
-from azure.ai.ml._schema.component.input_output import SUPPORTED_PORT_TYPES, SUPPORTED_PARAM_TYPES
 from azure.ai.ml._schema.pipeline.control_flow_job import ParallelForSchema
 from azure.ai.ml._utils.utils import is_data_binding_expression
 from azure.ai.ml.constants import AssetTypes
@@ -34,6 +33,16 @@ class ParallelFor(LoopNode, NodeIOMixin):
         in parallel if not specified.
     :type max_concurrency: int
     """
+
+    OUT_TYPE_MAPPING = {
+        AssetTypes.URI_FILE: AssetTypes.MLTABLE,
+        AssetTypes.URI_FOLDER: AssetTypes.MLTABLE,
+        AssetTypes.MLTABLE: AssetTypes.MLTABLE,
+        ComponentParameterTypes.NUMBER: ComponentParameterTypes.STRING,
+        ComponentParameterTypes.STRING: ComponentParameterTypes.STRING,
+        ComponentParameterTypes.BOOLEAN: ComponentParameterTypes.STRING,
+        ComponentParameterTypes.INTEGER: ComponentParameterTypes.STRING,
+    }
 
     def __init__(
             self,
@@ -65,12 +74,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # transform body outputs to aggregate types
         aggregate_outputs = {}
         for name, output in outputs.items():
-            if output.type in SUPPORTED_PORT_TYPES:
-                new_type = AssetTypes.MLTABLE
-            elif output.type in SUPPORTED_PARAM_TYPES:
-                new_type = ComponentParameterTypes.STRING
+            if output.type in self.OUT_TYPE_MAPPING:
+                new_type = self.OUT_TYPE_MAPPING[output.type]
             else:
-                raise UserErrorException("Unsupported output type {}.".format(output.type))
+                raise UserErrorException("Unsupported output type: {}.".format(output.type))
             out_dict = output._to_dict()
             out_dict["type"] = new_type
             aggregate_outputs[name] = Output(**out_dict)
