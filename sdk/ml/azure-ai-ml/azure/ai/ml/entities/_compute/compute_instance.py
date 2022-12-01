@@ -354,7 +354,6 @@ class ComputeInstance(Compute):
         os_image_metadata = None
         if prop.properties and prop.properties.os_image_metadata:
             metadata = prop.properties.os_image_metadata
-            print(metadata)
             os_image_metadata = ImageMetadata(
                 is_latest_os_image_version=metadata.is_latest_os_image_version
                 if metadata.is_latest_os_image_version is not None
