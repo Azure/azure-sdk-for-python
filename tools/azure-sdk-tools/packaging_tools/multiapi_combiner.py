@@ -28,12 +28,10 @@ class VersionedObject:
         self,
         code_model: "CodeModel",
         name: str,
-        *,
-        added_on: Optional[str] = None,
     ) -> None:
         self.code_model = code_model
         self.name = name
-        self.added_on = added_on or ""
+        self.api_versions = []
         self.removed_on = ""
         self.replaced_by = ""
 
@@ -44,32 +42,32 @@ T = TypeVar("T", bound=VersionedObject)
 def _combine_helper(
     code_model: "CodeModel",
     sorted_api_versions: List[str],
-    get_cls: Callable[["CodeModel", str, Optional[str]], T],
+    get_cls: Callable[["CodeModel", str], T],
     get_names_by_api_version: Callable[[str], List[str]],
 ) -> List[T]:
     """Helper to combine operation groups, operations, and parameters"""
 
     # objs is union of all operation groups we've seen
-    objs: List[T] = [get_cls(code_model, name, None) for name in get_names_by_api_version(sorted_api_versions[0])]
+    objs: List[T] = [get_cls(code_model, name) for name in get_names_by_api_version(sorted_api_versions[0])]
+    for obj in objs:
+        obj.api_versions.append(sorted_api_versions[0])
 
-    curr_objs = [o for o in objs] # operation groups we see for our current api version
+    curr_objs = objs # operation groups we see for our current api version
     for idx in range(1, len(sorted_api_versions)):
 
         next_api_version = sorted_api_versions[idx]
         next_names = get_names_by_api_version(next_api_version)
         curr_obj_names = [obj.name for obj in curr_objs]
 
-        removed_objs = [o for o in curr_objs if o.name not in next_names]
-        for ro in removed_objs:
-            if not ro.removed_on:
-                ro.removed_on = next_api_version
+        existing_objs = [o for o in curr_objs if o.name in next_names]
 
         added_next_names = [n for n in next_names if n not in curr_obj_names]
         new_objs: List[T] = [
-            get_cls(code_model, name, next_api_version) for name in added_next_names
+            get_cls(code_model, name) for name in added_next_names
         ]
-        curr_objs = [o for o in objs if o.removed_on != next_api_version]
-        curr_objs.extend(new_objs)
+        curr_objs = existing_objs + new_objs
+        for obj in curr_objs:
+            obj.api_versions.append(next_api_version)
         objs.extend(new_objs)
     return objs
 
@@ -80,10 +78,8 @@ class Parameter(VersionedObject):
         code_model: "CodeModel",
         name: str,
         operation: "Operation",
-        *,
-        added_on: Optional[str] = None,
     ) -> None:
-        super().__init__(code_model, name, added_on=added_on)
+        super().__init__(code_model, name)
         self.operation = operation
 
 
@@ -93,10 +89,8 @@ class Operation(VersionedObject):
         code_model: "CodeModel",
         name: str,
         operation_group: "OperationGroup",
-        *,
-        added_on: Optional[str] = None,
     ) -> None:
-        super().__init__(code_model, name, added_on=added_on)
+        super().__init__(code_model, name)
         self.operation_group = operation_group
         self.parameters: List[Parameter] = []
 
@@ -129,21 +123,16 @@ class Operation(VersionedObject):
         # don't want api versions if my operation group isn't in them
         api_versions = [
             v for v in self.code_model.sorted_api_versions
-            if v >= self.operation_group.added_on and
-            v >= self.added_on
+            if v in self.operation_group.api_versions and v in self.api_versions
         ]
-        if self.operation_group.removed_on:
-            api_versions = [a for a in api_versions if a < self.operation_group.removed_on]
-        if self.removed_on:
-            api_versions = [a for a in api_versions if a < self.removed_on]
 
         def _get_names_by_api_version(api_version: str):
             op = self._get_op(api_version)
             # return retvals beside kwargs and the response
             return list(op.__annotations__.keys())[: len(op.__annotations__.keys()) - 2]
 
-        def _get_parameter(code_model: "CodeModel", name: str, added_on: Optional[str] = None) -> Parameter:
-            return Parameter(code_model, name, operation=self, added_on=added_on)
+        def _get_parameter(code_model: "CodeModel", name: str) -> Parameter:
+            return Parameter(code_model, name, operation=self)
 
         self.parameters = _combine_helper(
             code_model=self.code_model,
@@ -158,10 +147,8 @@ class OperationGroup(VersionedObject):
         self,
         code_model: "CodeModel",
         name: str,
-        *,
-        added_on: Optional[str] = None,
     ):
-        super().__init__(code_model, name=name, added_on=added_on)
+        super().__init__(code_model, name=name)
         self.operations: List[Operation] = []
         # self.generated_class = self._get_og(self.code_model.default_api_version)
         self.is_mixin = self.name.endswith("OperationsMixin")
@@ -172,16 +159,13 @@ class OperationGroup(VersionedObject):
 
     def combine_operations(self) -> None:
         # chose api versions greater than when I was added
-        api_versions = [v for v in self.code_model.sorted_api_versions if v >= self.added_on]
-        if self.removed_on:
-            api_versions = [a for a in api_versions if a < self.removed_on]
-
+        api_versions = [v for v in self.code_model.sorted_api_versions if v in self.api_versions]
         def _get_names_by_api_version(api_version: str):
             operation_group = self._get_og(api_version)
             return [d for d in dir(operation_group) if callable(getattr(operation_group, d)) and d[:2] != "__"]
 
-        def _get_operation(code_model: "CodeModel", name: str, added_on: Optional[str] = None) -> Operation:
-            return Operation(code_model, name, operation_group=self, added_on=added_on)
+        def _get_operation(code_model: "CodeModel", name: str) -> Operation:
+            return Operation(code_model, name, operation_group=self)
 
         self.operations = _combine_helper(
             code_model=self.code_model,
@@ -215,8 +199,8 @@ class CodeModel:
             curr_metadata = self.api_version_to_metadata[api_version]
             return sorted(curr_metadata["operation_groups"].values())
 
-        def _get_operation_group(code_model: "CodeModel", name: str, added_on: Optional[str] = None):
-            return OperationGroup(code_model, name, added_on=added_on)
+        def _get_operation_group(code_model: "CodeModel", name: str):
+            return OperationGroup(code_model, name)
 
         ogs = _combine_helper(
             code_model=self,
@@ -226,34 +210,29 @@ class CodeModel:
         )
         if initial_metadata.get("operation_mixins"):
             # we're going to assume mixins are never added / removed for now
-            ogs.append(
-                OperationGroup(
-                    code_model=self,
-                    name=f"{initial_metadata['client']['name']}OperationsMixin",
-                )
+            mixin = OperationGroup(
+                code_model=self,
+                name=f"{initial_metadata['client']['name']}OperationsMixin",
             )
+            mixin.api_versions = self.sorted_api_versions
+            ogs.append(mixin)
+
         for operation_group in ogs:
             operation_group.combine_operations()
             for operation in operation_group.operations:
                 operation.combine_parameters()
 
         with open("errors.csv", "w") as fd:
-            fd.write("name,addedOn,removedOn\n")
+            fd.write("name,apiVersions\n")
         for operation_group in ogs:
-            operation_group_added_on = operation_group.added_on
             with open("errors.csv", "a") as fd:
-                added_on = operation_group_added_on or self.sorted_api_versions[0]
-                fd.write(f"{operation_group.name},{added_on},{operation_group.removed_on or 'N/A'}\n")
+                fd.write(f"{operation_group.name},{operation_group.api_versions}\n")
             for operation in operation_group.operations:
-                operation_added_on = operation.added_on or operation_group_added_on
                 with open("errors.csv", "a") as fd:
-                    added_on = operation_added_on or self.sorted_api_versions[0]
-                    fd.write(f"{operation_group.name}.{operation.name},{added_on},{operation.removed_on or 'N/A'}\n")
+                    fd.write(f"{operation_group.name}.{operation.name},{operation.api_versions}\n")
                 for parameter in operation.parameters:
-                    parameter_added_on = parameter.added_on or operation_added_on
                     with open("errors.csv", "a") as fd:
-                        added_on = parameter_added_on or self.sorted_api_versions[0]
-                        fd.write(f"{operation_group.name}.{operation.name}.{parameter.name},{added_on},{parameter.removed_on or 'N/A'}\n")
+                        fd.write(f"{operation_group.name}.{operation.name}.{parameter.name},{parameter.api_versions}\n")
         return ogs
 
 
