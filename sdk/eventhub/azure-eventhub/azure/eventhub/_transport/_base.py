@@ -7,7 +7,10 @@ from typing import Tuple, Union, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
 if TYPE_CHECKING:
-    from uamqp import types as uamqp_types
+    try:
+        from uamqp import types as uamqp_types
+    except ImportError:
+        uamqp_types = None
 
 class AmqpTransport(ABC):   # pylint: disable=too-many-public-methods
     """

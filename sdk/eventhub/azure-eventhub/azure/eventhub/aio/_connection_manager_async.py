@@ -14,8 +14,12 @@ if TYPE_CHECKING:
     from .._pyamqp.aio._authentication_async import JWTTokenAuthAsync
     from .._pyamqp.aio._connection_async import Connection as ConnectionAsync
     from ._transport._base_async import AmqpTransportAsync
-    from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
-    from uamqp.async_ops import ConnectionAsync as uamqp_ConnectionAsync
+    try:
+        from uamqp.authentication import JWTTokenAsync as uamqp_JWTTokenAuthAsync
+        from uamqp.async_ops import ConnectionAsync as uamqp_ConnectionAsync
+    except ImportError:
+        uamqp_JWTTokenAuthAsync = None
+        uamqp_ConnectionAsync = None
 
     try:
         from typing_extensions import Protocol
