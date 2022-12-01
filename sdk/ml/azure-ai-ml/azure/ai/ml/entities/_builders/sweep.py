@@ -153,15 +153,18 @@ class Sweep(ParameterizedSweep, BaseNode):
     @property
     def search_space(self):
         return self._search_space
-    
+
     @search_space.setter
     def search_space(self, values: Dict[str, Dict[str, Union[str, int, float, dict]]]):
+        """Support using dict to initialize search_space attribute value."""
         search_space = {}
         for name, value in values.items():
+            """If value is a SearchSpace object, directly pass it to job.search_space[name]"""
             search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
         self._search_space = search_space
 
-    def _value_type_to_class(self, value):
+    @classmethod
+    def _value_type_to_class(cls, value):
         value_type = value['type']
         search_space_dict = {
             SearchSpace.CHOICE: Choice, SearchSpace.RANDINT: Randint, SearchSpace.LOGNORMAL: LogNormal,
@@ -170,7 +173,7 @@ class Sweep(ParameterizedSweep, BaseNode):
             SearchSpace.QUNIFORM: QUniform
         }
         return search_space_dict[value_type](**value)
-    
+
     @classmethod
     def _get_supported_inputs_types(cls):
         supported_types = super()._get_supported_inputs_types() or ()

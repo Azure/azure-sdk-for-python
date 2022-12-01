@@ -253,6 +253,10 @@ class Command(BaseNode):
                                 ManagedIdentityConfiguration,
                                 AmlTokenConfiguration,
                                 UserIdentityConfiguration, None]):
+        """Support using dict to initialize identity.
+        :return: Identity attribute value logged in job.
+        :rtype: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
+        """
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [
@@ -263,7 +267,7 @@ class Command(BaseNode):
             )
             value = identify_schema._deserialize(value=value, attr=None, data=None)
         self._identity = value
-        
+
     @property
     def services(self) -> Dict:
         return self._services

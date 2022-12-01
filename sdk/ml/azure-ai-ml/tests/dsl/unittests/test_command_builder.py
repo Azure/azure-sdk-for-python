@@ -970,3 +970,32 @@ class TestCommandFunction:
                 "type": "command",
             }
         }
+
+    def test_set_identity(self, test_command):
+        from azure.ai.ml.entities._credentials import AmlTokenConfiguration
+        node1 = test_command()
+        node2 = node1()
+        node2.identity = AmlTokenConfiguration()
+        node3 = node1()
+        node3.identity = {'type': 'AMLToken'}
+        assert node2.identity == node3.identity
+
+    def test_sweep_set_search_space(self, test_command):
+        from azure.ai.ml.entities._job.sweep.search_space import Choice
+        node1 = test_command()
+        command_node_to_sweep_1 = node1()
+        sweep_node_1 = command_node_to_sweep_1.sweep(
+            primary_metric="AUC",
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_node_1.search_space = {'batch_size': {'type': 'choice', 'values': [25, 35]}}
+
+        command_node_to_sweep_2 = node1()
+        sweep_node_2 = command_node_to_sweep_2.sweep(
+            primary_metric="AUC",
+            goal="maximize",
+            sampling_algorithm="random",
+        )
+        sweep_node_2.search_space = {'batch_size': Choice(values=[25, 35])}
+        assert sweep_node_1.search_space == sweep_node_2.search_space
