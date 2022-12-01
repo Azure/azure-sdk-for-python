@@ -474,7 +474,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "outputs": {
                 "pipeline_job_out": {
                     "mode": "ReadWriteMount",
-                    "job_output_type": "uri_folder",
+                    "job_output_type": "mlflow_model",
                 }
             },
             "settings": {},

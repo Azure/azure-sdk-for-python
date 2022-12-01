@@ -2120,7 +2120,7 @@ class TestDSLPipeline:
 
             pipeline_with_variable_args(1, 2, 3)
 
-        with mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: 'false'}):
+        with mock.patch("azure.ai.ml.dsl._pipeline_decorator.is_private_preview_enabled", return_value=False):
             with pytest.raises(UnsupportedParameterKindError,
                                match="dsl pipeline does not accept \*args or \*\*kwargs as parameters\."):
                 root_pipeline(10, data, 11, data, component_in_number1=11, component_in_path1=data)
