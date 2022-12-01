@@ -1,11 +1,5 @@
 # Release History
 
-## 1.3.0 (Unreleased)
-
-### Bugs Fixed
-- Removed erroneous experimental warning from Compute Schedules.
-- 
-
 ## 1.2.0 (Unreleased)
 
 ### Features Added
@@ -14,6 +8,7 @@
 ### Bugs Fixed
 - Fixed Sweep node not excluding optional input with value `None` in REST object. 
 - Fixed bool test for output in download operation.
+- Fixed Compute Instance schedule not being created  
 
 ## 1.1.2 (2022-11-21)
 
