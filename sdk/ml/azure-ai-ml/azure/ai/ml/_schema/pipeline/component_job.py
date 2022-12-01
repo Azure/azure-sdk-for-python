@@ -123,8 +123,8 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
         ],
         required=True,
     )
-    # code is directly linked to component.code, so no need to validate it
-    code = fields.Str(allow_none=True)
+    # code is directly linked to component.code, so no need to validate or dump it
+    code = fields.Str(allow_none=True, load_only=True)
     type = StringTransformedEnum(allowed_values=[NodeType.COMMAND])
     compute = ComputeField()
     # do not promote it as CommandComponent has no field named 'limits'
@@ -171,13 +171,6 @@ class CommandSchema(BaseNodeSchema, ParameterizedCommandSchema):
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
-
-    @post_dump
-    def resolve_code_path(self, data, **kwargs):
-        # component.code has been rebased from component.base_path to base_path, need to set current code to it.
-        if "component" in data and "code" in data["component"]:
-            data["code"] = data["component"]["code"]
-        return data
 
 
 class SweepSchema(BaseNodeSchema, ParameterizedSweepSchema):
@@ -323,6 +316,9 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
         ]
     )
 
+    # code is directly linked to component.code, so no need to validate or dump it
+    code = fields.Str(allow_none=True, load_only=True)
+
     @post_load
     def make(self, data, **kwargs) -> "Spark":
         from azure.ai.ml.entities._builders import parse_inputs_outputs
@@ -341,10 +337,3 @@ class SparkSchema(BaseNodeSchema, ParameterizedSparkSchema):
     @pre_dump
     def resolve_inputs_outputs(self, job, **kwargs):
         return _resolve_inputs_outputs(job)
-
-    @post_dump
-    def resolve_code_path(self, data, **kwargs):
-        # component.code has been rebased from component.base_path to base_path, need to set current code to it.
-        if "component" in data and "code" in data["component"]:
-            data["code"] = data["component"]["code"]
-        return data

@@ -194,7 +194,6 @@ class TestPipelineJobValidate:
         code_path = "./tests/test_configs/python"
         pipeline_job_dict = pipeline_job._to_dict()
         # return rebased path after serialization
-        assert_the_same_path(pipeline_job_dict["jobs"]["command_node"]["code"], code_path)
         assert_the_same_path(pipeline_job_dict["jobs"]["command_node"]["component"]["code"], code_path)
         assert_the_same_path(
             pipeline_job_dict["jobs"]["command_node"]["component"]["environment"]["build"]["path"],
