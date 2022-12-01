@@ -6,7 +6,7 @@
 
 ### Breaking Changes
 
-- Replaced `validate_authority` with `known_authority_hosts`. Now instead of setting validate_authority=False to disable authority validation, you need to explicitly specify your custom authority host(s) as known_authority_hosts.
+- Replaced `validate_authority` with `instance_discovery`. Now instead of setting validate_authority=False to disable authority validation and instance discovery, you need to use instance_discovery=False.
 
 ### Bugs Fixed
 
