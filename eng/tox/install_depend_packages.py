@@ -111,7 +111,6 @@ def check_pkg_against_overrides(pkg_specifier: str) -> List[str]:
         special_case_specifiers = SPECIAL_CASE_OVERRIDES[target_package]
 
         for specifier_set in special_case_specifiers.keys():
-            pdb.set_trace()
             spec = SpecifierSet(specifier_set)
             if target_version in spec:
                 additional_installs.extend(special_case_specifiers[specifier_set])
