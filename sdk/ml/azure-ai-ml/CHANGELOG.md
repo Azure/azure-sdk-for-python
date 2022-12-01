@@ -1,6 +1,6 @@
 # Release History
 
-## 1.2.0 (Unreleased)
+## 1.2.0 (2022-12-05)
 
 ### Features Added
 - Added OS Patching Parameters to Compute Instance.
@@ -8,7 +8,8 @@
 ### Bugs Fixed
 - Fixed Sweep node not excluding optional input with value `None` in REST object. 
 - Fixed bool test for output in download operation.
-- Fixed Compute Instance schedule not being created  
+- Fixed Compute Instance schedule not being created
+- Removed erroneous experimental warning from Compute Schedules
 
 ## 1.1.2 (2022-11-21)
 
