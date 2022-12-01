@@ -43,6 +43,8 @@ def request_file() -> str:
 
 
 @pytest.mark.e2etest
+# TODO: Re-enable these tests
+# @pytest.mark.skip(reason="Docker issues in CI")
 @pytest.mark.local_endpoint_local_assets
 class TestLocalEndpoint(AzureRecordedTestCase):
     def test_local_endpoint_mir_e2e(
