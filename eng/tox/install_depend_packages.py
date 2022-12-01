@@ -169,7 +169,7 @@ def process_requirement(req, dependency_type, orig_pkg_name):
             versions = [
                 v
                 for v in versions
-                if parse_version(v) >= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
+                if parse_version(v) <= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
             ]
 
     # Search from lowest to latest in case of finding minimum dependency
