@@ -20,17 +20,28 @@ class UploadLogsTest(PerfStressTest):
         self.data_collection_rule_id = self.get_from_env("AZURE_MONITOR_DCR_ID")
         self.data_collection_endpoint = self.get_from_env("AZURE_MONITOR_DCE")
         self.stream_name = self.get_from_env("AZURE_MONITOR_STREAM_NAME")
+        self.credential = DefaultAzureCredential()
+        self.async_credential = AsyncDefaultAzureCredential()
 
         # Create clients
         self.client = LogsIngestionClient(
             endpoint=self.data_collection_endpoint,
-            credential=DefaultAzureCredential()
+            credential=self.credential
         )
         self.async_client = AsyncLogsIngestionClient(
             endpoint=self.data_collection_endpoint,
-            credential=AsyncDefaultAzureCredential()
+            credential=self.async_credential
         )
 
+    async def close(self):
+        self.client.close()
+        self.credential.close()
+        await self.async_client.close()
+        await self.async_credential.close()
+        await super().close()
+
+    async def setup(self):
+        await super().setup()
         # Create log entries to upload
         # TODO: Parameterize the size of each log entry
         self.logs = []
@@ -40,11 +51,6 @@ class UploadLogsTest(PerfStressTest):
                 "Computer": f"Computer {i}",
                 "AdditionalContext": "some additional context"
             })
-
-    async def close(self):
-        self.client.close()
-        await self.async_client.close()
-        await super().close()
 
     @staticmethod
     def add_arguments(parser):

@@ -22,8 +22,7 @@ AZURE_MONITOR_STREAM_NAME=<The data collection stream name>
 ## Test commands
 
 ```cmd
-(env) ~/azure-monitor-ingestion> cd tests
-(env) ~/azure-monitor-ingestion/tests> perfstress
+(env) ~/azure-monitor-ingestion> perfstress
 ```
 
 ### Common perf command line options
