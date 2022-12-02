@@ -23,6 +23,10 @@ from azure.monitor.opentelemetry.exporter.export.trace._exporter import (
     _check_instrumentation_span,
     _get_trace_export_result,
 )
+from azure.monitor.opentelemetry.exporter._constants import (
+    _AZURE_SDK_NAMESPACE_NAME,
+    _AZURE_SDK_OPENTELEMETRY_NAME,
+)
 from azure.monitor.opentelemetry.exporter._utils import azure_monitor_context
 
 
@@ -1275,6 +1279,7 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
 
     def test_check_instrumentation_span(self):
         span = mock.Mock()
+        span.attributes = {}
         span.instrumentation_scope.name = "opentelemetry.instrumentation.test"
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
@@ -1284,9 +1289,20 @@ class TestAzureTraceExporterUtils(unittest.TestCase):
 
     def test_check_instrumentation_span_not_instrumentation(self):
         span = mock.Mock()
+        span.attributes = {}
         span.instrumentation_scope.name = "__main__"
         with mock.patch(
             "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
         ) as add:
             _check_instrumentation_span(span)
             add.assert_not_called()
+
+    def test_check_instrumentation_span_azure_sdk(self):
+        span = mock.Mock()
+        span.attributes = {_AZURE_SDK_NAMESPACE_NAME: "Microsoft.EventHub"}
+        span.instrumentation_scope.name = "__main__"
+        with mock.patch(
+            "azure.monitor.opentelemetry.exporter._utils.add_instrumentation"
+        ) as add:
+            _check_instrumentation_span(span)
+            add.assert_called_once_with(_AZURE_SDK_OPENTELEMETRY_NAME)

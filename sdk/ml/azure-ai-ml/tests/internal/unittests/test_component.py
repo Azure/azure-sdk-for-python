@@ -189,19 +189,15 @@ class TestComponent:
         entity = load_component(yaml_path)
 
         expected_dict = copy.deepcopy(yaml_dict)
-        type_value = (
-            expected_dict["type"].rsplit("@", 1)[0]
-            if expected_dict["type"].endswith("@1-legacy")
-            else expected_dict["type"]
-        )
-        pydash.set_(expected_dict, "type", type_value)
+
+        # Linux is the default value of os in InternalEnvironment
         if "environment" in expected_dict:
             expected_dict["environment"]["os"] = "Linux"
 
         for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum"]:
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
@@ -221,6 +217,17 @@ class TestComponent:
         assert InternalComponent._from_rest_object(rest_obj)._to_dict() == expected_dict
         result = entity._validate()
         assert result._to_dict() == {"result": "Succeeded"}
+
+    @pytest.mark.parametrize(
+        "yaml_path,label",
+        [
+            ("preview_command_component.yaml", "1-preview"),
+            ("legacy_distributed_component.yaml", "1-legacy"),
+        ]
+    )
+    def test_command_mode_command_component(self, yaml_path: str, label: str):
+        component = load_component("./tests/test_configs/internal/command-mode/{}".format(yaml_path))
+        assert component._to_rest_object().properties.component_spec["type"] == f"{component.type}@{label}"
 
     def test_ipp_component_serialization(self):
         yaml_path = "./tests/test_configs/internal/ipp-component/spec.yaml"
@@ -574,7 +581,7 @@ class TestComponent:
                 "param_bool": {"type": "boolean"},
                 "param_enum_cap": {"enum": ["minimal", "reuse", "expiry", "policies"], "type": "enum"},
                 "param_enum_with_int_values": {"default": "3", "enum": ["1", "2.0", "3", "4"], "type": "enum"},
-                "param_float": {"type": "float"},
+                "param_float": {"type": "float", "default": "0.15", "max": "1.0", "min": "-1.0"},
                 "param_int": {"type": "integer"},
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},

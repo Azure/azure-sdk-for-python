@@ -53,6 +53,7 @@ class StringTransformedEnum(Field):
         # pop marshmallow unknown args to avoid warnings
         self.allowed_values = kwargs.pop("allowed_values", None)
         self.casing_transform = kwargs.pop("casing_transform", lambda x: x.lower())
+        self.pass_original = kwargs.pop("pass_original", False)
         super().__init__(**kwargs)
         if isinstance(self.allowed_values, str):
             self.allowed_values = [self.allowed_values]
@@ -70,12 +71,12 @@ class StringTransformedEnum(Field):
         if not value:
             return
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return self.casing_transform(value)
+            return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return self.casing_transform(value)
+            return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
 
