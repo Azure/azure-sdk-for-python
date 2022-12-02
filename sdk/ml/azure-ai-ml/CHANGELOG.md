@@ -1,10 +1,14 @@
 # Release History
 
+## 1.2.1 (Unreleased)
+
+### Features Added
+- Change print behavior of various entity classes to match CLI `show` behavior.
+
 ## 1.2.0 (2022-12-05)
 
 ### Features Added
 - Added OS Patching Parameters to Compute Instance.
-- Change print behavior of various entity classes to match CLI `show` behavior.
 
 ### Bugs Fixed
 - Fixed Sweep node not excluding optional input with value `None` in REST object. 
