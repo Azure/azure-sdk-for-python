@@ -27,17 +27,18 @@ class PersistentLocalsFunction(object):
         self._func = MethodType(_func, self)
         self._skip_locals = skip_locals
 
-    def __call__(self, *args, **kwargs):
-        self.locals.clear()
+    def __call__(__self, *args, **kwargs):  # pylint: disable=no-self-argument
+        # Use __self in case self is also passed as a named argument in kwargs
+        __self.locals.clear()
         try:
-            if self._self:
-                return self._func(self._self, *args, **kwargs)  # pylint: disable=not-callable
-            return self._func(*args, **kwargs)  # pylint: disable=not-callable
+            if __self._self:
+                return __self._func(__self._self, *args, **kwargs)  # pylint: disable=not-callable
+            return __self._func(*args, **kwargs)  # pylint: disable=not-callable
         finally:
             # always pop skip locals even if exception is raised in user code
-            if self._skip_locals is not None:
-                for skip_local in self._skip_locals:
-                    self.locals.pop(skip_local, None)
+            if __self._skip_locals is not None:
+                for skip_local in __self._skip_locals:
+                    __self.locals.pop(skip_local, None)
 
 
 def _source_template_func(mock_arg):

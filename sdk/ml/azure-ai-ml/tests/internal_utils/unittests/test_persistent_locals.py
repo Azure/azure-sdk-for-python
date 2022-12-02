@@ -45,9 +45,9 @@ class TestPersistentLocals:
         assert persistent_func(mock_arg=1) == (1, 1)
         assert set(persistent_func.locals.keys()) == {'mock_arg', 'mock_local_variable'}
 
-    def test_func_with_self(self):
+    def test_func_with_named_self_argument(self):
         persistent_func = persistent_locals(mock_function_with_self)
-        assert persistent_func(1) == 1
+        assert persistent_func(self=1) == 1
         assert set(persistent_func.locals.keys()) == {'self'}
 
     def test_raise_exception(self):
