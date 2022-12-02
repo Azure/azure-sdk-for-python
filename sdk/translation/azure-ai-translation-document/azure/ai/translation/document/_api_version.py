@@ -24,6 +24,6 @@ def validate_api_version(api_version: str) -> None:
     except ValueError:
         raise ValueError(
             "Unsupported API version '{}'. Please select from:\n{}".format(
-                api_version, ", ".join(v.value for v in DocumentTranslationApiVersion)
+                api_version, ", ".join(v.value for v in DocumentTranslationApiVersion)  # type: ignore
             )
         )

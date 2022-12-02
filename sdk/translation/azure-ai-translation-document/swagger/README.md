@@ -21,6 +21,7 @@ credential-scopes: https://cognitiveservices.azure.com/.default
 no-namespace-folders: true
 python: true
 python-sdks-folder: $(python-sdks-folder)
+models-mode: msrest
 ```
 
 

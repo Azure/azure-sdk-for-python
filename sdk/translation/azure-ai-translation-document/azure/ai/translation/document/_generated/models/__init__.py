@@ -6,70 +6,50 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 
-try:
-    from ._models_py3 import BatchRequest
-    from ._models_py3 import DocumentFilter
-    from ._models_py3 import DocumentStatus
-    from ._models_py3 import DocumentsStatus
-    from ._models_py3 import FileFormat
-    from ._models_py3 import Glossary
-    from ._models_py3 import InnerTranslationError
-    from ._models_py3 import SourceInput
-    from ._models_py3 import StartTranslationDetails
-    from ._models_py3 import StatusSummary
-    from ._models_py3 import SupportedFileFormats
-    from ._models_py3 import SupportedStorageSources
-    from ._models_py3 import TargetInput
-    from ._models_py3 import TranslationError
-    from ._models_py3 import TranslationErrorResponse
-    from ._models_py3 import TranslationStatus
-    from ._models_py3 import TranslationsStatus
-except (SyntaxError, ImportError):
-    from ._models import BatchRequest  # type: ignore
-    from ._models import DocumentFilter  # type: ignore
-    from ._models import DocumentStatus  # type: ignore
-    from ._models import DocumentsStatus  # type: ignore
-    from ._models import FileFormat  # type: ignore
-    from ._models import Glossary  # type: ignore
-    from ._models import InnerTranslationError  # type: ignore
-    from ._models import SourceInput  # type: ignore
-    from ._models import StartTranslationDetails  # type: ignore
-    from ._models import StatusSummary  # type: ignore
-    from ._models import SupportedFileFormats  # type: ignore
-    from ._models import SupportedStorageSources  # type: ignore
-    from ._models import TargetInput  # type: ignore
-    from ._models import TranslationError  # type: ignore
-    from ._models import TranslationErrorResponse  # type: ignore
-    from ._models import TranslationStatus  # type: ignore
-    from ._models import TranslationsStatus  # type: ignore
+from ._models import BatchRequest
+from ._models import DocumentFilter
+from ._models import DocumentStatus
+from ._models import FileFormat
+from ._models import Glossary
+from ._models import InnerTranslationError
+from ._models import SourceInput
+from ._models import StartTranslationDetails
+from ._models import StatusSummary
+from ._models import SupportedFileFormats
+from ._models import SupportedStorageSources
+from ._models import TargetInput
+from ._models import TranslationError
+from ._models import TranslationErrorResponse
+from ._models import TranslationStatus
 
-from ._batch_document_translation_client_enums import (
-    Status,
-    StorageInputType,
-    StorageSource,
-    TranslationErrorCode,
-)
+from ._enums import Status
+from ._enums import StorageInputType
+from ._enums import StorageSource
+from ._enums import TranslationErrorCode
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'BatchRequest',
-    'DocumentFilter',
-    'DocumentStatus',
-    'DocumentsStatus',
-    'FileFormat',
-    'Glossary',
-    'InnerTranslationError',
-    'SourceInput',
-    'StartTranslationDetails',
-    'StatusSummary',
-    'SupportedFileFormats',
-    'SupportedStorageSources',
-    'TargetInput',
-    'TranslationError',
-    'TranslationErrorResponse',
-    'TranslationStatus',
-    'TranslationsStatus',
-    'Status',
-    'StorageInputType',
-    'StorageSource',
-    'TranslationErrorCode',
+    "BatchRequest",
+    "DocumentFilter",
+    "DocumentStatus",
+    "FileFormat",
+    "Glossary",
+    "InnerTranslationError",
+    "SourceInput",
+    "StartTranslationDetails",
+    "StatusSummary",
+    "SupportedFileFormats",
+    "SupportedStorageSources",
+    "TargetInput",
+    "TranslationError",
+    "TranslationErrorResponse",
+    "TranslationStatus",
+    "Status",
+    "StorageInputType",
+    "StorageSource",
+    "TranslationErrorCode",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

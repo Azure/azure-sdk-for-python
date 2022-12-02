@@ -177,7 +177,7 @@ class TranslationTarget:
                 self.target_url,
                 self.language,
                 self.category_id,
-                self.glossaries.__repr__(),
+                repr(self.glossaries),
                 self.storage_source,
             )[:1024]
         )
@@ -278,9 +278,9 @@ class DocumentTranslationInput:
             "source_language={}, storage_type={}, "
             "storage_source={}, prefix={}, suffix={})".format(
                 self.source_url,
-                self.targets.__repr__(),
+                repr(self.targets),
                 self.source_language,
-                self.storage_type.__repr__(),
+                repr(self.storage_type),
                 self.storage_source,
                 self.prefix,
                 self.suffix,
@@ -379,7 +379,7 @@ class TranslationStatus:  # pylint: disable=too-many-instance-attributes
                 self.created_on,
                 self.last_updated_on,
                 self.status,
-                self.error.__repr__(),
+                repr(self.error),
                 self.documents_total_count,
                 self.documents_failed_count,
                 self.documents_succeeded_count,
@@ -478,7 +478,7 @@ class DocumentStatus:
                 self.last_updated_on,
                 self.status,
                 self.translated_to,
-                self.error.__repr__(),
+                repr(self.error),
                 self.translation_progress,
                 self.characters_charged,
             )[:1024]
