@@ -1061,7 +1061,6 @@
             ]
           },
           {
-<<<<<<< HEAD
             "label": "Cognitive - Personalizer",
             "pathFilter": [
               "sdk/personalizer/"
@@ -1071,10 +1070,7 @@
             ]
           },
           {
-            "label": "Machine Learning PR",
-=======
             "label": "Machine Learning",
->>>>>>> 4888df628b (Remove PR)
             "pathFilter": [
               "sdk/ml/"
             ],
