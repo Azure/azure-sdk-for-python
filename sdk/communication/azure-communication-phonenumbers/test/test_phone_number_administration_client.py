@@ -232,28 +232,60 @@ class PhoneNumbersClientTest(CommunicationTestCase):
         assert str(ex.value.status_code) == "404"
         assert ex.value.message is not None
 
+    def test_list_toll_free_area_codes_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        area_codes = phone_number_client.list_available_area_codes("US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+        assert area_codes.next()
+        
     def test_list_toll_free_area_codes(self):
         area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
-        assert area_codes.next()    
+        assert area_codes.next()       
+
+    def test_list_geographic_area_codes_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        first_locality = phone_number_client.list_available_localities("US")
+        area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.next().localized_name)
+        assert area_codes.next() 
 
     def test_list_geographic_area_codes(self):
         first_locality = self.phone_number_client.list_available_localities("US")
         area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.next().localized_name)
-        assert area_codes.next()  
+        assert area_codes.next()      
+
+    def test_list_countries_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        countries = phone_number_client.list_available_countries()
+        assert countries.next()    
 
     def test_list_countries(self):
         countries = self.phone_number_client.list_available_countries()
-        assert countries.next()    
+        assert countries.next()     
+
+    def test_list_localities_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        localities = phone_number_client.list_available_localities("US")
+        assert localities.next()  
 
     def test_list_localities(self):
         localities = self.phone_number_client.list_available_localities("US")
         assert localities.next()  
 
+    def test_list_localities_with_administrative_division_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        first_locality = phone_number_client.list_available_localities("US")
+        localities = phone_number_client.list_available_localities("US", administrative_division=first_locality.next().administrative_division.abbreviated_name)
+        assert localities.next() 
+
     def test_list_localities_with_administrative_division(self):
         first_locality = self.phone_number_client.list_available_localities("US")
         localities = self.phone_number_client.list_available_localities("US", administrative_division=first_locality.next().administrative_division.abbreviated_name)
-        assert localities.next()       
+        assert localities.next()          
+
+    def test_list_offerings_from_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        offerings = phone_number_client.list_available_offerings("US")
+        assert offerings.next() 
 
     def test_list_offerings(self):
         offerings = self.phone_number_client.list_available_offerings("US")
-        assert offerings.next()               
+        assert offerings.next()                  
