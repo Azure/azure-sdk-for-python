@@ -13,6 +13,9 @@ from msrest import Serializer
 
 from azure.ai.ml._restclient.v2021_10_01 import models
 
+from azure.ai.ml._utils.utils import dump_yaml
+from azure.ai.ml.constants._common import NEW_ENTITY_PRINT_KWARG
+
 from ._system_data import SystemData
 
 
@@ -57,6 +60,10 @@ class Resource(ABC):
         client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
+        
+        # Transitory value while we convert entity classes to print in a new style.
+        # Allows activating/reverting individual entity classes easily.
+        self.user_friendly_print_style = kwargs.pop(NEW_ENTITY_PRINT_KWARG, False)
         super().__init__(**kwargs)
 
     @property
@@ -184,4 +191,8 @@ class Resource(ABC):
         return f"{self.__class__.__name__}({var_dict})"
 
     def __str__(self) -> str:
-        return self.__repr__()
+        if self.user_friendly_print_style:
+            yaml_serialized = self._to_dict()
+            return dump_yaml(yaml_serialized, default_flow_style=False)
+        else:
+            return self.__repr__()

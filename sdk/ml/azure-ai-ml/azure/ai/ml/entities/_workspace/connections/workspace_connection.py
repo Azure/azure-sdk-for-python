@@ -24,7 +24,7 @@ from azure.ai.ml._restclient.v2022_01_01_preview.models import (
 from azure.ai.ml._schema.workspace.connections.workspace_connection import WorkspaceConnectionSchema
 from azure.ai.ml._utils._experimental import experimental
 from azure.ai.ml._utils.utils import _snake_to_camel, camel_to_snake, dump_yaml_to_file
-from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
+from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, NEW_ENTITY_PRINT_KWARG
 from azure.ai.ml.entities._credentials import PatTokenConfiguration, SasTokenConfiguration, \
     UsernamePasswordConfiguration, ManagedIdentityConfiguration, ServicePrincipalConfiguration
 from azure.ai.ml.entities._resource import Resource
@@ -73,6 +73,7 @@ class WorkspaceConnection(Resource):
         self._target = target
         self._credentials = credentials
         self._metadata = json.loads(json.dumps(metadata))
+        kwargs[NEW_ENTITY_PRINT_KWARG] = True
         super().__init__(**kwargs)
 
     @property

@@ -4,6 +4,7 @@
 
 ### Features Added
 - Added OS Patching Parameters to Compute Instance.
+- Change print behavior of various entity classes to match CLI `show` behavior.
 
 ### Bugs Fixed
 - Fixed Sweep node not excluding optional input with value `None` in REST object. 
