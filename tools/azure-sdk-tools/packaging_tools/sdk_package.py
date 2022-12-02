@@ -41,14 +41,17 @@ def main(generate_input, generate_output):
         package["artifacts"] = [str(dist_path / package_file) for package_file in os.listdir(dist_path)]
         package["result"] = "succeeded"
         # Generate api stub File
-        package_path = Path(sdk_folder, folder_name, package_name)
-        check_call(["python", "-m" "pip", "install", "-r", "../../../eng/apiview_reqs.txt",
-                    "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
-                    "/simple/"], cwd=package_path)
-        check_call(["apistubgen", "--pkg-path", "."], cwd=package_path)
-        for file in os.listdir(package_path):
-            if "_python.json" in file:
-                package["apiViewArtifact"] = str(Path(package_path, file))
+        try:
+            package_path = Path(sdk_folder, folder_name, package_name)
+            check_call(["python", "-m" "pip", "install", "-r", "../../../eng/apiview_reqs.txt",
+                        "--index-url=https://pkgs.dev.azure.com/azure-sdk/public/_packaging/azure-sdk-for-python/pypi"
+                        "/simple/"], cwd=package_path)
+            check_call(["apistubgen", "--pkg-path", "."], cwd=package_path)
+            for file in os.listdir(package_path):
+                if "_python.json" in file:
+                    package["apiViewArtifact"] = str(Path(package_path, file))
+        except:
+            _LOGGER.error(f"Generate ApiView token file failed: [PACKAGE]({package_name})[CHANGELOG]:{md_output}")
         # Installation package
         package["installInstructions"] = {
             "full": "You can install the use using pip install of the artifacts.",
