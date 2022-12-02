@@ -61,6 +61,7 @@ PYLINT_OPT_OUT = [
     "azure-agrifood-farming",
     "azure-developer-loadtesting",
     "azure-developer-devcenter",
+    "azure-security-confidentialledgerbugbash",
 ]
 
 # omit package from running mypy checks
@@ -118,6 +119,7 @@ MYPY_OPT_OUT = [
     "azure-synapse-monitoring",
     "azure-synapse-spark",
     "azure-messaging-webpubsubservice",
+    "azure-security-confidentialledgerbugbash",
 ]
 
 # omit package from running pyright checks
@@ -195,6 +197,7 @@ PYRIGHT_OPT_OUT = [
     "azure-ai-textanalytics",
     "azure-ai-translation-document",
     "azure-messaging-webpubsubservice",
+    "azure-security-confidentialledgerbugbash",
 ]
 
 # omit package from running verifytypes checks
