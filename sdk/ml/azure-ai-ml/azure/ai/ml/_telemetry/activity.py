@@ -25,7 +25,7 @@ from marshmallow import ValidationError
 from azure.core.exceptions import HttpResponseError
 
 from azure.ai.ml._utils.utils import _is_user_error_from_exception_type, _is_user_error_from_status_code, _str_to_bool
-from azure.ai.ml.exceptions import ErrorCategory, MlException
+from azure.ai.ml.exceptions import ErrorCategory, MLException
 
 # Get environment variable IS_IN_CI_PIPELINE to decide whether it's in CI test
 IS_IN_CI_PIPELINE = _str_to_bool(os.environ.get("IS_IN_CI_PIPELINE", "False"))
@@ -122,7 +122,7 @@ def error_preprocess(activityLogger, exception):
         activityLogger.activity_info["errorCategory"] = error_category
         if exception.inner_exception:
             activityLogger.activity_info["innerException"] = type(exception.inner_exception).__name__
-    elif isinstance(exception, MlException):
+    elif isinstance(exception, MLException):
         # If exception is MLException, it will have error_category, message and target attributes and will log those
         # information in log_activity, no need more actions here.
         pass
@@ -192,7 +192,7 @@ def log_activity(
         # All the system and unknown errors except for NotImplementedError will be wrapped with a new exception.
         if IS_IN_CI_PIPELINE and not isinstance(e, NotImplementedError):
             if (
-                isinstance(exception, MlException)
+                isinstance(exception, MLException)
                 and exception.error_category in [ErrorCategory.SYSTEM_ERROR, ErrorCategory.UNKNOWN] # pylint: disable=no-member
             ) or (
                 "errorCategory" in activityLogger.activity_info
@@ -214,7 +214,7 @@ def log_activity(
             if exception:
                 message += ", Exception={}".format(type(exception).__name__)
                 activityLogger.activity_info["exception"] = type(exception).__name__
-                if isinstance(exception, MlException):
+                if isinstance(exception, MLException):
                     activityLogger.activity_info["errorMessage"] = exception.no_personal_data_message # pylint: disable=no-member
                     activityLogger.activity_info["errorTarget"] = exception.target # pylint: disable=no-member
                     activityLogger.activity_info["errorCategory"] = exception.error_category # pylint: disable=no-member
