@@ -398,6 +398,8 @@ class ValidationException(MLException):
             **kwargs,
         )
 
+        self.raw_error = message  # used for CLI error formatting
+
         if error_type in list(ValidationErrorType):
             self._error_type = error_type
         else:

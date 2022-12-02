@@ -7,7 +7,7 @@ import logging
 import traceback
 from typing import Dict, Tuple, Union
 
-from colorama import Fore, init
+from colorama import Fore, init, Style
 from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 from azure.ai.ml.constants._common import (
@@ -86,7 +86,7 @@ def format_details_section(
 
     if hasattr(error, "message"):
         error_types[error.error_type] = True
-        details += f"\n\n{Fore.RED}{error.message}{Fore.RESET}\n"
+        details += f"\n\n{Fore.RED}(x) {error.message}{Fore.RESET}\n"
     else:
         if (
             entity_type == ErrorTarget.COMMAND_JOB
@@ -143,7 +143,7 @@ def format_details_section(
     return error_types, details
 
 
-def format_errors_and_resolutions_sections(entity_type: str, error_types: Dict[str, bool]) -> Tuple[str, str]:
+def format_errors_and_resolutions_sections(entity_type: str, error_types: Dict[str, bool], cli: bool) -> Tuple[str, str]:
     """Builds strings for details of the error message template's Errors and Resolutions sections."""
 
     resolutions = ""
@@ -182,12 +182,16 @@ def format_errors_and_resolutions_sections(entity_type: str, error_types: Dict[s
             "that you have access to it."
         count += 1
 
-    errors = Fore.WHITE + errors + Fore.RESET
+    if cli:
+        errors = "Error: " + errors
+    else:
+        errors = Fore.BLACK + errors + Fore.RESET
+
     return errors, resolutions
 
 
 def format_create_validation_error(
-    error: Union[SchemaValidationError, ValidationException], yaml_operation: bool
+    error: Union[SchemaValidationError, ValidationException], yaml_operation: bool, cli: bool = False, raw_error: str = None
 ) -> str:
     """
     Formats a detailed error message for validation errors.
@@ -205,13 +209,15 @@ def format_create_validation_error(
     from azure.ai.ml._schema.assets.environment import EnvironmentSchema
     from azure.ai.ml._schema.assets.model import ModelSchema
 
+    if raw_error:
+        error = raw_error
     entity_type, details = get_entity_type(error)
     error_types, details = format_details_section(error, details, entity_type)
-    errors, resolutions = format_errors_and_resolutions_sections(entity_type, error_types)
+    errors, resolutions = format_errors_and_resolutions_sections(entity_type, error_types, cli)
 
     if yaml_operation:
         description = YAML_CREATION_ERROR_DESCRIPTION.format(entity_type=entity_type)
-        description = Fore.WHITE + description + Fore.RESET
+        description = Style.BRIGHT + description + Style.RESET_ALL
 
         if entity_type == ErrorTarget.MODEL:
             schema_type = ModelSchema
@@ -274,10 +280,11 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
                 formatted_error = error
             else:
                 formatted_error = format_create_validation_error(error, yaml_operation=yaml_operation)
-            raise MLException(
+            raise ValidationException(
                 message=formatted_error,
                 no_personal_data_message="",
                 error_type=error_type,
+                raw_error=error,
             )
         except NotImplementedError:
             formatted_error = error

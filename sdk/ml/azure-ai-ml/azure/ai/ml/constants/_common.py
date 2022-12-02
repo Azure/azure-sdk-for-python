@@ -138,7 +138,7 @@ DEFAULT_COMPONENT_VERSION = "azureml_default"
 ANONYMOUS_COMPONENT_NAME = "azureml_anonymous"
 GIT_PATH_PREFIX = "git+"
 SCHEMA_VALIDATION_ERROR_TEMPLATE = (
-    "\n{text_color}Error: {description}\n{error_msg}{reset}\n\n"
+    "\n{text_color}{description}\n{error_msg}{reset}\n\n"
     "Details: {parsed_error_details}\n"
     "Resolutions: {resolutions}"
     "If using the CLI, you can also check the full log in debug mode for more details by adding --debug "
@@ -152,7 +152,7 @@ SCHEMA_VALIDATION_ERROR_TEMPLATE = (
 
 YAML_CREATION_ERROR_DESCRIPTION = (
     "The yaml file you provided does not match the prescribed schema "
-    "for {entity_type} yaml files and/or has the following issues:"
+    "for {entity_type} yaml files and/or has the following issues:\n"
 )
 DATASTORE_SCHEMA_TYPES = [
     "AzureFileSchema",
