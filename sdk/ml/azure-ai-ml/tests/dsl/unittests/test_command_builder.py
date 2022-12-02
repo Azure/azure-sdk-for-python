@@ -22,7 +22,7 @@ from azure.ai.ml.entities._builders import Command
 from azure.ai.ml.entities._job.job_service import JobService
 from azure.ai.ml.entities._job.pipeline._component_translatable import ComponentTranslatableMixin
 from azure.ai.ml.exceptions import JobException, ValidationException
-from test_utilities.utils import omit_with_wildcard
+from test_utilities.utils import omit_with_wildcard, parse_local_path
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -133,7 +133,7 @@ class TestCommandFunction:
             "properties": {
                 "component_spec": {
                     "_source": "BUILDER",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
                     "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
@@ -171,7 +171,7 @@ class TestCommandFunction:
             "properties": {
                 "component_spec": {
                     "_source": "BUILDER",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "description": "This is a fancy job",
                     "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
@@ -359,7 +359,7 @@ class TestCommandFunction:
                 "component_spec": {
                     "_source": "BUILDER",
                     "description": "This is a fancy job",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "command": "python train.py --input-data " "${{inputs.uri_folder}} --lr " "${{inputs.float}}",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},
@@ -533,7 +533,7 @@ class TestCommandFunction:
                 "component_spec": {
                     "_source": "BUILDER",
                     "description": "This is a fancy job",
-                    "code": "./tests",
+                    "code": parse_local_path("./tests"),
                     "command": "echo hello",
                     "display_name": "my-fancy-job",
                     "distribution": {"process_count_per_instance": 4, "type": "mpi"},

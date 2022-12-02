@@ -6,9 +6,9 @@
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "Content-Length": "819",
+        "Content-Length": "710",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b2 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -58,66 +58,59 @@
             "parameters": {
               "stringIndexType": "UnicodeCodePoint"
             }
-          },
-          {
-            "taskName": "5",
-            "kind": "ExtractiveSummarization",
-            "parameters": {
-              "stringIndexType": "UnicodeCodePoint"
-            }
           }
         ]
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "1a545f55-1476-4d13-a5ff-d72bed8203f6",
+        "apim-request-id": "4ed05ed3-4e52-436e-9935-7e2458d9be96",
         "Content-Length": "0",
-        "Date": "Mon, 14 Nov 2022 21:40:43 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9750f4ac-38df-4932-a67b-90e3641c9d0f?api-version=2022-10-01-preview",
+        "Date": "Wed, 30 Nov 2022 00:00:03 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ca46c886-16d7-4cbe-9992-583bef11b575?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "303",
-        "x-ms-region": "West US 2"
+        "x-envoy-upstream-service-time": "249",
+        "x-ms-region": "East US"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/9750f4ac-38df-4932-a67b-90e3641c9d0f?api-version=2022-10-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/ca46c886-16d7-4cbe-9992-583bef11b575?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b2 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "35d52cbe-90ef-4ad6-acd3-aaa9eb0ab108",
-        "Content-Length": "5300",
+        "apim-request-id": "86ddc573-810b-41d2-8b92-7d7f4293af5f",
+        "Content-Length": "4598",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 14 Nov 2022 21:40:48 GMT",
+        "Date": "Wed, 30 Nov 2022 00:00:08 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "237",
-        "x-ms-region": "West US 2"
+        "x-envoy-upstream-service-time": "180",
+        "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "9750f4ac-38df-4932-a67b-90e3641c9d0f",
-        "lastUpdateDateTime": "2022-11-14T21:40:46Z",
-        "createdDateTime": "2022-11-14T21:40:43Z",
-        "expirationDateTime": "2022-11-15T21:40:43Z",
+        "jobId": "ca46c886-16d7-4cbe-9992-583bef11b575",
+        "lastUpdatedDateTime": "2022-11-30T00:00:06Z",
+        "createdDateTime": "2022-11-30T00:00:03Z",
+        "expirationDateTime": "2022-12-01T00:00:03Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
-          "completed": 6,
+          "completed": 5,
           "failed": 0,
           "inProgress": 0,
-          "total": 6,
+          "total": 5,
           "items": [
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-11-14T21:40:46.107064Z",
+              "lastUpdateDateTime": "2022-11-30T00:00:06.394954Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -195,7 +188,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-11-14T21:40:46.1392011Z",
+              "lastUpdateDateTime": "2022-11-30T00:00:05.969956Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -237,7 +230,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-11-14T21:40:46.4414915Z",
+              "lastUpdateDateTime": "2022-11-30T00:00:06.4227813Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -317,7 +310,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-11-14T21:40:46.3684179Z",
+              "lastUpdateDateTime": "2022-11-30T00:00:06.0293482Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -354,16 +347,16 @@
                     "id": "2",
                     "sentiment": "neutral",
                     "confidenceScores": {
-                      "positive": 0.05,
-                      "neutral": 0.94,
+                      "positive": 0.02,
+                      "neutral": 0.98,
                       "negative": 0.0
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.05,
-                          "neutral": 0.94,
+                          "positive": 0.02,
+                          "neutral": 0.98,
                           "negative": 0.0
                         },
                         "offset": 0,
@@ -381,13 +374,13 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2022-10-01"
+                "modelVersion": "2022-11-01"
               }
             },
             {
               "kind": "HealthcareLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-11-14T21:40:46.3302947Z",
+              "lastUpdateDateTime": "2022-11-30T00:00:05.7701876Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -414,54 +407,6 @@
                   }
                 ],
                 "modelVersion": "2022-03-01"
-              }
-            },
-            {
-              "kind": "ExtractiveSummarizationLROResults",
-              "taskName": "5",
-              "lastUpdateDateTime": "2022-11-14T21:40:45.1438519Z",
-              "status": "succeeded",
-              "results": {
-                "documents": [
-                  {
-                    "id": "1",
-                    "sentences": [
-                      {
-                        "text": "Microsoft was founded by Bill Gates and Paul Allen",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 50
-                      }
-                    ],
-                    "warnings": [],
-                    "detectedLanguage": {
-                      "name": "English",
-                      "iso6391Name": "en",
-                      "confidenceScore": 0.94
-                    },
-                    "isLanguageDefaulted": false
-                  },
-                  {
-                    "id": "2",
-                    "sentences": [
-                      {
-                        "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 49
-                      }
-                    ],
-                    "warnings": [],
-                    "detectedLanguage": {
-                      "name": "Spanish",
-                      "iso6391Name": "es",
-                      "confidenceScore": 0.97
-                    },
-                    "isLanguageDefaulted": false
-                  }
-                ],
-                "errors": [],
-                "modelVersion": "2022-08-31-preview"
               }
             }
           ]
