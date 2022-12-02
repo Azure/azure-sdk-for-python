@@ -95,7 +95,8 @@
     "eng/**/*.py",
     ".gitignore",
     "tools/azure-sdk-tools/packaging_tools/**",
-    "tools/azure-sdk-tools/setup.py"
+    "tools/azure-sdk-tools/setup.py",
+    "sdk/confidentialledger/azure-security-confidentialledgerbugbash/**"
   ],
   "words": [
     "qnamaker",
