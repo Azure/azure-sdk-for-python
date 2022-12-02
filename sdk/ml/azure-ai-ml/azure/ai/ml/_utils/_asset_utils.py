@@ -676,7 +676,6 @@ def _get_next_version_from_container(
 
     except ResourceNotFoundError:
         version = "1"
-    
     return version
 
 def _get_latest(
