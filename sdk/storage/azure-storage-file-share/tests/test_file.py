@@ -77,12 +77,6 @@ class TestStorageFile(StorageRecordedTestCase):
             self.fsc2 = ShareServiceClient(remote_url, credential=remote_credential)
             self.remote_share_name = None
 
-    def _teardown(self, FILE_PATH):
-        if os.path.isfile(FILE_PATH):
-            try:
-                os.remove(FILE_PATH)
-            except:
-                pass
     # --Helpers-----------------------------------------------------------------
 
     def _get_file_reference(self, prefix=TEST_FILE_PREFIX):
