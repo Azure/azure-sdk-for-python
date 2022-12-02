@@ -26,6 +26,7 @@ class EndpointURLS:  # pylint: disable=too-few-public-methods,no-init
     ACTIVE_DIRECTORY_ENDPOINT = "active_directory"
     AML_RESOURCE_ID = "aml_resource_id"
     STORAGE_ENDPOINT = "storage_endpoint"
+    REGISTRY_DISCOVERY_ENDPOINT = "registry_discovery_endpoint"
 
 
 _environments = {
@@ -35,6 +36,7 @@ _environments = {
         EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: "https://login.microsoftonline.com/",
         EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.com/",
         EndpointURLS.STORAGE_ENDPOINT: "core.windows.net",
+        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: "https://eastus.api.azureml.ms/",
     },
     AzureEnvironments.ENV_CHINA: {
         EndpointURLS.AZURE_PORTAL_ENDPOINT: "https://portal.azure.cn/",
@@ -42,6 +44,7 @@ _environments = {
         EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: "https://login.chinacloudapi.cn/",
         EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.cn/",
         EndpointURLS.STORAGE_ENDPOINT: "core.chinacloudapi.cn",
+        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: "https://chinaeast2.api.ml.azure.cn/",
     },
     AzureEnvironments.ENV_US_GOVERNMENT: {
         EndpointURLS.AZURE_PORTAL_ENDPOINT: "https://portal.azure.us/",
@@ -49,6 +52,7 @@ _environments = {
         EndpointURLS.ACTIVE_DIRECTORY_ENDPOINT: "https://login.microsoftonline.us/",
         EndpointURLS.AML_RESOURCE_ID: "https://ml.azure.us/",
         EndpointURLS.STORAGE_ENDPOINT: "core.usgovcloudapi.net",
+        EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT: "https://usgovarizona.api.ml.azure.us/",
     },
 }
 
@@ -162,6 +166,17 @@ def _get_cloud_information_from_metadata(cloud_name: str = None, **kwargs) -> Di
         client_kwargs["credential_scopes"] = credential_scopes
     kwargs.update(client_kwargs)
     return kwargs
+
+def _get_registry_discovery_endpoint_from_metadata(cloud_name: str = None):
+    """Retrieve the registry_discovery_endpoint for a cloud from the metadata in SDK.
+
+    :param cloud_name: cloud name
+    :return: registry_discovery_endpoint for a cloud
+    """
+    cloud_details = _get_cloud_details(cloud_name)
+    registry_discovery_endpoint = cloud_details.get(EndpointURLS.REGISTRY_DISCOVERY_ENDPOINT)
+    return registry_discovery_endpoint
+
 
 
 def _resource_to_scopes(resource):

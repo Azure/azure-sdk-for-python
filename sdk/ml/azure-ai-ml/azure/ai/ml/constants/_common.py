@@ -39,6 +39,7 @@ PROVIDER_RESOURCE_ID_WITH_VERSION = (
 ASSET_ID_FORMAT = "azureml://locations/{}/workspaces/{}/{}/{}/versions/{}"
 VERSIONED_RESOURCE_NAME = "{}:{}"
 LABELLED_RESOURCE_NAME = "{}@{}"
+LABEL_SPLITTER = "@"
 PYTHON = "python"
 AML_TOKEN_YAML = "aml_token"
 AAD_TOKEN_YAML = "aad_token"
@@ -67,7 +68,6 @@ COMPUTE_UPDATE_ERROR = (
     "Only AmlCompute/KubernetesCompute cluster properties are supported, compute name {}, is {} type."
 )
 MAX_AUTOINCREMENT_ATTEMPTS = 3
-REGISTRY_DISCOVERY_BASE_URI = "https://eastus.api.azureml.ms"
 REGISTRY_URI_REGEX_FORMAT = "azureml://registries/*"
 REGISTRY_URI_FORMAT = "azureml://registries/"
 INTERNAL_REGISTRY_URI_FORMAT = "azureml://feeds/"

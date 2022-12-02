@@ -289,7 +289,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = pipeline_with_pipeline_component(client)
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip("Skip for compute reaource not ready.")
     @pytest.mark.e2etest
     def test_spark_job_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import generate_dsl_pipeline_from_yaml as spark_job_in_pipeline
@@ -297,7 +296,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = spark_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip("Skip for compute reaource not ready.")
     @pytest.mark.e2etest
     def test_spark_job_with_builder_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.pipeline import (
@@ -307,7 +305,6 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
         pipeline = spark_job_in_pipeline()
         assert_job_cancel(pipeline, client)
 
-    @pytest.mark.skip("Skip for compute reaource not ready.")
     @pytest.mark.e2etest
     def test_spark_job_with_multiple_node_in_pipeline(self, client: MLClient) -> None:
         from test_configs.dsl_pipeline.spark_job_in_pipeline.kmeans_sample.pipeline import (
@@ -316,3 +313,15 @@ class TestDSLPipelineSamples(AzureRecordedTestCase):
 
         pipeline = spark_job_in_pipeline()
         assert_job_cancel(pipeline, client)
+
+    @pytest.mark.e2etest
+    def test_spark_job_with_builder_in_pipeline_without_entry(self, client: MLClient,) -> None:
+        from test_configs.dsl_pipeline.spark_job_in_pipeline.invalid_pipeline import (
+            generate_dsl_pipeline_from_builder_without_entry as spark_job_in_pipeline,
+        )
+        pipeline = spark_job_in_pipeline()
+        validation_result = client.jobs.validate(pipeline)
+        assert validation_result.passed is False
+        assert validation_result.error_messages == {
+            "jobs.add_greeting_column.component.entry": 'Missing data for required field.',
+        }

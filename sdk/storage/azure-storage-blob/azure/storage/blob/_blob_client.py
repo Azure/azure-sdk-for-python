@@ -8,7 +8,7 @@
 from functools import partial
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
@@ -24,6 +24,7 @@ from azure.core.tracing.decorator import distributed_trace
 from ._shared import encode_base64
 from ._shared.base_client import StorageAccountHostsMixin, parse_connection_str, parse_query, TransportWrapper
 from ._shared.uploads import IterStreamer
+from ._shared.uploads_async import AsyncIterStreamer
 from ._shared.request_handlers import (
     add_metadata_headers, get_length, read_length,
     validate_and_format_range_headers)
@@ -357,13 +358,12 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     def _upload_blob_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
+            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            length: Optional[int] = None,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        ) -> Dict[str, Any]:
         if self.require_encryption and not self.key_encryption_key:
             raise ValueError("Encryption required but no key was provided.")
         encryption_options = {
@@ -374,8 +374,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
         }
 
         encoding = kwargs.pop('encoding', 'UTF-8')
-        if isinstance(data, six.text_type):
-            data = data.encode(encoding) # type: ignore
+        if isinstance(data, str):
+            data = data.encode(encoding)
         if length is None:
             length = get_length(data)
         if isinstance(data, bytes):
@@ -387,6 +387,8 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             stream = data
         elif hasattr(data, '__iter__') and not isinstance(data, (list, tuple, set, dict)):
             stream = IterStreamer(data, encoding=encoding)
+        elif hasattr(data, '__aiter__'):
+            stream = AsyncIterStreamer(data, encoding=encoding)
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
@@ -588,14 +590,13 @@ class BlobClient(StorageAccountHostsMixin, StorageEncryptionMixin):  # pylint: d
             process_storage_error(error)
 
     @distributed_trace
-    def upload_blob(  # pylint: disable=too-many-locals
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
+    def upload_blob(
+            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            length: Optional[int] = None,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ):
-        # type: (...) -> Any
+        ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.

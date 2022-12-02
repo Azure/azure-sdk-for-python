@@ -73,7 +73,6 @@ class SystemCreatedAcrAccount:
     def _from_rest_object(cls, rest_obj: RestAcrDetails) -> "Union[str, SystemCreatedAcrAccount]":
         if not rest_obj:
             return None
-        # TODO should we even bother check if both values are set and throw an error? This shouldn't be possible.
         if hasattr(rest_obj, "system_created_acr_account") and rest_obj.system_created_acr_account is not None:
             resource_id = None
             if rest_obj.system_created_acr_account.arm_resource_id:
@@ -85,7 +84,7 @@ class SystemCreatedAcrAccount:
         elif hasattr(rest_obj, "user_created_acr_account") and rest_obj.user_created_acr_account is not None:
             return rest_obj.user_created_acr_account.arm_resource_id.resource_id
         else:
-            return None  # TODO should this throw an error instead?
+            return None
 
 
 @experimental
@@ -147,7 +146,7 @@ class RegistryRegionDetails:
             can either be a single string representing the arm_resource_id of
             a user-created storage account, or an entire
             SystemCreatedStorageAccount object.
-        :type storage_account_details: List[Union[str, SystemCreatedStorageAccount]]
+        :type storage_account_details: Union[List[str], SystemCreatedStorageAccount]
         """
         self.acr_config = acr_config
         self.location = location
@@ -248,7 +247,7 @@ class RegistryRegionDetails:
                 storage_account_hns=first_config.storage_account_hns_enabled,
                 storage_account_type=StorageAccountType(
                     first_config.storage_account_type.lower()
-                ),  # TODO validate storage account type? GI
+                ),
                 arm_resource_id=resource_id,
                 replication_count=num_configs,
                 replicated_ids=replicated_ids
