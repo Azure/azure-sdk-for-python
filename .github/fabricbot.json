@@ -1061,6 +1061,15 @@
             ]
           },
           {
+            "label": "Machine Learning PR",
+            "pathFilter": [
+              "sdk/ml/"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
             "label": "ML-AutoML",
             "pathFilter": [
               "/sdk/ml/automl.tests.yml",
