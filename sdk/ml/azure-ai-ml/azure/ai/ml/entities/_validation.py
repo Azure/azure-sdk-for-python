@@ -356,6 +356,8 @@ class SchemaValidatableMixin:
 
     @classmethod
     def _create_schema_for_validation_with_base_path(cls, base_path=None):
+        # Note that, although context can be passed here, nested.schema will be initialized only once
+        # base_path works well because it's fixed after loaded
         return cls._create_schema_for_validation(
             context={BASE_PATH_CONTEXT_KEY: base_path or Path.cwd()}
         )

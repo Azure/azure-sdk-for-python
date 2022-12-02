@@ -6,8 +6,10 @@
 
 import functools
 import time
+from datetime import datetime
 from typing import (
-    Optional, Union, Any, Dict, TYPE_CHECKING
+    Any, AnyStr, Dict, IO, Iterable, Optional, Union,
+    TYPE_CHECKING
 )
 from urllib.parse import urlparse, quote, unquote
 
@@ -27,12 +29,11 @@ from ._parser import _get_file_permission, _datetime_to_str
 from ._deserialize import deserialize_directory_properties
 from ._serialize import get_api_version, get_dest_access_conditions, get_rename_smb_properties
 from ._file_client import ShareFileClient
-from ._models import DirectoryPropertiesPaged, HandlesPaged, NTFSAttributes  # pylint: disable=unused-import
+from ._models import DirectoryPropertiesPaged, HandlesPaged
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from datetime import datetime
-    from ._models import DirectoryProperties
+    from ._models import DirectoryProperties, NTFSAttributes
     from ._generated.models import HandleItem
 
 
@@ -822,18 +823,17 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def upload_file(
-            self, file_name,  # type: str
-            data, # type: Any
-            length=None, # type: Optional[int]
-            **kwargs # type: Any
-        ):
-        # type: (...) -> ShareFileClient
+            self, file_name: str,
+            data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            length: Optional[int] = None,
+            **kwargs
+        ) -> ShareFileClient:
         """Creates a new file in the directory and returns a ShareFileClient
         to interact with the file.
 
         :param str file_name:
             The name of the file.
-        :param Any data:
+        :param data:
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
@@ -877,7 +877,7 @@ class ShareDirectoryClient(StorageAccountHostsMixin):
             data,
             length=length,
             **kwargs)
-        return file_client # type: ignore
+        return file_client
 
     @distributed_trace
     def delete_file(
