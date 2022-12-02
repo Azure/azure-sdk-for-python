@@ -50,8 +50,8 @@ def main(generate_input, generate_output):
             for file in os.listdir(package_path):
                 if "_python.json" in file:
                     package["apiViewArtifact"] = str(Path(package_path, file))
-        except:
-            _LOGGER.error(f"Generate ApiView token file failed: [PACKAGE]({package_name})[CHANGELOG]:{md_output}")
+        except Exception as e:
+            _LOGGER.error(f"Generate ApiView token file for {package_name} failed: {e}")
         # Installation package
         package["installInstructions"] = {
             "full": "You can install the use using pip install of the artifacts.",
