@@ -15,7 +15,7 @@ from azure.ai.ml.constants._common import (
     SCHEMA_VALIDATION_ERROR_TEMPLATE,
     YAML_CREATION_ERROR_DESCRIPTION,
 )
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException, MLException
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
 
@@ -143,7 +143,11 @@ def format_details_section(
     return error_types, details
 
 
-def format_errors_and_resolutions_sections(entity_type: str, error_types: Dict[str, bool], cli: bool) -> Tuple[str, str]:
+def format_errors_and_resolutions_sections(
+    entity_type: str,
+    error_types: Dict[str, bool],
+    cli: bool
+) -> Tuple[str, str]:
     """Builds strings for details of the error message template's Errors and Resolutions sections."""
 
     resolutions = ""
@@ -191,7 +195,11 @@ def format_errors_and_resolutions_sections(entity_type: str, error_types: Dict[s
 
 
 def format_create_validation_error(
-    error: Union[SchemaValidationError, ValidationException], yaml_operation: bool, cli: bool = False, raw_error: str = None
+    error: Union[SchemaValidationError,
+    ValidationException],
+    yaml_operation: bool,
+    cli: bool = False,
+    raw_error: str = None,
 ) -> str:
     """
     Formats a detailed error message for validation errors.
@@ -284,7 +292,6 @@ def log_and_raise_error(error, debug=False, yaml_operation=False):
                 message=formatted_error,
                 no_personal_data_message="",
                 error_type=error_type,
-                raw_error=error,
             )
         except NotImplementedError:
             formatted_error = error
