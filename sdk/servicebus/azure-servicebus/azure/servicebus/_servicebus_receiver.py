@@ -12,8 +12,6 @@ import datetime
 import warnings
 from typing import Any, List, Optional, Dict, Iterator, Union, TYPE_CHECKING, cast
 
-import six
-
 from uamqp import ReceiveClient, types, Message
 from uamqp.constants import SenderSettleMode
 from uamqp.authentication.common import AMQPAuth
@@ -728,7 +726,7 @@ class ServiceBusReceiver(
         self._check_live()
         if timeout is not None and timeout <= 0:
             raise ValueError("The timeout must be greater than 0.")
-        if isinstance(sequence_numbers, six.integer_types):
+        if isinstance(sequence_numbers, int):
             sequence_numbers = [sequence_numbers]
         sequence_numbers = cast(List[int], sequence_numbers)
         if len(sequence_numbers) == 0:

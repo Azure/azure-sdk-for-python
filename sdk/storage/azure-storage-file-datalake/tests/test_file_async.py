@@ -4,6 +4,7 @@
 # license information.
 # --------------------------------------------------------------------------
 import asyncio
+import tempfile
 import unittest
 from datetime import datetime, timedelta
 from math import ceil
@@ -36,7 +37,6 @@ from settings.testcase import DataLakePreparer
 
 TEST_DIRECTORY_PREFIX = 'directory'
 TEST_FILE_PREFIX = 'file'
-FILE_PATH = 'file_output.temp.dat'
 
 # ------------------------------------------------------------------------------
 
@@ -695,13 +695,14 @@ class TestFileAsync(AsyncStorageRecordedTestCase):
         await file_client.flush_data(len(data))
 
         # download the data into a file and make sure it is the same as uploaded data
-        with open(FILE_PATH, 'wb') as stream:
+        with tempfile.TemporaryFile() as temp_file:
             download = await file_client.download_file()
-            await download.readinto(stream)
+            await download.readinto(temp_file)
 
-        # Assert
-        with open(FILE_PATH, 'rb') as stream:
-            actual = stream.read()
+            temp_file.seek(0)
+
+            # Assert
+            actual = temp_file.read()
             assert data == actual
 
     @DataLakePreparer()

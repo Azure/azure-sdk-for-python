@@ -351,15 +351,27 @@ class NetworkTraceLoggingPolicy(SansIOHTTPPolicy):
         except Exception as err:  # pylint: disable=broad-except
             _LOGGER.debug("Failed to log response: %s", repr(err))
 
+class _HiddenClassProperties(type):
+    # Backward compatible for DEFAULT_HEADERS_WHITELIST
+    # https://github.com/Azure/azure-sdk-for-python/issues/26331
 
-class HttpLoggingPolicy(SansIOHTTPPolicy):
+    @property
+    def DEFAULT_HEADERS_WHITELIST(cls):
+        return cls.DEFAULT_HEADERS_ALLOWLIST
+
+    @DEFAULT_HEADERS_WHITELIST.setter
+    def DEFAULT_HEADERS_WHITELIST(cls, value):
+        cls.DEFAULT_HEADERS_ALLOWLIST = value
+
+class HttpLoggingPolicy(SansIOHTTPPolicy, metaclass=_HiddenClassProperties):
     """The Pipeline policy that handles logging of HTTP requests and responses.
     """
 
-    DEFAULT_HEADERS_WHITELIST = set([
+    DEFAULT_HEADERS_ALLOWLIST = set([
         "x-ms-request-id",
         "x-ms-client-request-id",
         "x-ms-return-client-request-id",
+        "x-ms-error-code",
         "traceparent",
         "Accept",
         "Cache-Control",
@@ -390,7 +402,7 @@ class HttpLoggingPolicy(SansIOHTTPPolicy):
             "azure.core.pipeline.policies.http_logging_policy"
         )
         self.allowed_query_params = set()
-        self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_WHITELIST)
+        self.allowed_header_names = set(self.__class__.DEFAULT_HEADERS_ALLOWLIST)
 
     def _redact_query_param(self, key, value):
         lower_case_allowed_query_params = [

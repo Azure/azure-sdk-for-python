@@ -64,7 +64,7 @@ PARAMETERS_TO_TEST = [
         },
         {
             "resources.instance_count": 1,  # runsettings.parallel.node_count
-            "max_concurrency_per_instance": 2,  # runsettings.parallel.max_concurrency_per_instance
+            "max_concurrency_per_instance": 2,  # runsettings.parallel.process_count_per_node
             "error_threshold": 5,  # runsettings.parallel.error_threshold
             "mini_batch_size": 2,  # runsettings.parallel.mini_batch_size
             "logging_level": "DEBUG",  # runsettings.parallel.logging_level

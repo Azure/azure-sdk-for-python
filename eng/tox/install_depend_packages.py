@@ -31,7 +31,7 @@ PKGS_TXT_FILE = "packages.txt"
 logging.getLogger().setLevel(logging.INFO)
 
 # both min and max overrides are *inclusive* of the version targeted
-MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
+MINIMUM_VERSION_GENERIC_OVERRIDES = {
     "azure-common": "1.1.10",
     "msrest": "0.6.10",
     "typing-extensions": "3.6.5",
@@ -43,7 +43,16 @@ MINIMUM_VERSION_SUPPORTED_OVERRIDE = {
     "cryptography": "3.3.2",
 }
 
-MAXIMUM_VERSION_SUPPORTED_OVERRIDE = {"cryptography": "4.0.0"}
+# this array contains overrides ONLY IF the package being processed the key of each item
+MINIMUM_VERSION_SPECIFIC_OVERRIDES = {
+    "azure-eventhub": {"azure-core": "1.25.0"},
+    "azure-eventhub-checkpointstoreblob-aio": {"azure-core": "1.25.0"},
+    "azure-eventhub-checkpointstoreblob": {"azure-core": "1.25.0"},
+}
+
+MAXIMUM_VERSION_GENERIC_OVERRIDES = {"cryptography": "4.0.0"}
+
+MAXIMUM_VERSION_SPECIFIC_OVERRIDES = {}
 
 SPECIAL_CASE_OVERRIDES = {
     # this package has an override
@@ -115,17 +124,18 @@ def check_pkg_against_overrides(pkg_specifier: str) -> List[str]:
 
 def find_released_packages(setup_py_path, dependency_type):
     # this method returns list of required available package on PyPI in format <package-name>==<version>
+    pkg_info = ParsedSetup.from_path(setup_py_path)
 
     # parse setup.py and find install requires
-    requires = [r for r in ParsedSetup.from_path(setup_py_path).requires if "-nspkg" not in r]
+    requires = [r for r in pkg_info.requires if "-nspkg" not in r]
 
     # Get available version on PyPI for each required package
-    avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type), requires) if x]
+    avlble_packages = [x for x in map(lambda x: process_requirement(x, dependency_type, pkg_info.name), requires) if x]
 
     return avlble_packages
 
 
-def process_requirement(req, dependency_type):
+def process_requirement(req, dependency_type, orig_pkg_name):
     # this method finds either latest or minimum version of a package that is available on PyPI
 
     # find package name and requirement specifier from requires
@@ -136,15 +146,35 @@ def process_requirement(req, dependency_type):
     versions = [str(v) for v in client.get_ordered_versions(pkg_name, True)]
     logging.info("Versions available on PyPI for %s: %s", pkg_name, versions)
 
-    if pkg_name in MINIMUM_VERSION_SUPPORTED_OVERRIDE:
+    if pkg_name in MINIMUM_VERSION_GENERIC_OVERRIDES:
         versions = [
-            v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
+            v for v in versions if parse_version(v) >= parse_version(MINIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
 
-    if pkg_name in MAXIMUM_VERSION_SUPPORTED_OVERRIDE:
+        if (
+            orig_pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES
+            and pkg_name in MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
+        ):
+            versions = [
+                v
+                for v in versions
+                if parse_version(v) >= parse_version(MINIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
+            ]
+
+    if pkg_name in MAXIMUM_VERSION_GENERIC_OVERRIDES:
         versions = [
-            v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_SUPPORTED_OVERRIDE[pkg_name])
+            v for v in versions if parse_version(v) <= parse_version(MAXIMUM_VERSION_GENERIC_OVERRIDES[pkg_name])
         ]
+
+        if (
+            orig_pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES
+            and pkg_name in MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name]
+        ):
+            versions = [
+                v
+                for v in versions
+                if parse_version(v) <= parse_version(MAXIMUM_VERSION_SPECIFIC_OVERRIDES[orig_pkg_name][pkg_name])
+            ]
 
     # Search from lowest to latest in case of finding minimum dependency
     # Search from latest to lowest in case of finding latest required version
