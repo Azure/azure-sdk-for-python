@@ -86,7 +86,8 @@ setup(
         "typing-extensions<5.0.0",
         "opencensus-ext-azure<2.0.0",
         # Used in pipeline_component_builder
-        'bytecode>=0.14.0',
+        # TODO: must be of version 0.14.0 for Python 3.11, which is not existed in Python 3.7
+        'bytecode<0.15.0,>=0.13.0',
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package
