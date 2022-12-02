@@ -9,7 +9,12 @@ import pathlib
 import shlex
 import sys
 
-from dotenv import load_dotenv
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except:
+    pass
+
 import subprocess
 
 
@@ -35,8 +40,7 @@ import subprocess
 # For more information about how recording asset synchronization, please refer to
 # https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md.
 
-
-load_dotenv()  # Load environment variables from user's .env file
+ # Load environment variables from user's .env file
 
 CONTAINER_NAME = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
 GIT_TOKEN = os.getenv("GIT_TOKEN", "")
