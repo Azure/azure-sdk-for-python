@@ -9,20 +9,31 @@
 from copy import deepcopy
 from typing import Any, Awaitable, TYPE_CHECKING
 
-from msrest import Deserializer, Serializer
-
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
+from .._serialization import Deserializer, Serializer
 from ._configuration import AzureStackHCIClientConfiguration
-from .operations import ArcSettingsOperations, ClustersOperations, ExtensionsOperations, Operations
+from .operations import (
+    ArcSettingsOperations,
+    ClustersOperations,
+    ExtensionsOperations,
+    OffersOperations,
+    Operations,
+    PublishersOperations,
+    SkusOperations,
+    UpdateRunsOperations,
+    UpdateSummariesOperations,
+    UpdatesOperations,
+)
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
     from azure.core.credentials_async import AsyncTokenCredential
 
-class AzureStackHCIClient:
+
+class AzureStackHCIClient:  # pylint: disable=client-accepts-api-version-keyword,too-many-instance-attributes
     """Azure Stack HCI management service.
 
     :ivar arc_settings: ArcSettingsOperations operations
@@ -33,13 +44,25 @@ class AzureStackHCIClient:
     :vartype extensions: azure.mgmt.azurestackhci.aio.operations.ExtensionsOperations
     :ivar operations: Operations operations
     :vartype operations: azure.mgmt.azurestackhci.aio.operations.Operations
-    :param credential: Credential needed for the client to connect to Azure.
+    :ivar offers: OffersOperations operations
+    :vartype offers: azure.mgmt.azurestackhci.aio.operations.OffersOperations
+    :ivar publishers: PublishersOperations operations
+    :vartype publishers: azure.mgmt.azurestackhci.aio.operations.PublishersOperations
+    :ivar skus: SkusOperations operations
+    :vartype skus: azure.mgmt.azurestackhci.aio.operations.SkusOperations
+    :ivar update_runs: UpdateRunsOperations operations
+    :vartype update_runs: azure.mgmt.azurestackhci.aio.operations.UpdateRunsOperations
+    :ivar update_summaries: UpdateSummariesOperations operations
+    :vartype update_summaries: azure.mgmt.azurestackhci.aio.operations.UpdateSummariesOperations
+    :ivar updates: UpdatesOperations operations
+    :vartype updates: azure.mgmt.azurestackhci.aio.operations.UpdatesOperations
+    :param credential: Credential needed for the client to connect to Azure. Required.
     :type credential: ~azure.core.credentials_async.AsyncTokenCredential
-    :param subscription_id: The ID of the target subscription.
+    :param subscription_id: The ID of the target subscription. Required.
     :type subscription_id: str
     :param base_url: Service URL. Default value is "https://management.azure.com".
     :type base_url: str
-    :keyword api_version: Api Version. Default value is "2022-05-01". Note that overriding this
+    :keyword api_version: Api Version. Default value is "2022-10-01". Note that overriding this
      default value may result in unsupported behavior.
     :paramtype api_version: str
     :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
@@ -53,10 +76,12 @@ class AzureStackHCIClient:
         base_url: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
-        self._config = AzureStackHCIClientConfiguration(credential=credential, subscription_id=subscription_id, **kwargs)
+        self._config = AzureStackHCIClientConfiguration(
+            credential=credential, subscription_id=subscription_id, **kwargs
+        )
         self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False
@@ -64,13 +89,16 @@ class AzureStackHCIClient:
         self.clusters = ClustersOperations(self._client, self._config, self._serialize, self._deserialize)
         self.extensions = ExtensionsOperations(self._client, self._config, self._serialize, self._deserialize)
         self.operations = Operations(self._client, self._config, self._serialize, self._deserialize)
+        self.offers = OffersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.publishers = PublishersOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.skus = SkusOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.update_runs = UpdateRunsOperations(self._client, self._config, self._serialize, self._deserialize)
+        self.update_summaries = UpdateSummariesOperations(
+            self._client, self._config, self._serialize, self._deserialize
+        )
+        self.updates = UpdatesOperations(self._client, self._config, self._serialize, self._deserialize)
 
-
-    def _send_request(
-        self,
-        request: HttpRequest,
-        **kwargs: Any
-    ) -> Awaitable[AsyncHttpResponse]:
+    def _send_request(self, request: HttpRequest, **kwargs: Any) -> Awaitable[AsyncHttpResponse]:
         """Runs the network request through the client's chained policies.
 
         >>> from azure.core.rest import HttpRequest
@@ -79,7 +107,7 @@ class AzureStackHCIClient:
         >>> response = await client._send_request(request)
         <AsyncHttpResponse: 200 OK>
 
-        For more information on this code flow, see https://aka.ms/azsdk/python/protocol/quickstart
+        For more information on this code flow, see https://aka.ms/azsdk/dpcodegen/python/send_request
 
         :param request: The network request you want to make. Required.
         :type request: ~azure.core.rest.HttpRequest

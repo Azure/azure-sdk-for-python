@@ -53,6 +53,7 @@ class StringTransformedEnum(Field):
         # pop marshmallow unknown args to avoid warnings
         self.allowed_values = kwargs.pop("allowed_values", None)
         self.casing_transform = kwargs.pop("casing_transform", lambda x: x.lower())
+        self.pass_original = kwargs.pop("pass_original", False)
         super().__init__(**kwargs)
         if isinstance(self.allowed_values, str):
             self.allowed_values = [self.allowed_values]
@@ -70,12 +71,12 @@ class StringTransformedEnum(Field):
         if not value:
             return
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return self.casing_transform(value)
+            return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
     def _deserialize(self, value, attr, data, **kwargs):
         if isinstance(value, str) and self.casing_transform(value) in self.allowed_values:
-            return self.casing_transform(value)
+            return value if self.pass_original else self.casing_transform(value)
         raise ValidationError(f"Value {value!r} passed is not in set {self.allowed_values}")
 
 
@@ -654,6 +655,28 @@ def DistributionField(**kwargs):
             NestedField(TensorFlowDistributionSchema, **kwargs),
             NestedField(MPIDistributionSchema, **kwargs),
         ]
+    )
+
+
+def PrimitiveValueField(**kwargs):
+    return UnionField(
+        [
+            # Note: order matters here - to make sure value parsed correctly.
+            # By default when strict is false, marshmallow downcasts float to int.
+            # Setting it to true will throw a validation error when loading a float to int.
+            # https://github.com/marshmallow-code/marshmallow/pull/755
+            # Use DumpableIntegerField to make sure there will be validation error when
+            # loading/dumping a float to int.
+            # note that this field can serialize bool instance but cannot deserialize bool instance.
+            DumpableIntegerField(strict=True),
+            # Use DumpableFloatField with strict of True to avoid '1'(str) serialized to 1.0(float)
+            DumpableFloatField(strict=True),
+            # put string schema after Int and Float to make sure they won't dump to string
+            fields.Str(),
+            # fields.Bool comes last since it'll parse anything non-falsy to True
+            fields.Bool(),
+        ],
+        **kwargs,
     )
 
 

@@ -14,7 +14,7 @@ from azure.ai.ml.entities._validate_funcs import validate_job
 from azure.ai.ml.exceptions import ValidationException
 
 from .._util import _PIPELINE_JOB_TIMEOUT_SECOND
-from ..e2etests.test_control_flow_node_in_pipeline_job import update_pipeline_schema
+from ..e2etests.test_control_flow_pipeline import update_pipeline_schema
 
 
 def assert_the_same_path(actual_path, expected_path):
@@ -548,8 +548,8 @@ class TestDSLPipelineJobValidate:
         dsl_pipeline: PipelineJob = pipeline(10, job_input)
 
         validation_result = dsl_pipeline._validate()
-        assert "jobs.node2.limits.max_total_trials" in validation_result.error_messages
-        assert validation_result.error_messages["jobs.node2.limits.max_total_trials"] == "Missing data for required field."
+        assert "jobs.node2.limits" in validation_result.error_messages
+        assert validation_result.error_messages["jobs.node2.limits"] == "Missing data for required field."
 
     def test_node_schema_validation(self) -> None:
         path = "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/score.yml"
@@ -643,7 +643,8 @@ class TestDSLPipelineJobValidate:
 
     @pytest.mark.usefixtures(
         "enable_pipeline_private_preview_features",
-        "update_pipeline_schema"
+        "update_pipeline_schema",
+        "enable_private_preview_schema_features",
     )
     def test_pipeline_with_invalid_do_while_node(self) -> None:
         with pytest.raises(ValidationError) as exception:
@@ -651,7 +652,7 @@ class TestDSLPipelineJobValidate:
                 "./tests/test_configs/dsl_pipeline/pipeline_with_do_while/invalid_pipeline.yml",
             )
         error_message_str = re.findall(r"(\{.*\})", exception.value.args[0].replace("\n", ""))[0]
-        error_messages = json.loads(error_message_str.replace("\\", "\\\\"))
+        error_messages = json.loads(error_message_str)
 
         def assert_error_message(path, except_message, error_messages):
             msgs = next(filter(lambda item: item["path"] == path, error_messages))

@@ -8,11 +8,9 @@ stages:
       TestTimeoutInMinutes: 300
       BuildTargetingString: azure-monitor-*
       EnvVars:
-        AZURE_SUBSCRIPTION_ID: $(azure-subscription-id)
-        AZURE_TENANT_ID: $(aad-azure-sdk-test-tenant-id)
-        AZURE_CLIENT_ID: $(aad-azure-sdk-test-client-id)
-        AZURE_CLIENT_SECRET: $(aad-azure-sdk-test-client-secret)
-        LOG_WORKSPACE_ID: $(azure-monitor-query-log-workspace)
-        SECONDARY_WORKSPACE_ID: $(python-query-secondary-workspace-id)
-        METRICS_RESOURCE_URI: $(azure-monitor-query-metrics-uri)
+        AZURE_SUBSCRIPTION_ID: $(MONITOR_SUBSCRIPTION_ID)
+        AZURE_TENANT_ID: $(MONITOR_TENANT_ID)
+        AZURE_CLIENT_ID: $(MONITOR_CLIENT_ID)
+        AZURE_CLIENT_SECRET: $(MONITOR_CLIENT_SECRET)
         AZURE_TEST_RUN_LIVE: 'true'
+        AZURE_SKIP_LIVE_RECORDING: 'true'

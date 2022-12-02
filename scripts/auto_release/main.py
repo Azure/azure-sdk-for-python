@@ -575,7 +575,9 @@ class CodegenTestPR:
 
         # comment for hint
         body = 'Tips: If you have special needs for release date or other things, please let us know. ' \
-               'Otherwise we will release it ASAP after your check.'
+               'Otherwise we will follow ' \
+               '[Management-SDK-Release-Cycle](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/761/Management-SDK-Release-Cycle) ' \
+               'to release it before target date'
         api.issues.create_comment(issue_number=issue_number, body=body)
 
     def issue_comment(self):

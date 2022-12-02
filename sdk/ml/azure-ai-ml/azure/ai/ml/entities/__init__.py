@@ -5,7 +5,7 @@
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)
 
 from azure.ai.ml._restclient.v2021_10_01.models import CreatedByType
-from azure.ai.ml._restclient.v2022_01_01_preview.models import UsageUnit
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UsageUnit
 
 from ._assets._artifacts.data import Data
 from ._assets._artifacts.model import Model
@@ -28,6 +28,7 @@ from ._compute.kubernetes_compute import KubernetesCompute
 from ._compute.synapsespark_compute import AutoPauseSettings, AutoScaleSettings, SynapseSparkCompute
 from ._compute.unsupported_compute import UnsupportedCompute
 from ._compute.virtual_machine_compute import VirtualMachineCompute, VirtualMachineSshSettings
+from ._compute._image_metadata import ImageMetadata
 from ._datastore.adls_gen1 import AzureDataLakeGen1Datastore
 from ._datastore.azure_storage import AzureBlobDatastore, AzureDataLakeGen2Datastore, AzureFileDatastore
 from ._datastore.datastore import Datastore
@@ -208,6 +209,7 @@ __all__ = [
     "VirtualMachineSshSettings",
     "AmlComputeSshSettings",
     "AmlComputeNodeInfo",
+    "ImageMetadata",
     "SystemCreatedAcrAccount",
     "SystemCreatedStorageAccount",
     "ValidationResult",

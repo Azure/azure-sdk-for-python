@@ -4,15 +4,15 @@
 
 from marshmallow import fields
 
-from azure.ai.ml._schema import PathAwareSchema, StringTransformedEnum
+from azure.ai.ml._schema import PathAwareSchema
+from azure.ai.ml._schema.core.fields import DumpableEnumField
 
 
 class InternalEnvironmentSchema(PathAwareSchema):
     docker = fields.Dict()
     conda = fields.Dict()
-    os = StringTransformedEnum(
+    os = DumpableEnumField(
         allowed_values=["Linux", "Windows"],
-        casing_transform=lambda x: x,
         required=False,
     )
     name = fields.Str()

@@ -8,7 +8,7 @@ import asyncio
 from datetime import date, datetime, timezone
 from azure_devtools.perfstress_tests import PerfStressTest
 
-from azure.monitor.query import LogsQueryClient as SyncLogsQueryClient, LogsQueryRequest
+from azure.monitor.query import LogsQueryClient as SyncLogsQueryClient, LogsBatchQuery
 from azure.monitor.query.aio import LogsQueryClient as AsyncLogsQueryClient
 
 from azure.identity import DefaultAzureCredential as SyncDefaultAzureCredential
@@ -30,29 +30,32 @@ class LogsBatchPerfTest(PerfStressTest):
         )
 
         self.requests = [
-            LogsQueryRequest(
+            LogsBatchQuery(
                 query="AzureActivity | summarize count()",
                 start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
                 end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
-                workspace_id= self.workspace_id
+                workspace_id= self.workspace_id,
+                timespan=None
             ),
-            LogsQueryRequest(
+            LogsBatchQuery(
                 query= """AppRequests | take 10  |
                     summarize avgRequestDuration=avg(DurationMs) by bin(TimeGenerated, 10m), _ResourceId""",
                 start_time=datetime(2021, 7, 25, 0, 0, 0, tzinfo=timezone.utc),
                 end_time=datetime(2021, 7, 26, 0, 0, 0, tzinfo=timezone.utc),
-                workspace_id= self.workspace_id
+                workspace_id= self.workspace_id,
+                timespan=None
             ),
-            LogsQueryRequest(
+            LogsBatchQuery(
                 query= "AppRequests | take 20",
                 workspace_id= self.workspace_id,
-                include_statistics=True
+                include_statistics=True,
+                timespan=None
             ),
         ]
 
     async def close(self):
         """This is run after cleanup.
-        
+
         Use this to close any open handles or clients.
         """
         await self.async_logs_client.close()
@@ -60,7 +63,7 @@ class LogsBatchPerfTest(PerfStressTest):
 
     def run_sync(self):
         """The synchronous perf test.
-        
+
         Try to keep this minimal and focused. Using only a single client API.
         Avoid putting any ancillary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.
@@ -71,7 +74,7 @@ class LogsBatchPerfTest(PerfStressTest):
 
     async def run_async(self):
         """The asynchronous perf test.
-        
+
         Try to keep this minimal and focused. Using only a single client API.
         Avoid putting any ancillary logic (e.g. generating UUIDs), and put this in the setup/init instead
         so that we're only measuring the client API call.

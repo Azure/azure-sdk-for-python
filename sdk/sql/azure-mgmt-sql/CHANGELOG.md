@@ -1,5 +1,11 @@
 # Release History
 
+## 4.0.0b5 (2022-11-10)
+
+### Features Added
+
+  - Model ServerDevOpsAuditingSettings has a new parameter is_managed_identity_in_use
+
 ## 4.0.0b4 (2022-09-29)
 
 ### Features Added

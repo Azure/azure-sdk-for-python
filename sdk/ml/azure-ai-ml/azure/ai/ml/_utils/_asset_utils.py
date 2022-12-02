@@ -82,16 +82,20 @@ class IgnoreFile(object):
         self._path = path
         self._path_spec = None
 
-    def _create_pathspec(self) -> Optional[List[GitWildMatchPattern]]:
-        """Creates path specification based on ignore file contents."""
-        if not self.exists():
-            return None
-        with open(self._path, "r") as fh:
-            return [GitWildMatchPattern(line) for line in fh if line]
-
     def exists(self) -> bool:
         """Checks if ignore file exists."""
         return self._path and self._path.exists()
+
+    def _get_ignore_list(self) -> List[str]:
+        """Get ignore list from ignore file contents."""
+        if not self.exists():
+            return []
+        with open(self._path, "r") as fh:
+            return [line for line in fh if line]
+
+    def _create_pathspec(self) -> List[GitWildMatchPattern]:
+        """Creates path specification based on ignore list."""
+        return [GitWildMatchPattern(ignore) for ignore in set(self._get_ignore_list())]
 
     def is_file_excluded(self, file_path: Union[str, Path]) -> bool:
         """Checks if given file_path is excluded.
@@ -728,6 +732,7 @@ def _archive_or_restore(
 ) -> None:
     resource_group_name = asset_operations._operation_scope._resource_group_name
     workspace_name = asset_operations._workspace_name
+    registry_name = asset_operations._registry_name
     if version and label:
         msg = "Cannot specify both version and label."
         raise ValidationException(
@@ -745,10 +750,21 @@ def _archive_or_restore(
             name=name,
             version=version,
             resource_group_name=resource_group_name,
+            registry_name=registry_name,
+        ) if registry_name else version_operation.get(
+            name=name,
+            version=version,
+            resource_group_name=resource_group_name,
             workspace_name=workspace_name,
         )
         version_resource.properties.is_archived = is_archived
-        version_operation.create_or_update(
+        version_operation.begin_create_or_update( # pylint: disable=expression-not-assigned
+            name=name,
+            version=version,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            body=version_resource,
+            ) if registry_name else version_operation.create_or_update(
             name=name,
             version=version,
             resource_group_name=resource_group_name,
@@ -759,15 +775,24 @@ def _archive_or_restore(
         container_resource = container_operation.get(
             name=name,
             resource_group_name=resource_group_name,
+            registry_name=registry_name,
+        ) if registry_name else container_operation.get(
+            name=name,
+            resource_group_name=resource_group_name,
             workspace_name=workspace_name,
         )
         container_resource.properties.is_archived = is_archived
-        container_operation.create_or_update(
+        container_operation.create_or_update( # pylint: disable=expression-not-assigned
+            name=name,
+            resource_group_name=resource_group_name,
+            registry_name=registry_name,
+            body=container_resource,
+            ) if registry_name else container_operation.create_or_update(
             name=name,
             resource_group_name=resource_group_name,
             workspace_name=workspace_name,
             body=container_resource,
-        )
+            )
 
 
 def _resolve_label_to_asset(
