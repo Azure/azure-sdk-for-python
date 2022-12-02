@@ -4,10 +4,10 @@
 
 import os
 import re
+import sys
 from io import open
 from typing import Any, Match, cast
 
-import pkg_resources
 from setuptools import find_packages, setup
 
 # Change the PACKAGE_NAME only to change folder and different name
@@ -86,8 +86,7 @@ setup(
         "typing-extensions<5.0.0",
         "opencensus-ext-azure<2.0.0",
         # Used in pipeline_component_builder
-        # TODO: must be of version 0.14.0 for Python 3.11, which is not existed in Python 3.7
-        'bytecode<0.15.0,>=0.13.0',
+        f'bytecode<0.15.0,>={"0.14.0" if sys.version_info >= (3, 11) else "0.13.0"}',
     ],
     extras_require={
         # user can run `pip install azure-ai-ml[designer]` to install mldesigner alone with this package

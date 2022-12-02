@@ -252,6 +252,4 @@ def persistent_locals(func):
         # Get the locals in the func.
         func_locals = persistent_locals_func._locals
     """
-    if sys.version_info < (3, 11):
-        return _persistent_locals_below_3_11(func)
     return PersistentLocalsFunctionBuilder().build(func)
