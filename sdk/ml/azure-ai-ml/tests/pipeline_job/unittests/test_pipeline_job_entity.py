@@ -23,6 +23,7 @@ from azure.ai.ml.entities._job.automl.image import (
     ImageInstanceSegmentationJob,
     ImageObjectDetectionJob,
 )
+from azure.ai.ml.entities._job.job_resource_configuration import JobResourceConfiguration
 from azure.ai.ml.entities._job.automl.nlp import TextClassificationJob, TextClassificationMultilabelJob, TextNerJob
 from azure.ai.ml.entities._job.automl.tabular import ClassificationJob, ForecastingJob, RegressionJob
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput, _GroupAttrDict
@@ -1464,3 +1465,27 @@ class TestPipelineJobEntity:
         assert "boolean" in rest_obj.properties.inputs
         assert "number" in rest_obj.properties.inputs
         assert "str_param" in rest_obj.properties.inputs
+
+    def test_pipeline_input_as_runsettings_value(self, client: MLClient) -> None:
+        input_types_func = load_component(source="./tests/test_configs/components/input_types_component.yml")
+
+        @dsl.pipeline(
+            default_compute="cpu-cluster",
+            description="Set pipeline input to runsettings",
+        )
+        def empty_value_pipeline(integer: int, boolean: bool, number: float,
+                                 str_param: str, shm_size: str):
+            component = input_types_func(component_in_string=str_param,
+                                         component_in_ranged_integer=integer,
+                                         component_in_boolean=boolean,
+                                         component_in_ranged_number=number)
+            component.resources = JobResourceConfiguration(
+                instance_count=integer,
+                shm_size=shm_size,
+            )
+
+        pipeline = empty_value_pipeline(integer=0, boolean=False, number=0,
+                                        str_param="str_param", shm_size="20g")
+        rest_obj = pipeline._to_rest_object()
+        expect_resource = {'instance_count': '${{parent.inputs.integer}}', 'shm_size': '${{parent.inputs.shm_size}}'}
+        assert rest_obj.properties.jobs["component"]["resources"] == expect_resource
