@@ -63,7 +63,7 @@ class JobSchedule(YamlTranslatableMixin, SchemaValidatableMixin, RestTranslatabl
     ):
         is_enabled = kwargs.pop("is_enabled", None)
         provisioning_state = kwargs.pop("provisioning_state", None)
-        kwargs[NEW_ENTITY_PRINT_KWARG] = True
+        kwargs[NEW_ENTITY_PRINT_KWARG] = kwargs.pop(NEW_ENTITY_PRINT_KWARG, True)
         super().__init__(name=name, description=description, tags=tags, properties=properties, **kwargs)
         self.trigger = trigger
         self.display_name = display_name

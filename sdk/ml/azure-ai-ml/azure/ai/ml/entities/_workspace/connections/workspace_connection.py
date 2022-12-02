@@ -73,7 +73,7 @@ class WorkspaceConnection(Resource):
         self._target = target
         self._credentials = credentials
         self._metadata = json.loads(json.dumps(metadata))
-        kwargs[NEW_ENTITY_PRINT_KWARG] = True
+        kwargs[NEW_ENTITY_PRINT_KWARG] = kwargs.pop(NEW_ENTITY_PRINT_KWARG, True)
         super().__init__(**kwargs)
 
     @property
