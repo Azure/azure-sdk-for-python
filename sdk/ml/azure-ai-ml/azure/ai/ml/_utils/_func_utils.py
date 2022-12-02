@@ -3,7 +3,7 @@
 # ---------------------------------------------------------
 
 from types import FunctionType, MethodType
-from typing import List, Union, Callable
+from typing import List, Union, Callable, Any
 
 from bytecode import Instr, Bytecode
 
@@ -15,39 +15,47 @@ class PersistentLocalsFunction(object):
     function.
     """
 
-    def __init__(self, _func, _self=None):
+    def __init__(self, _func, *, _self: Any = None, skip_locals: List[str] = None):
         """
         :param _func: The function to be wrapped.
         :param _self: If original func is a method, _self should be provided, which is the instance of the method.
+        :param skip_locals: A list of local variables to skip when saving the locals.
         """
-        self._locals = {}
+        self.locals = {}
         self._self = _self
         # make function an instance method
         self._func = MethodType(_func, self)
+        self._skip_locals = skip_locals
 
     def __call__(self, *args, **kwargs):
-        if self._self:
-            return self._func(self._self, *args, **kwargs)  # pylint: disable=not-callable
-        return self._func(*args, **kwargs)  # pylint: disable=not-callable
+        self.locals.clear()
+        try:
+            if self._self:
+                return self._func(self._self, *args, **kwargs)  # pylint: disable=not-callable
+            return self._func(*args, **kwargs)  # pylint: disable=not-callable
+        finally:
+            # always pop skip locals even if exception is raised in user code
+            if self._skip_locals is not None:
+                for skip_local in self._skip_locals:
+                    self.locals.pop(skip_local, None)
 
 
-def source_template_func(mock_arg):
+def _source_template_func(mock_arg):
     return mock_arg
 
 
-def target_template_func(__self, mock_arg):
+def _target_template_func(__self, mock_arg):
     try:
         return mock_arg
     finally:
-        __self._locals = locals().copy()  # pylint: disable=protected-access
-        del __self._locals['__self']  # pylint: disable=protected-access
+        __self.locals = locals().copy()
 
 
 class PersistentLocalsFunctionBuilder(object):
     def __init__(self):
-        self._template_separators = self._clear_location(Bytecode.from_code(source_template_func.__code__))
+        self._template_separators = self._clear_location(Bytecode.from_code(_source_template_func.__code__))
 
-        template = self._clear_location(Bytecode.from_code(target_template_func.__code__))
+        template = self._clear_location(Bytecode.from_code(_target_template_func.__code__))
         self._template_body = self.split_bytecode(template)
         # after split, len(self._template_body) will be len(self._separators) + 1
         # pop tail to make zip work
@@ -149,17 +157,22 @@ class PersistentLocalsFunctionBuilder(object):
             func.__defaults__,
             func.__closure__
         )
-        if isinstance(func, MethodType):
-            return PersistentLocalsFunction(generated_func, _self=func.__self__)
-        return PersistentLocalsFunction(generated_func)
+        return PersistentLocalsFunction(
+            generated_func,
+            _self=func.__self__ if isinstance(func, MethodType) else None,
+            skip_locals=[self._injected_param]
+        )
 
     def build(self, func: Callable):
+        """Build a persistent locals function from the given function.
+        Detailed impact is described in the docstring of the persistent_locals decorator.
+        """
         if isinstance(func, (FunctionType, MethodType)):
             pass
         elif hasattr(func, '__call__'):
             func = func.__call__
         else:
-            raise TypeError('func must be a function, a method or a callable object')
+            raise TypeError('func must be a function or a callable object')
         return self._build_func(func)
 
 
@@ -172,14 +185,13 @@ def persistent_locals(func):
             try:
                the func code...
             finally:
-               __self._locals = locals().copy()
-               del __self._locals['__self']
+               __self.locals = locals().copy()
 
     You can get the locals in func by this code:
         persistent_locals_func = persistent_locals(your_func)
         # Execute your func
         result = persistent_locals_func(*args)
         # Get the locals in the func.
-        func_locals = persistent_locals_func._locals
+        func_locals = persistent_locals_func.locals
     """
     return PersistentLocalsFunctionBuilder().build(func)

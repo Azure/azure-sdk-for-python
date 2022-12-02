@@ -241,7 +241,7 @@ class PipelineComponentBuilder:
                 outputs = persistent_func(func.__self__, **_all_kwargs)
             else:
                 outputs = persistent_func(**_all_kwargs)
-            return outputs, persistent_func._locals
+            return outputs, persistent_func.locals
         finally:
             _definition_builder_stack.pop()
 
