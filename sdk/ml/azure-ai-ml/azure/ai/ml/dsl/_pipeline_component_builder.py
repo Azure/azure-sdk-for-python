@@ -4,7 +4,6 @@
 
 # pylint: disable=protected-access
 import copy
-import inspect
 import typing
 from collections import OrderedDict
 from inspect import Parameter, signature
@@ -232,13 +231,14 @@ class PipelineComponentBuilder:
         _definition_builder_stack.push(self)
 
         try:
-            func = self.func
-
-            # Use bytecode injection to add try...finally around code to persistent the locals in the function.
-            persistent_func = persistent_locals(func)
-            if inspect.ismethod(func):
-                # When func is the method of class, it will set the object to params.
-                outputs = persistent_func(func.__self__, **_all_kwargs)
+            persistent_func = persistent_locals(self.func)
+            # for some reason, when self.func is an instance method, it will
+            # not be a MethodType, but a FunctionType with a self argument,
+            # then the self argument will be passed to self.func as a named
+            # argument, which will conflict with the self argument from PersistentLocalsFunc.
+            # So we transform it into a positional argument here.
+            if "self" in _all_kwargs:
+                outputs = persistent_func(_all_kwargs.pop("self"), **_all_kwargs)
             else:
                 outputs = persistent_func(**_all_kwargs)
             return outputs, persistent_func.locals

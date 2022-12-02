@@ -29,6 +29,10 @@ def mock_conflict_function(__self):
     return __self
 
 
+def mock_function_with_self(self):
+    return self
+
+
 @pytest.mark.unittest
 @pytest.mark.pipeline_test
 class TestPersistentLocals:
@@ -40,6 +44,11 @@ class TestPersistentLocals:
         persistent_func = persistent_locals(mock_function)
         assert persistent_func(mock_arg=1) == (1, 1)
         assert set(persistent_func.locals.keys()) == {'mock_arg', 'mock_local_variable'}
+
+    def test_func_with_self(self):
+        persistent_func = persistent_locals(mock_function_with_self)
+        assert persistent_func(1) == 1
+        assert set(persistent_func.locals.keys()) == {'self'}
 
     def test_raise_exception(self):
         def mock_error_exception():
