@@ -28,9 +28,9 @@ from azure.ai.ml._scope_dependent_operations import (
 from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource, is_registry_id_for_resource
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
-    _create_or_update_autoincrement,
     _get_latest,
     _resolve_label_to_asset,
+    _get_next_version_from_container,
 )
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import polling_wait
@@ -283,16 +283,14 @@ class ComponentOperations(_ScopeDependentOperations):
             component = _refine_component(component)
         if version is not None:
             component.version = version
-        if not component.version and self._registry_name:
-            # version is required only when create into registry as
-            # we have _auto_increment_version for workspace component.
-            msg = "Component version is required for create_or_update."
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                target=ErrorTarget.COMPONENT,
-                error_category=ErrorCategory.USER_ERROR,
-            )
+        if not component.version and component._auto_increment_version:
+            component.version = _get_next_version_from_container(name=component.name,
+                        container_operation=self._container_operation,
+                        resource_group_name=self._operation_scope.resource_group_name,
+                        workspace_name=self._workspace_name,
+                        registry_name=self._registry_name,
+                        **self._init_args,
+                    )
 
         component._set_is_anonymous(kwargs.pop("is_anonymous", False))
         if not skip_validation:
@@ -327,25 +325,14 @@ class ComponentOperations(_ScopeDependentOperations):
                 polling_wait(poller=poller, start_time=start_time, message=message, timeout=None)
 
             else:
-                if component._auto_increment_version:
-                    result = _create_or_update_autoincrement(
-                        name=component.name,
-                        body=rest_component_resource,
-                        version_operation=self._version_operation,
-                        container_operation=self._container_operation,
-                        resource_group_name=self._operation_scope.resource_group_name,
-                        workspace_name=self._workspace_name,
-                        **self._init_args,
-                    )
-                else:
-                    result = self._version_operation.create_or_update(
-                        name=rest_component_resource.name,
-                        version=component.version,
-                        resource_group_name=self._resource_group_name,
-                        workspace_name=self._workspace_name,
-                        body=rest_component_resource,
-                        **self._init_args,
-                    )
+                result = self._version_operation.create_or_update(
+                    name=rest_component_resource.name,
+                    version=component.version,
+                    resource_group_name=self._resource_group_name,
+                    workspace_name=self._workspace_name,
+                    body=rest_component_resource,
+                    **self._init_args,
+                )
         except Exception as e:
             raise e
 

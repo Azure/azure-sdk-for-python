@@ -80,6 +80,8 @@ class Output(_InputOutputBase):
         self.mode = mode
         # use this field to determine the Output is control or not, currently hide in kwargs
         self.is_control = kwargs.pop("is_control", None)
+        # use this field to mark Output for early node orchestrate, currently hide in kwargs
+        self.early_available = kwargs.pop("early_available", None)
 
     def _get_hint(self, new_line_style=False):
         comment_str = self.description.replace('"', '\\"') if self.description else self.type
@@ -87,7 +89,7 @@ class Output(_InputOutputBase):
 
     def _to_dict(self, remove_name=True):
         """Convert the Output object to a dict."""
-        keys = ["name", "path", "type", "mode", "description", "is_control"]
+        keys = ["name", "path", "type", "mode", "description", "is_control", "early_available"]
         if remove_name:
             keys.remove("name")
         result = {key: getattr(self, key) for key in keys}

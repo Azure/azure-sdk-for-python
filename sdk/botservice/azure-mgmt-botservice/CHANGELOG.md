@@ -1,5 +1,23 @@
 # Release History
 
+## 2.0.0b4 (2022-11-30)
+
+### Features Added
+
+  - Added operation group EmailOperations
+  - Added operation group QnAMakerEndpointKeysOperations
+  - Model BotProperties has a new parameter tenant_id
+  - Model DirectLineChannelProperties has a new parameter extension_key1
+  - Model DirectLineChannelProperties has a new parameter extension_key2
+  - Model DirectLineSpeechChannelProperties has a new parameter cognitive_service_resource_id
+  - Model EmailChannelProperties has a new parameter auth_method
+  - Model EmailChannelProperties has a new parameter magic_code
+  - Model MsTeamsChannelProperties has a new parameter calling_webhook
+
+### Breaking Changes
+
+  - Model MsTeamsChannelProperties no longer has parameter calling_web_hook
+
 ## 2.0.0b3 (2022-06-27)
 
 **Bugfixes**

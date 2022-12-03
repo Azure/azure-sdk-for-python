@@ -4,13 +4,12 @@
 
 # pylint: disable=protected-access
 import copy
-import sys
 import typing
 from collections import OrderedDict
-from contextlib import contextmanager
 from inspect import Parameter, signature
 from typing import Callable, Union
 
+from azure.ai.ml._utils._func_utils import persistent_locals
 from azure.ai.ml._utils.utils import (
     get_all_enum_values_iter,
     is_private_preview_enabled,
@@ -18,7 +17,7 @@ from azure.ai.ml._utils.utils import (
     parse_args_description_from_docstring,
 )
 from azure.ai.ml.constants import AssetTypes
-from azure.ai.ml.constants._component import ComponentSource
+from azure.ai.ml.constants._component import ComponentSource, IOConstants
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
 from azure.ai.ml.entities import PipelineJob
 from azure.ai.ml.entities._builders import BaseNode
@@ -114,17 +113,6 @@ def get_func_variable_tracer(_locals_data, func_code):
     return tracer
 
 
-@contextmanager
-def replace_sys_profiler(profiler):
-    """A context manager which replaces sys profiler to given profiler."""
-    original_profiler = sys.getprofile()
-    sys.setprofile(profiler)
-    try:
-        yield
-    finally:
-        sys.setprofile(original_profiler)
-
-
 class PipelineComponentBuilder:
     # map from python built-in type to component type
     # pylint: disable=too-many-instance-attributes
@@ -203,17 +191,9 @@ class PipelineComponentBuilder:
             non_pipeline_inputs=non_pipeline_inputs
         )
         kwargs.update(non_pipeline_inputs_dict or {})
-        # We use this stack to store the dsl pipeline definition hierarchy
-        _definition_builder_stack.push(self)
 
         # Use a dict to store all variables in self.func
-        _locals = {}
-        func_variable_profiler = get_func_variable_tracer(_locals, self.func.__code__)
-        try:
-            with replace_sys_profiler(func_variable_profiler):
-                outputs = self.func(**kwargs)
-        finally:
-            _definition_builder_stack.pop()
+        outputs, _locals = self._get_outputs_and_locals(kwargs)
 
         if outputs is None:
             outputs = {}
@@ -235,9 +215,47 @@ class PipelineComponentBuilder:
         pipeline_component._outputs = self._build_pipeline_outputs(outputs)
         return pipeline_component
 
+    def _get_outputs_and_locals(
+        self,
+        _all_kwargs: typing.Dict[str, typing.Any]
+    ) -> typing.Tuple[typing.Dict, typing.Dict]:
+        """Get outputs and locals from self.func.
+        Locals will be used to update node variable names.
+
+        :param _all_kwargs: All kwargs to call self.func.
+        :type _all_kwargs: typing.Dict[str, typing.Any]
+        :return: A tuple of outputs and locals.
+        :rtype: typing.Tuple[typing.Dict, typing.Dict]
+        """
+        # We use this stack to store the dsl pipeline definition hierarchy
+        _definition_builder_stack.push(self)
+
+        try:
+            persistent_func = persistent_locals(self.func)
+            outputs = persistent_func(**_all_kwargs)
+            return outputs, persistent_func.locals
+        finally:
+            _definition_builder_stack.pop()
+
+    def _validate_group_annotation(self, name:str, val:GroupInput):
+        for k, v in val.values.items():
+            if isinstance(v, GroupInput):
+                self._validate_group_annotation(k, v)
+            elif isinstance(v, Output):
+                # TODO(2097468): automatically change it to Input when used in input annotation
+                raise UserErrorException("Output annotation cannot be used in @pipeline.")
+            elif isinstance(v, Input):
+                if v.type not in IOConstants.PRIMITIVE_STR_2_TYPE:
+                    # TODO(2097478): support port type groups
+                    raise UserErrorException(f"Only primitive types can be used as input of group, got {v.type}")
+            else:
+                raise UserErrorException(f"Unsupported annotation type {type(v)} for group field {name}.{k}")
+
     def _build_inputs(self, func):
         inputs = _get_param_with_standard_annotation(func, is_func=True, skip_params=self.non_pipeline_parameter_names)
         for k, v in inputs.items():
+            if isinstance(v, GroupInput):
+                self._validate_group_annotation(name=k, val=v)
             # add arg description
             if k in self._args_description:
                 v["description"] = self._args_description[k]
@@ -421,7 +439,7 @@ def _build_pipeline_parameter(
         func, *, user_provided_kwargs, group_default_kwargs=None, non_pipeline_inputs=None):
     # Pass group defaults into kwargs to support group.item can be used even if no default on function.
     # example:
-    # @parameter_group
+    # @group
     # class Group:
     #   key = 'val'
     #
