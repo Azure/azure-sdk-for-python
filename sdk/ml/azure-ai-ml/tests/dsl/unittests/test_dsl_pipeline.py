@@ -1,6 +1,7 @@
 import os
 from io import StringIO
 from pathlib import Path
+from typing import Dict
 from unittest import mock
 from unittest.mock import patch
 
@@ -9,7 +10,7 @@ import pytest
 from test_configs.dsl_pipeline import data_binding_expression
 from test_utilities.utils import omit_with_wildcard, prepare_dsl_curated
 
-from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, spark, \
+from azure.ai.ml import Input, MLClient, MpiDistribution, Output, command, dsl, load_component, load_job, \
     AmlTokenConfiguration, UserIdentityConfiguration, ManagedIdentityConfiguration
 from azure.ai.ml._restclient.v2022_05_01.models import ComponentContainerData, ComponentContainerDetails, SystemData
 from azure.ai.ml.constants._common import (
@@ -30,7 +31,7 @@ from azure.ai.ml.entities import (
 from azure.ai.ml.entities._builders import Command, Spark
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
-from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError
+from azure.ai.ml.exceptions import UserErrorException, ValidationException, ParamValueNotExistsError, UnsupportedParameterKindError, MultipleValueError
 
 from .._util import _DSL_TIMEOUT_SECOND
 
@@ -909,6 +910,9 @@ class TestDSLPipeline:
         pipeline1 = pipeline(10, test_job_input)
         self.assert_component_reuse(pipeline1, 1, mock_machinelearning_client)
 
+    @pytest.mark.skip(
+        "Could not rerecord the test , errors: (InvalidSubscriptionId) The provided subscription identifier 'test_subscription'"
+    )
     def test_command_function_reuse(self, mock_machinelearning_client: MLClient):
         path = "./tests/test_configs/components/helloworld_component.yml"
         environment = "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5"
@@ -1930,20 +1934,24 @@ class TestDSLPipeline:
         component_func1 = load_component(source=component_yaml, params_override=[{"name": "component_name_1"}])
         component_func2 = load_component(source=component_yaml, params_override=[{"name": "component_name_2"}])
 
-        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component"])
-        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component):
+        @dsl.pipeline(non_pipeline_inputs=["other_params", "is_add_component",
+                                           "param_with_annotation", "param_with_default"])
+        def pipeline_func(job_in_number, job_in_path, other_params, is_add_component,
+                          param_with_annotation: Dict[str, str], param_with_default: int = 1):
+            assert param_with_default == 1
+            assert param_with_annotation == {"mock": "dict"}
             component_func1(component_in_number=job_in_number, component_in_path=job_in_path)
             component_func2(component_in_number=other_params, component_in_path=job_in_path)
             if is_add_component:
                 component_func2(component_in_number=other_params, component_in_path=job_in_path)
 
-        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, False)
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, False, {"mock": "dict"})
         assert len(pipeline.jobs) == 2
         assert "other_params" not in pipeline.inputs
         assert isinstance(pipeline.jobs[component_func1.name].inputs["component_in_number"]._data, PipelineInput)
         assert pipeline.jobs[component_func2.name].inputs["component_in_number"]._data == 15
 
-        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True)
+        pipeline = pipeline_func(10, Input(path="/a/path/on/ds"), 15, True, {"mock": "dict"})
         assert len(pipeline.jobs) == 3
 
         @dsl.pipeline(non_pipeline_parameters=["other_params", "is_add_component"])
@@ -1990,6 +1998,120 @@ class TestDSLPipeline:
             component_func=component_func2)
         assert len(pipeline.jobs) == 2
         assert component_func2.name in pipeline.jobs
+
+    def test_pipeline_with_variable_inputs(self):
+        path = "./tests/test_configs/components/helloworld_component.yml"
+        component_func1 = load_component(path)
+        data = Data(name="test", version="1", type=AssetTypes.MLTABLE)
+
+        @dsl.pipeline
+        def pipeline_with_variable_args(**kwargs):
+            node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
+                                          component_in_path=kwargs["component_in_path1"])
+
+        @dsl.pipeline
+        def root_pipeline(component_in_number: int, component_in_path: Input, **kwargs):
+            """A pipeline with detailed docstring, including descriptions for inputs and outputs.
+
+            In this pipeline docstring, there are descriptions for inputs and outputs, via pipeline decorator,
+            Input/Output descriptions can infer from these descriptions.
+
+            Args:
+                component_in_number: component_in_number description
+                component_in_path: component_in_path description
+                component_in_number1: component_in_number1 description
+                component_in_path1: component_in_path1 description
+                args_0: args_0 description
+            """
+            node = component_func1(component_in_number=component_in_number, component_in_path=component_in_path)
+            node_kwargs = component_func1(component_in_number=kwargs["component_in_number1"],
+                                          component_in_path=kwargs["component_in_path1"])
+            node_with_arg_kwarg = pipeline_with_variable_args(**kwargs)
+
+        pipeline = root_pipeline(10, data, component_in_number1=12, component_in_path1=data)
+
+        assert pipeline.component.inputs['component_in_number'].description == "component_in_number description"
+        assert pipeline.component.inputs['component_in_path'].description == "component_in_path description"
+        assert pipeline.component.inputs['component_in_number1'].description == "component_in_number1 description"
+        assert pipeline.component.inputs['component_in_path1'].description == "component_in_path1 description"
+
+        omit_fields = [
+            "jobs.*.componentId",
+            "jobs.*._source"
+        ]
+        actual_dict = omit_with_wildcard(pipeline._to_rest_object().as_dict()["properties"], *omit_fields)
+
+        assert actual_dict["inputs"] == {
+            "component_in_number": {"job_input_type": "literal", "value": "10"},
+            "component_in_path": {"uri": "test:1", "job_input_type": "mltable"},
+            "component_in_number1": {"job_input_type": "literal", "value": "12"},
+            "component_in_path1": {"uri": "test:1", "job_input_type": "mltable"},
+        }
+        assert actual_dict["jobs"] == {
+            'node': {
+                'name': 'node', 'type': 'command', 'inputs': {
+                    'component_in_number': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_number}}'
+                    },
+                    'component_in_path': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_path}}'
+                    }
+                }
+            },
+            'node_kwargs': {
+                'name': 'node_kwargs',
+                'type': 'command',
+                'inputs': {
+                    'component_in_number': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_number1}}'
+                    },
+                    'component_in_path': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_path1}}'
+                    }
+                }
+            },
+            'node_with_arg_kwarg': {
+                'name': 'node_with_arg_kwarg',
+                'type': 'pipeline',
+                'inputs': {
+                    'component_in_number1': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_number1}}'
+                    },
+                    'component_in_path1': {
+                        'job_input_type': 'literal',
+                        'value': '${{parent.inputs.component_in_path1}}'
+                    }
+                }
+            }
+        }
+
+        with pytest.raises(UnsupportedParameterKindError,
+                           match="dsl pipeline does not accept \*custorm_args as parameters\."):
+            @dsl.pipeline
+            def pipeline_with_variable_args(*custorm_args):
+                pass
+
+            pipeline_with_variable_args(1, 2, 3)
+
+        with mock.patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: 'false'}):
+            with pytest.raises(UnsupportedParameterKindError,
+                               match="dsl pipeline does not accept \*args or \*\*kwargs as parameters\."):
+                root_pipeline(10, data, 11, data, component_in_number1=11, component_in_path1=data)
+
+    def test_pipeline_with_dumplicate_variable_inputs(self):
+
+        @dsl.pipeline
+        def pipeline_with_variable_args(key_1: int, **kargs):
+            pass
+
+        with pytest.raises(MultipleValueError,
+                           match="pipeline_with_variable_args\(\) got multiple values for argument 'key_1'\."):
+            pipeline_with_variable_args(10, key_1=10)
 
     def test_condition_node_consumption(self):
         from azure.ai.ml.dsl._condition import condition
@@ -2131,3 +2253,71 @@ class TestDSLPipeline:
             "outputs": {"output": {"job_output_type": "uri_folder", "mode": "Direct"}},
             "settings": {"_source": "DSL"},
         }
+
+    def test_node_sweep_with_optional_input(self) -> None:
+        component_yaml = components_dir / "helloworld_component_optional_input.yml"
+        component_func = load_component(component_yaml)
+
+        @dsl.pipeline
+        def pipeline_func():
+            node1 = component_func(required_input=1, optional_input=2)  # noqa: F841
+            node2 = component_func(required_input=1)  # noqa: F841
+            node3 = component_func(required_input=1)
+            node_sweep = node3.sweep(
+                primary_metric="training_f1_score",
+                goal="minimize",
+                sampling_algorithm="random",
+            )
+            node_sweep.set_limits(
+                max_total_trials=20,
+                max_concurrent_trials=10,
+            )
+
+        pipeline_job = pipeline_func()
+        jobs_dict = pipeline_job._to_rest_object().as_dict()["properties"]["jobs"]
+        # for node1 inputs, should contain required_input and optional_input;
+        # while for node2 and node_sweep, should only contain required_input.
+        assert jobs_dict["node1"]["inputs"] == {
+            "required_input": {"job_input_type": "literal", "value": "1"},
+            "optional_input": {"job_input_type": "literal", "value": "2"},
+        }
+        assert jobs_dict["node2"]["inputs"] == {"required_input": {"job_input_type": "literal", "value": "1"}}
+        assert jobs_dict["node_sweep"]["inputs"] == {"required_input": {"job_input_type": "literal", "value": "1"}}
+
+    def test_dsl_pipeline_unprovided_required_input(self):
+        component_yaml = components_dir / "helloworld_component_optional_input.yml"
+        component_func = load_component(component_yaml)
+
+        @dsl.pipeline
+        def pipeline_func(required_input: int, optional_input: int = 2):
+            component_func(required_input=required_input, optional_input=optional_input)
+
+        # no error when calling dsl pipeline func
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {
+            'inputs.required_input': "Required input 'required_input' for pipeline "
+                                     "'pipeline_func' not provided."
+        }
+
+        validate_result = pipeline_job.component._validate()
+        assert validate_result.error_messages == {}
+
+        # pipeline component has required inputs
+        assert pipeline_job.component._to_dict()["inputs"] == {
+            'optional_input': {'default': '2', 'optional': True, 'type': 'integer'},
+            'required_input': {'type': 'integer'}
+        }
+
+        # setting _validate_required_input_not_provided to False will skip the unprovided input check
+        @dsl.pipeline
+        def outer_pipeline():
+            node = pipeline_func()
+            node._validate_required_input_not_provided = False
+
+        pipeline_job = outer_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        validate_result = pipeline_job._validate()
+        assert validate_result.passed

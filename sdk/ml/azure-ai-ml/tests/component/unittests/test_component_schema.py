@@ -126,7 +126,7 @@ class TestCommandComponent:
         test_path = "./tests/test_configs/components/helloworld_component_alt1.yml"
         component_entity = load_component_entity_from_yaml(test_path, mock_machinelearning_client)
 
-        assert component_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu"
+        assert component_entity.environment == "AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1"
 
     def test_serialize_deserialize_input_types(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/input_types_component.yml"
@@ -145,6 +145,9 @@ class TestCommandComponent:
             "id",
         )
         assert component_dict == expected_dict
+
+        rest_component_resource = component_entity._to_rest_object()
+        assert rest_component_resource.properties.component_spec["inputs"] == expected_dict["inputs"]
 
     def test_override_params(self, mock_machinelearning_client: MLClient):
         test_path = "./tests/test_configs/components/helloworld_component.yml"

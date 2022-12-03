@@ -18,7 +18,7 @@ from azure.ai.ml.entities._deployment.batch_deployment import BatchDeployment
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestEnvironmentSchema:
     def test_yaml_load(self) -> None:
         path = Path("./tests/test_configs/environment/environment_conda.yml")

@@ -7,6 +7,7 @@ import os
 import signal
 import tempfile
 import time
+from pathlib import Path
 from typing import Dict, Callable
 from zipfile import ZipFile
 from io import StringIO
@@ -292,7 +293,7 @@ def assert_job_cancel(
     created_job = client.jobs.create_or_update(job, experiment_name=experiment_name)
     if check_before_cancelled is not None:
         assert check_before_cancelled(created_job)
-        cancel_job(client, created_job)
+    cancel_job(client, created_job)
     return created_job
 
 
@@ -318,3 +319,21 @@ def sleep_if_live(seconds):
     """
     if is_live():
         time.sleep(seconds)
+
+
+def parse_local_path(origin_path, base_path=None):
+    """Relative path in LocalPathField will be dumped to absolute path in _to_dict.
+    In e2e tests, it will be uploaded and resolved into an uri before _to_rest_object.
+    However, developers usually directly compare the result of _to_dict/_to_rest_object with a fixed dict.
+    So we provide this function to parse the original value in the same way as LocalPathField serialization
+    to avoid updating test cases after updating LocalPathField serialization logic.
+
+    :param origin_path: The original value filled in LocalPathField
+    :param base_path: The base path of the original value, usually from resource.base_path.
+    Will use current working directory if not provided.
+    """
+    if base_path is None:
+        base_path = Path.cwd()
+    else:
+        base_path = Path(base_path)
+    return (base_path / origin_path).resolve().absolute().as_posix()

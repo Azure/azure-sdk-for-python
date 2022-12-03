@@ -50,8 +50,8 @@ def build_list_by_subscription_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -82,8 +82,8 @@ def build_list_by_resource_group_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -118,8 +118,8 @@ def build_get_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -153,8 +153,8 @@ def build_create_or_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -191,8 +191,8 @@ def build_update_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
     accept = _headers.pop("Accept", "application/json")
 
@@ -229,8 +229,8 @@ def build_delete_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -269,8 +269,8 @@ def build_list_health_details_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -306,8 +306,8 @@ def build_get_health_details_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -341,8 +341,8 @@ def build_run_health_checks_request(
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
     api_version = kwargs.pop(
-        "api_version", _params.pop("api-version", "2022-10-12-preview")
-    )  # type: Literal["2022-10-12-preview"]
+        "api_version", _params.pop("api-version", "2022-11-11-preview")
+    )  # type: Literal["2022-11-11-preview"]
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -405,7 +405,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkConnectionListResult]
 
         error_map = {
@@ -495,7 +495,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkConnectionListResult]
 
         error_map = {
@@ -592,7 +592,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkConnection]
 
         request = build_get_request(
@@ -646,7 +646,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkConnection]
 
@@ -809,7 +809,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkConnection]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
@@ -874,7 +874,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.NetworkConnection]]
 
@@ -1035,7 +1035,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.NetworkConnection]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
@@ -1096,7 +1096,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_delete_request(
@@ -1153,7 +1153,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
         polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
@@ -1219,7 +1219,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.HealthCheckStatusDetailsListResult]
 
         error_map = {
@@ -1319,7 +1319,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[_models.HealthCheckStatusDetails]
 
         request = build_get_health_details_request(
@@ -1353,24 +1353,9 @@ class NetworkConnectionsOperations:
 
     get_health_details.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/networkConnections/{networkConnectionName}/healthChecks/latest"}  # type: ignore
 
-    @distributed_trace
-    def run_health_checks(  # pylint: disable=inconsistent-return-statements
+    def _run_health_checks_initial(  # pylint: disable=inconsistent-return-statements
         self, resource_group_name: str, network_connection_name: str, **kwargs: Any
     ) -> None:
-        """Triggers a new health check run. The execution and health check result can be tracked via the
-        network Connection health check details.
-
-        :param resource_group_name: The name of the resource group. The name is case insensitive.
-         Required.
-        :type resource_group_name: str
-        :param network_connection_name: Name of the Network Connection that can be applied to a Pool.
-         Required.
-        :type network_connection_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: None or the result of cls(response)
-        :rtype: None
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -1384,7 +1369,7 @@ class NetworkConnectionsOperations:
 
         api_version = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
-        )  # type: Literal["2022-10-12-preview"]
+        )  # type: Literal["2022-11-11-preview"]
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_run_health_checks_request(
@@ -1392,7 +1377,7 @@ class NetworkConnectionsOperations:
             network_connection_name=network_connection_name,
             subscription_id=self._config.subscription_id,
             api_version=api_version,
-            template_url=self.run_health_checks.metadata["url"],
+            template_url=self._run_health_checks_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -1405,11 +1390,81 @@ class NetworkConnectionsOperations:
 
         response = pipeline_response.http_response
 
-        if response.status_code not in [200]:
+        if response.status_code not in [200, 202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         if cls:
             return cls(pipeline_response, None, {})
 
-    run_health_checks.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/networkConnections/{networkConnectionName}/runHealthChecks"}  # type: ignore
+    _run_health_checks_initial.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/networkConnections/{networkConnectionName}/runHealthChecks"}  # type: ignore
+
+    @distributed_trace
+    def begin_run_health_checks(
+        self, resource_group_name: str, network_connection_name: str, **kwargs: Any
+    ) -> LROPoller[None]:
+        """Triggers a new health check run. The execution and health check result can be tracked via the
+        network Connection health check details.
+
+        :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
+        :type resource_group_name: str
+        :param network_connection_name: Name of the Network Connection that can be applied to a Pool.
+         Required.
+        :type network_connection_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be ARMPolling. Pass in False for this
+         operation to not poll, or pass in your own initialized polling object for a personal polling
+         strategy.
+        :paramtype polling: bool or ~azure.core.polling.PollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of LROPoller that returns either None or the result of cls(response)
+        :rtype: ~azure.core.polling.LROPoller[None]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )  # type: Literal["2022-11-11-preview"]
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, PollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
+        if cont_token is None:
+            raw_result = self._run_health_checks_initial(  # type: ignore
+                resource_group_name=resource_group_name,
+                network_connection_name=network_connection_name,
+                api_version=api_version,
+                cls=lambda x, y, z: x,
+                headers=_headers,
+                params=_params,
+                **kwargs
+            )
+        kwargs.pop("error_map", None)
+
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
+            if cls:
+                return cls(pipeline_response, None, {})
+
+        if polling is True:
+            polling_method = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs)
+            )  # type: PollingMethod
+        elif polling is False:
+            polling_method = cast(PollingMethod, NoPolling())
+        else:
+            polling_method = polling
+        if cont_token:
+            return LROPoller.from_continuation_token(
+                polling_method=polling_method,
+                continuation_token=cont_token,
+                client=self._client,
+                deserialization_callback=get_long_running_output,
+            )
+        return LROPoller(self._client, raw_result, get_long_running_output, polling_method)
+
+    begin_run_health_checks.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DevCenter/networkConnections/{networkConnectionName}/runHealthChecks"}  # type: ignore

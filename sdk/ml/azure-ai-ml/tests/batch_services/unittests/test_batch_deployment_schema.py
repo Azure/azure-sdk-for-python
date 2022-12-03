@@ -20,7 +20,7 @@ def load_batch_deployment_entity_from_yaml(path: str, context={}) -> BatchDeploy
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestBatchDeploymentSchema:
     def test_serialize_batch_deployment(self) -> None:
         test_path = "./tests/test_configs/deployments/batch/batch_deployment_1.yaml"

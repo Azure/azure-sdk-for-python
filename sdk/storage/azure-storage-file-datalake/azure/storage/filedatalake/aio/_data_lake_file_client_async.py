@@ -4,14 +4,10 @@
 # license information.
 # --------------------------------------------------------------------------
 # pylint: disable=invalid-overridden-method
-from typing import ( # pylint: disable=unused-import
-    Any, AnyStr, Dict, IO, Iterable, Optional, Union,
+from typing import (
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING)
-
-try:
-    from urllib.parse import quote, unquote
-except ImportError:
-    from urllib2 import quote, unquote # type: ignore
+from urllib.parse import quote, unquote
 
 from azure.core.exceptions import HttpResponseError
 from ._download_async import StorageStreamDownloader
@@ -290,11 +286,12 @@ class DataLakeFileClient(PathClient, DataLakeFileClientBase):
         await self._datalake_client_for_blob_operation.path.set_expiry(expiry_options, expires_on=expires_on,
                                                                        **kwargs)  # pylint: disable=protected-access
 
-    async def upload_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-                          length=None,  # type: Optional[int]
-                          overwrite=False,  # type: Optional[bool]
-                          **kwargs):
-        # type: (...) -> Dict[str, Any]
+    async def upload_data(
+            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            length: Optional[int] = None,
+            overwrite: Optional[bool] = False,
+            **kwargs
+        ) -> Dict[str, Any]:
         """
         Upload data to a file.
 

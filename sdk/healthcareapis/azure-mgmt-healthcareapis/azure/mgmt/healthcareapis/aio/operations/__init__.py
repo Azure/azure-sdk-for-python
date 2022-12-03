@@ -20,18 +20,24 @@ from ._workspace_private_link_resources_operations import WorkspacePrivateLinkRe
 from ._operations import Operations
 from ._operation_results_operations import OperationResultsOperations
 
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'ServicesOperations',
-    'PrivateEndpointConnectionsOperations',
-    'PrivateLinkResourcesOperations',
-    'WorkspacesOperations',
-    'DicomServicesOperations',
-    'IotConnectorsOperations',
-    'FhirDestinationsOperations',
-    'IotConnectorFhirDestinationOperations',
-    'FhirServicesOperations',
-    'WorkspacePrivateEndpointConnectionsOperations',
-    'WorkspacePrivateLinkResourcesOperations',
-    'Operations',
-    'OperationResultsOperations',
+    "ServicesOperations",
+    "PrivateEndpointConnectionsOperations",
+    "PrivateLinkResourcesOperations",
+    "WorkspacesOperations",
+    "DicomServicesOperations",
+    "IotConnectorsOperations",
+    "FhirDestinationsOperations",
+    "IotConnectorFhirDestinationOperations",
+    "FhirServicesOperations",
+    "WorkspacePrivateEndpointConnectionsOperations",
+    "WorkspacePrivateLinkResourcesOperations",
+    "Operations",
+    "OperationResultsOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

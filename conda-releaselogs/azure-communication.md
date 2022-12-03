@@ -1,5 +1,14 @@
 # Azure Communication client library for Python (conda)
 
+## 2022.12.01
+
+### Packages included
+
+- azure-communication-chat-1.1.0
+- azure-communication-identity-1.3.0
+- azure-communication-phonenumbers-1.0.1
+- azure-communication-sms-1.0.1
+
 ## 2022.09.01
 
 ### Packages included

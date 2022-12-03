@@ -3,11 +3,13 @@ import os
 import random
 import time
 import uuid
+import json
 from datetime import datetime
+from importlib import reload
 from os import getenv
 from pathlib import Path
 from typing import Callable, Tuple, Union
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 import pytest
 from azure.core.pipeline.transport import HttpTransport
@@ -16,6 +18,7 @@ from azure.ai.ml import MLClient, load_component, load_job
 from azure.ai.ml._restclient.registry_discovery import AzureMachineLearningWorkspaces as ServiceClientRegistryDiscovery
 from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationScope
 from azure.ai.ml._utils.utils import hash_dict
+from azure.ai.ml.constants._common import AZUREML_PRIVATE_FEATURES_ENV_VAR
 from azure.ai.ml.entities import AzureBlobDatastore, Component
 from azure.ai.ml.entities._assets import Data, Model
 from azure.ai.ml.entities._component.parallel_component import ParallelComponent
@@ -152,6 +155,28 @@ def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
 
 
 @pytest.fixture
+def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
+    mock_response = json.dumps(
+        {
+            "registryName": "testFeed",
+            "primaryRegionResourceProviderUri": "https://cert-master.experiments.azureml-test.net/",
+            "resourceGroup": "resourceGroup",
+            "subscriptionId": "subscriptionId"
+        }
+    )
+    mocker.patch(
+        "azure.ai.ml._restclient.registry_discovery.operations._registry_management_non_workspace_operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace",
+        return_val=mock_response,
+    )
+    yield MLClient(
+        credential=Mock(spec_set=DefaultAzureCredential),
+        subscription_id=Test_Subscription,
+        resource_group_name=Test_Resource_Group,
+        registry_name=Test_Registry_Name,
+    )
+
+
+@pytest.fixture
 def mock_aml_services_2021_10_01(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2021_10_01")
 
@@ -174,6 +199,11 @@ def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2021_10_01_dataplanepreview")
 
 
 @pytest.fixture
@@ -316,6 +346,16 @@ def crud_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredent
         resource_group_name=e2e_ws_scope.resource_group_name,
         logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
         registry_name=None,  # This must be set to None for CRUD operations
+    )
+
+
+@pytest.fixture
+def pipelines_registry_client(e2e_ws_scope: OperationScope, auth: ClientSecretCredential) -> MLClient:
+    """return a machine learning client using in Pipelines end-to-end tests."""
+    return MLClient(
+        credential=auth,
+        logging_enable=getenv(E2E_TEST_LOGGING_ENABLED),
+        registry_name="sdk-test",
     )
 
 
@@ -580,6 +620,29 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
 
 
 @pytest.fixture()
+def enable_private_preview_schema_features():
+    """Schemas will be imported at the very beginning, so need to reload related classes."""
+    from azure.ai.ml._schema.component import command_component as command_component_schema, input_output
+    from azure.ai.ml._schema.pipeline import pipeline_component as pipeline_component_schema
+    from azure.ai.ml.entities._component import (
+        command_component as command_component_entity,
+        pipeline_component as pipeline_component_entity,
+    )
+
+    def _reload_related_classes():
+        reload(input_output)
+        reload(command_component_schema)
+        reload(pipeline_component_schema)
+        command_component_entity.CommandComponentSchema = command_component_schema.CommandComponentSchema
+        pipeline_component_entity.PipelineComponentSchema = pipeline_component_schema.PipelineComponentSchema
+
+    with patch.dict(os.environ, {AZUREML_PRIVATE_FEATURES_ENV_VAR: "True"}):
+        _reload_related_classes()
+        yield
+    _reload_related_classes()
+
+
+@pytest.fixture()
 def enable_environment_id_arm_expansion(mocker: MockFixture):
     mocker.patch("azure.ai.ml._utils.utils.is_private_preview_enabled", return_value=False)
 
@@ -598,6 +661,7 @@ def enable_internal_components():
     with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
         # need to call _try_init_internal_components manually as environment variable is set after _internal is imported
         try_enable_internal_components()
+        yield  # run test with env var overwritten
 
 
 @pytest.fixture()
@@ -636,7 +700,7 @@ def pytest_configure(config):
         ("pipeline_test", "marks tests as pipeline tests, which will create pipeline jobs during testing"),
         ("automl_test", "marks tests as automl tests, which will create automl jobs during testing"),
         ("core_sdk_test", "marks tests as core sdk tests"),
-        ("production_experience_test", "marks tests as production experience tests"),
+        ("production_experiences_test", "marks tests as production experience tests"),
         ("training_experiences_test", "marks tests as training experience tests"),
         ("data_experiences_test", "marks tests as data experience tests"),
         ("local_endpoint_local_assets", "marks tests as local_endpoint_local_assets"),

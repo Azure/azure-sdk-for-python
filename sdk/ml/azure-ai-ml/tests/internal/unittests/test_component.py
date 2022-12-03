@@ -3,6 +3,7 @@
 # ---------------------------------------------------------
 import copy
 import os
+import tempfile
 import shutil
 from pathlib import Path
 from typing import Dict
@@ -11,6 +12,7 @@ from zipfile import ZipFile
 import pydash
 import pytest
 import yaml
+from pytest_mock import MockFixture
 
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
@@ -22,6 +24,7 @@ from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.exceptions import ValidationException
+from test_utilities.utils import parse_local_path
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
 
@@ -187,19 +190,15 @@ class TestComponent:
         entity = load_component(yaml_path)
 
         expected_dict = copy.deepcopy(yaml_dict)
-        type_value = (
-            expected_dict["type"].rsplit("@", 1)[0]
-            if expected_dict["type"].endswith("@1-legacy")
-            else expected_dict["type"]
-        )
-        pydash.set_(expected_dict, "type", type_value)
+
+        # Linux is the default value of os in InternalEnvironment
         if "environment" in expected_dict:
             expected_dict["environment"]["os"] = "Linux"
 
         for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum"]:
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
@@ -207,6 +206,10 @@ class TestComponent:
             # optional will be dropped if it's False
             if "optional" in input_port and input_port["optional"] is False:
                 del input_port["optional"]
+
+        # code will be dumped as absolute path
+        if "code" in expected_dict:
+            expected_dict["code"] = parse_local_path(expected_dict["code"], entity.base_path)
 
         assert entity._to_dict() == expected_dict
         rest_obj = entity._to_rest_object()
@@ -219,6 +222,17 @@ class TestComponent:
         assert InternalComponent._from_rest_object(rest_obj)._to_dict() == expected_dict
         result = entity._validate()
         assert result._to_dict() == {"result": "Succeeded"}
+
+    @pytest.mark.parametrize(
+        "yaml_path,label",
+        [
+            ("preview_command_component.yaml", "1-preview"),
+            ("legacy_distributed_component.yaml", "1-legacy"),
+        ]
+    )
+    def test_command_mode_command_component(self, yaml_path: str, label: str):
+        component = load_component("./tests/test_configs/internal/command-mode/{}".format(yaml_path))
+        assert component._to_rest_object().properties.component_spec["type"] == f"{component.type}@{label}"
 
     def test_ipp_component_serialization(self):
         yaml_path = "./tests/test_configs/internal/ipp-component/spec.yaml"
@@ -470,6 +484,42 @@ class TestComponent:
                 "os": "Linux",
             }
 
+    def test_artifacts_in_additional_includes(self, mocker: MockFixture):
+        with tempfile.TemporaryDirectory() as temp_dir:
+
+            def mock_get_artifacts(**kwargs):
+                version = kwargs.get("version")
+                artifact = Path(temp_dir) / version
+                if version in ["version_1", "version_3"]:
+                    version = "version_1"
+                artifact.mkdir(parents=True, exist_ok=True)
+                (artifact / version).mkdir(exist_ok=True)
+                (artifact / version / "file").touch(exist_ok=True)
+                (artifact / f"file_{version}").touch(exist_ok=True)
+                return str(artifact)
+
+            mocker.patch("azure.ai.ml._internal.entities._artifact_cache.ArtifactCache.get",
+                         side_effect=mock_get_artifacts)
+            from azure.ai.ml._internal.entities._artifact_cache import ArtifactCache
+            yaml_path = "./tests/test_configs/internal/component_with_additional_includes/with_artifacts.yml"
+            component: InternalComponent = load_component(source=yaml_path)
+            assert component._validate().passed, repr(component._validate())
+            with component._resolve_local_code() as code:
+                code_path = code.path
+                assert code_path.is_dir()
+                for path in ['version_1/', 'version_1/file', 'version_2/', 'version_2/file',
+                             'file_version_1', 'file_version_2', 'DockerFile']:
+                    assert (code_path / path).exists()
+
+            yaml_path = "./tests/test_configs/internal/component_with_additional_includes/" \
+                        "artifacts_additional_includes_with_conflict.yml"
+            component: InternalComponent = load_component(source=yaml_path)
+            validation_result = component._validate()
+            assert validation_result.passed is False
+            assert "There are conflict files in additional include" in validation_result.error_messages["*"]
+            assert 'test_additional_include:version_1 in component-sdk-test-feed' in validation_result.error_messages["*"]
+            assert 'test_additional_include:version_3 in component-sdk-test-feed' in validation_result.error_messages["*"]
+
     @pytest.mark.parametrize(
         "yaml_path,expected_error_msg_prefix",
         [
@@ -536,16 +586,25 @@ class TestComponent:
                 "param_bool": {"type": "boolean"},
                 "param_enum_cap": {"enum": ["minimal", "reuse", "expiry", "policies"], "type": "enum"},
                 "param_enum_with_int_values": {"default": "3", "enum": ["1", "2.0", "3", "4"], "type": "enum"},
-                "param_float": {"type": "float"},
+                "param_float": {"type": "float", "default": "0.15", "max": "1.0", "min": "-1.0"},
                 "param_int": {"type": "integer"},
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},
                 # yes will be converted to true in YAML 1.2, users may use "yes" as a workaround
                 "param_string_with_yes_value": {"default": "True", "type": "string"},
                 "param_string_with_quote_yes_value": {"default": "yes", "type": "string"},
+            },
+            "outputs": {
+                'output_data_path': {
+                    'datastore_mode': 'mount',
+                    'description': 'Path to the data',
+                    'is_link_mode': True,
+                    'type': 'path'
+                }
             }
         }
         assert component._to_rest_object().properties.component_spec["inputs"] == expected_inputs["inputs"]
+        assert component._to_rest_object().properties.component_spec["outputs"] == expected_inputs["outputs"]
         assert component._validate().passed is True, repr(component._validate())
 
         regenerated_component = Component._from_rest_object(component._to_rest_object())

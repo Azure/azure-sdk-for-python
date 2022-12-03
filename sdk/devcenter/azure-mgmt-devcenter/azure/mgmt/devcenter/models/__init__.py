@@ -16,6 +16,8 @@ from ._models_py3 import CatalogListResult
 from ._models_py3 import CatalogProperties
 from ._models_py3 import CatalogUpdate
 from ._models_py3 import CatalogUpdateProperties
+from ._models_py3 import CheckNameAvailabilityRequest
+from ._models_py3 import CheckNameAvailabilityResponse
 from ._models_py3 import CloudErrorBody
 from ._models_py3 import DevBoxDefinition
 from ._models_py3 import DevBoxDefinitionListResult
@@ -32,6 +34,7 @@ from ._models_py3 import EnvironmentTypeListResult
 from ._models_py3 import EnvironmentTypeUpdate
 from ._models_py3 import ErrorAdditionalInfo
 from ._models_py3 import ErrorDetail
+from ._models_py3 import ErrorResponse
 from ._models_py3 import Gallery
 from ._models_py3 import GalleryListResult
 from ._models_py3 import GitCatalog
@@ -93,15 +96,18 @@ from ._models_py3 import UserRoleAssignmentValue
 
 from ._dev_center_mgmt_client_enums import ActionType
 from ._dev_center_mgmt_client_enums import CatalogSyncState
+from ._dev_center_mgmt_client_enums import CheckNameAvailabilityReason
 from ._dev_center_mgmt_client_enums import CreatedByType
 from ._dev_center_mgmt_client_enums import DomainJoinType
 from ._dev_center_mgmt_client_enums import EnableStatus
 from ._dev_center_mgmt_client_enums import HealthCheckStatus
+from ._dev_center_mgmt_client_enums import HibernateSupport
 from ._dev_center_mgmt_client_enums import ImageValidationStatus
 from ._dev_center_mgmt_client_enums import LicenseType
 from ._dev_center_mgmt_client_enums import LocalAdminStatus
 from ._dev_center_mgmt_client_enums import ManagedServiceIdentityType
 from ._dev_center_mgmt_client_enums import Origin
+from ._dev_center_mgmt_client_enums import ProvisioningState
 from ._dev_center_mgmt_client_enums import ScheduledFrequency
 from ._dev_center_mgmt_client_enums import ScheduledType
 from ._dev_center_mgmt_client_enums import SkuTier
@@ -121,6 +127,8 @@ __all__ = [
     "CatalogProperties",
     "CatalogUpdate",
     "CatalogUpdateProperties",
+    "CheckNameAvailabilityRequest",
+    "CheckNameAvailabilityResponse",
     "CloudErrorBody",
     "DevBoxDefinition",
     "DevBoxDefinitionListResult",
@@ -137,6 +145,7 @@ __all__ = [
     "EnvironmentTypeUpdate",
     "ErrorAdditionalInfo",
     "ErrorDetail",
+    "ErrorResponse",
     "Gallery",
     "GalleryListResult",
     "GitCatalog",
@@ -197,15 +206,18 @@ __all__ = [
     "UserRoleAssignmentValue",
     "ActionType",
     "CatalogSyncState",
+    "CheckNameAvailabilityReason",
     "CreatedByType",
     "DomainJoinType",
     "EnableStatus",
     "HealthCheckStatus",
+    "HibernateSupport",
     "ImageValidationStatus",
     "LicenseType",
     "LocalAdminStatus",
     "ManagedServiceIdentityType",
     "Origin",
+    "ProvisioningState",
     "ScheduledFrequency",
     "ScheduledType",
     "SkuTier",

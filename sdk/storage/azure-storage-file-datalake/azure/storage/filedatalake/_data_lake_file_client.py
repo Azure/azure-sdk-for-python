@@ -5,7 +5,7 @@
 # --------------------------------------------------------------------------
 from io import BytesIO
 from typing import (
-    Any, AnyStr, Dict, IO, Iterable, Optional, Union,
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, Optional, Union,
     TYPE_CHECKING
 )
 from urllib.parse import quote, unquote
@@ -19,6 +19,7 @@ from ._shared.base_client import parse_connection_str
 from ._shared.request_handlers import get_length, read_length
 from ._shared.response_handlers import return_response_headers
 from ._shared.uploads import IterStreamer
+from ._shared.uploads_async import AsyncIterStreamer
 from ._upload_helper import upload_datalake_file
 from ._download import StorageStreamDownloader
 from ._path_client import PathClient
@@ -321,15 +322,14 @@ class DataLakeFileClient(PathClient):
             .set_expiry(expiry_options, expires_on=expires_on, **kwargs)  # pylint: disable=protected-access
 
     def _upload_options(  # pylint:disable=too-many-statements
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            length=None,  # type: Optional[int]
+            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            length: Optional[int] = None,
             **kwargs
-        ):
-        # type: (...) -> Dict[str, Any]
+        ) -> Dict[str, Any]:
 
         encoding = kwargs.pop('encoding', 'UTF-8')
-        if isinstance(data, six.text_type):
-            data = data.encode(encoding) # type: ignore
+        if isinstance(data, str):
+            data = data.encode(encoding)
         if length is None:
             length = get_length(data)
         if isinstance(data, bytes):
@@ -341,6 +341,8 @@ class DataLakeFileClient(PathClient):
             stream = data
         elif hasattr(data, '__iter__'):
             stream = IterStreamer(data, encoding=encoding)
+        elif hasattr(data, '__aiter__'):
+            stream = AsyncIterStreamer(data, encoding=encoding)
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
 
@@ -366,11 +368,12 @@ class DataLakeFileClient(PathClient):
 
         return kwargs
 
-    def upload_data(self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-                    length=None,  # type: Optional[int]
-                    overwrite=False,  # type: Optional[bool]
-                    **kwargs):
-        # type: (...) -> Dict[str, Any]
+    def upload_data(
+            self, data: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]],
+            length: Optional[int] = None,
+            overwrite: Optional[bool] = False,
+            **kwargs
+        ) -> Dict[str, Any]:
         """
         Upload data to a file.
 
