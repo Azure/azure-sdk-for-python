@@ -112,6 +112,27 @@ steps:
       targetPath: '$(Build.SourcesDirectory)/_coverage'
       artifactType: 'pipeline'
 
+  - task: PythonScript@0
+    displayName: 'Create Coverage Report'
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    inputs:
+      scriptPath: 'scripts/devops_tasks/create_coverage.py'
+
+  - pwsh: |
+      Get-Content $(Build.SourcesDirectory)\.coverage
+      Get-Content $(Build.SourcesDirectory)\coverage.xml
+    continueOnError: true
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    displayName: Show .coverage and coverage.xml file
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage to DevOps'
+    continueOnError: true
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+
   - task: PublishTestResults@2
     condition: always()
     inputs:
