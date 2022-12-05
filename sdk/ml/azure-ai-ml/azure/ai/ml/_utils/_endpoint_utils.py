@@ -26,7 +26,7 @@ from azure.core.exceptions import (
     ResourceNotFoundError,
     map_error,
 )
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException, MlException, ErrorCategory
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException, MLException, ErrorCategory
 from azure.core.polling import LROPoller, PollingMethod
 from azure.core.rest import HttpResponse
 from azure.mgmt.core.exceptions import ARMErrorFormat
@@ -253,7 +253,7 @@ def validate_scoring_script(deployment):
     except Exception as err:
         if isinstance(err, ValidationException):
             raise err
-        raise MlException(
+        raise MLException(
             message= f"Failed to open scoring script {err.filename}.",
             no_personal_data_message= "Failed to open scoring script.",
         )

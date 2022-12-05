@@ -602,6 +602,7 @@
           "keySource": "Microsoft.Storage"
         },
         "supportsHttpsTrafficOnly": true,
+        "allowBlobPublicAccess": false,
         "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
       }
     },
@@ -750,7 +751,7 @@
             "minNodeCount": "[parameters('computeMinNodeCount')]",
             "maxNodeCount": "[parameters('computeMaxNodeCount')]"
           },
-          "vmSize": "STANDARD_NC6",
+          "vmSize": "[if(equals(parameters('location'), 'eastus2euap'), 'STANDARD_DS2_V2', 'STANDARD_NC6')]",
           "remoteLoginPortPublicAccess": "[parameters('remoteLoginPortPublicAccess')]"
         }
       }

@@ -6,7 +6,7 @@ from azure.ai.ml import load_batch_endpoint, load_online_endpoint
 from azure.ai.ml.entities import BatchEndpoint, Endpoint, ManagedOnlineDeployment, OnlineEndpoint
 
 
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 @pytest.mark.unittest
 class TestOnlineEndpointYAML:
     SIMPLE_ENDPOINT_WITH_BLUE_BAD = "tests/test_configs/endpoints/online/online_endpoint_create_aks_bad.yml"

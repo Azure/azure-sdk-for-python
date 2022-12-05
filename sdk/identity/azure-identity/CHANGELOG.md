@@ -1,5 +1,17 @@
 # Release History
 
+## 1.13.0b1 (Unreleased)
+
+### Features Added
+
+- Added Windows Web Account Manager (WAM) Brokered Authentication support. ([#23687](https://github.com/Azure/azure-sdk-for-python/issues/23687))
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 1.12.0 (2022-11-08)
 
 ### Bugs Fixed

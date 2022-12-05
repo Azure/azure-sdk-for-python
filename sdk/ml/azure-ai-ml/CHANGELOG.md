@@ -1,6 +1,59 @@
 # Release History
 
-## 1.1.0 (Unreleased)
+## 1.2.0 (2022-12-05)
+
+### Breaking Changes
+- Removed description from Registry.
+- Disable sdk telemetry logging
+
+### Features Added
+- Enable updating the CMK encryption key (workspace.encryption.keyVaultProperties.keyIdentifier) for a workspace.
+- Mark JobService class and services param to command() as experimental.
+- Added a replication_count value to the schema of SystemCreatedStorageAccount in Registry.
+- Support expression in if-else in Pipelines.
+- Support command schedule in Pipelines.
+- Support Output & port type Input in @group in Pipelines.
+- Support parallel-for pipeline with subgraph as body in Pipelines.
+- Additional includes support azure devops artifacts for Component.
+- Added support for Fairfax and MoonCake cloud for the registry discovery baseurl.
+- Added support for schedule in spark job.
+- Added support for foreach node in SDK.
+- Added support for variable args as pipeline input in DSL Pipeline.
+- Added support for dsl condition with one branch in Pipeline.
+- Added OS Patching Parameters to Compute Instance.
+
+### Bugs Fixed
+- Update the upper bound dependencies version for tqdm, strictyaml, colorama and opencensus-ext-azure.
+- Added missing "properties" to batch deployment.
+- Retain the cases for the names of system job services (Tracking and Studio).
+- Fixed Sweep node not excluding optional input with value `None` in REST object. 
+- Update registry begin_delete method return type.
+- Fixed sweep job optional input cannot be empty.
+- Added private preview flag for on_init and on_finalize in pipeline settings schema to hide them in YAML spec.
+- Convert mldesigner primitive annotation to Input type in Pipeline.
+- Fixed bool test for output in download operation.
+- Fixed Compute Instance schedule not being created
+- Removed erroneous experimental warning from Compute Schedules
+
+## 1.1.2 (2022-11-21)
+
+### Features Added
+- Restored idle_time_before_shutdown property for Compute Instances. 
+- Deprecated idle_time_before_shutdown property in favor of idle_time_before_shutdown_minutes.
+
+### Bugs Fixed
+- Fixed idle_time_before_shutdown appearing as None for Compute Instances returned by `show` or `list`.
+- Fixed idle_time_before_shutdown_minutes preventing creation of Compute Instances when set to None.
+
+## 1.1.1 (2022-11-15)
+
+### Breaking Changes
+- Renamed idle_time_before_shutdown to idle_time_before_shutdown_minutes and changed input type to int.
+
+### Bugs Fixed
+- Fixed idle_time_before_shutdown_minutes not appearing in GET calls for Compute Instances.
+
+## 1.1.0 (2022-11-07)
 
 ### Features Added
 - Registry list operation now accepts scope value to allow subscription-only based requests.
@@ -9,16 +62,18 @@
 - The values of JobService.job_service_type are now using the snake case. e.g jupyter_lab, ssh, tensor_board, vs_code.
 - Command function now accepts services param of type Dict[str, JobService] instead of dict.
 
-### Breaking Changes
-
 ### Bugs Fixed
 - MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
+- Fixed job inputs not accepting datastores or job inputs.
 - Registries now assign managed tags to match registry's tags.
 - Adjust registry experimental tags and imports to avoid warning printouts for unrelated operations.
 - Make registry delete operation return an LROPoller, and change name to begin_delete.
 - Prevent registering an already existing environment that references conda file.
+- Fix ARM ID logic for registry environments (ex: Creating a registry component that references a registry environment).
+- Fix ARM ID logic for passing models and environments with ID (ex: Creating endpoint deployment for a registry model should return said model's ID immediately)
 
 ### Other Changes
+- Switched compute operations to go through 2022-10-01-preview API version.
 
 ## 1.0.0 (2022-10-10)
 - GA release
@@ -33,7 +88,6 @@
 - Endpoint and Job use unified identity classes.
 - Workspace ManagedServiceIdentity has been replaced by IdentityConfiguration.
 
-### Bugs Fixed
 
 ### Other Changes
  - Switched Compute operations to use Oct preview API version.
@@ -58,6 +112,7 @@
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
+- MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 
 ### Other Changes
  - Removed declaration on Python 3.6 support
@@ -108,9 +163,6 @@
 - Fixed mismatch errors when updating scale_settings for KubernetesOnlineDeployment.
 - Removed az CLI command that was printed when deleting OnlineEndpoint
 
-### Other Changes
-
-
 ## 0.1.0b5 (2022-07-15)
 
 ### Features Added
@@ -123,7 +175,6 @@
 - Added end_time to job schedule.
 - MIR and pipeline job now support registry assets.
 
-### Breaking Changes
 
 ### Bugs Fixed
 

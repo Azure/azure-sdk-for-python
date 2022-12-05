@@ -67,6 +67,8 @@ class ChainedTokenCredential(object):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :raises ~azure.core.exceptions.ClientAuthenticationError: no credential in the chain provided a token
         """
         within_credential_chain.set(True)

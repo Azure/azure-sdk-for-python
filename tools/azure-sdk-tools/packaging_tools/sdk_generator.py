@@ -3,6 +3,8 @@ import json
 import logging
 from pathlib import Path
 from subprocess import check_call
+import shutil
+import re
 
 from .swaggertosdk.SwaggerToSdkCore import (
     CONFIG_FILE,
@@ -20,6 +22,29 @@ from .generate_utils import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def del_outdated_samples(readme: str):
+    python_readme = Path(readme).parent / "readme.python.md"
+    if not python_readme.exists():
+        _LOGGER.info(f"do not find python configuration: {python_readme}")
+        return
+
+    with open(python_readme, "r") as file_in:
+        content = file_in.readlines()
+    pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
+    for line in content:
+        if all(p in line for p in pattern):
+            sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
+            sample_folder = Path(f"sdk/{sdk_folder}/generated_samples") 
+            if sample_folder.exists():
+                shutil.rmtree(sample_folder)
+                _LOGGER.info(f"remove sample folder: {sample_folder}")
+            else:
+                _LOGGER.info(f"sample folder does not exist: {sample_folder}")
+            return
+
+    _LOGGER.info(f"do not find {pattern} in {python_readme}")
 
 
 def main(generate_input, generate_output):
@@ -53,6 +78,7 @@ def main(generate_input, generate_output):
         _LOGGER.info(f"[CODEGEN]({input_readme})codegen begin")
         if "resource-manager" in input_readme:
             relative_path_readme = str(Path(spec_folder, input_readme))
+            del_outdated_samples(relative_path_readme)
             config = generate(
                 CONFIG_FILE,
                 sdk_folder,

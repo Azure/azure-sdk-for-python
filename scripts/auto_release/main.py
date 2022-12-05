@@ -494,7 +494,7 @@ class CodegenTestPR:
 
     def create_pr_proc(self):
         api = GhApi(owner='Azure', repo='azure-sdk-for-python', token=self.bot_token)
-        pr_title = "[AutoRelease] {}(Do not merge)".format(self.new_branch)
+        pr_title = "[AutoRelease] {}(can only be merged by SDK owner)".format(self.new_branch)
         pr_head = "{}:{}".format(os.getenv('USR_NAME'), self.new_branch)
         pr_base = 'main'
         pr_body = "{} \n{} \n{}".format(self.issue_link, self.test_result, self.pipeline_link)
@@ -575,7 +575,9 @@ class CodegenTestPR:
 
         # comment for hint
         body = 'Tips: If you have special needs for release date or other things, please let us know. ' \
-               'Otherwise we will release it ASAP after your check.'
+               'Otherwise we will follow ' \
+               '[Management-SDK-Release-Cycle](https://dev.azure.com/azure-sdk/internal/_wiki/wikis/internal.wiki/761/Management-SDK-Release-Cycle) ' \
+               'to release it before target date'
         api.issues.create_comment(issue_number=issue_number, body=body)
 
     def issue_comment(self):

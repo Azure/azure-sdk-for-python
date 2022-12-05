@@ -1,5 +1,18 @@
 # Release History
 
+## 1.26.2 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
+- Add "x-ms-error-code" as secure header to log
+- Rename "DEFAULT_HEADERS_WHITELIST" to "DEFAULT_HEADERS_ALLOWLIST". Added a backward compatible alias.
+
 ## 1.26.1 (2022-11-03)
 
 ### Other Changes
