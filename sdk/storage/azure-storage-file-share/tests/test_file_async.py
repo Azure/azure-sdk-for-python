@@ -7,6 +7,7 @@
 import asyncio
 import base64
 import os
+import tempfile
 import uuid
 from datetime import datetime, timedelta
 
@@ -40,8 +41,6 @@ TEST_SHARE_PREFIX = 'share'
 TEST_DIRECTORY_PREFIX = 'dir'
 TEST_FILE_PREFIX = 'file'
 TEST_BLOB_PREFIX = 'blob'
-INPUT_FILE_PATH = 'file_input.temp.{}.dat'.format(str(uuid.uuid4()))
-OUTPUT_FILE_PATH = 'file_output.temp.{}.dat'.format(str(uuid.uuid4()))
 LARGE_FILE_SIZE = 64 * 1024 + 5
 TEST_FILE_PERMISSIONS = 'O:S-1-5-21-2127521184-1604012920-1887927527-21560751G:S-1-5-21-2127521184-' \
                         '1604012920-1887927527-513D:AI(A;;FA;;;SY)(A;;FA;;;BA)(A;;0x1200a9;;;' \
@@ -1974,8 +1973,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_name = self._get_file_reference()
         await self._setup_share(storage_account_name, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
-        with open(INPUT_FILE_PATH, 'wb') as stream:
-            stream.write(data)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
@@ -1984,15 +1981,16 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             max_range_size=4 * 1024)
 
         # Act
-        with open(INPUT_FILE_PATH, 'rb') as stream:
-            response = await file_client.upload_file(stream, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            response = await file_client.upload_file(temp_file, max_concurrency=2)
             assert isinstance(response, dict)
             assert 'last_modified' in response
             assert 'etag' in response
 
         # Assert
         await self.assertFileEqual(file_client, data)
-        self._teardown(INPUT_FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2004,8 +2002,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_name = self._get_file_reference()
         await self._setup_share(storage_account_name, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
-        with open(INPUT_FILE_PATH, 'wb') as stream:
-            stream.write(data)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
@@ -2021,19 +2017,17 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
             if current is not None:
                 progress.append((current, total))
 
-        with open(INPUT_FILE_PATH, 'rb') as stream:
-            response = await file_client.upload_file(stream, max_concurrency=2, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            response = await file_client.upload_file(temp_file, max_concurrency=2, raw_response_hook=callback)
             assert isinstance(response, dict)
             assert 'last_modified' in response
             assert 'etag' in response
 
         # Assert
         await self.assertFileEqual(file_client, data)
-        self.assert_upload_progress(
-            len(data),
-            self.fsc._config.max_range_size,
-            progress, unknown_size=False)
-        self._teardown(INPUT_FILE_PATH)
+        self.assert_upload_progress(len(data), self.fsc._config.max_range_size, progress, unknown_size=False)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2045,8 +2039,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_name = self._get_file_reference()
         await self._setup_share(storage_account_name, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
-        with open(INPUT_FILE_PATH, 'wb') as stream:
-            stream.write(data)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
@@ -2056,15 +2048,16 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         # Act
         file_size = len(data)
-        with open(INPUT_FILE_PATH, 'rb') as stream:
-            response = await file_client.upload_file(stream, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            response = await file_client.upload_file(temp_file, max_concurrency=2)
             assert isinstance(response, dict)
             assert 'last_modified' in response
             assert 'etag' in response
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
-        self._teardown(INPUT_FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2076,8 +2069,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_name = self._get_file_reference()
         await self._setup_share(storage_account_name, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
-        with open(INPUT_FILE_PATH, 'wb') as stream:
-            stream.write(data)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
@@ -2087,13 +2078,14 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         # Act
         file_size = len(data)
-        with open(INPUT_FILE_PATH, 'rb') as stream:
-            non_seekable_file = TestStorageFileAsync.NonSeekableFile(stream)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            non_seekable_file = TestStorageFileAsync.NonSeekableFile(temp_file)
             await file_client.upload_file(non_seekable_file, length=file_size, max_concurrency=1)
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
-        self._teardown(INPUT_FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2105,8 +2097,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_name = self._get_file_reference()
         await self._setup_share(storage_account_name, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
-        with open(INPUT_FILE_PATH, 'wb') as stream:
-            stream.write(data)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
@@ -2123,16 +2113,14 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
                 progress.append((current, total))
 
         file_size = len(data)
-        with open(INPUT_FILE_PATH, 'rb') as stream:
-            await file_client.upload_file(stream, max_concurrency=2, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await file_client.upload_file(temp_file, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
-        self.assert_upload_progress(
-            len(data),
-            self.fsc._config.max_range_size,
-            progress, unknown_size=False)
-        self._teardown(INPUT_FILE_PATH)
+        self.assert_upload_progress(len(data), self.fsc._config.max_range_size, progress, unknown_size=False)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2144,8 +2132,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_name = self._get_file_reference()
         await self._setup_share(storage_account_name, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
-        with open(INPUT_FILE_PATH, 'wb') as stream:
-            stream.write(data)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
@@ -2155,12 +2141,13 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
 
         # Act
         file_size = len(data) - 512
-        with open(INPUT_FILE_PATH, 'rb') as stream:
-            await file_client.upload_file(stream, length=file_size, max_concurrency=4)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await file_client.upload_file(temp_file, length=file_size, max_concurrency=4)
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
-        self._teardown(INPUT_FILE_PATH)
 
     @pytest.mark.live_test_only
     @FileSharePreparer()
@@ -2172,8 +2159,6 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
         file_name = self._get_file_reference()
         await self._setup_share(storage_account_name, storage_account_key)
         data = self.get_random_bytes(LARGE_FILE_SIZE)
-        with open(INPUT_FILE_PATH, 'wb') as stream:
-            stream.write(data)
         file_client = ShareFileClient(
             self.account_url(storage_account_name, "file"),
             share_name=self.share_name,
@@ -2190,17 +2175,14 @@ class TestStorageFileAsync(AsyncStorageRecordedTestCase):
                 progress.append((current, total))
 
         file_size = len(data) - 5
-        with open(INPUT_FILE_PATH, 'rb') as stream:
-            await file_client.upload_file(stream, length=file_size, max_concurrency=2, raw_response_hook=callback)
-
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await file_client.upload_file(temp_file, length=file_size, max_concurrency=2, raw_response_hook=callback)
 
         # Assert
         await self.assertFileEqual(file_client, data[:file_size])
-        self.assert_upload_progress(
-            file_size,
-            self.fsc._config.max_range_size,
-            progress, unknown_size=False)
-        self._teardown(INPUT_FILE_PATH)
+        self.assert_upload_progress(file_size, self.fsc._config.max_range_size, progress, unknown_size=False)
 
     @FileSharePreparer()
     @recorded_by_proxy_async

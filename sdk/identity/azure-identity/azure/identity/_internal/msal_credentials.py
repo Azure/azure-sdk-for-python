@@ -22,6 +22,7 @@ class MsalCredential(object):   # pylint: disable=too-many-instance-attributes
             client_credential: Union[str, Dict] = None,
             *,
             additionally_allowed_tenants: List[str] = None,
+            allow_broker: bool = None,
             **kwargs
     ) -> None:
         authority = kwargs.pop("authority", None)
@@ -34,6 +35,7 @@ class MsalCredential(object):   # pylint: disable=too-many-instance-attributes
         self._client_applications = {}  # type: Dict[str, msal.ClientApplication]
         self._client_credential = client_credential
         self._client_id = client_id
+        self._allow_broker = allow_broker
         self._additionally_allowed_tenants = additionally_allowed_tenants or []
 
         self._cache = kwargs.pop("_cache", None)
@@ -77,6 +79,7 @@ class MsalCredential(object):   # pylint: disable=too-many-instance-attributes
                 token_cache=self._cache,
                 http_client=self._client,
                 instance_discovery=self._instance_discovery,
+                allow_broker=self._allow_broker
             )
 
         return self._client_applications[tenant_id]

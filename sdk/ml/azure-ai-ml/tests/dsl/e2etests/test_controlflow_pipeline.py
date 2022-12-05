@@ -25,6 +25,7 @@ omit_fields = [
 
 
 @pytest.mark.usefixtures(
+    "enable_private_preview_schema_features",
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
@@ -335,7 +336,6 @@ class TestParallelForPipeline(TestControlFlowPipeline):
 
         with include_private_preview_nodes_in_pipeline():
             pipeline_job = assert_job_cancel(pipeline_job, client)
-
         dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             'after_node': {
@@ -460,3 +460,123 @@ class TestParallelForPipeline(TestControlFlowPipeline):
                                        '{"component_in_number": 2}]',
                               'type': 'parallel_for'}
         }
+
+    def test_parallel_for_pipeline_with_port_outputs(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml",
+            params_override=[
+                {"outputs": {
+                    "component_out_path": {"type": "uri_folder"},
+                    "component_out_file": {"type": "uri_file"},
+                    "component_out_table": {"type": "mltable"},
+                }}
+            ]
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component(component_in_path=test_input)
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            return {
+                "component_out_path": parallel_node.outputs.component_out_path,
+                "component_out_file": parallel_node.outputs.component_out_file,
+                "component_out_table": parallel_node.outputs.component_out_table,
+            }
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"] == {
+            'parallel_body': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
+                              'inputs': {'component_in_path': {
+                                  'job_input_type': 'uri_file',
+                                  'uri': 'https://dprepdata.blob.core.windows.net/demo/Titanic.csv'}},
+                              'name': 'parallel_body',
+                              'type': 'command'},
+            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+                              'items': '[{"component_in_number": 1}, '
+                                       '{"component_in_number": 2}]',
+                              'type': 'parallel_for'}
+        }
+        assert dsl_pipeline_job_dict["properties"]["outputs"] == {
+            'component_out_file': {'job_output_type': 'mltable',
+                                   'mode': 'ReadWriteMount'},
+            'component_out_path': {'job_output_type': 'mltable',
+                                   'mode': 'ReadWriteMount'},
+            'component_out_table': {'job_output_type': 'mltable',
+                                    'mode': 'ReadWriteMount'}
+        }
+
+        # parallel for pipeline component is correctly generated
+        @pipeline
+        def parent_pipeline():
+            parallel_for_pipeline()
+
+        pipeline_job = parent_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        rest_pipeline_component = pipeline_job.jobs["parallel_for_pipeline"].component._to_rest_object().as_dict()
+        assert rest_pipeline_component["properties"]["component_spec"]["outputs"] == {
+            'component_out_file': {'type': 'mltable'},
+            'component_out_path': {'type': 'mltable'},
+            'component_out_table': {'type': 'mltable'}
+        }
+
+        with include_private_preview_nodes_in_pipeline():
+            assert_job_cancel(pipeline_job, client)
+
+    def test_parallel_for_pipeline_with_primitive_outputs(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml",
+            params_override=[
+                {"outputs": {
+                    "component_out_path": {"type": "uri_folder"},
+                    "component_out_number": {"type": "number"},
+                    "component_out_boolean": {"type": "boolean", "is_control": True},
+                }}
+            ]
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component(component_in_path=test_input)
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            return {
+                "component_out_path": parallel_node.outputs.component_out_path,
+                "component_out_number": parallel_node.outputs.component_out_number,
+                "component_out_boolean": parallel_node.outputs.component_out_boolean,
+            }
+
+        @pipeline
+        def parent_pipeline():
+            parallel_for_pipeline()
+
+        pipeline_job = parent_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        rest_pipeline_component = pipeline_job.jobs["parallel_for_pipeline"].component._to_rest_object().as_dict()
+        assert rest_pipeline_component["properties"]["component_spec"]["outputs"] == {
+            'component_out_boolean': {'is_control': True, 'type': 'string'},
+            'component_out_number': {'type': 'string'},
+            'component_out_path': {'type': 'mltable'}
+        }
+
+        # parallel for pipeline component is correctly generated
+        with include_private_preview_nodes_in_pipeline():
+            assert_job_cancel(pipeline_job, client)
