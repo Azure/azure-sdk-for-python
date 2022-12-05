@@ -432,8 +432,8 @@ class TestDSLPipelineWithSpecificNodes:
                                    'resources': {'instance_count': 2},
                                    'type': 'command'}},
                 'outputs': {'pipeline_output1': {'job_output_type': 'uri_folder'},
-                            'pipeline_output2': {'job_output_type': 'uri_folder'},
-                            'pipeline_output3': {'job_output_type': 'uri_folder'}},
+                            'pipeline_output2': {'job_output_type': 'mlflow_model'},
+                            'pipeline_output3': {'job_output_type': 'mlflow_model'}},
                 'properties': {},
                 'settings': {},
                 'tags': {}
