@@ -36,6 +36,9 @@ inputs:
     type: integer
   param_float:
     type: float
+    default: 0.15
+    max: 1.0
+    min: -1.0
   param_bool:
     type: boolean
   param_enum_with_int_values:
@@ -45,6 +48,13 @@ inputs:
   param_enum_cap:
     type: Enum
     enum: [minimal, reuse, expiry, policies]
+
+outputs:
+  output_data_path:
+    type: path
+    description: Path to the data
+    is_link_mode: True
+    datastore_mode: mount
 
 environment: azureml:AzureEnv:1
 

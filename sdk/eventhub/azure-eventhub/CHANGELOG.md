@@ -10,6 +10,9 @@
 
 ### Other Changes
 
+- Updated uAMQP dependency to 1.6.3.
+  - Added support for Python 3.11.
+
 ## 5.10.1 (2022-08-22)
 
 This version and all future versions will require Python 3.7+, Python 3.6 is no longer supported.

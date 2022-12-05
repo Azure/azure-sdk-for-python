@@ -30,6 +30,7 @@ class NodeType(object):
 class ControlFlowType(object):
     DO_WHILE = "do_while"
     IF_ELSE = "if_else"
+    PARALLEL_FOR = "parallel_for"
 
 
 class ComponentSource:
@@ -94,5 +95,5 @@ class IOConstants:
         "string": ["default"],
         "boolean": ["default"],
     }
-    GROUP_ATTR_NAME = "__parameter_group__"
+    GROUP_ATTR_NAME = "__dsl_group__"
     GROUP_TYPE_NAME = "group"

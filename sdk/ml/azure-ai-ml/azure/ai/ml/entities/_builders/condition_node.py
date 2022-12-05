@@ -18,7 +18,7 @@ class ConditionNode(ControlFlowNode):
     Conditional node in pipeline. Please do not directly use this class.
     """
 
-    def __init__(self, condition, true_block, false_block, **kwargs):  # pylint: disable=unused-argument
+    def __init__(self, condition, *, true_block=None, false_block=None, **kwargs):  # pylint: disable=unused-argument
         kwargs.pop("type", None)
         super(ConditionNode, self).__init__(type=ControlFlowType.IF_ELSE, **kwargs)
         self.condition = condition

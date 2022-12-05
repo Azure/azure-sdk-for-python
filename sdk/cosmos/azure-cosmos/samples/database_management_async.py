@@ -3,8 +3,9 @@
 # Licensed under the MIT License. See LICENSE.txt in the project root for
 # license information.
 # -------------------------------------------------------------------------
-import azure.cosmos.aio.cosmos_client as cosmos_client
+from azure.cosmos.aio import CosmosClient
 import azure.cosmos.exceptions as exceptions
+from azure.cosmos import ThroughputProperties
 
 import asyncio
 import config
@@ -138,7 +139,7 @@ async def delete_database(client, id):
 
 
 async def run_sample():
-    async with cosmos_client.CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
+    async with CosmosClient(HOST, {'masterKey': MASTER_KEY}) as client:
         try:
             # query for a database
             await find_database(client, DATABASE_ID)
