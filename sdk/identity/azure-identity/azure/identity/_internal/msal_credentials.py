@@ -13,7 +13,7 @@ from .._constants import EnvironmentVariables
 from .._persistent_cache import _load_persistent_cache
 
 
-class MsalCredential(object):
+class MsalCredential(object):   # pylint: disable=too-many-instance-attributes
     """Base class for credentials wrapping MSAL applications"""
 
     def __init__(
@@ -26,7 +26,7 @@ class MsalCredential(object):
             **kwargs
     ) -> None:
         authority = kwargs.pop("authority", None)
-        # self._validate_authority = kwargs.pop("validate_authority", True)
+        self._instance_discovery = kwargs.pop("instance_discovery", None)
         self._authority = normalize_authority(authority) if authority else get_default_authority()
         self._regional_authority = os.environ.get(EnvironmentVariables.AZURE_REGIONAL_AUTHORITY_NAME)
         self._tenant_id = kwargs.pop("tenant_id", None) or "organizations"
@@ -78,7 +78,7 @@ class MsalCredential(object):
                 azure_region=self._regional_authority,
                 token_cache=self._cache,
                 http_client=self._client,
-                # validate_authority=self._validate_authority,
+                instance_discovery=self._instance_discovery,
                 allow_broker=self._allow_broker
             )
 
