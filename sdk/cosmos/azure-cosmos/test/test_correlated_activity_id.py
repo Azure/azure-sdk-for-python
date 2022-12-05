@@ -48,12 +48,12 @@ class CorrelatedActivityIdTest(unittest.TestCase):
 
     def side_effect_correlated_activity_id(self, *args, **kwargs):
         # Extract request headers from args
-        assert args[2]["x-ms-cosmos-correlated-activityid"] == self.correlated_activity_id
+        assert args[2]["x-ms-cosmos-correlated-activityid"] == self.correlated_activity_id # cspell:disable-line
         raise StopIteration
 
     def side_effect_default_correlated_activity_id(self, *args, **kwargs):
         # Extract request headers from args
-        assert args[2]["x-ms-cosmos-correlated-activityid"] == self.correlated_activity_id
+        assert args[2]["x-ms-cosmos-correlated-activityid"] == self.correlated_activity_id # cspell:disable-line
         raise StopIteration
 
     def test_correlated_activity_id(self):
