@@ -35,7 +35,7 @@ def load_component_entity_from_yaml(
     with open(path, "r") as f:
         data = yaml.safe_load(f)
     context.update({BASE_PATH_CONTEXT_KEY: Path(path).parent})
-    create_instance_func, create_schema_func = component_factory.get_create_funcs(_type)
+    create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
     data = dict(create_schema_func(context).load(data))
     if fields_to_override is None:
         fields_to_override = {}

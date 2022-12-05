@@ -24,7 +24,7 @@ from azure.ai.ml.entities._builders.parallel_for import ParallelFor
 from azure.ai.ml.entities._builders.pipeline import Pipeline
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.automl.automl_job import AutoMLJob
-from azure.ai.ml.entities._util import extract_label
+from azure.ai.ml.entities._util import get_type_from_spec
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
 
 
@@ -98,8 +98,8 @@ class _PipelineNodeFactory:
         )
 
     @classmethod
-    def _get_func(cls, _type: str, funcs):
-        _type, _ = extract_label(_type)
+    def _get_func(cls, _type: str, funcs: Dict[str, Callable]) -> Callable:
+        _type = get_type_from_spec({CommonYamlFields.TYPE: _type}, valid_keys=funcs)
         exception = partial(
             ValidationException,
             target=ErrorTarget.COMPONENT,
