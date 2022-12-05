@@ -301,6 +301,8 @@ def GetHeaders(  # pylint: disable=too-many-statements,too-many-branches
 
     if options.get("correlatedActivityId"):
         headers[http_constants.HttpHeaders.CorrelatedActivityId] = options["correlatedActivityId"]
+    else:
+        headers[http_constants.HttpHeaders.CorrelatedActivityId] = str(uuid.uuid4())
 
     return headers
 
