@@ -31,14 +31,13 @@ from azure.mgmt.core.polling.async_arm_polling import AsyncARMPolling
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._linker_operations import (
-    build_create_or_update_request,
-    build_delete_request,
-    build_get_request,
-    build_list_configurations_request,
-    build_list_request,
-    build_update_request,
-    build_validate_request,
+from ...operations._linkers_operations import (
+    build_create_dryrun_request,
+    build_delete_dryrun_request,
+    build_generate_configurations_request,
+    build_get_dryrun_request,
+    build_list_dryrun_request,
+    build_update_dryrun_request,
 )
 
 if sys.version_info >= (3, 8):
@@ -49,14 +48,14 @@ T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
 
 
-class LinkerOperations:
+class LinkersOperations:
     """
     .. warning::
         **DO NOT** instantiate this class directly.
 
         Instead, you should access the following operations through
         :class:`~azure.mgmt.servicelinker.aio.ServiceLinkerManagementClient`'s
-        :attr:`linker` attribute.
+        :attr:`linkers` attribute.
     """
 
     models = _models
@@ -69,17 +68,16 @@ class LinkerOperations:
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
     @distributed_trace
-    def list(self, resource_uri: str, **kwargs: Any) -> AsyncIterable["_models.LinkerResource"]:
-        """Returns list of Linkers which connects to the resource. which supports to config both
-        application and target service during the resource provision.
+    def list_dryrun(self, resource_uri: str, **kwargs: Any) -> AsyncIterable["_models.DryrunResource"]:
+        """list dryrun jobs.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
          be connected. Required.
         :type resource_uri: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either LinkerResource or the result of cls(response)
+        :return: An iterator like instance of either DryrunResource or the result of cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicelinker.models.LinkerResource]
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.servicelinker.models.DryrunResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -88,7 +86,7 @@ class LinkerOperations:
         api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
-        cls: ClsType[_models.ResourceList] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DryrunList] = kwargs.pop("cls", None)
 
         error_map = {
             401: ClientAuthenticationError,
@@ -101,10 +99,10 @@ class LinkerOperations:
         def prepare_request(next_link=None):
             if not next_link:
 
-                request = build_list_request(
+                request = build_list_dryrun_request(
                     resource_uri=resource_uri,
                     api_version=api_version,
-                    template_url=self.list.metadata["url"],
+                    template_url=self.list_dryrun.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -130,7 +128,7 @@ class LinkerOperations:
             return request
 
         async def extract_data(pipeline_response):
-            deserialized = self._deserialize("ResourceList", pipeline_response)
+            deserialized = self._deserialize("DryrunList", pipeline_response)
             list_of_elem = deserialized.value
             if cls:
                 list_of_elem = cls(list_of_elem)  # type: ignore
@@ -153,20 +151,20 @@ class LinkerOperations:
 
         return AsyncItemPaged(get_next, extract_data)
 
-    list.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers"}
+    list_dryrun.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/dryruns"}
 
     @distributed_trace_async
-    async def get(self, resource_uri: str, linker_name: str, **kwargs: Any) -> _models.LinkerResource:
-        """Returns Linker resource for a given name.
+    async def get_dryrun(self, resource_uri: str, dryrun_name: str, **kwargs: Any) -> _models.DryrunResource:
+        """get a dryrun job.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
          be connected. Required.
         :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
+        :param dryrun_name: The name of dryrun. Required.
+        :type dryrun_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: LinkerResource or the result of cls(response)
-        :rtype: ~azure.mgmt.servicelinker.models.LinkerResource
+        :return: DryrunResource or the result of cls(response)
+        :rtype: ~azure.mgmt.servicelinker.models.DryrunResource
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -183,13 +181,13 @@ class LinkerOperations:
         api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
-        cls: ClsType[_models.LinkerResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DryrunResource] = kwargs.pop("cls", None)
 
-        request = build_get_request(
+        request = build_get_dryrun_request(
             resource_uri=resource_uri,
-            linker_name=linker_name,
+            dryrun_name=dryrun_name,
             api_version=api_version,
-            template_url=self.get.metadata["url"],
+            template_url=self.get_dryrun.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -207,18 +205,18 @@ class LinkerOperations:
             error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
-        deserialized = self._deserialize("LinkerResource", pipeline_response)
+        deserialized = self._deserialize("DryrunResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}"}
+    get_dryrun.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/dryruns/{dryrunName}"}
 
-    async def _create_or_update_initial(
-        self, resource_uri: str, linker_name: str, parameters: Union[_models.LinkerResource, IO], **kwargs: Any
-    ) -> _models.LinkerResource:
+    async def _create_dryrun_initial(
+        self, resource_uri: str, dryrun_name: str, parameters: Union[_models.DryrunResource, IO], **kwargs: Any
+    ) -> _models.DryrunResource:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -234,7 +232,7 @@ class LinkerOperations:
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.LinkerResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DryrunResource] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -242,16 +240,16 @@ class LinkerOperations:
         if isinstance(parameters, (IO, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "LinkerResource")
+            _json = self._serialize.body(parameters, "DryrunResource")
 
-        request = build_create_or_update_request(
+        request = build_create_dryrun_request(
             resource_uri=resource_uri,
-            linker_name=linker_name,
+            dryrun_name=dryrun_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._create_or_update_initial.metadata["url"],
+            template_url=self._create_dryrun_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -270,39 +268,37 @@ class LinkerOperations:
             raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
 
         if response.status_code == 200:
-            deserialized = self._deserialize("LinkerResource", pipeline_response)
+            deserialized = self._deserialize("DryrunResource", pipeline_response)
 
         if response.status_code == 201:
-            deserialized = self._deserialize("LinkerResource", pipeline_response)
+            deserialized = self._deserialize("DryrunResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
 
         return deserialized  # type: ignore
 
-    _create_or_update_initial.metadata = {
-        "url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}"
-    }
+    _create_dryrun_initial.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/dryruns/{dryrunName}"}
 
     @overload
-    async def begin_create_or_update(
+    async def begin_create_dryrun(
         self,
         resource_uri: str,
-        linker_name: str,
-        parameters: _models.LinkerResource,
+        dryrun_name: str,
+        parameters: _models.DryrunResource,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.LinkerResource]:
-        """Create or update Linker resource.
+    ) -> AsyncLROPoller[_models.DryrunResource]:
+        """create a dryrun job to do necessary check before actual creation.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
          be connected. Required.
         :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
-        :param parameters: Linker details. Required.
-        :type parameters: ~azure.mgmt.servicelinker.models.LinkerResource
+        :param dryrun_name: The name of dryrun. Required.
+        :type dryrun_name: str
+        :param parameters: dryrun resource. Required.
+        :type parameters: ~azure.mgmt.servicelinker.models.DryrunResource
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
@@ -314,30 +310,30 @@ class LinkerOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either LinkerResource or the result of
+        :return: An instance of AsyncLROPoller that returns either DryrunResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.DryrunResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def begin_create_or_update(
+    async def begin_create_dryrun(
         self,
         resource_uri: str,
-        linker_name: str,
+        dryrun_name: str,
         parameters: IO,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> AsyncLROPoller[_models.LinkerResource]:
-        """Create or update Linker resource.
+    ) -> AsyncLROPoller[_models.DryrunResource]:
+        """create a dryrun job to do necessary check before actual creation.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
          be connected. Required.
         :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
-        :param parameters: Linker details. Required.
+        :param dryrun_name: The name of dryrun. Required.
+        :type dryrun_name: str
+        :param parameters: dryrun resource. Required.
         :type parameters: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
@@ -350,25 +346,25 @@ class LinkerOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either LinkerResource or the result of
+        :return: An instance of AsyncLROPoller that returns either DryrunResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.DryrunResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def begin_create_or_update(
-        self, resource_uri: str, linker_name: str, parameters: Union[_models.LinkerResource, IO], **kwargs: Any
-    ) -> AsyncLROPoller[_models.LinkerResource]:
-        """Create or update Linker resource.
+    async def begin_create_dryrun(
+        self, resource_uri: str, dryrun_name: str, parameters: Union[_models.DryrunResource, IO], **kwargs: Any
+    ) -> AsyncLROPoller[_models.DryrunResource]:
+        """create a dryrun job to do necessary check before actual creation.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
          be connected. Required.
         :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
-        :param parameters: Linker details. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.servicelinker.models.LinkerResource or IO
+        :param dryrun_name: The name of dryrun. Required.
+        :type dryrun_name: str
+        :param parameters: dryrun resource. Is either a model type or a IO type. Required.
+        :type parameters: ~azure.mgmt.servicelinker.models.DryrunResource or IO
         :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
          Default value is None.
         :paramtype content_type: str
@@ -380,9 +376,9 @@ class LinkerOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either LinkerResource or the result of
+        :return: An instance of AsyncLROPoller that returns either DryrunResource or the result of
          cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.DryrunResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -392,14 +388,14 @@ class LinkerOperations:
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.LinkerResource] = kwargs.pop("cls", None)
+        cls: ClsType[_models.DryrunResource] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._create_or_update_initial(
+            raw_result = await self._create_dryrun_initial(
                 resource_uri=resource_uri,
-                linker_name=linker_name,
+                dryrun_name=dryrun_name,
                 parameters=parameters,
                 api_version=api_version,
                 content_type=content_type,
@@ -411,7 +407,7 @@ class LinkerOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LinkerResource", pipeline_response)
+            deserialized = self._deserialize("DryrunResource", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
@@ -434,124 +430,11 @@ class LinkerOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_create_or_update.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}"}
+    begin_create_dryrun.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/dryruns/{dryrunName}"}
 
-    async def _delete_initial(  # pylint: disable=inconsistent-return-statements
-        self, resource_uri: str, linker_name: str, **kwargs: Any
-    ) -> None:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
-
-        request = build_delete_request(
-            resource_uri=resource_uri,
-            linker_name=linker_name,
-            api_version=api_version,
-            template_url=self._delete_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 202, 204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    _delete_initial.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}"}
-
-    @distributed_trace_async
-    async def begin_delete(self, resource_uri: str, linker_name: str, **kwargs: Any) -> AsyncLROPoller[None]:
-        """Delete a Linker.
-
-        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
-         be connected. Required.
-        :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
-        cls: ClsType[None] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._delete_initial(  # type: ignore
-                resource_uri=resource_uri,
-                linker_name=linker_name,
-                api_version=api_version,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
-            if cls:
-                return cls(pipeline_response, None, {})
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_delete.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}"}
-
-    async def _update_initial(
-        self, resource_uri: str, linker_name: str, parameters: Union[_models.LinkerPatch, IO], **kwargs: Any
-    ) -> _models.LinkerResource:
+    async def _update_dryrun_initial(
+        self, resource_uri: str, dryrun_name: str, parameters: Union[_models.DryrunPatch, IO], **kwargs: Any
+    ) -> Optional[_models.DryrunResource]:
         error_map = {
             401: ClientAuthenticationError,
             404: ResourceNotFoundError,
@@ -567,7 +450,7 @@ class LinkerOperations:
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.LinkerResource] = kwargs.pop("cls", None)
+        cls: ClsType[Optional[_models.DryrunResource]] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _json = None
@@ -575,222 +458,16 @@ class LinkerOperations:
         if isinstance(parameters, (IO, bytes)):
             _content = parameters
         else:
-            _json = self._serialize.body(parameters, "LinkerPatch")
+            _json = self._serialize.body(parameters, "DryrunPatch")
 
-        request = build_update_request(
+        request = build_update_dryrun_request(
             resource_uri=resource_uri,
-            linker_name=linker_name,
+            dryrun_name=dryrun_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
             content=_content,
-            template_url=self._update_initial.metadata["url"],
-            headers=_headers,
-            params=_params,
-        )
-        request = _convert_request(request)
-        request.url = self._client.format_url(request.url)
-
-        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 201]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
-            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
-
-        if response.status_code == 200:
-            deserialized = self._deserialize("LinkerResource", pipeline_response)
-
-        if response.status_code == 201:
-            deserialized = self._deserialize("LinkerResource", pipeline_response)
-
-        if cls:
-            return cls(pipeline_response, deserialized, {})  # type: ignore
-
-        return deserialized  # type: ignore
-
-    _update_initial.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}"}
-
-    @overload
-    async def begin_update(
-        self,
-        resource_uri: str,
-        linker_name: str,
-        parameters: _models.LinkerPatch,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.LinkerResource]:
-        """Operation to update an existing Linker.
-
-        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
-         be connected. Required.
-        :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
-        :param parameters: Linker details. Required.
-        :type parameters: ~azure.mgmt.servicelinker.models.LinkerPatch
-        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either LinkerResource or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @overload
-    async def begin_update(
-        self,
-        resource_uri: str,
-        linker_name: str,
-        parameters: IO,
-        *,
-        content_type: str = "application/json",
-        **kwargs: Any
-    ) -> AsyncLROPoller[_models.LinkerResource]:
-        """Operation to update an existing Linker.
-
-        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
-         be connected. Required.
-        :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
-        :param parameters: Linker details. Required.
-        :type parameters: IO
-        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
-         Default value is "application/json".
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either LinkerResource or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-
-    @distributed_trace_async
-    async def begin_update(
-        self, resource_uri: str, linker_name: str, parameters: Union[_models.LinkerPatch, IO], **kwargs: Any
-    ) -> AsyncLROPoller[_models.LinkerResource]:
-        """Operation to update an existing Linker.
-
-        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
-         be connected. Required.
-        :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
-        :param parameters: Linker details. Is either a model type or a IO type. Required.
-        :type parameters: ~azure.mgmt.servicelinker.models.LinkerPatch or IO
-        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
-         Default value is None.
-        :paramtype content_type: str
-        :keyword callable cls: A custom type or function that will be passed the direct response
-        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
-        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
-         this operation to not poll, or pass in your own initialized polling object for a personal
-         polling strategy.
-        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
-        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
-         Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either LinkerResource or the result of
-         cls(response)
-        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.LinkerResource]
-        :raises ~azure.core.exceptions.HttpResponseError:
-        """
-        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
-        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.LinkerResource] = kwargs.pop("cls", None)
-        polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
-        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
-        cont_token: Optional[str] = kwargs.pop("continuation_token", None)
-        if cont_token is None:
-            raw_result = await self._update_initial(
-                resource_uri=resource_uri,
-                linker_name=linker_name,
-                parameters=parameters,
-                api_version=api_version,
-                content_type=content_type,
-                cls=lambda x, y, z: x,
-                headers=_headers,
-                params=_params,
-                **kwargs
-            )
-        kwargs.pop("error_map", None)
-
-        def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("LinkerResource", pipeline_response)
-            if cls:
-                return cls(pipeline_response, deserialized, {})
-            return deserialized
-
-        if polling is True:
-            polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod,
-                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
-            )
-        elif polling is False:
-            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else:
-            polling_method = polling
-        if cont_token:
-            return AsyncLROPoller.from_continuation_token(
-                polling_method=polling_method,
-                continuation_token=cont_token,
-                client=self._client,
-                deserialization_callback=get_long_running_output,
-            )
-        return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
-
-    begin_update.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}"}
-
-    async def _validate_initial(
-        self, resource_uri: str, linker_name: str, **kwargs: Any
-    ) -> Optional[_models.ValidateOperationResult]:
-        error_map = {
-            401: ClientAuthenticationError,
-            404: ResourceNotFoundError,
-            409: ResourceExistsError,
-            304: ResourceNotModifiedError,
-        }
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
-            "api_version", _params.pop("api-version", self._config.api_version)
-        )
-        cls: ClsType[Optional[_models.ValidateOperationResult]] = kwargs.pop("cls", None)
-
-        request = build_validate_request(
-            resource_uri=resource_uri,
-            linker_name=linker_name,
-            api_version=api_version,
-            template_url=self._validate_initial.metadata["url"],
+            template_url=self._update_dryrun_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -810,28 +487,37 @@ class LinkerOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize("ValidateOperationResult", pipeline_response)
+            deserialized = self._deserialize("DryrunResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _validate_initial.metadata = {
-        "url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}/validateLinker"
-    }
+    _update_dryrun_initial.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/dryruns/{dryrunName}"}
 
-    @distributed_trace_async
-    async def begin_validate(
-        self, resource_uri: str, linker_name: str, **kwargs: Any
-    ) -> AsyncLROPoller[_models.ValidateOperationResult]:
-        """Validate a Linker.
+    @overload
+    async def begin_update_dryrun(
+        self,
+        resource_uri: str,
+        dryrun_name: str,
+        parameters: _models.DryrunPatch,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DryrunResource]:
+        """add a dryrun job to do necessary check before actual creation.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
          be connected. Required.
         :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
+        :param dryrun_name: The name of dryrun. Required.
+        :type dryrun_name: str
+        :param parameters: dryrun resource. Required.
+        :type parameters: ~azure.mgmt.servicelinker.models.DryrunPatch
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
@@ -840,27 +526,95 @@ class LinkerOperations:
         :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
         :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
          Retry-After header is present.
-        :return: An instance of AsyncLROPoller that returns either ValidateOperationResult or the
-         result of cls(response)
-        :rtype:
-         ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.ValidateOperationResult]
+        :return: An instance of AsyncLROPoller that returns either DryrunResource or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.DryrunResource]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
-        _headers = kwargs.pop("headers", {}) or {}
+
+    @overload
+    async def begin_update_dryrun(
+        self,
+        resource_uri: str,
+        dryrun_name: str,
+        parameters: IO,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> AsyncLROPoller[_models.DryrunResource]:
+        """add a dryrun job to do necessary check before actual creation.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
+         be connected. Required.
+        :type resource_uri: str
+        :param dryrun_name: The name of dryrun. Required.
+        :type dryrun_name: str
+        :param parameters: dryrun resource. Required.
+        :type parameters: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either DryrunResource or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.DryrunResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def begin_update_dryrun(
+        self, resource_uri: str, dryrun_name: str, parameters: Union[_models.DryrunPatch, IO], **kwargs: Any
+    ) -> AsyncLROPoller[_models.DryrunResource]:
+        """add a dryrun job to do necessary check before actual creation.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
+         be connected. Required.
+        :type resource_uri: str
+        :param dryrun_name: The name of dryrun. Required.
+        :type dryrun_name: str
+        :param parameters: dryrun resource. Is either a model type or a IO type. Required.
+        :type parameters: ~azure.mgmt.servicelinker.models.DryrunPatch or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :keyword str continuation_token: A continuation token to restart a poller from a saved state.
+        :keyword polling: By default, your polling method will be AsyncARMPolling. Pass in False for
+         this operation to not poll, or pass in your own initialized polling object for a personal
+         polling strategy.
+        :paramtype polling: bool or ~azure.core.polling.AsyncPollingMethod
+        :keyword int polling_interval: Default waiting time between two polls for LRO operations if no
+         Retry-After header is present.
+        :return: An instance of AsyncLROPoller that returns either DryrunResource or the result of
+         cls(response)
+        :rtype: ~azure.core.polling.AsyncLROPoller[~azure.mgmt.servicelinker.models.DryrunResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
         api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
-        cls: ClsType[_models.ValidateOperationResult] = kwargs.pop("cls", None)
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
+        cls: ClsType[_models.DryrunResource] = kwargs.pop("cls", None)
         polling: Union[bool, AsyncPollingMethod] = kwargs.pop("polling", True)
         lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
         cont_token: Optional[str] = kwargs.pop("continuation_token", None)
         if cont_token is None:
-            raw_result = await self._validate_initial(
+            raw_result = await self._update_dryrun_initial(
                 resource_uri=resource_uri,
-                linker_name=linker_name,
+                dryrun_name=dryrun_name,
+                parameters=parameters,
                 api_version=api_version,
+                content_type=content_type,
                 cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
@@ -869,14 +623,15 @@ class LinkerOperations:
         kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize("ValidateOperationResult", pipeline_response)
+            deserialized = self._deserialize("DryrunResource", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
         if polling is True:
             polling_method: AsyncPollingMethod = cast(
-                AsyncPollingMethod, AsyncARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+                AsyncPollingMethod,
+                AsyncARMPolling(lro_delay, lro_options={"final-state-via": "azure-async-operation"}, **kwargs),
             )
         elif polling is False:
             polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
@@ -891,24 +646,22 @@ class LinkerOperations:
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)  # type: ignore
 
-    begin_validate.metadata = {
-        "url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}/validateLinker"
-    }
+    begin_update_dryrun.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/dryruns/{dryrunName}"}
 
     @distributed_trace_async
-    async def list_configurations(
-        self, resource_uri: str, linker_name: str, **kwargs: Any
-    ) -> _models.ConfigurationResult:
-        """list source configurations for a Linker.
+    async def delete_dryrun(  # pylint: disable=inconsistent-return-statements
+        self, resource_uri: str, dryrun_name: str, **kwargs: Any
+    ) -> None:
+        """delete a dryrun job.
 
         :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
          be connected. Required.
         :type resource_uri: str
-        :param linker_name: The name Linker resource. Required.
-        :type linker_name: str
+        :param dryrun_name: The name of dryrun. Required.
+        :type dryrun_name: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: ConfigurationResult or the result of cls(response)
-        :rtype: ~azure.mgmt.servicelinker.models.ConfigurationResult
+        :return: None or the result of cls(response)
+        :rtype: None
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -925,13 +678,153 @@ class LinkerOperations:
         api_version: Literal["2022-11-01-preview"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
+        cls: ClsType[None] = kwargs.pop("cls", None)
+
+        request = build_delete_dryrun_request(
+            resource_uri=resource_uri,
+            dryrun_name=dryrun_name,
+            api_version=api_version,
+            template_url=self.delete_dryrun.metadata["url"],
+            headers=_headers,
+            params=_params,
+        )
+        request = _convert_request(request)
+        request.url = self._client.format_url(request.url)
+
+        pipeline_response: PipelineResponse = await self._client._pipeline.run(  # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            error = self._deserialize.failsafe_deserialize(_models.ErrorResponse, pipeline_response)
+            raise HttpResponseError(response=response, model=error, error_format=ARMErrorFormat)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    delete_dryrun.metadata = {"url": "/{resourceUri}/providers/Microsoft.ServiceLinker/dryruns/{dryrunName}"}
+
+    @overload
+    async def generate_configurations(
+        self,
+        resource_uri: str,
+        linker_name: str,
+        parameters: Optional[_models.ConfigurationInfo] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ConfigurationResult:
+        """Generate configurations for a Linker.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
+         be connected. Required.
+        :type resource_uri: str
+        :param linker_name: The name Linker resource. Required.
+        :type linker_name: str
+        :param parameters: Connection Info, including format, secret store, etc. Default value is None.
+        :type parameters: ~azure.mgmt.servicelinker.models.ConfigurationInfo
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ConfigurationResult or the result of cls(response)
+        :rtype: ~azure.mgmt.servicelinker.models.ConfigurationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def generate_configurations(
+        self,
+        resource_uri: str,
+        linker_name: str,
+        parameters: Optional[IO] = None,
+        *,
+        content_type: str = "application/json",
+        **kwargs: Any
+    ) -> _models.ConfigurationResult:
+        """Generate configurations for a Linker.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
+         be connected. Required.
+        :type resource_uri: str
+        :param linker_name: The name Linker resource. Required.
+        :type linker_name: str
+        :param parameters: Connection Info, including format, secret store, etc. Default value is None.
+        :type parameters: IO
+        :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ConfigurationResult or the result of cls(response)
+        :rtype: ~azure.mgmt.servicelinker.models.ConfigurationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @distributed_trace_async
+    async def generate_configurations(
+        self,
+        resource_uri: str,
+        linker_name: str,
+        parameters: Optional[Union[_models.ConfigurationInfo, IO]] = None,
+        **kwargs: Any
+    ) -> _models.ConfigurationResult:
+        """Generate configurations for a Linker.
+
+        :param resource_uri: The fully qualified Azure Resource manager identifier of the resource to
+         be connected. Required.
+        :type resource_uri: str
+        :param linker_name: The name Linker resource. Required.
+        :type linker_name: str
+        :param parameters: Connection Info, including format, secret store, etc. Is either a model type
+         or a IO type. Default value is None.
+        :type parameters: ~azure.mgmt.servicelinker.models.ConfigurationInfo or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: ConfigurationResult or the result of cls(response)
+        :rtype: ~azure.mgmt.servicelinker.models.ConfigurationResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+        api_version: Literal["2022-11-01-preview"] = kwargs.pop(
+            "api_version", _params.pop("api-version", self._config.api_version)
+        )
+        content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
         cls: ClsType[_models.ConfigurationResult] = kwargs.pop("cls", None)
 
-        request = build_list_configurations_request(
+        content_type = content_type or "application/json"
+        _json = None
+        _content = None
+        if isinstance(parameters, (IO, bytes)):
+            _content = parameters
+        else:
+            if parameters is not None:
+                _json = self._serialize.body(parameters, "ConfigurationInfo")
+            else:
+                _json = None
+
+        request = build_generate_configurations_request(
             resource_uri=resource_uri,
             linker_name=linker_name,
             api_version=api_version,
-            template_url=self.list_configurations.metadata["url"],
+            content_type=content_type,
+            json=_json,
+            content=_content,
+            template_url=self.generate_configurations.metadata["url"],
             headers=_headers,
             params=_params,
         )
@@ -956,6 +849,6 @@ class LinkerOperations:
 
         return deserialized
 
-    list_configurations.metadata = {
-        "url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}/listConfigurations"
+    generate_configurations.metadata = {
+        "url": "/{resourceUri}/providers/Microsoft.ServiceLinker/linkers/{linkerName}/generateConfigurations"
     }
