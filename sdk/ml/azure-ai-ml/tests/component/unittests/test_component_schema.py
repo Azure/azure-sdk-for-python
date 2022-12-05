@@ -325,7 +325,7 @@ class TestCommandComponent:
     def test_dump_with_non_existent_base_path(self):
         test_path = "./tests/test_configs/components/helloworld_component.yml"
         component_entity = load_component(source=test_path)
-        component_entity.base_path = "/non/existent/path"
+        component_entity._base_path = "/non/existent/path"
         component_entity._to_dict()
 
 

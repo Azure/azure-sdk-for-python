@@ -612,7 +612,7 @@ class TestPipelineJob:
 
         unregister_internal_components()
         internal_node_type = "CommandComponent"
-        with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "True"):
+        with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "False"):
             with pytest.raises(ValidationException, match=f"Unsupported component type: {internal_node_type}."):
                 pipeline_node_factory.get_load_from_rest_object_func(internal_node_type)
 
