@@ -126,7 +126,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace
     def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self, message: IO, *, excluded: Optional[List[str]] = None, filter_string: Optional[str] = None, **kwargs: Any
+        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Broadcast content inside request body to all the connected client connections.
 
@@ -173,7 +173,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         request = build_send_to_all_request(
             hub=self._config.hub,
             excluded=excluded,
-            filter_string=filter_string,
+            filter=filter,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -201,7 +201,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
 
     @distributed_trace
     def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: IO, *, filter_string: Optional[str] = None, **kwargs: Any
+        self, user_id: str, message: IO, *, filter: Optional[str] = None, **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific user.
 
@@ -248,7 +248,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         request = build_send_to_user_request(
             user_id=user_id,
             hub=self._config.hub,
-            filter_string=filter_string,
+            filter=filter,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,
@@ -281,7 +281,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
         message: IO,
         *,
         excluded: Optional[List[str]] = None,
-        filter_string: Optional[str] = None,
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Send content inside request body to a group of connections.
@@ -333,7 +333,7 @@ class WebPubSubServiceClientOperationsMixin(WebPubSubServiceClientOperationsMixi
             group=group,
             hub=self._config.hub,
             excluded=excluded,
-            filter_string=filter_string,
+            filter=filter,
             content_type=content_type,
             api_version=self._config.api_version,
             content=_content,

@@ -79,7 +79,7 @@ def test_overall_integration(webpubsub_connection_string: str):
     service.send_to_group(group="InitGroup", message='Message_For_InitGroup', content_type='text/plain') # N messages
 
     # test if parameter "filter" in send is working
-    service.send_to_all("Message_Not_For_User0", filter_string="userId ne 'User0'", content_type='text/plain') # N - 1 messages
+    service.send_to_all("Message_Not_For_User0", filter="userId ne 'User0'", content_type='text/plain') # N - 1 messages
 
     # test if remove_connection_from_all_groups works
     group_names = ["Group%d" % i for i in range(3)]

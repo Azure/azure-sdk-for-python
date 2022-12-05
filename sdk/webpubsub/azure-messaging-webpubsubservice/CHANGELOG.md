@@ -3,11 +3,11 @@
 ## 1.1.0b1 (2022-12-05)
 
 ### Features Added
-- Operation `send_to_all` has a new optional parameter `filter_string`
-- Operation `send_to_user` has a new optional parameter `filter_string`
-- Operation `send_to_group` has a new optional parameter `filter_string`
+- Operation `send_to_all` has a new optional parameter `filter`
+- Operation `send_to_user` has a new optional parameter `filter`
+- Operation `send_to_group` has a new optional parameter `filter`
 - Operation `get_client_access_token` has a new optional parameter `group`
-- Added operation `removeConnectionFromAllGroups`
+- Added operation `remove_connection_from_all_groups`
 
 ## 1.0.1 (2022-02-15)
 

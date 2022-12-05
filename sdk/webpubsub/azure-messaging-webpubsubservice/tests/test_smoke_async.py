@@ -58,7 +58,7 @@ class WebpubsubSmokeAsyncTest(WebpubsubAsyncTest):
     @WebpubsubPowerShellPreparer()
     async def test_send_with_filter(self, webpubsub_connection_string):
         client = self.create_client(connection_string=webpubsub_connection_string, hub="hub")
-        await client.send_to_all(message={"hello": "world!"}, filter_string="userId ne 'user1'", content_type="text/plain")
+        await client.send_to_all(message={"hello": "world!"}, filter="userId ne 'user1'", content_type="text/plain")
 
     @WebpubsubPowerShellPreparer()
     async def test_get_client_access_key_with_groups(self, webpubsub_connection_string):
