@@ -112,19 +112,18 @@ steps:
       targetPath: '$(Build.SourcesDirectory)/_coverage'
       artifactType: 'pipeline'
 
-  - task: PythonScript@0
-    displayName: 'Create Coverage Report'
+  - pwsh: |
+      python -m pip install coverage==4.5.4
+      python scripts/devops_tasks/create_coverage.py
+    displayName: Create Coverage Report
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
-    inputs:
-      scriptPath: 'scripts/devops_tasks/create_coverage.py'
 
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish Code Coverage to DevOps'
+  - pwsh: |
+      Get-Content $(Build.SourcesDirectory)\.coverage
+      Get-Content $(Build.SourcesDirectory)\coverage.xml
     continueOnError: true
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
+    displayName: Show .coverage and coverage.xml file
 
   - task: PublishTestResults@2
     condition: always()
@@ -143,3 +142,11 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="samples"
     env: ${{ parameters.EnvVars }}
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage to DevOps'
+    continueOnError: true
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'
