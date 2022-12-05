@@ -40,10 +40,11 @@ class ResourceSchema(YamlFileSchema):
     def update_base_path_pre_dump(self, data, **kwargs):
         # inherit from parent if base_path is not set
         if data.base_path:
-            cur_base_path: Path = Path(data.base_path).resolve()
-            if not cur_base_path.samefile(self.context[BASE_PATH_CONTEXT_KEY]):
-                self._previous_base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
-                self.context[BASE_PATH_CONTEXT_KEY] = cur_base_path
+            cur_base_path: Path = Path(data.base_path)
+            base_path_in_context = Path(self.context[BASE_PATH_CONTEXT_KEY])
+            if cur_base_path == base_path_in_context:
+                return data
+            self.context[BASE_PATH_CONTEXT_KEY] = cur_base_path
         return data
 
     @post_dump

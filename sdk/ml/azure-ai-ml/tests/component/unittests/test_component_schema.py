@@ -322,6 +322,12 @@ class TestCommandComponent:
         recreated_component = component_factory.load_from_rest(obj=component_entity._to_rest_object())
         assert recreated_component._to_dict() == component_entity._to_dict()
 
+    def test_dump_with_non_existent_base_path(self):
+        test_path = "./tests/test_configs/components/helloworld_component.yml"
+        component_entity = load_component(source=test_path)
+        component_entity.base_path = "/non/existent/path"
+        component_entity._to_dict()
+
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
