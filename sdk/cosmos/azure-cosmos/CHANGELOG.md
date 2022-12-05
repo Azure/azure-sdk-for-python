@@ -1,9 +1,8 @@
 ## Release History
 
 ### 4.3.1b2 (Unreleased)
-
 #### Features Added
-
+ - Added `correlated_activity_id`
 #### Breaking Changes
 
 #### Bugs Fixed
