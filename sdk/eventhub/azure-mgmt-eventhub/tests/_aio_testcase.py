@@ -28,6 +28,11 @@ class AzureMgmtAsyncTestCase(AzureMgmtTestCase):
             credential=credential,
             subscription_id=self.settings.SUBSCRIPTION_ID
         )
+    
+    def mock_completed_future(self, result=None):
+        future = asyncio.Future()
+        future.set_result = result
+        return future
 
     def to_list(self, ait):
         async def lst():

@@ -90,10 +90,10 @@ class EnvironmentCredential(AsyncContextManager):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises ~azure.identity.CredentialUnavailableError: environment variable configuration is incomplete
         """
         if not self._credential:
