@@ -23,7 +23,7 @@ jobs:
 
       # Download all existing artifacts (most of the time, it's whatever was uploaded before)
       - pwsh: |
-          New-Item -Path $(Build.SourcesDirectory) -Name "_all_coverage_files" -ItemType "directory"
+          New-Item -Path $(Build.SourcesDirectory) -Name "_coverage" -ItemType "directory"
         displayName: 'Create all coverages directory'
         continueOnError: false
         condition: succeededOrFailed()
@@ -31,7 +31,7 @@ jobs:
       - task: DownloadPipelineArtifact@2
         inputs:
           source: current
-          path: '$(Build.SourcesDirectory)/_all_coverage_files'
+          path: '$(Build.SourcesDirectory)/_coverage'
 
       - script: |
           pip install -r eng/ci_tools.txt
@@ -39,7 +39,7 @@ jobs:
         displayName: 'Prep Environment'
 
       - pwsh: |
-          Get-ChildItem -Recurse .\_all_coverage_files\ |
+          Get-ChildItem -Recurse .\_coverage\ |
           ForEach-Object {
             If (Test-Path $_ -PathType Leaf) {
               Get-Content $_
