@@ -757,9 +757,6 @@ class TestPipelineJobSchema:
                 "tests/test_configs/pipeline_jobs/pipeline_job_with_sweep_job_with_input_bindings.yml",
                 {
                     "hello_world": {
-                        "component_in_number": {
-                            "job_input_type": "literal",
-                        },
                         "test1": {
                             "job_input_type": "literal",
                             "value": "${{parent.inputs.job_data_path}}",
@@ -1163,7 +1160,6 @@ class TestPipelineJobSchema:
                 {
                     "hello_world_inline_commandjob_1": {
                         "_source": "YAML.JOB",
-                        "code": "./",
                         "command": "pip freeze && echo " "${{inputs.literal_input}}",
                         "description": "Train a model on the Iris " "dataset-1.",
                         "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -1193,7 +1189,6 @@ class TestPipelineJobSchema:
                     },
                     "hello_world_inline_commandjob_3": {
                         "_source": "YAML.JOB",
-                        "code": "./",
                         "command": "pip freeze && echo ${{inputs.test1}}",
                         "description": "Train a model on the Iris dataset-1.",
                         "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -1210,7 +1205,6 @@ class TestPipelineJobSchema:
                 {
                     "hello_world_inline_commandjob_1": {
                         "_source": "YAML.JOB",
-                        "code": "./",
                         "command": "pip freeze && echo " "${{inputs.literal_input}}",
                         "description": "Train a model on the Iris " "dataset-1.",
                         "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -1240,7 +1234,6 @@ class TestPipelineJobSchema:
                     },
                     "hello_world_inline_commandjob_3": {
                         "_source": "YAML.JOB",
-                        "code": "./",
                         "command": "pip freeze && echo ${{inputs.test1}}",
                         "description": "Train a model on the Iris dataset-1.",
                         "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:1",
@@ -1261,6 +1254,8 @@ class TestPipelineJobSchema:
             actual_dict = pipeline_entity.jobs[name].component._to_rest_object().as_dict()
             omit_fields = [
                 "name",
+                # dumped code will be an absolute path, tested in other tests
+                "code",
             ]
 
             actual_dict = pydash.omit(actual_dict["properties"]["component_spec"], omit_fields)

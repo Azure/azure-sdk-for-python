@@ -106,8 +106,9 @@ class InternalInput(Input):
 
 
 class InternalOutput(Output):
-    def __init__(self, *, datastore_mode=None, **kwargs):
+    def __init__(self, *, datastore_mode=None, is_link_mode=None, **kwargs):
         self.datastore_mode = datastore_mode
+        self.is_link_mode = is_link_mode
         super().__init__(**kwargs)
 
     @classmethod

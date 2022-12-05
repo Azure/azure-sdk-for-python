@@ -88,7 +88,8 @@ class YamlFileSchema(PathAwareSchema):
         self._previous_base_path = None
         super().__init__(*args, **kwargs)
 
-    def resolve_path(self, data, base_path) -> Optional[Path]:
+    @classmethod
+    def _resolve_path(cls, data, base_path) -> Optional[Path]:
         if isinstance(data, str) and data.startswith(FILE_PREFIX):
             # Use directly if absolute path
             path = Path(data[len(FILE_PREFIX) :])
@@ -100,7 +101,7 @@ class YamlFileSchema(PathAwareSchema):
 
     @pre_load
     def load_from_file(self, data, **kwargs):
-        path = self.resolve_path(data, Path(self.context[BASE_PATH_CONTEXT_KEY]))
+        path = self._resolve_path(data, Path(self.context[BASE_PATH_CONTEXT_KEY]))
         if path is not None:
             self._previous_base_path = Path(self.context[BASE_PATH_CONTEXT_KEY])
             # Push update
@@ -114,7 +115,7 @@ class YamlFileSchema(PathAwareSchema):
 
     # Schemas are read depth-first, so push/pop to update current path
     @post_load
-    def reset_base_path(self, data, **kwargs):
+    def reset_base_path_post_load(self, data, **kwargs):
         if self._previous_base_path is not None:
             # pop state
             self.context[BASE_PATH_CONTEXT_KEY] = self._previous_base_path

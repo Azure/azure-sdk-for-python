@@ -32,9 +32,9 @@ def del_outdated_samples(readme: str):
 
     with open(python_readme, "r") as file_in:
         content = file_in.readlines()
-    pattern = "$(python-sdks-folder)"
+    pattern = ["$(python-sdks-folder)", "azure-mgmt-"]
     for line in content:
-        if pattern in line:
+        if all(p in line for p in pattern):
             sdk_folder = re.findall("[a-z]+/[a-z]+-[a-z]+-[a-z]+", line)[0]
             sample_folder = Path(f"sdk/{sdk_folder}/generated_samples") 
             if sample_folder.exists():
