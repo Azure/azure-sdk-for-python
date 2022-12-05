@@ -31,8 +31,6 @@ SUPPORTED_API_VERSIONS = [
 OCI_MANIFEST_MEDIA_TYPE = "application/vnd.oci.image.manifest.v1+json"
 
 # Supported audiences
-AZURE_RESOURCE_MANAGER_CHINA = "https://management.chinacloudapi.cn"
-AZURE_RESOURCE_MANAGER_GOVERNMENT = "https://management.usgovcloudapi.net"
 AZURE_RESOURCE_MANAGER_PUBLIC_CLOUD = "https://management.azure.com"
 
 

@@ -48,7 +48,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
         self,
         endpoint: str,
         credential: Optional["TokenCredential"] = None,
-        **kwargs: "Any"
+        **kwargs: Any
     ) -> None:
         """Create a ContainerRegistryClient from an ACR endpoint and a credential.
 
@@ -763,7 +763,7 @@ class ContainerRegistryClient(ContainerRegistryBaseClient):
 
     @distributed_trace
     def upload_manifest(
-        self, repository: str, manifest: "Union['OCIManifest', 'IO']", *, tag: "Optional[str]" = None, **kwargs: "Any"
+        self, repository: str, manifest: Union["OCIManifest", "IO"], *, tag: Optional[str] = None, **kwargs: Any
     ) -> str:
         """Upload a manifest for an OCI artifact.
 
