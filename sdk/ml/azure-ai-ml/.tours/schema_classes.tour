@@ -1,0 +1,10 @@
+{
+  "$schema": "https://aka.ms/codetour-schema",
+  "title": "AML SDK Schema Classes",
+  "steps": [
+    {
+      "directory": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema",
+      "description": "This code tour covers the purpose, functionality, and details of entity schema classes within the AML SDK.\n\nSchema classes define the YAML structure of entity classes for saving and loading them from files. Since entity classes are the SDK representations of Azure resources, schema classes can be thoughts of as the YAML structure of Azure resources. \n\nOur implementation of schema classes makes generous use of a python library called [Marshmallow](https://marshmallow.readthedocs.io/en/stable/), along with a couple internal tricks layered on top of marshmallow."
+    }
+  ]
+}
