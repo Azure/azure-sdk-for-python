@@ -2,7 +2,7 @@
 
 ### 4.3.1b2 (Unreleased)
 #### Features Added
- - Added `correlated_activity_id`
+ - Added `correlated_activity_id` for query operations
 #### Breaking Changes
 
 #### Bugs Fixed
