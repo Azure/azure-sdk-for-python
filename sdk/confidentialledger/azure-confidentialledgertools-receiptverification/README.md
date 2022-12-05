@@ -40,7 +40,7 @@ Every write to Azure Confidential Ledger generates an immutable ledger entry in 
 
 ### Receipts
 
-To enforce transaction integrity guarantees, an Azure Confidential Ledger uses a Merkle tree data structure to record the hash of all transactions blocks that are appended to the immutable ledger. After a write transaction is committed, Azure Confidential Ledger users can get a cryptographic Merkle proof, or receipt, over the entry produced in a Confidential Ledger to verify that the write operation was correctly saved. A write transaction receipt is proof that the system has committed the corresponding transaction and can be used to verify that the entry has been effectively appended to the ledger.
+To enforce transaction integrity guarantees, an Azure Confidential Ledger uses a [Merkle tree][merkle_tree_wiki] data structure to record the hash of all transactions blocks that are appended to the immutable ledger. After a write transaction is committed, Azure Confidential Ledger users can get a cryptographic Merkle proof, or receipt, over the entry produced in a Confidential Ledger to verify that the write operation was correctly saved. A write transaction receipt is proof that the system has committed the corresponding transaction and can be used to verify that the entry has been effectively appended to the ledger.
 
 Please refer to the following [article](https://learn.microsoft.com/azure/confidential-ledger/write-transaction-receipts) for more information about Azure Confidential Ledger write transaction receipts.
 
@@ -161,9 +161,7 @@ A list of inner exceptions raised by the library, along with their descriptions,
 
 ### Additional client libraries
 
-Please find below other Confidential Ledger client libraries for Python that are more suitable for general usage:
-
- that can be used to administer and perform operations on Azure Confidential Ledgers:
+Please find below other Confidential Ledger client libraries for Python that are more suitable for general usage and that can be used to administer and perform operations on Azure Confidential Ledgers:
 
 * [Azure Confidential Ledger Management Client Library][confidential_ledger_mgmt_src]: to adminster and manager Azure Confidential Ledger resources
 * [Azure Confidential Ledger Client Library][confidential_ledger_client_src]: to perform operations on Azure Confidential Ledger applications
