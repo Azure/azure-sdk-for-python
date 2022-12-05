@@ -31,12 +31,13 @@ pytestmark = pytest.mark.cosmosEmulator
 
 
 @pytest.mark.usefixtures("teardown")
-class HeadersTest(unittest.TestCase):
+class CorrelatedActivityIdTest(unittest.TestCase):
     configs = test_config._test_config
     host = configs.host
     masterKey = configs.masterKey
 
     correlated_activity_id = str(uuid.uuid4())
+    default = None
 
     @classmethod
     def setUpClass(cls):
@@ -46,6 +47,11 @@ class HeadersTest(unittest.TestCase):
                                                       partition_key=PartitionKey(path="/id"))
 
     def side_effect_correlated_activity_id(self, *args, **kwargs):
+        # Extract request headers from args
+        assert args[2]["x-ms-cosmos-correlated-activityid"] == self.correlated_activity_id
+        raise StopIteration
+
+    def side_effect_default_correlated_activity_id(self, *args, **kwargs):
         # Extract request headers from args
         assert args[2]["x-ms-cosmos-correlated-activityid"] == self.correlated_activity_id
         raise StopIteration
@@ -62,6 +68,13 @@ class HeadersTest(unittest.TestCase):
         except StopIteration:
             pass
 
+    def test_default_correlated_activity_id(self):
+        query_2 = 'SELECT * from c ORDER BY c._ts'
+        try:
+            self.container.query_items(query=query_2, partition_key="pk-1",
+                                         correlated_activity_id=self.default)
+        except Exception as exception:
+            assert isinstance(exception, ValueError)
 
 if __name__ == "__main__":
     unittest.main()
