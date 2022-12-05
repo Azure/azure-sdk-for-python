@@ -105,7 +105,7 @@ steps:
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish .coverage files'
+    displayName: 'Publish raw .coverage files'
     continueOnError: true
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
     inputs:
@@ -117,13 +117,6 @@ steps:
       python scripts/devops_tasks/create_coverage.py
     displayName: Create Coverage Report
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
-
-  - pwsh: |
-      Get-Content $(Build.SourcesDirectory)\.coverage
-      Get-Content $(Build.SourcesDirectory)\coverage.xml
-    continueOnError: true
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
-    displayName: Show .coverage and coverage.xml file
 
   - task: PublishTestResults@2
     condition: always()
