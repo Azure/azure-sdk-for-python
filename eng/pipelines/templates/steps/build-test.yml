@@ -118,13 +118,6 @@ steps:
     inputs:
       scriptPath: 'scripts/devops_tasks/create_coverage.py'
 
-  - pwsh: |
-      Get-Content $(Build.SourcesDirectory)\.coverage
-      Get-Content $(Build.SourcesDirectory)\coverage.xml
-    continueOnError: true
-    condition: and(succeeded(), ${{ parameters.RunCoverage }})
-    displayName: Show .coverage and coverage.xml file
-
   - task: PublishCodeCoverageResults@1
     displayName: 'Publish Code Coverage to DevOps'
     continueOnError: true
