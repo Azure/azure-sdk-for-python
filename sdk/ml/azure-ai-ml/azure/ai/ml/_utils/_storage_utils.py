@@ -5,6 +5,7 @@
 import logging
 import re
 from typing import Tuple, Union
+from azure.ai.ml._artifacts._constants import STORAGE_URI_REGEX
 
 from azure.ai.ml._artifacts._blob_storage_helper import BlobStorageClient
 from azure.ai.ml._artifacts._fileshare_storage_helper import FileStorageClient
@@ -182,7 +183,12 @@ def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> s
     return blob_url
 
 
-def get_ds_name_and_path_prefix(asset_uri: str) -> Tuple[str, str]:
-    ds_name = asset_uri.split("paths")[0].split("/")[-2]
-    path_prefix = asset_uri.split("paths")[1][1:]
+def get_ds_name_and_path_prefix(asset_uri: str, registry_name: str = None) -> Tuple[str, str]:
+    if registry_name: # for registry
+        split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
+        path_prefix = split_paths[0][3]
+        ds_name = None
+    else: # for workspace
+        ds_name = asset_uri.split("paths")[0].split("/")[-2]
+        path_prefix = asset_uri.split("paths")[1][1:]
     return ds_name, path_prefix
