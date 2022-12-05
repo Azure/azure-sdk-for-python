@@ -1,5 +1,3 @@
-
-
 # Azure Core Tracing OpenCensus client library for Python
 
 ## Getting started

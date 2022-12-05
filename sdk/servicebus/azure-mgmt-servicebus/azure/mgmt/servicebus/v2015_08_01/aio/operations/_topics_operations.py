@@ -867,4 +867,3 @@ class TopicsOperations:
         return deserialized
 
     regenerate_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/authorizationRules/{authorizationRuleName}/regenerateKeys"}  # type: ignore
-

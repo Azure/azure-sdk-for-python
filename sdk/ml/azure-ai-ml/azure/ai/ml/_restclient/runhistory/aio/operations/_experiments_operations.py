@@ -618,4 +618,3 @@ class ExperimentsOperations:
         return deserialized
 
     delete_tags.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/tags:delete"}  # type: ignore
-

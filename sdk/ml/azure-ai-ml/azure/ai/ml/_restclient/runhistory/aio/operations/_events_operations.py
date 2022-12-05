@@ -477,4 +477,3 @@ class EventsOperations:
             return cls(pipeline_response, None, {})
 
     post.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/runs/{runId}/events"}  # type: ignore
-

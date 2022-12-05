@@ -629,4 +629,3 @@ class SearchIndexClient(HeadersMixin): # pylint:disable=too-many-public-methods
             **kwargs
         )
         return result  # pylint:disable=protected-access
-        

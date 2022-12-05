@@ -494,4 +494,3 @@ class CertificatesOperations:
         return deserialized
 
     update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/certificates/{name}"}  # type: ignore
-

@@ -70,4 +70,3 @@ class TestMetricsAdvisorAdministrationClient(TestMetricsAdvisorClientBase):
             start_time=datetime.datetime(2022, 2, 28, tzinfo=tzutc()),
             end_time=datetime.datetime(2022, 3, 1, tzinfo=tzutc()),
         )
-

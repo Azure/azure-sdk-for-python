@@ -1009,4 +1009,3 @@ class AppsOperations(object):
         return deserialized
 
     validate_domain.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/validateDomain"}  # type: ignore
-

@@ -437,4 +437,3 @@ class DscCompilationJobOperations:
         return deserialized
 
     get_stream.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/compilationjobs/{jobId}/streams/{jobStreamId}"}  # type: ignore
-

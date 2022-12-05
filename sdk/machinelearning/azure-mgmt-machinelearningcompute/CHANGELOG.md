@@ -67,4 +67,3 @@ This version uses a next-generation code generator that introduces important bre
 **Features**
 
   - Initial private preview release.
-

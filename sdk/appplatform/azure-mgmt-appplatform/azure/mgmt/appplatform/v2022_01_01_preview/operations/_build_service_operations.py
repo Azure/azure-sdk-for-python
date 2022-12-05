@@ -1503,4 +1503,3 @@ class BuildServiceOperations(object):
         return deserialized
 
     get_supported_stack.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/buildServices/{buildServiceName}/supportedStacks/{stackName}"}  # type: ignore
-

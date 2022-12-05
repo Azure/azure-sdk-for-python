@@ -203,4 +203,3 @@ class OperationStatusOperations:
         return deserialized
 
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{clusterRp}/{clusterResourceName}/{clusterName}/providers/Microsoft.KubernetesConfiguration/extensions/{extensionName}/operations/{operationId}'}  # type: ignore
-

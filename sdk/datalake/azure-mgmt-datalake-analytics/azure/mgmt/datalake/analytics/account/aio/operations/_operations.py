@@ -95,4 +95,3 @@ class Operations:
         return deserialized
 
     list.metadata = {'url': "/providers/Microsoft.DataLakeAnalytics/operations"}  # type: ignore
-

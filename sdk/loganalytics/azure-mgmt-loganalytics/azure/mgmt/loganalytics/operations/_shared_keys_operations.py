@@ -250,4 +250,3 @@ class SharedKeysOperations:
         return deserialized
 
     regenerate.metadata = {'url': "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/regenerateSharedKey"}  # type: ignore
-

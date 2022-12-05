@@ -1250,4 +1250,3 @@ class CustomLocationsOperations:
         return deserialized
 
     find_target_resource_group.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ExtendedLocation/customLocations/{resourceName}/findTargetResourceGroup"}  # type: ignore
-

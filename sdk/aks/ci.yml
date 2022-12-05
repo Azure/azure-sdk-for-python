@@ -30,4 +30,3 @@ extends:
     Artifacts:
     - name: azure-mgmt-devspaces
       safeName: azuremgmtdevspaces
-

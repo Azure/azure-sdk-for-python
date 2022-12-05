@@ -142,4 +142,3 @@ class DeleteOperations(object):
         return deserialized
 
     data_container.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datacontainer/{name}'}  # type: ignore
-

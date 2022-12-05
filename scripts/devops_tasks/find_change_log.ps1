@@ -1,4 +1,3 @@
-﻿
 param (
   $workingDir,
   $version
@@ -103,4 +102,3 @@ if (($workingDir -eq $null) -or ($version -eq $null))
 }
 
 VerifyPackages -rootDirectory $workingDir
-

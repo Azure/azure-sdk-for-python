@@ -32273,4 +32273,3 @@ class WebAppsOperations:  # pylint: disable=too-many-public-methods
         return deserialized
 
     get_web_job.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/webjobs/{webJobName}"}  # type: ignore
-

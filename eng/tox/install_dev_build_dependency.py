@@ -123,5 +123,3 @@ if __name__ == "__main__":
         pkg_dir = path.abspath(args.target_package)
         pkg_details = ParsedSetup.from_path(pkg_dir)
         install_dev_build_packages(pkg_details.name)
-
-

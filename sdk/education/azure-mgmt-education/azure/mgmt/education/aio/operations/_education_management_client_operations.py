@@ -81,4 +81,3 @@ class EducationManagementClientOperationsMixin(MixinABC):
             return cls(pipeline_response, None, {})
 
     redeem_invitation_code.metadata = {'url': "/providers/Microsoft.Education/redeemInvitationCode"}  # type: ignore
-

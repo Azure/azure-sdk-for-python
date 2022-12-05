@@ -75,4 +75,3 @@ def add_sanitizers(test_proxy):
     add_header_regex_sanitizer(key="x-ms-ests-server", value="sanitized")
     add_header_regex_sanitizer(key="x-ms-request-id", value="sanitized")
     add_header_regex_sanitizer(key="Content-Security-Policy-Report-Only", value="sanitized")
-

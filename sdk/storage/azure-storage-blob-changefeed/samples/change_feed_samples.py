@@ -118,4 +118,3 @@ if __name__ == '__main__':
     sample.list_range_of_events()
     sample.list_events_using_continuation_token()
     sample.list_events_in_live_mode()
-

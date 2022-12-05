@@ -788,4 +788,3 @@ class WebhooksOperations:
         return deserialized
 
     get_callback_config.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/webhooks/{webhookName}/getCallbackConfig"}  # type: ignore
-

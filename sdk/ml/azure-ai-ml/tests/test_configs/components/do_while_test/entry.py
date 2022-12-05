@@ -118,4 +118,3 @@ def do_while_body_component(
     control_output_content = '{"condition": "%s", "int_param_output": "%s", "bool_param_output": "%s", "float_param_output": "%s", "str_param_output": "%s"}' % (
                              str(condition), int_param_output, bool_param_output, float_param_output, str_param_output)
     ExecutorBase._write_control_outputs_to_run_history(control_output_content=control_output_content)
-

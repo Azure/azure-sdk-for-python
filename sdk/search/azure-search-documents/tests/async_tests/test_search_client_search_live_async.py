@@ -162,4 +162,3 @@ class TestClientTestAsync(AzureRecordedTestCase):
         async for x in await client.search(search_text = ''):
             results.append(x)
         assert len(results) == 60
-            

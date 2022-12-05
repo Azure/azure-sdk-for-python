@@ -146,4 +146,3 @@ class OperationStatusesOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.OperationalInsights/locations/{location}/operationStatuses/{asyncOperationId}"}  # type: ignore
-

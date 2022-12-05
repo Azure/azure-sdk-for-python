@@ -129,4 +129,3 @@ stages:
         ArtifactName: conda
         ${{ if eq(parameters.ServiceDirectory, 'template') }}:
           TestPipeline: true
-

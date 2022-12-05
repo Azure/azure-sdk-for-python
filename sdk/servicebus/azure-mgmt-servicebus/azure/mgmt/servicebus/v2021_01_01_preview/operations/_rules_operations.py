@@ -573,4 +573,3 @@ class RulesOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/topics/{topicName}/subscriptions/{subscriptionName}/rules/{ruleName}"}  # type: ignore
-

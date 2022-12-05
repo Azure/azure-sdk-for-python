@@ -29282,5 +29282,3 @@ class CollectionOperations:
             return cls(pipeline_response, cast(JSON, deserialized), {})
 
         return cast(JSON, deserialized)
-
-

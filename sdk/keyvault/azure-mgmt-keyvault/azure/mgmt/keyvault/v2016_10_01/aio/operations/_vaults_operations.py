@@ -985,4 +985,3 @@ class VaultsOperations:
         return deserialized
 
     check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/checkNameAvailability"}  # type: ignore
-

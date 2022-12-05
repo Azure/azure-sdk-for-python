@@ -68,5 +68,3 @@ def sample_analyze_healthcare_entities_with_cancellation() -> None:
 
 if __name__ == "__main__":
     sample_analyze_healthcare_entities_with_cancellation()
-
-

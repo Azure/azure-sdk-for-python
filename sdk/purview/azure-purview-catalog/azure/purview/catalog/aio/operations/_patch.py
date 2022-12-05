@@ -352,4 +352,4 @@ class GlossaryOperations(GlossaryOperationsGenerated):
 
 
 
-__all__= ['EntityOperations','GlossaryOperations'] 
+__all__= ['EntityOperations','GlossaryOperations']

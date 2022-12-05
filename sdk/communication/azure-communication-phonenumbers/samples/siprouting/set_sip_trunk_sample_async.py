@@ -35,4 +35,3 @@ async def set_sip_trunk_sample():
 
 if __name__ == "__main__":
     asyncio.run(set_sip_trunk_sample())
-

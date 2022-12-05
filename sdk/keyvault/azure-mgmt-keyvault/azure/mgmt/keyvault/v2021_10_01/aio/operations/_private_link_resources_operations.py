@@ -103,4 +103,3 @@ class PrivateLinkResourcesOperations:
         return deserialized
 
     list_by_vault.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/vaults/{vaultName}/privateLinkResources"}  # type: ignore
-

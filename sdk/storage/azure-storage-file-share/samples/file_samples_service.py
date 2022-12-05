@@ -107,4 +107,3 @@ if __name__ == '__main__':
     sample.file_service_properties()
     sample.list_shares_in_service()
     sample.get_share_client()
-

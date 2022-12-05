@@ -132,4 +132,3 @@ class VirtualMachineSizesOperations(object):
         return deserialized
 
     list.metadata = {'url': '/subscriptions/{subscriptionId}/providers/Microsoft.MachineLearningServices/locations/{location}/vmSizes'}  # type: ignore
-

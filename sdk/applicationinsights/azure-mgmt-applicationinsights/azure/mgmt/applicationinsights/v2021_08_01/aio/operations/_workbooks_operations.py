@@ -651,4 +651,3 @@ class WorkbooksOperations:
         return deserialized
 
     revision_get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/workbooks/{resourceName}/revisions/{revisionId}"}  # type: ignore
-

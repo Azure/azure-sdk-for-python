@@ -32,4 +32,3 @@ extends:
       safeName: azuremgmtmedia
     - name: azure-media-analytics-edge
       safeName: azuremediaanalyticsedge
-

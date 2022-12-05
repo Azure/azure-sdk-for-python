@@ -100,4 +100,3 @@ class ComponentAvailableFeaturesOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/getavailablebillingfeatures"}  # type: ignore
-

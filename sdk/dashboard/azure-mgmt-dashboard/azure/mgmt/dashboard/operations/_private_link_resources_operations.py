@@ -283,4 +283,3 @@ class PrivateLinkResourcesOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Dashboard/grafana/{workspaceName}/privateLinkResources/{privateLinkResourceName}"}  # type: ignore
-

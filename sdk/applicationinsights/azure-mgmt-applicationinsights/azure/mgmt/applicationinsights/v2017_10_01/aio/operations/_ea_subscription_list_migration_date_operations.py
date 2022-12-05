@@ -91,4 +91,3 @@ class EASubscriptionListMigrationDateOperations:
         return deserialized
 
     post.metadata = {'url': "/subscriptions/{subscriptionId}/providers/microsoft.insights/listMigrationdate"}  # type: ignore
-

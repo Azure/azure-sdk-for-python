@@ -2671,4 +2671,3 @@ class RunsOperations:  # pylint: disable=too-many-public-methods
         return deserialized
 
     cancel_run_with_uri_by_experiment_name.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experiments/{experimentName}/runs/{runId}/cancel"}  # type: ignore
-

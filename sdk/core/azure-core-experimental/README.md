@@ -1,4 +1,3 @@
-
 # Azure Core Experimental client library for Python
 
 Azure Core Experimental client library provides experimental features that are not ready for stable release. The main reason might be because the feature depends on some other packages that there is no stable version available yet. If its dependant package introduces breaking changes, the features maybe break. It is not recommended to use azure core experimental library in production environment.

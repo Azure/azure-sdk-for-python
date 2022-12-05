@@ -60,4 +60,3 @@ class MediaTests(unittest.TestCase):
 
     def _MockRunFunction(self, pipeline_client, request, **kwargs):
         return self.response
-

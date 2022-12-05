@@ -1176,4 +1176,3 @@ class WorkspacesOperations:
         return deserialized
 
     list_outbound_network_dependencies_endpoints.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/outboundNetworkDependenciesEndpoints'}  # type: ignore
-

@@ -37,4 +37,3 @@ If there is no link in the figure above, it may be folded. You can also find it 
 ## 1.private repo
 
 In private repo [Azure/azure-rest-api-specs-pr](https://github.com/Azure/azure-rest-api-specs-pr), pipeline can be triggered **only when the target branch is `main`**
-

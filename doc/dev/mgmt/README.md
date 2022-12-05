@@ -11,4 +11,3 @@ In order of workflow:
 
 More implementations / advanced documents:
 - [changelog_impl.md](https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/mgmt/changelog_impl.md) : Technical details about the change log tool implementation
-

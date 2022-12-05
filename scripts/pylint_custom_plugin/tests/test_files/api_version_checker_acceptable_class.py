@@ -19,6 +19,3 @@ class SomeClient():
 
     def __init__(self, endpoint, credential, **kwargs):
         pass
-
-
-

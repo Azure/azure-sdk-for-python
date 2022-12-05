@@ -3296,4 +3296,3 @@ class AppServicePlansOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
 
     reboot_worker.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/serverfarms/{name}/workers/{workerName}/reboot"}  # type: ignore
-

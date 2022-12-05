@@ -307,4 +307,3 @@ class CertificateOrdersDiagnosticsOperations:
         return deserialized
 
     get_app_service_certificate_order_detector_response.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{certificateOrderName}/detectors/{detectorName}"}  # type: ignore
-

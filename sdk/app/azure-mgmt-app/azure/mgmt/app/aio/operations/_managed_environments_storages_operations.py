@@ -274,4 +274,3 @@ class ManagedEnvironmentsStoragesOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{envName}/storages/{name}'}  # type: ignore
-

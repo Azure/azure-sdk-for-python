@@ -223,6 +223,3 @@ class TestCommunicationTokenCredential(TestCase):
             with credential:
                 assert credential._timer is not None
         assert str(err.value) == "An instance of CommunicationTokenCredential cannot be reused once it has been closed."
-        
-
-    

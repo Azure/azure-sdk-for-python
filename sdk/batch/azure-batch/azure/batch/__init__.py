@@ -16,4 +16,3 @@ __all__ = ['BatchServiceClient', 'BatchServiceClientConfiguration']
 from ._version import VERSION
 
 __version__ = VERSION
-

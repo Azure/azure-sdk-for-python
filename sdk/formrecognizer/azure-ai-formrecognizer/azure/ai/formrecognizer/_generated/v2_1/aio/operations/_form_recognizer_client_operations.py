@@ -2248,4 +2248,3 @@ class FormRecognizerClientOperationsMixin(MixinABC):  # pylint: disable=too-many
         return deserialized
 
     get_custom_models.metadata = {'url': "/custom/models"}  # type: ignore
-

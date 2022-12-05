@@ -300,4 +300,3 @@ class DaprComponentsOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{environmentName}/daprComponents/{name}'}  # type: ignore
-

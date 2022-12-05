@@ -1,4 +1,3 @@
-
 # Azure Core Library - Client library developer reference
 
 ## Pipeline

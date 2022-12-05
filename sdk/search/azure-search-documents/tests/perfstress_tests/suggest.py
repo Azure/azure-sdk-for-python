@@ -43,4 +43,3 @@ class SuggestTest(PerfStressTest):
             results = len(await self.async_service_client.suggest(search_text="mot", suggester_name="sg"))
         else:
             results = len(await self.async_service_client.suggest(search_text="mot", suggester_name="sg", top=self.args.num_documents))
-

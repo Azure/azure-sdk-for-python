@@ -48,4 +48,3 @@ class HybridComputeTests(AzureMgmtTestCase):
         )
         with self.assertRaises(ErrorResponseException):
             self.client.machines.get(resource_group_name,machine_name)
-

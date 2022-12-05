@@ -2012,4 +2012,3 @@ class NamespacesOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
 
     migrate.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrate"}  # type: ignore
-

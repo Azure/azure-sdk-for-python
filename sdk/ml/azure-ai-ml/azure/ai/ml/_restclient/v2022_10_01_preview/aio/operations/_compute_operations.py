@@ -1206,4 +1206,3 @@ class ComputeOperations:
             return cls(pipeline_response, None, {})
 
     update_idle_shutdown_setting.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/computes/{computeName}/updateIdleShutdownSetting"}  # type: ignore
-

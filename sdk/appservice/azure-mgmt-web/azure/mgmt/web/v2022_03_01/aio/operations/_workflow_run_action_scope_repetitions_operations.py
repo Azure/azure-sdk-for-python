@@ -229,4 +229,3 @@ class WorkflowRunActionScopeRepetitionsOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}/runs/{runName}/actions/{actionName}/scopeRepetitions/{repetitionName}"}  # type: ignore
-

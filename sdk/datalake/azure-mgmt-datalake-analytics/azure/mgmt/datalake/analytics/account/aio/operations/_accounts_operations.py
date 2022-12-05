@@ -835,4 +835,3 @@ class AccountsOperations:
         return deserialized
 
     check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeAnalytics/locations/{location}/checkNameAvailability"}  # type: ignore
-

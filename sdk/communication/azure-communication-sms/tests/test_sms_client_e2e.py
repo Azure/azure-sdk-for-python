@@ -192,4 +192,3 @@ class SMSClientTest(CommunicationTestCase):
         assert sms_response.http_status_code == 202
         assert sms_response.error_message is None
         assert sms_response.successful
-        

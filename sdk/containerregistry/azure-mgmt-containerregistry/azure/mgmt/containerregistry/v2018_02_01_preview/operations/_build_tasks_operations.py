@@ -892,4 +892,3 @@ class BuildTasksOperations(object):
         return deserialized
 
     list_source_repository_properties.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/buildTasks/{buildTaskName}/listSourceRepositoryProperties"}  # type: ignore
-

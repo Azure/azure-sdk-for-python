@@ -1,4 +1,3 @@
-
 # Azure Management Core Library
 
 Azure management core library defines extensions to Azure Core that are specific to ARM (Azure Resource Management) needed when you use client libraries.

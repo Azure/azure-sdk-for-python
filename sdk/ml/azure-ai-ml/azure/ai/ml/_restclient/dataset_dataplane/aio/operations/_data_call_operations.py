@@ -240,4 +240,3 @@ class DataCallOperations:
         return deserialized
 
     get_quick_profile_for_ml_table.metadata = {'url': '/data/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datacall/quickprofile'}  # type: ignore
-

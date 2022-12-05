@@ -1128,4 +1128,3 @@ class DisasterRecoveryConfigsOperations(object):
             return cls(pipeline_response, None, {})
 
     fail_over.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/failover"}  # type: ignore
-

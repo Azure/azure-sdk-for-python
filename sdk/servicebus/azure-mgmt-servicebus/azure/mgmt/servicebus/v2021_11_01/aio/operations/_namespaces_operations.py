@@ -1348,4 +1348,3 @@ class NamespacesOperations:
         return deserialized
 
     check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.ServiceBus/CheckNameAvailability"}  # type: ignore
-

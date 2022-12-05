@@ -212,4 +212,3 @@ class MgmtCosmosDBTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         result = self.mgmt_client.database_accounts.begin_delete(resource_group_name=RESOURCE_GROUP, account_name=ACCOUNT_NAME)
         result = result.result()
-

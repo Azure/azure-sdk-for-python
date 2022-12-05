@@ -24,4 +24,4 @@ class HMACTest(AzureTestCase):
 
         sha_val = auth_policy._compute_hmac(u"😀")
 
-        assert sha_val == "1rudJKjn2Zi+3hRrBG29wIF6pD6YyAeQR1ZcFtXoKAU=" 
+        assert sha_val == "1rudJKjn2Zi+3hRrBG29wIF6pD6YyAeQR1ZcFtXoKAU="

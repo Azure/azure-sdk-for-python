@@ -297,4 +297,3 @@ class MgmtSqlTest(AzureMgmtTestCase):
 #--------------------------------------------------------------------------
         result = self.mgmt_client.managed_databases.begin_delete(resource_group_name=RESOURCE_GROUP, managed_instance_name=MANAGED_INSTANCE_NAME, database_name=DATABASE_NAME)
         result = result.result()
-

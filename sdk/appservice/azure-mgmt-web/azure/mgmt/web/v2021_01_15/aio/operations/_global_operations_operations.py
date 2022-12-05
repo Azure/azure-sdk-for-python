@@ -227,4 +227,3 @@ class GlobalOperations:
             return cls(pipeline_response, None, {})
 
     get_subscription_operation_with_async_response.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Web/locations/{location}/operations/{operationId}"}  # type: ignore
-

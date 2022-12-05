@@ -96,4 +96,3 @@ class MigrationOperations:
             return cls(pipeline_response, None, {})
 
     start_migration.metadata = {'url': '/modelregistry/v1.0/meta/migration'}  # type: ignore
-

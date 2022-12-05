@@ -1630,4 +1630,3 @@ class AppServiceCertificateOrdersOperations:  # pylint: disable=too-many-public-
         return deserialized
 
     retrieve_certificate_email_history.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.CertificateRegistration/certificateOrders/{name}/retrieveEmailHistory"}  # type: ignore
-

@@ -119,4 +119,3 @@ class RuntimeVersionsOperations(object):
         return deserialized
 
     list_runtime_versions.metadata = {'url': "/providers/Microsoft.AppPlatform/runtimeVersions"}  # type: ignore
-

@@ -16,4 +16,3 @@ __all__ = ['LUISRuntimeClient', 'LUISRuntimeClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

@@ -1,4 +1,4 @@
-﻿#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -301,4 +301,4 @@ class WebsiteManagementService(_ServiceManagementClient):
 
     def _get_publishxml_path(self, webspace_name, website_name):
         return self._get_path('services/webspaces/',
-                              webspace_name) + '/sites/' + _str(website_name) + '/publishxml/' 
+                              webspace_name) + '/sites/' + _str(website_name) + '/publishxml/'

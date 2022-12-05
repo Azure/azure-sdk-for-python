@@ -562,4 +562,3 @@ class TargetsOperations:
         return deserialized
 
     create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{parentProviderNamespace}/{parentResourceType}/{parentResourceName}/providers/Microsoft.Chaos/targets/{targetName}"}  # type: ignore
-

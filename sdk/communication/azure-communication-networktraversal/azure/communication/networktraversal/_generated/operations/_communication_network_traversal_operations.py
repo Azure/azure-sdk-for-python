@@ -154,4 +154,3 @@ class CommunicationNetworkTraversalOperations(object):
         return deserialized
 
     issue_relay_configuration.metadata = {'url': "/networkTraversal/:issueRelayConfiguration"}  # type: ignore
-

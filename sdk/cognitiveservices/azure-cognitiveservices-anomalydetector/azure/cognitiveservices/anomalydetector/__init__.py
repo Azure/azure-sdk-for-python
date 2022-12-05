@@ -16,4 +16,3 @@ __all__ = ['AnomalyDetectorClient', 'AnomalyDetectorClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

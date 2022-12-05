@@ -78,4 +78,3 @@ class MgmtRecoveryServicesTests(AzureMgmtTestCase):
 
         # self.assertIsNotNone(replication_usages)
         # self.assertEqual(len(replication_usages),0)
-

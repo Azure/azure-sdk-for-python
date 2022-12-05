@@ -54,4 +54,3 @@ Once you know the list of tags you need to generate:
 The `afterscripts` will execute a Jinja template to create a client to link together all the batch generated autorest ([example](https://github.com/Azure/azure-sdk-for-python/blob/4a7c67189591b052fe2b5769847ff68f7845386d/sdk/storage/azure-mgmt-storage/azure/mgmt/storage/_storage_management_client.py))
 
 This script will infer a default `LATEST_PROFILE`. You can change this behavior and force the default API version if necessary ([example](https://github.com/Azure/azure-rest-api-specs/blob/49238f0b2917452311e71dd43c4164de70af3721/specification/authorization/resource-manager/readme.md#swagger-to-sdk))
-

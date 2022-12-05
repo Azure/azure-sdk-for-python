@@ -108,4 +108,3 @@ class ClusterExtensionTypeOperations:
         return deserialized
 
     get.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{clusterRp}/{clusterType}/{clusterName}/providers/Microsoft.KubernetesConfiguration/extensionTypes/{extensionTypeName}'}  # type: ignore
-

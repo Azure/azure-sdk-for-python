@@ -357,4 +357,3 @@ class CommunicationIdentityOperations:
         return deserialized
 
     issue_access_token.metadata = {'url': "/identities/{id}/:issueAccessToken"}  # type: ignore
-

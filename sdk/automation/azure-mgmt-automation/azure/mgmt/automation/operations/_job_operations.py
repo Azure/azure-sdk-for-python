@@ -1016,4 +1016,3 @@ class JobOperations:
             return cls(pipeline_response, None, {})
 
     resume.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/jobs/{jobName}/resume"}  # type: ignore
-

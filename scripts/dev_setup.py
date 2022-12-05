@@ -170,4 +170,3 @@ if sys.version_info >= (3,):
     pip_command("uninstall -y azure-nspkg", error_ok=True)
 
 print("Finished dev setup.")
-

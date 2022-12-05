@@ -423,4 +423,3 @@ class ComputePoliciesOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DataLakeAnalytics/accounts/{accountName}/computePolicies/{computePolicyName}"}  # type: ignore
-

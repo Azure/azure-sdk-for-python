@@ -31,4 +31,3 @@ extends:
     Artifacts:
     - name: azure-ai-anomalydetector
       safeName: azureaianomalydetector
-

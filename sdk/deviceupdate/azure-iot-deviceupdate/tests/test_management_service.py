@@ -164,4 +164,3 @@ class TestDeviceManagementClient(DeviceUpdateTest):
             assert len(result) > 0
         except ResourceNotFoundError as e:
             assert 404 == e.status_code
-

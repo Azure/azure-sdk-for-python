@@ -681,4 +681,3 @@ class WorkItemConfigurationsOperations(object):
         return deserialized
 
     update_item.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/WorkItemConfigs/{workItemConfigId}"}  # type: ignore
-

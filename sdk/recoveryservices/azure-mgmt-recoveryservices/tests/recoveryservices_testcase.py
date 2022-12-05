@@ -91,4 +91,3 @@ class MgmtRecoveryServicesTestHelper(object):
 
     def generate_random_key(self):
         return base64.b64encode(bytearray(random.getrandbits(8) for i in range(16)))
-

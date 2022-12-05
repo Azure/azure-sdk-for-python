@@ -463,4 +463,3 @@ class TestRouterWorkerAsync(AsyncRouterRecordedTestCase):
 
             # all workers created were listed
             assert w_count == 0
-

@@ -53,4 +53,3 @@ def enable_multi_slot(personalizer_endpoint, personalizer_api_key, is_live):
     client.update_policy(multi_slot_policy)
     if is_live:
         time.sleep(30)
-

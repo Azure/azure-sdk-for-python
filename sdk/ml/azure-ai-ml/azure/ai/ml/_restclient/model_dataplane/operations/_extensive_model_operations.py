@@ -141,4 +141,3 @@ class ExtensiveModelOperations(object):
         return deserialized
 
     query_by_id.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/extensiveModels/{id}'}  # type: ignore
-

@@ -110,4 +110,3 @@ class DataReferencesOperations:
         return deserialized
 
     get_blob_reference_sas.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/datarefs/{name}/versions/{version}'}  # type: ignore
-

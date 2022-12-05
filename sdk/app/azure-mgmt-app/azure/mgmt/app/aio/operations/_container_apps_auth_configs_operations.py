@@ -300,4 +300,3 @@ class ContainerAppsAuthConfigsOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/authConfigs/{name}'}  # type: ignore
-

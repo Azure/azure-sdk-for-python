@@ -318,4 +318,3 @@ class ComponentLinkedStorageAccountsOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/linkedStorageAccounts/{storageType}"}  # type: ignore
-

@@ -1,4 +1,3 @@
-
 import json
 from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
 

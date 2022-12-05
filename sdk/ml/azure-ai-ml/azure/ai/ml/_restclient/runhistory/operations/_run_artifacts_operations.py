@@ -1847,4 +1847,3 @@ class RunArtifactsOperations(object):
         return deserialized
 
     batch_create_empty_artifacts_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/runs/{runId}/artifacts/batch/metadata"}  # type: ignore
-

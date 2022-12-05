@@ -181,4 +181,3 @@ class ServicePrincipalsOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Automanage/servicePrincipals/default"}  # type: ignore
-

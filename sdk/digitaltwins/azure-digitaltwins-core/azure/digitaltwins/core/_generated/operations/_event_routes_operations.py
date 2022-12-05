@@ -524,4 +524,3 @@ class EventRoutesOperations(object):
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': "/eventroutes/{id}"}  # type: ignore
-

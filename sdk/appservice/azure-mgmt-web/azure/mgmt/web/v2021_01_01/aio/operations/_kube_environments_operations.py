@@ -626,4 +626,3 @@ class KubeEnvironmentsOperations:
         return deserialized
 
     update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/kubeEnvironments/{name}"}  # type: ignore
-

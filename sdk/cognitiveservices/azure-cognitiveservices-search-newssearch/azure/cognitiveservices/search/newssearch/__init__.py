@@ -16,4 +16,3 @@ __all__ = ['NewsSearchClient', 'NewsSearchClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

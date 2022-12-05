@@ -30,4 +30,3 @@ class SipTrunk(object):
         """
         self.fqdn = kwargs.get('fqdn', None)
         self.sip_signaling_port = kwargs.get('sip_signaling_port', None)
-        

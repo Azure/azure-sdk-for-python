@@ -135,5 +135,3 @@ if __name__ == '__main__':
     sample.simple_file_operations()
     sample.copy_file_from_url()
     sample.acquire_file_lease()
-
-

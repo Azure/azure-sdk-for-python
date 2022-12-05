@@ -801,4 +801,3 @@ class DataVersionOperations:
         return deserialized
 
     batch_get_resolved_uris.metadata = {'url': '/data/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/dataversion/batchGetResolvedUris'}  # type: ignore
-

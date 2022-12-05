@@ -16,4 +16,3 @@ __all__ = ['LUISAuthoringClient', 'LUISAuthoringClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

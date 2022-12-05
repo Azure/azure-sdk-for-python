@@ -504,4 +504,3 @@ class JoinRequestsOperations:
             return cls(pipeline_response, None, {})
 
     deny.metadata = {'url': "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Education/labs/default/joinRequests/{joinRequestName}/deny"}  # type: ignore
-

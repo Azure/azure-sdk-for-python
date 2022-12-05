@@ -582,4 +582,3 @@ class ComponentsOperations:
         return deserialized
 
     get_purge_status.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/operations/{purgeId}"}  # type: ignore
-

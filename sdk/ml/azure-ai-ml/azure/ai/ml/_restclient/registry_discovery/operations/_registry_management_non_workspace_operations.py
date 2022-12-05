@@ -123,4 +123,3 @@ class RegistryManagementNonWorkspaceOperations(object):
         return deserialized
 
     registry_management_non_workspace.metadata = {'url': '/registrymanagement/v1.0/registries/{registryName}/discovery'}  # type: ignore
-

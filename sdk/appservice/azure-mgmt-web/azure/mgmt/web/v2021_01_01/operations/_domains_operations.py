@@ -1828,4 +1828,3 @@ class DomainsOperations:
             return cls(pipeline_response, None, {})
 
     renew.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/renew"}  # type: ignore
-

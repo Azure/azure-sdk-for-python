@@ -716,4 +716,3 @@ class ApiPortalsOperations(object):
         return deserialized
 
     validate_domain.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apiPortals/{apiPortalName}/validateDomain"}  # type: ignore
-

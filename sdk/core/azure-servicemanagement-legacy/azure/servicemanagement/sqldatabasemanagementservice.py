@@ -1,4 +1,4 @@
-﻿#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -419,5 +419,4 @@ class SqlDatabaseManagementService(_ServiceManagementClient):
     def _get_list_databases_path(self, name):
         # *contentview=generic is mandatory*
         return self._get_path('services/sqlservers/servers/',
-                              name) + '/databases?contentview=generic' 
-
+                              name) + '/databases?contentview=generic'

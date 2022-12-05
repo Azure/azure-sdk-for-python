@@ -429,4 +429,3 @@ class TestMgmtCompute(AzureMgmtRecordedTestCase):
 
         # # List Virtual Machine extension image versions (TODO: need swagger file)
         result = self.mgmt_client.virtual_machine_extension_images.list_versions(AZURE_LOCATION, EXTENSION_PUBLISHER_NAME, EXTENSION_IMAGE_TYPE)
- 

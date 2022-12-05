@@ -34,4 +34,3 @@ extends:
     Artifacts:
     - name: azure-ai-metricsadvisor
       safeName: azureaimetricsadvisor
-

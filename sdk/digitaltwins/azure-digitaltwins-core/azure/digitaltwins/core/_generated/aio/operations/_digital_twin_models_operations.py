@@ -492,4 +492,3 @@ class DigitalTwinModelsOperations:
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': "/models/{id}"}  # type: ignore
-

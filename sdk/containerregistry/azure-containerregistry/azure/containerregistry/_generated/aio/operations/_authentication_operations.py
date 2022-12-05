@@ -207,4 +207,3 @@ class AuthenticationOperations:
         return deserialized
 
     exchange_acr_refresh_token_for_acr_access_token.metadata = {'url': "/oauth2/token"}  # type: ignore
-

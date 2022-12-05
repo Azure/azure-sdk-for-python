@@ -553,4 +553,3 @@ class ServiceBusClientAsyncTests(AzureMgmtTestCase):
             with pytest.raises(ServiceBusError):
                 async with client.get_queue_sender(servicebus_queue.name) as sender:
                     await sender.send_messages(ServiceBusMessage("foo"))
-

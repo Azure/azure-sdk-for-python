@@ -103,4 +103,3 @@ class AscOperationsOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.StorageCache/locations/{location}/ascOperations/{operationId}"}  # type: ignore
-

@@ -762,4 +762,3 @@ class ResourceHealthMetadataOperations:
         return deserialized
 
     get_by_site_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/slots/{slot}/resourceHealthMetadata/default"}  # type: ignore
-

@@ -22,4 +22,3 @@ class TestModelAsync(AzureRecordedTestCase):
         await client.import_model(signed_model_bytes)
         new_unsigned_model_bytes = await client.export_model(signed=False)
         assert [b async for b in unsigned_model_bytes] == [b async for b in new_unsigned_model_bytes]
-        

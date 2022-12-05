@@ -1023,4 +1023,3 @@ class NamespacesOperations:
         return deserialized
 
     regenerate_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/AuthorizationRules/{authorizationRuleName}/regenerateKeys"}  # type: ignore
-

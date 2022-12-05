@@ -974,4 +974,3 @@ class TestRouterJobAsync(AsyncRouterRecordedTestCase):
 
             # all job_queues created were listed
             assert job_count == 0
-

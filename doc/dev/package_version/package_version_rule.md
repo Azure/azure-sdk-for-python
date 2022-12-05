@@ -41,4 +41,3 @@ According to the up rules, we could summarize all the possibilities in the follo
 ![img.png](version_summary.png)
 
 (`-` means that this item doesn't influence result)
- 

@@ -915,4 +915,3 @@ class ClustersOperations(object):
         return deserialized
 
     list_namespaces.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/clusters/{clusterName}/namespaces"}  # type: ignore
-

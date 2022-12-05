@@ -594,4 +594,3 @@ class WorkbooksOperations(object):
         return deserialized
 
     update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/workbooks/{resourceName}"}  # type: ignore
-

@@ -48,4 +48,3 @@ with producer_client:
 with consumer_client:
     consumer_client.receive(on_event=on_event)
     print('Finished receiving.')
-

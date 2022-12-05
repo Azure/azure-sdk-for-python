@@ -1302,4 +1302,3 @@ class ExperimentsOperations:
         return deserialized
 
     get_execution_details.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Chaos/experiments/{experimentName}/executionDetails/{executionDetailsId}"}  # type: ignore
-

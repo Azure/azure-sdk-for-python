@@ -135,4 +135,3 @@ class SystemAssignedIdentitiesOperations:
         return deserialized
 
     get_by_scope.metadata = {'url': "/{scope}/providers/Microsoft.ManagedIdentity/identities/default"}  # type: ignore
-

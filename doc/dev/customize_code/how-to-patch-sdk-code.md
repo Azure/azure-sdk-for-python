@@ -61,4 +61,3 @@ def patch_sdk():
     curr_package = importlib.import_module("azure.messaging.webpubsubservice")
     curr_package.WebPubSubServiceClient.generated_function = handwritten_function
 ```
-

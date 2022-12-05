@@ -16,4 +16,3 @@ __all__ = ['VideoSearchClient', 'VideoSearchClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

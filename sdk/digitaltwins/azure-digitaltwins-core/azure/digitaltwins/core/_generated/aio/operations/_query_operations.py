@@ -123,4 +123,3 @@ class QueryOperations:
         return deserialized
 
     query_twins.metadata = {'url': "/query"}  # type: ignore
-

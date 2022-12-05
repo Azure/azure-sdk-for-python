@@ -163,4 +163,3 @@ class TemporaryDataReferencesOperations(object):
         return deserialized
 
     create_or_get_temporary_data_reference.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/tempdatarefs/{name}/versions/{version}'}  # type: ignore
-

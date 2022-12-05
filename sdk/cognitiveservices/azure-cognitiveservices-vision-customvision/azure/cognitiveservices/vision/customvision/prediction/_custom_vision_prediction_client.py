@@ -40,4 +40,3 @@ class CustomVisionPredictionClient(CustomVisionPredictionClientOperationsMixin, 
         self.api_version = '3.1'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
-

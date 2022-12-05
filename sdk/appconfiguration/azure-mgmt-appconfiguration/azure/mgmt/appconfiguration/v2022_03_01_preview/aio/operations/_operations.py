@@ -263,4 +263,3 @@ class Operations:
         return deserialized
 
     regional_check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.AppConfiguration/locations/{location}/checkNameAvailability"}  # type: ignore
-

@@ -525,4 +525,3 @@ class AnalyticsItemsOperations(object):
             return cls(pipeline_response, None, {})
 
     delete.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/{scopePath}/item"}  # type: ignore
-

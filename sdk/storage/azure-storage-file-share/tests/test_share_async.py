@@ -1560,4 +1560,3 @@ class TestStorageShareAsync(AsyncStorageRecordedTestCase):
             resp.append(d)
         assert len(resp) == 2
         await self._delete_shares(share.share_name)
-

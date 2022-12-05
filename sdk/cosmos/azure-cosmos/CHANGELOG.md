@@ -352,4 +352,3 @@ Version 4.0.0b1 is the first preview of our efforts to create a user-friendly an
 ## 1.0.1
 
 - Supports proxy connection
-

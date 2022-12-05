@@ -259,4 +259,4 @@ class TestWorkspaceOperation:
         wps = load_workspace("./tests/test_configs/workspace/workspace_uai.yaml", params_override=params_override)
         assert isinstance(wps.identity, IdentityConfiguration)
         assert isinstance(wps.identity.user_assigned_identities, list)
-        assert isinstance(wps.identity.user_assigned_identities[0], ManagedIdentityConfiguration) 
+        assert isinstance(wps.identity.user_assigned_identities[0], ManagedIdentityConfiguration)

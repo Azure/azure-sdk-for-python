@@ -26,4 +26,3 @@ connstr = os.environ['SERVICEBUS_CONNECTION_STR']
 
 with ServiceBusClient.from_connection_string(connstr) as client:
     pass # Client is now initialized and can be used.
-

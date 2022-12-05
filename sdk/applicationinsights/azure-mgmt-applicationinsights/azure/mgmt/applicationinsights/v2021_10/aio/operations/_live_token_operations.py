@@ -95,4 +95,3 @@ class LiveTokenOperations:
         return deserialized
 
     get.metadata = {'url': "/{resourceUri}/providers/Microsoft.Insights/generatelivetoken"}  # type: ignore
-

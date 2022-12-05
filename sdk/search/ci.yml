@@ -33,4 +33,3 @@ extends:
       safeName: azuresearchdocuments
     - name: azure-mgmt-search
       safeName: azuremgmtsearch
-

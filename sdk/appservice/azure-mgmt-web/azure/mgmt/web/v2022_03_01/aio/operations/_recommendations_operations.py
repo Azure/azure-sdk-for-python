@@ -1226,4 +1226,3 @@ class RecommendationsOperations:
             return cls(pipeline_response, None, {})
 
     disable_recommendation_for_site.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/recommendations/{name}/disable"}  # type: ignore
-

@@ -608,4 +608,4 @@ class TestAvroEncoder(AzureRecordedTestCase):
 
         encoded_message_content = sr_avro_encoder.encode(content, schema=schema_record)
         decoded_content = sr_avro_encoder.decode(encoded_message_content)
-        assert decoded_content == content 
+        assert decoded_content == content

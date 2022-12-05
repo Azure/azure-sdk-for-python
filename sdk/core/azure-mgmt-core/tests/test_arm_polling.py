@@ -600,4 +600,3 @@ class TestArmPolling(object):
         method._operation._location_url = "/results/1"
         method._client = client
         assert "http://localhost:3000/results/1" == method._client.format_url(method._operation.get_polling_url(), **method._path_format_arguments)
-

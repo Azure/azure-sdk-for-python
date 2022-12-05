@@ -150,4 +150,3 @@ class TestStreamingFailover(unittest.TestCase):
 
     def _mock_resolve_service_endpoint(self, request):
         return None
-

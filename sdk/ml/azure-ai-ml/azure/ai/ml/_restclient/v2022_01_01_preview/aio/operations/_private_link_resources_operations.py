@@ -93,4 +93,3 @@ class PrivateLinkResourcesOperations:
         return deserialized
 
     list.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/privateLinkResources'}  # type: ignore
-

@@ -11,4 +11,3 @@ def start_proxy(test_proxy):
     add_general_string_sanitizer(target="policies/OpenEnclave", value="policies/Tpm")
     add_oauth_response_sanitizer()
     return
- 

@@ -198,4 +198,3 @@ def build_publish_custom_event_events_request(
         headers=header_parameters,
         **kwargs
     )
-

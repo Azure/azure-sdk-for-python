@@ -288,4 +288,3 @@ class CapabilityTypesOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Chaos/locations/{locationName}/targetTypes/{targetTypeName}/capabilityTypes/{capabilityTypeName}"}  # type: ignore
-

@@ -182,4 +182,3 @@ class AgentRegistrationInformationOperations:
         return deserialized
 
     regenerate_key.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/agentRegistrationInformation/regenerateKey"}  # type: ignore
-

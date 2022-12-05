@@ -2110,4 +2110,3 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
 
     reset_static_site_api_key.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/resetapikey"}  # type: ignore
-

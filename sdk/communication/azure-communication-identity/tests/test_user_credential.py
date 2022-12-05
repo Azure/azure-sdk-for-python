@@ -215,6 +215,3 @@ class TestCommunicationTokenCredential(TestCase):
         with pytest.raises(RuntimeError) as err:
             credential.get_token()
         assert str(err.value) == "An instance of CommunicationTokenCredential cannot be reused once it has been closed."
-        
-
-    

@@ -349,5 +349,3 @@ class GlossaryOperations(GlossaryOperationsGenerated):
 
 
 __all__= ['EntityOperations','GlossaryOperations']  # Add all objects you want publicly available to users at this package level
-
-

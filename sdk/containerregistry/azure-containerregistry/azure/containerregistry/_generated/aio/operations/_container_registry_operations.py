@@ -1151,4 +1151,3 @@ class ContainerRegistryOperations:
         return deserialized
 
     update_manifest_properties.metadata = {'url': "/acr/v1/{name}/_manifests/{digest}"}  # type: ignore
-

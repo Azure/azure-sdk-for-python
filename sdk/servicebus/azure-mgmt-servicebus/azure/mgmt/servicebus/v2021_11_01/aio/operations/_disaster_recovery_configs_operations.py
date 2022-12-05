@@ -793,4 +793,3 @@ class DisasterRecoveryConfigsOperations:
         return deserialized
 
     check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/CheckNameAvailability"}  # type: ignore
-

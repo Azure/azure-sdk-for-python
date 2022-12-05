@@ -19,4 +19,3 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sample.settings')
 application = get_asgi_application()
 
 # cSpell:enable
-

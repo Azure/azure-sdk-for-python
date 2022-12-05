@@ -369,4 +369,3 @@ class CertificatesOperations:
         return deserialized
 
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{managedEnvironmentName}/certificates/{name}'}  # type: ignore
-

@@ -108,4 +108,3 @@ class KeysOperations:
         return deserialized
 
     list_by_automation_account.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/listKeys"}  # type: ignore
-

@@ -1051,4 +1051,3 @@ class OpenShiftClustersOperations(object):
         return deserialized
 
     list_credentials.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.RedHatOpenShift/openShiftClusters/{resourceName}/listCredentials"}  # type: ignore
-

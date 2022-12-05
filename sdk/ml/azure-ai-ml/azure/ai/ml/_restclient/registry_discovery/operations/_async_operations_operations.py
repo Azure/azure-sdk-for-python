@@ -113,4 +113,3 @@ class AsyncOperationsOperations(object):
             return cls(pipeline_response, None, {})
 
     asyc_operations.metadata = {'url': '/registrymanagement/v1.0/operations/{operationId}'}  # type: ignore
-

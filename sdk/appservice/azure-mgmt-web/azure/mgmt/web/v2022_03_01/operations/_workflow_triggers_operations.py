@@ -710,4 +710,3 @@ class WorkflowTriggersOperations:
         return deserialized
 
     get_schema_json.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}/triggers/{triggerName}/schemas/json"}  # type: ignore
-

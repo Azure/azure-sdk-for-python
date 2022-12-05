@@ -73,5 +73,3 @@ None
 None
 204
 [('Date', 'Thu, 17 May 2018 21:19:22 GMT'), ('Content-Type', 'application/octet-stream'), ('Server', 'GitHub.com'), ('Status', '204 No Content'), ('X-RateLimit-Limit', '5000'), ('X-RateLimit-Remaining', '4855'), ('X-RateLimit-Reset', '1526593184'), ('X-OAuth-Scopes', 'repo, user'), ('X-Accepted-OAuth-Scopes', ''), ('X-GitHub-Media-Type', 'github.v3; format=json'), ('Access-Control-Expose-Headers', 'ETag, Link, Retry-After, X-GitHub-OTP, X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset, X-OAuth-Scopes, X-Accepted-OAuth-Scopes, X-Poll-Interval'), ('Access-Control-Allow-Origin', '*'), ('Strict-Transport-Security', 'max-age=31536000; includeSubdomains; preload'), ('X-Frame-Options', 'deny'), ('X-Content-Type-Options', 'nosniff'), ('X-XSS-Protection', '1; mode=block'), ('Referrer-Policy', 'origin-when-cross-origin, strict-origin-when-cross-origin'), ('Content-Security-Policy', "default-src 'none'"), ('X-Runtime-rack', '0.105747'), ('Vary', 'Accept-Encoding'), ('X-GitHub-Request-Id', '1592:97BA:C85310:103DE44:5AFDF1DA')]
-
-

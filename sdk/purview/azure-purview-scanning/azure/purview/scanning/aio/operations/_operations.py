@@ -3587,4 +3587,3 @@ class TriggersOperations:
         return deserialized
 
     delete_trigger.metadata = {'url': '/datasources/{dataSourceName}/scans/{scanName}/triggers/default'}  # type: ignore
-

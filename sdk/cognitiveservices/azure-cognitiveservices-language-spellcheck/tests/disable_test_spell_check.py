@@ -54,6 +54,3 @@ class SpellCheckTest(ReplayableTest):
         )
         self.assertEqual(response.flagged_tokens[0].token, "cognituve")
         self.assertEqual(response.flagged_tokens[0].suggestions[0].suggestion, "cognitive")
-
-
-

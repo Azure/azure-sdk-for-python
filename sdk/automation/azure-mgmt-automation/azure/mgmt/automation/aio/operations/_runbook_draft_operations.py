@@ -408,4 +408,3 @@ class RunbookDraftOperations:
         return deserialized
 
     undo_edit.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/undoEdit"}  # type: ignore
-

@@ -1,4 +1,3 @@
-
 # Azure Communication Network Traversal for Python
 
 > see https://aka.ms/autorest

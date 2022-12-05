@@ -588,4 +588,3 @@ class CapabilitiesOperations:
         return deserialized
 
     create_or_update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/{parentProviderNamespace}/{parentResourceType}/{parentResourceName}/providers/Microsoft.Chaos/targets/{targetName}/capabilities/{capabilityName}"}  # type: ignore
-

@@ -103,4 +103,3 @@ class MHSMPrivateLinkResourcesOperations:
         return deserialized
 
     list_by_mhsm_resource.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.KeyVault/managedHSMs/{name}/privateLinkResources"}  # type: ignore
-

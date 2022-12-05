@@ -449,4 +449,3 @@ class TestRouterWorker(RouterRecordedTestCase):
 
         # all job_queues created were listed
         assert w_count == 0
-

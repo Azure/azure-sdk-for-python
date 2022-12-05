@@ -1151,4 +1151,3 @@ class ContainerRegistryBlobOperations(object):
             return cls(pipeline_response, None, response_headers)
 
     check_chunk_exists.metadata = {'url': "/v2/{name}/blobs/{digest}"}  # type: ignore
-

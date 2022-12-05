@@ -66,5 +66,3 @@ try:
 
 except HttpResponseError as e:
     print('Failed to import update: {}'.format(e))
-
-

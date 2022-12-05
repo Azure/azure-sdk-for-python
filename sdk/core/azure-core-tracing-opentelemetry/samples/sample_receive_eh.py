@@ -92,4 +92,3 @@ with tracer.start_as_current_span(name="MyApplication"):
             )
     except KeyboardInterrupt:
         print('Stopped receiving.')
-

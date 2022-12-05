@@ -106,4 +106,3 @@ Install a package from Github with pip, from a subfolder:<br/>
 
 Install a package from Github with pip, from a subfolder and a special branch:<br/>
 `pip install "git+https://github.com/Azure/azure-sdk-for-python@mybranch#subdirectory=sdk/service/azure-mgmt-service&egg=azure-mgmt-service"`
-

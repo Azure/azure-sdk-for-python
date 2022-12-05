@@ -509,4 +509,3 @@ class GatewaysOperations:
         return deserialized
 
     validate_domain.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/gateways/{gatewayName}/validateDomain"}  # type: ignore
-

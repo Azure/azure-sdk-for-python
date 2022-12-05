@@ -474,4 +474,3 @@ class CodeContainersOperations(object):
         return deserialized
 
     create_or_update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/registries/{registryName}/codes/{name}'}  # type: ignore
-

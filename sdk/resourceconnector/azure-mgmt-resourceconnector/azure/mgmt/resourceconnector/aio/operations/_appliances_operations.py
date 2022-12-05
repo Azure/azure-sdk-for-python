@@ -904,4 +904,3 @@ class AppliancesOperations:
         return deserialized
 
     get_upgrade_graph.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ResourceConnector/appliances/{resourceName}/upgradeGraphs/{upgradeGraph}"}  # type: ignore
-

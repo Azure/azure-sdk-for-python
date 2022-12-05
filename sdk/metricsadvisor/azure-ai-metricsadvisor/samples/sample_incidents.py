@@ -107,4 +107,3 @@ if __name__ == '__main__':
     sample_list_incident_root_cause()
     print("---List incidents for alert configuration...")
     sample_list_incidents_for_alert()
-

@@ -589,4 +589,3 @@ class DatasetV2Operations:
         return deserialized
 
     get_dataset_by_name.metadata = {'url': '/dataset/v2.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/query/name={datasetName}'}  # type: ignore
-

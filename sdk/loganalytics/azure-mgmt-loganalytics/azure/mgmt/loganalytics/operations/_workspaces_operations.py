@@ -870,4 +870,3 @@ class WorkspacesOperations:
         return deserialized
 
     update.metadata = {'url': "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}"}  # type: ignore
-

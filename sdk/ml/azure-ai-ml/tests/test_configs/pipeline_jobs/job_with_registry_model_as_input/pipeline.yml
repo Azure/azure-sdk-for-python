@@ -1,4 +1,3 @@
-
 type: pipeline
 
 description: "Dummy score pipeline with local components"

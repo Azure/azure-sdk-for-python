@@ -140,4 +140,3 @@ class SIPRoutingServiceOperationsMixin:
         return deserialized
 
     patch_sip_configuration.metadata = {'url': "/sip"}  # type: ignore
-

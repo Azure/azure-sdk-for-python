@@ -183,4 +183,3 @@ class WorkflowsOperations:
             return cls(pipeline_response, None, {})
 
     validate.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}/validate"}  # type: ignore
-

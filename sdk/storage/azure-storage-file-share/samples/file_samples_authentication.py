@@ -78,4 +78,3 @@ if __name__ == '__main__':
     sample.authentication_connection_string()
     sample.authentication_shared_access_key()
     sample.authentication_shared_access_signature()
-

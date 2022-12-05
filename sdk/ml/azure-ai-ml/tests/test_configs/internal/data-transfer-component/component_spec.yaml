@@ -14,4 +14,3 @@ outputs:
   destination_data:
     type: path
     description: Destination data
-

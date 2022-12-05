@@ -32,4 +32,3 @@ azure.core.tracing.decorator\_async
    :members:
    :undoc-members:
    :inherited-members:
-

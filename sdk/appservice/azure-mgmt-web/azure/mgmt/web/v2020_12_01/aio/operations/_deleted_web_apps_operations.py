@@ -280,4 +280,3 @@ class DeletedWebAppsOperations:
         return deserialized
 
     get_deleted_web_app_by_location.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Web/locations/{location}/deletedSites/{deletedSiteId}"}  # type: ignore
-

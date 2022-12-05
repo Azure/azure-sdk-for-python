@@ -1424,4 +1424,3 @@ class ManagedHsmsOperations:
         return deserialized
 
     check_mhsm_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.KeyVault/checkMhsmNameAvailability"}  # type: ignore
-

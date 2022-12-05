@@ -170,4 +170,3 @@ class DeleteOperations:
         return deserialized
 
     get_configuration.metadata = {'url': "/history/v1.0/private/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/deleteConfiguration"}  # type: ignore
-

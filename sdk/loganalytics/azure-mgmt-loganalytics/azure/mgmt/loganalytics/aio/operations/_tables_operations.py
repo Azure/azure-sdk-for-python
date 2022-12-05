@@ -701,4 +701,3 @@ class TablesOperations:
             return cls(pipeline_response, None, {})
 
     migrate.metadata = {'url': "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/tables/{tableName}/migrate"}  # type: ignore
-

@@ -140,4 +140,3 @@ class NetworkSecurityPerimeterConfigurationOperations(object):
         return deserialized
 
     list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/networkSecurityPerimeterConfigurations"}  # type: ignore
-

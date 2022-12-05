@@ -146,4 +146,3 @@ class SchemaOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/schema"}  # type: ignore
-

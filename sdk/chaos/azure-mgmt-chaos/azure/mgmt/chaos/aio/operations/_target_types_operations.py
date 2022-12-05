@@ -197,4 +197,3 @@ class TargetTypesOperations:
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.Chaos/locations/{locationName}/targetTypes/{targetTypeName}"}  # type: ignore
-

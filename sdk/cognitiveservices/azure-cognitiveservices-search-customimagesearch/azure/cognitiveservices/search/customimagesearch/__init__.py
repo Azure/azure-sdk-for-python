@@ -16,4 +16,3 @@ __all__ = ['CustomImageSearchClient', 'CustomImageSearchClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

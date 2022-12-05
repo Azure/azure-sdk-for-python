@@ -1,4 +1,3 @@
-
 import json
 import pytest
 from devtools_testutils import AzureRecordedTestCase, CachedResourceGroupPreparer

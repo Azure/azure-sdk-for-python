@@ -1931,4 +1931,3 @@ class DomainsOperations:
         return deserialized
 
     transfer_out.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.DomainRegistration/domains/{domainName}/transferOut"}  # type: ignore
-

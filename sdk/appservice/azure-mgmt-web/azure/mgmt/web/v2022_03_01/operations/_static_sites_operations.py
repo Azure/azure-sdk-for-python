@@ -8065,4 +8065,3 @@ class StaticSitesOperations:  # pylint: disable=too-many-public-methods
             return cls(pipeline_response, None, {})
 
     unlink_backend_from_build.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/staticSites/{name}/builds/{environmentName}/linkedBackends/{linkedBackendName}"}  # type: ignore
-

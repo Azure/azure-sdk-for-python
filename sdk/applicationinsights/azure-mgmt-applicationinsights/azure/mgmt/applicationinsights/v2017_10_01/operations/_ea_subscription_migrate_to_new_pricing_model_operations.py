@@ -122,4 +122,3 @@ class EASubscriptionMigrateToNewPricingModelOperations(object):
             return cls(pipeline_response, None, {})
 
     post.metadata = {'url': "/subscriptions/{subscriptionId}/providers/microsoft.insights/migrateToNewPricingModel"}  # type: ignore
-

@@ -391,4 +391,3 @@ class TestJobOperations:
             return cls(pipeline_response, None, {})
 
     suspend.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/runbooks/{runbookName}/draft/testJob/suspend"}  # type: ignore
-

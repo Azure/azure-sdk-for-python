@@ -639,4 +639,3 @@ class AgentPoolsOperations:
         return deserialized
 
     get_queue_status.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/agentPools/{agentPoolName}/listQueueStatus"}  # type: ignore
-

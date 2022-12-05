@@ -2985,4 +2985,3 @@ class DiagnosticsOperations:  # pylint: disable=too-many-public-methods
         return deserialized
 
     execute_site_detector_slot.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{siteName}/slots/{slot}/diagnostics/{diagnosticCategory}/detectors/{detectorName}/execute"}  # type: ignore
-

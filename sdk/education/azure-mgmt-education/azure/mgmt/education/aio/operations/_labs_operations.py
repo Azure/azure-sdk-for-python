@@ -532,4 +532,3 @@ class LabsOperations:
         return deserialized
 
     generate_invite_code.metadata = {'url': "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Education/labs/default/generateInviteCode"}  # type: ignore
-

@@ -16,4 +16,3 @@ __all__ = ['ComputerVisionClient', 'ComputerVisionClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

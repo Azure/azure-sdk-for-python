@@ -16,4 +16,3 @@ __all__ = ['CustomVisionPredictionClient', 'CustomVisionPredictionClientConfigur
 from .version import VERSION
 
 __version__ = VERSION
-

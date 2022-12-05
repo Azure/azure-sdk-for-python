@@ -1190,4 +1190,3 @@ class DisasterRecoveryConfigsOperations:
         return deserialized
 
     list_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/disasterRecoveryConfigs/{alias}/AuthorizationRules/{authorizationRuleName}/listKeys"}  # type: ignore
-

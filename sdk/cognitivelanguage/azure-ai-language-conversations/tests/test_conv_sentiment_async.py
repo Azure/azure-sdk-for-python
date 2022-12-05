@@ -68,4 +68,3 @@ class TestConversationalSentimentTaskAsync(AzureRecordedTestCase):
             assert conversation_sentiment["sentiment"] == "mixed"
             assert conversation_sentiment["participantId"] == "1"
             assert conversation_sentiment["confidenceScores"]
-

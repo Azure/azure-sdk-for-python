@@ -122,4 +122,3 @@ class AzureMonitorClientOperationsMixin(object):
         return deserialized
 
     track.metadata = {'url': "/track"}  # type: ignore
-

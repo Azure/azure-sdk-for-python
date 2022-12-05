@@ -16,4 +16,3 @@ __all__ = ['CustomSearchClient', 'CustomSearchClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

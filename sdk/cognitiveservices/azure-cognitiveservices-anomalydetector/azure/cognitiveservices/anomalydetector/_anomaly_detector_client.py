@@ -41,4 +41,3 @@ class AnomalyDetectorClient(AnomalyDetectorClientOperationsMixin, SDKClient):
         self.api_version = '1.0'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
-

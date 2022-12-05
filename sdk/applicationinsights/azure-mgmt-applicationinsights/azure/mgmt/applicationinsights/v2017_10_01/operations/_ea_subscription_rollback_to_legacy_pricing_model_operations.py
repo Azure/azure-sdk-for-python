@@ -122,4 +122,3 @@ class EASubscriptionRollbackToLegacyPricingModelOperations(object):
             return cls(pipeline_response, None, {})
 
     post.metadata = {'url': "/subscriptions/{subscriptionId}/providers/microsoft.insights/rollbackToLegacyPricingModel"}  # type: ignore
-

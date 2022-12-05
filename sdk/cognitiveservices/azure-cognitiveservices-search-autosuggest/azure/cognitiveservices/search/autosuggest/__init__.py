@@ -16,4 +16,3 @@ __all__ = ['AutoSuggestClient', 'AutoSuggestClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

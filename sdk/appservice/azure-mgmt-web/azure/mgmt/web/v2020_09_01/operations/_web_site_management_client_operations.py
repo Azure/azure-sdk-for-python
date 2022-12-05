@@ -1782,4 +1782,3 @@ class WebSiteManagementClientOperationsMixin(MixinABC):
             return cls(pipeline_response, None, {})
 
     validate_move.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/validateMoveResources"}  # type: ignore
-

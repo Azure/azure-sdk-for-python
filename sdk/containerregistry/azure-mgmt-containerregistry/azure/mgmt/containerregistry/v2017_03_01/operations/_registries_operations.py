@@ -1033,4 +1033,3 @@ class RegistriesOperations(object):
         return deserialized
 
     regenerate_credential.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/regenerateCredential"}  # type: ignore
-

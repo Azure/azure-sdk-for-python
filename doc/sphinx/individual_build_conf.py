@@ -270,5 +270,3 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 
 # If false, no module index is generated.
 #latex_domain_indices = True
-
-

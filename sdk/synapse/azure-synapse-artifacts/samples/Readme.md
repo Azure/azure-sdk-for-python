@@ -1,4 +1,3 @@
-
 # Azure Synapse Artifacts client library for Python Samples
 
 These are code samples that show common scenario operations with the Azure Synapse Artifacts client library.

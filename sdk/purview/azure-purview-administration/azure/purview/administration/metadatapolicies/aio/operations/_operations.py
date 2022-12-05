@@ -613,4 +613,3 @@ class MetadataPolicyOperations:
         return deserialized
 
     get.metadata = {'url': '/metadataPolicies/{policyId}'}  # type: ignore
-

@@ -52,4 +52,3 @@ class WebpubsubReverseProxyTestAsync(WebpubsubAsyncTest):
             reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint
         )
         await client.send_to_all({'Hello': 'reverse_proxy_endpoint!'})
-

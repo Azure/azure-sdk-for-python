@@ -76,4 +76,3 @@ IGNORE_BREAKING_CHANGES = {
 | RemovedFunctionKwargs                                | A function was changed to no longer accept keyword arguments. `def my_func(param, **kwargs)  -->  def my_func(param)`  | ("RemovedFunctionKwargs", "module-name", "class-name", "function-name")
 | ChangedParameterKind                                 | `def my_function(a, b, c)  -->  def my_function(a, b, *, c)`                                                           | ("ChangedParameterKind", "module-name", "class-name", "function-name")
 | ChangedFunctionKind                                  | `async def my_function(param) ->  def my_function(param)`                                                              | ("ChangedFunctionKind", "module-name", "class-name", "function-name")
-

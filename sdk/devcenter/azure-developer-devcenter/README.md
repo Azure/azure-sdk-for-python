@@ -1,4 +1,3 @@
-
 # Azure DevCenter Service client library for Python
 The Azure DevCenter package provides access to manage resources for Microsoft Dev Box and Azure Deployment Environments. This SDK enables managing developer machines and environments in Azure.
 

@@ -1588,4 +1588,3 @@ class TestStorageGetFileAsync(AsyncStorageRecordedTestCase):
         # Assert
         progress.assert_complete()
         assert length == read
-

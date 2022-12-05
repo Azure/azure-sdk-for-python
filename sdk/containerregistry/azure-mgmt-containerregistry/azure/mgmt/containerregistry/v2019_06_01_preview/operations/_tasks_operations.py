@@ -882,4 +882,3 @@ class TasksOperations(object):
         return deserialized
 
     get_details.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/tasks/{taskName}/listDetails"}  # type: ignore
-

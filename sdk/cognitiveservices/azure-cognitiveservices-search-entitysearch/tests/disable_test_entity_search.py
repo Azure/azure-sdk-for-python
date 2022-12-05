@@ -64,4 +64,3 @@ class EntitySearchTest(ReplayableTest):
         assert response.entities.value is not None
         assert len(response.entities.value) == 1
         assert response.entities.value[0].contractual_rules is not None
-

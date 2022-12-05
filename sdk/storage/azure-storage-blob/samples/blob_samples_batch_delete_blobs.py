@@ -39,4 +39,3 @@ def batch_delete_blobs_sample(local_path):
 
 if __name__ == '__main__':
     batch_delete_blobs_sample(SOURCE_FOLDER)
-

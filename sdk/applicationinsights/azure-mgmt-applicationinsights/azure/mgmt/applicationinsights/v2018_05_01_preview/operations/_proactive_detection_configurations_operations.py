@@ -364,4 +364,3 @@ class ProactiveDetectionConfigurationsOperations(object):
         return deserialized
 
     update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/ProactiveDetectionConfigs/{ConfigurationId}"}  # type: ignore
-

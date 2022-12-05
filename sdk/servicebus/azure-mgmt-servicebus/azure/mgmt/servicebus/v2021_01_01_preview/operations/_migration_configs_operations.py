@@ -792,4 +792,3 @@ class MigrationConfigsOperations:
             return cls(pipeline_response, None, {})
 
     revert.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/migrationConfigurations/{configName}/revert"}  # type: ignore
-

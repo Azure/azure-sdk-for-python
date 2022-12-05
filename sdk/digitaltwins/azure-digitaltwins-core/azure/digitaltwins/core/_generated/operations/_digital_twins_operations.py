@@ -1982,4 +1982,3 @@ class DigitalTwinsOperations(object):
             return cls(pipeline_response, None, response_headers)
 
     update_component.metadata = {'url': "/digitaltwins/{id}/components/{componentPath}"}  # type: ignore
-

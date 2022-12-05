@@ -68,5 +68,3 @@ if __name__ == '__main__':
             receive_batch_message(receiver)
 
         print("Receive is done.")
-
-

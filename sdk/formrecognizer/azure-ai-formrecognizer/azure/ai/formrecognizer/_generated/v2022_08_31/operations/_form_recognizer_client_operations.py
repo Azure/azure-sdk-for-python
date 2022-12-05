@@ -1583,4 +1583,3 @@ class FormRecognizerClientOperationsMixin(MixinABC):
         return deserialized
 
     get_resource_details.metadata = {'url': "/info"}  # type: ignore
-

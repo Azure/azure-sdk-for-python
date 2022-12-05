@@ -529,4 +529,3 @@ class StudentsOperations:
         return deserialized
 
     create_or_update.metadata = {'url': "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/invoiceSections/{invoiceSectionName}/providers/Microsoft.Education/labs/default/students/{studentAlias}"}  # type: ignore
-

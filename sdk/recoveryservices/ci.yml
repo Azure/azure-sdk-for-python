@@ -34,4 +34,3 @@ extends:
       safeName: azuremgmtrecoveryservicesbackup
     - name: azure-mgmt-recoveryservicessiterecovery
       safeName: azuremgmtrecoveryservicessiterecovery
-

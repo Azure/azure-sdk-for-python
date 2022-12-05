@@ -181,4 +181,3 @@ class StudentLabsOperations:
         return deserialized
 
     get.metadata = {'url': "/providers/Microsoft.Education/studentLabs/{studentLabName}"}  # type: ignore
-

@@ -96,4 +96,3 @@ class Operations:
         return deserialized
 
     list.metadata = {'url': "/providers/Microsoft.Education/operations"}  # type: ignore
-

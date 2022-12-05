@@ -1841,4 +1841,3 @@ class NamespacesOperations(object):
         return deserialized
 
     check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.EventHub/checkNameAvailability"}  # type: ignore
-

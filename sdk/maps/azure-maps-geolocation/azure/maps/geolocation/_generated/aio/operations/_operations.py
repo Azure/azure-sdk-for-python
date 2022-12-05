@@ -102,5 +102,3 @@ class GeolocationOperations:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
-
-

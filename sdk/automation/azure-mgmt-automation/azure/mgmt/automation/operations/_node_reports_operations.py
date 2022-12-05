@@ -422,4 +422,3 @@ class NodeReportsOperations:
         return deserialized
 
     get_content.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/nodes/{nodeId}/reports/{reportId}/content"}  # type: ignore
-

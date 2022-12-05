@@ -397,4 +397,3 @@ class GrantsOperations:
         return deserialized
 
     get.metadata = {'url': "/providers/Microsoft.Billing/billingAccounts/{billingAccountName}/billingProfiles/{billingProfileName}/providers/Microsoft.Education/grants/default"}  # type: ignore
-

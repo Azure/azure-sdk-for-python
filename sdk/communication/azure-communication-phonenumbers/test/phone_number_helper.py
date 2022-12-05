@@ -44,5 +44,3 @@ class PhoneNumberResponseReplacerProcessor(ResponseReplacerProcessor):
             return response
         except (KeyError, ValueError, TypeError):
             return response
-
- 

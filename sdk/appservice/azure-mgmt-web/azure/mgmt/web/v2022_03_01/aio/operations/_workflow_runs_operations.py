@@ -290,4 +290,3 @@ class WorkflowRunsOperations:
             return cls(pipeline_response, None, {})
 
     cancel.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Web/sites/{name}/hostruntime/runtime/webhooks/workflow/api/management/workflows/{workflowName}/runs/{runName}/cancel"}  # type: ignore
-

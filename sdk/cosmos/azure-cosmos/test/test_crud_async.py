@@ -2643,4 +2643,3 @@ class CRUDTests(unittest.TestCase):
         self.last_headers.append(args[4].headers[HttpHeaders.PartitionKey]
                                  if HttpHeaders.PartitionKey in args[4].headers else '')
         return await self.OriginalExecuteFunction(function, *args, **kwargs)
-

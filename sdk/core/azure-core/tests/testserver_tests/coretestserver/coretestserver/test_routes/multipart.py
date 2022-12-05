@@ -116,4 +116,3 @@ def multipart_request():
         "--batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed--"
     )
     return Response(body_as_str.encode('ascii'), content_type="multipart/mixed; boundary=batchresponse_66925647-d0cb-4109-b6d3-28efe3e1e5ed")
-

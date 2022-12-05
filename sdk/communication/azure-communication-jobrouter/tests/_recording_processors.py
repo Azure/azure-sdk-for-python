@@ -175,4 +175,3 @@ class RouterScrubber(RecordingProcessor):
 
         # Finished scrubbing
         return ret
-

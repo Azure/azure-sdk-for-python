@@ -1298,4 +1298,3 @@ class FormRecognizerClientOperationsMixin(MixinABC):
         return deserialized
 
     get_custom_models.metadata = {'url': "/custom/models"}  # type: ignore
-

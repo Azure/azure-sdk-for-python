@@ -1317,4 +1317,3 @@ class QueuesOperations:
         return deserialized
 
     regenerate_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ServiceBus/namespaces/{namespaceName}/queues/{queueName}/authorizationRules/{authorizationRuleName}/regenerateKeys"}  # type: ignore
-

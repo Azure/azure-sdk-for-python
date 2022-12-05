@@ -23,4 +23,3 @@ launcher:
     --output-path {outputs.output_path}
 environment:
   name: AzureML-Minimal
-

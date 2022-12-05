@@ -313,4 +313,3 @@ class RegistriesOperations(object):
         return deserialized
 
     get_build_source_upload_url.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/listBuildSourceUploadUrl"}  # type: ignore
-

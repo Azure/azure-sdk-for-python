@@ -379,4 +379,3 @@ class WorkbookTemplatesOperations:
         return deserialized
 
     update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/workbooktemplates/{resourceName}"}  # type: ignore
-

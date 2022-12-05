@@ -16,4 +16,3 @@ __all__ = ['WebSearchClient', 'WebSearchClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

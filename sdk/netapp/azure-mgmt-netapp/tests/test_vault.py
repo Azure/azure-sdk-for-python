@@ -33,4 +33,3 @@ class TestNetAppVault(AzureMgmtRecordedTestCase):
         delete_account(self.client, TEST_RG, ACCOUNT1, live=self.is_live)
         if self.is_live:
             self.network_client.virtual_networks.begin_delete(TEST_RG, VNETNAME)
-

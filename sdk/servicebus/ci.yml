@@ -35,4 +35,3 @@ extends:
       safeName: azuremgmtservicebus
     - name: azure-servicebus
       safeName: azureservicebus
-

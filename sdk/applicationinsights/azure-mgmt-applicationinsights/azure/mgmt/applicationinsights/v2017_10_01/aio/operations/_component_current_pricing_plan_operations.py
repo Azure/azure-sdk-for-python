@@ -236,4 +236,3 @@ class ComponentCurrentPricingPlanOperations:
         return deserialized
 
     update.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/microsoft.insights/components/{resourceName}/pricingPlans/current"}  # type: ignore
-

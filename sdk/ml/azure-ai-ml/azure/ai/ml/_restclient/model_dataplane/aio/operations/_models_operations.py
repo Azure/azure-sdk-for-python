@@ -872,4 +872,3 @@ class ModelsOperations:
             return cls(pipeline_response, None, {})
 
     deployment_settings.metadata = {'url': '/modelregistry/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/models/deploymentSettings'}  # type: ignore
-

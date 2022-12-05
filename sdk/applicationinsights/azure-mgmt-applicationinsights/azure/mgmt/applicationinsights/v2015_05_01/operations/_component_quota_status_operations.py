@@ -139,4 +139,3 @@ class ComponentQuotaStatusOperations(object):
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Insights/components/{resourceName}/quotastatus"}  # type: ignore
-

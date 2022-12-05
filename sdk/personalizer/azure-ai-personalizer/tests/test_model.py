@@ -18,4 +18,3 @@ class TestModel(AzureRecordedTestCase):
         client.import_model(signed_model_bytes)
         new_unsigned_model_bytes = client.export_model(signed=False)
         assert [b for b in unsigned_model_bytes] == [b for b in new_unsigned_model_bytes]
-        

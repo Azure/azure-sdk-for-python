@@ -1189,4 +1189,3 @@ class EventHubsOperations(object):
         return deserialized
 
     get.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.EventHub/namespaces/{namespaceName}/eventhubs/{eventHubName}"}  # type: ignore
-

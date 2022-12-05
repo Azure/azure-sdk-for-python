@@ -1,4 +1,3 @@
-
 from .._generated.models import (
     TilesetID,
     MapTileSize,

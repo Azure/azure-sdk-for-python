@@ -1,4 +1,4 @@
- param (
+param (
     [Parameter(Mandatory=$true)][string]$inputdir,
     [Parameter(Mandatory=$true)][string]$outputdir,
     [Parameter(Mandatory=$true)][string[]]$copyfilelist

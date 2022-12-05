@@ -47,4 +47,3 @@ parallel:
   entry: batch_score.py
   args: >-
     --model_path {inputs.model_path} --scored_dataset {outputs.scored_dataset}
-

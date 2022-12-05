@@ -16,4 +16,3 @@ __all__ = ['FaceClient', 'FaceClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

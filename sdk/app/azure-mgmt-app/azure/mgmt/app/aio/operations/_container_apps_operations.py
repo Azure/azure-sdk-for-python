@@ -635,4 +635,3 @@ class ContainerAppsOperations:
         return deserialized
 
     list_secrets.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{name}/listSecrets'}  # type: ignore
-

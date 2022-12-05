@@ -203,4 +203,3 @@ class SoftwareUpdateConfigurationMachineRunsOperations:
         return deserialized
 
     list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/softwareUpdateConfigurationMachineRuns"}  # type: ignore
-

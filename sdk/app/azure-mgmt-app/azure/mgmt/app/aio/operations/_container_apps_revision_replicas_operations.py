@@ -162,4 +162,3 @@ class ContainerAppsRevisionReplicasOperations:
         return deserialized
 
     list_replicas.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{revisionName}/replicas'}  # type: ignore
-

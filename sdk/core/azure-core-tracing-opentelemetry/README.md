@@ -1,5 +1,3 @@
-
-
 # Azure Core Tracing OpenTelemetry client library for Python
 
 ## Getting started

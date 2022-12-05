@@ -303,4 +303,3 @@ class TestDistributionPolicy(RouterRecordedTestCase):
 
         # all policies created were listed
         assert policy_count == 0
-

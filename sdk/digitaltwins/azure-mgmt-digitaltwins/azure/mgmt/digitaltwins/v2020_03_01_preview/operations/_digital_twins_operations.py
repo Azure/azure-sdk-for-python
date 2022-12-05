@@ -970,4 +970,3 @@ class DigitalTwinsOperations(object):
         return deserialized
 
     check_name_availability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.DigitalTwins/locations/{location}/checkNameAvailability"}  # type: ignore
-

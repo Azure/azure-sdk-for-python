@@ -47,4 +47,3 @@ directive:
     transform: >
       $["x-ms-client-name"] = "DigitalTwinsEventRoute"
 ```
-

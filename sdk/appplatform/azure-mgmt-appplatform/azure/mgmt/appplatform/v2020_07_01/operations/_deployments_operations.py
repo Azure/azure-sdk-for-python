@@ -1538,4 +1538,3 @@ class DeploymentsOperations(object):
         return deserialized
 
     get_log_file_url.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.AppPlatform/Spring/{serviceName}/apps/{appName}/deployments/{deploymentName}/getLogFileUrl"}  # type: ignore
-

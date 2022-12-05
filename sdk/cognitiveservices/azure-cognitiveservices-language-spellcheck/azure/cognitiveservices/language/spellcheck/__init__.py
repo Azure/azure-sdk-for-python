@@ -16,4 +16,3 @@ __all__ = ['SpellCheckClient', 'SpellCheckClientConfiguration']
 from .version import VERSION
 
 __version__ = VERSION
-

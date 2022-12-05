@@ -454,5 +454,3 @@ class TestStorageFileClientAsync(AsyncStorageRecordedTestCase):
             service = client(
                 self.account_url(storage_account_name, "file"), credential=self.account_key, share_name='foo', directory_path='bar', file_path='baz')
             await service.close()
-
-

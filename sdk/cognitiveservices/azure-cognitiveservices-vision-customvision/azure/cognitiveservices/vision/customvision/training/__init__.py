@@ -16,4 +16,3 @@ __all__ = ['CustomVisionTrainingClient', 'CustomVisionTrainingClientConfiguratio
 from .version import VERSION
 
 __version__ = VERSION
-

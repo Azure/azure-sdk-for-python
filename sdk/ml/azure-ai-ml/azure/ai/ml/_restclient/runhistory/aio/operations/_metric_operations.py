@@ -872,4 +872,3 @@ class MetricOperations:
         return deserialized
 
     get_metric_details_by_experiment_id.metadata = {'url': "/history/v1.0/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/experimentids/{experimentId}/metrics/{metricId}"}  # type: ignore
-

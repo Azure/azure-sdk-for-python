@@ -729,4 +729,3 @@ class QueryPacksOperations:
         return deserialized
 
     update_tags.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/queryPacks/{queryPackName}"}  # type: ignore
-

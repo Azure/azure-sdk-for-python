@@ -146,4 +146,3 @@ class AvailableServiceTiersOperations:
         return deserialized
 
     list_by_workspace.metadata = {'url': "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/availableServiceTiers"}  # type: ignore
-

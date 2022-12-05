@@ -341,4 +341,3 @@ class ContainerAppsRevisionsOperations:
             return cls(pipeline_response, None, {})
 
     restart_revision.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/containerApps/{containerAppName}/revisions/{name}/restart'}  # type: ignore
-

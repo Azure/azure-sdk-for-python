@@ -1,4 +1,4 @@
-﻿#-------------------------------------------------------------------------
+#-------------------------------------------------------------------------
 # Copyright (c) Microsoft.  All rights reserved.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -68,4 +68,3 @@ def get_credentials():
 # blob_service.copy_blob('vhdcontainername', 'targetvhdblobname', sourceblob)
 #
 # LINUX_OS_VHD = "http://storageservicesname.blob.core.windows.net/vhdcontainername/targetvhdblobname"
-

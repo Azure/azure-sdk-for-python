@@ -28,4 +28,3 @@ hdinsight:
   file: "train-spark.py"
   args: >-
     --input_path {inputs.input_path} [--regularization_rate {inputs.regularization_rate}] --output_path {outputs.output_path}
-

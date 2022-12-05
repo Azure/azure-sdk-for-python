@@ -343,4 +343,3 @@ class IntelligencePacksOperations:
         return deserialized
 
     list.metadata = {'url': "/subscriptions/{subscriptionId}/resourcegroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/intelligencePacks"}  # type: ignore
-

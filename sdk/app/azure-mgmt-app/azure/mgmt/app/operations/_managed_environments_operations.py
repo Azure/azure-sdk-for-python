@@ -747,4 +747,3 @@ class ManagedEnvironmentsOperations(object):
         return deserialized
 
     update.metadata = {'url': '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.App/managedEnvironments/{name}'}  # type: ignore
-

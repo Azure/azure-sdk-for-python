@@ -931,4 +931,3 @@ class BatchEndpointsOperations(object):
         return deserialized
 
     list_keys.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/listkeys"}  # type: ignore
-

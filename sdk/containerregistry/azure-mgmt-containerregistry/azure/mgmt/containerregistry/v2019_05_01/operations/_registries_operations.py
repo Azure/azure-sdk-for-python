@@ -1400,4 +1400,3 @@ class RegistriesOperations(object):
         return deserialized
 
     list_usages.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ContainerRegistry/registries/{registryName}/listUsages"}  # type: ignore
-

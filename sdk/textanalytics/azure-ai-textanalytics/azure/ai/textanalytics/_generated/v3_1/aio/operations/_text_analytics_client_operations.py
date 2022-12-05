@@ -1288,4 +1288,3 @@ class TextAnalyticsClientOperationsMixin(MixinABC):
         return deserialized
 
     sentiment.metadata = {'url': "/sentiment"}  # type: ignore
-

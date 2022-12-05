@@ -144,4 +144,3 @@ class AutomationClientOperationsMixin(MixinABC):
         return deserialized
 
     convert_graph_runbook_content.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.Automation/automationAccounts/{automationAccountName}/convertGraphRunbookContent"}  # type: ignore
-

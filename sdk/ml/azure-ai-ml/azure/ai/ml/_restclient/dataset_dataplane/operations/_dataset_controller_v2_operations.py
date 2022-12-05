@@ -1297,4 +1297,3 @@ class DatasetControllerV2Operations(object):
             return cls(pipeline_response, None, {})
 
     unregister_dataset.metadata = {'url': '/dataset/v1.2/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/datasets/{name}'}  # type: ignore
-

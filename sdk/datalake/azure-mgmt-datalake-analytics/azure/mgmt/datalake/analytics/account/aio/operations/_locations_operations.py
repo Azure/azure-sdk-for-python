@@ -103,4 +103,3 @@ class LocationsOperations:
         return deserialized
 
     get_capability.metadata = {'url': "/subscriptions/{subscriptionId}/providers/Microsoft.DataLakeAnalytics/locations/{location}/capability"}  # type: ignore
-

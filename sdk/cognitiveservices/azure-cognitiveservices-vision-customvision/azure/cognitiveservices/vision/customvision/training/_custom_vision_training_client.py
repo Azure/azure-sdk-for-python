@@ -41,4 +41,3 @@ class CustomVisionTrainingClient(CustomVisionTrainingClientOperationsMixin, SDKC
         self.api_version = '3.4-preview'
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
-
