@@ -20,12 +20,13 @@
 # SOFTWARE.
 
 import unittest
-import uuid
-import pytest
-import azure.cosmos.cosmos_client as cosmos_client
-from azure.cosmos.partition_key import PartitionKey
 from unittest.mock import MagicMock
+
+import pytest
+
+import azure.cosmos.cosmos_client as cosmos_client
 import test_config
+from azure.cosmos.partition_key import PartitionKey
 
 pytestmark = pytest.mark.cosmosEmulator
 
@@ -36,9 +37,6 @@ class CorrelatedActivityIdTest(unittest.TestCase):
     host = configs.host
     masterKey = configs.masterKey
 
-    correlated_activity_id = str(uuid.uuid4())
-    default = None
-
     @classmethod
     def setUpClass(cls):
         cls.client = cosmos_client.CosmosClient(cls.host, cls.masterKey)
@@ -46,14 +44,9 @@ class CorrelatedActivityIdTest(unittest.TestCase):
         cls.container = cls.database.create_container(id=test_config._test_config.TEST_COLLECTION_MULTI_PARTITION_ID,
                                                       partition_key=PartitionKey(path="/id"))
 
-    def side_effect_correlated_activity_id(self, *args, **kwargs):
+    def side_effect_correlated_activity_id(self, *args):
         # Extract request headers from args
-        assert args[2]["x-ms-cosmos-correlated-activityid"] == self.correlated_activity_id # cspell:disable-line
-        raise StopIteration
-
-    def side_effect_default_correlated_activity_id(self, *args, **kwargs):
-        # Extract request headers from args
-        assert args[2]["x-ms-cosmos-correlated-activityid"] == self.correlated_activity_id # cspell:disable-line
+        assert args[2]["x-ms-cosmos-correlated-activityid"]  # cspell:disable-line
         raise StopIteration
 
     def test_correlated_activity_id(self):
@@ -63,18 +56,10 @@ class CorrelatedActivityIdTest(unittest.TestCase):
         cosmos_client_connection._CosmosClientConnection__Get = MagicMock(
             side_effect=self.side_effect_correlated_activity_id)
         try:
-            self.container.query_items(query=query, partition_key="pk-1",
-                                       correlated_activity_id=self.correlated_activity_id)
+            self.container.query_items(query=query, partition_key="pk-1")
         except StopIteration:
             pass
 
-    def test_default_correlated_activity_id(self):
-        query_2 = 'SELECT * from c ORDER BY c._ts'
-        try:
-            self.container.query_items(query=query_2, partition_key="pk-1",
-                                         correlated_activity_id=self.default)
-        except Exception as exception:
-            assert isinstance(exception, ValueError)
 
 if __name__ == "__main__":
     unittest.main()
