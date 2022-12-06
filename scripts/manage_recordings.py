@@ -4,13 +4,14 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import argparse
 import os
-import pathlib
 import shlex
 import sys
 
 try:
     from dotenv import load_dotenv
+
     load_dotenv()
 except:
     pass
@@ -40,9 +41,9 @@ import subprocess
 # For more information about how recording asset synchronization, please refer to
 # https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md.
 
- # Load environment variables from user's .env file
+# Load environment variables from user's .env file
 
-CONTAINER_NAME = "azsdkengsys.azurecr.io/engsys/testproxy-lin"
+CONTAINER_NAME = "azsdkengsys.azurecr.io/engsys/test-proxy"
 GIT_TOKEN = os.getenv("GIT_TOKEN", "")
 GIT_OWNER = os.getenv("GIT_COMMIT_OWNER", "")
 GIT_EMAIL = os.getenv("GIT_COMMIT_EMAIL", "")
@@ -52,6 +53,7 @@ GIT_EMAIL = os.getenv("GIT_COMMIT_EMAIL", "")
 
 
 discovered_roots = []
+
 
 def ascend_to_root(start_dir_or_file: str) -> str:
     """
@@ -106,36 +108,38 @@ def get_image_tag(repo_root: str) -> str:
 
 if not (GIT_TOKEN and GIT_OWNER and GIT_EMAIL):
     raise ValueError(
-            "GIT_TOKEN, GIT_COMMIT_OWNER, and GIT_COMMIT_EMAIL environment variables must be set, "
-            "either in-process or in a .env file"
-        )
+        "GIT_TOKEN, GIT_COMMIT_OWNER, and GIT_COMMIT_EMAIL environment variables must be set, "
+        "either in-process or in a .env file"
+    )
 
 # Prepare command arguments
-try:
-    command_verb = sys.argv[1].lower()  # "restore", "reset", or "push"
-    assets_arg = sys.argv[2]  # *Relative* path to `assets.json` file
-except IndexError:
-    raise ValueError("This script must be called with two arguments: a command verb, followed by an `assets.json` path")
-
-current_directory = pathlib.Path().resolve()
-repo_root = ascend_to_root(current_directory)
-image_tag = get_image_tag(repo_root)
-
-root_path = pathlib.Path(repo_root)
-cwd_relpath = ""
-for directory in current_directory.parts:
-    if directory not in root_path.parts:
-        cwd_relpath += directory + "/"
-assets_path = os.path.join(cwd_relpath, assets_arg).replace("\\", "/")
-
-delete_container()  # Delete any lingering container so a new one can be created with necessary environment variables
-
-subprocess.run(
-    shlex.split(
-        f'docker run --rm -v "{repo_root}:/srv/testproxy" '
-        f'-e "GIT_TOKEN={GIT_TOKEN}" -e "GIT_COMMIT_OWNER={GIT_OWNER}" -e "GIT_COMMIT_EMAIL={GIT_OWNER}" '
-        f'{CONTAINER_NAME}:{image_tag} test-proxy {command_verb} -a {assets_path}'
-    ),
-    stdout=sys.stdout,
-    stderr=sys.stderr,
+parser = argparse.ArgumentParser(description="Script for managing recording assets with Docker.")
+parser.add_argument("verb", help='The action verb for managing recordings: "restore", "push", or "reset".')
+parser.add_argument(
+    "path",
+    default="assets.json",
+    help='The *relative* path to your package\'s `assets.json` file. Default is "assets.json".',
 )
+args = parser.parse_args()
+
+if args.verb and args.path:
+
+    current_directory = os.getcwd()
+    repo_root = ascend_to_root(current_directory)
+    image_tag = get_image_tag(repo_root)
+
+    root_path = os.path.abspath(repo_root)
+    cwd_relpath = os.path.relpath(current_directory, root_path)
+    assets_path = os.path.join(cwd_relpath, args.path).replace("\\", "/")
+
+    delete_container()  # Delete any lingering container so a new one can be created with necessary environment variables
+
+    subprocess.run(
+        shlex.split(
+            f'docker run --rm -v "{repo_root}:/srv/testproxy" '
+            f'-e "GIT_TOKEN={GIT_TOKEN}" -e "GIT_COMMIT_OWNER={GIT_OWNER}" -e "GIT_COMMIT_EMAIL={GIT_OWNER}" '
+            f"{CONTAINER_NAME}:{image_tag} test-proxy {args.verb.lower()} -a {assets_path}"
+        ),
+        stdout=sys.stdout,
+        stderr=sys.stderr,
+    )
