@@ -5,6 +5,7 @@
 # license information.
 #--------------------------------------------------------------------------
 
+import functools
 import os
 import asyncio
 import pytest
@@ -177,7 +178,8 @@ async def test_send_with_partition_key_async(connstr_receivers, live_eventhub):
         while retry_total < 3:
             timeout = 5000 + retry_total * 1000
             try:
-                received = partition.receive_message_batch(timeout=timeout)
+                loop =  asyncio.get_running_loop()
+                received = await loop.run_in_executor(None, functools.partial(partition.receive_message_batch,timeout=timeout))
                 for message in received:
                     try:
                         event_data = EventData._from_message(message)
@@ -255,8 +257,9 @@ async def test_send_partition_async(connstr_receivers):
         await client.send_batch(batch)
         await client.send_event(EventData(b"Data"), partition_id="1")
 
-    partition_0 = await asyncio.get_event_loop().run_in_executor(receivers[0].receive_message_batch(timeout=5000))
-    partition_1 = await asyncio.get_event_loop().run_in_executor(receivers[1].receive_message_batch(timeout=5000))
+    loop =  asyncio.get_running_loop()
+    partition_0 = await loop.run_in_executor(None, functools.partial(receivers[0].receive_message_batch,timeout=5000,))
+    partition_1 = await loop.run_in_executor(None, functools.partial(receivers[1].receive_message_batch,timeout=5000,))
     assert len(partition_1) >= 2
     assert len(partition_0) + len(partition_1) == 4
 
@@ -273,8 +276,9 @@ async def test_send_partition_async(connstr_receivers):
         await client.send_event(EventData(b"Data"), partition_id="0")
 
     time.sleep(5)
-    partition_0 = await asyncio.get_event_loop().run_in_executor(receivers[0].receive_message_batch(timeout=5000))
-    partition_1 = await asyncio.get_event_loop().run_in_executor(receivers[1].receive_message_batch(timeout=5000))
+    loop =  asyncio.get_running_loop()
+    partition_0 = await loop.run_in_executor(None, functools.partial(receivers[0].receive_message_batch,timeout=5000,))
+    partition_1 = await loop.run_in_executor(None, functools.partial(receivers[1].receive_message_batch,timeout=5000))
     assert len(partition_0) >= 2
     assert len(partition_0) + len(partition_1) == 4
 
