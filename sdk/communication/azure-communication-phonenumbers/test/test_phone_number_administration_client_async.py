@@ -273,6 +273,6 @@ class TestPhoneNumbersClientAsync(PhoneNumbersTestCase):
                     PhoneNumberCapabilityType.INBOUND,
                     polling=True
                 )
-
-        assert str(ex.value.status_code) == "404"  # type: ignore
+        
+        assert str(ex.value.status_code) == "403"  # type: ignore
         assert ex.value.message is not None  # type: ignore

@@ -2,6 +2,9 @@
 ## 1.1.0b3 (Unreleased)
 - Users can now manage SIP configuration for Direct routing.
 
+### Bug Fixes
+- The test "test_update_phone_number_capabilities_with_invalid_phone_number" for the phone number SDK now expects the correct HTTP status code (403).
+
 ### Features Added
 - Added new SIP routing client for handling Direct routing numbers.
 - Added the ability specify the API version by an optional `api_version` keyword parameter.
