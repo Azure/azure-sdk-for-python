@@ -4,15 +4,13 @@
 # license information.
 # -------------------------------------------------------------------------
 
-import os
+import uuid
 
 from devtools_testutils import is_live
 
 def get_user_domain():
     if(is_live()):
-        sip_domain = os.getenv("AZURE_TEST_SIP_DOMAIN")
-        assert sip_domain is not None, "Missing AZURE_TEST_SIP_DOMAIN environment variable."
-        return sip_domain
+        return uuid.uuid4().hex + ".com"
     return "sanitized.com"
 
 def assert_trunks_are_equal(response_trunks, request_trunks):

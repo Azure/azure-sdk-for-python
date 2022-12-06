@@ -4,6 +4,8 @@
 # license information.
 # --------------------------------------------------------------------------
 
+import os
+
 from _shared.testcase import CommunicationTestCase
 from _shared.helper import URIReplacerProcessor
 from _shared.utils import create_token_credential, get_http_logging_policy
@@ -30,7 +32,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
             )
-        self.recording_processors.extend([URIReplacerProcessor(),DomainReplacerProcessor(domain=get_user_domain())])
+        self.recording_processors.extend([URIReplacerProcessor(),DomainReplacerProcessor(domain=self.user_domain)])
         self._sip_routing_client.set_routes([])
         self._sip_routing_client.set_trunks([self.first_trunk,self.second_trunk])
     
