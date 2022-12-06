@@ -1070,6 +1070,15 @@
             ]
           },
           {
+            "label": "Machine Learning",
+            "pathFilter": [
+              "sdk/ml/"
+            ],
+            "exclude": [
+              ""
+            ]
+          },
+          {
             "label": "ML-AutoML",
             "pathFilter": [
               "/sdk/ml/automl.tests.yml",

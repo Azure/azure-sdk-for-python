@@ -133,6 +133,11 @@ class ArtifactCache:
             f"Azure DevOps or Azure DevOps Server repository."
         )
 
+    @classmethod
+    def _get_checksum_path(cls, path):
+        artifact_path = Path(path)
+        return artifact_path.parent / f"{artifact_path.name}_{cls.POSTFIX_CHECKSUM}"
+
     def _redirect_artifacts_tool_path(self, organization):
         """To avoid the transient issue when download artifacts,
         download the artifacts tool and redirect az artifact command to it."""
@@ -216,7 +221,7 @@ class ArtifactCache:
         path = Path(artifact_package_path)
         if not path.exists():
             return False
-        checksum_path = path.parent / f"{path.name}_{self.POSTFIX_CHECKSUM}"
+        checksum_path = self._get_checksum_path(artifact_package_path)
         if checksum_path.exists():
             with open(checksum_path, "r") as f:
                 checksum = f.read()
@@ -264,6 +269,9 @@ class ArtifactCache:
             # When the cache folder of artifact package exists, it's sure that the package has been downloaded.
             return artifact_package_path.absolute().resolve()
         if resolve:
+            check_sum_path = self._get_checksum_path(artifact_package_path)
+            if Path(check_sum_path).exists():
+                os.unlink(check_sum_path)
             if artifact_package_path.exists():
                 # Remove invalid artifact package to avoid affecting download artifact.
                 temp_folder = tempfile.mktemp()  # nosec B306

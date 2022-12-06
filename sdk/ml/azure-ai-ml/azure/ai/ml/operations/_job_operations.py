@@ -84,7 +84,7 @@ from azure.ai.ml.exceptions import (
     ErrorCategory,
     ErrorTarget,
     JobException,
-    MlException,
+    MLException,
     ValidationErrorType,
     ValidationException,
     JobParsingError,
@@ -644,7 +644,7 @@ class JobOperations(_ScopeDependentOperations):
         :type all: bool
         :raises ~azure.ai.ml.exceptions.JobException: Raised if Job is not yet in a terminal state.
             Details will be provided in the error message.
-        :raises ~azure.ai.ml.exceptions.MlException: Raised if logs and outputs cannot be successfully downloaded.
+        :raises ~azure.ai.ml.exceptions.MLException: Raised if logs and outputs cannot be successfully downloaded.
             Details will be provided in the error message.
         """
         job_details = self.get(name)
@@ -1007,7 +1007,7 @@ class JobOperations(_ScopeDependentOperations):
                 # TODO : Move this part to a common place
                 if entry.type == AssetTypes.URI_FOLDER and entry.path and not entry.path.endswith("/"):
                     entry.path = entry.path + "/"
-        except (MlException, HttpResponseError) as e:
+        except (MLException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ValidationException(
