@@ -56,30 +56,29 @@ class MultivariateSample:
 
             # Use sample data to train the model
             print("Training new model...(it may take a few minutes)")
-            model = self.ad_client.create_and_train_multivariate_model(body)
+            model = self.ad_client.train_multivariate_model(body)
             trained_model_id = model.model_id
             print("Training model id is {}".format(trained_model_id))
 
             ## Wait until the model is ready. It usually takes several minutes
             model_status = None
-            model_info = None
+            model = None
 
             while model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
-                model_info = self.ad_client.get_multivariate_model(trained_model_id)
-                print(model_info)
-                model_status = model_info.model_info.status
-                # model_status = model_info.model_info.status
+                model = self.ad_client.get_multivariate_model(trained_model_id)
+                print(model)
+                model_status = model.model_info.status
                 print("Model is {}".format(model_status))
                 time.sleep(30)
 
             if model_status == ModelStatus.FAILED:
                 print("Creating model failed.")
                 print("Errors:")
-                if len(model_info.model_info.errors) > 0:
+                if len(model.model_info.errors) > 0:
                     print(
                         "Error code: {}. Message: {}".format(
-                            model_info.model_info.errors[0].code,
-                            model_info.model_info.errors[0].message,
+                            model.model_info.errors[0].code,
+                            model.model_info.errors[0].message,
                         )
                     )
                 else:
@@ -115,12 +114,12 @@ class MultivariateSample:
             r = self.ad_client.get_multivariate_batch_detection_result(result_id)
             print("Get detection result...(it may take a few seconds)")
 
-            while r.summary.status != DetectionStatus.READY and r.summary.status != DetectionStatus.FAILED:
+            while r.summary.status != MultivariateBatchDetectionStatus.READY and r.summary.status != MultivariateBatchDetectionStatus.FAILED:
                 r = self.ad_client.get_multivariate_batch_detection_result(result_id)
                 print("Detection is {}".format(r.summary.status))
                 time.sleep(15)
 
-            if r.summary.status == DetectionStatus.FAILED:
+            if r.summary.status == MultivariateBatchDetectionStatus.FAILED:
                 print("Detection failed.")
                 print("Errors:")
                 if len(r.summary.errors) > 0:
@@ -182,8 +181,8 @@ if __name__ == "__main__":
     model_id = sample.train(train_body)
 
     # Batch Inference
-    batch_inference_body = DetectionRequest(
-        data_source=blobUrl,
+    batch_inference_body = MultivariateBatchDetectionOptions(
+        data_source=blob_url,
         top_contributor_count=10,
         start_time=datetime.strptime("2021-01-02T00:00:00Z", time_format),
         end_time=datetime.strptime("2021-01-02T05:00:00Z", time_format),
@@ -245,7 +244,7 @@ if __name__ == "__main__":
             )
         )
 
-    last_inference_body = LastDetectionRequest(
+    last_inference_body = MultivariateLastDetectionOptions(
         variables=variables,
         top_contributor_count=10,
     )
