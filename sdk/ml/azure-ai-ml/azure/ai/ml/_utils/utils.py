@@ -910,19 +910,3 @@ def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: 
             target=ErrorTarget.GENERAL,
             error_category=ErrorCategory.USER_ERROR,
         )
-
-# borrowed from console.py, since I don't want to reference _vender files driectly
-def _is_jupyter() -> bool:  # pragma: no cover
-    """Check if we're running in a Jupyter notebook."""
-    try:
-        get_ipython  # type: ignore
-    except NameError:
-        return False
-    ipython = get_ipython()  # type: ignore
-    shell = ipython.__class__.__name__
-    if "google.colab" in str(ipython.__class__) or shell == "ZMQInteractiveShell":
-        return True  # Jupyter notebook or qtconsole
-    elif shell == "TerminalInteractiveShell":
-        return False  # Terminal running IPython
-    else:
-        return False  # Other type (?)
