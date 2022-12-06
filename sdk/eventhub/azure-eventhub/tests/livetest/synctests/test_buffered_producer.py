@@ -148,7 +148,7 @@ def test_basic_send_single_events_round_robin(connection_str, flush_after_sendin
             assert sum([len(sent_events[pid]) for pid in partitions]) == total_single_event_cnt
 
         # give some time for producer to complete sending and consumer to complete receiving
-        time.sleep(10)
+        time.sleep(20)
         assert len(sent_events) == len(received_events) == partitions_cnt
 
         for pid in partitions:
@@ -270,7 +270,7 @@ def test_basic_send_batch_events_round_robin(connection_str, flush_after_sending
             # ensure all events are sent
             assert sum([len(sent_events[pid]) for pid in partitions]) == total_events_cnt
 
-        time.sleep(10)
+        time.sleep(20)
         assert len(sent_events) == len(received_events) == partitions_cnt
 
         # ensure all events are received in the correct partition
