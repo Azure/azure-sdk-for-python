@@ -364,7 +364,6 @@ class ContainerProxy(object):
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-
         correlated_activity_id = GenerateGuidId()
         feed_options["correlatedActivityId"] = correlated_activity_id
         if hasattr(response_hook, "clear"):
