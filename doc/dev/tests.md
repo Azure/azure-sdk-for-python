@@ -394,19 +394,25 @@ sdk/{service}/{package}/assets.json;2Km2Z8755;python/{service}/{package}_<10-cha
 ```
 The recording directory in this case is `2Km2Z8755`, the string between the two semicolons.
 
-After verifying that your recording updates look correct, you can use the `manage_recordings.py` script from
-`azure-sdk-for-python/scripts` to push these recordings to the `azure-sdk-assets` repo. For example, from the root of
-the `azure-sdk-for-python` repo:
+After verifying that your recording updates look correct, you can use the [`manage_recordings.py`][manage_recordings]
+script from `azure-sdk-for-python/scripts` to push these recordings to the `azure-sdk-assets` repo. This script accepts
+a verb and a **relative** path to your package's `assets.json` file. For example, from the root of the
+`azure-sdk-for-python` repo:
 ```
 python scripts/manage_recordings.py push sdk/{service}/{package}/assets.json
 ```
 
-**NOTE:** The `manage_recordings.py` script is still under development at the time of writing. To push updated
-recordings in the meantime, refer to https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md#pushing-new-recordings.
+The verbs that can be provided to this script are "push", "restore", and "reset":
+- **push**: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
+- **restore**: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
+- **reset**: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
 
 After pushing your recordings, the `assets.json` file for your package will be updated to point to a new `Tag` that
 contains the updates. Include this `assets.json` update in any pull request to update the recordings pointer in the
 upstream repo.
+
+More details about the recording management commands and management script are documented in
+[`manage_recordings.py`][manage_recordings].
 
 ### Sanitize secrets
 
@@ -708,6 +714,7 @@ Tests that use the Shared Access Signature (SAS) to authenticate a client should
 [kv_test_resources_outputs]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L255
 [kv_test_resources_resources]: https://github.com/Azure/azure-sdk-for-python/blob/fbdb860630bcc13c1e355828231161849a9bd5a4/sdk/keyvault/test-resources.json#L116
 
+[manage_recordings]: https://github.com/Azure/azure-sdk-for-python/blob/main/scripts/manage_recordings.py
 [mgmt_settings_fake]: https://github.com/Azure/azure-sdk-for-python/blob/main/tools/azure-sdk-tools/devtools_testutils/mgmt_settings_fake.py
 
 [packaging]: https://github.com/Azure/azure-sdk-for-python/blob/main/doc/dev/packaging.md
