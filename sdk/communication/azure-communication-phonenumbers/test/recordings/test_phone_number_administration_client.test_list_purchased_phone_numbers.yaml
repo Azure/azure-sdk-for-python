@@ -9,13 +9,13 @@ interactions:
       Connection:
       - keep-alive
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 12 Jan 2022 16:24:30 GMT
+      - Fri, 02 Dec 2022 23:07:24 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
-    uri: https://sanitized.communication.azure.com/phoneNumbers?skip=0&top=100&api-version=2022-01-11-preview2
+    uri: https://sanitized.communication.azure.com/phoneNumbers?skip=0&top=100&api-version=2022-12-01
   response:
     body:
       string: '{"phoneNumbers": [{"id": "sanitized", "phoneNumber": "sanitized", "countryCode":
@@ -199,7 +199,7 @@ interactions:
         "assignmentType": "application", "purchaseDate": "2021-06-23T23:41:22.1720088+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}},
         {"id": "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
-        "tollFree", "capabilities": {"calling": "inbound", "sms": "outbound"}, "assignmentType":
+        "tollFree", "capabilities": {"calling": "outbound", "sms": "outbound"}, "assignmentType":
         "application", "purchaseDate": "2021-06-23T23:38:41.0997634+00:00", "cost":
         {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}, {"id":
         "sanitized", "phoneNumber": "sanitized", "countryCode": "US", "phoneNumberType":
@@ -418,24 +418,24 @@ interactions:
         "tollFree", "capabilities": {"calling": "inbound+outbound", "sms": "inbound+outbound"},
         "assignmentType": "application", "purchaseDate": "2021-06-24T03:18:42.3038608+00:00",
         "cost": {"amount": 2.0, "currencyCode": "USD", "billingFrequency": "monthly"}}],
-        "nextLink": "/phoneNumbers?skip=100&top=100&api-version=2022-01-11-preview2"}'
+        "nextLink": "/phoneNumbers?skip=100&top=100&api-version=2022-12-01"}'
     headers:
       api-supported-versions:
-      - 2021-03-07, 2022-01-11-preview2
+      - 2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 12 Jan 2022 16:24:31 GMT
+      - Fri, 02 Dec 2022 23:07:25 GMT
       ms-cv:
-      - uncxAwNo6UCrwN7VxlhXCQ.0
-      request-context:
-      - appId=
+      - EB3Kk0ffyk2NyZsl3V9MOQ.0
+      strict-transport-security:
+      - max-age=2592000
       transfer-encoding:
       - chunked
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 4822ms
+      - 1349ms
     status:
       code: 200
       message: OK

@@ -266,13 +266,36 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         assert ex.value.message is not None
 
     @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_toll_free_area_codes_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            area_codes = phone_number_client.list_available_area_codes("US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
+            items = []
+            async for item in area_codes:
+                items.append(item)
+        assert len(items) > 0  
+
+    @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_toll_free_area_codes(self):
         async with self.phone_number_client:
             area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.TOLL_FREE, PhoneNumberAssignmentType.APPLICATION)
             items = []
             async for item in area_codes:
                 items.append(item)
-        assert len(items) > 0  
+        assert len(items) > 0      
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_geographic_area_codes_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            localities = phone_number_client.list_available_localities("US")
+            async for first_locality in localities:
+                area_codes = self.phone_number_client.list_available_area_codes("US", PhoneNumberType.GEOGRAPHIC, PhoneNumberAssignmentType.PERSON, first_locality.localized_name)
+                items = []
+                async for item in area_codes:
+                    items.append(item)
+                break
+        assert len(items) > 0
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_geographic_area_codes(self):
@@ -287,13 +310,33 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
         assert len(items) > 0
 
     @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_countries_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            countries = phone_number_client.list_available_countries()
+            items = []
+            async for item in countries:
+                items.append(item)
+        assert len(items) > 0  
+
+    @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_countries(self):
         async with self.phone_number_client:
             countries = self.phone_number_client.list_available_countries()
             items = []
             async for item in countries:
                 items.append(item)
-        assert len(items) > 0    
+        assert len(items) > 0        
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_localities_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            localities = phone_number_client.list_available_localities("US")
+            items = []
+            async for item in localities:
+                items.append(item)
+        assert len(items) > 0 
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_localities(self):
@@ -302,7 +345,20 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             items = []
             async for item in localities:
                 items.append(item)
-        assert len(items) > 0  
+        assert len(items) > 0      
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_localities_with_administrative_division_and_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            localities = phone_number_client.list_available_localities("US")
+            async for first_locality in localities:
+                localities = phone_number_client.list_available_localities("US", administrative_division=first_locality.administrative_division.abbreviated_name)
+                items = []
+                async for item in localities:
+                    items.append(item)
+                break
+        assert len(items) > 0 
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_localities_with_administrative_division(self):
@@ -314,7 +370,17 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
                 async for item in localities:
                     items.append(item)
                 break
-        assert len(items) > 0  
+        assert len(items) > 0      
+
+    @AsyncCommunicationTestCase.await_prepared_test
+    async def test_list_offerings_with_managed_identity(self):
+        phone_number_client = self._get_managed_identity_phone_number_client()
+        async with phone_number_client:
+            offerings = phone_number_client.list_available_offerings("US")
+            items = []
+            async for item in offerings:
+                items.append(item)
+        assert len(items) > 0
 
     @AsyncCommunicationTestCase.await_prepared_test
     async def test_list_offerings(self):
@@ -323,4 +389,4 @@ class PhoneNumbersClientTestAsync(AsyncCommunicationTestCase):
             items = []
             async for item in offerings:
                 items.append(item)
-        assert len(items) > 0                
+        assert len(items) > 0                    

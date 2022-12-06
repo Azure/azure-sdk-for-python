@@ -10,30 +10,31 @@ interactions:
       Content-Type:
       - application/json
       User-Agent:
-      - azsdk-python-communication-phonenumbers/1.0.2 Python/3.9.9 (Windows-10-10.0.22000-SP0)
+      - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.8 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 12 Jan 2022 16:28:17 GMT
+      - Fri, 02 Dec 2022 23:07:32 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: POST
-    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-01-11-preview2
+    uri: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-12-01
   response:
     body:
       string: ''
     headers:
       access-control-expose-headers: Location,Operation-Location,operation-id,search-id
-      api-supported-versions: 2021-03-07, 2022-01-11-preview2
+      api-supported-versions: 2021-03-07, 2022-01-11-preview2, 2022-06-01-preview,
+        2022-12-01
       content-length: '0'
-      date: Wed, 12 Jan 2022 16:28:18 GMT
-      ms-cv: j0wnfJQmYkCRbaw5ds3lrg.0
-      operation-id: search_8c7b9296-ccca-468a-90ca-d51bcbbed8d3
-      operation-location: /phoneNumbers/operations/search_8c7b9296-ccca-468a-90ca-d51bcbbed8d3?api-version=2022-01-11-preview2
-      request-context: appId=
-      search-id: 8c7b9296-ccca-468a-90ca-d51bcbbed8d3
+      date: Fri, 02 Dec 2022 23:07:33 GMT
+      ms-cv: MBB1yxBKY0+h4q5o0o87xg.0
+      operation-id: search_366c96dd-51ca-473e-b7a8-09f7cd9aa71f
+      operation-location: /phoneNumbers/operations/search_366c96dd-51ca-473e-b7a8-09f7cd9aa71f?api-version=2022-12-01
+      search-id: 366c96dd-51ca-473e-b7a8-09f7cd9aa71f
+      strict-transport-security: max-age=2592000
       x-cache: CONFIG_NOCACHE
-      x-processing-time: 4646ms
+      x-processing-time: 1695ms
     status:
       code: 202
       message: Accepted
-    url: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-01-11-preview2
+    url: https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-12-01
 version: 1
