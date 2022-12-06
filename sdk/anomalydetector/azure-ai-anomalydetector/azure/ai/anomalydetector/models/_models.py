@@ -70,11 +70,61 @@ Previous, Subsequent, Linear, Zero, Fixed. Known values are: \"Previous\", \"Sub
         super().__init__(*args, **kwargs)
 
 
+class AnomalyDetectionModel(_model_base.Model):
+    """Response of getting a model.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar model_id: Model identifier. Required.
+    :vartype model_id: str
+    :ivar created_time: Date and time (UTC) when the model was created. Required.
+    :vartype created_time: ~datetime.datetime
+    :ivar last_updated_time: Date and time (UTC) when the model was last updated. Required.
+    :vartype last_updated_time: ~datetime.datetime
+    :ivar model_info: Training result of a model including its status, errors and diagnostics
+     information.
+    :vartype model_info: ~anomalydetector.models.ModelInfo
+    """
+
+    model_id: str = rest_field(name="modelId", readonly=True)
+    """Model identifier. Required. """
+    created_time: datetime.datetime = rest_field(name="createdTime")
+    """Date and time (UTC) when the model was created. Required. """
+    last_updated_time: datetime.datetime = rest_field(name="lastUpdatedTime")
+    """Date and time (UTC) when the model was last updated. Required. """
+    model_info: Optional["_models.ModelInfo"] = rest_field(name="modelInfo")
+    """Training result of a model including its status, errors and diagnostics
+information. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        created_time: datetime.datetime,
+        last_updated_time: datetime.datetime,
+        model_info: Optional["_models.ModelInfo"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
 class AnomalyDetectorError(_model_base.Model):
     """Error information returned by the API.
 
-    :ivar x_ms_error:
-    :vartype x_ms_error: str
+    :ivar x_ms_error_code: Error code.
+    :vartype x_ms_error_code: str
     :ivar code: The error code. Known values are: "InvalidCustomInterval", "BadArgument",
      "InvalidGranularity", "InvalidPeriod", "InvalidModelArgument", "InvalidSeries",
      "InvalidJsonFormat", "RequiredGranularity", "RequiredSeries", "InvalidImputeMode", and
@@ -84,7 +134,8 @@ class AnomalyDetectorError(_model_base.Model):
     :vartype message: str
     """
 
-    x_ms_error: Optional[str] = rest_field(name="x-ms-error")
+    x_ms_error_code: Optional[str] = rest_field(name="x-ms-error-code")
+    """Error code. """
     code: Optional[Union[str, "_models.AnomalyDetectorErrorCodes"]] = rest_field()
     """The error code. Known values are: \"InvalidCustomInterval\", \"BadArgument\", \"InvalidGranularity\", \"InvalidPeriod\", \"InvalidModelArgument\", \"InvalidSeries\", \"InvalidJsonFormat\", \"RequiredGranularity\", \"RequiredSeries\", \"InvalidImputeMode\", and \"InvalidImputeFixedValue\"."""
     message: Optional[str] = rest_field()
@@ -94,7 +145,7 @@ class AnomalyDetectorError(_model_base.Model):
     def __init__(
         self,
         *,
-        x_ms_error: Optional[str] = None,
+        x_ms_error_code: Optional[str] = None,
         code: Optional[Union[str, "_models.AnomalyDetectorErrorCodes"]] = None,
         message: Optional[str] = None,
     ):
@@ -113,7 +164,7 @@ class AnomalyDetectorError(_model_base.Model):
 
 
 class AnomalyInterpretation(_model_base.Model):
-    """AnomalyInterpretation.
+    """Interpretation of the anomalous timestamp.
 
     :ivar variable: Variable.
     :vartype variable: str
@@ -121,7 +172,7 @@ class AnomalyInterpretation(_model_base.Model):
      timestamp. A
      number between 0 and 1.
     :vartype contribution_score: float
-    :ivar correlation_changes:
+    :ivar correlation_changes: Correlation changes among the anomalous variables.
     :vartype correlation_changes: ~anomalydetector.models.CorrelationChanges
     """
 
@@ -131,6 +182,7 @@ class AnomalyInterpretation(_model_base.Model):
     """This score shows the percentage contributing to the anomalous timestamp. A
 number between 0 and 1. """
     correlation_changes: Optional["_models.CorrelationChanges"] = rest_field(name="correlationChanges")
+    """Correlation changes among the anomalous variables. """
 
     @overload
     def __init__(
@@ -155,13 +207,13 @@ number between 0 and 1. """
 
 
 class AnomalyState(_model_base.Model):
-    """AnomalyState.
+    """Anomaly status and information.
 
     All required parameters must be populated in order to send to Azure.
 
     :ivar timestamp: The timestamp for this anomaly. Required.
     :vartype timestamp: ~datetime.datetime
-    :ivar value:
+    :ivar value: The detailed value of this anomalous timestamp.
     :vartype value: ~anomalydetector.models.AnomalyValue
     :ivar errors: Error message for the current timestamp.
     :vartype errors: list[~anomalydetector.models.ErrorResponse]
@@ -170,6 +222,7 @@ class AnomalyState(_model_base.Model):
     timestamp: datetime.datetime = rest_field()
     """The timestamp for this anomaly. Required. """
     value: Optional["_models.AnomalyValue"] = rest_field()
+    """The detailed value of this anomalous timestamp. """
     errors: Optional[List["_models.ErrorResponse"]] = rest_field()
     """Error message for the current timestamp. """
 
@@ -196,7 +249,7 @@ class AnomalyState(_model_base.Model):
 
 
 class AnomalyValue(_model_base.Model):
-    """AnomalyValue.
+    """Detailed information of the anomalous timestamp.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -208,7 +261,7 @@ class AnomalyValue(_model_base.Model):
     :ivar score: Raw anomaly score of severity, will help indicate the degree of abnormality as
      well. Required.
     :vartype score: float
-    :ivar interpretation:
+    :ivar interpretation: Interpretation of this anomalous timestamp.
     :vartype interpretation: list[~anomalydetector.models.AnomalyInterpretation]
     """
 
@@ -221,6 +274,7 @@ significant the anomaly is. Required. """
     """Raw anomaly score of severity, will help indicate the degree of abnormality as
 well. Required. """
     interpretation: Optional[List["_models.AnomalyInterpretation"]] = rest_field()
+    """Interpretation of this anomalous timestamp. """
 
     @overload
     def __init__(
@@ -245,7 +299,605 @@ well. Required. """
         super().__init__(*args, **kwargs)
 
 
-class ChangePointDetectRequest(_model_base.Model):
+class CorrelationChanges(_model_base.Model):
+    """Correlation changes among the anomalous variables.
+
+    :ivar changed_variables: The correlated variables that have correlation changes under an
+     anomaly.
+    :vartype changed_variables: list[str]
+    """
+
+    changed_variables: Optional[List[str]] = rest_field(name="changedVariables")
+    """The correlated variables that have correlation changes under an anomaly. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        changed_variables: Optional[List[str]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class DiagnosticsInfo(_model_base.Model):
+    """Diagnostics information to help inspect the states of model or variable.
+
+    :ivar model_state: Model status.
+    :vartype model_state: ~anomalydetector.models.ModelState
+    :ivar variable_states: Variable Status.
+    :vartype variable_states: list[~anomalydetector.models.VariableState]
+    """
+
+    model_state: Optional["_models.ModelState"] = rest_field(name="modelState")
+    """Model status. """
+    variable_states: Optional[List["_models.VariableState"]] = rest_field(name="variableStates")
+    """Variable Status. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        model_state: Optional["_models.ModelState"] = None,
+        variable_states: Optional[List["_models.VariableState"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ErrorResponse(_model_base.Model):
+    """ErrorResponse contains code and message that shows the error information.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar code: The error code. Required.
+    :vartype code: str
+    :ivar message: The message explaining the error reported by the service. Required.
+    :vartype message: str
+    """
+
+    code: str = rest_field()
+    """The error code. Required. """
+    message: str = rest_field()
+    """The message explaining the error reported by the service. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ModelInfo(_model_base.Model):
+    """Training result of a model including its status, errors and diagnostics
+    information.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
+     either pointed to an Azure blob storage folder, or pointed to a CSV file in
+     Azure blob storage based on you data schema selection. Required.
+    :vartype data_source: str
+    :ivar data_schema: Data schema of input data source: OneTable or MultiTable. The default
+     DataSchema is OneTable. Known values are: "OneTable" and "MultiTable".
+    :vartype data_schema: str or ~anomalydetector.models.DataSchema
+    :ivar start_time: A required field, indicating the start time of training data, which should be
+     date-time of ISO 8601 format. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: A required field, indicating the end time of training data, which should be
+     date-time of ISO 8601 format. Required.
+    :vartype end_time: ~datetime.datetime
+    :ivar display_name: An optional field. The display name of the model whose maximum length is 24
+     characters.
+    :vartype display_name: str
+    :ivar sliding_window: An optional field, indicating how many previous timestamps will be used
+     to
+     detect whether the timestamp is anomaly or not.
+    :vartype sliding_window: int
+    :ivar align_policy: An optional field, indicating the manner to align multiple variables.
+    :vartype align_policy: ~anomalydetector.models.AlignPolicy
+    :ivar status: Model status. One of CREATED, RUNNING, READY, and FAILED. Known values are:
+     "CREATED", "RUNNING", "READY", and "FAILED".
+    :vartype status: str or ~anomalydetector.models.ModelStatus
+    :ivar errors: Error messages when failed to create a model.
+    :vartype errors: list[~anomalydetector.models.ErrorResponse]
+    :ivar diagnostics_info: Diagnostics information to help inspect the states of model or
+     variable.
+    :vartype diagnostics_info: ~anomalydetector.models.DiagnosticsInfo
+    """
+
+    data_source: str = rest_field(name="dataSource")
+    """Source link to the input data to indicate an accessible Azure storage Uri,
+either pointed to an Azure blob storage folder, or pointed to a CSV file in
+Azure blob storage based on you data schema selection. Required. """
+    data_schema: Optional[Union[str, "_models.DataSchema"]] = rest_field(name="dataSchema")
+    """Data schema of input data source: OneTable or MultiTable. The default
+DataSchema is OneTable. Known values are: \"OneTable\" and \"MultiTable\"."""
+    start_time: datetime.datetime = rest_field(name="startTime")
+    """A required field, indicating the start time of training data, which should be
+date-time of ISO 8601 format. Required. """
+    end_time: datetime.datetime = rest_field(name="endTime")
+    """A required field, indicating the end time of training data, which should be
+date-time of ISO 8601 format. Required. """
+    display_name: Optional[str] = rest_field(name="displayName")
+    """An optional field. The display name of the model whose maximum length is 24
+characters. """
+    sliding_window: Optional[int] = rest_field(name="slidingWindow")
+    """An optional field, indicating how many previous timestamps will be used to
+detect whether the timestamp is anomaly or not. """
+    align_policy: Optional["_models.AlignPolicy"] = rest_field(name="alignPolicy")
+    """An optional field, indicating the manner to align multiple variables. """
+    status: Optional[Union[str, "_models.ModelStatus"]] = rest_field()
+    """Model status. One of CREATED, RUNNING, READY, and FAILED. Known values are: \"CREATED\", \"RUNNING\", \"READY\", and \"FAILED\"."""
+    errors: Optional[List["_models.ErrorResponse"]] = rest_field(readonly=True)
+    """Error messages when failed to create a model. """
+    diagnostics_info: Optional["_models.DiagnosticsInfo"] = rest_field(name="diagnosticsInfo")
+    """Diagnostics information to help inspect the states of model or variable. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_source: str,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+        data_schema: Optional[Union[str, "_models.DataSchema"]] = None,
+        display_name: Optional[str] = None,
+        sliding_window: Optional[int] = None,
+        align_policy: Optional["_models.AlignPolicy"] = None,
+        status: Optional[Union[str, "_models.ModelStatus"]] = None,
+        diagnostics_info: Optional["_models.DiagnosticsInfo"] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ModelList(_model_base.Model):
+    """Response of listing models.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar models: List of models. Required.
+    :vartype models: list[~anomalydetector.models.AnomalyDetectionModel]
+    :ivar current_count: Number of trained multivariate models. Required.
+    :vartype current_count: int
+    :ivar max_count: Maximum number of models that can be trained for this Anomaly Detector
+     resource. Required.
+    :vartype max_count: int
+    :ivar next_link: The link to fetch more models.
+    :vartype next_link: str
+    """
+
+    models: List["_models.AnomalyDetectionModel"] = rest_field()
+    """List of models. Required. """
+    current_count: int = rest_field(name="currentCount")
+    """Number of trained multivariate models. Required. """
+    max_count: int = rest_field(name="maxCount")
+    """Maximum number of models that can be trained for this Anomaly Detector resource. Required. """
+    next_link: Optional[str] = rest_field(name="nextLink")
+    """The link to fetch more models. """
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ModelState(_model_base.Model):
+    """Model status.
+
+    :ivar epoch_ids: This indicates the number of passes of the entire training dataset the
+     algorithm has completed.
+    :vartype epoch_ids: list[int]
+    :ivar train_losses: List of metrics used to assess how the model fits the training data for
+     each
+     epoch.
+    :vartype train_losses: list[float]
+    :ivar validation_losses: List of metrics used to assess how the model fits the validation set
+     for each
+     epoch.
+    :vartype validation_losses: list[float]
+    :ivar latencies_in_seconds: Latency for each epoch.
+    :vartype latencies_in_seconds: list[float]
+    """
+
+    epoch_ids: Optional[List[int]] = rest_field(name="epochIds")
+    """This indicates the number of passes of the entire training dataset the
+algorithm has completed. """
+    train_losses: Optional[List[float]] = rest_field(name="trainLosses")
+    """List of metrics used to assess how the model fits the training data for each
+epoch. """
+    validation_losses: Optional[List[float]] = rest_field(name="validationLosses")
+    """List of metrics used to assess how the model fits the validation set for each
+epoch. """
+    latencies_in_seconds: Optional[List[float]] = rest_field(name="latenciesInSeconds")
+    """Latency for each epoch. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        epoch_ids: Optional[List[int]] = None,
+        train_losses: Optional[List[float]] = None,
+        validation_losses: Optional[List[float]] = None,
+        latencies_in_seconds: Optional[List[float]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class MultivariateBatchDetectionOptions(_model_base.Model):
+    """Detection request for batch inference. This is an asynchronous inference which
+    will need another API to get detection results.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
+     either pointed to an Azure blob storage folder, or pointed to a CSV file in
+     Azure blob storage based on you data schema selection. The data schema should
+     be exactly the same with those used in the training phase. Required.
+    :vartype data_source: str
+    :ivar top_contributor_count: An optional field, which is used to specify the number of top
+     contributed
+     variables for one anomalous timestamp in the response. The default number is
+     10. Required.
+    :vartype top_contributor_count: int
+    :ivar start_time: A required field, indicating the start time of data for detection, which
+     should
+     be date-time of ISO 8601 format. Required.
+    :vartype start_time: ~datetime.datetime
+    :ivar end_time: A required field, indicating the end time of data for detection, which should
+     be date-time of ISO 8601 format. Required.
+    :vartype end_time: ~datetime.datetime
+    """
+
+    data_source: str = rest_field(name="dataSource")
+    """Source link to the input data to indicate an accessible Azure storage Uri,
+either pointed to an Azure blob storage folder, or pointed to a CSV file in
+Azure blob storage based on you data schema selection. The data schema should
+be exactly the same with those used in the training phase. Required. """
+    top_contributor_count: int = rest_field(name="topContributorCount")
+    """An optional field, which is used to specify the number of top contributed
+variables for one anomalous timestamp in the response. The default number is
+10. Required. """
+    start_time: datetime.datetime = rest_field(name="startTime")
+    """A required field, indicating the start time of data for detection, which should
+be date-time of ISO 8601 format. Required. """
+    end_time: datetime.datetime = rest_field(name="endTime")
+    """A required field, indicating the end time of data for detection, which should
+be date-time of ISO 8601 format. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        data_source: str,
+        top_contributor_count: int,
+        start_time: datetime.datetime,
+        end_time: datetime.datetime,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class MultivariateBatchDetectionResultSummary(_model_base.Model):
+    """Multivariate anomaly detection status.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar status: Status of detection results. One of CREATED, RUNNING, READY, and FAILED.
+     Required. Known values are: "CREATED", "RUNNING", "READY", and "FAILED".
+    :vartype status: str or ~anomalydetector.models.MultivariateBatchDetectionStatus
+    :ivar errors: Error message when detection is failed.
+    :vartype errors: list[~anomalydetector.models.ErrorResponse]
+    :ivar variable_states: Variable Status.
+    :vartype variable_states: list[~anomalydetector.models.VariableState]
+    :ivar setup_info: Detection request for batch inference. This is an asynchronous inference
+     which
+     will need another API to get detection results. Required.
+    :vartype setup_info: ~anomalydetector.models.MultivariateBatchDetectionOptions
+    """
+
+    status: Union[str, "_models.MultivariateBatchDetectionStatus"] = rest_field()
+    """Status of detection results. One of CREATED, RUNNING, READY, and FAILED. Required. Known values are: \"CREATED\", \"RUNNING\", \"READY\", and \"FAILED\"."""
+    errors: Optional[List["_models.ErrorResponse"]] = rest_field()
+    """Error message when detection is failed. """
+    variable_states: Optional[List["_models.VariableState"]] = rest_field(name="variableStates")
+    """Variable Status. """
+    setup_info: "_models.MultivariateBatchDetectionOptions" = rest_field(name="setupInfo")
+    """Detection request for batch inference. This is an asynchronous inference which
+will need another API to get detection results. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        status: Union[str, "_models.MultivariateBatchDetectionStatus"],
+        setup_info: "_models.MultivariateBatchDetectionOptions",
+        errors: Optional[List["_models.ErrorResponse"]] = None,
+        variable_states: Optional[List["_models.VariableState"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class MultivariateDetectionResult(_model_base.Model):
+    """Detection results for the given resultId.
+
+    Readonly variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar result_id: Result identifier, which is used to fetch the results of an inference call.
+     Required.
+    :vartype result_id: str
+    :ivar summary: Multivariate anomaly detection status. Required.
+    :vartype summary: ~anomalydetector.models.MultivariateBatchDetectionResultSummary
+    :ivar results: Detection result for each timestamp. Required.
+    :vartype results: list[~anomalydetector.models.AnomalyState]
+    """
+
+    result_id: str = rest_field(name="resultId", readonly=True)
+    """Result identifier, which is used to fetch the results of an inference call. Required. """
+    summary: "_models.MultivariateBatchDetectionResultSummary" = rest_field()
+    """Multivariate anomaly detection status. Required. """
+    results: List["_models.AnomalyState"] = rest_field()
+    """Detection result for each timestamp. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        summary: "_models.MultivariateBatchDetectionResultSummary",
+        results: List["_models.AnomalyState"],
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class MultivariateLastDetectionOptions(_model_base.Model):
+    """Request of last detection.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar variables: This contains the inference data, including the name, timestamps(ISO 8601) and
+     values of variables. Required.
+    :vartype variables: list[~anomalydetector.models.VariableValues]
+    :ivar top_contributor_count: An optional field, which is used to specify the number of top
+     contributed
+     variables for one anomalous timestamp in the response. The default number is
+     10. Required.
+    :vartype top_contributor_count: int
+    """
+
+    variables: List["_models.VariableValues"] = rest_field()
+    """This contains the inference data, including the name, timestamps(ISO 8601) and
+values of variables. Required. """
+    top_contributor_count: int = rest_field(name="topContributorCount")
+    """An optional field, which is used to specify the number of top contributed
+variables for one anomalous timestamp in the response. The default number is
+10. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        variables: List["_models.VariableValues"],
+        top_contributor_count: int,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class MultivariateLastDetectionResult(_model_base.Model):
+    """Results of last detection.
+
+    :ivar variable_states: Variable Status.
+    :vartype variable_states: list[~anomalydetector.models.VariableState]
+    :ivar results: Anomaly status and information.
+    :vartype results: list[~anomalydetector.models.AnomalyState]
+    """
+
+    variable_states: Optional[List["_models.VariableState"]] = rest_field(name="variableStates")
+    """Variable Status. """
+    results: Optional[List["_models.AnomalyState"]] = rest_field()
+    """Anomaly status and information. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        variable_states: Optional[List["_models.VariableState"]] = None,
+        results: Optional[List["_models.AnomalyState"]] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class ResponseError(_model_base.Model):
+    """Error response.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar x_ms_error_code: Error code.
+    :vartype x_ms_error_code: str
+    :ivar code: The error code. Required.
+    :vartype code: str
+    :ivar message: The message explaining the error reported by the service. Required.
+    :vartype message: str
+    """
+
+    x_ms_error_code: Optional[str] = rest_field(name="x-ms-error-code")
+    """Error code. """
+    code: str = rest_field()
+    """The error code. Required. """
+    message: str = rest_field()
+    """The message explaining the error reported by the service. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        code: str,
+        message: str,
+        x_ms_error_code: Optional[str] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class TimeSeriesPoint(_model_base.Model):
+    """The definition of input timeseries points.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar timestamp: Optional argument, timestamp of a data point (ISO8601 format).
+    :vartype timestamp: ~datetime.datetime
+    :ivar value: The measurement of that point, should be float. Required.
+    :vartype value: float
+    """
+
+    timestamp: Optional[datetime.datetime] = rest_field()
+    """Optional argument, timestamp of a data point (ISO8601 format). """
+    value: float = rest_field()
+    """The measurement of that point, should be float. Required. """
+
+    @overload
+    def __init__(
+        self,
+        *,
+        value: float,
+        timestamp: Optional[datetime.datetime] = None,
+    ):
+        ...
+
+    @overload
+    def __init__(self, mapping: Mapping[str, Any]):
+        """
+        :param mapping: raw JSON to initialize the model.
+        :type mapping: Mapping[str, Any]
+        """
+        ...
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+
+class UnivariateChangePointDetectionOptions(_model_base.Model):
     """The request of change point detection.
 
     All required parameters must be populated in order to send to Azure.
@@ -322,7 +974,7 @@ be accepted. """
         super().__init__(*args, **kwargs)
 
 
-class ChangePointDetectResponse(_model_base.Model):
+class UnivariateChangePointDetectionResult(_model_base.Model):
     """The response of change point detection.
 
     Readonly variables are only populated by the server, and will be ignored when sending a request.
@@ -370,196 +1022,7 @@ array is consistent with the input series. """
         super().__init__(*args, **kwargs)
 
 
-class CorrelationChanges(_model_base.Model):
-    """CorrelationChanges.
-
-    :ivar changed_variables: The correlated variables that have correlation changes under an
-     anomaly.
-    :vartype changed_variables: list[str]
-    """
-
-    changed_variables: Optional[List[str]] = rest_field(name="changedVariables")
-    """The correlated variables that have correlation changes under an anomaly. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        changed_variables: Optional[List[str]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class DetectionRequest(_model_base.Model):
-    """Detection request for batch inference. This is an asynchronous inference which
-    will need another API to get detection results.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
-     either pointed to an Azure blob storage folder, or pointed to a CSV file in
-     Azure blob storage based on you data schema selection. The data schema should
-     be exactly the same with those used in the training phase. Required.
-    :vartype data_source: str
-    :ivar top_contributor_count: An optional field, which is used to specify the number of top
-     contributed
-     variables for one anomalous timestamp in the response. The default number is
-     10. Required.
-    :vartype top_contributor_count: int
-    :ivar start_time: A required field, indicating the start time of data for detection, which
-     should
-     be date-time of ISO 8601 format. Required.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: A required field, indicating the end time of data for detection, which should
-     be date-time of ISO 8601 format. Required.
-    :vartype end_time: ~datetime.datetime
-    """
-
-    data_source: str = rest_field(name="dataSource")
-    """Source link to the input data to indicate an accessible Azure storage Uri,
-either pointed to an Azure blob storage folder, or pointed to a CSV file in
-Azure blob storage based on you data schema selection. The data schema should
-be exactly the same with those used in the training phase. Required. """
-    top_contributor_count: int = rest_field(name="topContributorCount")
-    """An optional field, which is used to specify the number of top contributed
-variables for one anomalous timestamp in the response. The default number is
-10. Required. """
-    start_time: datetime.datetime = rest_field(name="startTime")
-    """A required field, indicating the start time of data for detection, which should
-be date-time of ISO 8601 format. Required. """
-    end_time: datetime.datetime = rest_field(name="endTime")
-    """A required field, indicating the end time of data for detection, which should
-be date-time of ISO 8601 format. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        data_source: str,
-        top_contributor_count: int,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class DetectionResult(_model_base.Model):
-    """Detection results for the given resultId.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar result_id: Result identifier, which is used to fetch the results of an inference call.
-     Required.
-    :vartype result_id: str
-    :ivar summary: Multivariate anomaly detection status. Required.
-    :vartype summary: ~anomalydetector.models.DetectionResultSummary
-    :ivar results: Detection result for each timestamp. Required.
-    :vartype results: list[~anomalydetector.models.AnomalyState]
-    """
-
-    result_id: str = rest_field(name="resultId", readonly=True)
-    """Result identifier, which is used to fetch the results of an inference call. Required. """
-    summary: "_models.DetectionResultSummary" = rest_field()
-    """Multivariate anomaly detection status. Required. """
-    results: List["_models.AnomalyState"] = rest_field()
-    """Detection result for each timestamp. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        summary: "_models.DetectionResultSummary",
-        results: List["_models.AnomalyState"],
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class DetectionResultSummary(_model_base.Model):
-    """Multivariate anomaly detection status.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar status: Status of detection results. One of CREATED, RUNNING, READY, and FAILED.
-     Required. Known values are: "CREATED", "RUNNING", "READY", and "FAILED".
-    :vartype status: str or ~anomalydetector.models.DetectionStatus
-    :ivar errors: Error message when detection is failed.
-    :vartype errors: list[~anomalydetector.models.ErrorResponse]
-    :ivar variable_states:
-    :vartype variable_states: list[~anomalydetector.models.VariableState]
-    :ivar setup_info: Detection request for batch inference. This is an asynchronous inference
-     which
-     will need another API to get detection results. Required.
-    :vartype setup_info: ~anomalydetector.models.DetectionRequest
-    """
-
-    status: Union[str, "_models.DetectionStatus"] = rest_field()
-    """Status of detection results. One of CREATED, RUNNING, READY, and FAILED. Required. Known values are: \"CREATED\", \"RUNNING\", \"READY\", and \"FAILED\"."""
-    errors: Optional[List["_models.ErrorResponse"]] = rest_field()
-    """Error message when detection is failed. """
-    variable_states: Optional[List["_models.VariableState"]] = rest_field(name="variableStates")
-    setup_info: "_models.DetectionRequest" = rest_field(name="setupInfo")
-    """Detection request for batch inference. This is an asynchronous inference which
-will need another API to get detection results. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        status: Union[str, "_models.DetectionStatus"],
-        setup_info: "_models.DetectionRequest",
-        errors: Optional[List["_models.ErrorResponse"]] = None,
-        variable_states: Optional[List["_models.VariableState"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class DetectRequest(_model_base.Model):
+class UnivariateDetectionOptions(_model_base.Model):
     """The request of entire or last anomaly detection.
 
     All required parameters must be populated in order to send to Azure.
@@ -659,40 +1122,7 @@ and imputeMode is \"fixed\". """
         super().__init__(*args, **kwargs)
 
 
-class DiagnosticsInfo(_model_base.Model):
-    """Diagnostics information to help inspect the states of model or variable.
-
-    :ivar model_state:
-    :vartype model_state: ~anomalydetector.models.ModelState
-    :ivar variable_states:
-    :vartype variable_states: list[~anomalydetector.models.VariableState]
-    """
-
-    model_state: Optional["_models.ModelState"] = rest_field(name="modelState")
-    variable_states: Optional[List["_models.VariableState"]] = rest_field(name="variableStates")
-
-    @overload
-    def __init__(
-        self,
-        *,
-        model_state: Optional["_models.ModelState"] = None,
-        variable_states: Optional[List["_models.VariableState"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class EntireDetectResponse(_model_base.Model):
+class UnivariateEntireDetectionResult(_model_base.Model):
     """The response of entire anomaly detection.
 
     All required parameters must be populated in order to send to Azure.
@@ -804,121 +1234,7 @@ sever the anomaly is. For normal points, the \"severity\" is always 0. """
         super().__init__(*args, **kwargs)
 
 
-class ErrorResponse(_model_base.Model):
-    """ErrorResponse.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar code: The error code. Required.
-    :vartype code: str
-    :ivar message: The message explaining the error reported by the service. Required.
-    :vartype message: str
-    """
-
-    code: str = rest_field()
-    """The error code. Required. """
-    message: str = rest_field()
-    """The message explaining the error reported by the service. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class LastDetectionRequest(_model_base.Model):
-    """LastDetectionRequest.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar variables: This contains the inference data, including the name, timestamps(ISO 8601) and
-     values of variables. Required.
-    :vartype variables: list[~anomalydetector.models.VariableValues]
-    :ivar top_contributor_count: An optional field, which is used to specify the number of top
-     contributed
-     variables for one anomalous timestamp in the response. The default number is
-     10. Required.
-    :vartype top_contributor_count: int
-    """
-
-    variables: List["_models.VariableValues"] = rest_field()
-    """This contains the inference data, including the name, timestamps(ISO 8601) and
-values of variables. Required. """
-    top_contributor_count: int = rest_field(name="topContributorCount")
-    """An optional field, which is used to specify the number of top contributed
-variables for one anomalous timestamp in the response. The default number is
-10. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        variables: List["_models.VariableValues"],
-        top_contributor_count: int,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class LastDetectionResult(_model_base.Model):
-    """LastDetectionResult.
-
-    :ivar variable_states:
-    :vartype variable_states: list[~anomalydetector.models.VariableState]
-    :ivar results:
-    :vartype results: list[~anomalydetector.models.AnomalyState]
-    """
-
-    variable_states: Optional[List["_models.VariableState"]] = rest_field(name="variableStates")
-    results: Optional[List["_models.AnomalyState"]] = rest_field()
-
-    @overload
-    def __init__(
-        self,
-        *,
-        variable_states: Optional[List["_models.VariableState"]] = None,
-        results: Optional[List["_models.AnomalyState"]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class LastDetectResponse(_model_base.Model):
+class UnivariateLastDetectionResult(_model_base.Model):
     """The response of last anomaly detection.
 
     All required parameters must be populated in order to send to Azure.
@@ -1013,314 +1329,8 @@ sever the anomaly is. For normal points, the \"severity\" is always 0. """
         super().__init__(*args, **kwargs)
 
 
-class Model(_model_base.Model):
-    """Response of getting a model.
-
-    Readonly variables are only populated by the server, and will be ignored when sending a request.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar model_id: Model identifier. Required.
-    :vartype model_id: str
-    :ivar created_time: Date and time (UTC) when the model was created. Required.
-    :vartype created_time: ~datetime.datetime
-    :ivar last_updated_time: Date and time (UTC) when the model was last updated. Required.
-    :vartype last_updated_time: ~datetime.datetime
-    :ivar model_info: Training result of a model including its status, errors and diagnostics
-     information.
-    :vartype model_info: ~anomalydetector.models.ModelInfo
-    """
-
-    model_id: str = rest_field(name="modelId", readonly=True)
-    """Model identifier. Required. """
-    created_time: datetime.datetime = rest_field(name="createdTime")
-    """Date and time (UTC) when the model was created. Required. """
-    last_updated_time: datetime.datetime = rest_field(name="lastUpdatedTime")
-    """Date and time (UTC) when the model was last updated. Required. """
-    model_info: Optional["_models.ModelInfo"] = rest_field(name="modelInfo")
-    """Training result of a model including its status, errors and diagnostics
-information. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        created_time: datetime.datetime,
-        last_updated_time: datetime.datetime,
-        model_info: Optional["_models.ModelInfo"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class ModelInfo(_model_base.Model):
-    """Training result of a model including its status, errors and diagnostics
-    information.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar data_source: Source link to the input data to indicate an accessible Azure storage Uri,
-     either pointed to an Azure blob storage folder, or pointed to a CSV file in
-     Azure blob storage based on you data schema selection. Required.
-    :vartype data_source: str
-    :ivar data_schema: Data schema of input data source: OneTable or MultiTable. The default
-     DataSchema is OneTable. Known values are: "OneTable" and "MultiTable".
-    :vartype data_schema: str or ~anomalydetector.models.DataSchema
-    :ivar start_time: A required field, indicating the start time of training data, which should be
-     date-time of ISO 8601 format. Required.
-    :vartype start_time: ~datetime.datetime
-    :ivar end_time: A required field, indicating the end time of training data, which should be
-     date-time of ISO 8601 format. Required.
-    :vartype end_time: ~datetime.datetime
-    :ivar display_name: An optional field. The display name of the model whose maximum length is 24
-     characters.
-    :vartype display_name: str
-    :ivar sliding_window: An optional field, indicating how many previous timestamps will be used
-     to
-     detect whether the timestamp is anomaly or not.
-    :vartype sliding_window: int
-    :ivar align_policy: An optional field, indicating the manner to align multiple variables.
-    :vartype align_policy: ~anomalydetector.models.AlignPolicy
-    :ivar status: Model status. One of CREATED, RUNNING, READY, and FAILED. Known values are:
-     "CREATED", "RUNNING", "READY", and "FAILED".
-    :vartype status: str or ~anomalydetector.models.ModelStatus
-    :ivar errors: Error messages when failed to create a model.
-    :vartype errors: list[~anomalydetector.models.ErrorResponse]
-    :ivar diagnostics_info: Diagnostics information to help inspect the states of model or
-     variable.
-    :vartype diagnostics_info: ~anomalydetector.models.DiagnosticsInfo
-    """
-
-    data_source: str = rest_field(name="dataSource")
-    """Source link to the input data to indicate an accessible Azure storage Uri,
-either pointed to an Azure blob storage folder, or pointed to a CSV file in
-Azure blob storage based on you data schema selection. Required. """
-    data_schema: Optional[Union[str, "_models.DataSchema"]] = rest_field(name="dataSchema")
-    """Data schema of input data source: OneTable or MultiTable. The default
-DataSchema is OneTable. Known values are: \"OneTable\" and \"MultiTable\"."""
-    start_time: datetime.datetime = rest_field(name="startTime")
-    """A required field, indicating the start time of training data, which should be
-date-time of ISO 8601 format. Required. """
-    end_time: datetime.datetime = rest_field(name="endTime")
-    """A required field, indicating the end time of training data, which should be
-date-time of ISO 8601 format. Required. """
-    display_name: Optional[str] = rest_field(name="displayName")
-    """An optional field. The display name of the model whose maximum length is 24
-characters. """
-    sliding_window: Optional[int] = rest_field(name="slidingWindow")
-    """An optional field, indicating how many previous timestamps will be used to
-detect whether the timestamp is anomaly or not. """
-    align_policy: Optional["_models.AlignPolicy"] = rest_field(name="alignPolicy")
-    """An optional field, indicating the manner to align multiple variables. """
-    status: Optional[Union[str, "_models.ModelStatus"]] = rest_field()
-    """Model status. One of CREATED, RUNNING, READY, and FAILED. Known values are: \"CREATED\", \"RUNNING\", \"READY\", and \"FAILED\"."""
-    errors: Optional[List["_models.ErrorResponse"]] = rest_field()
-    """Error messages when failed to create a model. """
-    diagnostics_info: Optional["_models.DiagnosticsInfo"] = rest_field(name="diagnosticsInfo")
-    """Diagnostics information to help inspect the states of model or variable. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        data_source: str,
-        start_time: datetime.datetime,
-        end_time: datetime.datetime,
-        data_schema: Optional[Union[str, "_models.DataSchema"]] = None,
-        display_name: Optional[str] = None,
-        sliding_window: Optional[int] = None,
-        align_policy: Optional["_models.AlignPolicy"] = None,
-        status: Optional[Union[str, "_models.ModelStatus"]] = None,
-        errors: Optional[List["_models.ErrorResponse"]] = None,
-        diagnostics_info: Optional["_models.DiagnosticsInfo"] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class ModelList(_model_base.Model):
-    """Response of listing models.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar models: List of models. Required.
-    :vartype models: list[~anomalydetector.models.Model]
-    :ivar current_count: Number of trained multivariate models. Required.
-    :vartype current_count: int
-    :ivar max_count: Maximum number of models that can be trained for this Anomaly Detector
-     resource. Required.
-    :vartype max_count: int
-    :ivar next_link: The link to fetch more models.
-    :vartype next_link: str
-    """
-
-    models: List["_models.Model"] = rest_field()
-    """List of models. Required. """
-    current_count: int = rest_field(name="currentCount")
-    """Number of trained multivariate models. Required. """
-    max_count: int = rest_field(name="maxCount")
-    """Maximum number of models that can be trained for this Anomaly Detector resource. Required. """
-    next_link: Optional[str] = rest_field(name="nextLink")
-    """The link to fetch more models. """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class ModelState(_model_base.Model):
-    """ModelState.
-
-    :ivar epoch_ids: This indicates the number of passes of the entire training dataset the
-     algorithm has completed.
-    :vartype epoch_ids: list[int]
-    :ivar train_losses: List of metrics used to assess how the model fits the training data for
-     each
-     epoch.
-    :vartype train_losses: list[float]
-    :ivar validation_losses: List of metrics used to assess how the model fits the validation set
-     for each
-     epoch.
-    :vartype validation_losses: list[float]
-    :ivar latencies_in_seconds: Latency for each epoch.
-    :vartype latencies_in_seconds: list[float]
-    """
-
-    epoch_ids: Optional[List[int]] = rest_field(name="epochIds")
-    """This indicates the number of passes of the entire training dataset the
-algorithm has completed. """
-    train_losses: Optional[List[float]] = rest_field(name="trainLosses")
-    """List of metrics used to assess how the model fits the training data for each
-epoch. """
-    validation_losses: Optional[List[float]] = rest_field(name="validationLosses")
-    """List of metrics used to assess how the model fits the validation set for each
-epoch. """
-    latencies_in_seconds: Optional[List[float]] = rest_field(name="latenciesInSeconds")
-    """Latency for each epoch. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        epoch_ids: Optional[List[int]] = None,
-        train_losses: Optional[List[float]] = None,
-        validation_losses: Optional[List[float]] = None,
-        latencies_in_seconds: Optional[List[float]] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class ResponseError(_model_base.Model):
-    """Error response.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar x_ms_error_code: Error code.
-    :vartype x_ms_error_code: str
-    :ivar code: The error code. Required.
-    :vartype code: str
-    :ivar message: The message explaining the error reported by the service. Required.
-    :vartype message: str
-    """
-
-    x_ms_error_code: Optional[str] = rest_field(name="x-ms-error-code")
-    """Error code. """
-    code: str = rest_field()
-    """The error code. Required. """
-    message: str = rest_field()
-    """The message explaining the error reported by the service. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        code: str,
-        message: str,
-        x_ms_error_code: Optional[str] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
-class TimeSeriesPoint(_model_base.Model):
-    """The definition of input timeseries points.
-
-    All required parameters must be populated in order to send to Azure.
-
-    :ivar timestamp: Optional argument, timestamp of a data point (ISO8601 format).
-    :vartype timestamp: ~datetime.datetime
-    :ivar value: The measurement of that point, should be float. Required.
-    :vartype value: float
-    """
-
-    timestamp: Optional[datetime.datetime] = rest_field()
-    """Optional argument, timestamp of a data point (ISO8601 format). """
-    value: float = rest_field()
-    """The measurement of that point, should be float. Required. """
-
-    @overload
-    def __init__(
-        self,
-        *,
-        value: float,
-        timestamp: Optional[datetime.datetime] = None,
-    ):
-        ...
-
-    @overload
-    def __init__(self, mapping: Mapping[str, Any]):
-        """
-        :param mapping: raw JSON to initialize the model.
-        :type mapping: Mapping[str, Any]
-        """
-        ...
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-
 class VariableState(_model_base.Model):
-    """VariableState.
+    """Variable Status.
 
     :ivar variable: Variable name in variable states.
     :vartype variable: str
@@ -1370,7 +1380,7 @@ class VariableState(_model_base.Model):
 
 
 class VariableValues(_model_base.Model):
-    """VariableValues.
+    """Variable values.
 
     All required parameters must be populated in order to send to Azure.
 

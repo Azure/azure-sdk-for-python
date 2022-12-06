@@ -19,14 +19,14 @@ from azure.core.credentials import AzureKeyCredential
 from test_data import get_test_data
 
 AnomalyDetectorEnvPreparer = functools.partial(
-    PowerShellPreparer, 
+    PowerShellPreparer,
     "anomaly_detector",
     anomaly_detector_endpoint="https://fake_ad_resource.cognitiveservices.azure.com/",
-    anomaly_detector_key="00000000000000000000000000000000"
+    anomaly_detector_key="00000000000000000000000000000000",
 )
 
+
 class TestAnomalyDetector(AzureRecordedTestCase):
-    
     @AnomalyDetectorEnvPreparer()
     @recorded_by_proxy
     def test_entire_detect(self, anomaly_detector_endpoint, anomaly_detector_key):

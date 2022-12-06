@@ -40,7 +40,7 @@ class APIVersion(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 
 class DataSchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Data schema of input data source: OneTable or MultiTable. The default DataSchema is OneTable."""
+    """DataSchema."""
 
     #: OneTable means that your input data are all in one CSV file, which contains one 'timestamp'
     #: column and several variable columns. The default DataSchema is OneTable.
@@ -49,15 +49,6 @@ class DataSchema(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: containing one 'timestamp' column and one 'variable' column, and the CSV file name should
     #: indicate the name of the variable. The default DataSchema is OneTable.
     MULTI_TABLE = "MultiTable"
-
-
-class DetectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """DetectionStatus."""
-
-    CREATED = "CREATED"
-    RUNNING = "RUNNING"
-    READY = "READY"
-    FAILED = "FAILED"
 
 
 class FillNAMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -83,6 +74,15 @@ class ImputeMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
 class ModelStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """ModelStatus."""
+
+    CREATED = "CREATED"
+    RUNNING = "RUNNING"
+    READY = "READY"
+    FAILED = "FAILED"
+
+
+class MultivariateBatchDetectionStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """MultivariateBatchDetectionStatus."""
 
     CREATED = "CREATED"
     RUNNING = "RUNNING"
