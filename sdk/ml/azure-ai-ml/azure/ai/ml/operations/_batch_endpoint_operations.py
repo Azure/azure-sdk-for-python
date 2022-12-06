@@ -30,7 +30,7 @@ from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, modified_operation_client
+from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, is_private_preview_enabled, modified_operation_client
 from azure.ai.ml.constants._common import (
     ARM_ID_FULL_PREFIX,
     BASE_PATH_CONTEXT_KEY,
@@ -44,7 +44,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities import BatchEndpoint, BatchJob
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException, ValidationErrorType, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
@@ -201,6 +201,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         *,
         deployment_name: str = None,
         inputs: Dict[str, Input] = None,
+        outputs: Dict[str, Output] = None,
+        job_name: str = None,
         **kwargs,
     ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
@@ -213,6 +215,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :param inputs: (Optional) A dictionary of existing data asset, public uri file or folder
             to use with the deployment
         :type inputs: Dict[str, Input]
+        :param outputs: (Optional) A dictionary to specify in which datastore to save the output
+        :type outputs: Dict[str, Output]
+        :param job_name: Name of the job for batch invoke
+        :type job_name: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets
@@ -256,6 +262,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 error_category=ErrorCategory.USER_ERROR,
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
+
+        if is_private_preview_enabled():
+            if outputs:
+                params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
+            if job_name:
+                params_override.append({EndpointYamlFields.BATCH_JOB_NAME: job_name})
 
         # Batch job doesn't have a python class, loading a rest object using params override
         context = {

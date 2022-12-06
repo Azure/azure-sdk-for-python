@@ -13,6 +13,7 @@ from azure.ai.ml._restclient.v2020_09_01_dataplanepreview.models import (
     BatchJob,
     DataVersion,
     UriFileJobInput,
+    UriFileJobOutput,
     UriFolderJobInput,
 )
 from azure.ai.ml._schema.core.fields import ArmStr, NestedField
@@ -22,7 +23,7 @@ from azure.ai.ml.constants import AssetTypes
 from azure.ai.ml.constants._common import AzureMLResourceType
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities import ComputeConfiguration
-from azure.ai.ml.entities._inputs_outputs import Input
+from azure.ai.ml.entities._inputs_outputs import Input, Output
 
 from .batch_deployment_settings import BatchRetrySettingsSchema
 from .compute_binding import ComputeBindingSchema
@@ -58,6 +59,13 @@ class BatchJobSchema(PathAwareSchema):
                         data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = UriFileJobInput(uri=input_data.path)
                     elif input_data.type == AssetTypes.URI_FOLDER:
                         data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = UriFolderJobInput(uri=input_data.path)
+
+        if data.get(EndpointYamlFields.BATCH_JOB_OUTPUT_DATA, None):
+            for key, output_data in data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA].items():
+                if isinstance(output_data, Output):
+                    if output_data.type == AssetTypes.URI_FILE:
+                        data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA][key] = UriFileJobOutput(mode=output_data.mode, uri=output_data.path)
+
         if data.get(EndpointYamlFields.COMPUTE, None):
             data[EndpointYamlFields.COMPUTE] = ComputeConfiguration(
                 **data[EndpointYamlFields.COMPUTE]
