@@ -54,7 +54,7 @@ def build_list_by_replication_protection_containers_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -93,7 +93,7 @@ def build_get_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -135,7 +135,7 @@ def build_create_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -179,7 +179,7 @@ def build_purge_request(
 ) -> HttpRequest:
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     # Construct URL
     _url = kwargs.pop(
         "template_url",
@@ -216,7 +216,7 @@ def build_update_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -261,7 +261,7 @@ def build_add_disks_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -306,7 +306,7 @@ def build_apply_recovery_point_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -351,7 +351,7 @@ def build_failover_cancel_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -393,7 +393,7 @@ def build_failover_commit_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -435,7 +435,7 @@ def build_planned_failover_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -480,7 +480,7 @@ def build_delete_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     # Construct URL
     _url = kwargs.pop(
@@ -522,7 +522,7 @@ def build_remove_disks_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -567,7 +567,7 @@ def build_repair_replication_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -609,7 +609,7 @@ def build_reprotect_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -654,7 +654,7 @@ def build_resolve_health_errors_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -699,7 +699,7 @@ def build_switch_provider_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -744,7 +744,7 @@ def build_test_failover_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -789,7 +789,7 @@ def build_test_failover_cleanup_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -834,7 +834,7 @@ def build_unplanned_failover_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -879,7 +879,7 @@ def build_update_appliance_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -924,7 +924,7 @@ def build_update_mobility_service_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
     accept = _headers.pop("Accept", "application/json")
 
@@ -969,7 +969,7 @@ def build_list_request(
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version: Literal["2022-09-10"] = kwargs.pop("api_version", _params.pop("api-version", "2022-09-10"))
+    api_version: Literal["2022-10-01"] = kwargs.pop("api_version", _params.pop("api-version", "2022-10-01"))
     accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
@@ -1039,7 +1039,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ReplicationProtectedItemCollection] = kwargs.pop("cls", None)
@@ -1144,7 +1144,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
@@ -1204,7 +1204,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1382,7 +1382,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1444,7 +1444,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1512,7 +1512,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[None] = kwargs.pop("cls", None)
@@ -1574,7 +1574,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1755,7 +1755,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -1822,7 +1822,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2000,7 +2000,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2067,7 +2067,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2248,7 +2248,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2310,7 +2310,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[Optional[_models.ReplicationProtectedItem]] = kwargs.pop("cls", None)
@@ -2384,7 +2384,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
@@ -2443,7 +2443,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[Optional[_models.ReplicationProtectedItem]] = kwargs.pop("cls", None)
@@ -2517,7 +2517,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
@@ -2581,7 +2581,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2760,7 +2760,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2827,7 +2827,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -2999,7 +2999,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -3064,7 +3064,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -3243,7 +3243,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -3305,7 +3305,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[Optional[_models.ReplicationProtectedItem]] = kwargs.pop("cls", None)
@@ -3380,7 +3380,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ReplicationProtectedItem] = kwargs.pop("cls", None)
@@ -3444,7 +3444,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -3624,7 +3624,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -3691,7 +3691,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -3871,7 +3871,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -3938,7 +3938,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -4119,7 +4119,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -4188,7 +4188,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -4367,7 +4367,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -4434,7 +4434,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -4614,7 +4614,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -4681,7 +4681,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -4860,7 +4860,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -4927,7 +4927,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -5109,7 +5109,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -5176,7 +5176,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -5219,11 +5219,15 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             raise HttpResponseError(response=response, error_format=ARMErrorFormat)
 
         deserialized = None
+        response_headers = {}
         if response.status_code == 200:
             deserialized = self._deserialize("ReplicationProtectedItem", pipeline_response)
 
+        if response.status_code == 202:
+            response_headers["Location"] = self._deserialize("str", response.headers.get("Location"))
+
         if cls:
-            return cls(pipeline_response, deserialized, {})
+            return cls(pipeline_response, deserialized, response_headers)
 
         return deserialized
 
@@ -5368,7 +5372,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
@@ -5398,7 +5402,9 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
             return deserialized
 
         if polling is True:
-            polling_method: PollingMethod = cast(PollingMethod, ARMPolling(lro_delay, **kwargs))
+            polling_method: PollingMethod = cast(
+                PollingMethod, ARMPolling(lro_delay, lro_options={"final-state-via": "location"}, **kwargs)
+            )
         elif polling is False:
             polling_method = cast(PollingMethod, NoPolling())
         else:
@@ -5439,7 +5445,7 @@ class ReplicationProtectedItemsOperations:  # pylint: disable=too-many-public-me
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version: Literal["2022-09-10"] = kwargs.pop(
+        api_version: Literal["2022-10-01"] = kwargs.pop(
             "api_version", _params.pop("api-version", self._config.api_version)
         )
         cls: ClsType[_models.ReplicationProtectedItemCollection] = kwargs.pop("cls", None)
