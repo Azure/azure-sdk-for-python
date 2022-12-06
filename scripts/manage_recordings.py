@@ -38,6 +38,10 @@ import subprocess
 #
 # - In addition to "push", you can also use the "restore" or "reset" verbs in the same command format.
 #
+#   * push: pushes recording updates to a new assets repo tag and updates the tag pointer in `assets.json`.
+#   * restore: fetches recordings from the assets repo, based on the tag pointer in `assets.json`.
+#   * reset: discards any pending changes to recordings, based on the tag pointer in `assets.json`.
+#
 # For more information about how recording asset synchronization, please refer to
 # https://github.com/Azure/azure-sdk-tools/blob/main/tools/test-proxy/documentation/asset-sync/README.md.
 
