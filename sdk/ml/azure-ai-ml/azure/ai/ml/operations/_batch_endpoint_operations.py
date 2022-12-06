@@ -30,7 +30,11 @@ from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
 from azure.ai.ml._utils._logger_utils import OpsLogger
-from azure.ai.ml._utils.utils import _get_mfe_base_url_from_discovery_service, is_private_preview_enabled, modified_operation_client
+from azure.ai.ml._utils.utils import (
+    _get_mfe_base_url_from_discovery_service,
+    is_private_preview_enabled,
+    modified_operation_client,
+)
 from azure.ai.ml.constants._common import (
     ARM_ID_FULL_PREFIX,
     BASE_PATH_CONTEXT_KEY,

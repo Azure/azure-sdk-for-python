@@ -64,7 +64,7 @@ class BatchJobSchema(PathAwareSchema):
             for key, output_data in data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA].items():
                 if isinstance(output_data, Output):
                     if output_data.type == AssetTypes.URI_FILE:
-                        data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA][key] = UriFileJobOutput(mode=output_data.mode, uri=output_data.path)
+                        data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA][key] = UriFileJobOutput(mode=output_data.mode, uri=output_data.path) # pylint: disable=line-too-long
 
         if data.get(EndpointYamlFields.COMPUTE, None):
             data[EndpointYamlFields.COMPUTE] = ComputeConfiguration(
