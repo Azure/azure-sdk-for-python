@@ -42,7 +42,7 @@ class TestAnomalyDetector(AzureRecordedTestCase):
                 TimeSeriesPoint(timestamp=datetime.strptime(data["timestamp"][i], time_format), value=data["value"][i])
             )
 
-        request = DetectRequest(
+        request = UnivariateDetectionOptions(
             series=series,
             granularity=TimeGranularity.DAILY,
         )
