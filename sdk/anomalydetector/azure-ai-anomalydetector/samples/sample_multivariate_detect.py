@@ -38,9 +38,7 @@ class MultivariateSample:
         # Create an Anomaly Detector client
 
         # <client>
-        self.ad_client = AnomalyDetectorClient(
-            self.end_point, AzureKeyCredential(self.sub_key)
-        )
+        self.ad_client = AnomalyDetectorClient(self.end_point, AzureKeyCredential(self.sub_key))
         # </client>
 
     def list_models(self):
@@ -66,9 +64,7 @@ class MultivariateSample:
             model_status = None
             model_info = None
 
-            while (
-                model_status != ModelStatus.READY and model_status != ModelStatus.FAILED
-            ):
+            while model_status != ModelStatus.READY and model_status != ModelStatus.FAILED:
                 model_info = self.ad_client.get_multivariate_model(trained_model_id)
                 print(model_info)
                 model_status = model_info.model_info.status
@@ -119,10 +115,7 @@ class MultivariateSample:
             r = self.ad_client.get_multivariate_batch_detection_result(result_id)
             print("Get detection result...(it may take a few seconds)")
 
-            while (
-                r.summary.status != DetectionStatus.READY
-                and r.summary.status != DetectionStatus.FAILED
-            ):
+            while r.summary.status != DetectionStatus.READY and r.summary.status != DetectionStatus.FAILED:
                 r = self.ad_client.get_multivariate_batch_detection_result(result_id)
                 print("Detection is {}".format(r.summary.status))
                 time.sleep(15)
@@ -131,11 +124,7 @@ class MultivariateSample:
                 print("Detection failed.")
                 print("Errors:")
                 if len(r.summary.errors) > 0:
-                    print(
-                        "Error code: {}. Message: {}".format(
-                            r.summary.errors[0].code, r.summary.errors[0].message
-                        )
-                    )
+                    print("Error code: {}. Message: {}".format(r.summary.errors[0].code, r.summary.errors[0].message))
                 else:
                     print("None")
                 return None

@@ -37,9 +37,14 @@ from devtools_testutils import test_proxy, add_general_regex_sanitizer
 
 load_dotenv()
 
+
 @pytest.fixture(scope="session", autouse=True)
 def add_sanitizers(test_proxy):
     anomaly_detector_endpoint = os.environ.get("ANOMALY_DETECTOR_KEY", "00000000000000000000000000000000")
-    anomaly_detector_key = os.environ.get("ANOMALY_DETECTOR_ENDPOINT", "https://fake_ad_resource.cognitiveservices.azure.com/")
+    anomaly_detector_key = os.environ.get(
+        "ANOMALY_DETECTOR_ENDPOINT", "https://fake_ad_resource.cognitiveservices.azure.com/"
+    )
     add_general_regex_sanitizer(regex=anomaly_detector_endpoint, value="00000000000000000000000000000000")
-    add_general_regex_sanitizer(regex=anomaly_detector_key, value="https://fake_ad_resource.cognitiveservices.azure.com/")
+    add_general_regex_sanitizer(
+        regex=anomaly_detector_key, value="https://fake_ad_resource.cognitiveservices.azure.com/"
+    )

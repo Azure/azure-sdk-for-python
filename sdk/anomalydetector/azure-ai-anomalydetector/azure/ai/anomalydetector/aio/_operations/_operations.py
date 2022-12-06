@@ -29,7 +29,6 @@ from azure.core.utils import case_insensitive_dict
 from ... import models as _models
 from ..._model_base import AzureJSONEncoder, _deserialize
 from ..._operations._operations import (
-    build_anomaly_detector_create_and_train_multivariate_model_request,
     build_anomaly_detector_delete_multivariate_model_request,
     build_anomaly_detector_detect_multivariate_batch_anomaly_request,
     build_anomaly_detector_detect_multivariate_last_anomaly_request,
@@ -39,6 +38,7 @@ from ..._operations._operations import (
     build_anomaly_detector_get_multivariate_batch_detection_result_request,
     build_anomaly_detector_get_multivariate_model_request,
     build_anomaly_detector_list_multivariate_models_request,
+    build_anomaly_detector_train_multivariate_model_request,
 )
 from .._vendor import AnomalyDetectorClientMixinABC
 
@@ -54,8 +54,8 @@ ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T
 class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
     @overload
     async def detect_univariate_entire_series(
-        self, body: Union[_models.DetectRequest, JSON], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EntireDetectResponse:
+        self, options: _models.UnivariateDetectionOptions, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UnivariateEntireDetectionResult:
         """Detect anomalies for the entire series in batch.
 
         This operation generates a model with an entire series, each point is detected
@@ -63,20 +63,21 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         are used to determine whether it is an anomaly. The entire detection can give
         user an overall status of the time series.
 
-        :param body: Required.
-        :type body: ~anomalydetector.models.DetectRequest or JSON
+        :param options: Method of univariate anomaly detection. Required.
+        :type options: ~anomalydetector.models.UnivariateDetectionOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: EntireDetectResponse. The EntireDetectResponse is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.EntireDetectResponse
+        :return: UnivariateEntireDetectionResult. The UnivariateEntireDetectionResult is compatible
+         with MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateEntireDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def detect_univariate_entire_series(
-        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.EntireDetectResponse:
+        self, options: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UnivariateEntireDetectionResult:
         """Detect anomalies for the entire series in batch.
 
         This operation generates a model with an entire series, each point is detected
@@ -84,20 +85,43 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         are used to determine whether it is an anomaly. The entire detection can give
         user an overall status of the time series.
 
-        :param body: Required.
-        :type body: IO
+        :param options: Method of univariate anomaly detection. Required.
+        :type options: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UnivariateEntireDetectionResult. The UnivariateEntireDetectionResult is compatible
+         with MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateEntireDetectionResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def detect_univariate_entire_series(
+        self, options: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UnivariateEntireDetectionResult:
+        """Detect anomalies for the entire series in batch.
+
+        This operation generates a model with an entire series, each point is detected
+        with the same model. With this method, points before and after a certain point
+        are used to determine whether it is an anomaly. The entire detection can give
+        user an overall status of the time series.
+
+        :param options: Method of univariate anomaly detection. Required.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: EntireDetectResponse. The EntireDetectResponse is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.EntireDetectResponse
+        :return: UnivariateEntireDetectionResult. The UnivariateEntireDetectionResult is compatible
+         with MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateEntireDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def detect_univariate_entire_series(
-        self, body: Union[_models.DetectRequest, JSON, IO], **kwargs: Any
-    ) -> _models.EntireDetectResponse:
+        self, options: Union[_models.UnivariateDetectionOptions, JSON, IO], **kwargs: Any
+    ) -> _models.UnivariateEntireDetectionResult:
         """Detect anomalies for the entire series in batch.
 
         This operation generates a model with an entire series, each point is detected
@@ -105,13 +129,15 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         are used to determine whether it is an anomaly. The entire detection can give
         user an overall status of the time series.
 
-        :param body: Is either a model type or a IO type. Required.
-        :type body: ~anomalydetector.models.DetectRequest or JSON or IO
+        :param options: Method of univariate anomaly detection. Is one of the following types: model,
+         JSON, IO Required.
+        :type options: ~anomalydetector.models.UnivariateDetectionOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: EntireDetectResponse. The EntireDetectResponse is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.EntireDetectResponse
+        :return: UnivariateEntireDetectionResult. The UnivariateEntireDetectionResult is compatible
+         with MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateEntireDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -126,14 +152,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.EntireDetectResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UnivariateEntireDetectionResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(options, (IO, bytes)):
+            _content = options
         else:
-            _content = json.dumps(body, cls=AzureJSONEncoder)
+            _content = json.dumps(options, cls=AzureJSONEncoder)
 
         request = build_anomaly_detector_detect_univariate_entire_series_request(
             content_type=content_type,
@@ -160,7 +186,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             error = _deserialize(_models.AnomalyDetectorError, response.json())
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = _deserialize(_models.EntireDetectResponse, response.json())
+        deserialized = _deserialize(_models.UnivariateEntireDetectionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -169,58 +195,82 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
     @overload
     async def detect_univariate_last_point(
-        self, body: Union[_models.DetectRequest, JSON], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.LastDetectResponse:
+        self, options: _models.UnivariateDetectionOptions, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UnivariateLastDetectionResult:
         """Detect anomaly status of the latest point in time series.
 
         This operation generates a model using the points that you sent into the API,
         and based on all data to determine whether the last point is anomalous.
 
-        :param body: Required.
-        :type body: ~anomalydetector.models.DetectRequest or JSON
+        :param options: Method of univariate anomaly detection. Required.
+        :type options: ~anomalydetector.models.UnivariateDetectionOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: LastDetectResponse. The LastDetectResponse is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.LastDetectResponse
+        :return: UnivariateLastDetectionResult. The UnivariateLastDetectionResult is compatible with
+         MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateLastDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def detect_univariate_last_point(
-        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.LastDetectResponse:
+        self, options: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UnivariateLastDetectionResult:
         """Detect anomaly status of the latest point in time series.
 
         This operation generates a model using the points that you sent into the API,
         and based on all data to determine whether the last point is anomalous.
 
-        :param body: Required.
-        :type body: IO
+        :param options: Method of univariate anomaly detection. Required.
+        :type options: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UnivariateLastDetectionResult. The UnivariateLastDetectionResult is compatible with
+         MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateLastDetectionResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def detect_univariate_last_point(
+        self, options: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UnivariateLastDetectionResult:
+        """Detect anomaly status of the latest point in time series.
+
+        This operation generates a model using the points that you sent into the API,
+        and based on all data to determine whether the last point is anomalous.
+
+        :param options: Method of univariate anomaly detection. Required.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: LastDetectResponse. The LastDetectResponse is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.LastDetectResponse
+        :return: UnivariateLastDetectionResult. The UnivariateLastDetectionResult is compatible with
+         MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateLastDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def detect_univariate_last_point(
-        self, body: Union[_models.DetectRequest, JSON, IO], **kwargs: Any
-    ) -> _models.LastDetectResponse:
+        self, options: Union[_models.UnivariateDetectionOptions, JSON, IO], **kwargs: Any
+    ) -> _models.UnivariateLastDetectionResult:
         """Detect anomaly status of the latest point in time series.
 
         This operation generates a model using the points that you sent into the API,
         and based on all data to determine whether the last point is anomalous.
 
-        :param body: Is either a model type or a IO type. Required.
-        :type body: ~anomalydetector.models.DetectRequest or JSON or IO
+        :param options: Method of univariate anomaly detection. Is one of the following types: model,
+         JSON, IO Required.
+        :type options: ~anomalydetector.models.UnivariateDetectionOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: LastDetectResponse. The LastDetectResponse is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.LastDetectResponse
+        :return: UnivariateLastDetectionResult. The UnivariateLastDetectionResult is compatible with
+         MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateLastDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -235,14 +285,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.LastDetectResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UnivariateLastDetectionResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(options, (IO, bytes)):
+            _content = options
         else:
-            _content = json.dumps(body, cls=AzureJSONEncoder)
+            _content = json.dumps(options, cls=AzureJSONEncoder)
 
         request = build_anomaly_detector_detect_univariate_last_point_request(
             content_type=content_type,
@@ -269,7 +319,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             error = _deserialize(_models.AnomalyDetectorError, response.json())
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = _deserialize(_models.LastDetectResponse, response.json())
+        deserialized = _deserialize(_models.UnivariateLastDetectionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -279,61 +329,81 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
     @overload
     async def detect_univariate_change_point(
         self,
-        body: Union[_models.ChangePointDetectRequest, JSON],
+        options: _models.UnivariateChangePointDetectionOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.ChangePointDetectResponse:
+    ) -> _models.UnivariateChangePointDetectionResult:
         """Detect change point for the entire series.
 
         Evaluate change point score of every series point.
 
-        :param body: Required.
-        :type body: ~anomalydetector.models.ChangePointDetectRequest or JSON
+        :param options: Method of univariate anomaly detection. Required.
+        :type options: ~anomalydetector.models.UnivariateChangePointDetectionOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ChangePointDetectResponse. The ChangePointDetectResponse is compatible with
-         MutableMapping
-        :rtype: ~anomalydetector.models.ChangePointDetectResponse
+        :return: UnivariateChangePointDetectionResult. The UnivariateChangePointDetectionResult is
+         compatible with MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateChangePointDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def detect_univariate_change_point(
-        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.ChangePointDetectResponse:
+        self, options: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UnivariateChangePointDetectionResult:
         """Detect change point for the entire series.
 
         Evaluate change point score of every series point.
 
-        :param body: Required.
-        :type body: IO
+        :param options: Method of univariate anomaly detection. Required.
+        :type options: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: UnivariateChangePointDetectionResult. The UnivariateChangePointDetectionResult is
+         compatible with MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateChangePointDetectionResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def detect_univariate_change_point(
+        self, options: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.UnivariateChangePointDetectionResult:
+        """Detect change point for the entire series.
+
+        Evaluate change point score of every series point.
+
+        :param options: Method of univariate anomaly detection. Required.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: ChangePointDetectResponse. The ChangePointDetectResponse is compatible with
-         MutableMapping
-        :rtype: ~anomalydetector.models.ChangePointDetectResponse
+        :return: UnivariateChangePointDetectionResult. The UnivariateChangePointDetectionResult is
+         compatible with MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateChangePointDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def detect_univariate_change_point(
-        self, body: Union[_models.ChangePointDetectRequest, JSON, IO], **kwargs: Any
-    ) -> _models.ChangePointDetectResponse:
+        self, options: Union[_models.UnivariateChangePointDetectionOptions, JSON, IO], **kwargs: Any
+    ) -> _models.UnivariateChangePointDetectionResult:
         """Detect change point for the entire series.
 
         Evaluate change point score of every series point.
 
-        :param body: Is either a model type or a IO type. Required.
-        :type body: ~anomalydetector.models.ChangePointDetectRequest or JSON or IO
+        :param options: Method of univariate anomaly detection. Is one of the following types: model,
+         JSON, IO Required.
+        :type options: ~anomalydetector.models.UnivariateChangePointDetectionOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: ChangePointDetectResponse. The ChangePointDetectResponse is compatible with
-         MutableMapping
-        :rtype: ~anomalydetector.models.ChangePointDetectResponse
+        :return: UnivariateChangePointDetectionResult. The UnivariateChangePointDetectionResult is
+         compatible with MutableMapping
+        :rtype: ~anomalydetector.models.UnivariateChangePointDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -348,14 +418,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.ChangePointDetectResponse] = kwargs.pop("cls", None)
+        cls: ClsType[_models.UnivariateChangePointDetectionResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(options, (IO, bytes)):
+            _content = options
         else:
-            _content = json.dumps(body, cls=AzureJSONEncoder)
+            _content = json.dumps(options, cls=AzureJSONEncoder)
 
         request = build_anomaly_detector_detect_univariate_change_point_request(
             content_type=content_type,
@@ -382,7 +452,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             error = _deserialize(_models.AnomalyDetectorError, response.json())
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = _deserialize(_models.ChangePointDetectResponse, response.json())
+        deserialized = _deserialize(_models.UnivariateChangePointDetectionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -390,16 +460,19 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         return deserialized  # type: ignore
 
     @distributed_trace_async
-    async def get_multivariate_batch_detection_result(self, result_id: str, **kwargs: Any) -> _models.DetectionResult:
+    async def get_multivariate_batch_detection_result(
+        self, result_id: str, **kwargs: Any
+    ) -> _models.MultivariateDetectionResult:
         """Get Multivariate Anomaly Detection Result.
 
         For asynchronous inference, get multivariate anomaly detection result based on
         resultId returned by the BatchDetectAnomaly api.
 
-        :param result_id: Required.
+        :param result_id: ID of a batch detection result. Required.
         :type result_id: str
-        :return: DetectionResult. The DetectionResult is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.DetectionResult
+        :return: MultivariateDetectionResult. The MultivariateDetectionResult is compatible with
+         MutableMapping
+        :rtype: ~anomalydetector.models.MultivariateDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -413,7 +486,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.DetectionResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MultivariateDetectionResult] = kwargs.pop("cls", None)
 
         request = build_anomaly_detector_get_multivariate_batch_detection_result_request(
             result_id=result_id,
@@ -439,7 +512,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             error = _deserialize(_models.ResponseError, response.json())
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = _deserialize(_models.DetectionResult, response.json())
+        deserialized = _deserialize(_models.MultivariateDetectionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -447,9 +520,9 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         return deserialized  # type: ignore
 
     @overload
-    async def create_and_train_multivariate_model(
-        self, body: Union[_models.ModelInfo, JSON], *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Model:
+    async def train_multivariate_model(
+        self, model_info: _models.ModelInfo, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AnomalyDetectionModel:
         """Train a Multivariate Anomaly Detection Model.
 
         Create and train a multivariate anomaly detection model. The request must
@@ -460,20 +533,20 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         a CSV file in Azure blob storage, which contains all the variables and a
         timestamp column.
 
-        :param body: Required.
-        :type body: ~anomalydetector.models.ModelInfo or JSON
+        :param model_info: Model information. Required.
+        :type model_info: ~anomalydetector.models.ModelInfo
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Model. The Model is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.Model
+        :return: AnomalyDetectionModel. The AnomalyDetectionModel is compatible with MutableMapping
+        :rtype: ~anomalydetector.models.AnomalyDetectionModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
-    async def create_and_train_multivariate_model(
-        self, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.Model:
+    async def train_multivariate_model(
+        self, model_info: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AnomalyDetectionModel:
         """Train a Multivariate Anomaly Detection Model.
 
         Create and train a multivariate anomaly detection model. The request must
@@ -484,20 +557,44 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         a CSV file in Azure blob storage, which contains all the variables and a
         timestamp column.
 
-        :param body: Required.
-        :type body: IO
+        :param model_info: Model information. Required.
+        :type model_info: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: AnomalyDetectionModel. The AnomalyDetectionModel is compatible with MutableMapping
+        :rtype: ~anomalydetector.models.AnomalyDetectionModel
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def train_multivariate_model(
+        self, model_info: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.AnomalyDetectionModel:
+        """Train a Multivariate Anomaly Detection Model.
+
+        Create and train a multivariate anomaly detection model. The request must
+        include a source parameter to indicate an externally accessible Azure blob
+        storage URI.There are two types of data input: An URI pointed to an Azure blob
+        storage folder which contains multiple CSV files, and each CSV file contains
+        two columns, timestamp and variable. Another type of input is an URI pointed to
+        a CSV file in Azure blob storage, which contains all the variables and a
+        timestamp column.
+
+        :param model_info: Model information. Required.
+        :type model_info: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: Model. The Model is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.Model
+        :return: AnomalyDetectionModel. The AnomalyDetectionModel is compatible with MutableMapping
+        :rtype: ~anomalydetector.models.AnomalyDetectionModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
-    async def create_and_train_multivariate_model(
-        self, body: Union[_models.ModelInfo, JSON, IO], **kwargs: Any
-    ) -> _models.Model:
+    async def train_multivariate_model(
+        self, model_info: Union[_models.ModelInfo, JSON, IO], **kwargs: Any
+    ) -> _models.AnomalyDetectionModel:
         """Train a Multivariate Anomaly Detection Model.
 
         Create and train a multivariate anomaly detection model. The request must
@@ -508,13 +605,13 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         a CSV file in Azure blob storage, which contains all the variables and a
         timestamp column.
 
-        :param body: Is either a model type or a IO type. Required.
-        :type body: ~anomalydetector.models.ModelInfo or JSON or IO
+        :param model_info: Model information. Is one of the following types: model, JSON, IO Required.
+        :type model_info: ~anomalydetector.models.ModelInfo or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: Model. The Model is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.Model
+        :return: AnomalyDetectionModel. The AnomalyDetectionModel is compatible with MutableMapping
+        :rtype: ~anomalydetector.models.AnomalyDetectionModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -529,16 +626,16 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.Model] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AnomalyDetectionModel] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(model_info, (IO, bytes)):
+            _content = model_info
         else:
-            _content = json.dumps(body, cls=AzureJSONEncoder)
+            _content = json.dumps(model_info, cls=AzureJSONEncoder)
 
-        request = build_anomaly_detector_create_and_train_multivariate_model_request(
+        request = build_anomaly_detector_train_multivariate_model_request(
             content_type=content_type,
             content=_content,
             headers=_headers,
@@ -566,7 +663,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         response_headers = {}
         response_headers["location"] = self._deserialize("str", response.headers.get("location"))
 
-        deserialized = _deserialize(_models.Model, response.json())
+        deserialized = _deserialize(_models.AnomalyDetectionModel, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -576,7 +673,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
     @distributed_trace
     def list_multivariate_models(
         self, *, skip: Optional[int] = None, top: Optional[int] = None, **kwargs: Any
-    ) -> AsyncIterable["_models.Model"]:
+    ) -> AsyncIterable["_models.AnomalyDetectionModel"]:
         """List Multivariate Models.
 
         List models of a resource.
@@ -585,8 +682,9 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         :paramtype skip: int
         :keyword top: Top indicates how many models will be fetched. Default value is None.
         :paramtype top: int
-        :return: An iterator like instance of Model. The Model is compatible with MutableMapping
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~anomalydetector.models.Model]
+        :return: An iterator like instance of AnomalyDetectionModel. The AnomalyDetectionModel is
+         compatible with MutableMapping
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~anomalydetector.models.AnomalyDetectionModel]
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
@@ -714,7 +812,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             return cls(pipeline_response, None, {})
 
     @distributed_trace_async
-    async def get_multivariate_model(self, model_id: str, **kwargs: Any) -> _models.Model:
+    async def get_multivariate_model(self, model_id: str, **kwargs: Any) -> _models.AnomalyDetectionModel:
         """Get Multivariate Model.
 
         Get detailed information of multivariate model, including the training status
@@ -722,8 +820,8 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         :param model_id: Model identifier. Required.
         :type model_id: str
-        :return: Model. The Model is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.Model
+        :return: AnomalyDetectionModel. The AnomalyDetectionModel is compatible with MutableMapping
+        :rtype: ~anomalydetector.models.AnomalyDetectionModel
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -737,7 +835,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _headers = kwargs.pop("headers", {}) or {}
         _params = kwargs.pop("params", {}) or {}
 
-        cls: ClsType[_models.Model] = kwargs.pop("cls", None)
+        cls: ClsType[_models.AnomalyDetectionModel] = kwargs.pop("cls", None)
 
         request = build_anomaly_detector_get_multivariate_model_request(
             model_id=model_id,
@@ -763,7 +861,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             error = _deserialize(_models.ResponseError, response.json())
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = _deserialize(_models.Model, response.json())
+        deserialized = _deserialize(_models.AnomalyDetectionModel, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
@@ -774,11 +872,11 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
     async def detect_multivariate_batch_anomaly(
         self,
         model_id: str,
-        body: Union[_models.DetectionRequest, JSON],
+        options: _models.MultivariateBatchDetectionOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.DetectionResult:
+    ) -> _models.MultivariateDetectionResult:
         """Detect Multivariate Anomaly.
 
         Submit multivariate anomaly detection task with the modelId of trained model
@@ -790,20 +888,21 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         :param model_id: Model identifier. Required.
         :type model_id: str
-        :param body: Required.
-        :type body: ~anomalydetector.models.DetectionRequest or JSON
+        :param options: Request of multivariate anomaly detection. Required.
+        :type options: ~anomalydetector.models.MultivariateBatchDetectionOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: DetectionResult. The DetectionResult is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.DetectionResult
+        :return: MultivariateDetectionResult. The MultivariateDetectionResult is compatible with
+         MutableMapping
+        :rtype: ~anomalydetector.models.MultivariateDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def detect_multivariate_batch_anomaly(
-        self, model_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.DetectionResult:
+        self, model_id: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MultivariateDetectionResult:
         """Detect Multivariate Anomaly.
 
         Submit multivariate anomaly detection task with the modelId of trained model
@@ -815,20 +914,47 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         :param model_id: Model identifier. Required.
         :type model_id: str
-        :param body: Required.
-        :type body: IO
+        :param options: Request of multivariate anomaly detection. Required.
+        :type options: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MultivariateDetectionResult. The MultivariateDetectionResult is compatible with
+         MutableMapping
+        :rtype: ~anomalydetector.models.MultivariateDetectionResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def detect_multivariate_batch_anomaly(
+        self, model_id: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MultivariateDetectionResult:
+        """Detect Multivariate Anomaly.
+
+        Submit multivariate anomaly detection task with the modelId of trained model
+        and inference data, the input schema should be the same with the training
+        request. The request will complete asynchronously and return a resultId to
+        query the detection result.The request should be a source link to indicate an
+        externally accessible Azure storage Uri, either pointed to an Azure blob
+        storage folder, or pointed to a CSV file in Azure blob storage.
+
+        :param model_id: Model identifier. Required.
+        :type model_id: str
+        :param options: Request of multivariate anomaly detection. Required.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: DetectionResult. The DetectionResult is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.DetectionResult
+        :return: MultivariateDetectionResult. The MultivariateDetectionResult is compatible with
+         MutableMapping
+        :rtype: ~anomalydetector.models.MultivariateDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def detect_multivariate_batch_anomaly(
-        self, model_id: str, body: Union[_models.DetectionRequest, JSON, IO], **kwargs: Any
-    ) -> _models.DetectionResult:
+        self, model_id: str, options: Union[_models.MultivariateBatchDetectionOptions, JSON, IO], **kwargs: Any
+    ) -> _models.MultivariateDetectionResult:
         """Detect Multivariate Anomaly.
 
         Submit multivariate anomaly detection task with the modelId of trained model
@@ -840,13 +966,15 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         :param model_id: Model identifier. Required.
         :type model_id: str
-        :param body: Is either a model type or a IO type. Required.
-        :type body: ~anomalydetector.models.DetectionRequest or JSON or IO
+        :param options: Request of multivariate anomaly detection. Is one of the following types:
+         model, JSON, IO Required.
+        :type options: ~anomalydetector.models.MultivariateBatchDetectionOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: DetectionResult. The DetectionResult is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.DetectionResult
+        :return: MultivariateDetectionResult. The MultivariateDetectionResult is compatible with
+         MutableMapping
+        :rtype: ~anomalydetector.models.MultivariateDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -861,14 +989,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.DetectionResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MultivariateDetectionResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(options, (IO, bytes)):
+            _content = options
         else:
-            _content = json.dumps(body, cls=AzureJSONEncoder)
+            _content = json.dumps(options, cls=AzureJSONEncoder)
 
         request = build_anomaly_detector_detect_multivariate_batch_anomaly_request(
             model_id=model_id,
@@ -900,7 +1028,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         response_headers["operation-id"] = self._deserialize("str", response.headers.get("operation-id"))
         response_headers["operation-location"] = self._deserialize("str", response.headers.get("operation-location"))
 
-        deserialized = _deserialize(_models.DetectionResult, response.json())
+        deserialized = _deserialize(_models.MultivariateDetectionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, response_headers)  # type: ignore
@@ -911,11 +1039,11 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
     async def detect_multivariate_last_anomaly(
         self,
         model_id: str,
-        body: Union[_models.LastDetectionRequest, JSON],
+        options: _models.MultivariateLastDetectionOptions,
         *,
         content_type: str = "application/json",
         **kwargs: Any
-    ) -> _models.LastDetectionResult:
+    ) -> _models.MultivariateLastDetectionResult:
         """Detect anomalies in the last point of the request body.
 
         Submit multivariate anomaly detection task with the modelId of trained model
@@ -925,20 +1053,21 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         :param model_id: Model identifier. Required.
         :type model_id: str
-        :param body: Required.
-        :type body: ~anomalydetector.models.LastDetectionRequest or JSON
+        :param options: Request of last detection. Required.
+        :type options: ~anomalydetector.models.MultivariateLastDetectionOptions
         :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: LastDetectionResult. The LastDetectionResult is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.LastDetectionResult
+        :return: MultivariateLastDetectionResult. The MultivariateLastDetectionResult is compatible
+         with MutableMapping
+        :rtype: ~anomalydetector.models.MultivariateLastDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @overload
     async def detect_multivariate_last_anomaly(
-        self, model_id: str, body: IO, *, content_type: str = "application/json", **kwargs: Any
-    ) -> _models.LastDetectionResult:
+        self, model_id: str, options: JSON, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MultivariateLastDetectionResult:
         """Detect anomalies in the last point of the request body.
 
         Submit multivariate anomaly detection task with the modelId of trained model
@@ -948,20 +1077,45 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         :param model_id: Model identifier. Required.
         :type model_id: str
-        :param body: Required.
-        :type body: IO
+        :param options: Request of last detection. Required.
+        :type options: JSON
+        :keyword content_type: Body Parameter content-type. Content type parameter for JSON body.
+         Default value is "application/json".
+        :paramtype content_type: str
+        :return: MultivariateLastDetectionResult. The MultivariateLastDetectionResult is compatible
+         with MutableMapping
+        :rtype: ~anomalydetector.models.MultivariateLastDetectionResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+
+    @overload
+    async def detect_multivariate_last_anomaly(
+        self, model_id: str, options: IO, *, content_type: str = "application/json", **kwargs: Any
+    ) -> _models.MultivariateLastDetectionResult:
+        """Detect anomalies in the last point of the request body.
+
+        Submit multivariate anomaly detection task with the modelId of trained model
+        and inference data, and the inference data should be put into request body in a
+        JSON format. The request will complete synchronously and return the detection
+        immediately in the response body.
+
+        :param model_id: Model identifier. Required.
+        :type model_id: str
+        :param options: Request of last detection. Required.
+        :type options: IO
         :keyword content_type: Body Parameter content-type. Content type parameter for binary body.
          Default value is "application/json".
         :paramtype content_type: str
-        :return: LastDetectionResult. The LastDetectionResult is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.LastDetectionResult
+        :return: MultivariateLastDetectionResult. The MultivariateLastDetectionResult is compatible
+         with MutableMapping
+        :rtype: ~anomalydetector.models.MultivariateLastDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
 
     @distributed_trace_async
     async def detect_multivariate_last_anomaly(
-        self, model_id: str, body: Union[_models.LastDetectionRequest, JSON, IO], **kwargs: Any
-    ) -> _models.LastDetectionResult:
+        self, model_id: str, options: Union[_models.MultivariateLastDetectionOptions, JSON, IO], **kwargs: Any
+    ) -> _models.MultivariateLastDetectionResult:
         """Detect anomalies in the last point of the request body.
 
         Submit multivariate anomaly detection task with the modelId of trained model
@@ -971,13 +1125,15 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
 
         :param model_id: Model identifier. Required.
         :type model_id: str
-        :param body: Is either a model type or a IO type. Required.
-        :type body: ~anomalydetector.models.LastDetectionRequest or JSON or IO
+        :param options: Request of last detection. Is one of the following types: model, JSON, IO
+         Required.
+        :type options: ~anomalydetector.models.MultivariateLastDetectionOptions or JSON or IO
         :keyword content_type: Body parameter Content-Type. Known values are: application/json. Default
          value is None.
         :paramtype content_type: str
-        :return: LastDetectionResult. The LastDetectionResult is compatible with MutableMapping
-        :rtype: ~anomalydetector.models.LastDetectionResult
+        :return: MultivariateLastDetectionResult. The MultivariateLastDetectionResult is compatible
+         with MutableMapping
+        :rtype: ~anomalydetector.models.MultivariateLastDetectionResult
         :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
@@ -992,14 +1148,14 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
         _params = kwargs.pop("params", {}) or {}
 
         content_type: Optional[str] = kwargs.pop("content_type", _headers.pop("Content-Type", None))
-        cls: ClsType[_models.LastDetectionResult] = kwargs.pop("cls", None)
+        cls: ClsType[_models.MultivariateLastDetectionResult] = kwargs.pop("cls", None)
 
         content_type = content_type or "application/json"
         _content = None
-        if isinstance(body, (IO, bytes)):
-            _content = body
+        if isinstance(options, (IO, bytes)):
+            _content = options
         else:
-            _content = json.dumps(body, cls=AzureJSONEncoder)
+            _content = json.dumps(options, cls=AzureJSONEncoder)
 
         request = build_anomaly_detector_detect_multivariate_last_anomaly_request(
             model_id=model_id,
@@ -1027,7 +1183,7 @@ class AnomalyDetectorClientOperationsMixin(AnomalyDetectorClientMixinABC):
             error = _deserialize(_models.ResponseError, response.json())
             raise HttpResponseError(response=response, model=error)
 
-        deserialized = _deserialize(_models.LastDetectionResult, response.json())
+        deserialized = _deserialize(_models.MultivariateLastDetectionResult, response.json())
 
         if cls:
             return cls(pipeline_response, deserialized, {})  # type: ignore
