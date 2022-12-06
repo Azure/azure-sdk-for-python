@@ -14,7 +14,7 @@ from msrest import Serializer
 from azure.ai.ml._restclient.v2021_10_01 import models
 
 from azure.ai.ml._utils.utils import dump_yaml
-from azure.ai.ml.constants._common import NEW_ENTITY_PRINT_KWARG
+from azure.ai.ml._telemetry.logging_handler import in_jupyter_notebook
 
 from ._system_data import SystemData
 
@@ -32,6 +32,7 @@ class Resource(ABC):
         description: Optional[str] = None,
         tags: Optional[Dict] = None,
         properties: Optional[Dict] = None,
+        print_as_yaml: Optional[bool] = None,
         **kwargs,
     ):
         """Class Resource constructor.
@@ -44,6 +45,10 @@ class Resource(ABC):
         :type tags: Dict, optional
         :param properties: The asset property dictionary., defaults to None
         :type properties: Dict, optional
+        param: print_as_yaml: If set to true, then printing out this resource will produce a YAML-formatted object.
+            False will force a more-compact printing style. By default, the YAML output is only used in jupyter
+            notebooks. Be aware that some bookkeeping values are shown only in the non-YAML output.
+        type print_as_yaml: bool, optional
         :param kwargs: A dictionary of additional configuration parameters.
         :type kwargs: dict
         """
@@ -51,6 +56,7 @@ class Resource(ABC):
         self.description = description
         self.tags = dict(tags) if tags else {}
         self.properties = dict(properties) if properties else {}
+        self.print_as_yaml = print_as_yaml if print_as_yaml is not None else in_jupyter_notebook()
 
         # Hide read only properties in kwargs
         self._id = kwargs.pop("id", None)
@@ -61,9 +67,6 @@ class Resource(ABC):
         self._serialize = Serializer(client_models)
         self._serialize.client_side_validation = False
         
-        # Transitory value while we convert entity classes to print in a new style.
-        # Allows activating/reverting individual entity classes easily.
-        self.user_friendly_print_style = kwargs.pop(NEW_ENTITY_PRINT_KWARG, False)
         super().__init__(**kwargs)
 
     @property
@@ -191,7 +194,7 @@ class Resource(ABC):
         return f"{self.__class__.__name__}({var_dict})"
 
     def __str__(self) -> str:
-        if self.user_friendly_print_style:
+        if self.print_as_yaml:
             yaml_serialized = self._to_dict()
             return dump_yaml(yaml_serialized, default_flow_style=False)
         else:
