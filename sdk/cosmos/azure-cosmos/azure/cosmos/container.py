@@ -360,7 +360,6 @@ class ContainerProxy(object):
         The max cache staleness for the integrated cache in milliseconds.
             For accounts configured to use the integrated cache, using Session or Eventual consistency,
             responses are guaranteed to be no staler than this value.
-        :keyword str correlated_activity_id: Unique identifier for each query.
         :returns: An Iterable of items (dicts).
         :rtype: ItemPaged[Dict[str, Any]]
 
