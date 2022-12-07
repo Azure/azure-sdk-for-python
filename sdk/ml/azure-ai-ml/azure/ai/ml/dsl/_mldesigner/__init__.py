@@ -10,6 +10,7 @@ original function/module names the same as before, otherwise mldesigner will be 
 
 __path__ = __import__("pkgutil").extend_path(__path__, __name__)  # type: ignore
 
+from ._constants import V1_COMPONENT_TO_NODE
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException
 from azure.ai.ml.entities._component.component_factory import component_factory
 from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
@@ -18,38 +19,32 @@ from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._validation import SchemaValidatableMixin
 from azure.ai.ml._schema import PathAwareSchema
 from azure.ai.ml.dsl._utils import _sanitize_python_variable_name
-from azure.ai.ml._internal.entities import (
-    InternalComponent,
-    Ae365exepool,
-    Command as InternalCommand,
-    Parallel as InternalParallel,
-    DataTransfer,
-    Distributed,
-    HDInsight,
-    Hemera,
-    Scope,
-    Starlite,
-)
+from azure.ai.ml._internal.entities import InternalComponent
+from azure.ai.ml.entities._inputs_outputs import EnumInput
+from azure.ai.ml._utils._experimental import experimental
+from azure.ai.ml.dsl._condition import condition
+from azure.ai.ml.dsl._do_while import do_while
+from azure.ai.ml.dsl._group_decorator import group
+from azure.ai.ml._utils._asset_utils import get_ignore_file
+from azure.ai.ml.entities._inputs_outputs import GroupInput
 
 component_factory_load_from_dict = component_factory.load_from_dict
 
 
 __all__ = [
-    "Ae365exepool",
-    "AzureCliCredential",
-    "DataTransfer",
-    "Distributed",
-    "HDInsight",
-    "Hemera",
-    "InternalCommand",
-    "InternalParallel",
+    "experimental",
+    "EnumInput",
+    "get_ignore_file",
     "PathAwareSchema",
     "SchemaValidatableMixin",
-    "Scope",
-    "Starlite",
     "UserErrorException",
     "_generate_component_function",
     "_sanitize_python_variable_name",
     "component_factory_load_from_dict",
     "load_yaml",
+    "V1_COMPONENT_TO_NODE",
+    "GroupInput",
+    "condition",
+    "do_while",
+    "group",
 ]

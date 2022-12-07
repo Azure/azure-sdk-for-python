@@ -39,7 +39,7 @@ class TestMldesignerImports:
         assert hasattr(ValidationResult, "error_messages")
         assert hasattr(ErrorTarget, "PIPELINE")
 
-    def test_necessay_attributes_for_input(self):
+    def test_necessary_attributes_for_input(self):
         input_obj = Input()
         assert hasattr(input_obj, "type")
         assert hasattr(input_obj, "_is_enum")
