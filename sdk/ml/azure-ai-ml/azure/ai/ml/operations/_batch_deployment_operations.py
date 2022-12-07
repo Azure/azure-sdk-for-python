@@ -26,7 +26,7 @@ from azure.ai.ml._utils.utils import (
     is_private_preview_enabled
 )
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
-from azure.ai.ml.entities import BatchDeployment, BatchJob, Component, PipelineComponent
+from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
