@@ -18,7 +18,7 @@ stages:
             SubscriptionConfigurations:
               - $(sub-config-communication-ppe-test-resources-common)
               - $(sub-config-communication-ppe-test-resources-python)
-      Clouds: Public,Int
+      Clouds: Public,PPE
       EnvVars:
         AZURE_SKIP_LIVE_RECORDING: 'True'
         AZURE_TEST_RUN_LIVE: 'true'
