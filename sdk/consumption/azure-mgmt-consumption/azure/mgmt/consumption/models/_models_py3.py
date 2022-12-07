@@ -3195,14 +3195,12 @@ class ModernReservationRecommendation(ReservationRecommendation):  # pylint: dis
     :vartype net_savings: ~azure.mgmt.consumption.models.Amount
     :ivar first_usage_date: The usage date for looking back.
     :vartype first_usage_date: ~datetime.datetime
-    :ivar scope: Shared or single recommendation.
+    :ivar scope: Shared or single recommendation. Required.
     :vartype scope: str
     :ivar sku_properties: List of sku properties.
     :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
     :ivar sku_name: This is the ARM Sku name.
     :vartype sku_name: str
-    :ivar subscription_id: Subscription ID.
-    :vartype subscription_id: str
     """
 
     _validation = {
@@ -3228,10 +3226,9 @@ class ModernReservationRecommendation(ReservationRecommendation):  # pylint: dis
         "total_cost_with_reserved_instances": {"readonly": True},
         "net_savings": {"readonly": True},
         "first_usage_date": {"readonly": True},
-        "scope": {"readonly": True},
+        "scope": {"required": True},
         "sku_properties": {"readonly": True},
         "sku_name": {"readonly": True},
-        "subscription_id": {"readonly": True},
     }
 
     _attribute_map = {
@@ -3260,7 +3257,6 @@ class ModernReservationRecommendation(ReservationRecommendation):  # pylint: dis
         "scope": {"key": "properties.scope", "type": "str"},
         "sku_properties": {"key": "properties.skuProperties", "type": "[SkuProperty]"},
         "sku_name": {"key": "properties.skuName", "type": "str"},
-        "subscription_id": {"key": "properties.subscriptionId", "type": "str"},
     }
 
     def __init__(self, **kwargs):  # pylint: disable=too-many-locals
@@ -3281,10 +3277,125 @@ class ModernReservationRecommendation(ReservationRecommendation):  # pylint: dis
         self.total_cost_with_reserved_instances = None
         self.net_savings = None
         self.first_usage_date = None
-        self.scope = None
+        self.scope: str = "modern"
         self.sku_properties = None
         self.sku_name = None
-        self.subscription_id = None
+
+
+class ModernReservationRecommendationProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
+    """The properties of the reservation recommendation.
+
+    You probably want to use the sub-classes and not this class directly. Known sub-classes are:
+    ModernSharedScopeReservationRecommendationProperties,
+    ModernSingleScopeReservationRecommendationProperties
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar location: Resource Location.
+    :vartype location: str
+    :ivar look_back_period: The number of days of usage to look back for recommendation.
+    :vartype look_back_period: int
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: float
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID).
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
+    :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: float
+    :ivar resource_type: Resource type.
+    :vartype resource_type: str
+    :ivar total_cost_with_reserved_instances: The total amount of cost with reserved instances.
+    :vartype total_cost_with_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~azure.mgmt.consumption.models.Amount
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: ~datetime.datetime
+    :ivar scope: Shared or single recommendation. Required.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties.
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar sku_name: This is the ARM Sku name.
+    :vartype sku_name: str
+    """
+
+    _validation = {
+        "location": {"readonly": True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
+        "sku_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "look_back_period": {"key": "lookBackPeriod", "type": "int"},
+        "instance_flexibility_ratio": {"key": "instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "costWithNoReservedInstances", "type": "Amount"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "total_cost_with_reserved_instances": {"key": "totalCostWithReservedInstances", "type": "Amount"},
+        "net_savings": {"key": "netSavings", "type": "Amount"},
+        "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "scope", "type": "str"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "sku_name": {"key": "skuName", "type": "str"},
+    }
+
+    _subtype_map = {
+        "scope": {
+            "Shared": "ModernSharedScopeReservationRecommendationProperties",
+            "Single": "ModernSingleScopeReservationRecommendationProperties",
+        }
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.location = None
+        self.look_back_period = None
+        self.instance_flexibility_ratio = None
+        self.instance_flexibility_group = None
+        self.normalized_size = None
+        self.recommended_quantity_normalized = None
+        self.meter_id = None
+        self.term = None
+        self.cost_with_no_reserved_instances = None
+        self.recommended_quantity = None
+        self.resource_type = None
+        self.total_cost_with_reserved_instances = None
+        self.net_savings = None
+        self.first_usage_date = None
+        self.scope: Optional[str] = None
+        self.sku_properties = None
+        self.sku_name = None
 
 
 class ModernReservationTransaction(ReservationTransactionResource):  # pylint: disable=too-many-instance-attributes
@@ -3451,6 +3562,193 @@ class ModernReservationTransactionsListResult(_serialization.Model):
         super().__init__(**kwargs)
         self.value = None
         self.next_link = None
+
+
+class ModernSharedScopeReservationRecommendationProperties(
+    ModernReservationRecommendationProperties
+):  # pylint: disable=too-many-instance-attributes
+    """The properties of the modern reservation recommendation for shared scope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar location: Resource Location.
+    :vartype location: str
+    :ivar look_back_period: The number of days of usage to look back for recommendation.
+    :vartype look_back_period: int
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: float
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID).
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
+    :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: float
+    :ivar resource_type: Resource type.
+    :vartype resource_type: str
+    :ivar total_cost_with_reserved_instances: The total amount of cost with reserved instances.
+    :vartype total_cost_with_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~azure.mgmt.consumption.models.Amount
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: ~datetime.datetime
+    :ivar scope: Shared or single recommendation. Required.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties.
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar sku_name: This is the ARM Sku name.
+    :vartype sku_name: str
+    """
+
+    _validation = {
+        "location": {"readonly": True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
+        "sku_name": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "look_back_period": {"key": "lookBackPeriod", "type": "int"},
+        "instance_flexibility_ratio": {"key": "instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "costWithNoReservedInstances", "type": "Amount"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "total_cost_with_reserved_instances": {"key": "totalCostWithReservedInstances", "type": "Amount"},
+        "net_savings": {"key": "netSavings", "type": "Amount"},
+        "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "scope", "type": "str"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "sku_name": {"key": "skuName", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.scope: str = "Shared"
+
+
+class ModernSingleScopeReservationRecommendationProperties(
+    ModernReservationRecommendationProperties
+):  # pylint: disable=too-many-instance-attributes
+    """The properties of the modern reservation recommendation for single scope.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    All required parameters must be populated in order to send to Azure.
+
+    :ivar location: Resource Location.
+    :vartype location: str
+    :ivar look_back_period: The number of days of usage to look back for recommendation.
+    :vartype look_back_period: int
+    :ivar instance_flexibility_ratio: The instance Flexibility Ratio.
+    :vartype instance_flexibility_ratio: float
+    :ivar instance_flexibility_group: The instance Flexibility Group.
+    :vartype instance_flexibility_group: str
+    :ivar normalized_size: The normalized Size.
+    :vartype normalized_size: str
+    :ivar recommended_quantity_normalized: The recommended Quantity Normalized.
+    :vartype recommended_quantity_normalized: float
+    :ivar meter_id: The meter id (GUID).
+    :vartype meter_id: str
+    :ivar term: RI recommendations in one or three year terms.
+    :vartype term: str
+    :ivar cost_with_no_reserved_instances: The total amount of cost without reserved instances.
+    :vartype cost_with_no_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar recommended_quantity: Recommended quality for reserved instances.
+    :vartype recommended_quantity: float
+    :ivar resource_type: Resource type.
+    :vartype resource_type: str
+    :ivar total_cost_with_reserved_instances: The total amount of cost with reserved instances.
+    :vartype total_cost_with_reserved_instances: ~azure.mgmt.consumption.models.Amount
+    :ivar net_savings: Total estimated savings with reserved instances.
+    :vartype net_savings: ~azure.mgmt.consumption.models.Amount
+    :ivar first_usage_date: The usage date for looking back.
+    :vartype first_usage_date: ~datetime.datetime
+    :ivar scope: Shared or single recommendation. Required.
+    :vartype scope: str
+    :ivar sku_properties: List of sku properties.
+    :vartype sku_properties: list[~azure.mgmt.consumption.models.SkuProperty]
+    :ivar sku_name: This is the ARM Sku name.
+    :vartype sku_name: str
+    :ivar subscription_id: Subscription ID associated with single scoped recommendation.
+    :vartype subscription_id: str
+    """
+
+    _validation = {
+        "location": {"readonly": True},
+        "look_back_period": {"readonly": True},
+        "instance_flexibility_ratio": {"readonly": True},
+        "instance_flexibility_group": {"readonly": True},
+        "normalized_size": {"readonly": True},
+        "recommended_quantity_normalized": {"readonly": True},
+        "meter_id": {"readonly": True},
+        "term": {"readonly": True},
+        "cost_with_no_reserved_instances": {"readonly": True},
+        "recommended_quantity": {"readonly": True},
+        "resource_type": {"readonly": True},
+        "total_cost_with_reserved_instances": {"readonly": True},
+        "net_savings": {"readonly": True},
+        "first_usage_date": {"readonly": True},
+        "scope": {"required": True},
+        "sku_properties": {"readonly": True},
+        "sku_name": {"readonly": True},
+        "subscription_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "location": {"key": "location", "type": "str"},
+        "look_back_period": {"key": "lookBackPeriod", "type": "int"},
+        "instance_flexibility_ratio": {"key": "instanceFlexibilityRatio", "type": "float"},
+        "instance_flexibility_group": {"key": "instanceFlexibilityGroup", "type": "str"},
+        "normalized_size": {"key": "normalizedSize", "type": "str"},
+        "recommended_quantity_normalized": {"key": "recommendedQuantityNormalized", "type": "float"},
+        "meter_id": {"key": "meterId", "type": "str"},
+        "term": {"key": "term", "type": "str"},
+        "cost_with_no_reserved_instances": {"key": "costWithNoReservedInstances", "type": "Amount"},
+        "recommended_quantity": {"key": "recommendedQuantity", "type": "float"},
+        "resource_type": {"key": "resourceType", "type": "str"},
+        "total_cost_with_reserved_instances": {"key": "totalCostWithReservedInstances", "type": "Amount"},
+        "net_savings": {"key": "netSavings", "type": "Amount"},
+        "first_usage_date": {"key": "firstUsageDate", "type": "iso-8601"},
+        "scope": {"key": "scope", "type": "str"},
+        "sku_properties": {"key": "skuProperties", "type": "[SkuProperty]"},
+        "sku_name": {"key": "skuName", "type": "str"},
+        "subscription_id": {"key": "subscriptionId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.scope: str = "Single"
+        self.subscription_id = None
 
 
 class ModernUsageDetail(UsageDetail):  # pylint: disable=too-many-instance-attributes
