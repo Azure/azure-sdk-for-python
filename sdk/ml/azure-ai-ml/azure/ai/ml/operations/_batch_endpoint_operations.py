@@ -37,6 +37,7 @@ from azure.ai.ml._utils.utils import (
 )
 from azure.ai.ml.constants._common import (
     ARM_ID_FULL_PREFIX,
+    AZUREML_REGEX_FORMAT,
     BASE_PATH_CONTEXT_KEY,
     HTTP_PREFIX,
     LONG_URI_REGEX_FORMAT,
@@ -205,8 +206,6 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         *,
         deployment_name: str = None,
         inputs: Dict[str, Input] = None,
-        outputs: Dict[str, Output] = None,
-        job_name: str = None,
         **kwargs,
     ) -> BatchJob:
         """Invokes the batch endpoint with the provided payload.
@@ -219,10 +218,6 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :param inputs: (Optional) A dictionary of existing data asset, public uri file or folder
             to use with the deployment
         :type inputs: Dict[str, Input]
-        :param outputs: (Optional) A dictionary to specify in which datastore to save the output
-        :type outputs: Dict[str, Output]
-        :param job_name: Name of the job for batch invoke
-        :type job_name: str
         :raises ~azure.ai.ml.exceptions.ValidationException: Raised if deployment cannot be successfully validated.
             Details will be provided in the error message.
         :raises ~azure.ai.ml.exceptions.AssetException: Raised if BatchEndpoint assets
@@ -234,6 +229,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         :return: The invoked batch deployment job.
         :rtype: ~azure.ai.ml.entities.BatchJob
         """
+        outputs = kwargs.get("outputs", None)
+        job_name = kwargs.get("job_name", None)
         params_override = kwargs.get("params_override", None) or []
         input = kwargs.get("input", None) # pylint: disable=redefined-builtin
         # Until this bug is resolved https://msdata.visualstudio.com/Vienna/_workitems/edit/1446538
@@ -267,11 +264,10 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-        if is_private_preview_enabled():
-            if outputs:
-                params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
-            if job_name:
-                params_override.append({EndpointYamlFields.BATCH_JOB_NAME: job_name})
+        if is_private_preview_enabled() and outputs:
+            params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
+        if is_private_preview_enabled() and job_name:
+            params_override.append({EndpointYamlFields.BATCH_JOB_NAME: job_name})
 
         # Batch job doesn't have a python class, loading a rest object using params override
         context = {
@@ -420,6 +416,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 # If we receive a datastore path in long/short form we don't need
                 # to get the arm asset id
                 if re.match(SHORT_URI_REGEX_FORMAT, entry.path) or re.match(LONG_URI_REGEX_FORMAT, entry.path):
+                    return
+                if is_private_preview_enabled() and re.match(AZUREML_REGEX_FORMAT, entry.path):
                     return
                 asset_type = AzureMLResourceType.DATASTORE
                 entry.path = remove_datastore_prefix(entry.path)
