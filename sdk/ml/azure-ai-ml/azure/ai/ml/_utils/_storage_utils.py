@@ -184,11 +184,18 @@ def get_artifact_path_from_storage_url(blob_url: str, container_name: dict) -> s
 
 
 def get_ds_name_and_path_prefix(asset_uri: str, registry_name: str = None) -> Tuple[str, str]:
-    if registry_name: # for registry
-        split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
-        path_prefix = split_paths[0][3]
+    if registry_name:
+        try:
+            split_paths = re.findall(STORAGE_URI_REGEX, asset_uri)
+            path_prefix = split_paths[0][3]
+        except Exception:
+            raise Exception(f"Registry asset uri could not be parsed." )
         ds_name = None
-    else: # for workspace
-        ds_name = asset_uri.split("paths")[0].split("/")[-2]
-        path_prefix = asset_uri.split("paths")[1][1:]
+    else:
+        try:
+            ds_name = asset_uri.split("paths")[0].split("/")[-2]
+            path_prefix = asset_uri.split("paths")[1][1:]
+        except Exception:
+            raise Exception(f"Workspace asset uri could not be parsed.")
+
     return ds_name, path_prefix
