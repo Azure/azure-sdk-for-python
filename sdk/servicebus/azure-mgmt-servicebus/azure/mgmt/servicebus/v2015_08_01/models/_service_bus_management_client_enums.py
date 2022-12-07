@@ -11,14 +11,15 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AccessRights(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AccessRights."""
 
     MANAGE = "Manage"
     SEND = "Send"
     LISTEN = "Listen"
 
+
 class EntityAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Entity availability status.
-    """
+    """Entity availability status."""
 
     AVAILABLE = "Available"
     LIMITED = "Limited"
@@ -26,9 +27,9 @@ class EntityAvailabilityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     RESTORING = "Restoring"
     UNKNOWN = "Unknown"
 
+
 class EntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Entity status.
-    """
+    """Entity status."""
 
     ACTIVE = "Active"
     CREATING = "Creating"
@@ -40,9 +41,9 @@ class EntityStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     SEND_DISABLED = "SendDisabled"
     UNKNOWN = "Unknown"
 
+
 class NamespaceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """State of the namespace.
-    """
+    """State of the namespace."""
 
     UNKNOWN = "Unknown"
     CREATING = "Creating"
@@ -58,32 +59,32 @@ class NamespaceState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     REMOVED = "Removed"
     FAILED = "Failed"
 
+
 class Policykey(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Key that needs to be regenerated.
-    """
+    """Key that needs to be regenerated."""
 
     PRIMARY_KEY = "PrimaryKey"
     SECONDARY_KEY = "SecondaryKey"
 
+
 class SkuName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Name of this SKU.
-    """
+    """Name of this SKU."""
 
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
+
 
 class SkuTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The billing tier of this particular SKU.
-    """
+    """The billing tier of this particular SKU."""
 
     BASIC = "Basic"
     STANDARD = "Standard"
     PREMIUM = "Premium"
 
+
 class UnavailableReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the reason for the unavailability of the service.
-    """
+    """Specifies the reason for the unavailability of the service."""
 
     NONE = "None"
     INVALID_NAME = "InvalidName"

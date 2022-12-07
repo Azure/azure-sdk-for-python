@@ -34,56 +34,54 @@ from ._models_py3 import TopicListResult
 from ._models_py3 import TopicResource
 from ._models_py3 import TrackedResource
 
-
-from ._service_bus_management_client_enums import (
-    AccessRights,
-    EntityAvailabilityStatus,
-    EntityStatus,
-    NamespaceState,
-    Policykey,
-    SkuName,
-    SkuTier,
-    UnavailableReason,
-)
+from ._service_bus_management_client_enums import AccessRights
+from ._service_bus_management_client_enums import EntityAvailabilityStatus
+from ._service_bus_management_client_enums import EntityStatus
+from ._service_bus_management_client_enums import NamespaceState
+from ._service_bus_management_client_enums import Policykey
+from ._service_bus_management_client_enums import SkuName
+from ._service_bus_management_client_enums import SkuTier
+from ._service_bus_management_client_enums import UnavailableReason
 from ._patch import __all__ as _patch_all
-from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import *  # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'CheckNameAvailability',
-    'CheckNameAvailabilityResult',
-    'MessageCountDetails',
-    'NamespaceCreateOrUpdateParameters',
-    'NamespaceListResult',
-    'NamespaceResource',
-    'NamespaceUpdateParameters',
-    'Operation',
-    'OperationDisplay',
-    'OperationListResult',
-    'QueueCreateOrUpdateParameters',
-    'QueueListResult',
-    'QueueResource',
-    'RegenerateKeysParameters',
-    'Resource',
-    'ResourceListKeys',
-    'SharedAccessAuthorizationRuleCreateOrUpdateParameters',
-    'SharedAccessAuthorizationRuleListResult',
-    'SharedAccessAuthorizationRuleResource',
-    'Sku',
-    'SubscriptionCreateOrUpdateParameters',
-    'SubscriptionListResult',
-    'SubscriptionResource',
-    'TopicCreateOrUpdateParameters',
-    'TopicListResult',
-    'TopicResource',
-    'TrackedResource',
-    'AccessRights',
-    'EntityAvailabilityStatus',
-    'EntityStatus',
-    'NamespaceState',
-    'Policykey',
-    'SkuName',
-    'SkuTier',
-    'UnavailableReason',
+    "CheckNameAvailability",
+    "CheckNameAvailabilityResult",
+    "MessageCountDetails",
+    "NamespaceCreateOrUpdateParameters",
+    "NamespaceListResult",
+    "NamespaceResource",
+    "NamespaceUpdateParameters",
+    "Operation",
+    "OperationDisplay",
+    "OperationListResult",
+    "QueueCreateOrUpdateParameters",
+    "QueueListResult",
+    "QueueResource",
+    "RegenerateKeysParameters",
+    "Resource",
+    "ResourceListKeys",
+    "SharedAccessAuthorizationRuleCreateOrUpdateParameters",
+    "SharedAccessAuthorizationRuleListResult",
+    "SharedAccessAuthorizationRuleResource",
+    "Sku",
+    "SubscriptionCreateOrUpdateParameters",
+    "SubscriptionListResult",
+    "SubscriptionResource",
+    "TopicCreateOrUpdateParameters",
+    "TopicListResult",
+    "TopicResource",
+    "TrackedResource",
+    "AccessRights",
+    "EntityAvailabilityStatus",
+    "EntityStatus",
+    "NamespaceState",
+    "Policykey",
+    "SkuName",
+    "SkuTier",
+    "UnavailableReason",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()
