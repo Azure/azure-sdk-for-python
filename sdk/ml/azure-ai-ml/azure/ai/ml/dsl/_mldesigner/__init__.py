@@ -37,6 +37,7 @@ component_factory_load_from_dict = component_factory.load_from_dict
 __all__ = [
     "BaseNode",
     "experimental",
+    "ErrorTarget",
     "EnumInput",
     "get_ignore_file",
     "_get_param_with_standard_annotation",
