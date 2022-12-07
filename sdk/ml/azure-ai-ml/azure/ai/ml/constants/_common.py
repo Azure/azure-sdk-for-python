@@ -80,6 +80,7 @@ JOB_URI_FORMAT = "azureml://jobs/{}/outputs/{}/paths/{}"
 LONG_URI_FORMAT = "azureml://subscriptions/{}/resourcegroups/{}/workspaces/{}/datastores/{}/paths/{}"
 SHORT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/paths/(.+)"
 MLFLOW_URI_REGEX_FORMAT = "runs:/([^/?]+)/(.+)"
+AZUREML_REGEX_FORMAT = "azureml:([^/]+):(.+)"
 JOB_URI_REGEX_FORMAT = "azureml://jobs/([^/]+)/outputs/([^/]+)/paths/(.+)"
 OUTPUT_URI_REGEX_FORMAT = "azureml://datastores/([^/]+)/(ExperimentRun/.+)"
 LONG_URI_REGEX_FORMAT = (
