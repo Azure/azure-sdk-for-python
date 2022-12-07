@@ -30,14 +30,14 @@ class TestStorageUtils:
         with pytest.raises(Exception) as e:
             get_ds_name_and_path_prefix(reg_uri_bad, "registry_name")
         assert (
-            'Registry asset uri could not be parsed.'
+            'Registry asset URI could not be parsed.'
             in str(e.value)
         )
 
         with pytest.raises(Exception) as e:
             get_ds_name_and_path_prefix(workspace_uri_bad)
         assert (
-            'Workspace asset uri could not be parsed.'
+            'Workspace asset URI could not be parsed.'
             in str(e.value)
         )
 
