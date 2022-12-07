@@ -49,7 +49,7 @@ from azure.ai.ml.constants._common import (
 )
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
 from azure.ai.ml.entities import BatchEndpoint, BatchJob
-from azure.ai.ml.entities._inputs_outputs import Input, Output
+from azure.ai.ml.entities._inputs_outputs import Input
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, MLException, ValidationErrorType, ValidationException
 from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
