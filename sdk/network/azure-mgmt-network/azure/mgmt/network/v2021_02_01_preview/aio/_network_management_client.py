@@ -12,7 +12,7 @@ from typing import Any, Awaitable, TYPE_CHECKING
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
 
-from .. import models
+from .. import models as _models
 from ..._serialization import Deserializer, Serializer
 from ._configuration import NetworkManagementClientConfiguration
 from .operations import (
@@ -139,13 +139,13 @@ class NetworkManagementClient:  # pylint: disable=client-accepts-api-version-key
     :ivar nsp_link_reference_reconcile: NspLinkReferenceReconcileOperations operations
     :vartype nsp_link_reference_reconcile:
      azure.mgmt.network.v2021_02_01_preview.aio.operations.NspLinkReferenceReconcileOperations
-    :param credential: Credential needed for the client to connect to Azure. Required.
-    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
     :param subscription_id: The subscription credentials which uniquely identify the Microsoft
      Azure subscription. The subscription ID forms part of the URI for every service call. Required.
     :type subscription_id: str
-    :param base_url: Service URL. Default value is "https://management.azure.com".
-    :type base_url: str
+    :param credential: Credential needed for the client to connect to Azure. Required.
+    :type credential: ~azure.core.credentials_async.AsyncTokenCredential
+    :param endpoint: Service URL. Default value is "https://management.azure.com".
+    :type endpoint: str
     :keyword api_version: Api Version. Default value is "2021-02-01-preview". Note that overriding
      this default value may result in unsupported behavior.
     :paramtype api_version: str
@@ -155,17 +155,17 @@ class NetworkManagementClient:  # pylint: disable=client-accepts-api-version-key
 
     def __init__(
         self,
-        credential: "AsyncTokenCredential",
         subscription_id: str,
-        base_url: str = "https://management.azure.com",
+        credential: "AsyncTokenCredential",
+        endpoint: str = "https://management.azure.com",
         **kwargs: Any
     ) -> None:
         self._config = NetworkManagementClientConfiguration(
-            credential=credential, subscription_id=subscription_id, **kwargs
+            subscription_id=subscription_id, credential=credential, **kwargs
         )
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=endpoint, config=self._config, **kwargs)
 
-        client_models = {k: v for k, v in models.__dict__.items() if isinstance(v, type)}
+        client_models = {k: v for k, v in _models.__dict__.items() if isinstance(v, type)}
         self._serialize = Serializer(client_models)
         self._deserialize = Deserializer(client_models)
         self._serialize.client_side_validation = False

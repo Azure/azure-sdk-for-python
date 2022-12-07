@@ -116,7 +116,7 @@ class ActiveBaseSecurityAdminRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ActiveBaseSecurityUserRule(_serialization.Model):
@@ -218,7 +218,7 @@ class ActiveBaseSecurityUserRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class ActiveConfigurationParameter(_serialization.Model):
@@ -477,7 +477,8 @@ class ActiveConnectivityConfiguration(
 
 
 class ActiveConnectivityConfigurationsListResult(_serialization.Model):
-    """Result of the request to list active connectivity configurations. It contains a list of active connectivity configurations and a skiptoken to get the next set of results.
+    """Result of the request to list active connectivity configurations. It contains a list of active
+    connectivity configurations and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active connectivity configurations.
     :vartype value:
@@ -670,7 +671,7 @@ class ActiveDefaultSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: di
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -831,7 +832,7 @@ class ActiveDefaultSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disa
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -1025,7 +1026,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1040,7 +1041,8 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
 
 
 class ActiveSecurityAdminRulesListResult(_serialization.Model):
-    """Result of the request to list active security admin rules. It contains a list of active security admin rules and a skiptoken to get the next set of results.
+    """Result of the request to list active security admin rules. It contains a list of active
+    security admin rules and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active security admin rules.
     :vartype value:
@@ -1235,7 +1237,7 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1248,7 +1250,8 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too
 
 
 class ActiveSecurityUserRulesListResult(_serialization.Model):
-    """Result of the request to list active security user rules. It contains a list of active security user rules and a skiptoken to get the next set of results.
+    """Result of the request to list active security user rules. It contains a list of active security
+    user rules and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active security user rules.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.ActiveBaseSecurityUserRule]
@@ -1403,7 +1406,7 @@ class BaseAdminRule(ProxyResource):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.system_data = None
 
 
@@ -1538,7 +1541,7 @@ class AdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attributes
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
         super().__init__(**kwargs)
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -1628,7 +1631,7 @@ class BaseUserRule(ProxyResource):
     def __init__(self, **kwargs):
         """ """
         super().__init__(**kwargs)
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
         self.system_data = None
 
 
@@ -1867,7 +1870,8 @@ class ConnectivityConfiguration(ProxyResource):  # pylint: disable=too-many-inst
 
 
 class ConnectivityConfigurationListResult(_serialization.Model):
-    """Result of the request to list network manager connectivity configurations. It contains a list of configurations and a link to get the next set of results.
+    """Result of the request to list network manager connectivity configurations. It contains a list
+    of configurations and a link to get the next set of results.
 
     :ivar value: Gets a page of Connectivity Configurations.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityConfiguration]
@@ -2053,7 +2057,7 @@ class DefaultAdminRule(BaseAdminRule):  # pylint: disable=too-many-instance-attr
         :paramtype flag: str
         """
         super().__init__(**kwargs)
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2159,7 +2163,7 @@ class DefaultUserRule(BaseUserRule):  # pylint: disable=too-many-instance-attrib
         :paramtype flag: str
         """
         super().__init__(**kwargs)
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2257,7 +2261,7 @@ class EffectiveBaseSecurityAdminRule(_serialization.Model):
         self.rule_collection_description = rule_collection_description
         self.rule_collection_applies_to_groups = rule_collection_applies_to_groups
         self.rule_groups = rule_groups
-        self.kind = None  # type: Optional[str]
+        self.kind: Optional[str] = None
 
 
 class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: disable=too-many-instance-attributes
@@ -2404,7 +2408,7 @@ class EffectiveDefaultSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pyli
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Default"  # type: str
+        self.kind: str = "Default"
         self.display_name = None
         self.description = None
         self.flag = flag
@@ -2586,7 +2590,7 @@ class EffectiveSecurityAdminRule(EffectiveBaseSecurityAdminRule):  # pylint: dis
             rule_groups=rule_groups,
             **kwargs
         )
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
@@ -2641,7 +2645,8 @@ class EffectiveVirtualNetwork(_serialization.Model):
 
 
 class EffectiveVirtualNetworksListResult(_serialization.Model):
-    """Result of the request to list Effective Virtual Network. It contains a list of groups and a URL link to get the next set of results.
+    """Result of the request to list Effective Virtual Network. It contains a list of groups and a URL
+    link to get the next set of results.
 
     :ivar value: Gets a page of EffectiveVirtualNetwork.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.EffectiveVirtualNetwork]
@@ -2835,7 +2840,8 @@ class NetworkGroup(ProxyResource):  # pylint: disable=too-many-instance-attribut
 
 
 class NetworkGroupListResult(_serialization.Model):
-    """Result of the request to list NetworkGroup. It contains a list of groups and a URL link to get the next set of results.
+    """Result of the request to list NetworkGroup. It contains a list of groups and a URL link to get
+    the next set of results.
 
     :ivar value: Gets a page of NetworkGroup.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkGroup]
@@ -3216,7 +3222,8 @@ class NetworkManagerDeploymentStatusParameter(_serialization.Model):
 
 
 class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.Model):
-    """Result of the request to list networkManagerEffectiveConnectivityConfiguration. It contains a list of groups and a skiptoken to get the next set of results.
+    """Result of the request to list networkManagerEffectiveConnectivityConfiguration. It contains a
+    list of groups and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of NetworkManagerEffectiveConnectivityConfiguration.
     :vartype value:
@@ -3252,7 +3259,8 @@ class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.
 
 
 class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
-    """Result of the request to list networkManagerEffectiveSecurityAdminRules. It contains a list of groups and a skiptoken to get the next set of results.
+    """Result of the request to list networkManagerEffectiveSecurityAdminRules. It contains a list of
+    groups and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of NetworkManagerEffectiveSecurityAdminRules.
     :vartype value:
@@ -3288,7 +3296,8 @@ class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
 
 
 class NetworkManagerListResult(_serialization.Model):
-    """Result of the request to list NetworkManager. It contains a list of network managers and a URL link to get the next set of results.
+    """Result of the request to list NetworkManager. It contains a list of network managers and a URL
+    link to get the next set of results.
 
     :ivar value: Gets a page of NetworkManager.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManager]
@@ -3425,7 +3434,8 @@ class NetworkSecurityPerimeter(Resource):
 
 
 class NetworkSecurityPerimeterListResult(_serialization.Model):
-    """Result of the request to list NetworkSecurityPerimeter. It contains a list of network security perimeters and a URL link to get the next set of results.
+    """Result of the request to list NetworkSecurityPerimeter. It contains a list of network security
+    perimeters and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NetworkSecurityPerimeter.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkSecurityPerimeter]
@@ -3555,7 +3565,8 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
 
 
 class NspAccessRuleListResult(_serialization.Model):
-    """Result of the request to list NSP access rules. Contains a list of NSP access rules and a URL link to get the next set of results.
+    """Result of the request to list NSP access rules. Contains a list of NSP access rules and a URL
+    link to get the next set of results.
 
     :ivar value: Gets a page of NSP access rule.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspAccessRule]
@@ -3669,7 +3680,8 @@ class NspAssociation(Resource):
 
 
 class NspAssociationsListResult(_serialization.Model):
-    """Result of the request to list NSP resource associations. Contains a list of NSP resource associations and a URL link to get the next set of results.
+    """Result of the request to list NSP resource associations. Contains a list of NSP resource
+    associations and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP resource associations.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspAssociation]
@@ -3817,7 +3829,8 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
 
 
 class NspLinkListResult(_serialization.Model):
-    """Result of the request to list NSP link resources. Contains a list of NSP link resources and a URL link to get the next set of results.
+    """Result of the request to list NSP link resources. Contains a list of NSP link resources and a
+    URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP Link resources.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLink]
@@ -3945,7 +3958,8 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
 
 
 class NspLinkReferenceListResult(_serialization.Model):
-    """Result of the request to list NSP linkReference resources. Contains a list of NSP linkReference resources and a URL link to get the next set of results.
+    """Result of the request to list NSP linkReference resources. Contains a list of NSP linkReference
+    resources and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP LinkReference resources.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference]
@@ -4034,7 +4048,8 @@ class NspProfile(Resource):
 
 
 class NspProfileListResult(_serialization.Model):
-    """Result of the request to list NSP profiles. Contains a list of NSP profiles and a URL link to get the next set of results.
+    """Result of the request to list NSP profiles. Contains a list of NSP profiles and a URL link to
+    get the next set of results.
 
     :ivar value: Gets a page of NSP profile.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspProfile]
@@ -4062,7 +4077,8 @@ class NspProfileListResult(_serialization.Model):
 
 
 class PerimeterAssociableResource(Resource):
-    """Resource that is onboarded to use network security perimeter. Also referred as perimeter associable resource.
+    """Resource that is onboarded to use network security perimeter. Also referred as perimeter
+    associable resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
@@ -4669,7 +4685,7 @@ class UserRule(BaseUserRule):  # pylint: disable=too-many-instance-attributes
          ~azure.mgmt.network.v2021_02_01_preview.models.SecurityConfigurationRuleDirection
         """
         super().__init__(**kwargs)
-        self.kind = "Custom"  # type: str
+        self.kind: str = "Custom"
         self.display_name = display_name
         self.description = description
         self.protocol = protocol
