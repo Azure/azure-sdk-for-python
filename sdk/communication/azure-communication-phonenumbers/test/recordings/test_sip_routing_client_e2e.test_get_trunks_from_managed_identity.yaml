@@ -15,7 +15,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 07 Dec 2022 10:40:24 GMT
+      - Wed, 07 Dec 2022 11:16:02 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -29,9 +29,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Dec 2022 10:40:23 GMT
+      - Wed, 07 Dec 2022 11:16:01 GMT
       ms-cv:
-      - ESA+vzAyvEKIw3TGz9A2oQ.0
+      - 4fbR7uR0FkqABBeX8yC/Xg.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
@@ -39,7 +39,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 161ms
+      - 265ms
     status:
       code: 200
       message: OK
@@ -55,7 +55,7 @@ interactions:
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 07 Dec 2022 10:40:24 GMT
+      - Wed, 07 Dec 2022 11:16:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: GET
@@ -69,9 +69,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Dec 2022 10:40:23 GMT
+      - Wed, 07 Dec 2022 11:16:02 GMT
       ms-cv:
-      - X6FhacDRYEqlQuwQnFKztA.0
+      - GRS57TESfUisFqPk1G51uw.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
@@ -79,13 +79,14 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 100ms
+      - 76ms
     status:
       code: 200
       message: OK
 - request:
     body: '{"trunks": {"sbs1.sanitized.com": {"sipSignalingPort": 1122}, "sbs2.sanitized.com":
-      {"sipSignalingPort": 1123}}}'
+      {"sipSignalingPort": 1123}, "sbs1.sanitized.com": null, "sbs2.sanitized.com":
+      null}}'
     headers:
       Accept:
       - application/json
@@ -94,13 +95,13 @@ interactions:
       Connection:
       - keep-alive
       Content-Length:
-      - '158'
+      - '260'
       Content-Type:
       - application/merge-patch+json
       User-Agent:
       - azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.10.0 (Windows-10-10.0.22621-SP0)
       x-ms-date:
-      - Wed, 07 Dec 2022 10:40:25 GMT
+      - Wed, 07 Dec 2022 11:16:03 GMT
       x-ms-return-client-request-id:
       - 'true'
     method: PATCH
@@ -114,9 +115,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Dec 2022 10:40:23 GMT
+      - Wed, 07 Dec 2022 11:16:02 GMT
       ms-cv:
-      - RiTySFeLc0GQWOrmhOgWTw.0
+      - cgSR7EYGGkCH/7lFaaQY0w.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
@@ -124,7 +125,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 247ms
+      - 433ms
     status:
       code: 200
       message: OK
@@ -150,9 +151,9 @@ interactions:
       content-type:
       - application/json; charset=utf-8
       date:
-      - Wed, 07 Dec 2022 10:40:24 GMT
+      - Wed, 07 Dec 2022 11:16:03 GMT
       ms-cv:
-      - AKcQNAKpEkmDSv7xGiFSnA.0
+      - F8waAiChpUOPgU1q8TYPeA.0
       strict-transport-security:
       - max-age=2592000
       transfer-encoding:
@@ -160,7 +161,7 @@ interactions:
       x-cache:
       - CONFIG_NOCACHE
       x-processing-time:
-      - 78ms
+      - 499ms
     status:
       code: 200
       message: OK

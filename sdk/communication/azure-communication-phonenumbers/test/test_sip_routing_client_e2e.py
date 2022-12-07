@@ -25,8 +25,7 @@ class TestSipRoutingClientE2E(CommunicationTestCase):
         super(TestSipRoutingClientE2E, self).__init__(method_name)
         
     def setUp(self):
-        super(TestSipRoutingClientE2E, self).setUp()
-
+        super(TestSipRoutingClientE2E, self).setUp(use_dynamic_resource = True)
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
             )
