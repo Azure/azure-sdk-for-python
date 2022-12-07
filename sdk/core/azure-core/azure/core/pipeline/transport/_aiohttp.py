@@ -195,7 +195,10 @@ class AioHttpTransport(AsyncHttpTransport):
         :keyword str proxy: will define the proxy to use all the time
         """
         await self.open()
-        auto_decompress = self.session.auto_decompress  # type: ignore
+        try:
+            auto_decompress = self.session.auto_decompress  # type: ignore
+        except AttributeError:
+            auto_decompress = False
 
         proxies = config.pop('proxies', None)
         if proxies and 'proxy' not in config:

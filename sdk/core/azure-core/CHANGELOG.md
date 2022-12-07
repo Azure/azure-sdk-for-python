@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fix "EnvironmentCredential: 'ClientSession' object has no attribute 'auto_decompress'"
+
 ### Other Changes
 
 - Add "x-ms-error-code" as secure header to log
