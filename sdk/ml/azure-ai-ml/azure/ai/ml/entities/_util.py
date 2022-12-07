@@ -42,12 +42,14 @@ from azure.ai.ml._schema.job import CommandJobSchema, ParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._schema.workspace import WorkspaceSchema
-from azure.ai.ml._utils.utils import is_internal_components_enabled
+from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components
 from azure.ai.ml.constants._common import (
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
     CommonYamlFields,
     YAMLRefDocLinks,
-    YAMLRefDocSchemaNames, AZUREML_INTERNAL_COMPONENTS_ENV_VAR, AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
+    YAMLRefDocSchemaNames,
+    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
+    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
@@ -425,8 +427,8 @@ def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
     _type, _ = extract_label(data.get(CommonYamlFields.TYPE, None))
     schema = data.get(CommonYamlFields.SCHEMA, None)
 
-    from azure.ai.ml._utils.utils import try_enable_internal_components
-
+    # we should keep at least 1 place outside _internal to enable internal components
+    # and this is the only place
     try_enable_internal_components()
 
     if _type not in valid_keys:
