@@ -1,10 +1,13 @@
-class {{ operation_group.generated_class.__name__ }}{{ "(MixinABC)" if operation_group.is_mixin else "" }}:
+class {{ operation_group.generated_class.__name__ }}{{ "(NetworkManagementClientMixinABC)" if operation_group.is_mixin else "" }}:
 {% if not operation_group.is_mixin %}
     """
     {{ operation_group.generated_class.__doc__ }}
     """
     models = _models
 
+    {% if operation_group.need_decorator %}
+    {{ operation_group.decorator | indent }}
+    {% endif %}
     def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")

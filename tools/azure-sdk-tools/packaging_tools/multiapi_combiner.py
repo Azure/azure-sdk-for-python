@@ -174,10 +174,13 @@ class OperationGroup(VersionedObject):
         self,
         code_model: "CodeModel",
         name: str,
+        *,
+        property_name: Optional[str] = None,
     ):
         super().__init__(code_model, name=name)
         self.operations: List[Operation] = []
         self.is_mixin = self.name.endswith("OperationsMixin")
+        self.property_name = property_name
 
     def _get_og(self, api_version: str):
         module = importlib.import_module(f"{self.code_model.module_name}.{api_version}")
@@ -227,7 +230,7 @@ class CodeModel:
             for dir in self.root_of_code.iterdir()
             if dir.stem.startswith("v") and "preview" not in dir.stem
         }
-        self.sorted_api_versions = sorted(self.api_version_to_metadata.keys())
+        self.sorted_api_versions = sorted([metadata["chosen_version"] for metadata in self.api_version_to_metadata.values()])
         self.default_api_version = self.sorted_api_versions[-1]
         self.module_name = pkg_path.stem.replace("-", ".")
         self.operation_groups = self._combine_operation_groups()
@@ -242,7 +245,13 @@ class CodeModel:
             return sorted(curr_metadata["operation_groups"].values())
 
         def _get_operation_group(code_model: "CodeModel", name: str):
-            return OperationGroup(code_model, name)
+            property_name = next(
+                property_name
+                for _, metadata in code_model.api_version_to_metadata.items()
+                for property_name, og_name in metadata["operation_groups"].items()
+                if og_name == name
+            )
+            return OperationGroup(code_model, name, property_name=property_name)
 
         ogs = _combine_helper(
             code_model=self,
@@ -316,6 +325,9 @@ class Serializer:
         with open(f"{operations_folder}/__init__.py", "w") as wfd:
             with open(f"{self._get_file_path_from_module(operations_folder_module, strip_api_version=False)}/__init__.py", "r") as rfd:
                 wfd.write(rfd.read())
+        with open(f"{operations_folder}/_patch.py", "w") as wfd:
+            with open(f"{self._get_file_path_from_module(operations_folder_module, strip_api_version=False)}/_patch.py", "r") as rfd:
+                wfd.write(rfd.read())
 
 
     def serialize_client(self, async_mode: bool):
@@ -329,6 +341,8 @@ class Serializer:
         # do parsing on the source so we can build up our client
         main_client_source = inspect.getsource(client_module)
         imports = main_client_source.split("class")[0]
+        vadilation_relative = ".." if async_mode else "."
+        imports += f"from {vadilation_relative}_validation import api_version_validation\n"
 
         main_client_source = main_client_source[len(imports):]
 

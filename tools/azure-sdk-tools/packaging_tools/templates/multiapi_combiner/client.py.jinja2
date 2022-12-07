@@ -5,12 +5,9 @@ from .operations import (
     {% endfor %}
 )
 {{ client_initialization }}
-{% for operation_group in code_model.operation_groups %}
+{% for operation_group in code_model.operation_groups | rejectattr("property_name", "equalto", None) %}
 
-    {% if operation_group.need_decorator %}
-    {{ operation_group.decorator | indent }}
-    {% endif %}
     @property
-    def {{ operation_group.name }}(self):
+    def {{ operation_group.property_name }}(self):
         return {{ operation_group.name }}(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
     {% endfor %}
