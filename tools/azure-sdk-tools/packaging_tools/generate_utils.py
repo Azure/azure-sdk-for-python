@@ -3,6 +3,7 @@ import json
 import logging
 import os
 import re
+import shutil
 
 from azure_devtools.ci_tools.git_tools import get_add_diff_file_list
 from pathlib import Path
@@ -367,7 +368,10 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
 
     # npm install tool
     origin_path = os.getcwd()
+    cadl_to_sdk_config = origin_path / "cadl_to_sdk_config.json"
     os.chdir(Path(spec_folder) / cadl_relative_path)
+    if not Path("package.json").exists():
+        shutil.copy(cadl_to_sdk_config, "package.json")
     check_call("npm install", shell=True)
 
     # generate code
