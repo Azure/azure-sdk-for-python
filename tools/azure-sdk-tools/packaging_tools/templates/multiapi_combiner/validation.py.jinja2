@@ -11,7 +11,7 @@ import functools
 
 def api_version_validation(**kwargs):
     params = kwargs.pop("params", {})
-    api_versions = kwargs.pop("api_versions", "")
+    api_versions = kwargs.pop("api_versions", [])
 
     def decorator(func):
         @functools.wraps(func)
@@ -22,26 +22,23 @@ def api_version_validation(**kwargs):
                 client_api_version = client._config.api_version  # pylint: disable=protected-access
             except AttributeError:
                 return func(*args, **kwargs)
-
-            if method_added_on > client_api_version:
+            if api_versions and client_api_version not in api_versions:
                 raise ValueError(
                     f"'{func.__name__}' is not available in API version "
-                    f"{client_api_version}. Pass service API version {method_added_on} or newer to your client."
+                    f"{client_api_version}. Pass service API version {api_versions[0]} or newer to your client."
                 )
-
-            unsupported = {
-                parameter: api_version
-                for api_version, parameters in params_added_on.items()
-                for parameter in parameters
-                if parameter in kwargs and api_version > client_api_version
-            }
+            unsupported = [
+                parameter
+                for parameter, api_versions in params.items()
+                if parameter in kwargs and client_api_version not in api_versions
+            ]
             if unsupported:
                 raise ValueError(
                     "".join(
                         [
                             f"'{param}' is not available in API version {client_api_version}. "
-                            f"Use service API version {version} or newer.\n"
-                            for param, version in unsupported.items()
+                            f"Use service API version {params[param][0]} or newer.\n"
+                            for param, version in unsupported
                         ]
                     )
                 )

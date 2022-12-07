@@ -20,6 +20,11 @@ def _get_metadata(path: Path) -> Dict[str, Any]:
     with open(path / "_metadata.json", "r") as fd:
         return json.load(fd)
 
+def modify_relative_imports(regex: str, file: str) -> str:
+    dots = re.search(regex, file).group(1)
+    original_str = regex.replace("(.*)", dots)
+    new_str = regex.replace("(.*)", "." * (len(dots) - 1))
+    return file.replace(original_str, new_str)
 
 class VersionedObject:
     """An object that can be added / removed in an api version"""
@@ -299,6 +304,12 @@ class Serializer:
         operations_folder = self._get_file_path_from_module(operations_folder_module, strip_api_version=True)
         operations_module = importlib.import_module(f"{operations_folder_module}._operations")
         setup = inspect.getsource(operations_module).split("class ")[0]  # get all request builders and imports
+        try:
+            setup = modify_relative_imports(r"from (.*)_serialization import Serializer", setup)
+        except AttributeError:
+            pass
+        validation_relative = "..." if async_mode else ".."
+        setup += f"from {validation_relative}_validation import api_version_validation\n"
         Path(operations_folder).mkdir(parents=True, exist_ok=True)
         with open(f"{operations_folder}/_operations.py", "w") as fd:
             fd.write(template.render(code_model=self.code_model, setup=setup, async_mode=async_mode))
@@ -351,9 +362,9 @@ class Serializer:
 
     def serialize(self):
         self.serialize_operations_folder(async_mode=False)
-        # self.serialize_operations_folder(async_mode=True)
+        self.serialize_operations_folder(async_mode=True)
         self.serialize_client(async_mode=False)
-        # self.serialize_client(async_mode=True)
+        self.serialize_client(async_mode=True)
         # self.serialize_models_file()
         self.serialize_general()
 
