@@ -22,13 +22,14 @@ USAGE:
 """
 
 import os
+import pandas as pd
+
 from azure.ai.anomalydetector import AnomalyDetectorClient
 from azure.core.credentials import AzureKeyCredential
-import pandas as pd
+from azure.ai.anomalydetector.models import *
 
 
 class DetectLastAnomalySample(object):
-
     def detect_last_point(self):
         SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
         ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
@@ -44,37 +45,40 @@ class DetectLastAnomalySample(object):
 
         # <loadDataFile>
         series = []
-        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding='utf-8', parse_dates=[0])
+        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
         for index, row in data_file.iterrows():
-            series.append({"timestamp": row[0], "value": row[1]})
+            series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
         # </loadDataFile>
 
         # Create a request from the data file
 
         # <request>
-        request = {
-            "series": series,
-            "granularity": "daily"
-        }
+        request = UnivariateDetectionOptions(
+            series=series,
+            granularity=TimeGranularity.DAILY,
+        )
         # </request>
 
         # Detect the anomaly status of the latest data point
 
         # <latestPointDetection>
-        print('Detecting the anomaly status of the latest data point.')
+        print("Detecting the anomaly status of the latest data point.")
 
         try:
             response = client.detect_univariate_last_point(request)
         except Exception as e:
-            print('Error code: {}'.format(e.error.code), 'Error message: {}'.format(e.error.message))
+            print(
+                "Error code: {}".format(e.error.code),
+                "Error message: {}".format(e.error.message),
+            )
 
-        if response['isAnomaly']:
-            print('The latest point is detected as anomaly.')
+        if response.is_anomaly:
+            print("The latest point is detected as anomaly.")
         else:
-            print('The latest point is not detected as anomaly.')
+            print("The latest point is not detected as anomaly.")
         # </latestPointDetection>
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sample = DetectLastAnomalySample()
     sample.detect_last_point()
