@@ -368,7 +368,7 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
 
     # npm install tool
     origin_path = os.getcwd()
-    cadl_to_sdk_config = origin_path / "cadl_to_sdk_config.json"
+    cadl_to_sdk_config = Path(origin_path) / "cadl_to_sdk_config.json"
     os.chdir(Path(spec_folder) / cadl_relative_path)
     if not Path("package.json").exists():
         shutil.copy(cadl_to_sdk_config, "package.json")
