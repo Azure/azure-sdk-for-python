@@ -11,8 +11,6 @@ from azure.eventhub._constants import ALL_PARTITIONS
 @pytest.mark.liveTest
 def test_receive_no_partition(connstr_senders, uamqp_transport):
     connection_str, senders = connstr_senders
-    senders[0].send(EventData("Test EventData"))
-    senders[1].send(EventData("Test EventData"))
     client = EventHubConsumerClient.from_connection_string(
         connection_str,
         consumer_group='$default',
@@ -38,10 +36,12 @@ def test_receive_no_partition(connstr_senders, uamqp_transport):
 
     with client:
         worker = threading.Thread(target=client.receive,
-                                  args=(on_event,),
-                                  kwargs={"starting_position": "-1"})
+                                  args=(on_event,))
         worker.start()
-        time.sleep(20)
+        time.sleep(5)
+        senders[0].send(EventData("Test EventData"))
+        senders[1].send(EventData("Test EventData"))
+        time.sleep(10)
         assert on_event.received == 2
         checkpoints = list(client._event_processors.values())[0]._checkpoint_store.list_checkpoints(
             on_event.namespace, on_event.eventhub_name, on_event.consumer_group

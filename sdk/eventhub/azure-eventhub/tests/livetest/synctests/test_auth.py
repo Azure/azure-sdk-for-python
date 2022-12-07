@@ -11,6 +11,7 @@ from azure.identity import EnvironmentCredential
 from azure.eventhub import EventData, EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
 from azure.eventhub._client_base import EventHubSASTokenCredential
 from azure.core.credentials import AzureSasCredential, AzureNamedKeyCredential
+from devtools_testutils import EnvironmentVariableLoader
 
 
 @pytest.mark.liveTest
@@ -28,11 +29,6 @@ def test_client_secret_credential(live_eventhub, uamqp_transport):
                                              user_agent='customized information',
                                              uamqp_transport=uamqp_transport
                                              )
-    with producer_client:
-        batch = producer_client.create_batch(partition_id='0')
-        batch.add(EventData(body='A single message'))
-        producer_client.send_batch(batch)
-
     def on_event(partition_context, event):
         on_event.called = True
         on_event.partition_id = partition_context.partition_id
@@ -42,9 +38,12 @@ def test_client_secret_credential(live_eventhub, uamqp_transport):
         worker = threading.Thread(target=consumer_client.receive, args=(on_event,),
                                   kwargs={
                                       "partition_id": '0',
-                                      "starting_position": '-1'
                                   })
         worker.start()
+        with producer_client:
+            batch = producer_client.create_batch(partition_id='0')
+            batch.add(EventData(body='A single message'))
+            producer_client.send_batch(batch)
         time.sleep(13)
 
     worker.join()

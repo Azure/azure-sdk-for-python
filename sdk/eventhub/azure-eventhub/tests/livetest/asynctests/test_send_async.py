@@ -27,62 +27,64 @@ from azure.eventhub.amqp import (
 @pytest.mark.asyncio
 async def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
     connection_str, receivers = connstr_receivers
-    client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
-    async with client:
-        sequence_body = [b'message', 123.456, True]
-        footer = {'footer_key': 'footer_value'}
-        prop = {"subject": "sequence"}
-        seq_app_prop = {"body_type": "sequence"}
+    sequence_body = [b'message', 123.456, True]
+    footer = {'footer_key': 'footer_value'}
+    prop = {"subject": "sequence"}
+    seq_app_prop = {"body_type": "sequence"}
 
-        sequence_message = AmqpAnnotatedMessage(
-            sequence_body=sequence_body,
-            footer=footer,
-            properties=prop,
-            application_properties=seq_app_prop
-        )
+    sequence_message = AmqpAnnotatedMessage(
+        sequence_body=sequence_body,
+        footer=footer,
+        properties=prop,
+        application_properties=seq_app_prop
+    )
 
-        value_body = {b"key": [-123, b'data', False]}
-        header = {"priority": 10}
-        anno = {"ann_key": "ann_value"}
-        value_app_prop = {"body_type": "value"}
-        value_message = AmqpAnnotatedMessage(
-            value_body=value_body,
-            header=header,
-            annotations=anno,
-            application_properties=value_app_prop
-        )
+    value_body = {b"key": [-123, b'data', False]}
+    header = {"priority": 10}
+    anno = {"ann_key": "ann_value"}
+    value_app_prop = {"body_type": "value"}
+    value_message = AmqpAnnotatedMessage(
+        value_body=value_body,
+        header=header,
+        annotations=anno,
+        application_properties=value_app_prop
+    )
 
-        data_body = [b'aa', b'bb', b'cc']
-        data_app_prop = {"body_type": "data"}
-        del_anno = {"delann_key": "delann_value"}
-        data_message = AmqpAnnotatedMessage(
-            data_body=data_body,
-            header=header,
-            delivery_annotations=del_anno,
-            application_properties=data_app_prop
-        )
+    data_body = [b'aa', b'bb', b'cc']
+    data_app_prop = {"body_type": "data"}
+    del_anno = {"delann_key": "delann_value"}
+    data_message = AmqpAnnotatedMessage(
+        data_body=data_body,
+        header=header,
+        delivery_annotations=del_anno,
+        application_properties=data_app_prop
+    )
 
-        body_ed = """{"json_key": "json_val"}"""
-        prop_ed = {"raw_prop": "raw_value"}
-        cont_type_ed = "text/plain"
-        corr_id_ed = "corr_id"
-        mess_id_ed = "mess_id"
-        event_data = EventData(body_ed)
-        event_data.content_type = cont_type_ed
-        event_data.correlation_id = corr_id_ed
-        event_data.message_id = mess_id_ed
+    body_ed = """{"json_key": "json_val"}"""
+    prop_ed = {b"raw_prop": b"raw_value"}
+    cont_type_ed = "text/plain"
+    corr_id_ed = "corr_id"
+    mess_id_ed = "mess_id"
+    event_data = EventData(body_ed)
+    event_data.content_type = cont_type_ed
+    event_data.correlation_id = corr_id_ed
+    event_data.message_id = mess_id_ed
+    event_data.properties = prop_ed
 
-        batch = await client.create_batch()
-        batch.add(data_message)
-        batch.add(value_message)
-        batch.add(sequence_message)
-        batch.add(event_data)
-        await client.send_batch(batch)
-        await client.send_batch([data_message, value_message, sequence_message, event_data])
-        await client.send_event(data_message)
-        await client.send_event(value_message)
-        await client.send_event(sequence_message)
-        await client.send_event(event_data)
+    producer = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+    async def send_events():
+        async with producer:
+            batch = await producer.create_batch()
+            batch.add(data_message)
+            batch.add(value_message)
+            batch.add(sequence_message)
+            batch.add(event_data)
+            await producer.send_batch(batch)
+            await producer.send_batch([data_message, value_message, sequence_message, event_data])
+            await producer.send_event(data_message)
+            await producer.send_event(value_message)
+            await producer.send_event(sequence_message)
+            await producer.send_event(event_data)
 
     received_count = {}
     received_count["data_msg"] = 0
@@ -105,6 +107,7 @@ async def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
                 assert event.correlation_id == corr_id_ed
                 assert event.message_id == mess_id_ed
                 assert event.content_type == cont_type_ed
+                assert event.properties == prop_ed
                 assert event.body_type == AmqpMessageBodyType.DATA
                 received_count["normal_msg"] += 1
         elif raw_amqp_message.body_type == AmqpMessageBodyType.SEQUENCE:
@@ -126,11 +129,13 @@ async def test_send_amqp_annotated_message(connstr_receivers, uamqp_transport):
         on_event.received.append(event)
 
     on_event.received = []
-    client = EventHubConsumerClient.from_connection_string(connection_str,
+    consumer = EventHubConsumerClient.from_connection_string(connection_str,
                                                         consumer_group='$default', uamqp_transport=uamqp_transport)
-    async with client:
-        task = asyncio.ensure_future(client.receive(on_event, starting_position="-1"))
-        await asyncio.sleep(15)
+    async with consumer:
+        task = asyncio.ensure_future(consumer.receive(on_event))
+        await asyncio.sleep(5)
+        await send_events()
+        await asyncio.sleep(10)
         for event in on_event.received:
             check_values(event)
 

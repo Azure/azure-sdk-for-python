@@ -10,8 +10,6 @@ from azure.eventhub._constants import ALL_PARTITIONS
 @pytest.mark.asyncio
 async def test_receive_no_partition_async(connstr_senders):
     connection_str, senders = connstr_senders
-    senders[0].send(EventData("Test EventData"))
-    senders[1].send(EventData("Test EventData"))
     client = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default')
 
     async def on_event(partition_context, event):
@@ -32,8 +30,10 @@ async def test_receive_no_partition_async(connstr_senders):
     on_event.sequence_number = None
 
     async with client:
-        task = asyncio.ensure_future(
-            client.receive(on_event, starting_position="-1"))
+        task = asyncio.ensure_future(client.receive(on_event))
+        await asyncio.sleep(5)
+        senders[0].send(EventData("Test EventData"))
+        senders[1].send(EventData("Test EventData"))
         await asyncio.sleep(10)
         assert on_event.received == 2
 

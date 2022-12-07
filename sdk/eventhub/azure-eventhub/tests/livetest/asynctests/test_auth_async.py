@@ -28,18 +28,18 @@ async def test_client_secret_credential_async(live_eventhub):
                                              credential=credential,
                                              user_agent='customized information')
 
-    async with producer_client:
-        batch = await producer_client.create_batch(partition_id='0')
-        batch.add(EventData(body='A single message'))
-        await producer_client.send_batch(batch)
-
     def on_event(partition_context, event):
         on_event.called = True
         on_event.partition_id = partition_context.partition_id
         on_event.event = event
     on_event.called = False
     async with consumer_client:
-        task = asyncio.ensure_future(consumer_client.receive(on_event, partition_id='0', starting_position='-1'))
+        task = asyncio.ensure_future(consumer_client.receive(on_event, partition_id='0'))
+        async with producer_client:
+            batch = await producer_client.create_batch(partition_id='0')
+            batch.add(EventData(body='A single message'))
+            await producer_client.send_batch(batch)
+
         await asyncio.sleep(13)
     await task
     assert on_event.called is True
