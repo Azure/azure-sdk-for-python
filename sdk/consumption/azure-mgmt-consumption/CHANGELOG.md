@@ -1,30 +1,6 @@
 # Release History
 
-## 11.0.0b2 (2022-12-07)
-
-### Features Added
-
-  - Model ChargeSummary has a new parameter etag
-  - Model ChargeSummary has a new parameter tags
-  - Model CreditSummary has a new parameter e_tag_properties_e_tag
-  - Model LegacyChargeSummary has a new parameter azure_marketplace_charges
-  - Model LegacyChargeSummary has a new parameter etag
-  - Model LegacyChargeSummary has a new parameter tags
-  - Model ModernChargeSummary has a new parameter etag
-  - Model ModernChargeSummary has a new parameter tags
-  - Model ModernReservationRecommendation has a new parameter resource_type
-
-### Breaking Changes
-
-  - Model ChargeSummary no longer has parameter e_tag
-  - Model CreditSummary no longer has parameter etag
-  - Model CreditSummary no longer has parameter tags
-  - Model LegacyChargeSummary no longer has parameter e_tag
-  - Model LegacyChargeSummary no longer has parameter marketplace_charges
-  - Model ModernChargeSummary no longer has parameter e_tag
-  - Parameter scope of model ModernReservationRecommendation is now required
-
-## 11.0.0b1 (2022-11-30)
+## 11.0.0b1 (2022-12-07)
 
 ### Features Added
 
