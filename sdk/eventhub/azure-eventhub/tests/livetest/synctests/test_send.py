@@ -31,7 +31,29 @@ except (ImportError, ModuleNotFoundError):
 @pytest.mark.liveTest
 def test_send_with_partition_key(connstr_receivers, live_eventhub, uamqp_transport, timeout_factor):
     connection_str, receivers = connstr_receivers
+    batch_cnt = []
+    single_cnt = []
+    found_partition_keys = {}
+    
+    def on_event_batch(partition_context, event_batch):
+        for event in event_batch:
+            try:
+                if event.properties and event.properties[b'is_single']:
+                    single_cnt.append(event)
+                else:
+                    batch_cnt.append(event)
+                existing = found_partition_keys[event_data.partition_key]
+                assert existing == partition_context.partition_id
+            except KeyError:
+                found_partition_keys[event_data.partition_key] = partition_context.partition_id
+
     client = EventHubProducerClient.from_connection_string(connection_str, uamqp_transport=uamqp_transport)
+
+    consumer = EventHubConsumerClient.from_connection_string(connection_str, consumer_group='$default', uamqp_transport=uamqp_transport)
+    receive_thread = threading.Thread(target=consumer.receive_batch, args=(on_event_batch,))
+    receive_thread.daemon = True
+    receive_thread.start()
+    
     with client:
         data_val = 0
         for partition in [b"a", b"b", b"c", b"d", b"e", b"f"]:
@@ -52,54 +74,66 @@ def test_send_with_partition_key(connstr_receivers, live_eventhub, uamqp_transpo
                 data_val += 1
                 client.send_event(event_data, partition_key=partition_key)
 
-    batch_cnt = 0
-    single_cnt = 0
-    found_partition_keys = {}
-    reconnect_receivers = []
-    for index, partition in enumerate(receivers):
-        retry_total = 0
-        while retry_total < 3:
-            timeout = (5 + retry_total) * timeout_factor
-            try:
-                received = partition.receive_message_batch(timeout=timeout)
-                for message in received:
-                    try:
-                        event_data = EventData._from_message(message)
-                        if event_data.properties and event_data.properties[b'is_single']:
-                            single_cnt += 1
-                        else:
-                            batch_cnt += 1
-                        existing = found_partition_keys[event_data.partition_key]
-                        assert existing == index
-                    except KeyError:
-                        found_partition_keys[event_data.partition_key] = index
-                if received:
-                    break
-                retry_total += 1
-            except uamqp.errors.ConnectionClose:
-                for r in reconnect_receivers:
-                    r.close()
-                uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
-                sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
-                    uri, live_eventhub['key_name'], live_eventhub['access_key'])
+    #give enough time for the receiver to finish
+    time.sleep(60)
+    consumer.close()
+    receive_thread.join()
+    #region original code
+    # batch_cnt = 0
+    # single_cnt = 0
+    # found_partition_keys = {}
+    # reconnect_receivers = []
+    # for index, partition in enumerate(receivers):
+    #     retry_total = 0
+    #     while retry_total < 3:
+    #         timeout = (5 + retry_total) * timeout_factor
+    #         try:
+    #             received = partition.receive_message_batch(timeout=timeout)
+    #             for message in received:
+    #                 try:
+    #                     event_data = EventData._from_message(message)
+    #                     if event_data.properties and event_data.properties[b'is_single']:
+    #                         single_cnt += 1
+    #                     else:
+    #                         batch_cnt += 1
+    #                     existing = found_partition_keys[event_data.partition_key]
+    #                     assert existing == index
+    #                 except KeyError:
+    #                     found_partition_keys[event_data.partition_key] = index
+    #             if received:
+    #                 break
+    #             retry_total += 1
+    #         except uamqp.errors.ConnectionClose:
+    #             for r in reconnect_receivers:
+    #                 r.close()
+    #             uri = "sb://{}/{}".format(live_eventhub['hostname'], live_eventhub['event_hub'])
+    #             sas_auth = uamqp.authentication.SASTokenAuth.from_shared_access_key(
+    #                 uri, live_eventhub['key_name'], live_eventhub['access_key'])
 
-                source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
-                    live_eventhub['hostname'],
-                    live_eventhub['event_hub'],
-                    live_eventhub['consumer_group'],
-                    index)
-                partition = uamqp.ReceiveClient(source, auth=sas_auth, debug=True, timeout=0, prefetch=500)
-                reconnect_receivers.append(partition)
-                retry_total += 1
-        if retry_total == 3:
-            raise OperationTimeoutError(f"Exhausted retries for receiving from {live_eventhub['hostname']}.")
+    #             source = "amqps://{}/{}/ConsumerGroups/{}/Partitions/{}".format(
+    #                 live_eventhub['hostname'],
+    #                 live_eventhub['event_hub'],
+    #                 live_eventhub['consumer_group'],
+    #                 index)
+    #             partition = uamqp.ReceiveClient(source, auth=sas_auth, debug=True, timeout=0, prefetch=500)
+    #             reconnect_receivers.append(partition)
+    #             retry_total += 1
+    #     if retry_total == 3:
+    #         raise OperationTimeoutError(f"Exhausted retries for receiving from {live_eventhub['hostname']}.")
 
-    for r in reconnect_receivers:
-        r.close()
+    # for r in reconnect_receivers:
+    #     r.close()
+    #endregion
 
-    assert single_cnt == 60
-    assert batch_cnt == 60
+    assert len(single_cnt) == 60
+    assert len(batch_cnt) == 60
+    # assert single_cnt == 60
+    # assert batch_cnt == 60
     assert len(found_partition_keys) == 6
+    #consumer.close()
+    
+    
+    
 
 
 @pytest.mark.liveTest
