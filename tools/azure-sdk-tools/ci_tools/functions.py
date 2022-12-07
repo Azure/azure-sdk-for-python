@@ -203,27 +203,33 @@ def is_required_version_on_pypi(package_name, spec):
     return versions
 
 
-def get_version_from_repo(pkg_name: str, repo_root: str = None):
+def get_package_from_repo(pkg_name: str, repo_root: str = None) -> ParsedSetup:
     root_dir = discover_repo_root(repo_root)
 
-    # find version for the package from source. This logic should be revisited to find version from devops feed
     glob_path = os.path.join(root_dir, "sdk", "*", pkg_name, "setup.py")
     paths = glob.glob(glob_path)
+
     if paths:
         setup_py_path = paths[0]
         parsed_setup = ParsedSetup.from_path(setup_py_path)
+        return parsed_setup
 
+    return None
+
+
+def get_version_from_repo(pkg_name: str, repo_root: str = None):
+    pkg_info = get_package_from_repo(pkg_name, repo_root)
+    if pkg_info:
         # Remove dev build part if version for this package is already updated to dev build
         # When building package with dev build version, version for packages in same service is updated to dev build
         # and other packages will not have dev build number
         # strip dev build number so we can check if package exists in PyPI and replace
-
-        version_obj = Version(parsed_setup.version)
+        version_obj = Version(pkg_info.version)
         if version_obj.pre:
             if version_obj.pre[0] == DEV_BUILD_IDENTIFIER:
-                version = version_obj.base_version
+                return version_obj.base_version
 
-        return version
+        return str(version_obj)
     else:
         logging.error("setup.py is not found for package {} to identify current version".format(pkg_name))
         exit(1)

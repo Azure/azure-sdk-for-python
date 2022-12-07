@@ -305,6 +305,7 @@ class ModelOperations(_ScopeDependentOperations):
         """
 
         model_uri = self.get(name=name, version=version).path
+        ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri, self._registry_name)
         if self._registry_name:
             sas_uri = get_storage_details_for_registry_assets(
                 service_client=self._service_client,
@@ -316,10 +317,8 @@ class ModelOperations(_ScopeDependentOperations):
                 uri=model_uri,
             )
             storage_client = get_storage_client(credential=None, storage_account=None, account_url=sas_uri)
-            path_prefix = model_uri.split("/")[-1]
 
         else:
-            ds_name, path_prefix = get_ds_name_and_path_prefix(model_uri)
             ds = self._datastore_operation.get(ds_name, include_secrets=True)
             acc_name = ds.account_name
 

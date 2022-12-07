@@ -141,17 +141,3 @@ stages:
               SubscriptionConfigurations: ${{ cloud.value.SubscriptionConfigurations }}
               Location: ${{ coalesce(parameters.Location, cloud.value.Location) }}
               Cloud: ${{ cloud.key }}
-
-- stage: Publish_Coverage_${{ parameters.JobName }}
-  # If dependsOn isn't specified, this stage may end up running after the previous stage in the pipeline. In the case
-  # that a stage (i.e. cloud) is skipped in the UI, then this stage will run too early, so make dependsOn include ALL dynamic
-  # stages.
-  dependsOn:
-    - ${{ each cloud in parameters.CloudConfig }}:
-      - ${{ if or(contains(parameters.Clouds, cloud.key), and(contains(variables['Build.DefinitionName'], 'tests-weekly'), contains(parameters.SupportedClouds, cloud.key))) }}:
-        - ${{ if not(contains(parameters.UnsupportedClouds, cloud.key)) }}:
-          - ${{ cloud.key }}_${{ parameters.JobName }}
-  jobs:
-  - template: ../jobs/publish-coverage.yml
-    parameters:
-      ServiceDirectory: ${{ parameters.ServiceDirectory }}
