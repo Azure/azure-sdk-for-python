@@ -53,6 +53,7 @@ __all__ = [
     "condition",
     "do_while",
     "group",
+    "_assert_arg_valid",
     "_get_annotation_by_value",
     "PipelineInput",
 ]
