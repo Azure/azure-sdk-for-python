@@ -1,20 +1,22 @@
+import re
+
 from azure_devtools.scenario_tests import RecordingProcessor
 
 class DomainReplacerProcessor(RecordingProcessor):
     """Sanitize the domain name in both request and response"""
 
-    def __init__(self, replacement="sanitized.com", domain=None):
+    def __init__(self, replacement=".sanitized.com", _regex_pattern="\.[0-9a-fA-F]{32}\.com"):
         self._replacement = replacement
-        self._domain = domain
+        self._regex_pattern = _regex_pattern
         
     def process_request(self, request):
         if request.body is not None:
-            request.body = request.body.decode().replace(self._domain,self._replacement).encode()
+            request.body = re.sub(self._regex_pattern, self._replacement, request.body.decode()).encode()
 
         return request
 
     def process_response(self, response):
         if response['body']['string']:
-            response['body']['string'] = response['body']['string'].replace(self._domain,self._replacement)
+            response['body']['string'] = re.sub(self._regex_pattern, self._replacement, response['body']['string'])
 
         return response

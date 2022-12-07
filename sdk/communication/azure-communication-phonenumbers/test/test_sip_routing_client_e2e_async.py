@@ -4,8 +4,6 @@
 # license information.
 # --------------------------------------------------------------------------
 
-import os
-
 from _shared.asynctestcase import AsyncCommunicationTestCase
 from _shared.helper import URIReplacerProcessor
 from _shared.utils import async_create_token_credential, get_http_logging_policy
@@ -33,7 +31,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
         )
-        self.recording_processors.extend([URIReplacerProcessor(), DomainReplacerProcessor(domain=self.user_domain)])
+        self.recording_processors.extend([URIReplacerProcessor(), DomainReplacerProcessor()])
 
     async def _prepare_test(self):
         await self._sip_routing_client.set_routes([])
