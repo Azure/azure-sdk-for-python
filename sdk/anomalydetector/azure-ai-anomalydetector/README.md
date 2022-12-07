@@ -21,8 +21,11 @@ python -m pip install azure-ai-anomalydetector
 This table shows the relationship between SDK versions and supported API versions of the service:
 
 |SDK version|Supported API version of service |
-|-|- |
-|3.0.0b6| 1.1|
+|-------------|---------------|
+|3.0.0b6 | 1.1|
+|3.0.0b4, 3.0.0b5| 1.1-preview-1|
+|3.0.0b3 | 1.1-preview|
+|3.0.0b1, 3.0.0b2  | 1.0 |
 
 ### Authenticate the client
 
@@ -42,7 +45,9 @@ az cognitiveservices account show --name "resource-name" --resource-group "resou
 You can get the **API Key** from the Anomaly Detector service resource in the Azure Portal.
 Alternatively, you can use **Azure CLI** snippet below to get the API key of your resource.
 
-`az cognitiveservices account keys list --name "resource-name" --resource-group "resource-group-name"`
+```PowerShell
+az cognitiveservices account keys list --resource-group <your-resource-group-name> --name <your-resource-name>
+```
 
 #### Create a AnomalyDetectorClient with an API Key Credential
 
@@ -92,139 +97,122 @@ With the Multivariate Anomaly Detection, you can automatically detect anomalies 
   - You could also use Sync Inference API to trigger a detection on one timestamp every time.
 - **Other operations**: List Model API and Delete Model API are supported in Multivariate Anomaly Detection model for model management.
 
+### Thread safety
+
+We guarantee that all client instance methods are thread-safe and independent of each other ([guideline](https://azure.github.io/azure-sdk/dotnet_introduction.html#dotnet-service-methods-thread-safety)). This ensures that the recommendation of reusing client instances is always safe, even across threads.
+
 ## Examples
 
 The following section provides several code snippets covering some of the most common Anomaly Detector service tasks, including:
 
-- [Univariate Anomaly Detection - Detect change points](#detect-change-points)
 - [Univariate Anomaly Detection - Batch detection](#batch-detection)
 - [Univariate Anomaly Detection - Streaming detection](#streaming-detection)
-
-### Detect change points
-
-```python
-import os
-import pandas as pd
-from azure.ai.anomalydetector import AnomalyDetectorClient
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.anomalydetector.models import *
-
-class DetectChangePointsSample(object):
-    def detect_change_point(self):
-        SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
-        ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
-        TIME_SERIES_DATA_PATH = os.path.join("sample_data", "request-data.csv")
-
-        client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
-
-        series = []
-        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
-        for index, row in data_file.iterrows():
-            series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
-
-        request = UnivariateChangePointDetectionOptions(
-            series=series,
-            granularity=TimeGranularity.DAILY,
-        )
-
-        print("Detecting change points in the entire time series.")
-
-        if any(response.is_change_point):
-            print("An change point was detected at index:")
-            for i, value in enumerate(response.is_change_point):
-                if value:
-                    print(i)
-        else:
-            print("No change point were detected in the time series.")
-        # </detectChangePoint>
-
-
-if __name__ == "__main__":
-    sample = DetectChangePointsSample()
-    sample.detect_change_point()
-```
+- [Univariate Anomaly Detection - Detect change points](#detect-change-points)
+- [Multivariate Anomaly Detection](#multivariate-anomaly-detection-sample)
 
 ### Batch detection
 
 ```python
-import os
-import pandas as pd
 from azure.ai.anomalydetector import AnomalyDetectorClient
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.anomalydetector.models import *
 
-class DetectEntireAnomalySample(object):
-    def detect_entire_series(self):
-        SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
-        ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
-        TIME_SERIES_DATA_PATH = os.path.join("sample_data", "request-data.csv")
 
-        client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
+SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
+ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
+TIME_SERIES_DATA_PATH = os.path.join("sample_data", "request-data.csv")
+client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
 
-        series = []
-        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
-        for index, row in data_file.iterrows():
-            series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
+series = []
+data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
+for index, row in data_file.iterrows():
+    series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
 
-        request = UnivariateDetectionOptions(
-            series=series,
-            granularity=TimeGranularity.DAILY,
-        )
+request = UnivariateDetectionOptions(
+    series=series,
+    granularity=TimeGranularity.DAILY,
+)
 
 
-        if any(response.is_anomaly):
-            print("An anomaly was detected at index:")
-            for i, value in enumerate(response.is_anomaly):
-                if value:
-                    print(i)
-        else:
-            print("No anomalies were detected in the time series.")
+if any(response.is_anomaly):
+    print("An anomaly was detected at index:")
+    for i, value in enumerate(response.is_anomaly):
+        if value:
+            print(i)
+else:
+    print("No anomalies were detected in the time series.")
 
-if __name__ == "__main__":
-    sample = DetectEntireAnomalySample()
-    sample.detect_entire_series()
 ```
 
 ### Streaming Detection
 
 ```python
-import os
-import pandas as pd
 from azure.ai.anomalydetector import AnomalyDetectorClient
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.anomalydetector.models import *
 
-class DetectLastAnomalySample(object):
-    def detect_last_point(self):
-        SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
-        ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
-        TIME_SERIES_DATA_PATH = os.path.join("sample_data", "request-data.csv")
 
-        client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
+SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
+ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
+TIME_SERIES_DATA_PATH = os.path.join("sample_data", "request-data.csv")
+client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
 
-        series = []
-        data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
-        for index, row in data_file.iterrows():
-            series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
+series = []
+data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
+for index, row in data_file.iterrows():
+    series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
 
-        request = UnivariateDetectionOptions(
-            series=series,
-            granularity=TimeGranularity.DAILY,
-        )
-        print("Detecting the anomaly status of the latest data point.")
+request = UnivariateDetectionOptions(
+    series=series,
+    granularity=TimeGranularity.DAILY,
+)
+print("Detecting the anomaly status of the latest data point.")
 
-        if response.is_anomaly:
-            print("The latest point is detected as anomaly.")
-        else:
-            print("The latest point is not detected as anomaly.")
-
-
-if __name__ == "__main__":
-    sample = DetectLastAnomalySample()
-    sample.detect_last_point()
+if response.is_anomaly:
+    print("The latest point is detected as anomaly.")
+else:
+    print("The latest point is not detected as anomaly.")
 ```
 
-To see how to use Anomaly Detector library to conduct Multivariate Anomaly Detection, see this [sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_multivariate_detect.py). To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
+### Detect change points
+
+```python
+from azure.ai.anomalydetector import AnomalyDetectorClient
+from azure.core.credentials import AzureKeyCredential
+from azure.ai.anomalydetector.models import *
+
+
+SUBSCRIPTION_KEY = os.environ["ANOMALY_DETECTOR_KEY"]
+ANOMALY_DETECTOR_ENDPOINT = os.environ["ANOMALY_DETECTOR_ENDPOINT"]
+TIME_SERIES_DATA_PATH = os.path.join("sample_data", "request-data.csv")
+client = AnomalyDetectorClient(ANOMALY_DETECTOR_ENDPOINT, AzureKeyCredential(SUBSCRIPTION_KEY))
+
+series = []
+data_file = pd.read_csv(TIME_SERIES_DATA_PATH, header=None, encoding="utf-8", parse_dates=[0])
+for index, row in data_file.iterrows():
+    series.append(TimeSeriesPoint(timestamp=row[0], value=row[1]))
+
+request = UnivariateChangePointDetectionOptions(
+    series=series,
+    granularity=TimeGranularity.DAILY,
+)
+
+
+if any(response.is_change_point):
+    print("An change point was detected at index:")
+    for i, value in enumerate(response.is_change_point):
+        if value:
+            print(i)
+else:
+    print("No change point were detected in the time series.")
+
+```
+
+### Multivariate Anomaly Detection Sample
+
+To see how to use Anomaly Detector library to conduct Multivariate Anomaly Detection, see this [sample](https://github.com/Azure/azure-sdk-for-python/blob/main/sdk/anomalydetector/azure-ai-anomalydetector/samples/sample_multivariate_detect.py).
+
+To get more details of Anomaly Detector package, refer to this [azure.ai.anomalydetector package](https://azuresdkdocs.blob.core.windows.net/$web/python/azure-ai-anomalydetector/latest/azure.ai.anomalydetector.html#).
 
 ## Troubleshooting
 
