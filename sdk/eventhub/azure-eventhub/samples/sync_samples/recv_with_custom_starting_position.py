@@ -11,8 +11,8 @@ An example to show receiving events from Event Hub partitions with custom starti
 import os
 from azure.eventhub import EventHubConsumerClient, EventHubProducerClient, EventData
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ["EVENTHUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 
 
 def on_partition_initialize(partition_context):

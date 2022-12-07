@@ -13,8 +13,8 @@ import threading
 import time
 from azure.eventhub import EventHubConsumerClient
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ["EVENTHUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 RECEIVE_DURATION = 15
 
 

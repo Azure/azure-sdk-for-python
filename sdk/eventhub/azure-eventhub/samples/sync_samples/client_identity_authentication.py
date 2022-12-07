@@ -40,8 +40,8 @@ from azure.eventhub import EventData, EventHubProducerClient
 from azure.identity import EnvironmentCredential
 
 
-fully_qualified_namespace = os.environ['EVENT_HUB_HOSTNAME']
-eventhub_name = os.environ['EVENT_HUB_NAME']
+fully_qualified_namespace = os.environ['EVENTHUB_HOSTNAME']
+eventhub_name = os.environ['EVENTHUB_NAME']
 
 credential = EnvironmentCredential()
 

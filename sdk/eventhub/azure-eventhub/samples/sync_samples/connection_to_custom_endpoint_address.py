@@ -12,8 +12,8 @@ Examples to show how to create EventHubProducerClient and EventHubConsumerClient
 import os
 from azure.eventhub import EventHubProducerClient, EventHubConsumerClient, EventData
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ["EVENTHUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 # The custom endpoint address to use for establishing a connection to the Event Hubs service,
 # allowing network requests to be routed through any application gateways
 # or other paths needed for the host environment.

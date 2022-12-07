@@ -15,11 +15,11 @@ from azure.core.credentials import AzureNamedKeyCredential
 from azure.eventhub import EventHubProducerClient, EventData
 
 # Target namespace and hub must also be specified.
-FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ['EVENTHUB_HOSTNAME']
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 
-EVENTHUB_POLICY_NAME = os.environ['EVENT_HUB_SAS_POLICY']
-EVENTHUB_KEY = os.environ['EVENT_HUB_SAS_KEY']
+EVENTHUB_POLICY_NAME = os.environ['EVENTHUB_SAS_POLICY']
+EVENTHUB_KEY = os.environ['EVENTHUB_SAS_KEY']
 
 credential = AzureNamedKeyCredential(EVENTHUB_POLICY_NAME, EVENTHUB_KEY)
 

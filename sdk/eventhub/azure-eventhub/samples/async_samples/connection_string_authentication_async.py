@@ -12,8 +12,8 @@ import asyncio
 import os
 from azure.eventhub.aio import EventHubConsumerClient
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ["EVENTHUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 
 
 async def main():

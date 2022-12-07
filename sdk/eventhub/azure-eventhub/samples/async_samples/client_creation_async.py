@@ -14,11 +14,11 @@ from azure.eventhub import TransportType
 from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient, EventHubSharedKeyCredential
 
 
-CONNECTION_STRING = os.environ['EVENT_HUB_CONN_STR']
-FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
-SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
-SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
+CONNECTION_STRING = os.environ['EVENTHUB_CONN_STR']
+FULLY_QUALIFIED_NAMESPACE = os.environ['EVENTHUB_HOSTNAME']
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
+SAS_POLICY = os.environ['EVENTHUB_SAS_POLICY']
+SAS_KEY = os.environ['EVENTHUB_SAS_KEY']
 CONSUMER_GROUP = "$Default"
 
 

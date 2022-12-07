@@ -54,12 +54,12 @@ class CustomizedSASCredential(object):
 
 
 # Target namespace and hub must also be specified.  Consumer group is set to default unless required otherwise.
-FULLY_QUALIFIED_NAMESPACE = os.environ['EVENT_HUB_HOSTNAME']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+FULLY_QUALIFIED_NAMESPACE = os.environ['EVENTHUB_HOSTNAME']
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 
 # The following part creates a SAS token. Users can use any way to create a SAS token.
-SAS_POLICY = os.environ['EVENT_HUB_SAS_POLICY']
-SAS_KEY = os.environ['EVENT_HUB_SAS_KEY']
+SAS_POLICY = os.environ['EVENTHUB_SAS_POLICY']
+SAS_KEY = os.environ['EVENTHUB_SAS_KEY']
 
 
 async def create_with_sas_token():

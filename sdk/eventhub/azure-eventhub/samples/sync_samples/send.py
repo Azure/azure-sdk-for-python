@@ -14,8 +14,8 @@ import os
 from azure.eventhub import EventHubProducerClient, EventData
 from azure.eventhub.exceptions import EventHubError
 
-CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ['EVENTHUB_CONN_STR']
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 
 
 def send_event_data_batch(producer):

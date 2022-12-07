@@ -216,27 +216,31 @@
     }
   ],
   "outputs": {
-    "EVENT_HUB_NAMESPACE": {
+    "EVENTHUB_RESOURCE_GROUP": {
+      "type": "string",
+      "value": "[parameters('baseName')]"
+    },
+    "EVENTHUB_NAMESPACE": {
         "type": "string",
         "value": "[variables('eventHubsNamespace')]"
     },
-    "EVENT_HUB_HOSTNAME": {
+    "EVENTHUB_HOSTNAME": {
         "type": "string",
         "value": "[concat(variables('eventHubsNamespace'), '.servicebus.windows.net')]"
     },
-    "EVENT_HUB_CONN_STR": {
+    "EVENTHUB_CONN_STR": {
         "type": "string",
         "value": "[listkeys(variables('eventHubAuthRuleName'), variables('ehVersion')).primaryConnectionString]"
     },
-    "EVENT_HUB_NAME": {
+    "EVENTHUB_NAME": {
         "type": "string",
         "value": "[variables('eventHubName')]"
     },
-    "EVENT_HUB_SAS_POLICY":{
+    "EVENTHUB_SAS_POLICY":{
       "type": "string",
       "value": "[variables('eventHubAuthRuleName')]"
     },
-    "EVENT_HUB_SAS_KEY":{
+    "EVENTHUB_SAS_KEY":{
       "type": "string",
       "value": "[listkeys(variables('eventHubAuthRuleName'), variables('ehVersion')).primaryKey]"
     },

@@ -15,8 +15,8 @@ from azure.eventhub.aio import EventHubProducerClient, EventHubConsumerClient
 from azure.eventhub.amqp import AmqpAnnotatedMessage, AmqpMessageBodyType
 
 
-CONNECTION_STR = os.environ['EVENT_HUB_CONN_STR']
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ['EVENTHUB_CONN_STR']
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 
 async def send_data_message(producer):
     data_body = [b'aa', b'bb', b'cc']

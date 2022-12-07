@@ -11,8 +11,8 @@ An example to show sending and receiving events behind a proxy.
 import os
 from azure.eventhub import EventData, EventHubConsumerClient, EventHubProducerClient
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ["EVENTHUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 
 HTTP_PROXY = {
     'proxy_hostname': '127.0.0.1',  # proxy hostname.

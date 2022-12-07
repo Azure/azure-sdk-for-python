@@ -11,8 +11,8 @@ An example to show authentication using a connection string obtained via the Azu
 import os
 from azure.eventhub import EventHubConsumerClient
 
-CONNECTION_STR = os.environ["EVENT_HUB_CONN_STR"]
-EVENTHUB_NAME = os.environ['EVENT_HUB_NAME']
+CONNECTION_STR = os.environ["EVENTHUB_CONN_STR"]
+EVENTHUB_NAME = os.environ['EVENTHUB_NAME']
 
 consumer_client = EventHubConsumerClient.from_connection_string(
     conn_str=CONNECTION_STR,
