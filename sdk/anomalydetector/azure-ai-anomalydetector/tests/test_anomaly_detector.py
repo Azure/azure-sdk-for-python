@@ -69,3 +69,15 @@ class TestAnomalyDetector(AzureRecordedTestCase):
             35,
             44,
         ]
+
+    @AnomalyDetectorEnvPreparer()
+    @recorded_by_proxy
+    def test_multi_ad_list_model(self, anomaly_detector_endpoint, anomaly_detector_key):
+
+        ad_client = AnomalyDetectorClient(anomaly_detector_endpoint, AzureKeyCredential(anomaly_detector_key))
+        assert ad_client is not None
+
+        models = ad_client.list_multivariate_models(skip=0, top=10)
+        model_count = len(list(models))
+
+        assert model_count >= 0
