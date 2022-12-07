@@ -53,7 +53,7 @@ class DetectChangePointsSample(object):
         # Create a request from the data file
 
         # <request>
-        request = ChangePointDetectRequest(
+        request = UnivariateChangePointDetectionOptions(
             series=series,
             granularity=TimeGranularity.DAILY,
         )

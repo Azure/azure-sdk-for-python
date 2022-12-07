@@ -53,7 +53,7 @@ class DetectLastAnomalySample(object):
         # Create a request from the data file
 
         # <request>
-        request = DetectRequest(
+        request = UnivariateDetectionOptions(
             series=series,
             granularity=TimeGranularity.DAILY,
         )
