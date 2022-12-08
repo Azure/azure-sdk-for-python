@@ -7,6 +7,7 @@
 import asyncio
 
 from _shared.asynctestcase import AsyncCommunicationTestCase
+from _shared.testcase import CommunicationTestResourceType
 from _shared.helper import URIReplacerProcessor
 from _shared.utils import async_create_token_credential, get_http_logging_policy
 
@@ -23,8 +24,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         super(TestSipRoutingClientE2EAsync, self).__init__(method_name)
         
     def setUp(self):
-        super(TestSipRoutingClientE2EAsync, self).setUp()
-
+        super(TestSipRoutingClientE2EAsync, self).setUp(resource_type = CommunicationTestResourceType.DYNAMIC)
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
         )
