@@ -292,7 +292,7 @@ class ComponentOperations(_ScopeDependentOperations):
                         **self._init_args,
                     )
 
-        if not (hasattr(component, "_is_anonymous") and component._is_anonymous is True):
+        if not (hasattr(component, "_is_anonymous") and component._is_anonymous):
             component._set_is_anonymous(kwargs.pop("is_anonymous", False))
         if not skip_validation:
             self._validate(component, raise_on_failure=True)
