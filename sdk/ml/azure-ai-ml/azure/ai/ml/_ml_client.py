@@ -103,9 +103,9 @@ class MLClient(object):
         :param show_progress: Whether to display progress bars for long running operations. E.g. customers may consider
             to set this to False if not using this SDK in an interactive setup. Defaults to True.
         :type show_progress: bool, optional
-        :keyword cloud:
-            Specifies the cloud name to set on the client and use for all future operations.
-        :paramtype cloud: str
+        :param kwargs: A dictionary of additional configuration parameters.
+            For e.g. kwargs = {"cloud": "AzureUSGovernment"}
+        :type kwargs: dict
 
         .. admonition:: Example:
 
