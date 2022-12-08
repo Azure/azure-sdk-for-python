@@ -109,7 +109,7 @@ class MLClient(object):
 
         .. admonition:: Example:
 
-            .. literalinclude:: ../samples/ml_samples_authentication_sovereign_cloud.py
+            .. literalinclude:: ../../samples/ml_samples_authentication_sovereign_cloud.py
                 :start-after: [START create_ml_client_default_credential]
                 :end-before: [END create_ml_client_default_credential]
                 :language: python
