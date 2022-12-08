@@ -876,7 +876,12 @@
         "myaccount",
         "testid",
         "filea",
-        "fileb"
+        "fileb",
+        "FFFE",
+        "Fdirectory",
+        "Ffile",
+        "Fsubdir",
+        "Fdir"
       ]
     },
     {
