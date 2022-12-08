@@ -269,9 +269,6 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         if is_private_preview_enabled() and job_name:
             params_override.append({EndpointYamlFields.BATCH_JOB_NAME: job_name})
 
-        if outputs:
-            params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
-
         # Batch job doesn't have a python class, loading a rest object using params override
         context = {
             BASE_PATH_CONTEXT_KEY: Path(".").parent,

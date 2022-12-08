@@ -108,9 +108,4 @@ class BatchJobSchema(PathAwareSchema):
         if data.get(EndpointYamlFields.RETRY_SETTINGS, None):
             data[EndpointYamlFields.RETRY_SETTINGS] = data[EndpointYamlFields.RETRY_SETTINGS]._to_rest_object()
 
-        if data.get(EndpointYamlFields.BATCH_JOB_OUTPUT_DATA, None):
-            for key, output_data in data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA].items():
-                if isinstance(output_data, Output):
-                    if output_data.type == AssetTypes.URI_FILE:
-                        data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA][key] = UriFileJobOutput(uri=output_data.path)
         return BatchJob(**data)
