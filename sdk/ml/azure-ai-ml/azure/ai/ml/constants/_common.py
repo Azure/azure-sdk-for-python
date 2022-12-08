@@ -530,6 +530,11 @@ class AssetTypes:
     TRITON_MODEL = "triton_model"
     CUSTOM_MODEL = "custom_model"
 
+class InputTypes:
+    INTEGER = 'integer'
+    NUMBER = 'number'
+    STRING = 'string'
+    BOOLEAN = 'boolean'
 
 class WorkspaceResourceConstants(object):
     ENCRYPTION_STATUS_ENABLED = "Enabled"
