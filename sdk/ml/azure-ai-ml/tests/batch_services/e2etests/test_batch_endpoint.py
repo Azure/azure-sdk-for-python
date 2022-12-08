@@ -6,7 +6,7 @@ from azure.ai.ml import MLClient, load_batch_endpoint, load_batch_deployment
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.core.exceptions import ResourceNotFoundError
 
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
 
 @pytest.mark.e2etest
@@ -108,6 +108,42 @@ class TestBatchEndpoint(AzureRecordedTestCase):
             input = input_1
         )
         assert batchjob_input
+
+    @pytest.mark.skipif(
+        condition=not is_live(),
+        reason="Update operation is not valid. If we use the same endpoint/deployment this will throw an error"
+    )
+    def test_batch_component(self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
+        endpoint_yaml = "./tests/test_configs/endpoints/batch/batch_endpoint_deployment_component.yaml"
+        endpoint_name = rand_batch_name("endpoint_name")
+        endpoint = load_batch_endpoint(endpoint_yaml)
+        endpoint.name = endpoint_name
+
+        # Create deployment using local files
+        deployment_yaml = "./tests/test_configs/deployments/batch/batch_deployment_component.yaml"
+        deployment_name = rand_batch_deployment_name("deployment_name")
+
+        deployment = load_batch_deployment(deployment_yaml)
+        deployment.endpoint_name = endpoint_name
+        deployment.name = deployment_name
+
+        # create the batch endpoint
+        endpoint = client.batch_endpoints.begin_create_or_update(endpoint).result()
+        # create a deployment
+        client.batch_deployments.begin_create_or_update(deployment).result()
+        
+        # Batch endpoint invoke using different supported inputs
+        inputs_dict = {
+            "input_1": Input(path="azureml:list_data_v2_test:2", type="uri_folder"),
+            "input_2": Input(path="azureml:list_data_v2_test:2", type="uri_folder")
+        }
+
+        job = client.batch_endpoints.invoke(
+            endpoint_name=endpoint.name,
+            deployment_name=deployment.name,
+            inputs = inputs_dict,
+        )
+        assert job
 
     def test_batch_invoke_outputs(self, client: MLClient, rand_batch_name: Callable[[], str], rand_batch_deployment_name: Callable[[], str]) -> None:
         endpoint_yaml = "./tests/test_configs/endpoints/batch/simple_batch_endpoint.yaml"

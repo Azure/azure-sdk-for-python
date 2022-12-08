@@ -770,6 +770,11 @@ def is_internal_components_enabled():
 
 
 def try_enable_internal_components(*, force=False):
+    """Try to enable internal components for the current process.
+    This is the only function outside _internal that references _internal
+
+    :param force: Force enable internal components even if enabled before.
+    """
     if is_internal_components_enabled():
         from azure.ai.ml._internal import enable_internal_components_in_pipeline
 

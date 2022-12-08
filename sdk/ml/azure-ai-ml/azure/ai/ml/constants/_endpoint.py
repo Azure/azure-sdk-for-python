@@ -75,3 +75,12 @@ class LocalEndpointConstants:
     CONDA_ENV_NAME = "inf-conda-env"
     CONDA_ENV_BIN_PATH = "/opt/miniconda/envs/inf-conda-env/bin"
     CONDA_ENV_PYTHON_PATH = "/opt/miniconda/envs/inf-conda-env/bin/python"
+
+class BatchEndpointInvoke:
+    INPUTS = "inputs"
+    OUTPUTS = "outputs"
+    ENDPOINT = "endpoint"
+    DEPLOYMENT = "deployment"
+    TYPE = "type"
+    MODE = "mode"
+    PATH = "path"

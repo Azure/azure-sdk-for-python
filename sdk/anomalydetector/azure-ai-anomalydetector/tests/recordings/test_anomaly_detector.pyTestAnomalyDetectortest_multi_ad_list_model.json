@@ -1,0 +1,35 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://fake_ad_resource.cognitiveservices.azure.com//anomalydetector/v1.1/multivariate/models?skip=0\u0026top=10",
+      "RequestMethod": "GET",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Connection": "keep-alive",
+        "Ocp-Apim-Subscription-Key": "00000000000000000000000000000000",
+        "User-Agent": "azsdk-python-ai-anomalydetector/3.0.0b6 Python/3.9.12 (Windows-10-10.0.22621-SP0)"
+      },
+      "RequestBody": null,
+      "StatusCode": 200,
+      "ResponseHeaders": {
+        "apim-request-id": "292ef9bc-88b3-479b-b3e1-561400952a7c",
+        "Content-Length": "68",
+        "Content-Type": "application/json",
+        "Date": "Wed, 07 Dec 2022 07:07:03 GMT",
+        "Server": "istio-envoy",
+        "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
+        "X-Content-Type-Options": "nosniff",
+        "x-envoy-upstream-service-time": "12",
+        "x-ms-region": "Central US EUAP"
+      },
+      "ResponseBody": {
+        "models": [],
+        "currentCount": 0,
+        "maxCount": 1000,
+        "nextLink": ""
+      }
+    }
+  ],
+  "Variables": {}
+}
