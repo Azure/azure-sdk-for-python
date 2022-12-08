@@ -294,7 +294,8 @@ class ArmStr(Field):
     def _serialize(self, value, attr, obj, **kwargs):
         # TODO: (1795017) Improve pre-serialization checks
         if isinstance(value, str):
-            return f"{ARM_ID_PREFIX}{value}"
+            serialized_value = value if value.startswith(ARM_ID_PREFIX) else f"{ARM_ID_PREFIX}{value}"
+            return serialized_value
         if value is None and not self.required:
             return None
         raise ValidationError(f"Non-string passed to ArmStr for {attr}")
@@ -331,11 +332,6 @@ class ArmVersionedStr(ArmStr):
     def __init__(self, **kwargs):
         self.allow_default_version = kwargs.pop("allow_default_version", False)
         super().__init__(**kwargs)
-
-    def _serialize(self, value, attr, obj, **kwargs):
-        if isinstance(value, str) and value.startswith(ARM_ID_PREFIX):
-            return value
-        return super()._serialize(value, attr, obj, **kwargs)
 
     def _deserialize(self, value, attr, data, **kwargs):
         arm_id = super()._deserialize(value, attr, data, **kwargs)
