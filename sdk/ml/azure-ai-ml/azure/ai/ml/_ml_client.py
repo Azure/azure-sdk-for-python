@@ -86,21 +86,7 @@ module_logger = logging.getLogger(__name__)
 class MLClient(object):
     """A client class to interact with Azure ML services.
 
-    Use this client to manage Azure ML resources, e.g. workspaces, jobs,
-    models and so on.
-    """
-
-    # pylint: disable=client-method-missing-type-annotations
-    def __init__(
-        self,
-        credential: TokenCredential,
-        subscription_id: str = None,
-        resource_group_name: str = None,
-        workspace_name: str = None,
-        registry_name: str = None,
-        **kwargs: Any,
-    ):
-        """Initiate Azure ML client.
+    Use this client to manage Azure ML resources, e.g. workspaces, jobs, models and so on.
 
         :param credential: Credential to use for authentication.
         :type credential: TokenCredential
@@ -117,44 +103,30 @@ class MLClient(object):
         :param show_progress: Whether to display progress bars for long running operations. E.g. customers may consider
             to set this to False if not using this SDK in an interactive setup. Defaults to True.
         :type show_progress: bool, optional
-        :param kwargs: A dictionary of additional configuration parameters.
-            For e.g. kwargs = {"cloud": "AzureUSGovernment"}
-        :type kwargs: dict
+        :keyword cloud:
+            Specifies the cloud name to set on the client and use for all future operations.
+        :paramtype cloud: str
 
-        .. note::
+        .. admonition:: Example:
 
-                The cloud parameter in kwargs in this class is what gets
-                the MLClient to work for non-standard Azure Clouds,
-                e.g. AzureUSGovernment, AzureChinaCloud
+            .. literalinclude:: ../samples/ml_samples_authentication_sovereign_cloud.py
+                :start-after: [START create_ml_client_default_credential]
+                :end-before: [END create_ml_client_default_credential]
+                :language: python
+                :dedent: 8
+                :caption: Creating the MLClient with Azure Identity credentials.
+    """
 
-                The following pseudo-code shows how to get a list of workspaces using MLClient.
-        .. code-block:: python
-
-                    from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
-                    from azure.ai.ml import MLClient
-                    from azure.ai.ml.entities import Workspace
-
-                    # Enter details of your subscription
-                    subscription_id = "AZURE_SUBSCRIPTION_ID"
-                    resource_group = "RESOURCE_GROUP_NAME"
-
-                    # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
-                    # you must use an authority with DefaultAzureCredential.
-                    # Default authority value : AzureAuthorityHosts.AZURE_PUBLIC_CLOUD
-                    # Expected values for authority for sovereign clouds:
-                    # AzureAuthorityHosts.AZURE_CHINA or AzureAuthorityHosts.AZURE_GOVERNMENT
-                    credential = DefaultAzureCredential(authority=AzureAuthorityHosts.AZURE_CHINA)
-
-                    # When using sovereign domains (that is, any cloud other than AZURE_PUBLIC_CLOUD),
-                    # you must pass in the cloud name in kwargs. Default cloud is AzureCloud
-                    kwargs = {"cloud": "AzureChinaCloud"}
-                    # get a handle to the subscription
-                    ml_client = MLClient(credential, subscription_id, resource_group, **kwargs)
-
-                    # Get a list of workspaces in a resource group
-                    for ws in ml_client.workspaces.list():
-                        print(ws.name, ":", ws.location, ":", ws.description)
-        """
+    # pylint: disable=client-method-missing-type-annotations
+    def __init__(
+        self,
+        credential: TokenCredential,
+        subscription_id: str = None,
+        resource_group_name: str = None,
+        workspace_name: str = None,
+        registry_name: str = None,
+        **kwargs: Any,
+    ):
 
         if credential is None:
             raise ValueError("credential can not be None")
