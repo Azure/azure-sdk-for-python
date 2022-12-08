@@ -121,12 +121,7 @@ class RedirectPolicyBase(object):
         return settings['redirects'] >= 0
 
     def _domain_changed(self, url):
-        subdomain = str(urlparse(url).netloc).lower()
-        segments = subdomain.split('.')
-        if len(segments) > 1:
-            domain = '.'.join(segments[1:])
-        else:
-            domain = subdomain
+        domain = self._get_domain(url)
         if not self._original_domain:
             self._original_domain = domain
             return False
