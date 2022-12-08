@@ -246,23 +246,23 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFolder": input}})
             elif input.type == "uri_file":
                 params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: {"UriFile": input}})
+            else:
+                msg = (
+                    "Unsupported input type please use a dictionary of either a path on the datastore, public URI, "
+                    "a registered data asset, or a local folder path."
+                )
+                raise ValidationException(
+                    message=msg,
+                    target=ErrorTarget.BATCH_ENDPOINT,
+                    no_personal_data_message=msg,
+                    error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
+                )
         elif inputs:
             for key, input_data in inputs.items():
                 if isinstance(input_data, Input) and HTTP_PREFIX not in input_data.path:
                     self._resolve_input(input_data, os.getcwd())
             params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})
-        else:
-            msg = (
-                "Unsupported input type please use a dictionary of either a path on the datastore, public URI, "
-                "a registered data asset, or a local folder path."
-            )
-            raise ValidationException(
-                message=msg,
-                target=ErrorTarget.BATCH_ENDPOINT,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                error_type=ValidationErrorType.INVALID_VALUE,
-            )
 
         if is_private_preview_enabled() and outputs:
             params_override.append({EndpointYamlFields.BATCH_JOB_OUTPUT_DATA: outputs})
