@@ -99,7 +99,7 @@ class _TransportRunner(HTTPPolicy):
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        insecure_domain = request.context.options.pop('insecure_domain', False)
+        insecure_domain = request.context.options.pop('insecure_domain_change', False)
         if insecure_domain:
             for header in _TransportRunner._SECURE_HEADERS:
                 request.http_request.headers.pop(header, None)
