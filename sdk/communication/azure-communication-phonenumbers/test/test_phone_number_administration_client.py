@@ -190,8 +190,11 @@ class TestPhoneNumbersClient(AzureRecordedTestCase):
         purchase_poller = phone_number_client.begin_purchase_phone_numbers(
             phone_number_to_buy.search_id, polling=True)
         purchase_poller.result()
+        assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+
         release_poller = phone_number_client.begin_release_phone_number(
             phone_number_to_buy.phone_numbers[0])
+        release_poller.result()
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
@@ -212,8 +215,11 @@ class TestPhoneNumbersClient(AzureRecordedTestCase):
         purchase_poller = self.phone_number_client.begin_purchase_phone_numbers(
             phone_number_to_buy.search_id, polling=True)
         purchase_poller.result()
+        assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+
         release_poller = self.phone_number_client.begin_release_phone_number(
             phone_number_to_buy.phone_numbers[0])
+        release_poller.result()
         assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @recorded_by_proxy

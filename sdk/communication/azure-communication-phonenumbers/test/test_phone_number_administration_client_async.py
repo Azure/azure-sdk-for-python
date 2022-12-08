@@ -199,10 +199,16 @@ class TestPhoneNumbersClientAsync(AzureRecordedTestCase):
                 polling=True
             )
             phone_number_to_buy = await search_poller.result()
-            purchase_poller = await phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
+            purchase_poller = await phone_number_client.begin_purchase_phone_numbers(
+                phone_number_to_buy.search_id, polling=True)
+
             await purchase_poller.result()
-            release_poller = await phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
-        assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+            assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+
+            release_poller = await phone_number_client.begin_release_phone_number(
+                phone_number_to_buy.phone_numbers[0])
+            await release_poller.result()
+            assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @pytest.mark.skipif(SKIP_PURCHASE_PHONE_NUMBER_TESTS, reason=PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON)
     @recorded_by_proxy_async
@@ -220,10 +226,16 @@ class TestPhoneNumbersClientAsync(AzureRecordedTestCase):
                 polling=True
             )
             phone_number_to_buy = await search_poller.result()
-            purchase_poller = await self.phone_number_client.begin_purchase_phone_numbers(phone_number_to_buy.search_id, polling=True)
+            purchase_poller = await self.phone_number_client.begin_purchase_phone_numbers(
+                phone_number_to_buy.search_id, polling=True)
+
             await purchase_poller.result()
-            release_poller = await self.phone_number_client.begin_release_phone_number(phone_number_to_buy.phone_numbers[0])
-        assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+            assert purchase_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
+
+            release_poller = await self.phone_number_client.begin_release_phone_number(
+                phone_number_to_buy.phone_numbers[0])
+            await release_poller.result()
+            assert release_poller.status() == PhoneNumberOperationStatus.SUCCEEDED.value
 
     @recorded_by_proxy_async
     async def test_get_purchased_phone_number_with_invalid_phone_number(self):
