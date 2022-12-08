@@ -83,12 +83,15 @@ class CommunicationTestCase(AzureTestCase):
     def __init__(self, method_name, *args, **kwargs):
         super(CommunicationTestCase, self).__init__(method_name, *args, **kwargs)
 
-    def setUp(self):
+    def setUp(self, use_dynamic_resource = False):
         super(CommunicationTestCase, self).setUp()
         if self.is_playback():
             self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
         else:
-            self.connection_str = os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
+            if use_dynamic_resource:
+                self.connection_str = os.getenv('COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING')
+            else:
+                self.connection_str = os.getenv('COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING')
             endpoint, _ = parse_connection_str(self.connection_str)
             self._resource_name = endpoint.split(".")[0]
             self.scrubber.register_name_pair(self._resource_name, "sanitized")
