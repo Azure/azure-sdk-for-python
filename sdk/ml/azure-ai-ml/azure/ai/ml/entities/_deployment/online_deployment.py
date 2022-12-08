@@ -66,7 +66,7 @@ class OnlineDeployment(Deployment):
     :param description: Description of the resource.
     :type description: str
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model]
+    :type model: Union[str, ~azure.ai.ml.entities.Model]
     :param code_configuration: Default value is None.
     :type code_configuration: CodeConfiguration
     :param environment: Environment entity for the endpoint deployment, defaults to None
@@ -117,7 +117,7 @@ class OnlineDeployment(Deployment):
         instance_type: Optional[str] = None,
         model_mount_path: Optional[str] = None,
         code_path:  Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
-        scoring_script:  Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.scoring_script
+        scoring_script:  Optional[Union[str, PathLike]] = None, # promoted property code_configuration.scoring_script
         **kwargs: Any,
     ):
         self._provisioning_state = kwargs.pop("provisioning_state", None)
