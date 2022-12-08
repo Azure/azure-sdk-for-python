@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0b6 (2022-12-01)
+## 3.0.0b6 (2022-12-06)
   **Features**
   - Added `OneTable` and `MultiTable` two data schemas.
   - Added `topContributorCount` in `detect_multivariate_last_anomaly` and `detect_multivariate_batch_anomaly`.
