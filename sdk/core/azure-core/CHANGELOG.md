@@ -8,7 +8,7 @@
 
 ### Bugs Fixed
 
-- Fix "EnvironmentCredential: 'ClientSession' object has no attribute 'auto_decompress'"
+- Fix "EnvironmentCredential: 'ClientSession' object has no attribute 'auto_decompress'"  (thanks to @mghextreme for the contribution)
 
 ### Other Changes
 
