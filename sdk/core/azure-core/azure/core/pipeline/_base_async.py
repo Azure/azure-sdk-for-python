@@ -96,8 +96,8 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
-        insecure_domain = request.context.options.pop('insecure_domain', False)
-        if insecure_domain:
+        insecure_domain_change = request.context.options.pop('insecure_domain_change', False)
+        if insecure_domain_change:
             for header in _AsyncTransportRunner._SECURE_HEADERS:
                 request.http_request.headers.pop(header, None)
         return PipelineResponse(
