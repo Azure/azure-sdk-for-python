@@ -7,6 +7,7 @@ from abc import abstractmethod
 
 from _shared.testcase import (
     CommunicationTestCase,
+    CommunicationTestResourceType
 )
 from azure_devtools.scenario_tests import LargeResponseBodyReplacer
 from _recording_processors import (
@@ -29,7 +30,7 @@ class RouterTestCaseBase(CommunicationTestCase):
         super(RouterTestCaseBase, self).__init__(method_name, *args, **kwargs)
 
     def setUp(self):
-        super(RouterTestCaseBase, self).setUp()
+        super(RouterTestCaseBase, self).setUp(resource_type=CommunicationTestResourceType.DYNAMIC)
 
         self.recording_processors.extend([
             RouterScrubber(keys = ["etag", "functionUri", "functionKey", "appKey", "clientId"]),
