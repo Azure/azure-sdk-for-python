@@ -26,6 +26,10 @@ from azure.ai.ml._utils._workspace_utils import (
     get_resource_and_group_name,
     get_resource_group_location,
 )
+from azure.ai.ml._utils._appinsights_utils import (
+    get_default_log_analytics_workspace,
+    get_log_analytics_deployment
+)
 from azure.ai.ml._utils.utils import camel_to_snake, from_iso_duration_format_min_sec
 from azure.ai.ml._version import VERSION
 from azure.ai.ml.constants import ManagedServiceIdentityType
@@ -469,6 +473,20 @@ class WorkspaceOperations:
                 group_name,
             )
         else:
+            # get ARM id for default log analytics workspace to be used and if it already exists
+            default_log_analytics, is_existing = get_default_log_analytics_workspace(self._credentials, self._subscription_id, workspace.location)
+            # if this does not exist yet, add the deployment needed to resources
+            if not is_existing:
+                app_insights_log_workspace_deployment_name = "DeployLogWorkspace%s"%get_deployment_name("")
+                template["resources"].append(get_log_analytics_deployment(app_insights_log_workspace_deployment_name, workspace.location, self._subscription_id))
+                for resource in template["resources"]:
+                    if resource["type"] == "Microsoft.Insights/components":
+                        resource["dependsOn"] = [app_insights_log_workspace_deployment_name]
+            # add WorkspaceResourceId property to app insights in template
+            for resource in template["resources"]:
+                if resource["type"] == "Microsoft.Insights/components":
+                    resource["properties"] = { "Application_Type": "web", "WorkspaceResourceId": default_log_analytics }
+            
             app_insights = _generate_app_insights(workspace.name, resources_being_deployed)
             _set_val(param["applicationInsightsName"], app_insights)
             _set_val(
