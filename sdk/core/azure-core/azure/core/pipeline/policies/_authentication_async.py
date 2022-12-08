@@ -133,12 +133,3 @@ class AsyncBearerTokenCredentialPolicy(AsyncHTTPPolicy):
 
     def _need_new_token(self) -> bool:
         return not self._token or self._token.expires_on - time.time() < 300
-
-    def _domain_changed(self, url):
-        domain = str(urlparse(url).netloc).lower()
-        if not self._original_domain:
-            self._original_domain = domain
-            return False
-        if self._original_domain == domain:
-            return False
-        return True
