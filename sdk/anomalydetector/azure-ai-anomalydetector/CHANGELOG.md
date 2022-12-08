@@ -3,6 +3,7 @@
 ## 3.0.0-beta.5 (2022-12-08)
   **Features**
   - Added `OneTable` and `MultiTable` two data schemas.
+  - Added `DataSchema` to `ModelInfo`
   - Added Azure Managed Identity data reader access for Azure Blob Storage.
   - Added `topContributorCount` in the request body for `get_multivariate_batch_detection_result`, `detect_multivariate_batch_anomaly` and `detect_multivariate_last_anomaly`.
 
