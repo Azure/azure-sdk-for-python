@@ -5,7 +5,7 @@ endpoint_name: testing-batch-component
 compute: azureml:batch-cluster
 type: component
 job_definition:
-    Type: pipeline
-    Component: ./hello-component/hello.yaml
-    Settings:
+    type: pipeline
+    component: ./hello-component/hello.yaml
+    settings:
         continue_on_step_failure: false

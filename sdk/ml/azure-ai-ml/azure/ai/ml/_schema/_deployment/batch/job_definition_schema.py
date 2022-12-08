@@ -46,8 +46,6 @@ class JobDefinitionSchema(metaclass=PatchedSchemaMeta):
     description = fields.Str()
     tags = fields.Dict()
 
-    def on_bind_field(self, field_name, field_obj):
-        field_obj.data_key = snake_to_pascal(field_obj.data_key or field_name)
 
     @post_load
     def make(self, data: Any, **kwargs: Any) -> Any:  # pylint: disable=unused-argument

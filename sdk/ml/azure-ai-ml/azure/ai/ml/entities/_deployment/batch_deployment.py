@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as Rest
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml._utils.utils import is_private_preview_enabled, camel_to_snake
+from azure.ai.ml._utils.utils import is_private_preview_enabled, camel_to_snake, flat_key_snake_to_pascal, flat_key_pascal_to_snake
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.entities._assets import Environment, Model
@@ -223,7 +223,8 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             flat_data = flatten(non_flat_data, ".")
             flat_data_keys = flat_data.keys()
             for k in flat_data_keys:
-                self.properties[k] = flat_data[k]
+                pascal_key = flat_key_snake_to_pascal(k)
+                self.properties[pascal_key] = flat_data[k]
 
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 
@@ -267,11 +268,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             snake_dict = {}
             for k in deployment.properties:
                 if k.startswith("ComponentDeployment"):
-                    k_array = k.split(".")
-                    k_snake_array = []
-                    for i in k_array:
-                        k_snake_array.append(camel_to_snake(i))
-                    k_snake = ".".join(k_snake_array)
+                    k_snake = flat_key_pascal_to_snake(k)
                     snake_dict[k_snake] = deployment.properties[k]
             if len(snake_dict) > 0:
                 for k in snake_dict:

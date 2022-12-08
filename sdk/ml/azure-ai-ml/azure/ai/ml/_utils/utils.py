@@ -35,6 +35,7 @@ from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
+    COMPONENT_DEPLOYMENT,
 )
 from azure.core.pipeline.policies import RetryPolicy
 
@@ -891,6 +892,22 @@ def get_all_enum_values_iter(enum_type):
         if not key.startswith("_"):
             yield getattr(enum_type, key)
 
+def flat_key_snake_to_pascal(key: str) -> str:
+    key_arr = key.split(".")
+    pascal_array = []
+    for key in key_arr:
+        if key != COMPONENT_DEPLOYMENT:
+            pascal_array.append(snake_to_pascal(key))
+        else:
+            pascal_array.append(key)
+    return '.'.join(pascal_array)
+
+def flat_key_pascal_to_snake(key: str) -> str:
+    key_arr = key.split(".")
+    snake_array = []
+    for key in key_arr:
+        snake_array.append(camel_to_snake(key))
+    return '.'.join(snake_array)
 
 def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
     """Determine if subscription or resource group is missing and raise exception
