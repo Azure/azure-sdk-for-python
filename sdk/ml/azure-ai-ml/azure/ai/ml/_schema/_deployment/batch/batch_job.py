@@ -78,12 +78,12 @@ class BatchJobSchema(PathAwareSchema):
                     if input_data.type == AssetTypes.CUSTOM_MODEL:
                         data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = CustomModelJobInput(mode=input_data.mode, uri=input_data.path) # pylint: disable=line-too-long
                     if (
-                        input_data.type == InputTypes.STRING 
-                        or input_data.type == InputTypes.NUMBER 
-                        or input_data.type == InputTypes.STRING 
+                        input_data.type == InputTypes.STRING
+                        or input_data.type == InputTypes.NUMBER
+                        or input_data.type == InputTypes.STRING
                         or input_data.type == InputTypes.BOOLEAN
                     ):
-                        data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = LiteralJobInput(model=input_data.mode, uri=input_data.path) # pylint: disable=line-too-long
+                        data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = LiteralJobInput(value=input_data.default) # pylint: disable=line-too-long
         if data.get(EndpointYamlFields.BATCH_JOB_OUTPUT_DATA, None):
             for key, output_data in data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA].items():
                 if isinstance(output_data, Output):
@@ -99,8 +99,7 @@ class BatchJobSchema(PathAwareSchema):
                         data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA][key] = MLTableJobOutput(mode=output_data.mode, uri=output_data.path) # pylint: disable=line-too-long
                     if output_data.type == AssetTypes.CUSTOM_MODEL:
                         data[EndpointYamlFields.BATCH_JOB_OUTPUT_DATA][key] = CustomModelJobOutput(mode=output_data.mode, uri=output_data.path) # pylint: disable=line-too-long
-                    
-                    
+
         if data.get(EndpointYamlFields.COMPUTE, None):
             data[EndpointYamlFields.COMPUTE] = ComputeConfiguration(
                 **data[EndpointYamlFields.COMPUTE]
