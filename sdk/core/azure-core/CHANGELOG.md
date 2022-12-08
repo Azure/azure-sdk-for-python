@@ -8,6 +8,8 @@
 
 ### Bugs Fixed
 
+- Fix 'ClientSession' object has no attribute 'auto_decompress'  (thanks to @mghextreme for the contribution)
+
 ### Other Changes
 
 - Add "x-ms-error-code" as secure header to log
