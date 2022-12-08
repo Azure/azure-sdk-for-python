@@ -4,6 +4,8 @@
 
 ### Features Added
 
+- Add support for serialization of numpy and pandas-like objects
+
 ### Breaking Changes
 
 ### Bugs Fixed

@@ -111,6 +111,24 @@ class AzureJSONEncoder(JSONEncoder):
     def default(self, o):  # pylint: disable=too-many-return-statements
         if isinstance(o, (bytes, bytearray)):
             return base64.b64encode(o).decode()
+        # Serialize pandas DataFrame and Series as dict
+        try:
+            return o.to_dict()
+        except AttributeError:
+            pass
+
+        # Serialize numpy numbers and bool
+        try:
+            return o.item()
+        except AttributeError:
+            pass
+
+        # Serialize numpy arrays
+        try:
+            return o.tolist()
+        except AttributeError:
+            pass
+
         try:
             return _datetime_as_isostr(o)
         except AttributeError:

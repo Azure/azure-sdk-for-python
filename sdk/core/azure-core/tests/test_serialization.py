@@ -439,3 +439,44 @@ def test_model_recursion(json_dumps_with_encoder):
         ]
     }
     assert json.loads(json_dumps_with_encoder(expected.to_dict())) == expected_dict
+
+
+def test_pandas_dataframe_like(json_dumps_with_encoder):
+    class DataFrame:
+        def __init__(self, val):
+            self.df = val
+
+        def to_dict(self):
+            return self.df
+
+    exp_dict = {
+        'a': [1, 2, 3]
+    }
+
+    assert json.loads(json_dumps_with_encoder(DataFrame(exp_dict))) == exp_dict
+
+
+def test_numpy_number_like(json_dumps_with_encoder):
+    class NumpyNumber:
+        def __init__(self, val):
+            self.val = val
+
+        def item(self):
+            return self.val
+
+    number = 3
+
+    assert json.loads(json_dumps_with_encoder(NumpyNumber(number))) == number
+
+
+def test_numpy_array_like(json_dumps_with_encoder):
+    class NumpyNDArray:
+        def __init__(self, val):
+            self.list = val
+
+        def tolist(self):
+            return self.list
+
+    val = [1, 2]
+
+    assert json.loads(json_dumps_with_encoder(val)) == val
