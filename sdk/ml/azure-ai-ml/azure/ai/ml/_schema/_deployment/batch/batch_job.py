@@ -61,7 +61,7 @@ class BatchJobSchema(PathAwareSchema):
     retry_settings = NestedField(BatchRetrySettingsSchema)
 
     @post_load
-    def make(self, data: Any, **kwargs: Any) -> Any:
+    def make(self, data: Any, **kwargs: Any) -> Any: # pylint: disable=too-many-branches
         if data.get(EndpointYamlFields.BATCH_JOB_INPUT_DATA, None):
             for key, input_data in data[EndpointYamlFields.BATCH_JOB_INPUT_DATA].items():
                 if isinstance(input_data, Input):
