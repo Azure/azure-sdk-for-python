@@ -82,6 +82,7 @@ class _AsyncTransportRunner(
 
     :param sender: The async Http Transport instance.
     """
+    _SECURE_HEADERS = ["Authorization", "x-ms-authorization-auxiliary"]
 
     def __init__(self, sender) -> None:
         super(_AsyncTransportRunner, self).__init__()
@@ -95,6 +96,10 @@ class _AsyncTransportRunner(
         :return: The PipelineResponse object.
         :rtype: ~azure.core.pipeline.PipelineResponse
         """
+        insecure_domain = request.context.options.pop('insecure_domain', False)
+        if insecure_domain:
+            for header in _AsyncTransportRunner._SECURE_HEADERS:
+                request.http_request.headers.pop(header, None)
         return PipelineResponse(
             request.http_request,
             await self._sender.send(request.http_request, **request.context.options),

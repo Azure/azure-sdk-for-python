@@ -27,17 +27,16 @@
 This module is the requests implementation of Pipeline ABC
 """
 import logging
-from urllib.parse import urlparse  # type: ignore
+from urllib.parse import urlparse
 
 from azure.core.exceptions import TooManyRedirectsError
 
 from ._base import HTTPPolicy, RequestHistory
 
-
 _LOGGER = logging.getLogger(__name__)
 
-class RedirectPolicyBase(object):
 
+class RedirectPolicyBase(object):
     REDIRECT_STATUSES = frozenset([300, 301, 302, 303, 307, 308])
 
     REDIRECT_HEADERS_BLACKLIST = frozenset(['Authorization'])
@@ -45,6 +44,8 @@ class RedirectPolicyBase(object):
     def __init__(self, **kwargs):
         self.allow = kwargs.get('permit_redirects', True)
         self.max_redirects = kwargs.get('redirect_max', 30)
+        self._original_domain = None
+        self._always_adding_header = kwargs.pop('always_adding_header', False)
 
         remove_headers = set(kwargs.get('redirect_remove_headers', []))
         self._remove_headers_on_redirect = remove_headers.union(self.REDIRECT_HEADERS_BLACKLIST)
@@ -119,6 +120,24 @@ class RedirectPolicyBase(object):
             response.http_request.headers.pop(non_redirect_header, None)
         return settings['redirects'] >= 0
 
+    def _domain_changed(self, url):
+        subdomain = str(urlparse(url).netloc).lower()
+        segments = subdomain.split('.')
+        if len(segments) > 1:
+            domain = '.'.join(segments[1:])
+        else:
+            domain = subdomain
+        if not self._original_domain:
+            self._original_domain = domain
+            return False
+        if self._original_domain == domain:
+            return False
+        return True
+
+    def _get_domain(self, url):  # pylint: disable=no-self-use
+        return str(urlparse(url).netloc).lower()
+
+
 class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
     """A redirect policy.
 
@@ -149,12 +168,15 @@ class RedirectPolicy(RedirectPolicyBase, HTTPPolicy):
         """
         retryable = True
         redirect_settings = self.configure_redirects(request.context.options)
+        self._original_domain = self._get_domain(request.http_request.url)
         while retryable:
             response = self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings['allow']:
                 retryable = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
+                if not self._always_adding_header and self._domain_changed(request.http_request.url):
+                    request.context.options['insecure_domain'] = True
                 continue
             return response
 

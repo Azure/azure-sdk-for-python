@@ -58,12 +58,19 @@ class AsyncRedirectPolicy(RedirectPolicyBase, AsyncHTTPPolicy):
         """
         redirects_remaining = True
         redirect_settings = self.configure_redirects(request.context.options)
+        self._original_domain = self._get_domain(request.http_request.url)
         while redirects_remaining:
             response = await self.next.send(request)
             redirect_location = self.get_redirect_location(response)
             if redirect_location and redirect_settings['allow']:
                 redirects_remaining = self.increment(redirect_settings, response, redirect_location)
                 request.http_request = response.http_request
+                if redirect_location and redirect_settings['allow']:
+                    retryable = self.increment(redirect_settings, response, redirect_location)
+                    request.http_request = response.http_request
+                    if not self._always_adding_header and self._domain_changed(request.http_request.url):
+                        request.context.options['insecure_domain'] = True
+                    continue
                 continue
             return response
 
