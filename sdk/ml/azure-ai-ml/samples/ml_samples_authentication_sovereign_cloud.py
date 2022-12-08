@@ -28,8 +28,6 @@ class MLClientSamples(object):
         # Enter details of your subscription
         subscription_id = "AZURE_SUBSCRIPTION_ID"
         resource_group = "RESOURCE_GROUP_NAME"
-        subscription_id = "b17253fa-f327-42d6-9686-f3e553e24763"
-        resource_group = "sdktest"
 
         # Instantiate a MLClient
         from azure.identity import DefaultAzureCredential, AzureAuthorityHosts
