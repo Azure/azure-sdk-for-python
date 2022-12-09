@@ -53,16 +53,19 @@ class IssueProcessPython(IssueProcess):
             self.bot_advice.append(_MultiAPI)
 
     def get_edit_content(self) -> None:
-        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}' \
-                            f'\nReadme Tag: {self.target_readme_tag}'
+        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\nReadme Tag: {self.target_readme_tag}'
+
+    @property
+    def is_multiapi(self):
+        return _MultiAPI in self.issue_package.labels_name
 
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
-        if 'package-' not in self.target_readme_tag:
-            return True
         if _CONFIGURED in self.issue_package.labels_name:
             return False
+        if 'package-' not in self.target_readme_tag:
+            return True
         readme_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
         contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
@@ -72,7 +75,7 @@ class IssueProcessPython(IssueProcess):
         return whether_change_readme
 
     def auto_reply(self) -> None:
-        if self.issue_package.issue.comments == 0 or _CONFIGURED in self.issue_package.labels_name:
+        if (_AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name) or (_CONFIGURED in self.issue_package.labels_name):
             issue_number = self.issue_package.issue.number
             if not self.readme_comparison:
                 try:
