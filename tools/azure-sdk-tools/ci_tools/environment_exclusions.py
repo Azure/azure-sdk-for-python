@@ -61,6 +61,7 @@ PYLINT_OPT_OUT = [
     "azure-agrifood-farming",
     "azure-developer-loadtesting",
     "azure-developer-devcenter",
+    "azure-messaging-webpubsubservice",
 ]
 
 # omit package from running mypy checks
