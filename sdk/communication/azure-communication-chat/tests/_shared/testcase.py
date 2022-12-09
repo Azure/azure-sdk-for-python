@@ -92,7 +92,6 @@ class CommunicationTestCase(AzureTestCase):
 
     def setUp(self, resource_type=CommunicationTestResourceType.UNSPECIFIED):
         super(CommunicationTestCase, self).setUp()
-
         self.connection_str = self._get_connection_str(resource_type)
         endpoint, _ = parse_connection_str(self.connection_str)
         self._resource_name = endpoint.split(".")[0]

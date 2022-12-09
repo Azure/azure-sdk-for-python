@@ -90,7 +90,7 @@ class CommunicationTestCase(AzureTestCase):
     def __init__(self, method_name, *args, **kwargs):
         super(CommunicationTestCase, self).__init__(method_name, *args, **kwargs)
 
-    def setUp(self, resource_type = CommunicationTestResourceType.UNSPECIFIED):
+    def setUp(self, resource_type=CommunicationTestResourceType.UNSPECIFIED):
         super(CommunicationTestCase, self).setUp()
         self.connection_str = self._get_connection_str(resource_type)
         endpoint, _ = parse_connection_str(self.connection_str)
