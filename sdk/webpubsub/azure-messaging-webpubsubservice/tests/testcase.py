@@ -30,6 +30,6 @@ WebpubsubPowerShellPreparer = functools.partial(
     PowerShellPreparer,
     "webpubsub",
     webpubsub_endpoint="https://myservice.webpubsub.azure.com",
-    webpubsub_reverse_proxy_endpoint="https://myservice.azure-api.net",
+    webpubsub_reverse_proxy_endpoint="https://myservice.webpubsub.azure.com",
     webpubsub_connection_string="Endpoint=https://myservice.webpubsub.azure.com;AccessKey=aaaaaaaaaaaaa;Version=1.0;"
 )

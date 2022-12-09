@@ -1,7 +1,7 @@
 import os
 import pytest
 from azure.communication.phonenumbers import PhoneNumbersClient
-from _shared.testcase import CommunicationTestCase, BodyReplacerProcessor
+from _shared.testcase import CommunicationTestCase, BodyReplacerProcessor, CommunicationTestResourceType
 from _shared.utils import (
     create_token_credential, 
     get_header_policy,
@@ -37,7 +37,7 @@ def get_test_phone_number():
 
 class PhoneNumbersClientTest(CommunicationTestCase):
     def setUp(self):
-        super(PhoneNumbersClientTest, self).setUp()
+        super(PhoneNumbersClientTest, self).setUp(resource_type = CommunicationTestResourceType.STATIC)
         if self.is_playback():
             self.phone_number = "sanitized"
             self.country_code = "US"

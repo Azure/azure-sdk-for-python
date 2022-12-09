@@ -37,6 +37,7 @@ from ._models_py3 import SourceLeaseAccessConditions
 from ._models_py3 import SourceModifiedAccessConditions
 from ._models_py3 import StorageError
 from ._models_py3 import StorageServiceProperties
+from ._models_py3 import StringEncoded
 
 from ._azure_file_storage_enums import CopyStatusType
 from ._azure_file_storage_enums import DeleteSnapshotsOptionType
@@ -87,6 +88,7 @@ __all__ = [
     "SourceModifiedAccessConditions",
     "StorageError",
     "StorageServiceProperties",
+    "StringEncoded",
     "CopyStatusType",
     "DeleteSnapshotsOptionType",
     "FileLastWrittenMode",
