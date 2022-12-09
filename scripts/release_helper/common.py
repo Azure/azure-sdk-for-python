@@ -359,15 +359,17 @@ class Common:
         for item in self.issues_package:
             issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates,
                                                 self.language_owner)
+
             try:
                 issue.run()
-                self.result.append(issue)
             except Exception as e:
                 self.log_error(f'Error happened during handling issue {item.issue.number}: {e}')
+            self.result.append(issue)
 
     def run(self):
         self.proc_issue()
         self.output()
+
 
 def common_process(issues: List[IssuePackage]):
     instance = Common(issues,  _LANGUAGE_OWNER, _LANGUAGE_OWNER)

@@ -1170,6 +1170,16 @@
       "words": [
         "euap"
       ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/_serialization.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize"
+      ]
     }
   ],
   "allowCompoundWords": true
