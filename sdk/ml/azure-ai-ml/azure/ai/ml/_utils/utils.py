@@ -892,23 +892,6 @@ def get_all_enum_values_iter(enum_type):
         if not key.startswith("_"):
             yield getattr(enum_type, key)
 
-def flat_key_snake_to_pascal(key: str) -> str:
-    key_arr = key.split(".")
-    pascal_array = []
-    for key in key_arr:
-        if key != COMPONENT_DEPLOYMENT:
-            pascal_array.append(snake_to_pascal(key))
-        else:
-            pascal_array.append(key)
-    return '.'.join(pascal_array)
-
-def flat_key_pascal_to_snake(key: str) -> str:
-    key_arr = key.split(".")
-    snake_array = []
-    for key in key_arr:
-        snake_array.append(camel_to_snake(key))
-    return '.'.join(snake_array)
-
 def _validate_missing_sub_or_rg_and_raise(subscription_id: str, resource_group: str):
     """Determine if subscription or resource group is missing and raise exception
     as appropriate."""
