@@ -1,6 +1,6 @@
 # Release History
 
-## 3.0.0-beta.5 (2022-12-08)
+## 3.0.0b6 (2022-12-08)
   **Features**
   - Added `OneTable` and `MultiTable` two data schemas.
   - Added `DataSchema` to `ModelInfo`.
@@ -34,24 +34,6 @@
   - Removed `export_model_with_response`.
   - Removed `changedvalue` in the inference response body.
   - Removed `detecting_points` in the sync inference request body.
-
-## 3.0.0b6 (2022-12-06)
-  **Features**
-  - Added `OneTable` and `MultiTable` two data schemas.
-  - Added `topContributorCount` in `detect_multivariate_last_anomaly` and `detect_multivariate_batch_anomaly`.
-
-  **Breaking Changes**
-  - Renamed `detect_entire_series` to `detect_univariate_entire_series`.
-  - Renamed `detect_last_point` to `detect_univariate_last_point`.
-  - Renamed `detect_change_point` to `detect_univariate_change_point`.
-  - Renamed `train_multivariate_model` to `create_and_train_multivariate_model`.
-  - Renamed `list_multivariate_model` to `list_multivariate_models`.
-  - Renamed `detect_anomaly` to `detect_multivariate_batch_anomaly`.
-  - Renamed `get_detection_result` to `get_multivariate_batch_detection_result`.
-  - Renamed `last_detect_anomaly` to `detect_multivariate_last_anomaly`.
-  - Removed `detecting_points` in `detect_multivariate_last_anomaly`.
-  - Removed `changed_values` in detection result.
-  - Removed `export_model`.
 
 ## 3.0.0b5 (2022-01-23)
 
