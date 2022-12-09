@@ -103,23 +103,31 @@ class Operation(VersionedObject):
         super().__init__(code_model, name)
         self.operation_group = operation_group
         self.parameters: List[Parameter] = []
+        self._request_builder: Optional[str] = None
 
     def source_code(self, async_mode: bool) -> str:
         return inspect.getsource(self._get_op(self.api_versions[-1], async_mode))
 
     @property
     def request_builder(self) -> Optional[str]:
-        if self.name.startswith("begin_"):
-            return None  # we use the initial function
-        if self.name.startswith("_") and self.name.endswith("_initial"):
-            operation_section = self.name[1: len(self.name) - len("_initial")]
-        else:
-            operation_section = self.name
-        request_builder_name = f"build_{self.operation_group.property_name}_{operation_section}_request"
-        folder_api_version = self.code_model.api_version_to_folder_api_version[self.api_versions[-1]]
-        module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}")
-        operations_file = getattr(module.operations, "_operations")
-        return inspect.getsource(getattr(operations_file, request_builder_name))
+        if self._request_builder is None:
+            if self.name.startswith("begin_"):
+                return None  # we use the initial function
+            if self.name.startswith("_") and self.name.endswith("_initial"):
+                operation_section = self.name[1: len(self.name) - len("_initial")]
+            else:
+                operation_section = self.name
+            if self.operation_group.property_name:
+                og_name = self.operation_group.property_name
+            else:
+                og_name = self.code_model.client_filename[1: len(self.code_model.client_filename) - len("_client")]
+            og_name = self.operation_group.property_name if self.operation_group.property_name else self.code_model.client_filename[1:]
+            request_builder_name = f"build_{og_name}_{operation_section}_request"
+            folder_api_version = self.code_model.api_version_to_folder_api_version[self.api_versions[-1]]
+            module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}")
+            operations_file = getattr(module.operations, "_operations")
+            self._request_builder = inspect.getsource(getattr(operations_file, request_builder_name))
+        return self._request_builder
 
     @property
     def _need_method_api_version_check(self) -> bool:
@@ -260,6 +268,9 @@ class CodeModel:
         self.module_name = pkg_path.stem.replace("-", ".")
         self.operation_groups = self._combine_operation_groups()
 
+    @property
+    def client_filename(self) -> str:
+        return list(self.api_version_to_metadata.values())[-1]["client"]["filename"]
 
     def _combine_operation_groups(self) -> List[OperationGroup]:
         initial_metadata = self.api_version_to_metadata[self.sorted_api_versions[0]]

@@ -3,7 +3,7 @@
 {{ operation.request_builder }}
     {% endif %}
 {% endfor %}
-class {{ operation_group.name }}{{ "(" + operation_group.name + "ABC)" if operation_group.is_mixin else "" }}:
+class {{ operation_group.name }}{{ "(" + operation_group.name.replace("Operations", "") + "ABC)" if operation_group.is_mixin else "" }}:
 {% if not operation_group.is_mixin %}
     """
     {{ operation_group.generated_class.__doc__ }}
