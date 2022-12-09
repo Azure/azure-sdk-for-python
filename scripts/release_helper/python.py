@@ -53,8 +53,7 @@ class IssueProcessPython(IssueProcess):
             self.bot_advice.append(_MultiAPI)
 
     def get_edit_content(self) -> None:
-        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\n{self.package_name}' \
-                            f'\nReadme Tag: {self.target_readme_tag}'
+        self.edit_content = f'\n{self.readme_link.replace("/readme.md", "")}\nReadme Tag: {self.target_readme_tag}'
 
     @property
     def is_multiapi(self):
