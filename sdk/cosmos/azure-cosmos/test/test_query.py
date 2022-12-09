@@ -378,7 +378,7 @@ class QueryTest(unittest.TestCase):
 
         self._validate_distinct(created_collection=created_collection,
                                 query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
-                                distinct_field, pk_field, pk_field, distinct_field),  # nosec
+                                    distinct_field, pk_field, pk_field, distinct_field),  # nosec
                                 results=self._get_distinct_docs(
                                     self._get_order_by_docs(padded_docs, pk_field, distinct_field), distinct_field,
                                     pk_field, True),
@@ -387,7 +387,7 @@ class QueryTest(unittest.TestCase):
 
         self._validate_distinct(created_collection=created_collection,
                                 query='SELECT distinct c.%s, c.%s from c ORDER BY c.%s, c.%s' % (
-                                distinct_field, pk_field, distinct_field, pk_field),  # nosec
+                                    distinct_field, pk_field, distinct_field, pk_field),  # nosec
                                 results=self._get_distinct_docs(
                                     self._get_order_by_docs(padded_docs, distinct_field, pk_field), distinct_field,
                                     pk_field, True),
@@ -396,7 +396,7 @@ class QueryTest(unittest.TestCase):
 
         self._validate_distinct(created_collection=created_collection,
                                 query='SELECT distinct value c.%s from c ORDER BY c.%s' % (
-                                distinct_field, distinct_field),  # nosec
+                                    distinct_field, distinct_field),  # nosec
                                 results=self._get_distinct_docs(
                                     self._get_order_by_docs(padded_docs, distinct_field, None), distinct_field, None,
                                     True),
@@ -613,7 +613,7 @@ class QueryTest(unittest.TestCase):
             self.config.TEST_COLLECTION_MULTI_PARTITION_WITH_CUSTOM_PK_ID, PartitionKey(path="/pk"))
         query = "Select value max(c.version) FROM c where c.isComplete = true and c.lookupVersion = @lookupVersion"
         query_results = container.query_items(query, parameters=[
-            {"name": "@lookupVersion", "value": "console_csat"}
+            {"name": "@lookupVersion", "value": "console_csat"}  # cspell:disable-line
         ], enable_cross_partition_query=True)
 
         self.assertListEqual(list(query_results), [None])
