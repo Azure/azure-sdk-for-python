@@ -10,8 +10,7 @@ import re
 import subprocess
 import sys
 import time
-from typing import Any, List
-
+from typing import List
 import six
 
 from azure.core.credentials import AccessToken
@@ -59,6 +58,8 @@ class AzureCliCredential(object):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`

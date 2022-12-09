@@ -17,13 +17,12 @@ from pytest_mock import MockFixture
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._internal.entities._additional_includes import ADDITIONAL_INCLUDES_SUFFIX
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.exceptions import ValidationException
+from test_utilities.utils import parse_local_path
 
 from .._utils import ANONYMOUS_COMPONENT_TEST_PARAMS, PARAMETERS_TO_TEST
 
@@ -197,7 +196,7 @@ class TestComponent:
         for input_port_name in expected_dict.get("inputs", {}):
             input_port = expected_dict["inputs"][input_port_name]
             # enum will be transformed to string
-            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum"]:
+            if isinstance(input_port["type"], str) and input_port["type"].lower() in ["string", "enum", "float"]:
                 if "enum" in input_port:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
@@ -205,6 +204,10 @@ class TestComponent:
             # optional will be dropped if it's False
             if "optional" in input_port and input_port["optional"] is False:
                 del input_port["optional"]
+
+        # code will be dumped as absolute path
+        if "code" in expected_dict:
+            expected_dict["code"] = parse_local_path(expected_dict["code"], entity.base_path)
 
         assert entity._to_dict() == expected_dict
         rest_obj = entity._to_rest_object()
@@ -581,7 +584,7 @@ class TestComponent:
                 "param_bool": {"type": "boolean"},
                 "param_enum_cap": {"enum": ["minimal", "reuse", "expiry", "policies"], "type": "enum"},
                 "param_enum_with_int_values": {"default": "3", "enum": ["1", "2.0", "3", "4"], "type": "enum"},
-                "param_float": {"type": "float"},
+                "param_float": {"type": "float", "default": "0.15", "max": "1.0", "min": "-1.0"},
                 "param_int": {"type": "integer"},
                 "param_string_with_default_value": {"default": ",", "type": "string"},
                 "param_string_with_default_value_2": {"default": "utf8", "type": "string"},

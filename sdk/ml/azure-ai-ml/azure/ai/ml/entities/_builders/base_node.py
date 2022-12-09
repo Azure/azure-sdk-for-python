@@ -326,7 +326,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
         Override this method to add customized validation logic.
         """
-        return self._validate_inputs(raise_error=False)
+        validate_result = self._validate_inputs(raise_error=False)
+        return validate_result
 
     @classmethod
     def _get_skip_fields_in_schema_validation(cls) -> List[str]:
@@ -336,7 +337,6 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             "name",
             "display_name",
             "experiment_name",  # name is not part of schema but may be set in dsl/yml file
-            cls._get_component_attr_name(),  # processed separately
             "kwargs",
         ]
 

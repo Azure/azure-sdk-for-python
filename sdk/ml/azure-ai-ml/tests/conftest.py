@@ -3,6 +3,7 @@ import os
 import random
 import time
 import uuid
+import json
 from datetime import datetime
 from importlib import reload
 from os import getenv
@@ -154,6 +155,28 @@ def mock_machinelearning_client(mocker: MockFixture) -> MLClient:
 
 
 @pytest.fixture
+def mock_machinelearning_registry_client(mocker: MockFixture) -> MLClient:
+    mock_response = json.dumps(
+        {
+            "registryName": "testFeed",
+            "primaryRegionResourceProviderUri": "https://cert-master.experiments.azureml-test.net/",
+            "resourceGroup": "resourceGroup",
+            "subscriptionId": "subscriptionId"
+        }
+    )
+    mocker.patch(
+        "azure.ai.ml._restclient.registry_discovery.operations._registry_management_non_workspace_operations.RegistryManagementNonWorkspaceOperations.registry_management_non_workspace",
+        return_val=mock_response,
+    )
+    yield MLClient(
+        credential=Mock(spec_set=DefaultAzureCredential),
+        subscription_id=Test_Subscription,
+        resource_group_name=Test_Resource_Group,
+        registry_name=Test_Registry_Name,
+    )
+
+
+@pytest.fixture
 def mock_aml_services_2021_10_01(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2021_10_01")
 
@@ -176,6 +199,11 @@ def mock_aml_services_2022_02_01_preview(mocker: MockFixture) -> Mock:
 @pytest.fixture
 def mock_aml_services_2022_06_01_preview(mocker: MockFixture) -> Mock:
     return mocker.patch("azure.ai.ml._restclient.v2022_06_01_preview")
+
+
+@pytest.fixture
+def mock_aml_services_2021_10_01_dataplanepreview(mocker: MockFixture) -> Mock:
+    return mocker.patch("azure.ai.ml._restclient.v2021_10_01_dataplanepreview")
 
 
 @pytest.fixture
@@ -589,6 +617,7 @@ def enable_pipeline_private_preview_features(mocker: MockFixture):
     mocker.patch("azure.ai.ml.dsl._pipeline_component_builder.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml._schema.pipeline.pipeline_component.is_private_preview_enabled", return_value=True)
     mocker.patch("azure.ai.ml.entities._schedule.schedule.is_private_preview_enabled", return_value=True)
+    mocker.patch("azure.ai.ml.dsl._pipeline_decorator.is_private_preview_enabled", return_value=True)
 
 
 @pytest.fixture()

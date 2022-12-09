@@ -31,17 +31,22 @@ from azure.ai.ml._internal import (
     Ae365exepool,
 )
 from azure.ai.ml._internal.entities import InternalBaseNode, InternalComponent, Scope
-from azure.ai.ml.constants._common import AssetTypes
+from azure.ai.ml.constants._common import AssetTypes, AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.constants._job.job import JobComputePropertyFields
 from azure.ai.ml.dsl import pipeline
+from azure.ai.ml.dsl._utils import environment_variable_overwrite
 from azure.ai.ml.entities import CommandComponent, Data, PipelineJob
+from azure.ai.ml.exceptions import ValidationException
+from test_utilities.utils import parse_local_path
 
 from .._utils import (
     DATA_VERSION,
     PARAMETERS_TO_TEST,
     assert_strong_type_intellisense_enabled,
     extract_non_primitive,
-    set_run_settings, get_expected_runsettings_items,
+    set_run_settings,
+    get_expected_runsettings_items,
+    unregister_internal_components,
 )
 
 
@@ -402,9 +407,12 @@ class TestPipelineJob:
         scope_internal_func = load_component(source=yaml_path)
         with open(yaml_path, encoding="utf-8") as yaml_file:
             yaml_dict = yaml.safe_load(yaml_file)
+
+        # handle some known difference in yaml_dict
         for _input in yaml_dict["inputs"].values():
             if "optional" in _input and _input["optional"] is False:
                 del _input["optional"]
+        yaml_dict["code"] = parse_local_path(yaml_dict["code"], scope_internal_func.base_path)
 
         command_func = load_component("./tests/test_configs/components/helloworld_component.yml")
 
@@ -598,3 +606,14 @@ class TestPipelineJob:
             assert "AZURE_ML_PathOnCompute_" in list(node_dict["properties"].keys())[0]
             assert node_dict["properties"] == rest_node_dict["properties"]
 
+    def test_load_pipeline_job_with_internal_nodes_from_rest(self):
+        # this is a simplified test case which avoid constructing a complete pipeline job rest object
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+
+        unregister_internal_components()
+        internal_node_type = "CommandComponent"
+        with environment_variable_overwrite(AZUREML_INTERNAL_COMPONENTS_ENV_VAR, "False"):
+            with pytest.raises(ValidationException, match=f"Unsupported component type: {internal_node_type}."):
+                pipeline_node_factory.get_load_from_rest_object_func(internal_node_type)
+
+        pipeline_node_factory.get_load_from_rest_object_func(internal_node_type)

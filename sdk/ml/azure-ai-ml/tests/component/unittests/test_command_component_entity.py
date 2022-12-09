@@ -338,10 +338,13 @@ class TestCommandComponentEntity:
         with patch("sys.stdout", new=StringIO()) as std_out:
             print(test_command)
             outstr = std_out.getvalue()
-            assert (
-                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\nenvironment: azureml:my-env:1\ncode: azureml:./src\nresources:\n  instance_count: 2"
-                in outstr
-            )
+            for piece in [
+                "outputs:\n  my_model:\n    mode: rw_mount\n    type: mlflow_model\n",
+                "environment: azureml:my-env:1\n",
+                "code: azureml:./src\n",
+                "resources:\n  instance_count: 2",
+            ]:
+                assert piece in outstr
 
     def test_sweep_help_function(self):
         yaml_file = "./tests/test_configs/components/helloworld_component.yml"

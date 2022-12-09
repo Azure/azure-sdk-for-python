@@ -8,12 +8,27 @@
 
 ## 1.2.0 (Unreleased)
 
+### Breaking Changes
+- Removed description from Registry.
+- Disable sdk telemetry logging
+
 ### Features Added
+- Enable updating the CMK encryption key (workspace.encryption.keyVaultProperties.keyIdentifier) for a workspace.
+- Mark JobService class and services param to command() as experimental.
+- Added a replication_count value to the schema of SystemCreatedStorageAccount in Registry.
+- Added support for Fairfax and MoonCake cloud for the registry discovery baseurl.
+- Added support for variable args as pipeline input in DSL Pipeline.
 - Added OS Patching Parameters to Compute Instance.
 
 ### Bugs Fixed
-- Fixed Sweep node not excluding optional input with value `None` in REST object. 
+- Update the upper bound dependencies version for tqdm, strictyaml, colorama and opencensus-ext-azure.
+- Added missing "properties" to batch deployment.
+- Retain the cases for the names of system job services (Tracking and Studio).
+- Update registry begin_delete method return type.
+- Fixed sweep job optional input cannot be empty.
 - Fixed bool test for output in download operation.
+- Fixed Compute Instance schedule not being created
+- Removed erroneous experimental warning from Compute Schedules
 
 ## 1.1.2 (2022-11-21)
 
@@ -92,6 +107,7 @@
 
 ### Bugs Fixed
 - Fix identity passthrough job with single file code
+- MLClient.from_config can now find the default config.json on Compute Instance when running sample notebooks.
 
 ### Other Changes
  - Removed declaration on Python 3.6 support
