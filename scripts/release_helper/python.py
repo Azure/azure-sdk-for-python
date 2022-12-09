@@ -156,10 +156,10 @@ class IssueProcessPython(IssueProcess):
         self.python_tag = self.get_specefied_param("->Readme Tag:", issue_body_list[:5])
 
         try:
-            readme_python_path = self.readme_link + '/readme.python.md'
+            readme_python_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.python.md'
             contents = str(self.issue_package.rest_repo.get_contents(readme_python_path).decoded_content)
-        except:
-            raise Exception("no readme.python.md")
+        except Exception as e:
+            raise Exception(f"fail to read readme.python.md: {e}")
         pattern_package = re.compile(r'package-name: [\w+-.]+')
         pattern_output = re.compile(r'\$\(python-sdks-folder\)/(.*?)/azure-')
         self.package_name = pattern_package.search(contents).group().split(':')[-1].strip()
