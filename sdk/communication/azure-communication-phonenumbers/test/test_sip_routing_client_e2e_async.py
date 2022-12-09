@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 from _shared.asynctestcase import AsyncCommunicationTestCase
+from _shared.testcase import CommunicationTestResourceType
 from _shared.helper import URIReplacerProcessor
 from _shared.utils import async_create_token_credential, get_http_logging_policy
 from sip_routing_helper import get_user_domain, assert_trunks_are_equal, assert_routes_are_equal
@@ -27,7 +28,7 @@ class TestSipRoutingClientE2EAsync(AsyncCommunicationTestCase):
         super(TestSipRoutingClientE2EAsync, self).__init__(method_name)
         
     def setUp(self):
-        super(TestSipRoutingClientE2EAsync, self).setUp(use_dynamic_resource=True)
+        super(TestSipRoutingClientE2EAsync, self).setUp(resource_type = CommunicationTestResourceType.DYNAMIC)
         self._sip_routing_client = SipRoutingClient.from_connection_string(
             self.connection_str, http_logging_policy=get_http_logging_policy()
         )

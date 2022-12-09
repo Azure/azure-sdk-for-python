@@ -13,13 +13,13 @@ module_logger = logging.getLogger(__name__)
 
 
 class SamplingStrategySchema(metaclass=PatchedSchemaMeta):
-    random_sample_percentage = fields.Int()
+    sampling_rate = fields.Float()
 
     # pylint: disable=unused-argument,no-self-use
-    @validates("random_sample_percentage")
-    def validate_random_sample_percentage(self, value, **kwargs):
-        if value > 100 or value < 1:
-            raise ValidationError("Random Sample Percentage must be an integer from 1-100")
+    @validates("sampling_rate")
+    def validate_sampling_rate(self, value, **kwargs):
+        if value >= 1.0 or value <= 0.0:
+            raise ValidationError("Random Sample Percentage must be an number between 0.0-1.0")
 
     # pylint: disable=unused-argument,no-self-use
     @post_load
