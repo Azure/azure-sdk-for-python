@@ -219,7 +219,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
         )
 
         if is_private_preview_enabled() and self.job_definition:
-            if not self.job_definition.settings and self.compute:
+            if not self.job_definition.settings:
                 self.job_definition.settings = {}
             self.job_definition.settings[PipelineConstants.DEFAULT_COMPUTE] = self.compute
             non_flat_data = {}
