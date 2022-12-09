@@ -360,10 +360,14 @@ class Common:
             issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates,
                                                 self.language_owner)
             try:
+                if item.issue.number == 3095:
+                    print('debug')
+                else:
+                    continue
                 issue.run()
-                self.result.append(issue)
             except Exception as e:
                 self.log_error(f'Error happened during handling issue {item.issue.number}: {e}')
+            self.result.append(issue)
 
     def run(self):
         self.proc_issue()
