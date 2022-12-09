@@ -263,7 +263,12 @@ class BatchEndpointOperations(_ScopeDependentOperations):
             for key, input_data in inputs.items():
                 if (
                     isinstance(input_data, Input)
-                    and input_data.type not in [InputTypes.NUMBER, InputTypes.BOOLEAN, InputTypes.INTEGER, InputTypes.STRING]
+                    and input_data.type not in [
+                            InputTypes.NUMBER,
+                            InputTypes.BOOLEAN,
+                            InputTypes.INTEGER,
+                            InputTypes.STRING
+                        ]
                     and HTTP_PREFIX not in input_data.path
                 ):
                     self._resolve_input(input_data, os.getcwd())
