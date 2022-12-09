@@ -44,7 +44,7 @@
 
 # PRLabel: %App Configuration Provider
 /sdk/appconfiguration/azure-appconfiguration-provider/
-@mametcal @albertofori @avanigupta
+@mametcal @albertofori @avanigupta @mrm9084
 
 # PRLabel: %Monitor - ApplicationInsights
 /sdk/applicationinsights/azure-applicationinsights/                  @azmonapplicationinsights @pvaneck
