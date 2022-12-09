@@ -8,7 +8,7 @@ import logging
 from typing import Any
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
-from marshmallow import fields, post_load, validates_schema
+from marshmallow import fields, post_load
 
 from azure.ai.ml._schema._deployment.deployment import DeploymentSchema
 from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefinitionSchema
@@ -23,7 +23,7 @@ module_logger = logging.getLogger(__name__)
 
 
 class BatchDeploymentSchema(DeploymentSchema):
-    compute = ComputeField()
+    compute = ComputeField(required=True)
     error_threshold = fields.Int(
         metadata={
             "description": """Error threshold, if the error count for the entire input goes above this value,\r\n
@@ -65,15 +65,3 @@ class BatchDeploymentSchema(DeploymentSchema):
         from azure.ai.ml.entities import BatchDeployment
 
         return BatchDeployment(base_path=self.context[BASE_PATH_CONTEXT_KEY], **data)
-
-    @validates_schema
-    def validate(self, data: Any, **kwargs):
-        if data.get("type") == BatchDeploymentType.MODEL and not data.get("compute"):
-            msg = "Compute name is required"
-            raise ValidationException(
-                message=msg,
-                no_personal_data_message=msg,
-                error_category=ErrorCategory.USER_ERROR,
-                target=ErrorTarget.JOB,
-                error_type=ValidationErrorType.MISSING_FIELD,
-            )
