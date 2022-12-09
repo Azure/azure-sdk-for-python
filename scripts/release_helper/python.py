@@ -57,6 +57,10 @@ class IssueProcessPython(IssueProcess):
                             f'\nReadme Tag: {self.target_readme_tag}'
 
     @property
+    def is_multiapi(self):
+        return _MultiAPI in self.issue_package.labels_name
+
+    @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
         if 'package-' not in self.target_readme_tag:
