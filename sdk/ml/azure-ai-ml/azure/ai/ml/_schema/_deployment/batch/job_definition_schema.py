@@ -8,7 +8,6 @@ import logging
 from typing import Any
 from marshmallow import fields, post_load
 
-from azure.ai.ml._utils.utils import snake_to_pascal
 from azure.ai.ml._schema import (
     PatchedSchemaMeta,
     StringTransformedEnum,

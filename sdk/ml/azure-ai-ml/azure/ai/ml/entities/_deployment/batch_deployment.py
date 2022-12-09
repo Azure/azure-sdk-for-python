@@ -223,7 +223,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             flat_data = flatten(non_flat_data, ".")
             flat_data_keys = flat_data.keys()
             for k in flat_data_keys:
-                pascal_key = self.flat_key_snake_to_pascal(k)
+                pascal_key = self._flat_key_snake_to_pascal(k)
                 self.properties[pascal_key] = flat_data[k]
 
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
@@ -268,7 +268,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             snake_dict = {}
             for k in deployment.properties:
                 if k.startswith("ComponentDeployment"):
-                    k_snake = cls.flat_key_pascal_to_snake(k)
+                    k_snake = cls._flat_key_pascal_to_snake(k)
                     snake_dict[k_snake] = deployment.properties[k]
             if len(snake_dict) > 0:
                 for k in snake_dict:
@@ -329,7 +329,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def flat_key_snake_to_pascal(self, key: str) -> str:
+    def _flat_key_snake_to_pascal(self, key: str) -> str: # pylint: disable=no-self-use
         key_arr = key.split(".")
         pascal_array = []
         for key in key_arr:
@@ -337,7 +337,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
         return '.'.join(pascal_array)
 
     @classmethod
-    def flat_key_pascal_to_snake(cls, key: str) -> str:
+    def _flat_key_pascal_to_snake(cls, key: str) -> str:
         key_arr = key.split(".")
         snake_array = []
         for key in key_arr:

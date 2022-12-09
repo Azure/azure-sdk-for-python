@@ -35,7 +35,6 @@ from azure.ai.ml.constants._common import (
     API_URL_KEY,
     AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
     AZUREML_PRIVATE_FEATURES_ENV_VAR,
-    COMPONENT_DEPLOYMENT,
 )
 from azure.core.pipeline.policies import RetryPolicy
 
