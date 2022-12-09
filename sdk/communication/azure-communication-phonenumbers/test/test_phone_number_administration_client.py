@@ -1,6 +1,6 @@
 import os
 import pytest
-from devtools_testutils import AzureRecordedTestCase, recorded_by_proxy
+from devtools_testutils import recorded_by_proxy
 from _shared.testcase import BodyReplacerProcessor
 from _shared.utils import (
     create_token_credential,
@@ -17,6 +17,7 @@ from azure.communication.phonenumbers import (
 from azure.communication.phonenumbers._generated.models import PhoneNumberOperationStatus
 from azure.communication.phonenumbers._shared.utils import parse_connection_str
 from phone_number_helper import PhoneNumberUriReplacer, PhoneNumberResponseReplacerProcessor
+from phone_numbers_testcase import PhoneNumbersTestCase
 
 SKIP_PURCHASE_PHONE_NUMBER_TESTS = True
 PURCHASE_PHONE_NUMBER_TEST_SKIP_REASON = "Phone numbers shouldn't be purchased in live tests"
@@ -39,17 +40,13 @@ def _get_test_phone_number():
     return os.environ["AZURE_PHONE_NUMBER_" + test_agent]
 
 
-class TestPhoneNumbersClient(AzureRecordedTestCase):
+class TestPhoneNumbersClient(PhoneNumbersTestCase):
     def setup_method(self):
+        super(TestPhoneNumbersClient, self).setUp(use_dynamic_resource=False)
         if self.is_playback():
-            self.connection_str = \
-                "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
             self.phone_number = "sanitized"
             self.country_code = "US"
         else:
-            self.connection_str = os.environ['COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING']
-            endpoint, *_ = parse_connection_str(self.connection_str)
-            self._resource_name = endpoint.split(".")[0]
             self.phone_number = _get_test_phone_number()
             self.country_code = os.getenv(
                 "AZURE_COMMUNICATION_SERVICE_COUNTRY_CODE", "US")

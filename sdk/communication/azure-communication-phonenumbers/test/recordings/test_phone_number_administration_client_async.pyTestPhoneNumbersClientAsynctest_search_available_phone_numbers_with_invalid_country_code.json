@@ -9,8 +9,8 @@
         "Content-Length": "131",
         "Content-Type": "application/json",
         "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
-        "x-ms-content-sha256": "ecyowPPqS6i2jEjg4ZPaHAki9yDR8IHa8lF\u002BVXRefVM=",
-        "x-ms-date": "Thu, 08 Dec 2022 23:07:51 GMT",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
         "x-ms-return-client-request-id": "true"
       },
       "RequestBody": {
@@ -25,13 +25,13 @@
       "ResponseHeaders": {
         "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01",
         "Content-Type": "application/json",
-        "Date": "Thu, 08 Dec 2022 23:07:51 GMT",
-        "MS-CV": "TkTSrQD1lESq\u002BGfczjBZLw.0",
+        "Date": "sanitized",
+        "MS-CV": "sanitized",
         "Strict-Transport-Security": "max-age=2592000",
         "Transfer-Encoding": "chunked",
-        "X-Azure-Ref": "0SG6SYwAAAADKpMfEFjc5T4alWy62p74tTEFYMzExMDAwMTA4MDMzADlmYzdiNTE5LWE4Y2MtNGY4OS05MzVlLWM5MTQ4YWUwOWU4MQ==",
+        "X-Azure-Ref": "sanitized",
         "X-Cache": "CONFIG_NOCACHE",
-        "X-Processing-Time": "34ms"
+        "X-Processing-Time": "39ms"
       },
       "ResponseBody": {
         "error": {
