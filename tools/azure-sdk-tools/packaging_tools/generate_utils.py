@@ -375,7 +375,8 @@ def gen_cadl(cadl_relative_path: str, spec_folder: str) -> Dict[str, Any]:
     check_call("npm install", shell=True)
 
     # generate code
-    check_call(f"npx cadl compile . --emit {cadl_python} --output-path={str(output_path)}", shell=True)
+    cadl_file = "client.cadl" if Path("client.cadl").exists() else "."
+    check_call(f"npx cadl compile {cadl_file} --emit {cadl_python} --output-path={str(output_path)}", shell=True)
     if (output_path / "output.yaml").exists():
         os.remove(output_path / "output.yaml")
     if not (output_path / "sdk_packaging.toml").exists():
