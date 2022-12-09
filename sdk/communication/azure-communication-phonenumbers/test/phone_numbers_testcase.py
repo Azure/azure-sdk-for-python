@@ -16,7 +16,7 @@ class PhoneNumbersTestCase(AzureRecordedTestCase):
             self.connection_str = "endpoint=https://sanitized.communication.azure.com/;accesskey=fake==="
         else:
             if use_dynamic_resource:
-                self.connection_str = os.environ['COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING']
+                self.connection_str = os.environ['COMMUNICATION_LIVETEST_DYNAMIC_CONNECTION_STRING']
             else:
                 self.connection_str = os.environ['COMMUNICATION_LIVETEST_STATIC_CONNECTION_STRING']
             endpoint, *_ = parse_connection_str(self.connection_str)
