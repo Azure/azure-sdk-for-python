@@ -19,6 +19,7 @@ from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deploymen
 from azure.ai.ml._utils.utils import is_private_preview_enabled, camel_to_snake
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
+from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.entities._assets import Environment, Model
 from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySettings
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
@@ -218,6 +219,9 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
         )
 
         if is_private_preview_enabled() and self.job_definition:
+            if not self.job_definition.settings:
+                self.job_definition.settings = {}
+            self.job_definition.settings[PipelineConstants.DEFAULT_COMPUTE] = self.compute
             non_flat_data = {}
             non_flat_data["ComponentDeployment"] = self.job_definition._to_dict()
             flat_data = flatten(non_flat_data, ".")
