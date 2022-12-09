@@ -9,7 +9,7 @@
     },
     {
       "directory": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/core",
-      "description": "Top-level entity classes inherit one of several base classes depending on what they represent:\n - PatchedBaseSchema\n - PathAwareSchema\n - ResourceSchema\n\nAs of writing this, I'm not sure when to choose between these. \nTODO: Determine how one should choose which parent class to use.",
+      "description": "Top-level entity classes inherit one of several base classes depending on what they represent. The classes are listed here in order of inheritance, with each class being a child of the previous class in the list:\n - PatchedBaseSchema: Prevents the writing to YAML of attributes with `None` values.\n - PathAwareSchema: Ignores the `$schema` field. Does a bunch of magic related to param overrides, and changes the behavior of dump-only values to be ignored instead of causing errors when loaded.\n - YamlFileSchema: Adds functionality to allow schema classes to be built from paths to separate YAML files in place of inline yaml definitions.\n - ResourceSchema: Auto-adds a bunch of fields that most resource objects have.\n\nDifferent schema classes inherit from a different base class from the four above, depending on how much of the cumulative functionality they need.",
       "title": "Base Classes"
     },
     {
@@ -32,7 +32,7 @@
     },
     {
       "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
-      "description": "There are many ways that field values can be confiured. We will cover the common options in this tour, starting with the \"required\" option. \n\nAs the name suggests, setting a field's \"required\" kwarg to true will make that value required for a schema to be loaded properly. It is false by default.",
+      "description": "We can configure field values to have a bunch of behaviors. We will cover the common options in this tour, starting with the \"required\" option. \n\nAs the name suggests, setting a field's \"required\" kwarg to true will make that value required for a schema to be loaded properly. It is false by default.",
       "line": 17,
       "title": "\"required\" Fields"
     },
@@ -120,7 +120,7 @@
     },
     {
       "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/identity.py",
-      "description": "Schema classes have some annotations that can be used to mark functions for injection at specific points of the YAML conversion process. The `@pre_dump` annotation shown here marks the function below to be run before a python object is converted into a schema class object, and is useful when the two class's fields don't match perfectly.",
+      "description": "Schema classes have some annotations that can be used to mark functions for injection at specific points of the YAML conversion process. The `@pre_dump` annotation shown here marks the function below to be run before a python object is converted into a schema class object, and is useful when the two classes' fields don't match perfectly.",
       "line": 43,
       "title": "@pre_dump annotation"
     },
@@ -138,7 +138,7 @@
     },
     {
       "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/workspace/workspace.py",
-      "description": "That concludes this introduction to schema classes and how they're used in the AML SDK. If you're curious about them, I encourage you to check out example YAML files that we have strewn about this repo (there are many that are used for testing), and cross-validate them with their schema classes to see how they line up.",
+      "description": "That concludes this introduction to schema classes and how they're used in the AML SDK. If you're curious about them, I encourage you to check out example YAML files that we have strewn about this repo (there are many that are used for [testing](https://github.com/Azure/azure-sdk-for-python/tree/main/sdk/ml/azure-ai-ml/tests/test_configs)), and cross-validate them with their schema classes to see how they line up.",
       "line": 16,
       "title": "Conclusion"
     }
