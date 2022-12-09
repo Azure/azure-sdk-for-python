@@ -57,12 +57,6 @@ class TestPhoneNumbersClient(PhoneNumbersTestCase):
             headers_policy=get_header_policy(),
             api_version=API_VERSION
         )
-        self.recording_processors.extend([
-            BodyReplacerProcessor(
-                keys=["id", "token", "phoneNumber"]
-            ),
-            PhoneNumberUriReplacer(),
-            PhoneNumberResponseReplacerProcessor()])
 
     def _get_managed_identity_phone_number_client(self):
         endpoint, *_ = parse_connection_str(self.connection_str)
