@@ -15,10 +15,13 @@ from jinja2 import FileSystemLoader, Environment
 
 PACKAGING_TOOLS_DIR = (Path(__file__) / "..").resolve()
 
-
 def _get_metadata(path: Path) -> Dict[str, Any]:
     with open(path / "_metadata.json", "r") as fd:
         return json.load(fd)
+
+def _get_api_version(path: Path) -> str:
+    return _get_metadata(path)["chosen_version"]
+
 
 def modify_relative_imports(regex: str, file: str) -> str:
     dots = re.search(regex, file).group(1)
@@ -142,7 +145,8 @@ class Operation(VersionedObject):
         return "\n".join(retval)
 
     def _get_op(self, api_version: str, async_mode: bool = False):
-        module = importlib.import_module(f"{self.code_model.module_name}.{api_version}{'.aio' if async_mode else ''}")
+        folder_api_version = self.code_model.api_version_to_folder_api_version[api_version]
+        module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}{'.aio' if async_mode else ''}")
         operation_group = getattr(module.operations, self.operation_group.name)
         return getattr(operation_group, self.name)
 
@@ -183,7 +187,8 @@ class OperationGroup(VersionedObject):
         self.property_name = property_name
 
     def _get_og(self, api_version: str):
-        module = importlib.import_module(f"{self.code_model.module_name}.{api_version}")
+        folder_api_version = self.code_model.api_version_to_folder_api_version[api_version]
+        module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}")
         return getattr(module.operations, self.name)
 
     @property
@@ -226,14 +231,21 @@ class CodeModel:
         for sub_folder in pkg_path.stem.split("-"):
             self.root_of_code = self.root_of_code / sub_folder
         self.api_version_to_metadata: Dict[str, Dict[str, Any]] = {
-            dir.stem: _get_metadata(dir)
+            _get_api_version(dir): _get_metadata(dir)
             for dir in self.root_of_code.iterdir()
             if dir.stem.startswith("v") and "preview" not in dir.stem
         }
-        self.sorted_api_versions = sorted([metadata["chosen_version"] for metadata in self.api_version_to_metadata.values()])
+        self.api_version_to_folder_api_version = {
+            _get_api_version(dir): dir.stem
+            for dir in self.root_of_code.iterdir()
+            if dir.stem.startswith("v") and "preview" not in dir.stem
+        }
+        self.sorted_api_versions = sorted(self.api_version_to_metadata.keys())
         self.default_api_version = self.sorted_api_versions[-1]
+        self.default_folder_api_version = self.api_version_to_folder_api_version[self.default_api_version]
         self.module_name = pkg_path.stem.replace("-", ".")
         self.operation_groups = self._combine_operation_groups()
+
 
     def _combine_operation_groups(self) -> List[OperationGroup]:
         initial_metadata = self.api_version_to_metadata[self.sorted_api_versions[0]]
@@ -290,7 +302,7 @@ class Serializer:
     def _copy_file_contents(self, filename: str, async_mode: bool, module: Optional[Path] = None):
         module = module or self.code_model.root_of_code
         root_of_code = (self.code_model.root_of_code / Path("aio")) if async_mode else self.code_model.root_of_code
-        default_api_version_folder = self.code_model.root_of_code / Path(self.code_model.default_api_version)
+        default_api_version_folder = self.code_model.root_of_code / Path(self.code_model.default_folder_api_version)
         default_api_version_root_of_code = (
             (default_api_version_folder / Path("aio")) if async_mode else default_api_version_folder
         )
@@ -304,12 +316,12 @@ class Serializer:
     def _get_file_path_from_module(self, module_name: str, strip_api_version: bool) -> Path:
         module_stem = module_name.strip(f"{self.code_model.module_name}.")
         if strip_api_version:
-            module_stem = module_stem.strip(f"{self.code_model.default_api_version}.")
+            module_stem = module_stem.strip(f"{self.code_model.default_folder_api_version}.")
         return self.code_model.root_of_code / Path(module_stem.replace(".", "/"))
 
     def serialize_operations_folder(self, async_mode: bool):
         template = self.env.get_template("operation_groups.py.jinja2")
-        operations_folder_module = f"{self.code_model.module_name}.{self.code_model.default_api_version}.{'aio.' if async_mode else ''}operations"
+        operations_folder_module = f"{self.code_model.module_name}.{self.code_model.default_folder_api_version}.{'aio.' if async_mode else ''}operations"
         operations_folder = self._get_file_path_from_module(operations_folder_module, strip_api_version=True)
         operations_module = importlib.import_module(f"{operations_folder_module}._operations")
         setup = inspect.getsource(operations_module).split("class ")[0]  # get all request builders and imports
@@ -322,13 +334,24 @@ class Serializer:
         Path(operations_folder).mkdir(parents=True, exist_ok=True)
         with open(f"{operations_folder}/_operations.py", "w") as fd:
             fd.write(template.render(code_model=self.code_model, setup=setup, async_mode=async_mode))
-        with open(f"{operations_folder}/__init__.py", "w") as wfd:
-            with open(f"{self._get_file_path_from_module(operations_folder_module, strip_api_version=False)}/__init__.py", "r") as rfd:
-                wfd.write(rfd.read())
+        with open(f"{operations_folder}/__init__.py", "w") as fd:
+            fd.write(self.env.get_template("operations_init.py.jinja2").render(code_model=self.code_model))
         with open(f"{operations_folder}/_patch.py", "w") as wfd:
             with open(f"{self._get_file_path_from_module(operations_folder_module, strip_api_version=False)}/_patch.py", "r") as rfd:
                 wfd.write(rfd.read())
 
+    def _get_operation_group_properties(self) -> List[OperationGroup]:
+        map: Dict[str, OperationGroup] = {}
+        for og in self.code_model.operation_groups:
+            if not og.property_name:
+                continue
+            if og.property_name in map:
+                existing_og = map[og.property_name]
+                if og.api_versions[-1] > existing_og.api_versions[-1]:
+                    map[og.property_name] = og
+            else:
+                map[og.property_name] = og
+        return list(map.values())
 
     def serialize_client(self, async_mode: bool):
         template = self.env.get_template("client.py.jinja2")
@@ -341,8 +364,6 @@ class Serializer:
         # do parsing on the source so we can build up our client
         main_client_source = inspect.getsource(client_module)
         imports = main_client_source.split("class")[0]
-        vadilation_relative = ".." if async_mode else "."
-        imports += f"from {vadilation_relative}_validation import api_version_validation\n"
 
         main_client_source = main_client_source[len(imports):]
 
@@ -354,6 +375,7 @@ class Serializer:
                 code_model=self.code_model,
                 imports=imports,
                 client_initialization=client_initialization,
+                operation_group_properties=self._get_operation_group_properties(),
         ))
 
     def _serialize_general_helper(self, async_mode: bool):

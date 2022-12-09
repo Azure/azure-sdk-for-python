@@ -45,6 +45,6 @@ class api_version_validation:
                         ]
                     )
                 )
-            return func(*args, **kwargs)
+            return func(self, *args, **kwargs)
 
         return wrapper

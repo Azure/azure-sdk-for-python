@@ -4,10 +4,14 @@ from .operations import (
     {{ operation_group.name }},
     {% endfor %}
 )
+from ._validation import api_version_validation
 {{ client_initialization }}
-{% for operation_group in code_model.operation_groups | rejectattr("property_name", "equalto", None) %}
+{% for operation_group in operation_group_properties %}
 
     @property
+    {% if operation_group.need_decorator %}
+    {{ operation_group.decorator | indent }}
+    {% endif %}
     def {{ operation_group.property_name }}(self):
-        return {{ operation_group.name }}(self._client, self._config, Serializer(self._models_dict(api_version)), Deserializer(self._models_dict(api_version)))
+        return {{ operation_group.name }}(self._client, self._config, Serializer({}), Deserializer({}))
     {% endfor %}

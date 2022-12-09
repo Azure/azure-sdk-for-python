@@ -5,9 +5,6 @@ class {{ operation_group.generated_class.__name__ }}{{ "(NetworkManagementClient
     """
     models = _models
 
-    {% if operation_group.need_decorator %}
-    {{ operation_group.decorator | indent }}
-    {% endif %}
     def __init__(self, *args, **kwargs):
         input_args = list(args)
         self._client = input_args.pop(0) if input_args else kwargs.pop("client")
