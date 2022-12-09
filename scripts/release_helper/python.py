@@ -76,7 +76,7 @@ class IssueProcessPython(IssueProcess):
         return whether_change_readme
 
     def auto_reply(self) -> None:
-        if self.issue_package.issue.comments == 0 or _CONFIGURED in self.issue_package.labels_name:
+        if (_AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name) or (_CONFIGURED in self.issue_package.labels_name):
             issue_number = self.issue_package.issue.number
             if not self.readme_comparison:
                 try:
