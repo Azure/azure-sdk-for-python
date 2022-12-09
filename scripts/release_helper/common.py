@@ -360,8 +360,6 @@ class Common:
             issue = self.issue_process_function(item, self.request_repo_dict, self.assignee_candidates,
                                                 self.language_owner)
 
-            if item.issue.number != 3095:
-                continue
             try:
                 issue.run()
             except Exception as e:
