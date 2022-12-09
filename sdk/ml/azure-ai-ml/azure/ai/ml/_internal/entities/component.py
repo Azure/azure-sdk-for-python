@@ -5,7 +5,8 @@
 # disable redefined-builtin to use id/type as argument name
 from contextlib import contextmanager
 from os import PathLike
-from typing import Dict, Union
+from pathlib import Path
+from typing import Dict, Optional, Union
 from uuid import UUID
 
 from marshmallow import Schema
@@ -19,13 +20,13 @@ from azure.ai.ml.entities._validation import MutableValidationResult
 from ._merkle_tree import create_merkletree
 
 from ... import Input, Output
-from ..._utils._asset_utils import IgnoreFile, get_ignore_file
-from .._schema.component import InternalBaseComponentSchema
+from .._schema.component import InternalComponentSchema
 from ._additional_includes import _AdditionalIncludes
 from ._input_outputs import InternalInput, InternalOutput
 from .environment import InternalEnvironment
 from .node import InternalBaseNode
-from .code import InternalCode
+from .code import InternalCode, InternalComponentIgnoreFile
+from ..._utils._arm_id_utils import parse_name_label
 from ...entities._job.distribution import DistributionConfiguration
 
 
@@ -95,6 +96,7 @@ class InternalComponent(Component):
         launcher: Dict = None,
         **kwargs,
     ):
+        type, self._type_label = parse_name_label(type)
         super().__init__(
             name=name,
             version=version,
@@ -149,16 +151,21 @@ class InternalComponent(Component):
             self.__additional_includes = _AdditionalIncludes(
                 code_path=self.code,
                 yaml_path=self._source_path,
+                ignore_file=InternalComponentIgnoreFile(
+                    self.code if self.code is not None else Path(self._source_path).parent,
+                ),  # use YAML's parent as code when self.code is None
             )
         return self.__additional_includes
 
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
-        return InternalBaseComponentSchema(context=context)
+        return InternalComponentSchema(context=context)
 
     def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(InternalComponent, self)._customized_validate()
-        if self._additional_includes.with_includes:
+        # if the code is not local path, no need for additional includes
+        code = Path(self.code) if self.code is not None else Path(self._source_path).parent
+        if code.exists() and self._additional_includes.with_includes:
             validation_result.merge_with(self._additional_includes._validate())
             # resolving additional includes & update self._base_path can be dangerous,
             # so we just skip path validation if additional_includes is used
@@ -200,16 +207,21 @@ class InternalComponent(Component):
         return result
 
     @classmethod
-    def _get_snapshot_id(cls, code_path: Union[str, PathLike]) -> str:
+    def _get_snapshot_id(
+        cls,
+        code_path: Union[str, PathLike],
+        ignore_file: Optional[InternalComponentIgnoreFile],
+    ) -> str:
         """Get the snapshot id of a component with specific working directory in ml-components.
         Use this as the name of code asset to reuse steps in a pipeline job from ml-components runs.
 
         :param code_path: The path of the working directory.
         :type code_path: str
+        :param ignore_file: The ignore file of the snapshot.
+        :type ignore_file: InternalComponentIgnoreFile
         :return: The snapshot id of a component in ml-components with code_path as its working directory.
         """
-        _ignore_file: IgnoreFile = get_ignore_file(code_path)
-        curr_root = create_merkletree(code_path, lambda x: _ignore_file.is_file_excluded(code_path))
+        curr_root = create_merkletree(code_path, lambda x: ignore_file.is_file_excluded(code_path))
         snapshot_id = str(UUID(curr_root.hexdigest_hash[::4]))
         return snapshot_id
 
@@ -230,16 +242,18 @@ class InternalComponent(Component):
             self.environment.resolve(self._additional_includes.code)
         # use absolute path in case temp folder & work dir are in different drive
         tmp_code_dir = self._additional_includes.code.absolute()
+        ignore_file = InternalComponentIgnoreFile(tmp_code_dir)
         # Use the snapshot id in ml-components as code name to enable anonymous
         # component reuse from ml-component runs.
         # calculate snapshot id here instead of inside InternalCode to ensure that
         # snapshot id is calculated based on the resolved code path
         yield InternalCode(
-            name=self._get_snapshot_id(tmp_code_dir),
+            name=self._get_snapshot_id(tmp_code_dir, ignore_file),
             version="1",
             base_path=self._base_path,
             path=tmp_code_dir,
             is_anonymous=True,
+            ignore_file=ignore_file,
         )
 
         self._additional_includes.cleanup()

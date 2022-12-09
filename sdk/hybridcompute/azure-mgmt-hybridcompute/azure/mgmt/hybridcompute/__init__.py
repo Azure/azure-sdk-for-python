@@ -10,10 +10,17 @@ from ._hybrid_compute_management_client import HybridComputeManagementClient
 from ._version import VERSION
 
 __version__ = VERSION
-__all__ = ['HybridComputeManagementClient']
 
 try:
-    from ._patch import patch_sdk  # type: ignore
-    patch_sdk()
+    from ._patch import __all__ as _patch_all
+    from ._patch import *  # pylint: disable=unused-wildcard-import
 except ImportError:
-    pass
+    _patch_all = []
+from ._patch import patch_sdk as _patch_sdk
+
+__all__ = [
+    "HybridComputeManagementClient",
+]
+__all__.extend([p for p in _patch_all if p not in __all__])
+
+_patch_sdk()

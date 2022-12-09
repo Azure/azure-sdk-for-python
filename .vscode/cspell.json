@@ -28,6 +28,7 @@
     "**/*requirement*.txt",
     "**/assets.json",
 
+    "sdk/anomalydetector/**",
     "sdk/applicationinsights/azure-applicationinsights/**",
     "sdk/appconfiguration/azure-appconfiguration/**",
     "sdk/batch/azure-batch/**",
@@ -97,6 +98,8 @@
     "tools/azure-sdk-tools/setup.py"
   ],
   "words": [
+    "qnamaker",
+    "mindependency",
     "automl",
     "pyyaml",
     "CONLL",
@@ -203,6 +206,7 @@
     "iscsi",
     "iterrows",
     "ivar",
+    "ivars",
     "jwks",
     "keybak",
     "kube",
@@ -277,6 +281,8 @@
     "pyfuncitem",
     "pygobject",
     "pyodide",
+    "pyright",
+    "pyrightconfig",
     "parameterizing",
     "pytyped",
     "pytz",
@@ -409,6 +415,12 @@
         "mytable",
         "edmtypes",
         "specifed"
+      ]
+    },
+    {
+      "filename": "sdk/tables/test-resources.json",
+      "words": [
+        "mmspecial"
       ]
     },
     {
@@ -567,6 +579,12 @@
         "mymodel",
         "heif",
         "racwd"
+      ]
+    },
+    {
+      "filename": "sdk/keyvault/**",
+      "words": [
+        "eddsa"
       ]
     },
     {
@@ -858,7 +876,12 @@
         "myaccount",
         "testid",
         "filea",
-        "fileb"
+        "fileb",
+        "FFFE",
+        "Fdirectory",
+        "Ffile",
+        "Fsubdir",
+        "Fdir"
       ]
     },
     {
@@ -1006,7 +1029,8 @@
         "myid",
         "jsonify",
         "ints",
-        "inirudebwoy"
+        "inirudebwoy",
+	"mghextreme"
       ]
     },
     {
@@ -1145,6 +1169,16 @@
       "filename": "sdk/personalizer/test-resources.json",
       "words": [
         "euap"
+      ]
+    },
+    {
+      "filename": "sdk/webpubsub/azure-messaging-webpubsubservice/azure/messaging/webpubsubservice/_serialization.py",
+      "words": [
+        "Nify",
+        "ctxt",
+        "unflattened",
+        "wday",
+        "deseralize"
       ]
     }
   ],

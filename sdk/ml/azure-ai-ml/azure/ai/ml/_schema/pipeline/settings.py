@@ -8,6 +8,7 @@ from marshmallow import INCLUDE, Schema, fields, post_dump, post_load
 
 from azure.ai.ml._schema.core.fields import ArmStr
 from azure.ai.ml._schema.pipeline.pipeline_component import NodeNameStr
+from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import AzureMLResourceType
 
 
@@ -19,8 +20,11 @@ class PipelineJobSettingsSchema(Schema):
     default_compute = ArmStr(azureml_type=AzureMLResourceType.COMPUTE)
     continue_on_step_failure = fields.Bool()
     force_rerun = fields.Bool()
-    on_init = NodeNameStr()
-    on_finalize = NodeNameStr()
+
+    # move init/finalize under private preview flag to hide them in spec
+    if is_private_preview_enabled():
+        on_init = NodeNameStr()
+        on_finalize = NodeNameStr()
 
     @post_load
     def make(self, data, **kwargs) -> "PipelineJobSettings":

@@ -7,9 +7,9 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "Content-Length": "723",
+        "Content-Length": "710",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b2 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "analysisInput": {
@@ -55,7 +55,7 @@
           },
           {
             "taskName": "4",
-            "kind": "ExtractiveSummarization",
+            "kind": "Healthcare",
             "parameters": {
               "stringIndexType": "UnicodeCodePoint"
             }
@@ -64,43 +64,43 @@
       },
       "StatusCode": 202,
       "ResponseHeaders": {
-        "apim-request-id": "63b41287-bec9-49cb-b517-89d5611a3404",
+        "apim-request-id": "e8ee77e2-b8cb-4f41-be85-09e4ffa4cdea",
         "Content-Length": "0",
-        "Date": "Fri, 28 Oct 2022 18:19:33 GMT",
-        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/91587903-745b-4512-84be-9d84a0b83583?api-version=2022-10-01-preview",
+        "Date": "Tue, 29 Nov 2022 23:59:34 GMT",
+        "operation-location": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3528950d-8f48-43b3-9adb-48d0250ab0ba?api-version=2022-10-01-preview",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "509",
-        "x-ms-region": "UK South"
+        "x-envoy-upstream-service-time": "407",
+        "x-ms-region": "East US"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/91587903-745b-4512-84be-9d84a0b83583?api-version=2022-10-01-preview",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/language/analyze-text/jobs/3528950d-8f48-43b3-9adb-48d0250ab0ba?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b1 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azsdk-python-ai-textanalytics/5.3.0b2 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "bf3dd49d-38cf-4c49-bc28-a8090f8cb26a",
-        "Content-Length": "4730",
+        "apim-request-id": "2b4c60b7-c83d-4c00-9bce-3f7d4a0130be",
+        "Content-Length": "4600",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Fri, 28 Oct 2022 18:19:38 GMT",
+        "Date": "Tue, 29 Nov 2022 23:59:39 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "146",
-        "x-ms-region": "UK South"
+        "x-envoy-upstream-service-time": "169",
+        "x-ms-region": "East US"
       },
       "ResponseBody": {
-        "jobId": "91587903-745b-4512-84be-9d84a0b83583",
-        "lastUpdateDateTime": "2022-10-28T18:19:36Z",
-        "createdDateTime": "2022-10-28T18:19:33Z",
-        "expirationDateTime": "2022-10-29T18:19:33Z",
+        "jobId": "3528950d-8f48-43b3-9adb-48d0250ab0ba",
+        "lastUpdatedDateTime": "2022-11-29T23:59:37Z",
+        "createdDateTime": "2022-11-29T23:59:34Z",
+        "expirationDateTime": "2022-11-30T23:59:34Z",
         "status": "succeeded",
         "errors": [],
         "tasks": {
@@ -112,7 +112,7 @@
             {
               "kind": "EntityRecognitionLROResults",
               "taskName": "0",
-              "lastUpdateDateTime": "2022-10-28T18:19:36.2768138Z",
+              "lastUpdateDateTime": "2022-11-29T23:59:37.1417524Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -190,7 +190,7 @@
             {
               "kind": "KeyPhraseExtractionLROResults",
               "taskName": "1",
-              "lastUpdateDateTime": "2022-10-28T18:19:36.6182176Z",
+              "lastUpdateDateTime": "2022-11-29T23:59:36.8998813Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -232,7 +232,7 @@
             {
               "kind": "PiiEntityRecognitionLROResults",
               "taskName": "2",
-              "lastUpdateDateTime": "2022-10-28T18:19:36.4136792Z",
+              "lastUpdateDateTime": "2022-11-29T23:59:37.1820976Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -312,7 +312,7 @@
             {
               "kind": "SentimentAnalysisLROResults",
               "taskName": "3",
-              "lastUpdateDateTime": "2022-10-28T18:19:36.6991103Z",
+              "lastUpdateDateTime": "2022-11-29T23:59:36.8703696Z",
               "status": "succeeded",
               "results": {
                 "documents": [
@@ -349,16 +349,16 @@
                     "id": "2",
                     "sentiment": "neutral",
                     "confidenceScores": {
-                      "positive": 0.05,
-                      "neutral": 0.94,
+                      "positive": 0.02,
+                      "neutral": 0.98,
                       "negative": 0.0
                     },
                     "sentences": [
                       {
                         "sentiment": "neutral",
                         "confidenceScores": {
-                          "positive": 0.05,
-                          "neutral": 0.94,
+                          "positive": 0.02,
+                          "neutral": 0.98,
                           "negative": 0.0
                         },
                         "offset": 0,
@@ -376,55 +376,39 @@
                   }
                 ],
                 "errors": [],
-                "modelVersion": "2022-10-01"
+                "modelVersion": "2022-11-01"
               }
             },
             {
-              "kind": "ExtractiveSummarizationLROResults",
+              "kind": "HealthcareLROResults",
               "taskName": "4",
-              "lastUpdateDateTime": "2022-10-28T18:19:35.2823932Z",
+              "lastUpdateDateTime": "2022-11-29T23:59:36.8260667Z",
               "status": "succeeded",
               "results": {
                 "documents": [
                   {
                     "id": "1",
-                    "sentences": [
-                      {
-                        "text": "Microsoft was founded by Bill Gates and Paul Allen",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 50
-                      }
-                    ],
+                    "entities": [],
+                    "relations": [],
                     "warnings": [],
-                    "detectedLanguage": {
-                      "name": "English",
-                      "iso6391Name": "en",
-                      "confidenceScore": 0.94
-                    },
-                    "isLanguageDefaulted": false
-                  },
-                  {
-                    "id": "2",
-                    "sentences": [
-                      {
-                        "text": "Microsoft fue fundado por Bill Gates y Paul Allen",
-                        "rankScore": 1.0,
-                        "offset": 0,
-                        "length": 49
-                      }
-                    ],
-                    "warnings": [],
-                    "detectedLanguage": {
-                      "name": "Spanish",
-                      "iso6391Name": "es",
-                      "confidenceScore": 0.97
-                    },
+                    "detectedLanguage": "en",
                     "isLanguageDefaulted": false
                   }
                 ],
-                "errors": [],
-                "modelVersion": "latest"
+                "errors": [
+                  {
+                    "id": "2",
+                    "error": {
+                      "code": "InvalidArgument",
+                      "message": "Invalid Language Code.",
+                      "innererror": {
+                        "code": "UnsupportedLanguageCode",
+                        "message": "Invalid language code \u0027es\u0027. Supported languages: en. For additional details see https://aka.ms/text-analytics/language-support"
+                      }
+                    }
+                  }
+                ],
+                "modelVersion": "2022-03-01"
               }
             }
           ]
