@@ -1,12 +1,6 @@
 # Release History
 
-## 1.3.0 (Unreleased)
-
-### Bugs Fixed
-- Removed erroneous experimental warning from Compute Schedules.
-- 
-
-## 1.2.0 (Unreleased)
+## 1.2.0 (2022-12-05)
 
 ### Breaking Changes
 - Removed description from Registry.
