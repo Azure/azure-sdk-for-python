@@ -303,10 +303,7 @@ class Component(
     ) -> "Component":
         data = data or {}
         params_override = params_override or []
-        context = {
-            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-            PARAMS_OVERRIDE_KEY: params_override,
-        }
+        base_path = Path(yaml_path).parent if yaml_path else Path("./")
 
         type_in_override = find_type_in_override(params_override)
 
@@ -316,19 +313,20 @@ class Component(
         data[CommonYamlFields.TYPE] = type_in_override
 
         from azure.ai.ml.entities._component.component_factory import component_factory
-        create_instance_func, create_schema_func = component_factory.get_create_funcs(
-            data[CommonYamlFields.TYPE],
-            schema=data.get(CommonYamlFields.SCHEMA) if CommonYamlFields.SCHEMA in data else None,
-        )
+        create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
         new_instance = create_instance_func()
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
             _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
-            **(create_schema_func(context).load(data, unknown=INCLUDE, **kwargs)),
+            **(create_schema_func({
+                BASE_PATH_CONTEXT_KEY: base_path,
+                PARAMS_OVERRIDE_KEY: params_override,
+            }).load(data, unknown=INCLUDE, **kwargs)),
         )
         # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
         # could be object or dict.
-        new_instance._base_path = context[BASE_PATH_CONTEXT_KEY]
+        # base_path in context can be changed in loading, so we use original base_path here.
+        new_instance._base_path = base_path
         if yaml_path:
             new_instance._source_path = yaml_path
         return new_instance
@@ -363,12 +361,7 @@ class Component(
         # shouldn't block serialization when name is not valid
         # maybe override serialization method for name field?
         from azure.ai.ml.entities._component.component_factory import component_factory
-        create_instance_func, _ = component_factory.get_create_funcs(
-            obj.properties.component_spec[CommonYamlFields.TYPE],
-            schema=obj.properties.component_spec[CommonYamlFields.SCHEMA]
-            if CommonYamlFields.SCHEMA in obj.properties.component_spec
-            else None,
-        )
+        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec)
 
         instance = create_instance_func()
         instance.__init__(**instance._from_rest_object_to_init_params(obj))

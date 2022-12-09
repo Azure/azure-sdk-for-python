@@ -4,13 +4,12 @@
 
 # pylint: disable=protected-access
 import copy
-import sys
 import typing
 from collections import OrderedDict
-from contextlib import contextmanager
 from inspect import Parameter, signature
 from typing import Callable, Union
 
+from azure.ai.ml._utils._func_utils import persistent_locals
 from azure.ai.ml._utils.utils import (
     get_all_enum_values_iter,
     is_private_preview_enabled,
@@ -114,17 +113,6 @@ def get_func_variable_tracer(_locals_data, func_code):
     return tracer
 
 
-@contextmanager
-def replace_sys_profiler(profiler):
-    """A context manager which replaces sys profiler to given profiler."""
-    original_profiler = sys.getprofile()
-    sys.setprofile(profiler)
-    try:
-        yield
-    finally:
-        sys.setprofile(original_profiler)
-
-
 class PipelineComponentBuilder:
     # map from python built-in type to component type
     # pylint: disable=too-many-instance-attributes
@@ -203,17 +191,9 @@ class PipelineComponentBuilder:
             non_pipeline_inputs=non_pipeline_inputs
         )
         kwargs.update(non_pipeline_inputs_dict or {})
-        # We use this stack to store the dsl pipeline definition hierarchy
-        _definition_builder_stack.push(self)
 
         # Use a dict to store all variables in self.func
-        _locals = {}
-        func_variable_profiler = get_func_variable_tracer(_locals, self.func.__code__)
-        try:
-            with replace_sys_profiler(func_variable_profiler):
-                outputs = self.func(**kwargs)
-        finally:
-            _definition_builder_stack.pop()
+        outputs, _locals = self._get_outputs_and_locals(kwargs)
 
         if outputs is None:
             outputs = {}
@@ -234,6 +214,28 @@ class PipelineComponentBuilder:
         # exception will be raised in component.build_validate_io().
         pipeline_component._outputs = self._build_pipeline_outputs(outputs)
         return pipeline_component
+
+    def _get_outputs_and_locals(
+        self,
+        _all_kwargs: typing.Dict[str, typing.Any]
+    ) -> typing.Tuple[typing.Dict, typing.Dict]:
+        """Get outputs and locals from self.func.
+        Locals will be used to update node variable names.
+
+        :param _all_kwargs: All kwargs to call self.func.
+        :type _all_kwargs: typing.Dict[str, typing.Any]
+        :return: A tuple of outputs and locals.
+        :rtype: typing.Tuple[typing.Dict, typing.Dict]
+        """
+        # We use this stack to store the dsl pipeline definition hierarchy
+        _definition_builder_stack.push(self)
+
+        try:
+            persistent_func = persistent_locals(self.func)
+            outputs = persistent_func(**_all_kwargs)
+            return outputs, persistent_func.locals
+        finally:
+            _definition_builder_stack.pop()
 
     def _validate_group_annotation(self, name:str, val:GroupInput):
         for k, v in val.values.items():
