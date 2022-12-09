@@ -98,7 +98,7 @@
     },
     {
       "file": "sdk/ml/azure-ai-ml/azure/ai/ml/_schema/compute/schedule.py",
-      "description": "Another important custom field that we make use of is the `UnionField`. This allows us to define polymorphic types. In this example, the \"trigger\" field can be one of two differnt classes through use of more `NestedField` instances.",
+      "description": "Another important custom field that we make use of is the `UnionField`. This allows us to define polymorphic types. In this example, the \"trigger\" field can be one of two different classes through use of more `NestedField` instances.",
       "line": 82,
       "title": "UnionField"
     },
