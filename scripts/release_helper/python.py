@@ -62,10 +62,10 @@ class IssueProcessPython(IssueProcess):
     @property
     def readme_comparison(self) -> bool:
         # to see whether need change readme
-        if 'package-' not in self.target_readme_tag:
-            return True
         if _CONFIGURED in self.issue_package.labels_name:
             return False
+        if 'package-' not in self.target_readme_tag:
+            return True
         readme_path = self.pattern_resource_manager.search(self.readme_link).group() + '/readme.md'
         contents = str(self.issue_package.rest_repo.get_contents(readme_path).decoded_content)
         pattern_tag = re.compile(r'tag: package-[\w+-.]+')
