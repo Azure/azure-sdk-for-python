@@ -329,16 +329,16 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    def _flat_key_snake_to_pascal(self, key: str) -> str: # pylint: disable=no-self-use
-        key_arr = key.split(".")
+    def _flat_key_snake_to_pascal(self, key_str: str) -> str: # pylint: disable=no-self-use
+        key_arr = key_str.split(".")
         pascal_array = []
         for key in key_arr:
             pascal_array.append(snake_to_pascal(key))
         return '.'.join(pascal_array)
 
     @classmethod
-    def _flat_key_pascal_to_snake(cls, key: str) -> str:
-        key_arr = key.split(".")
+    def _flat_key_pascal_to_snake(cls, key_str: str) -> str:
+        key_arr = key_str.split(".")
         snake_array = []
         for key in key_arr:
             if key != "continue_on_step_failure":
