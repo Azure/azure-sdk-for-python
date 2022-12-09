@@ -108,6 +108,20 @@ class Operation(VersionedObject):
         return inspect.getsource(self._get_op(self.api_versions[-1], async_mode))
 
     @property
+    def request_builder(self) -> Optional[str]:
+        if self.name.startswith("begin_"):
+            return None  # we use the initial function
+        if self.name.startswith("_") and self.name.endswith("_initial"):
+            operation_section = self.name[1: len(self.name) - len("_initial")]
+        else:
+            operation_section = self.name
+        request_builder_name = f"build_{self.operation_group.property_name}_{operation_section}_request"
+        folder_api_version = self.code_model.api_version_to_folder_api_version[self.api_versions[-1]]
+        module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}")
+        operations_file = getattr(module.operations, "_operations")
+        return inspect.getsource(getattr(operations_file, request_builder_name))
+
+    @property
     def _need_method_api_version_check(self) -> bool:
         """Whether we need to check the api version of the method"""
         return any(a for a in self.operation_group.api_versions if a not in self.api_versions)
@@ -324,16 +338,16 @@ class Serializer:
         operations_folder_module = f"{self.code_model.module_name}.{self.code_model.default_folder_api_version}.{'aio.' if async_mode else ''}operations"
         operations_folder = self._get_file_path_from_module(operations_folder_module, strip_api_version=True)
         operations_module = importlib.import_module(f"{operations_folder_module}._operations")
-        setup = inspect.getsource(operations_module).split("class ")[0]  # get all request builders and imports
+        imports = inspect.getsource(operations_module).split("def build_")[0]  # get all imports
         try:
-            setup = modify_relative_imports(r"from (.*)_serialization import Serializer", setup)
+            imports = modify_relative_imports(r"from (.*)_serialization import Serializer", imports)
         except AttributeError:
             pass
         validation_relative = "..." if async_mode else ".."
-        setup += f"from {validation_relative}_validation import api_version_validation\n"
+        imports += f"from {validation_relative}_validation import api_version_validation\n"
         Path(operations_folder).mkdir(parents=True, exist_ok=True)
         with open(f"{operations_folder}/_operations.py", "w") as fd:
-            fd.write(template.render(code_model=self.code_model, setup=setup, async_mode=async_mode))
+            fd.write(template.render(code_model=self.code_model, imports=imports, async_mode=async_mode))
         with open(f"{operations_folder}/__init__.py", "w") as fd:
             fd.write(self.env.get_template("operations_init.py.jinja2").render(code_model=self.code_model))
         with open(f"{operations_folder}/_patch.py", "w") as wfd:
