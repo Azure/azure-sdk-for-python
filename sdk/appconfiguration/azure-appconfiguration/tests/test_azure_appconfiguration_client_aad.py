@@ -290,11 +290,11 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
     @recorded_by_proxy
     def test_list_configuration_settings_reserved_chars(self, appconfiguration_endpoint_string):
         client = self.create_aad_client(appconfiguration_endpoint_string)
-        resered_char_kv = ConfigurationSetting(
+        reserved_char_kv = ConfigurationSetting(
             key=KEY, label=LABEL_RESERVED_CHARS, value=TEST_VALUE
         )
-        resered_char_kv = client.add_configuration_setting(
-            resered_char_kv
+        reserved_char_kv = client.add_configuration_setting(
+            reserved_char_kv
         )
         escaped_label = re.sub(r"((?!^)\*(?!$)|\\|,)", r"\\\1", LABEL_RESERVED_CHARS)
         items = list(client.list_configuration_settings(
@@ -302,7 +302,7 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
         ))
         assert len(items) == 1
         assert all(x.label == LABEL_RESERVED_CHARS for x in items)
-        client.delete_configuration_setting(resered_char_kv.key)
+        client.delete_configuration_setting(reserved_char_kv.key)
 
     @app_config_aad_decorator
     @recorded_by_proxy
@@ -694,8 +694,8 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
                 "name": FILTER_TARGETING,
                 "parameters": {
                     u"Audience": {
-                        u"Users": [u"abcd", u"defg"],
-                        u"Groups": [u"ghij", u"jklm"],
+                        u"Users": [u"abcd", u"defg"], # cspell:disable-line
+                        u"Groups": [u"ghij", u"jklm"], # cspell:disable-line
                         u"DefaultRolloutPercentage": 50
                     }
                 }
@@ -706,8 +706,8 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
                 "name": FILTER_TARGETING,
                 "parameters": {
                     u"Audience": {
-                        u"Users": [u"abcde", u"defgh"],
-                        u"Groups": [u"ghijk", u"jklmn"],
+                        u"Users": [u"abcde", u"defgh"], # cspell:disable-line
+                        u"Groups": [u"ghijk", u"jklmn"], # cspell:disable-line
                         u"DefaultRolloutPercentage": 100
                     }
                 }
@@ -798,8 +798,8 @@ class TestAppConfigurationClientAAD(AppConfigTestCase):
                     "name": FILTER_TARGETING,
                     "parameters": {
                         u"Audience": {
-                            u"Users": [u"abcde", u"defgh"],
-                            u"Groups": [u"ghijk", u"jklmn"],
+                            u"Users": [u"abcde", u"defgh"], # cspell:disable-line
+                            u"Groups": [u"ghijk", u"jklmn"], # cspell:disable-line
                             u"DefaultRolloutPercentage": 100
                         }
                     }
