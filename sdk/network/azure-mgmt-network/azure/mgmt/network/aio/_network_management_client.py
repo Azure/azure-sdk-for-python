@@ -97,7 +97,7 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
         **kwargs: Any
     ) -> None:
         self._config = NetworkManagementClientConfiguration(subscription_id, credential, **kwargs)
-        self._client = AsyncARMPipelineClient(base_url=base_url, config=self._config, **kwargs)
+        self._client = AsyncARMPipelineClient(base_url=endpoint, config=self._config, **kwargs)
         super(NetworkManagementClient, self).__init__(
             api_version=api_version,
             profile=profile
