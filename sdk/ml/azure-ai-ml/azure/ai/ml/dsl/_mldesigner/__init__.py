@@ -34,23 +34,29 @@ component_factory_load_from_dict = component_factory.load_from_dict
 
 
 __all__ = [
+    # maybe not needed
     "BaseNode",
-    "experimental",
     "ErrorTarget",
     "EnumInput",
-    "get_ignore_file",
-    "_get_param_with_standard_annotation",
     "PathAwareSchema",
     "SchemaValidatableMixin",
+    "GroupInput",
+    "_assert_arg_valid",
+    "_get_annotation_by_value",
+    "PipelineInput",
+
+    # to be put in main package
+    "condition",
+    "do_while",
+    "group",
+
+    # must keep
+    "experimental",
+    "get_ignore_file",
+    "_get_param_with_standard_annotation",
     "_generate_component_function",
     "component_factory_load_from_dict",
     "load_yaml",
     "V1_COMPONENT_TO_NODE",
-    "GroupInput",
-    "condition",
-    "do_while",
-    "group",
-    "_assert_arg_valid",
-    "_get_annotation_by_value",
-    "PipelineInput",
+
 ]
