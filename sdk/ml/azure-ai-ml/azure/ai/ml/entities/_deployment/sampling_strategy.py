@@ -11,14 +11,14 @@ from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 class SamplingStrategy:
     """Sampling strategy deployment entity
 
-    :param random_sample_percentage: Random sample percent of traffic.
+    :param sampling_rate: Random sample percent of traffic.
     :type random_sample_percentage: int, optional
 
     """
 
     # pylint: disable=unused-argument,no-self-use
-    def __init__(self, random_sample_percentage: int = None, **kwargs):
-        self.random_sample_percentage = random_sample_percentage
+    def __init__(self, sampling_rate: float = None, **kwargs):
+        self.sampling_rate = sampling_rate
 
     def _to_dict(self) -> Dict:
         # pylint: disable=no-member
