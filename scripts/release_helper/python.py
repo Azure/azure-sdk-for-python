@@ -49,7 +49,7 @@ class IssueProcessPython(IssueProcess):
         return ""
 
     def multi_api_policy(self) -> None:
-        if _MultiAPI in self.issue_package.labels_name:
+        if (_MultiAPI in self.issue_package.labels_name) and (_AUTO_ASK_FOR_CHECK not in self.issue_package.labels_name):
             self.bot_advice.append(_MultiAPI)
 
     def get_edit_content(self) -> None:
