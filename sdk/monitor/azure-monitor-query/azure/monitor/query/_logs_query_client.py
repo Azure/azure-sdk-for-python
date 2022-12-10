@@ -4,9 +4,10 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
-from typing import TYPE_CHECKING, Any, Union, Sequence, Dict, List, cast, Tuple
+from typing import Any, Union, Sequence, Dict, List, cast, Tuple
 from datetime import timedelta, datetime
+
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.tracing.decorator import distributed_trace
 
@@ -20,9 +21,6 @@ from ._helpers import (
 )
 from ._models import LogsBatchQuery, LogsQueryResult, LogsQueryPartialResult
 from ._exceptions import LogsQueryError
-
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
 
 
 class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -49,7 +47,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
     :paramtype endpoint: str
     """
 
-    def __init__(self, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
         endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io")
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint

@@ -4,20 +4,18 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 from datetime import datetime, timedelta
-from typing import Any, Tuple, Union, Sequence, Dict, List, TYPE_CHECKING
-from azure.core.tracing.decorator_async import distributed_trace_async
+from typing import Any, Tuple, Union, Sequence, Dict, List
+
+from azure.core.credentials_async import AsyncTokenCredential
 from azure.core.exceptions import HttpResponseError
+from azure.core.tracing.decorator_async import distributed_trace_async
 
 from .._generated.aio._client import MonitorQueryClient
 from .._helpers import construct_iso8601, order_results, process_error, process_prefer
 from .._models import LogsQueryResult, LogsBatchQuery, LogsQueryPartialResult
 from ._helpers_async import get_authentication_policy
 from .._exceptions import LogsQueryError
-
-if TYPE_CHECKING:
-    from azure.core.credentials_async import AsyncTokenCredential
 
 
 class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -35,7 +33,7 @@ class LogsQueryClient(object): # pylint: disable=client-accepts-api-version-keyw
     :paramtype endpoint: str
     """
 
-    def __init__(self, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
+    def __init__(self, credential: AsyncTokenCredential, **kwargs: Any) -> None:
         endpoint = kwargs.pop("endpoint", "https://api.loganalytics.io")
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):
             endpoint = "https://" + endpoint

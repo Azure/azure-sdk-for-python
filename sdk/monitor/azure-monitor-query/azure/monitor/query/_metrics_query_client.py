@@ -4,21 +4,17 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
 # pylint: disable=anomalous-backslash-in-string
-from typing import TYPE_CHECKING, Any, List
+from typing import Any, List
 
-from azure.core.tracing.decorator import distributed_trace
+from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
+from azure.core.tracing.decorator import distributed_trace
 
 from ._generated._serialization import Serializer
 from ._generated.metrics._client import MonitorMetricsClient
 from ._models import MetricsQueryResult, MetricDefinition, MetricNamespace
 from ._helpers import get_metrics_authentication_policy, construct_iso8601
-
-if TYPE_CHECKING:
-    from datetime import timedelta
-    from azure.core.credentials import TokenCredential
 
 
 class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-keyword
@@ -43,7 +39,7 @@ class MetricsQueryClient(object): # pylint: disable=client-accepts-api-version-k
     :paramtype endpoint: str
     """
 
-    def __init__(self, credential: "TokenCredential", **kwargs: Any) -> None:
+    def __init__(self, credential: TokenCredential, **kwargs: Any) -> None:
         audience = kwargs.pop("audience", None)
         endpoint = kwargs.pop("endpoint", "https://management.azure.com")
         if not endpoint.startswith("https://") and not endpoint.startswith("http://"):

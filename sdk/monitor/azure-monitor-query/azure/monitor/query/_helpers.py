@@ -5,20 +5,18 @@
 # license information.
 # --------------------------------------------------------------------------
 from datetime import datetime, timedelta
-from typing import TYPE_CHECKING, List, Dict, Any
+from typing import List, Dict, Any
 
+from azure.core.credentials import TokenCredential
 from azure.core.exceptions import HttpResponseError
 from azure.core.pipeline.policies import BearerTokenCredentialPolicy
 
 from ._generated._serialization import Serializer, Deserializer
 
-if TYPE_CHECKING:
-    from azure.core.credentials import TokenCredential
-
 
 def get_authentication_policy(
-    credential,  # type: "TokenCredential"
-    audience=None # type: str
+    credential: TokenCredential,
+    audience: str = None
 ) -> BearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
     if not audience:
@@ -35,8 +33,8 @@ def get_authentication_policy(
 
 
 def get_metrics_authentication_policy(
-    credential,  # type: TokenCredential
-    audience=None # type: str
+    credential: TokenCredential,
+    audience: str = None
 ) -> BearerTokenCredentialPolicy:
     """Returns the correct authentication policy"""
     if not audience:
