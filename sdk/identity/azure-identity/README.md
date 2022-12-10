@@ -279,6 +279,8 @@ argument but defaults to the authority matching VS Code's "Azure: Cloud" setting
 |Credential|Usage|Reference
 |-|-|-
 |[`AzureCliCredential`][cli_cred_ref]| Authenticates in a development environment with the Azure CLI. | [Azure CLI authentication](https://learn.microsoft.com/cli/azure/authenticate-azure-cli)
+#TODO: link for reference is pending
+|[`AzureDeveloperCliCredential`][azd_cli_cred_ref]| Authenticates in a development environment with the Azure Developer CLI. | [Azure Developer CLI authentication]()
 |[`PowerShellCredential`][powershell_cred_ref]| Authenticates in a development environment with the Azure PowerShell. | [Azure PowerShell authentication](https://learn.microsoft.com/powershell/azure/authenticate-azureps)
 |[`VisualStudioCodeCredential`][vscode_cred_ref]| Authenticates as the user signed in to the Visual Studio Code Azure Account extension. | [VS Code Azure Account extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
 
@@ -401,6 +403,8 @@ additional questions or comments.
 [cert_cred_ref]: https://aka.ms/azsdk/python/identity/certificatecredential
 [chain_cred_ref]: https://aka.ms/azsdk/python/identity/chainedtokencredential
 [cli_cred_ref]: https://aka.ms/azsdk/python/identity/azclicredential
+#TODO: azd_cli_cred_ref is pending
+[azd_cli_cred_ref]: 
 [client_assertion_cred_ref]: https://aka.ms/azsdk/python/identity/clientassertioncredential
 [client_secret_cred_ref]: https://aka.ms/azsdk/python/identity/clientsecretcredential
 [default_cred_ref]: https://aka.ms/azsdk/python/identity/defaultazurecredential

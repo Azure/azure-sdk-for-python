@@ -9,6 +9,7 @@ from ._exceptions import AuthenticationRequiredError, CredentialUnavailableError
 from ._constants import AzureAuthorityHosts, KnownAuthorities
 from ._credentials import (
     AuthorizationCodeCredential,
+    AzureDeveloperCliCredential,
     AzureCliCredential,
     AzurePowerShellCredential,
     CertificateCredential,
@@ -30,6 +31,7 @@ from ._persistent_cache import TokenCachePersistenceOptions
 
 __all__ = [
     "AuthenticationRecord",
+    "AzureDeveloperCliCredential",
     "AuthenticationRequiredError",
     "AuthorizationCodeCredential",
     "AzureAuthorityHosts",
