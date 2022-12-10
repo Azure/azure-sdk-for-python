@@ -84,3 +84,6 @@ class BatchEndpointInvoke:
     TYPE = "type"
     MODE = "mode"
     PATH = "path"
+    DEFAULT = "default"
+    MIN = "min"
+    MAX = "max"
