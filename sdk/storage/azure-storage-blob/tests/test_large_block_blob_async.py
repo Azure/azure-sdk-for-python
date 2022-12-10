@@ -5,6 +5,7 @@
 # --------------------------------------------------------------------------
 
 import asyncio
+import tempfile
 
 from io import BytesIO
 from os import path, remove, urandom
@@ -40,13 +41,6 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         if self.is_live:
             try:
                 await self.bsc.create_container(self.container_name)
-            except:
-                pass
-
-    def _teardown(self, file_name):
-        if path.isfile(file_name):
-            try:
-                remove(file_name)
             except:
                 pass
 
@@ -166,22 +160,18 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'create_large_blob_from_path_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, max_concurrency=2, overwrite=True)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, max_concurrency=2, overwrite=True)
 
-            block_list = await blob.get_block_list()
+        block_list = await blob.get_block_list()
 
-            # Assert
-            assert len(block_list) != 0
-            await self.assertBlobEqual(self.container_name, blob_name, data)
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        assert len(block_list) != 0
+        await self.assertBlobEqual(self.container_name, blob_name, data)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -194,19 +184,16 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'reate_large_blob_from_path_with_md5_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, validate_content=True, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, validate_content=True, max_concurrency=2)
 
-            # Assert
-            await self.assertBlobEqual(self.container_name, blob_name, data)
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        await self.assertBlobEqual(self.container_name, blob_name, data)
+
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -219,19 +206,16 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(self.get_random_bytes(100))
-        FILE_PATH = 'large_blob_from_path_non_parallel_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, max_concurrency=1)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, max_concurrency=1)
 
-            # Assert
-            await self.assertBlobEqual(self.container_name, blob_name, data)
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        await self.assertBlobEqual(self.container_name, blob_name, data)
+
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -243,28 +227,25 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         await self._setup(storage_account_name, storage_account_key)
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
-        FILE_PATH = 'large_blob_from_path_with_progress_asyn.temp.{}.dat'.format(str(uuid.uuid4()))
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            progress = []
-            def callback(response):
-                current = response.context['upload_stream_current']
-                total = response.context['data_stream_total']
-                if current is not None:
-                    progress.append((current, total))
+        progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, max_concurrency=2, raw_response_hook=callback)
 
-            # Assert
-            await self.assertBlobEqual(self.container_name, blob_name, data)
-            self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        await self.assertBlobEqual(self.container_name, blob_name, data)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
+
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -277,25 +258,21 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'large_blob_from_path_with_properties_asy.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            content_settings = ContentSettings(
-                content_type='image/png',
-                content_language='spanish')
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
+        content_settings = ContentSettings(
+            content_type='image/png',
+            content_language='spanish')
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2)
 
-            # Assert
-            await self.assertBlobEqual(self.container_name, blob_name, data)
-            properties = await blob.get_blob_properties()
-            assert properties.content_settings.content_type == content_settings.content_type
-            assert properties.content_settings.content_language == content_settings.content_language
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        await self.assertBlobEqual(self.container_name, blob_name, data)
+        properties = await blob.get_blob_properties()
+        assert properties.content_settings.content_type == content_settings.content_type
+        assert properties.content_settings.content_language == content_settings.content_language
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -308,19 +285,15 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'frm_stream_chnkd_upload_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, max_concurrency=2)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, max_concurrency=2)
 
-            # Assert
-            await self.assertBlobEqual(self.container_name, blob_name, data)
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        await self.assertBlobEqual(self.container_name, blob_name, data)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -333,27 +306,23 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'frm_strm_w_prgrss_chnkduplod_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            progress = []
-            def callback(response):
-                current = response.context['upload_stream_current']
-                total = response.context['data_stream_total']
-                if current is not None:
-                    progress.append((current, total))
+        progress = []
+        def callback(response):
+            current = response.context['upload_stream_current']
+            total = response.context['data_stream_total']
+            if current is not None:
+                progress.append((current, total))
 
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, max_concurrency=2, raw_response_hook=callback)
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, max_concurrency=2, raw_response_hook=callback)
 
-            # Assert
-            await self.assertBlobEqual(self.container_name, blob_name, data)
-            self.assert_upload_progress(len(data), self.config.max_block_size, progress)
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        await self.assertBlobEqual(self.container_name, blob_name, data)
+        self.assert_upload_progress(len(data), self.config.max_block_size, progress)
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -366,20 +335,16 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = '_lrgblob_frm_strm_chnkd_uplod_w_cnt_.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            blob_size = len(data) - 301
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, length=blob_size, max_concurrency=2)
+        blob_size = len(data) - 301
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, length=blob_size, max_concurrency=2)
 
-            # Assert
-            await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -392,27 +357,22 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'frm_stream_chnk_upload_w_cntnprops_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            content_settings = ContentSettings(
-                content_type='image/png',
-                content_language='spanish')
-            blob_size = len(data) - 301
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(
-                    stream, length=blob_size, content_settings=content_settings, max_concurrency=2)
+        content_settings = ContentSettings(
+            content_type='image/png',
+            content_language='spanish')
+        blob_size = len(data) - 301
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, length=blob_size, content_settings=content_settings, max_concurrency=2)
 
-            # Assert
-            await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
-            properties = await blob.get_blob_properties()
-            assert properties.content_settings.content_type == content_settings.content_type
-            assert properties.content_settings.content_language == content_settings.content_language
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        await self.assertBlobEqual(self.container_name, blob_name, data[:blob_size])
+        properties = await blob.get_blob_properties()
+        assert properties.content_settings.content_type == content_settings.content_type
+        assert properties.content_settings.content_language == content_settings.content_language
 
     @pytest.mark.live_test_only
     @BlobPreparer()
@@ -425,24 +385,20 @@ class TestStorageLargeBlockBlobAsync(AsyncStorageRecordedTestCase):
         blob_name = self._get_blob_reference()
         blob = self.bsc.get_blob_client(self.container_name, blob_name)
         data = bytearray(urandom(LARGE_BLOB_SIZE))
-        FILE_PATH = 'from_stream_chunk_upld_with_props_async.temp.{}.dat'.format(str(uuid.uuid4()))
-        with open(FILE_PATH, 'wb') as stream:
-            stream.write(data)
 
         # Act
-        try:
-            content_settings = ContentSettings(
-                content_type='image/png',
-                content_language='spanish')
-            with open(FILE_PATH, 'rb') as stream:
-                await blob.upload_blob(stream, content_settings=content_settings, max_concurrency=2)
+        content_settings = ContentSettings(
+            content_type='image/png',
+            content_language='spanish')
+        with tempfile.TemporaryFile() as temp_file:
+            temp_file.write(data)
+            temp_file.seek(0)
+            await blob.upload_blob(temp_file, content_settings=content_settings, max_concurrency=2)
 
-            # Assert
-            await self.assertBlobEqual(self.container_name, blob_name, data)
-            properties = await blob.get_blob_properties()
-            assert properties.content_settings.content_type == content_settings.content_type
-            assert properties.content_settings.content_language == content_settings.content_language
-        finally:
-            self._teardown(FILE_PATH)
+        # Assert
+        await self.assertBlobEqual(self.container_name, blob_name, data)
+        properties = await blob.get_blob_properties()
+        assert properties.content_settings.content_type == content_settings.content_type
+        assert properties.content_settings.content_language == content_settings.content_language
 
 # ------------------------------------------------------------------------------
