@@ -2421,6 +2421,21 @@ class TestDSLPipeline:
                                                "'pipeline_func' not provided."
         }
 
+        # required pipeline parameter with default value binding to optional node parameter
+        @dsl.pipeline()
+        def pipeline_func(required_param: Input(optional=False, type="string", default="pipeline_required_param")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param=required_param,
+                optional_param=required_param,
+                optional_param_with_default=required_param,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {}
+
     def test_dsl_pipeline_with_pipeline_component_unprovided_pipeline_optional_input(self, client: MLClient) -> None:
         component_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
@@ -2502,7 +2517,7 @@ class TestDSLPipeline:
             'inputs.required_input': "Required input 'required_input' for pipeline 'root_pipeline' not provided."
         }
 
-        # required parameter input binding to optional node parameter
+        # required pipeline parameter binding to optional node parameter
         @dsl.pipeline()
         def subgraph_pipeline(required_parameter: Input(optional=False, type="string")):
             component_func(
@@ -2524,6 +2539,7 @@ class TestDSLPipeline:
                                                             "'subgraph_node' not provided."
         }
 
+        # required pipeline parameter with default value binding to optional node parameter
         @dsl.pipeline()
         def subgraph_pipeline(required_parameter: Input(optional=False, type="string", default="subgraph_pipeline")):
             component_func(
