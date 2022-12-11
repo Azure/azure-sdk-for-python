@@ -447,7 +447,6 @@ class Input(_InputOutputBase):  # pylint: disable=too-many-instance-attributes
                 new_value = self._simple_parse(origin_value)
                 setattr(self, key, new_value)
         self.optional = self._simple_parse(getattr(self, "optional", "false"), _type="boolean")
-        self.optional = True if self.optional is True else None
 
     @classmethod
     def _get_input_by_type(cls, t: type, optional=None):
