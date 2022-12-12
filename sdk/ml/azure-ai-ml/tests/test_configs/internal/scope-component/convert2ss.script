@@ -6,3 +6,4 @@ USING DefaultTextExtractor();
 
 
 OUTPUT RawData TO SSTREAM @Output_stream;
+

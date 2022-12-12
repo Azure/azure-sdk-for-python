@@ -24,3 +24,4 @@ for line in lines:
 # Here only output a dummy data for demo.
 model = str(uuid4())
 (Path(args.model_output) / "model").write_text(model)
+

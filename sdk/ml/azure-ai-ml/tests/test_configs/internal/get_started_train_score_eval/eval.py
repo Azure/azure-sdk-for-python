@@ -18,3 +18,4 @@ for line in lines:
 # Evaluate the incoming scoring result and output evaluation result.
 # Here only output a dummy file for demo.
 (Path(args.eval_output) / "eval_result").write_text("eval_result")
+

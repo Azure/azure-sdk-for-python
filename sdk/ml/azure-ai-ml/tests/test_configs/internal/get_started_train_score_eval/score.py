@@ -25,3 +25,4 @@ print("Model:", model)
 # Do scoring with the input model
 # Here only print text to output file as demo
 (Path(args.score_output) / "score").write_text("scored with {}".format(model))
+
