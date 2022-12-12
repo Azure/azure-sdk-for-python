@@ -42,10 +42,10 @@ class ValidationCheckPoller(PollingMethod):
         self._initial_response = None
         self._polling_interval = interval
         self._status = None
-        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED"]
+        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"]
 
     def _update_status(self) -> None:
-        self._status = self._resource["inputArtifacts"]["testScriptFileInfo"]["validationStatus"]
+        self._status = self._resource["validationStatus"]
 
     def _update_resource(self) -> None:
         self._resource = self._command()
@@ -88,10 +88,10 @@ class ValidationCheckPollerAsync(AsyncPollingMethod):
         self._initial_response = None
         self._polling_interval = interval
         self._status = None
-        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED"]
+        self._termination_statuses = ["VALIDATION_SUCCESS", "VALIDATION_FAILED", "VALIDATION_NOT_REQUIRED"]
 
     def _update_status(self) -> None:
-        self._status = self._resource["inputArtifacts"]["testScriptFileInfo"]["validationStatus"]
+        self._status = self._resource["validationStatus"]
 
     async def _update_resource(self) -> None:
         self._resource = await self._command()

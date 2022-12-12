@@ -109,7 +109,7 @@ class LoadTestAdministrationOperations(LoadTestAdministrationOperationsGenerated
         upload_test_file_operation = self.upload_test_file(test_id=test_id, file_name=file_name, body=body,
                                                            file_type=file_type, **kwargs)
 
-        command = partial(self.get_test, test_id=test_id)
+        command = partial(self.get_test_file, test_id=test_id, file_name=file_name)
 
         if poll_for_validation_status:
             create_validation_status_polling = ValidationCheckPoller(interval=polling_interval)
