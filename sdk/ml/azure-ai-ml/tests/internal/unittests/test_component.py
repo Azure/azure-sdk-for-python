@@ -17,12 +17,10 @@ from pytest_mock import MockFixture
 from azure.ai.ml import load_component
 from azure.ai.ml._internal._schema.component import NodeType
 from azure.ai.ml._internal.entities.component import InternalComponent
-from azure.ai.ml._internal.entities._additional_includes import ADDITIONAL_INCLUDES_SUFFIX
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.constants._common import AZUREML_INTERNAL_COMPONENTS_ENV_VAR
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
-from azure.ai.ml.entities._util import convert_ordered_dict_to_dict
 from azure.ai.ml.exceptions import ValidationException
 from test_utilities.utils import parse_local_path
 

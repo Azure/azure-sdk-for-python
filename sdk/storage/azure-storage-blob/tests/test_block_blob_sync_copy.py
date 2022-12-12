@@ -11,8 +11,8 @@ from azure.storage.blob import (
     BlobClient,
     BlobSasPermissions,
     BlobServiceClient,
-    ContainerClient,
     generate_blob_sas,
+    StandardBlobTier,
     StorageErrorCode
 )
 from azure.storage.blob._shared.policies import StorageContentValidation
@@ -263,6 +263,24 @@ class TestStorageBlockBlob(StorageRecordedTestCase):
         # Verify content
         content = dest_blob.download_blob().readall()
         assert self.source_blob_with_special_chars_data == content
+
+    @BlobPreparer()
+    @recorded_by_proxy
+    def test_copy_blob_with_cold_tier_sync(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
+        self._setup(storage_account_name, storage_account_key)
+        dest_blob_name = self.get_resource_name('destblob')
+        dest_blob = self.bsc.get_blob_client(self.container_name, dest_blob_name)
+        blob_tier = StandardBlobTier.Cold
+
+        # Act
+        dest_blob.start_copy_from_url(self.source_blob_url, standard_blob_tier=blob_tier, requires_sync=True)
+        copy_blob_properties = dest_blob.get_blob_properties()
+
+        # Assert
+        assert copy_blob_properties.blob_tier == blob_tier
 
     @BlobPreparer()
     @recorded_by_proxy

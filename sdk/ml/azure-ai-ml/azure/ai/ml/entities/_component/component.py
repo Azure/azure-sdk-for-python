@@ -313,10 +313,7 @@ class Component(
         data[CommonYamlFields.TYPE] = type_in_override
 
         from azure.ai.ml.entities._component.component_factory import component_factory
-        create_instance_func, create_schema_func = component_factory.get_create_funcs(
-            data[CommonYamlFields.TYPE],
-            schema=data.get(CommonYamlFields.SCHEMA) if CommonYamlFields.SCHEMA in data else None,
-        )
+        create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
         new_instance = create_instance_func()
         new_instance.__init__(
             yaml_str=kwargs.pop("yaml_str", None),
@@ -364,12 +361,7 @@ class Component(
         # shouldn't block serialization when name is not valid
         # maybe override serialization method for name field?
         from azure.ai.ml.entities._component.component_factory import component_factory
-        create_instance_func, _ = component_factory.get_create_funcs(
-            obj.properties.component_spec[CommonYamlFields.TYPE],
-            schema=obj.properties.component_spec[CommonYamlFields.SCHEMA]
-            if CommonYamlFields.SCHEMA in obj.properties.component_spec
-            else None,
-        )
+        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec)
 
         instance = create_instance_func()
         instance.__init__(**instance._from_rest_object_to_init_params(obj))

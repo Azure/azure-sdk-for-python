@@ -21,7 +21,7 @@ class WebpubsubReverseProxyTestAsync(WebpubsubAsyncTest):
             raise ValueError("Success!")
         wps_endpoint = "https://wps.contoso.com/"
         apim_endpoint = "https://apim.contoso.com/"
-        credential = AzureKeyCredential("abcdabcdabcdabcdabcdabcdabcdabcd")
+        credential = AzureKeyCredential("AzureKeyCredential")
         request = build_send_to_all_request("Hub", content='test_webpubsub_send_request', content_type='text/plain')
         async with WebPubSubServiceClient(wps_endpoint, "Hub", credential, reverse_proxy_endpoint=apim_endpoint) as client:
             with pytest.raises(ValueError) as ex:
@@ -51,5 +51,6 @@ class WebpubsubReverseProxyTestAsync(WebpubsubAsyncTest):
             logging_enable=True,
             reverse_proxy_endpoint=webpubsub_reverse_proxy_endpoint
         )
+
         await client.send_to_all({'Hello': 'reverse_proxy_endpoint!'})
 
