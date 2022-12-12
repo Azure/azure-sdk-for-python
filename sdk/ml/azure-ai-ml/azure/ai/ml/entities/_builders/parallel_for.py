@@ -15,7 +15,7 @@ from azure.ai.ml.entities._builders import BaseNode
 from azure.ai.ml.entities._builders.control_flow_node import LoopNode
 from azure.ai.ml.entities._job.pipeline._io import NodeOutput, PipelineInput
 from azure.ai.ml.entities._job.pipeline._io.mixin import NodeIOMixin
-from azure.ai.ml.entities._util import validate_attribute_type
+from azure.ai.ml.entities._util import validate_attribute_type, convert_ordered_dict_to_dict
 from azure.ai.ml.exceptions import UserErrorException
 
 
@@ -64,15 +64,16 @@ class ParallelFor(LoopNode, NodeIOMixin):
         # loop body is incomplete in submission time, so won't validate required inputs
         self.body._validate_required_input_not_provided = False
 
+        actual_outputs = kwargs.get("outputs", {})
         # parallel for node shares output meta with body
         try:
             outputs = self.body._component.outputs
             # transform body outputs to aggregate types when available
             self._outputs = self._build_outputs_dict(output_definition_dict=self._convert_output_meta(outputs),
-                                                     outputs={})
+                                                     outputs=actual_outputs)
         except AttributeError:
             # when body output not available, create default output builder without meta
-            self._outputs = self._build_outputs_dict_without_meta(outputs={}, none_data=True)
+            self._outputs = self._build_outputs_dict_without_meta(outputs=actual_outputs)
 
         self._items = items
         self._validate_items(raise_error=True)
@@ -102,8 +103,10 @@ class ParallelFor(LoopNode, NodeIOMixin):
     def _to_rest_object(self, **kwargs) -> dict:  # pylint: disable=unused-argument
         """Convert self to a rest object for remote call."""
         rest_node = super(ParallelFor, self)._to_rest_object(**kwargs)
-
-        return rest_node
+        rest_node.update(dict(
+            outputs=self._to_rest_outputs()
+        ))
+        return convert_ordered_dict_to_dict(rest_node)
 
     @classmethod
     def _from_rest_object(cls, obj: dict, pipeline_jobs: dict) -> "ParallelFor":
