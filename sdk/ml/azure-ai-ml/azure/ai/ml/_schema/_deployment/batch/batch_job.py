@@ -78,7 +78,7 @@ class BatchJobSchema(PathAwareSchema):
                     if input_data.type == AssetTypes.CUSTOM_MODEL:
                         data[EndpointYamlFields.BATCH_JOB_INPUT_DATA][key] = CustomModelJobInput(mode=input_data.mode, uri=input_data.path) # pylint: disable=line-too-long
                     if (
-                        input_data.type == InputTypes.STRING
+                        input_data.type == InputTypes.INTEGER
                         or input_data.type == InputTypes.NUMBER
                         or input_data.type == InputTypes.STRING
                         or input_data.type == InputTypes.BOOLEAN

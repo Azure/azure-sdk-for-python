@@ -44,7 +44,6 @@ from ._download import StorageStreamDownloader
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
     from ._models import ContentSettings, FileProperties, Handle, NTFSAttributes
-    from ._generated.models import HandleItem
 
 
 def _upload_file_helper(
@@ -1500,8 +1499,8 @@ class ShareFileClient(StorageAccountHostsMixin):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.HandleItem]
+        :returns: An auto-paging iterable of Handle
+        :rtype: ~azure.core.paging.ItemPaged[~azure.storage.fileshare.Handle]
         """
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop('results_per_page', None)
@@ -1516,7 +1515,7 @@ class ShareFileClient(StorageAccountHostsMixin):
 
     @distributed_trace
     def close_handle(self, handle, **kwargs):
-        # type: (Union[str, HandleItem], Any) -> Dict[str, int]
+        # type: (Union[str, Handle], Any) -> Dict[str, int]
         """Close an open file handle.
 
         :param handle:
