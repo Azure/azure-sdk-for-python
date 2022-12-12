@@ -120,10 +120,10 @@ class LocalPathField(fields.Str):
         "path_not_exist": "Can't find {allow_type} in resolved absolute path: {path}.",
     }
 
-    def __init__(self, allow_dir=True, allow_file=True):
+    def __init__(self, allow_dir=True, allow_file=True, **kwargs):
         self._allow_dir = allow_dir
         self._allow_file = allow_file
-        super().__init__()
+        self._pattern = kwargs.get("pattern", None)
 
     def _jsonschema_type_mapping(self):
         schema = {"type": "string", "arm_type": LOCAL_PATH}
@@ -131,6 +131,8 @@ class LocalPathField(fields.Str):
             schema["title"] = self.name
         if self.dump_only:
             schema["readonly"] = True
+        if self._pattern:
+            schema["pattern"] = self._pattern
         return schema
 
     def _resolve_path(self, value) -> Path:
@@ -276,7 +278,7 @@ class DateTimeStr(fields.Str):
 class ArmStr(Field):
     def __init__(self, **kwargs):
         self.azureml_type = kwargs.pop("azureml_type", None)
-        self.pattern = kwargs.pop("pattern", r"^azureml:[\w\/]+")
+        self.pattern = kwargs.pop("pattern", r"^azureml:[\w\/]+.*")
         super().__init__(**kwargs)
 
     def _jsonschema_type_mapping(self):
@@ -292,7 +294,6 @@ class ArmStr(Field):
         return schema
 
     def _serialize(self, value, attr, obj, **kwargs):
-        # TODO: (1795017) Improve pre-serialization checks
         if isinstance(value, str):
             serialized_value = value if value.startswith(ARM_ID_PREFIX) else f"{ARM_ID_PREFIX}{value}"
             return serialized_value

@@ -12,11 +12,10 @@ from azure.ai.ml._schema.core.fields import (
     ArmVersionedStr,
     StringTransformedEnum,
     UnionField,
-    ArmStr,
+    LocalPathField,
 )
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
 from azure.ai.ml.constants._common import (
-    LOCAL_PATH,
     AssetTypes,
     AzureMLResourceType,
     InputOutputModes,
@@ -45,13 +44,9 @@ def generate_path_property(azureml_type):
     return UnionField(
         [
             ArmVersionedStr(azureml_type=azureml_type),
-            ArmStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
             fields.Str(metadata={"pattern": r"^(http(s)?):.*"}),
             fields.Str(metadata={"pattern": r"^(wasb(s)?):.*"}),
-            ArmStr(
-                azureml_type=LOCAL_PATH,
-                pattern=r"^(?!(azureml|http(s)?|wasb(s)?|file):).*",
-            ),
+            LocalPathField(pattern=r"^(?!(azureml|http(s)?|wasb(s)?|file):).*",),
         ],
         is_strict=True,
     )
