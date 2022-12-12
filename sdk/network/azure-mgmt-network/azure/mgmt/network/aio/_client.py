@@ -247,884 +247,1696 @@ class NetworkManagementClient(NetworkManagementClientOperationsMixin, MultiApiCl
 
     @property
     def application_gateways(self):
-        return ApplicationGatewaysOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ApplicationGatewaysOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("application_gateways")
+        )
 
     @property
     def express_route_circuit_authorizations(self):
-        return ExpressRouteCircuitAuthorizationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteCircuitAuthorizationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_circuit_authorizations")
+        )
 
     @property
     def express_route_circuit_peerings(self):
-        return ExpressRouteCircuitPeeringsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteCircuitPeeringsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_circuit_peerings")
+        )
 
     @property
     def express_route_circuits(self):
-        return ExpressRouteCircuitsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteCircuitsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_circuits")
+        )
 
     @property
     def express_route_service_providers(self):
-        return ExpressRouteServiceProvidersOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteServiceProvidersOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_service_providers")
+        )
 
     @property
     def load_balancers(self):
-        return LoadBalancersOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return LoadBalancersOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("load_balancers")
+        )
 
     @property
     def local_network_gateways(self):
-        return LocalNetworkGatewaysOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return LocalNetworkGatewaysOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("local_network_gateways")
+        )
 
     @property
     def network_interfaces(self):
-        return NetworkInterfacesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkInterfacesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_interfaces")
+        )
 
     @property
     def network_security_groups(self):
-        return NetworkSecurityGroupsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkSecurityGroupsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_security_groups")
+        )
 
     @property
     def public_ip_addresses(self):
-        return PublicIPAddressesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return PublicIPAddressesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("public_ip_addresses")
+        )
 
     @property
     def route_tables(self):
-        return RouteTablesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return RouteTablesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("route_tables")
+        )
 
     @property
     def routes(self):
-        return RoutesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return RoutesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("routes")
+        )
 
     @property
     def security_rules(self):
-        return SecurityRulesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return SecurityRulesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("security_rules")
+        )
 
     @property
     def subnets(self):
-        return SubnetsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return SubnetsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("subnets")
+        )
 
     @property
     def usages(self):
-        return UsagesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return UsagesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("usages")
+        )
 
     @property
     def virtual_network_gateway_connections(self):
-        return VirtualNetworkGatewayConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualNetworkGatewayConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_network_gateway_connections")
+        )
 
     @property
     def virtual_network_gateways(self):
-        return VirtualNetworkGatewaysOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualNetworkGatewaysOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_network_gateways")
+        )
 
     @property
     def virtual_networks(self):
-        return VirtualNetworksOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualNetworksOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_networks")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2016-09-01', '2016-12-01', '2017-03-01', '2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def network_watchers(self):
-        return NetworkWatchersOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkWatchersOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_watchers")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2016-09-01', '2016-12-01', '2017-03-01', '2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def packet_captures(self):
-        return PacketCapturesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return PacketCapturesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("packet_captures")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2016-09-01', '2016-12-01', '2017-03-01', '2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_network_peerings(self):
-        return VirtualNetworkPeeringsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualNetworkPeeringsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_network_peerings")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2016-12-01', '2017-03-01', '2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def bgp_service_communities(self):
-        return BgpServiceCommunitiesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return BgpServiceCommunitiesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("bgp_service_communities")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2016-12-01', '2017-03-01', '2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def route_filter_rules(self):
-        return RouteFilterRulesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return RouteFilterRulesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("route_filter_rules")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2016-12-01', '2017-03-01', '2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def route_filters(self):
-        return RouteFiltersOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return RouteFiltersOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("route_filters")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def available_endpoint_services(self):
-        return AvailableEndpointServicesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return AvailableEndpointServicesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("available_endpoint_services")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def default_security_rules(self):
-        return DefaultSecurityRulesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return DefaultSecurityRulesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("default_security_rules")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def inbound_nat_rules(self):
-        return InboundNatRulesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return InboundNatRulesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("inbound_nat_rules")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def load_balancer_backend_address_pools(self):
-        return LoadBalancerBackendAddressPoolsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return LoadBalancerBackendAddressPoolsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("load_balancer_backend_address_pools")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def load_balancer_frontend_ip_configurations(self):
-        return LoadBalancerFrontendIPConfigurationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return LoadBalancerFrontendIPConfigurationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("load_balancer_frontend_ip_configurations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def load_balancer_load_balancing_rules(self):
-        return LoadBalancerLoadBalancingRulesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return LoadBalancerLoadBalancingRulesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("load_balancer_load_balancing_rules")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def load_balancer_network_interfaces(self):
-        return LoadBalancerNetworkInterfacesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return LoadBalancerNetworkInterfacesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("load_balancer_network_interfaces")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def load_balancer_probes(self):
-        return LoadBalancerProbesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return LoadBalancerProbesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("load_balancer_probes")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def network_interface_ip_configurations(self):
-        return NetworkInterfaceIPConfigurationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkInterfaceIPConfigurationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_interface_ip_configurations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-06-01', '2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def network_interface_load_balancers(self):
-        return NetworkInterfaceLoadBalancersOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkInterfaceLoadBalancersOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_interface_load_balancers")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def application_security_groups(self):
-        return ApplicationSecurityGroupsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ApplicationSecurityGroupsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("application_security_groups")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def connection_monitors(self):
-        return ConnectionMonitorsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ConnectionMonitorsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("connection_monitors")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2017-10-01', '2018-01-01', '2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def operations(self):
-        return Operations(self._client, self._config, Serializer({}), Deserializer({}))
+        return Operations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("operations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def ddos_protection_plans(self):
-        return DdosProtectionPlansOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return DdosProtectionPlansOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("ddos_protection_plans")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def express_route_circuit_connections(self):
-        return ExpressRouteCircuitConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteCircuitConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_circuit_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def express_route_cross_connection_peerings(self):
-        return ExpressRouteCrossConnectionPeeringsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteCrossConnectionPeeringsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_cross_connection_peerings")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-02-01', '2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def express_route_cross_connections(self):
-        return ExpressRouteCrossConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteCrossConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_cross_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def azure_firewalls(self):
-        return AzureFirewallsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return AzureFirewallsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("azure_firewalls")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def hub_virtual_network_connections(self):
-        return HubVirtualNetworkConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return HubVirtualNetworkConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("hub_virtual_network_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_hubs(self):
-        return VirtualHubsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualHubsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_hubs")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_wans(self):
-        return VirtualWansOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualWansOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_wans")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def vpn_connections(self):
-        return VpnConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VpnConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vpn_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def vpn_gateways(self):
-        return VpnGatewaysOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VpnGatewaysOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vpn_gateways")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def vpn_sites_configuration(self):
-        return VpnSitesConfigurationOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VpnSitesConfigurationOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vpn_sites_configuration")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-04-01', '2018-06-01', '2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def vpn_sites(self):
-        return VpnSitesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VpnSitesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vpn_sites")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def public_ip_prefixes(self):
-        return PublicIPPrefixesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return PublicIPPrefixesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("public_ip_prefixes")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def service_endpoint_policies(self):
-        return ServiceEndpointPoliciesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ServiceEndpointPoliciesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("service_endpoint_policies")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-07-01', '2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def service_endpoint_policy_definitions(self):
-        return ServiceEndpointPolicyDefinitionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ServiceEndpointPolicyDefinitionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("service_endpoint_policy_definitions")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def available_delegations(self):
-        return AvailableDelegationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return AvailableDelegationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("available_delegations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def available_resource_group_delegations(self):
-        return AvailableResourceGroupDelegationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return AvailableResourceGroupDelegationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("available_resource_group_delegations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def azure_firewall_fqdn_tags(self):
-        return AzureFirewallFqdnTagsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return AzureFirewallFqdnTagsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("azure_firewall_fqdn_tags")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def express_route_connections(self):
-        return ExpressRouteConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def express_route_gateways(self):
-        return ExpressRouteGatewaysOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteGatewaysOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_gateways")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def express_route_links(self):
-        return ExpressRouteLinksOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteLinksOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_links")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def express_route_ports_locations(self):
-        return ExpressRoutePortsLocationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRoutePortsLocationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_ports_locations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def express_route_ports(self):
-        return ExpressRoutePortsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRoutePortsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_ports")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01']
     )
     def interface_endpoints(self):
-        return InterfaceEndpointsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return InterfaceEndpointsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("interface_endpoints")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def load_balancer_outbound_rules(self):
-        return LoadBalancerOutboundRulesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return LoadBalancerOutboundRulesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("load_balancer_outbound_rules")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def network_interface_tap_configurations(self):
-        return NetworkInterfaceTapConfigurationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkInterfaceTapConfigurationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_interface_tap_configurations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def network_profiles(self):
-        return NetworkProfilesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkProfilesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_profiles")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def p2_svpn_gateways(self):
-        return P2SVpnGatewaysOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return P2SVpnGatewaysOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("p2_svpn_gateways")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01']
     )
     def p2_svpn_server_configurations(self):
-        return P2SVpnServerConfigurationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return P2SVpnServerConfigurationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("p2_svpn_server_configurations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-08-01', '2018-10-01', '2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_network_taps(self):
-        return VirtualNetworkTapsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualNetworkTapsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_network_taps")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-11-01', '2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def ddos_custom_policies(self):
-        return DdosCustomPoliciesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return DdosCustomPoliciesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("ddos_custom_policies")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def peer_express_route_circuit_connections(self):
-        return PeerExpressRouteCircuitConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return PeerExpressRouteCircuitConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("peer_express_route_circuit_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2018-12-01', '2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def web_application_firewall_policies(self):
-        return WebApplicationFirewallPoliciesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return WebApplicationFirewallPoliciesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("web_application_firewall_policies")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def nat_gateways(self):
-        return NatGatewaysOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NatGatewaysOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("nat_gateways")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def resource_navigation_links(self):
-        return ResourceNavigationLinksOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ResourceNavigationLinksOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("resource_navigation_links")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-02-01', '2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def service_association_links(self):
-        return ServiceAssociationLinksOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ServiceAssociationLinksOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("service_association_links")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def available_private_endpoint_types(self):
-        return AvailablePrivateEndpointTypesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return AvailablePrivateEndpointTypesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("available_private_endpoint_types")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def bastion_hosts(self):
-        return BastionHostsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return BastionHostsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("bastion_hosts")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def private_endpoints(self):
-        return PrivateEndpointsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return PrivateEndpointsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("private_endpoints")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def private_link_services(self):
-        return PrivateLinkServicesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return PrivateLinkServicesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("private_link_services")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-04-01', '2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def service_tags(self):
-        return ServiceTagsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ServiceTagsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("service_tags")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def firewall_policies(self):
-        return FirewallPoliciesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return FirewallPoliciesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("firewall_policies")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01']
     )
     def firewall_policy_rule_groups(self):
-        return FirewallPolicyRuleGroupsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return FirewallPolicyRuleGroupsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("firewall_policy_rule_groups")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def vpn_link_connections(self):
-        return VpnLinkConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VpnLinkConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vpn_link_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def vpn_site_link_connections(self):
-        return VpnSiteLinkConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VpnSiteLinkConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vpn_site_link_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-06-01', '2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def vpn_site_links(self):
-        return VpnSiteLinksOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VpnSiteLinksOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vpn_site_links")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_router_peerings(self):
-        return VirtualRouterPeeringsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualRouterPeeringsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_router_peerings")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-07-01', '2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_routers(self):
-        return VirtualRoutersOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualRoutersOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_routers")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def available_service_aliases(self):
-        return AvailableServiceAliasesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return AvailableServiceAliasesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("available_service_aliases")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def vpn_server_configurations_associated_with_virtual_wan(self):
-        return VpnServerConfigurationsAssociatedWithVirtualWanOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VpnServerConfigurationsAssociatedWithVirtualWanOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vpn_server_configurations_associated_with_virtual_wan")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-08-01', '2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def vpn_server_configurations(self):
-        return VpnServerConfigurationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VpnServerConfigurationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vpn_server_configurations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def ip_groups(self):
-        return IpGroupsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return IpGroupsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("ip_groups")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-09-01', '2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_hub_route_table_v2_s(self):
-        return VirtualHubRouteTableV2SOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualHubRouteTableV2SOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_hub_route_table_v2_s")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-11-01', '2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def flow_logs(self):
-        return FlowLogsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return FlowLogsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("flow_logs")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2019-12-01', '2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def network_virtual_appliances(self):
-        return NetworkVirtualAppliancesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkVirtualAppliancesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_virtual_appliances")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def ip_allocations(self):
-        return IpAllocationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return IpAllocationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("ip_allocations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def private_dns_zone_groups(self):
-        return PrivateDnsZoneGroupsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return PrivateDnsZoneGroupsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("private_dns_zone_groups")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-03-01', '2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def security_partner_providers(self):
-        return SecurityPartnerProvidersOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return SecurityPartnerProvidersOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("security_partner_providers")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-04-01', '2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def hub_route_tables(self):
-        return HubRouteTablesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return HubRouteTablesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("hub_route_tables")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def application_gateway_private_endpoint_connections(self):
-        return ApplicationGatewayPrivateEndpointConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ApplicationGatewayPrivateEndpointConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("application_gateway_private_endpoint_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def application_gateway_private_link_resources(self):
-        return ApplicationGatewayPrivateLinkResourcesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ApplicationGatewayPrivateLinkResourcesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("application_gateway_private_link_resources")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def firewall_policy_rule_collection_groups(self):
-        return FirewallPolicyRuleCollectionGroupsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return FirewallPolicyRuleCollectionGroupsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("firewall_policy_rule_collection_groups")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_appliance_sites(self):
-        return VirtualApplianceSitesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualApplianceSitesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_appliance_sites")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_appliance_skus(self):
-        return VirtualApplianceSkusOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualApplianceSkusOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_appliance_skus")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_hub_bgp_connection(self):
-        return VirtualHubBgpConnectionOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualHubBgpConnectionOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_hub_bgp_connection")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_hub_bgp_connections(self):
-        return VirtualHubBgpConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualHubBgpConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_hub_bgp_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-05-01', '2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def virtual_hub_ip_configuration(self):
-        return VirtualHubIpConfigurationOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualHubIpConfigurationOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_hub_ip_configuration")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def custom_ip_prefixes(self):
-        return CustomIPPrefixesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return CustomIPPrefixesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("custom_ip_prefixes")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def dscp_configuration(self):
-        return DscpConfigurationOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return DscpConfigurationOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("dscp_configuration")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-06-01', '2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def inbound_security_rule(self):
-        return InboundSecurityRuleOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return InboundSecurityRuleOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("inbound_security_rule")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-07-01', '2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def web_categories(self):
-        return WebCategoriesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return WebCategoriesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("web_categories")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2020-08-01', '2020-11-01', '2021-02-01', '2022-05-01']
     )
     def nat_rules(self):
-        return NatRulesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NatRulesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("nat_rules")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2021-02-01', '2022-05-01']
     )
     def virtual_network_gateway_nat_rules(self):
-        return VirtualNetworkGatewayNatRulesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VirtualNetworkGatewayNatRulesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("virtual_network_gateway_nat_rules")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def admin_rule_collections(self):
-        return AdminRuleCollectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return AdminRuleCollectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("admin_rule_collections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def admin_rules(self):
-        return AdminRulesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return AdminRulesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("admin_rules")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def application_gateway_waf_dynamic_manifests_default(self):
-        return ApplicationGatewayWafDynamicManifestsDefaultOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ApplicationGatewayWafDynamicManifestsDefaultOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("application_gateway_waf_dynamic_manifests_default")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def application_gateway_waf_dynamic_manifests(self):
-        return ApplicationGatewayWafDynamicManifestsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ApplicationGatewayWafDynamicManifestsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("application_gateway_waf_dynamic_manifests")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def configuration_policy_groups(self):
-        return ConfigurationPolicyGroupsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ConfigurationPolicyGroupsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("configuration_policy_groups")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def connectivity_configurations(self):
-        return ConnectivityConfigurationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ConnectivityConfigurationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("connectivity_configurations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def express_route_port_authorizations(self):
-        return ExpressRoutePortAuthorizationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRoutePortAuthorizationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_port_authorizations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def express_route_provider_ports_location(self):
-        return ExpressRouteProviderPortsLocationOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ExpressRouteProviderPortsLocationOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("express_route_provider_ports_location")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def firewall_policy_idps_signatures_filter_values(self):
-        return FirewallPolicyIdpsSignaturesFilterValuesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return FirewallPolicyIdpsSignaturesFilterValuesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("firewall_policy_idps_signatures_filter_values")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def firewall_policy_idps_signatures(self):
-        return FirewallPolicyIdpsSignaturesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return FirewallPolicyIdpsSignaturesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("firewall_policy_idps_signatures")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def firewall_policy_idps_signatures_overrides(self):
-        return FirewallPolicyIdpsSignaturesOverridesOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return FirewallPolicyIdpsSignaturesOverridesOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("firewall_policy_idps_signatures_overrides")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def management_group_network_manager_connections(self):
-        return ManagementGroupNetworkManagerConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ManagementGroupNetworkManagerConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("management_group_network_manager_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def network_groups(self):
-        return NetworkGroupsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkGroupsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_groups")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def network_manager_commits(self):
-        return NetworkManagerCommitsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkManagerCommitsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_manager_commits")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def network_manager_deployment_status(self):
-        return NetworkManagerDeploymentStatusOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkManagerDeploymentStatusOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_manager_deployment_status")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def network_managers(self):
-        return NetworkManagersOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return NetworkManagersOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("network_managers")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def route_maps(self):
-        return RouteMapsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return RouteMapsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("route_maps")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def routing_intent(self):
-        return RoutingIntentOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return RoutingIntentOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("routing_intent")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def scope_connections(self):
-        return ScopeConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ScopeConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("scope_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def security_admin_configurations(self):
-        return SecurityAdminConfigurationsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return SecurityAdminConfigurationsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("security_admin_configurations")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def service_tag_information(self):
-        return ServiceTagInformationOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return ServiceTagInformationOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("service_tag_information")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def static_members(self):
-        return StaticMembersOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return StaticMembersOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("static_members")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def subscription_network_manager_connections(self):
-        return SubscriptionNetworkManagerConnectionsOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return SubscriptionNetworkManagerConnectionsOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("subscription_network_manager_connections")
+        )
 
     @property
     @api_version_validation(
         api_versions=['2022-05-01']
     )
     def vip_swap(self):
-        return VipSwapOperations(self._client, self._config, Serializer({}), Deserializer({}))
+        return VipSwapOperations(
+            self._client,
+            self._config,
+            Serializer({}),
+            Deserializer({}),
+            api_version=self._get_api_version("vip_swap")
+        )
+
+    async def close(self):
+        await self._client.close()
+    async def __aenter__(self):
+        await self._client.__aenter__()
+        return self
+    async def __aexit__(self, *exc_details):
+        await self._client.__aexit__(*exc_details)

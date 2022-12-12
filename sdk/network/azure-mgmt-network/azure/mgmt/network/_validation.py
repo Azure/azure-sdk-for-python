@@ -24,10 +24,13 @@ class api_version_validation:
         params = self.params
         def wrapper(self, *args, **kwargs):
             func_name = func.__name__
-            client_api_version = self._get_api_version(func_name)
+            if hasattr(self, "_get_api_version"):
+                client_api_version = self._get_api_version(func_name)
+            else:
+                client_api_version = self._api_version
             if api_versions and client_api_version not in api_versions:
                 raise ValueError(
-                    f"'{func.__name__}' is not available in API version "
+                    f"'{func_name}' is not available in API version "
                     f"{client_api_version}. Pass service API version {api_versions[0]} or newer to your client."
                 )
             unsupported = [
