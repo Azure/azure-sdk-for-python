@@ -124,6 +124,7 @@ class LocalPathField(fields.Str):
         self._allow_dir = allow_dir
         self._allow_file = allow_file
         self._pattern = kwargs.get("pattern", None)
+        super().__init__()
 
     def _jsonschema_type_mapping(self):
         schema = {"type": "string", "arm_type": LOCAL_PATH}
