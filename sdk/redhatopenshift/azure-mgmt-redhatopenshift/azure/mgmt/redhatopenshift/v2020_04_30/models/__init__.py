@@ -25,33 +25,35 @@ from ._models_py3 import ServicePrincipalProfile
 from ._models_py3 import TrackedResource
 from ._models_py3 import WorkerProfile
 
-
-from ._azure_red_hat_open_shift4_client_enums import (
-    ProvisioningState,
-    VMSize,
-    Visibility,
-)
+from ._azure_red_hat_open_shift4_client_enums import ProvisioningState
+from ._azure_red_hat_open_shift4_client_enums import VMSize
+from ._azure_red_hat_open_shift4_client_enums import Visibility
+from ._patch import __all__ as _patch_all
+from ._patch import *  # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'APIServerProfile',
-    'CloudErrorBody',
-    'ClusterProfile',
-    'ConsoleProfile',
-    'Display',
-    'IngressProfile',
-    'MasterProfile',
-    'NetworkProfile',
-    'OpenShiftCluster',
-    'OpenShiftClusterCredentials',
-    'OpenShiftClusterList',
-    'OpenShiftClusterUpdate',
-    'Operation',
-    'OperationList',
-    'Resource',
-    'ServicePrincipalProfile',
-    'TrackedResource',
-    'WorkerProfile',
-    'ProvisioningState',
-    'VMSize',
-    'Visibility',
+    "APIServerProfile",
+    "CloudErrorBody",
+    "ClusterProfile",
+    "ConsoleProfile",
+    "Display",
+    "IngressProfile",
+    "MasterProfile",
+    "NetworkProfile",
+    "OpenShiftCluster",
+    "OpenShiftClusterCredentials",
+    "OpenShiftClusterList",
+    "OpenShiftClusterUpdate",
+    "Operation",
+    "OperationList",
+    "Resource",
+    "ServicePrincipalProfile",
+    "TrackedResource",
+    "WorkerProfile",
+    "ProvisioningState",
+    "VMSize",
+    "Visibility",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()
