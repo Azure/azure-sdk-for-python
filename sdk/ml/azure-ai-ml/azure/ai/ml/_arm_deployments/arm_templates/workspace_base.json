@@ -406,10 +406,6 @@
                 }
             ]
         },
-        "subnetPolicyForPE": {
-            "privateEndpointNetworkPolicies": "Disabled",
-            "privateLinkServiceNetworkPolicies": "Enabled"
-        },
         "privateEndpointSettings": {
             "name": "[concat(parameters('workspaceName'), '-PrivateEndpoint')]",
             "properties": {
@@ -464,31 +460,6 @@
             }
         },
         {
-            "condition": "[and(equals(parameters('subnetOption'), 'existing'), not(equals(parameters('privateEndpointType'), 'none')))]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": "[concat('UpdateSubnetPolicy-', uniqueString(parameters('vnetName'), parameters('subnetName')))]",
-            "dependsOn": [
-                "[resourceId('Microsoft.Network/virtualNetworks/subnets', parameters('vnetName'), parameters('subnetName'))]"
-            ],
-            "resourceGroup": "[parameters('vnetResourceGroupName')]",
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "resources": [
-                        {
-                            "type": "Microsoft.Network/virtualNetworks/subnets",
-                            "apiVersion": "2019-09-01",
-                            "name": "[concat(parameters('vnetName'), '/', parameters('subnetName'))]",
-                            "properties": "[if(and(equals(parameters('subnetOption'), 'existing'), not(equals(parameters('privateEndpointType'), 'none'))), union(reference(variables('subnet'), '2019-09-01'), variables('subnetPolicyForPE')), json('null'))]"
-                        }
-                    ]
-                }
-            }
-        },
-        {
             "condition": "[and(variables('enablePE'), equals(parameters('storageAccountOption'), 'new'))]",
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2019-04-01",
@@ -515,6 +486,7 @@
                     "keySource": "Microsoft.Storage"
                 },
                 "supportsHttpsTrafficOnly": true,
+                "allowBlobPublicAccess": false,
                 "networkAcls": "[if(equals(parameters('storageAccountBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
             }
         },
@@ -556,18 +528,18 @@
                 "networkRuleSet": "[if(equals(parameters('containerRegistryBehindVNet'), 'true'), variables('networkRuleSetBehindVNet'), json('null'))]"
             }
         },
-        {
-            "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
-            "type": "Microsoft.Insights/components",
-            "tags": "[parameters('tagValues')]",
-            "apiVersion": "2018-05-01-preview",
-            "name": "[parameters('applicationInsightsName')]",
-            "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap'), equals(toLower(parameters('applicationInsightsLocation')),'westus3')),'southcentralus', if(equals(toLower(parameters('applicationInsightsLocation')),'jioindiawest'), 'centralindia', if(equals(toLower(parameters('applicationInsightsLocation')),'canadaeast'), 'canadacentral', parameters('applicationInsightsLocation'))))]",
-            "kind": "web",
-            "properties": {
-                "Application_Type": "web"
-            }
-        },
+      {
+        "condition": "[and(variables('enablePE'), equals(parameters('applicationInsightsOption'), 'new'))]",
+        "type": "Microsoft.Insights/components",
+        "tags": "[parameters('tagValues')]",
+        "apiVersion": "2018-05-01-preview",
+        "name": "[parameters('applicationInsightsName')]",
+        "location": "[if(or(equals(toLower(parameters('applicationInsightsLocation')),'westcentralus'), equals(toLower(parameters('applicationInsightsLocation')),'eastus2euap'), equals(toLower(parameters('applicationInsightsLocation')),'centraluseuap'), equals(toLower(parameters('applicationInsightsLocation')),'westus3')),'southcentralus', if(equals(toLower(parameters('applicationInsightsLocation')),'jioindiawest'), 'centralindia', if(equals(toLower(parameters('applicationInsightsLocation')),'canadaeast'), 'canadacentral', if(equals(toLower(parameters('applicationInsightsLocation')),'swedencentral'), 'norwayeast', parameters('applicationInsightsLocation')))))]",
+        "kind": "web",
+        "properties": {
+          "Application_Type": "web"
+        }
+      },
         {
             "condition": "[variables('enablePE')]",
             "type": "Microsoft.MachineLearningServices/workspaces",

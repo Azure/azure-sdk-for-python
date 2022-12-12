@@ -8,8 +8,12 @@ import functools
 import sys
 import time
 import warnings
+from datetime import datetime
 from io import BytesIO
-from typing import Optional, Union, List, Tuple, Dict, Any, TYPE_CHECKING
+from typing import (
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, Tuple, Union,
+    TYPE_CHECKING
+)
 
 import six
 
@@ -22,7 +26,7 @@ from .._shared.parser import _str
 from .._generated.aio import AzureFileStorage
 from .._generated.models import FileHTTPHeaders
 from .._shared.policies_async import ExponentialRetry
-from .._shared.uploads_async import upload_data_chunks, FileChunkUploader, IterStreamer
+from .._shared.uploads_async import AsyncIterStreamer, FileChunkUploader, IterStreamer, upload_data_chunks
 from .._shared.base_client_async import AsyncStorageAccountHostsMixin
 from .._shared.request_handlers import add_metadata_headers, get_length
 from .._shared.response_handlers import return_response_headers, process_storage_error
@@ -41,9 +45,7 @@ from ._download_async import StorageStreamDownloader
 
 if TYPE_CHECKING:
     from azure.core.credentials import AzureNamedKeyCredential, AzureSasCredential, TokenCredential
-    from datetime import datetime
-    from .._models import ContentSettings, FileProperties, NTFSAttributes
-    from .._generated.models import HandleItem
+    from .._models import ContentSettings, FileProperties, Handle, NTFSAttributes
 
 
 async def _upload_file_helper(
@@ -296,19 +298,18 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
     @distributed_trace_async
     async def upload_file(
-        self, data,  # type: Any
-        length=None,  # type: Optional[int]
-        file_attributes="none",  # type: Union[str, NTFSAttributes]
-        file_creation_time="now",  # type: Optional[Union[str, datetime]]
-        file_last_write_time="now",  # type: Optional[Union[str, datetime]]
-        file_permission=None,  # type: Optional[str]
-        permission_key=None,  # type: Optional[str]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> Dict[str, Any]
+        self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            length: Optional[int] = None,
+            file_attributes: Union[str, "NTFSAttributes"] = "none",
+            file_creation_time: Optional[Union[str, datetime]] = "now",
+            file_last_write_time: Optional[Union[str, datetime]] = "now",
+            file_permission: Optional[str] = None,
+            permission_key: Optional[str] = None,
+            **kwargs
+        ) -> Dict[str, Any]:
         """Uploads a new file.
 
-        :param Any data:
+        :param data:
             Content of the file.
         :param int length:
             Length of the file in bytes. Specify its maximum size, up to 1 TiB.
@@ -404,10 +405,12 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
         elif hasattr(data, "read"):
             stream = data
         elif hasattr(data, "__iter__"):
-            stream = IterStreamer(data, encoding=encoding)  # type: ignore
+            stream = IterStreamer(data, encoding=encoding)
+        elif hasattr(data, '__aiter__'):
+            stream = AsyncIterStreamer(data, encoding=encoding)
         else:
             raise TypeError("Unsupported data type: {}".format(type(data)))
-        return await _upload_file_helper(  # type: ignore
+        return await _upload_file_helper(
             self,
             stream,
             length,
@@ -1308,8 +1311,8 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.
-        :returns: An auto-paging iterable of HandleItem
-        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.HandleItem]
+        :returns: An auto-paging iterable of Handle
+        :rtype: ~azure.core.async_paging.AsyncItemPaged[~azure.storage.fileshare.Handle]
         """
         timeout = kwargs.pop('timeout', None)
         results_per_page = kwargs.pop("results_per_page", None)
@@ -1324,7 +1327,7 @@ class ShareFileClient(AsyncStorageAccountHostsMixin, ShareFileClientBase):
 
     @distributed_trace_async
     async def close_handle(self, handle, **kwargs):
-        # type: (Union[str, HandleItem], Any) -> Dict[str, int]
+        # type: (Union[str, Handle], Any) -> Dict[str, int]
         """Close an open file handle.
 
         :param handle:

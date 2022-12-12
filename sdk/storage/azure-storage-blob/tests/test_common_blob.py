@@ -40,6 +40,7 @@ from azure.storage.blob import (
     ResourceTypes,
     RetentionPolicy,
     StandardBlobTier,
+    StorageErrorCode,
     download_blob_from_url,
     generate_account_sas,
     generate_blob_sas,
@@ -390,11 +391,25 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
 
         self._setup(storage_account_name, storage_account_key)
 
+        # Create a blob to download with requests using SAS
+        data = b'a' * 1024 * 1024
+        blob = self._create_blob(data=data)
+
+        sas = self.generate_sas(
+            generate_blob_sas,
+            blob.account_name,
+            blob.container_name,
+            blob.blob_name,
+            account_key=storage_account_key,
+            permission=BlobSasPermissions(read=True),
+            expiry=datetime.utcnow() + timedelta(hours=1),
+        )
+
         # Act
-        uri = "https://www.gutenberg.org/files/59466/59466-0.txt"
+        uri = blob.url + '?' + sas
         data = requests.get(uri, stream=True)
-        blob = self.bsc.get_blob_client(self.container_name, "gutenberg")
-        resp = blob.upload_blob(data=data.raw)
+        blob2 = self.bsc.get_blob_client(self.container_name, blob.blob_name + '_copy')
+        resp = blob2.upload_blob(data=data.raw)
 
         assert resp.get('etag') is not None
 
@@ -1676,14 +1691,20 @@ class TestStorageCommonBlob(StorageRecordedTestCase):
         copy = copied_blob.start_copy_from_url(source_blob)
         assert copy['copy_status'] == 'pending'
 
-        copied_blob.abort_copy(copy)
-        props = self._wait_for_async_copy(copied_blob)
-        assert props.copy.status == 'aborted'
+        try:
+            copied_blob.abort_copy(copy)
+            props = self._wait_for_async_copy(copied_blob)
+            assert props.copy.status == 'aborted'
 
-        # Assert
-        actual_data = copied_blob.download_blob()
-        assert actual_data.readall() == b""
-        assert actual_data.properties.copy.status == 'aborted'
+            # Assert
+            actual_data = copied_blob.download_blob()
+            assert actual_data.readall() == b""
+            assert actual_data.properties.copy.status == 'aborted'
+
+        # In the Live test pipeline, the copy occasionally finishes before it can be aborted.
+        # Catch and assert on error code to prevent this test from failing.
+        except HttpResponseError as e:
+            assert e.error_code == StorageErrorCode.NO_PENDING_COPY_OPERATION
 
     @BlobPreparer()
     @recorded_by_proxy

@@ -23,7 +23,7 @@ def mock_poller() -> LROPoller:
 
 
 @pytest.mark.unittest
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestDeploymentExecutor:
     def test_empty_resources_throws(self, mock_machinelearning_client: MLClient) -> None:
         with pytest.raises(Exception):

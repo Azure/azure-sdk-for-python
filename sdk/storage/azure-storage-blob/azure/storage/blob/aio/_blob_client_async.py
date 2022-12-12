@@ -8,7 +8,7 @@
 import warnings
 from functools import partial
 from typing import (  # pylint: disable=unused-import
-    Any, AnyStr, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
+    Any, AnyStr, AsyncIterable, Dict, IO, Iterable, List, Optional, overload, Tuple, Union,
     TYPE_CHECKING
 )
 
@@ -255,13 +255,12 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
 
     @distributed_trace_async
     async def upload_blob(
-            self, data,  # type: Union[bytes, str, Iterable[AnyStr], IO[AnyStr]]
-            blob_type=BlobType.BlockBlob,  # type: Union[str, BlobType]
-            length=None,  # type: Optional[int]
-            metadata=None,  # type: Optional[Dict[str, str]]
+            self, data: Union[bytes, str, Iterable[AnyStr], AsyncIterable[AnyStr], IO[AnyStr]],
+            blob_type: Union[str, BlobType] = BlobType.BlockBlob,
+            length: Optional[int] = None,
+            metadata: Optional[Dict[str, str]] = None,
             **kwargs
-        ):
-        # type: (...) -> Any
+        ) -> Dict[str, Any]:
         """Creates a new blob from a data source with automatic chunking.
 
         :param data: The blob data to upload.
@@ -606,6 +605,10 @@ class BlobClient(AsyncStorageAccountHostsMixin, BlobClientBase, StorageEncryptio
 
         Operation will only be successful if used within the specified number of days
         set in the delete retention policy.
+
+        If blob versioning is enabled, the base blob cannot be restored using this
+        method. Instead use :func:`start_copy_from_url` with the URL of the blob version
+        you wish to promote to the current version.
 
         :keyword int timeout:
             The timeout parameter is expressed in seconds.

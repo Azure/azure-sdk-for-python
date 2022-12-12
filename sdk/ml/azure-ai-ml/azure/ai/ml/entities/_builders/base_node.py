@@ -181,6 +181,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             if isinstance(self._component, Component)
             else Component._resolve_component_source_from_id(id=self._component)
         )
+        self._validate_required_input_not_provided = True
         self._init = False
 
     @classmethod
@@ -295,19 +296,20 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     def _validate_inputs(self, raise_error=True):
         validation_result = self._create_empty_validation_result()
-        # validate inputs
-        if isinstance(self._component, Component):
-            for key, meta in self._component.inputs.items():
-                # raise error when required input with no default value not set
-                if (
-                    not self._is_input_set(input_name=key)  # input not provided
-                    and meta.optional is not True  # and it's required
-                    and meta.default is None  # and it does not have default
-                ):
-                    validation_result.append_error(
-                        yaml_path=f"inputs.{key}",
-                        message=f"Required input {key!r} for component {self.name!r} not provided.",
-                    )
+        if self._validate_required_input_not_provided:
+            # validate required inputs not provided
+            if isinstance(self._component, Component):
+                for key, meta in self._component.inputs.items():
+                    # raise error when required input with no default value not set
+                    if (
+                        not self._is_input_set(input_name=key)  # input not provided
+                        and meta.optional is not True  # and it's required
+                        and meta.default is None  # and it does not have default
+                    ):
+                        validation_result.append_error(
+                            yaml_path=f"inputs.{key}",
+                            message=f"Required input {key!r} for component {self.name!r} not provided.",
+                        )
 
         inputs = self._build_inputs()
         for input_name, input_obj in inputs.items():
@@ -324,7 +326,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
         Override this method to add customized validation logic.
         """
-        return self._validate_inputs(raise_error=False)
+        validate_result = self._validate_inputs(raise_error=False)
+        return validate_result
 
     @classmethod
     def _get_skip_fields_in_schema_validation(cls) -> List[str]:
@@ -334,7 +337,6 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             "name",
             "display_name",
             "experiment_name",  # name is not part of schema but may be set in dsl/yml file
-            cls._get_component_attr_name(),  # processed separately
             "kwargs",
         ]
 
@@ -408,9 +410,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         """Convert self to a rest object for remote call."""
         base_dict, rest_obj = self._to_dict(), {}
         for key in self._picked_fields_from_dict_to_rest_object():
-            if key not in base_dict:
-                rest_obj[key] = None
-            else:
+            if key in base_dict:
                 rest_obj[key] = base_dict.get(key)
 
         rest_obj.update(

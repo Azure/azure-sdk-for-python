@@ -9,10 +9,14 @@ from typing import Dict, Iterable, Tuple
 
 from azure.ai.ml._arm_deployments import ArmDeploymentExecutor
 from azure.ai.ml._arm_deployments.arm_helper import get_template
-from azure.ai.ml._restclient.v2022_05_01 import AzureMachineLearningWorkspaces as ServiceClient052022
-from azure.ai.ml._restclient.v2022_05_01.models import WorkspaceUpdateParameters
+from azure.ai.ml._restclient.v2022_10_01_preview import AzureMachineLearningWorkspaces as ServiceClient102022Preview
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
+    EncryptionKeyVaultUpdateProperties,
+    EncryptionUpdateProperties,
+    WorkspaceUpdateParameters,
+)
 from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
-from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
+# from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._logger_utils import OpsLogger
 from azure.ai.ml._utils._workspace_utils import (
     delete_resource_by_arm_id,
@@ -41,7 +45,7 @@ from azure.core.polling import LROPoller, PollingMethod
 from azure.core.tracing.decorator import distributed_trace
 
 ops_logger = OpsLogger(__name__)
-logger, module_logger = ops_logger.package_logger, ops_logger.module_logger
+module_logger = ops_logger.module_logger
 
 
 class WorkspaceOperations:
@@ -55,12 +59,12 @@ class WorkspaceOperations:
     def __init__(
         self,
         operation_scope: OperationScope,
-        service_client: ServiceClient052022,
+        service_client: ServiceClient102022Preview,
         all_operations: OperationsContainer,
         credentials: TokenCredential = None,
         **kwargs: Dict,
     ):
-        ops_logger.update_info(kwargs)
+        # ops_logger.update_info(kwargs)
         self._subscription_id = operation_scope.subscription_id
         self._resource_group_name = operation_scope.resource_group_name
         self._default_workspace_name = operation_scope.workspace_name
@@ -70,7 +74,7 @@ class WorkspaceOperations:
         self._init_kwargs = kwargs
         self.containerRegistry = "none"
 
-    @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.List", ActivityType.PUBLICAPI)
     def list(self, *, scope: str = Scope.RESOURCE_GROUP) -> Iterable[Workspace]:
         """List all workspaces that the user has access to in the current
         resource group or subscription.
@@ -90,7 +94,7 @@ class WorkspaceOperations:
             cls=lambda objs: [Workspace._from_rest_object(obj) for obj in objs],
         )
 
-    @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.Get", ActivityType.PUBLICAPI)
     @distributed_trace
     def get(self, name: str = None, **kwargs: Dict) -> Workspace:
         """Get a workspace by name.
@@ -106,7 +110,7 @@ class WorkspaceOperations:
         obj = self._operation.get(resource_group, workspace_name)
         return Workspace._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.Get_Keys", ActivityType.PUBLICAPI)
     @distributed_trace
     def get_keys(self, name: str = None) -> WorkspaceKeys:
         """Get keys for the workspace.
@@ -120,7 +124,7 @@ class WorkspaceOperations:
         obj = self._operation.list_keys(self._resource_group_name, workspace_name)
         return WorkspaceKeys._from_rest_object(obj)
 
-    @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginSyncKeys", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_sync_keys(self, name: str = None) -> LROPoller:
         """Triggers the workspace to immediately synchronize keys. If keys for
@@ -137,7 +141,7 @@ class WorkspaceOperations:
         workspace_name = self._check_workspace_name(name)
         return self._operation.begin_resync_keys(self._resource_group_name, workspace_name)
 
-    @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginCreate", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_create(
         self,
@@ -213,7 +217,7 @@ class WorkspaceOperations:
             CustomArmTemplateDeploymentPollingMethod(poller, arm_submit, callback),
         )
 
-    @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginUpdate", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_update(
         self,
@@ -305,6 +309,16 @@ class WorkspaceOperations:
         update_param.container_registry = container_registry or None
         update_param.application_insights = application_insights or None
 
+        # Only the key uri property of customer_managed_key can be updated.
+        # Check if user is updating CMK key uri, if so, add to update_param
+        if workspace.customer_managed_key is not None and workspace.customer_managed_key.key_uri is not None:
+            customer_managed_key_uri=workspace.customer_managed_key.key_uri
+            update_param.encryption=EncryptionUpdateProperties(
+                key_vault_properties=EncryptionKeyVaultUpdateProperties(
+                    key_identifier=customer_managed_key_uri,
+                )
+            )
+
         resource_group = kwargs.get("resource_group") or workspace.resource_group or self._resource_group_name
 
         # pylint: disable=unused-argument
@@ -314,7 +328,7 @@ class WorkspaceOperations:
         poller = self._operation.begin_update(resource_group, workspace.name, update_param, polling=True, cls=callback)
         return poller
 
-    @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginDelete", ActivityType.PUBLICAPI)
     @distributed_trace
     def begin_delete(self, name: str, *, delete_dependent_resources: bool, **kwargs: Dict) -> LROPoller:
         """Delete a workspace.
@@ -364,7 +378,7 @@ class WorkspaceOperations:
         return poller
 
     @distributed_trace
-    @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
+    # @monitor_with_activity(logger, "Workspace.BeginDiagnose", ActivityType.PUBLICAPI)
     def begin_diagnose(self, name: str, **kwargs: Dict) -> LROPoller[DiagnoseResponseResultValue]:
         """Diagnose workspace setup problems.
 

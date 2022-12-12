@@ -26,7 +26,7 @@ class NodeIOMixin:
         return NodeInput(name=name, meta=meta, data=data, owner=self)
 
     def _build_output(self, name, meta: Output, data) -> NodeOutput:
-        # For un-configured outputs, settings it to None so we won't passing extra fields(eg: default mode)
+        # For un-configured outputs, settings it to None, so we won't pass extra fields(eg: default mode)
         return NodeOutput(name=name, meta=meta, data=data, owner=self)
 
     def _get_default_input_val(self, val):  # pylint: disable=unused-argument, no-self-use
@@ -42,9 +42,9 @@ class NodeIOMixin:
         """Build an input attribute dict so user can get/set inputs by
         accessing attribute, eg: node1.inputs.xxx.
 
-        :param input_definition_dict: Input definition dict from component entity.
+        :param input_definition_dict: Static input definition dict.
         :param inputs: Provided kwargs when parameterizing component func.
-        :return: Built input attribute dict.
+        :return: Built dynamic input attribute dict.
         """
         # TODO: validate inputs.keys() in input_definitions.keys()
         input_dict = {}
@@ -60,11 +60,11 @@ class NodeIOMixin:
         return InputsAttrDict(input_dict)
 
     def _build_outputs_dict(self, output_definition_dict: dict, outputs: Dict[str, Output]) -> OutputsAttrDict:
-        """Build a output attribute dict so user can get/set outputs by
+        """Build an output attribute dict so user can get/set outputs by
         accessing attribute, eg: node1.outputs.xxx.
 
-        :param output_definition_dict: Output definition dict from component entity.
-        :return: Built output attribute dict.
+        :param output_definition_dict: Static output definition dict.
+        :return: Built dynamic output attribute dict.
         """
         # TODO: check if we need another way to mark a un-configured output instead of just set None.
         # Create None as data placeholder for all outputs.
@@ -79,11 +79,27 @@ class NodeIOMixin:
         return OutputsAttrDict(output_dict)
 
     def _build_inputs_dict_without_meta(self, inputs: Dict[str, Union[Input, str, bool, int, float]]) -> InputsAttrDict:
+        """Build an input attribute dict without input definition metadata, so user can get/set inputs by
+        accessing attribute, eg: node1.inputs.xxx.
+
+        :param inputs: Static input definition dict.
+        :return: Built dynamic input attribute dict.
+        """
         input_dict = {key: self._build_input(name=key, meta=None, data=val) for key, val in inputs.items()}
         return InputsAttrDict(input_dict)
 
-    def _build_outputs_dict_without_meta(self, outputs: Dict[str, Output]) -> OutputsAttrDict:
-        output_dict = {key: self._build_output(name=key, meta=None, data=val) for key, val in outputs.items()}
+    def _build_outputs_dict_without_meta(self, outputs: Dict[str, Output], none_data=False) -> OutputsAttrDict:
+        """Build an output attribute dict without output definition metadata, so user can get/set outputs by
+        accessing attribute, eg: node1.outputs.xxx.
+
+        :param outputs: Static output definition dict.
+        :param none_data: Set data to None if True.
+        :return: Built dynamic output attribute dict.
+        """
+        output_dict = {}
+        for key, val in outputs.items():
+            output_val = self._build_output(name=key, meta=None, data=val if not none_data else None)
+            output_dict[key] = output_val
         return OutputsAttrDict(output_dict)
 
     def _build_inputs(self) -> Dict[str, Union[Input, str, bool, int, float]]:

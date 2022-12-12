@@ -9,21 +9,26 @@ package_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
 def test_parse_require():
     test_scenarios = [
-        "ConfigArgParse>=0.12.0",
-        "msrest>=0.6.10",
-        "azure-core<2.0.0,>=1.2.2",
-        "msrest==0.6.10",
-        "msrest<0.6.10",
-        "msrest>0.6.9",
-        "azure-core<2.0.0,>=1.2.2",
+        ("ConfigArgParse>=0.12.0", "configargparse", ">=0.12.0"),
+        ("msrest>=0.6.10", "msrest", ">=0.6.10"),
+        ("azure-core<2.0.0,>=1.2.2", "azure-core", "<2.0.0,>=1.2.2"),
+        ("msrest==0.6.10", "msrest", "==0.6.10"),
+        ("msrest<0.6.10", "msrest", "<0.6.10"),
+        ("msrest>0.6.9", "msrest", ">0.6.9"),
+        ("azure-core<2.0.0,>=1.2.2", "azure-core", "<2.0.0,>=1.2.2"),
+        ("azure-core[aio]<2.0.0,>=1.26.0", "azure-core", "<2.0.0,>=1.26.0"),
+        ("azure-core[aio,cool_extra]<2.0.0,>=1.26.0", "azure-core", "<2.0.0,>=1.26.0"),
+        ("azure-core[]", "azure-core", None)
     ]
 
     for scenario in test_scenarios:
-        result = parse_require(scenario)
-
+        result = parse_require(scenario[0])
         assert result[0] is not None
-        assert result[1] is not None
-        assert isinstance(result[1], SpecifierSet)
+        if scenario[2] is not None:
+            assert result[1] is not None
+            assert isinstance(result[1], SpecifierSet)
+        assert result[0] == scenario[1]
+        assert result[1] == scenario[2]
 
 
 def test_parse_require_with_no_spec():
@@ -108,3 +113,4 @@ setup(
     assert result.namespace == "ci_tools"
     assert "pytyped" in result.package_data
     assert result.include_package_data == True
+    assert result.folder == package_root
