@@ -1,9 +1,9 @@
 # Release History
 
-## 1.2.1 (Unreleased)
+## 1.3.0 (Unreleased)
 
 ### Features Added
-- Change print behavior of various entity classes to match CLI `show` behavior.
+- Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
 
 ## 1.2.0 (2022-12-05)
 
