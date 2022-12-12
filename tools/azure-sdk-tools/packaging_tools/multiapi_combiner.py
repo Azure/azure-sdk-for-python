@@ -121,7 +121,6 @@ class Operation(VersionedObject):
                 og_name = self.operation_group.property_name
             else:
                 og_name = self.code_model.client_filename[1: len(self.code_model.client_filename) - len("_client")]
-            og_name = self.operation_group.property_name if self.operation_group.property_name else self.code_model.client_filename[1:]
             request_builder_name = f"build_{og_name}_{operation_section}_request"
             folder_api_version = self.code_model.api_version_to_folder_api_version[self.api_versions[-1]]
             module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}")

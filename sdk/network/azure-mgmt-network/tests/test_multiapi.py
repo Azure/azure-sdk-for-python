@@ -40,6 +40,7 @@ def test_mixin_operation_not_added_yet():
     with pytest.raises(ValueError) as ex:
         get_client(api_version="2018-07-01").supported_security_providers("1", "2")
     assert str(ex.value) == "'supported_security_providers' is not available in API version 2018-07-01. Pass service API version 2018-08-01 or newer to your client."
+    _passes(get_client().supported_security_providers, "1", "2")
 
 def test_mixin_operation_valid():
     ...
