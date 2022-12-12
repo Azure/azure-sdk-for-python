@@ -258,7 +258,7 @@ function FallbackValidation
         $packageExpression `
         --no-cache-dir `
         --target $installTargetFolder `
-        --extra-index-url=$PackageSourceOverride 2>&1 | Out-Null
+        --extra-index-url=$PackageSourceOverride 2>&1
     }
     else {
       Write-Host "pip install $packageExpression --no-cache-dir --target $installTargetFolder"
@@ -266,7 +266,7 @@ function FallbackValidation
         install `
         $packageExpression `
         --no-cache-dir `
-        --target $installTargetFolder 2>&1 | Out-Null
+        --target $installTargetFolder 2>&1
     }
     if ($LASTEXITCODE -ne 0) {
       LogWarning "pip install failed for $packageExpression"
