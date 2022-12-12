@@ -4,7 +4,7 @@ from .operations import (
     {{ operation_group.name }},
     {% endfor %}
 )
-from ._validation import api_version_validation
+from {{ ".." if async_mode else "." }}_validation import api_version_validation
 {{ client_initialization }}
 {% for operation_group in operation_group_properties %}
 

@@ -1,5 +1,5 @@
 {% for operation in operation_group.operations %}
-    {% if operation.request_builder %}
+    {% if operation.request_builder and not async_mode %}
 {{ operation.request_builder }}
     {% endif %}
 {% endfor %}

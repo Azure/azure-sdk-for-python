@@ -162,7 +162,7 @@ from .operations import (
     VipSwapOperations,
     NetworkManagementClientOperationsMixin,
 )
-from ._validation import api_version_validation
+from .._validation import api_version_validation
 class _SDKClient(object):
     def __init__(self, *args, **kwargs):
         """This is a fake class to support current implemetation of MultiApiClientMixin."
