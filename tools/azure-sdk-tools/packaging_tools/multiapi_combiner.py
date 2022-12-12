@@ -327,7 +327,14 @@ class Serializer:
             lstrip_blocks=True,
         )
 
-    def _copy_file_contents(self, filename: str, async_mode: bool, module: Optional[Path] = None):
+    def _copy_file_contents(
+        self,
+        filename: str,
+        async_mode: bool,
+        module: Optional[Path] = None,
+        *,
+        replacement_strings: Optional[Dict[str, Any]] = None,
+    ):
         module = module or self.code_model.root_of_code
         root_of_code = (self.code_model.root_of_code / Path("aio")) if async_mode else self.code_model.root_of_code
         default_api_version_folder = self.code_model.root_of_code / Path(self.code_model.default_folder_api_version)
@@ -339,7 +346,11 @@ class Serializer:
             return
         with open(default_api_version_filepath, "r") as rfd:
             with open(root_of_code / Path(f"{filename}.py"), "w") as wfd:
-                wfd.write(rfd.read())
+                read_lines = rfd.read()
+                if replacement_strings:
+                    for orig, new in replacement_strings.items():
+                        read_lines = read_lines.replace(orig, new)
+                wfd.write(read_lines)
 
     def _get_file_path_from_module(self, module_name: str, strip_api_version: bool) -> Path:
         module_stem = module_name.strip(f"{self.code_model.module_name}.")
@@ -409,20 +420,23 @@ class Serializer:
     def _serialize_general_helper(self, async_mode: bool):
         general_files = ["_configuration", "_patch", "__init__"]
         for file in general_files:
-            self._copy_file_contents(file, async_mode)
+            self._copy_file_contents(
+                file,
+                async_mode,
+                replacement_strings={
+                    f"from .{self.code_model.client_filename}": "from ._client"}
+            )
 
     def serialize_general(self):
         # sync
         self._serialize_general_helper(async_mode=False)
+        self._serialize_general_helper(async_mode=True)
         sync_general_files = ["_serialization", "_vendor", "_version"]
         for file in sync_general_files:
             self._copy_file_contents(file, async_mode=False)
 
         with open(f"{self.code_model.root_of_code}/_validation.py", "w") as fd:
             fd.write(self.env.get_template("validation.py.jinja2").render())
-
-        # async
-        # self._serialize_general_helper(async_mode=True)
 
     def serialize(self):
         self.serialize_operations_folder(async_mode=False)
