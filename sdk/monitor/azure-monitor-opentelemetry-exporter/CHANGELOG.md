@@ -11,6 +11,9 @@
 
 ### Breaking Changes
 
+- Update to OpenTelemetry api/sdk v1.15.0
+    ([#27900](https://github.com/Azure/azure-sdk-for-python/issues/27900))
+
 ### Bugs Fixed
 
 - Pass along sampleRate in SpanEvents from Span
