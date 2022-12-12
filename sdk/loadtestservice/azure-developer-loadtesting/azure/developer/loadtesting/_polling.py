@@ -11,15 +11,7 @@ import sys
 import time
 
 from azure.core.polling import PollingMethod, AsyncPollingMethod
-
-try:
-    from typing import TYPE_CHECKING
-except ImportError:
-    TYPE_CHECKING = False
-
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any
+from typing import Any
 
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
