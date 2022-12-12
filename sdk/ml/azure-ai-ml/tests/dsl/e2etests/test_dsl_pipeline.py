@@ -1291,6 +1291,48 @@ class TestDSLPipeline(AzureRecordedTestCase):
         # assert "optional_param_with_default" not in pipeline_job.inputs
         # assert "optional_param_with_default" not in next(pipeline_job.jobs.values().__iter__()).inputs
 
+    def test_dsl_pipeline_with_not_passing_pipeline_required_input(self, client: MLClient) -> None:
+        default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
+
+        # optional true pipeline input binding to optional node input, no validation error
+        @dsl.pipeline(
+            default_compute="cpu-cluster",
+            description="This is the basic pipeline with several input types",
+        )
+        def default_optional_pipeline(pipeline_required_param: Input(optional=False, type="string")):
+            default_optional_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_param=pipeline_required_param,
+            )
+
+        pipeline = default_optional_pipeline()  # use default pipeline parameter
+        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="default_optional_pipeline")
+
+        # only the two required input exists
+        # assert len(pipeline_job.jobs["default_optional_component"].inputs) == 3
+
+    def test_pipeline_with_pipeline_component_optional_true_input(self, client: MLClient) -> None:
+        component_func = load_component(source=str(components_dir / "default_optional_component.yml"))
+
+        @dsl.pipeline()
+        def subgraph_pipeline(required_parameter: Input(optional=False, type="string")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param=required_parameter,
+                # optional_param_with_default=required_parameter
+            )
+
+        @dsl.pipeline()
+        def root_pipeline():
+            subgraph_node = subgraph_pipeline(
+            )
+
+        pipeline = root_pipeline()
+        pipeline.settings.default_compute = "cpu-cluster"
+        pipeline_job = client.jobs.create_or_update(pipeline, experiment_name="default_optional_pipeline")
+        print(pipeline_job)
+
     @pytest.mark.disable_mock_code_hash
     @pytest.mark.skipif(condition=not is_live(), reason="reuse test, target to verify service-side behavior")
     def test_component_reuse(self, client: MLClient) -> None:

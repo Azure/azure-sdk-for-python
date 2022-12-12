@@ -78,7 +78,7 @@ class TestComponent:
             "display_name": "0.0.1",
             "is_deterministic": True,
             "successful_return_code": "Zero",
-            "inputs": {"train_data": {"type": "path"}},
+            "inputs": {"train_data": {"type": "path", "optional": False}},
             "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
             "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
@@ -93,7 +93,7 @@ class TestComponent:
             "display_name": "0.0.1",
             "is_deterministic": True,
             "successful_return_code": "Zero",
-            "inputs": {"train_data": {"type": "path"}},  # optional will be drop if False
+            "inputs": {"train_data": {"type": "path", "optional": False}},  # optional will be drop if False
             "outputs": {"output_dir": {"type": "path", "datastore_mode": "Upload"}},
             "command": "sh ls.sh {inputs.input_dir} {inputs.file_name} {outputs.output_dir}",
             "environment": {"name": "AzureML-Minimal", "version": "45", "os": "Linux"},
@@ -138,10 +138,12 @@ class TestComponent:
             "inputs": {
                 "TextData": {
                     "type": "AnyFile",
+                    'optional': False,
                     "description": "relative path on ADLS storage",
                 },
                 "ExtractionClause": {
                     "type": "string",
+                    'optional': False,
                     "description": 'the extraction clause,something like "column1:string, column2:int"',
                 },
             },
@@ -163,12 +165,12 @@ class TestComponent:
             "inputs": {
                 "TextData": {
                     "type": "AnyFile",
-                    # "optional": False,  # expected. optional will be dropped if it's False
+                    "optional": False,
                     "description": "relative path on ADLS storage",
                 },
                 "ExtractionClause": {
                     "type": "string",
-                    # "optional": False,  # expected. optional will be dropped if it's False
+                    "optional": False,
                     "description": 'the extraction clause,something like "column1:string, column2:int"',
                 },
             },
@@ -203,9 +205,6 @@ class TestComponent:
                     input_port["enum"] = list(map(lambda x: str(x), input_port["enum"]))
                 if "default" in input_port:
                     input_port["default"] = str(input_port["default"])
-            # optional will be dropped if it's False
-            if "optional" in input_port and input_port["optional"] is False:
-                del input_port["optional"]
 
         # code will be dumped as absolute path
         if "code" in expected_dict:
