@@ -68,11 +68,11 @@ def _combine_helper(
 
         next_api_version = sorted_api_versions[idx]
         next_names = get_names_by_api_version(next_api_version)
-        curr_obj_names = [obj.name for obj in curr_objs]
+        obj_names = [obj.name for obj in objs]
 
         existing_objs = [o for o in curr_objs if o.name in next_names]
 
-        added_next_names = [n for n in next_names if n not in curr_obj_names]
+        added_next_names = [n for n in next_names if n not in obj_names]
         new_objs: List[T] = [get_cls(code_model, name) for name in added_next_names]
         curr_objs = existing_objs + new_objs
         for obj in curr_objs:
@@ -220,14 +220,13 @@ class OperationGroup(VersionedObject):
         self.is_mixin = self.name.endswith("OperationsMixin")
         self.property_name = property_name
 
-    def _get_og(self, api_version: str):
+    def _get_og(self, api_version: str, async_mode: bool = False):
         folder_api_version = self.code_model.api_version_to_folder_api_version[api_version]
-        module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}")
+        module = importlib.import_module(f"{self.code_model.module_name}.{folder_api_version}{'.aio' if async_mode else ''}")
         return getattr(module.operations, self.name)
 
-    @property
-    def generated_class(self):
-        return self._get_og(self.api_versions[-1])
+    def generated_class(self, async_mode: bool):
+        return self._get_og(self.api_versions[-1], async_mode)
 
     @property
     def need_decorator(self) -> bool:
@@ -263,12 +262,12 @@ class CodeModel:
         self.api_version_to_metadata: Dict[str, Dict[str, Any]] = {
             _get_api_version(dir): _get_metadata(dir)
             for dir in self._root_of_code.iterdir()
-            if dir.stem.startswith("v")
+            if dir.stem.startswith("v") and "preview" not in dir.stem
         }
         self.api_version_to_folder_api_version = {
             _get_api_version(dir): dir.stem
             for dir in self._root_of_code.iterdir()
-            if dir.stem.startswith("v")
+            if dir.stem.startswith("v") and "preview" not in dir.stem
         }
         self.sorted_api_versions = sorted(self.api_version_to_metadata.keys())
         self.default_api_version = self.sorted_api_versions[-1]
@@ -321,9 +320,6 @@ class CodeModel:
                 a for a in self.sorted_api_versions
                 if self.api_version_to_metadata[a].get("operation_mixins")
             ]
-            # for api_version, metadata in self.api_version_to_metadata.items():
-            #     if metadata.get("operation_mixins"):
-            #         mixin.api_versions.append(api_version)
             ogs.append(mixin)
 
         for operation_group in ogs:
