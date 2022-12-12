@@ -7,11 +7,10 @@ import pytest
 def get_client(api_version: Optional[str] = None):
     return NetworkManagementClient("1", DefaultAzureCredential(), api_version=api_version)
 
-def _passes(callable, *params):
+def _passes(callable, *params, **kwargs):
     with pytest.raises(HttpResponseError) as ex:
-        callable(*params)
+        callable(*params, **kwargs)
     assert ex.value.status_code == 400
-
 
 def test_operation_group_valid():
     with get_client() as client:
@@ -33,7 +32,13 @@ def test_operation_group_removed():
         assert "'interface_endpoints' is not available in API version 2022-05-01. Pass service API version 2018-08-01 or newer to your client." in str(ex.value)
 
 def test_operation_group_operation_not_added_yet():
-    ...
+    with get_client() as client:
+        _passes(client.application_gateways.list_available_request_headers)
+
+    with get_client(api_version="2015-06-15") as client:
+        with pytest.raises(ValueError) as ex:
+            client.application_gateways.list_available_request_headers()
+        assert str(ex.value) == "'list_available_request_headers' is not available in API version 2015-06-15. Pass service API version 2018-11-01 or newer to your client."
 
 def test_operation_group_operation_valid():
     with get_client() as client:
@@ -57,7 +62,7 @@ def test_mixin_operation_not_added_yet():
         _passes(client.supported_security_providers, "1", "2")
 
 def test_mixin_operation_valid():
-    ...
-
-def test_mixin_operation_removed():
-    ...
+    with get_client() as client:
+        _passes(client.check_dns_name_availability, "1", domain_name_label="2")
+    with get_client(api_version="2015-06-15") as client:
+        _passes(client.check_dns_name_availability, "1", domain_name_label="2")

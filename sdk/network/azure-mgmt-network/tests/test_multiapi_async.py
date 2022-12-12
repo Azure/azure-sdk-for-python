@@ -8,9 +8,9 @@ def get_client(api_version: Optional[str] = None):
     return aio.NetworkManagementClient("1", DefaultAzureCredential(), api_version=api_version)
 
 @pytest.mark.asyncio
-async def _passes(callable, *params):
+async def _passes(callable, *params, **kwargs):
     with pytest.raises(HttpResponseError) as ex:
-        await callable(*params)
+        await callable(*params, **kwargs)
     assert ex.value.status_code == 400
 
 @pytest.mark.asyncio
@@ -37,8 +37,13 @@ async def test_operation_group_removed():
 
 @pytest.mark.asyncio
 async def test_operation_group_operation_not_added_yet():
-    ...
+    async with get_client() as client:
+        await _passes(client.application_gateways.list_available_request_headers)
 
+    async with get_client(api_version="2015-06-15") as client:
+        with pytest.raises(ValueError) as ex:
+            await client.application_gateways.list_available_request_headers()
+        assert str(ex.value) == "'list_available_request_headers' is not available in API version 2015-06-15. Pass service API version 2018-11-01 or newer to your client."
 @pytest.mark.asyncio
 async def test_operation_group_operation_valid():
     ...
@@ -65,8 +70,7 @@ async def test_mixin_operation_not_added_yet():
 
 @pytest.mark.asyncio
 async def test_mixin_operation_valid():
-    ...
-
-@pytest.mark.asyncio
-async def test_mixin_operation_removed():
-    ...
+    async with get_client() as client:
+        await _passes(client.check_dns_name_availability, "1", domain_name_label="2")
+    async with get_client(api_version="2015-06-15") as client:
+        await _passes(client.check_dns_name_availability, "1", domain_name_label="2")
