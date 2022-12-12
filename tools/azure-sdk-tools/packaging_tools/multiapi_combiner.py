@@ -4,11 +4,13 @@
 # license information.
 # --------------------------------------------------------------------------
 import importlib
+import os
 import re
 import inspect
 import json
 import argparse
 from pathlib import Path
+import shutil
 from typing import Dict, Optional, List, Any, TypeVar, Callable
 
 from jinja2 import FileSystemLoader, Environment
@@ -236,7 +238,6 @@ class OperationGroup(VersionedObject):
         return "\n".join(["@api_version_validation(", f"    api_versions={self.api_versions}", ")"])
 
     def combine_operations(self) -> None:
-        # chose api versions greater than when I was added
         api_versions = [v for v in self.code_model.sorted_api_versions if v in self.api_versions]
 
         def _get_names_by_api_version(api_version: str):
@@ -262,12 +263,12 @@ class CodeModel:
         self.api_version_to_metadata: Dict[str, Dict[str, Any]] = {
             _get_api_version(dir): _get_metadata(dir)
             for dir in self._root_of_code.iterdir()
-            if dir.stem.startswith("v") and "preview" not in dir.stem
+            if dir.stem.startswith("v")
         }
         self.api_version_to_folder_api_version = {
             _get_api_version(dir): dir.stem
             for dir in self._root_of_code.iterdir()
-            if dir.stem.startswith("v") and "preview" not in dir.stem
+            if dir.stem.startswith("v")
         }
         self.sorted_api_versions = sorted(self.api_version_to_metadata.keys())
         self.default_api_version = self.sorted_api_versions[-1]
@@ -281,6 +282,10 @@ class CodeModel:
     @property
     def client_filename(self) -> str:
         return list(self.api_version_to_metadata.values())[-1]["client"]["filename"]
+
+    @property
+    def client_name(self) -> str:
+        return list(self.api_version_to_metadata.values())[-1]["client"]["name"]
 
     def _combine_operation_groups(self) -> List[OperationGroup]:
         initial_metadata = self.api_version_to_metadata[self.sorted_api_versions[0]]
@@ -312,7 +317,13 @@ class CodeModel:
                 code_model=self,
                 name=f"{initial_metadata['client']['name']}OperationsMixin",
             )
-            mixin.api_versions = self.sorted_api_versions
+            mixin.api_versions = [
+                a for a in self.sorted_api_versions
+                if self.api_version_to_metadata[a].get("operation_mixins")
+            ]
+            # for api_version, metadata in self.api_version_to_metadata.items():
+            #     if metadata.get("operation_mixins"):
+            #         mixin.api_versions.append(api_version)
             ogs.append(mixin)
 
         for operation_group in ogs:
@@ -379,11 +390,12 @@ class Serializer:
             module_stem = module_stem.strip(f"{self.code_model.default_folder_api_version}.")
         return self.code_model.get_root_of_code(False) / Path(module_stem.replace(".", "/"))
 
-    def _get_operations_folder_module(self, async_mode: bool) -> str:
-        return f"{self.code_model.module_name}.{self.code_model.default_folder_api_version}.{'aio.' if async_mode else ''}operations"
+    def _get_operations_folder_module(self, async_mode: bool, *, api_version: Optional[str] = None) -> str:
+        folder_api_version = self.code_model.api_version_to_folder_api_version.get(api_version, self.code_model.default_folder_api_version)
+        return f"{self.code_model.module_name}.{folder_api_version}.{'aio.' if async_mode else ''}operations"
 
-    def _get_operations_folder(self, async_mode: bool) -> Path:
-        operations_folder_module = self._get_operations_folder_module(async_mode)
+    def _get_operations_folder(self, async_mode: bool, *, api_version: Optional[str] = None) -> Path:
+        operations_folder_module = self._get_operations_folder_module(async_mode, api_version=api_version)
         return self._get_file_path_from_module(operations_folder_module, strip_api_version=True)
 
     def serialize_operations_folder(self, async_mode: bool):
@@ -391,13 +403,25 @@ class Serializer:
         operations_folder_module = self._get_operations_folder_module(async_mode)
         operations_folder = self._get_operations_folder(async_mode)
         operations_module = importlib.import_module(f"{operations_folder_module}._operations")
-        imports = inspect.getsource(operations_module).split("def build_")[0]  # get all imports
+        imports = inspect.getsource(operations_module).split("def build_")[0] + "\n"  # get all imports
+
+        # imports_to_add: List[str] = []
+        # # add imports if missing
+        # for api_version in self.code_model.sorted_api_versions:
+        #     versioned_operations_folder_module = self._get_operations_folder_module(async_mode, api_version=api_version)
+        #     versioned_operations_module = importlib.import_module(f"{versioned_operations_folder_module}._operations")
+        #     versioned_imports = inspect.getsource(versioned_operations_module).split("def build_")[0]  # get all imports
+        #     for i in versioned_imports.splitlines():
+        #         if i not in imports:
+        #             imports_to_add.append(i)
+
+        # imports += "\n".join(imports_to_add)
         try:
             imports = modify_relative_imports(r"from (.*)_serialization import Serializer", imports)
         except AttributeError:
             pass
         validation_relative = "..." if async_mode else ".."
-        imports += f"from {validation_relative}_validation import api_version_validation\n"
+        imports += f"\nfrom {validation_relative}_validation import api_version_validation\n"
         Path(operations_folder).mkdir(parents=True, exist_ok=True)
         with open(f"{operations_folder}/_operations.py", "w") as fd:
             fd.write(template.render(code_model=self.code_model, imports=imports, async_mode=async_mode))
@@ -430,9 +454,11 @@ class Serializer:
 
         # do parsing on the source so we can build up our client
         main_client_source = inspect.getsource(client_module)
-        imports = main_client_source.split("class")[0]
+        split_main_client_source = main_client_source.split("class")
+        imports = split_main_client_source[0]
+        imports = imports.replace(f"from ._operations_mixin import {self.code_model.client_name}OperationsMixin\n", "")
 
-        main_client_source = main_client_source[len(imports) :]
+        main_client_source = "class" + "class".join(split_main_client_source[1:])
 
         client_initialization = re.search(r"((?s).*?)    @classmethod", main_client_source).group(1)
 
@@ -479,12 +505,36 @@ class Serializer:
         with open(f"{self.code_model.get_root_of_code(False)}/_validation.py", "w") as fd:
             fd.write(self.env.get_template("validation.py.jinja2").render())
 
+    def remove_versioned_files(self):
+        root_of_code = self.code_model.get_root_of_code(False)
+        for api_version_folder_stem in self.code_model.api_version_to_folder_api_version.values():
+            api_version_folder = root_of_code / api_version_folder_stem
+            shutil.rmtree(api_version_folder / Path("operations"), ignore_errors=True)
+            shutil.rmtree(api_version_folder / Path("aio"), ignore_errors=True)
+            files_to_remove = [
+                "__init__.py", "_configuration.py", "_metadata.json", "_patch.py", "_vendor.py", "_version.py", "py.typed", f"{self.code_model.client_filename}.py"
+            ]
+            for file in files_to_remove:
+                os.remove(f"{api_version_folder}/{file}")
+
+
+    def remove_top_level_files(self, async_mode: bool):
+        top_level_files = [self.code_model.client_filename, "_operations_mixin"]
+        for file in top_level_files:
+            os.remove(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
+
+    def remove_old_code(self):
+        self.remove_versioned_files()
+        self.remove_top_level_files(async_mode=False)
+        self.remove_top_level_files(async_mode=True)
+
     def serialize(self):
         self.serialize_operations_folder(async_mode=False)
         self.serialize_operations_folder(async_mode=True)
         self.serialize_client(async_mode=False)
         self.serialize_client(async_mode=True)
         self.serialize_general()
+        self.remove_old_code()
         # self.serialize_models_file()
 
 
