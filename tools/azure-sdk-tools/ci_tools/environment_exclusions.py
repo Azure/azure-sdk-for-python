@@ -281,7 +281,6 @@ TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-security-attestation",
     "azure-batch",
     "azure-ai-language-conversations",
-    "azure-ai-language-questionanswering",
     "azure-communication-chat",
     "azure-communication-email",
     "azure-communication-identity",
