@@ -245,6 +245,9 @@ class Command(BaseNode):
     def identity(
         self,
     ) -> Optional[Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]]:
+        """
+        Configuration of the hyperparameter identity.
+        """
         return self._identity
         
     @identity.setter
@@ -253,10 +256,6 @@ class Command(BaseNode):
                                 ManagedIdentityConfiguration,
                                 AmlTokenConfiguration,
                                 UserIdentityConfiguration, None]):
-        """Support using dict to initialize identity.
-        :return: Identity attribute value logged in job.
-        :rtype: Union[ManagedIdentityConfiguration, AmlTokenConfiguration, UserIdentityConfiguration]
-        """
         if isinstance(value, dict):
             identify_schema = UnionField(
                 [

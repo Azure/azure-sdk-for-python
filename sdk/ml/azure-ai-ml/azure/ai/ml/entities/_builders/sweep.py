@@ -25,6 +25,7 @@ from azure.ai.ml.entities._job.sweep.early_termination_policy import (
     BanditPolicy,
     MedianStoppingPolicy,
     TruncationSelectionPolicy,
+    EarlyTerminationPolicy,
 )
 from azure.ai.ml.entities._job.sweep.objective import Objective
 from azure.ai.ml.entities._job.sweep.parameterized_sweep import ParameterizedSweep
@@ -44,6 +45,7 @@ from azure.ai.ml.entities._job.sweep.search_space import (
 )
 from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
 from azure.ai.ml.sweep import SweepJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models import EarlyTerminationPolicyType
 
 from ..._schema import PathAwareSchema
 from ..._schema._utils.data_binding_expression import support_data_binding_expression_for_fields
@@ -152,11 +154,13 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     @property
     def search_space(self):
+        """Dictionary of the hyperparameter search space. 
+        The key is the name of the hyperparameter and the value is the parameter expression.
+        """
         return self._search_space
 
     @search_space.setter
     def search_space(self, values: Dict[str, Dict[str, Union[str, int, float, dict]]]):
-        """Support using dict to initialize search_space attribute value."""
         search_space = {}
         for name, value in values.items():
             """If value is a SearchSpace object, directly pass it to job.search_space[name]"""
@@ -345,3 +349,50 @@ class Sweep(ParameterizedSweep, BaseNode):
                 self.early_termination.slack_amount = None
             if self.early_termination.slack_factor == 0.0:
                 self.early_termination.slack_factor = None
+
+    @property
+    def early_termination(self) -> Union[str, EarlyTerminationPolicy]:
+        return self._early_termination
+
+    @early_termination.setter
+    def early_termination(self, policy_dict: Union[EarlyTerminationPolicy, Dict[str, Union[str, float, int, bool]]]):
+        if policy_dict is None:
+            self._early_termination = None
+        elif isinstance(policy_dict, EarlyTerminationPolicy):
+            self._early_termination = policy_dict
+        elif isinstance(policy_dict, dict):
+            assert 'type' in policy_dict.keys()
+            policy_type = policy_dict['type'].lower().capitalize()
+            if policy_type == EarlyTerminationPolicyType.BANDIT:
+                self._early_termination = BanditPolicy(
+                    delay_evaluation=policy_dict.get('delay_evaluation', 0),
+                    evaluation_interval=policy_dict.get('evaluation_interval', 0),
+                    slack_amount=policy_dict.get('slack_amount', 0), slack_factor=policy_dict.get('slack_factor', 0)
+                )
+            elif policy_type == EarlyTerminationPolicyType.MEDIAN_STOPPING:
+                self._early_termination = MedianStoppingPolicy(
+                    delay_evaluation=policy_dict.get('delay_evaluation', 0),
+                    evaluation_interval=policy_dict.get('evaluation_interval', 0)
+                )
+            elif policy_type == EarlyTerminationPolicyType.TRUNCATION_SELECTION:
+                self._early_termination = TruncationSelectionPolicy(
+                    delay_evaluation=policy_dict.get('delay_evaluation', 0),
+                    evaluation_interval=policy_dict.get('evaluation_interval', 0),
+                    truncation_percentage=policy_dict.get('truncation_percentage', 0)
+                )
+            else:
+                msg = f"Received unsupported value {policy_type} as the early termination policy"
+                raise ValidationException(
+                    message=msg,
+                    no_personal_data_message=msg,
+                    target=ErrorTarget.SWEEP_JOB,
+                    error_category=ErrorCategory.USER_ERROR,
+                )
+        else:
+            msg = f"Received unsupported value of type {type(policy_dict)} as the early termination policy"
+            raise ValidationException(
+                message=msg,
+                no_personal_data_message=msg,
+                target=ErrorTarget.SWEEP_JOB,
+                error_category=ErrorCategory.USER_ERROR,
+            )
