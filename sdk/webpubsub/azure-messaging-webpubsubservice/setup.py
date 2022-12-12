@@ -64,6 +64,7 @@ setup(
     install_requires=[
         "isodate<1.0.0,>=0.6.1",
         "azure-core<2.0.0,>=1.24.0",
+        "pyjwt>=1.7.1",
     ],
     python_requires=">=3.7",
 )

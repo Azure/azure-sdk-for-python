@@ -45,6 +45,7 @@ from azure.ai.ml.constants._common import (
     SHORT_URI_REGEX_FORMAT,
     AssetTypes,
     AzureMLResourceType,
+    InputTypes,
     LROConfigurations,
 )
 from azure.ai.ml.constants._endpoint import EndpointInvokeFields, EndpointYamlFields
@@ -260,7 +261,16 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                 )
         elif inputs:
             for key, input_data in inputs.items():
-                if isinstance(input_data, Input) and HTTP_PREFIX not in input_data.path:
+                if (
+                    isinstance(input_data, Input)
+                    and input_data.type not in [
+                            InputTypes.NUMBER,
+                            InputTypes.BOOLEAN,
+                            InputTypes.INTEGER,
+                            InputTypes.STRING
+                        ]
+                    and HTTP_PREFIX not in input_data.path
+                ):
                     self._resolve_input(input_data, os.getcwd())
             params_override.append({EndpointYamlFields.BATCH_JOB_INPUT_DATA: inputs})
 
@@ -379,6 +389,9 @@ class BatchEndpointOperations(_ScopeDependentOperations):
         # Input path should not be empty
         if not entry.path:
             raise Exception("Input path can't be empty for batch endpoint invoke")
+
+        if entry.type in [InputTypes.NUMBER, InputTypes.BOOLEAN, InputTypes.INTEGER, InputTypes.STRING]:
+            return
 
         try:
             if entry.path.startswith(ARM_ID_FULL_PREFIX):

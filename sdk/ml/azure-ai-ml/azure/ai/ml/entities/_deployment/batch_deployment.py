@@ -16,7 +16,7 @@ from azure.ai.ml._restclient.v2022_05_01.models import CodeConfiguration as Rest
 from azure.ai.ml._restclient.v2022_05_01.models import IdAssetReference
 from azure.ai.ml._schema._deployment.batch.batch_deployment import BatchDeploymentSchema
 from azure.ai.ml._utils._arm_id_utils import _parse_endpoint_name_from_deployment_id
-from azure.ai.ml._utils.utils import is_private_preview_enabled, camel_to_snake
+from azure.ai.ml._utils.utils import is_private_preview_enabled, camel_to_snake, snake_to_pascal
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY
 from azure.ai.ml.constants._deployment import BatchDeploymentOutputAction
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
@@ -223,11 +223,12 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
                 self.job_definition.settings = {}
             self.job_definition.settings[PipelineConstants.DEFAULT_COMPUTE] = self.compute
             non_flat_data = {}
-            non_flat_data["ComponentDeployment"] = self.job_definition._to_dict()
+            non_flat_data["component_deployment"] = self.job_definition._to_dict()
             flat_data = flatten(non_flat_data, ".")
             flat_data_keys = flat_data.keys()
             for k in flat_data_keys:
-                self.properties[k] = flat_data[k]
+                pascal_key = self._flat_key_snake_to_pascal(k)
+                self.properties[pascal_key] = flat_data[k]
 
         return BatchDeploymentData(location=location, properties=batch_deployment, tags=self.tags)
 
@@ -271,11 +272,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
             snake_dict = {}
             for k in deployment.properties:
                 if k.startswith("ComponentDeployment"):
-                    k_array = k.split(".")
-                    k_snake_array = []
-                    for i in k_array:
-                        k_snake_array.append(camel_to_snake(i))
-                    k_snake = ".".join(k_snake_array)
+                    k_snake = cls._flat_key_pascal_to_snake(k)
                     snake_dict[k_snake] = deployment.properties[k]
             if len(snake_dict) > 0:
                 for k in snake_dict:
@@ -336,8 +333,21 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
                 error_type=ValidationErrorType.INVALID_VALUE,
             )
 
-    # def _convert_properties_to_snake_case(properties) -> None:
-    #     for k in properties:
-    #         if k.startswith("ComponentDeployment"):
-    #             k_snake = camel_to_snake(k)
-    #             properties[k_snake] = properties[k]
+    def _flat_key_snake_to_pascal(self, key_str: str) -> str: # pylint: disable=no-self-use
+        key_arr = key_str.split(".")
+        pascal_array = []
+        for key in key_arr:
+            pascal_array.append(snake_to_pascal(key))
+        return '.'.join(pascal_array)
+
+    @classmethod
+    def _flat_key_pascal_to_snake(cls, key_str: str) -> str:
+        key_arr = key_str.split(".")
+        snake_array = []
+        for key in key_arr:
+            if key != "continue_on_step_failure":
+                snake_array.append(camel_to_snake(key))
+            else:
+                snake_array.append(key)
+
+        return '.'.join(snake_array)
