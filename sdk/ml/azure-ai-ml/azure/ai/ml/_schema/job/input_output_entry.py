@@ -44,7 +44,7 @@ class InputSchema(metaclass=PatchedSchemaMeta):
 def generate_path_property(azureml_type):
     return UnionField(
         [
-            ArmVersionedStr(azureml_type=azureml_type, pattern=r"^azureml:[\w\/]+"),
+            ArmVersionedStr(azureml_type=azureml_type),
             ArmStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
             fields.Str(metadata={"pattern": r"^(http(s)?):.*"}),
             fields.Str(metadata={"pattern": r"^(wasb(s)?):.*"}),
