@@ -194,6 +194,10 @@ class Operation(VersionedObject):
             get_names_by_api_version=_get_names_by_api_version,
         )
 
+    @property
+    def metadata(self) -> Optional[str]:
+        op = self._get_op(self.api_versions[-1])
+        return getattr(op, "metadata", None)
 
 class OperationGroup(VersionedObject):
     def __init__(

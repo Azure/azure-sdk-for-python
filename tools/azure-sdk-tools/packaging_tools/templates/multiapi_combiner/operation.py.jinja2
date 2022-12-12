@@ -2,3 +2,6 @@
 {{ operation.decorator }}
 {% endif %}
 {{ operation.source_code(async_mode) }}
+{% if operation.metadata %}
+    {{ operation.name }}.metadata = {{ operation.metadata }}
+{% endif %}
