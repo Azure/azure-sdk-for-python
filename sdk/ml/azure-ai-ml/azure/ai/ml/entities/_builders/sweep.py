@@ -43,7 +43,13 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     SweepDistribution,
     Uniform,
 )
-from azure.ai.ml.exceptions import ErrorTarget, UserErrorException, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import (
+    ErrorTarget, 
+    UserErrorException, 
+    ValidationErrorType,
+    ValidationException,
+    ErrorCategory,
+)
 from azure.ai.ml.sweep import SweepJob
 from azure.ai.ml._restclient.v2022_10_01_preview.models import EarlyTerminationPolicyType
 
@@ -154,7 +160,7 @@ class Sweep(ParameterizedSweep, BaseNode):
 
     @property
     def search_space(self):
-        """Dictionary of the hyperparameter search space. 
+        """Dictionary of the hyperparameter search space.
         The key is the name of the hyperparameter and the value is the parameter expression.
         """
         return self._search_space
@@ -163,7 +169,7 @@ class Sweep(ParameterizedSweep, BaseNode):
     def search_space(self, values: Dict[str, Dict[str, Union[str, int, float, dict]]]):
         search_space = {}
         for name, value in values.items():
-            """If value is a SearchSpace object, directly pass it to job.search_space[name]"""
+            # If value is a SearchSpace object, directly pass it to job.search_space[name]
             search_space[name] = self._value_type_to_class(value) if isinstance(value, dict) else value
         self._search_space = search_space
 

@@ -249,7 +249,7 @@ class Command(BaseNode):
         Configuration of the hyperparameter identity.
         """
         return self._identity
-        
+
     @identity.setter
     def identity(self, value: Union[
                                 Dict[str, str],
