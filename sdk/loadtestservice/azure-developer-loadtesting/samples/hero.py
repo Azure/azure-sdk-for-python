@@ -18,7 +18,7 @@ USAGE:
     2)  AZURE_CLIENT_SECRET - client secret
     3)  AZURE_TENANT_ID - tenant id for your Azure
     4)  LOADTESTSERVICE_ENDPOINT - Data Plane endpoint for Loadtestservice
-    5) SUBSCRIPTION_ID - Subscription Id
+    5)  SUBSCRIPTION_ID - Subscription Id
 """
 import sys
 
@@ -90,6 +90,11 @@ try:
         TEST_ID
     )
     print("JMX file validation status {}".format(result))
+
+    from azure.developer.loadtesting import TestFileValidationStatus
+
+    if not result.status == TestFileValidationStatus.ValidationSuccess:
+        sys.exit(1)
 
 except Exception as e:
     print("Error occurred while checking JMX file validation status: {}".format(e))
