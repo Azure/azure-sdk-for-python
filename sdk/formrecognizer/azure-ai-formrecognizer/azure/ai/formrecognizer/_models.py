@@ -5,7 +5,8 @@
 
 # pylint: disable=protected-access, too-many-lines
 
-from typing import Dict, Iterable, List, NewType
+import datetime
+from typing import Dict, Iterable, List, NewType, Any, Union, Sequence, Optional
 from enum import Enum
 from collections import namedtuple
 from azure.core import CaseInsensitiveEnumMeta
@@ -240,7 +241,7 @@ class Point(namedtuple("Point", "x y")):
 
     __slots__ = ()
 
-    def __new__(cls, x, y):
+    def __new__(cls, x: float, y: float) -> "Point":
         return super().__new__(cls, x, y)
 
     def to_dict(self) -> dict:
@@ -274,7 +275,7 @@ class FormPageRange(namedtuple("FormPageRange", "first_page_number last_page_num
 
     __slots__ = ()
 
-    def __new__(cls, first_page_number, last_page_number):
+    def __new__(cls, first_page_number: int, last_page_number: int) -> "FormPageRange":
         return super().__new__(
             cls, first_page_number, last_page_number
         )
@@ -324,11 +325,11 @@ class FormElement:
         Support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.bounding_box = kwargs.get("bounding_box", None)
-        self.page_number = kwargs.get("page_number", None)
-        self.text = kwargs.get("text", None)
-        self.kind = kwargs.get("kind", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)
+        self.page_number: int = kwargs.get("page_number", None)
+        self.text: str = kwargs.get("text", None)
+        self.kind: str = kwargs.get("kind", None)
 
     def to_dict(self) -> dict:
         """Returns a dict representation of FormElement.
@@ -393,15 +394,15 @@ class RecognizedForm:
         *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.fields = kwargs.get("fields", None)
-        self.form_type = kwargs.get("form_type", None)
-        self.page_range = kwargs.get("page_range", None)
-        self.pages = kwargs.get("pages", None)
-        self.model_id = kwargs.get("model_id", None)
-        self.form_type_confidence = kwargs.get("form_type_confidence", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.fields: dict[str, FormField] = kwargs.get("fields", None)
+        self.form_type: str = kwargs.get("form_type", None)
+        self.page_range: FormPageRange = kwargs.get("page_range", None)
+        self.pages: list[FormPage] = kwargs.get("pages", None)
+        self.model_id: str = kwargs.get("model_id", None)
+        self.form_type_confidence: str = kwargs.get("form_type_confidence", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"RecognizedForm(form_type={self.form_type}, fields={repr(self.fields)}, "
             f"page_range={repr(self.page_range)}, pages={repr(self.pages)}, "
@@ -476,13 +477,14 @@ class FormField:
         Support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.value_type = kwargs.get("value_type", None)
-        self.label_data = kwargs.get("label_data", None)
-        self.value_data = kwargs.get("value_data", None)
-        self.name = kwargs.get("name", None)
-        self.value = kwargs.get("value", None)
-        self.confidence = kwargs.get("confidence", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.value_type: str = kwargs.get("value_type", None)
+        self.label_data: FieldData = kwargs.get("label_data", None)
+        self.value_data: FieldData = kwargs.get("value_data", None)
+        self.name: str = kwargs.get("name", None)
+        self.value: Union[str, int, float, datetime.date, datetime.time,
+        dict[str, FormField], list[FormField]] = kwargs.get("value", None)
+        self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, field, value, read_result):
@@ -510,7 +512,7 @@ class FormField:
             confidence=adjust_confidence(field.confidence),
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
                 f"FormField(value_type={self.value_type}, label_data={repr(self.label_data)}, "
                 f"value_data={repr(self.value_data)}, name={self.name}, value={repr(self.value)}, "
@@ -590,11 +592,12 @@ class FieldData:
         *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.page_number = kwargs.get("page_number", None)
-        self.text = kwargs.get("text", None)
-        self.bounding_box = kwargs.get("bounding_box", None)
-        self.field_elements = kwargs.get("field_elements", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.page_number: int = kwargs.get("page_number", None)
+        self.text: str = kwargs.get("text", None)
+        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)
+        self.field_elements: list[Union[FormElement, FormWord,
+        FormLine, FormSelectionMark]] = kwargs.get("field_elements", None)
 
     @classmethod
     def _from_generated(cls, field, read_result):
@@ -627,7 +630,7 @@ class FieldData:
             else None,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"FieldData(page_number={self.page_number}, text={self.text}, bounding_box={self.bounding_box}, "
             f"field_elements={repr(self.field_elements)})"
@@ -714,17 +717,17 @@ class FormPage:
         *selection_marks* property, support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.page_number = kwargs.get("page_number", None)
-        self.text_angle = kwargs.get("text_angle", None)
-        self.width = kwargs.get("width", None)
-        self.height = kwargs.get("height", None)
-        self.unit = kwargs.get("unit", None)
-        self.tables = kwargs.get("tables", None)
-        self.lines = kwargs.get("lines", None)
-        self.selection_marks = kwargs.get("selection_marks", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.page_number: int = kwargs.get("page_number", None)
+        self.text_angle: float = kwargs.get("text_angle", None)
+        self.width: float = kwargs.get("width", None)
+        self.height: float = kwargs.get("height", None)
+        self.unit: str = kwargs.get("unit", None)
+        self.tables: list[FormTable] = kwargs.get("tables", None)
+        self.lines: list[FormLine] = kwargs.get("lines", None)
+        self.selection_marks: list[FormSelectionMark] = kwargs.get("selection_marks", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"FormPage(page_number={self.page_number}, text_angle={self.text_angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, tables={repr(self.tables)}, "
@@ -793,16 +796,16 @@ class FormLine(FormElement):
         The 1-based number of the page in which this content is present.
     :ivar str kind: For FormLine, this is "line".
     :ivar appearance: An object representing the appearance of the line.
-    :vartype appearance: ~azure.ai.formrecognizer.Appearance
+    :vartype appearance: ~azure.ai.formrecognizer.TextAppearance
 
     .. versionadded:: v2.1
         *appearance* property, support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(kind="line", **kwargs)
-        self.words = kwargs.get("words", None)
-        self.appearance = kwargs.get("appearance", None)
+        self.words: list[FormWord] = kwargs.get("words", None)
+        self.appearance: TextAppearance = kwargs.get("appearance", None)
 
     @classmethod
     def _from_generated(cls, line, page):
@@ -821,7 +824,7 @@ class FormLine(FormElement):
             appearance=line_appearance,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"FormLine(text={self.text}, bounding_box={self.bounding_box}, words={repr(self.words)}, "
             f"page_number={self.page_number}, kind={self.kind}, appearance={self.appearance})"
@@ -886,9 +889,9 @@ class FormWord(FormElement):
         Support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(kind="word", **kwargs)
-        self.confidence = kwargs.get("confidence", None)
+        self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, word, page):
@@ -899,7 +902,7 @@ class FormWord(FormElement):
             page_number=page,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"FormWord(text={self.text}, bounding_box={self.bounding_box}, confidence={self.confidence}, "
             f"page_number={self.page_number}, kind={self.kind})"
@@ -960,10 +963,10 @@ class FormSelectionMark(FormElement):
         Support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(kind="selectionMark", **kwargs)
-        self.confidence = kwargs["confidence"]
-        self.state = kwargs["state"]
+        self.confidence: float = kwargs["confidence"]
+        self.state: str = kwargs["state"]
 
     @classmethod
     def _from_generated(cls, mark, page):
@@ -974,7 +977,7 @@ class FormSelectionMark(FormElement):
             page_number=page,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"FormSelectionMark(text={self.text}, bounding_box={self.bounding_box}, confidence={self.confidence}, "
             f"page_number={self.page_number}, state={self.state}, kind={self.kind})"
@@ -1037,14 +1040,14 @@ class FormTable:
         The *bounding_box* property, support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.page_number = kwargs.get("page_number", None)
-        self.cells = kwargs.get("cells", None)
-        self.row_count = kwargs.get("row_count", None)
-        self.column_count = kwargs.get("column_count", None)
-        self.bounding_box = kwargs.get("bounding_box", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.page_number: int = kwargs.get("page_number", None)
+        self.cells: list[FormTableCell] = kwargs.get("cells", None)
+        self.row_count: int = kwargs.get("row_count", None)
+        self.column_count: int = kwargs.get("column_count", None)
+        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"FormTable(page_number={self.page_number}, cells={repr(self.cells)}, row_count={self.row_count}, "
             f"column_count={self.column_count}, bounding_box={self.bounding_box})"
@@ -1119,18 +1122,19 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
         *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.text = kwargs.get("text", None)
-        self.row_index = kwargs.get("row_index", None)
-        self.column_index = kwargs.get("column_index", None)
-        self.row_span = kwargs.get("row_span", 1)
-        self.column_span = kwargs.get("column_span", 1)
-        self.bounding_box = kwargs.get("bounding_box", None)
-        self.confidence = kwargs.get("confidence", None)
-        self.is_header = kwargs.get("is_header", False)
-        self.is_footer = kwargs.get("is_footer", False)
-        self.page_number = kwargs.get("page_number", None)
-        self.field_elements = kwargs.get("field_elements", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.text: str = kwargs.get("text", None)
+        self.row_index: int = kwargs.get("row_index", None)
+        self.column_index: int = kwargs.get("column_index", None)
+        self.row_span: int = kwargs.get("row_span", 1)
+        self.column_span: int = kwargs.get("column_span", 1)
+        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)
+        self.confidence: float = kwargs.get("confidence", None)
+        self.is_header: bool = kwargs.get("is_header", False)
+        self.is_footer: bool = kwargs.get("is_footer", False)
+        self.page_number: int = kwargs.get("page_number", None)
+        self.field_elements: list[Union[FormElement, FormWord,
+        FormLine, FormSelectionMark]] = kwargs.get("field_elements", None)
 
     @classmethod
     def _from_generated(cls, cell, page, read_result):
@@ -1152,7 +1156,7 @@ class FormTableCell:  # pylint:disable=too-many-instance-attributes
             else None,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"FormTableCell(text={self.text}, row_index={self.row_index}, column_index={self.column_index}, "
             f"row_span={self.row_span}, column_span={self.column_span}, bounding_box={self.bounding_box}, "
@@ -1247,16 +1251,16 @@ class CustomFormModel:
         The *model_name* and *properties* properties, support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.model_id = kwargs.get("model_id", None)
-        self.status = kwargs.get("status", None)
-        self.training_started_on = kwargs.get("training_started_on", None)
-        self.training_completed_on = kwargs.get("training_completed_on", None)
-        self.submodels = kwargs.get("submodels", None)
-        self.errors = kwargs.get("errors", None)
-        self.training_documents = kwargs.get("training_documents", None)
-        self.model_name = kwargs.get("model_name", None)
-        self.properties = kwargs.get("properties", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.model_id: str = kwargs.get("model_id", None)
+        self.status: str = kwargs.get("status", None)
+        self.training_started_on: datetime.datetime = kwargs.get("training_started_on", None)
+        self.training_completed_on: datetime.datetime = kwargs.get("training_completed_on", None)
+        self.submodels: list[CustomFormSubmodel] = kwargs.get("submodels", None)
+        self.errors: list[FormRecognizerError] = kwargs.get("errors", None)
+        self.training_documents: list[TrainingDocumentInfo] = kwargs.get("training_documents", None)
+        self.model_name: str = kwargs.get("model_name", None)
+        self.properties: CustomFormModelProperties = kwargs.get("properties", None)
 
     @classmethod
     def _from_generated(cls, model, api_version):
@@ -1303,7 +1307,7 @@ class CustomFormModel:
             model_name=model.model_info.model_name,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"CustomFormModel(model_id={self.model_id}, status={self.status}, "
             f"training_started_on={self.training_started_on}, training_completed_on={self.training_completed_on}, "
@@ -1382,11 +1386,11 @@ class CustomFormSubmodel:
         The *model_id* property, support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.model_id = kwargs.get("model_id", None)
-        self.accuracy = kwargs.get("accuracy", None)
-        self.fields = kwargs.get("fields", None)
-        self.form_type = kwargs.get("form_type", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.model_id: str = kwargs.get("model_id", None)
+        self.accuracy: float = kwargs.get("accuracy", None)
+        self.fields: dict[str, CustomFormModelField] = kwargs.get("fields", None)
+        self.form_type: str = kwargs.get("form_type", None)
 
     @classmethod
     def _from_generated_unlabeled(cls, model):
@@ -1448,7 +1452,7 @@ class CustomFormSubmodel:
             for train_result in model.composed_train_results
         ]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"CustomFormSubmodel(accuracy={self.accuracy}, model_id={self.model_id}, "
             f"fields={repr(self.fields)}, form_type={self.form_type})"
@@ -1498,10 +1502,10 @@ class CustomFormModelField:
         Support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.label = kwargs.get("label", None)
-        self.name = kwargs.get("name", None)
-        self.accuracy = kwargs.get("accuracy", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.label: str = kwargs.get("label", None)
+        self.name: str = kwargs.get("name", None)
+        self.accuracy: float = kwargs.get("accuracy", None)
 
     @classmethod
     def _from_generated_labeled(cls, field):
@@ -1517,7 +1521,7 @@ class CustomFormModelField:
             for idx, field_name in enumerate(fields)
         }
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"CustomFormModelField(label={self.label}, name={self.name}, accuracy={self.accuracy})"[:1024]
 
     def to_dict(self) -> dict:
@@ -1564,12 +1568,12 @@ class TrainingDocumentInfo:
         The *model_id* property, support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.name = kwargs.get("name", None)
-        self.status = kwargs.get("status", None)
-        self.page_count = kwargs.get("page_count", None)
-        self.errors = kwargs.get("errors", None)
-        self.model_id = kwargs.get("model_id", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.name: str = kwargs.get("name", None)
+        self.status: str = kwargs.get("status", None)
+        self.page_count: int = kwargs.get("page_count", None)
+        self.errors: list[FormRecognizerError] = kwargs.get("errors", None)
+        self.model_id: str = kwargs.get("model_id", None)
 
     @classmethod
     def _from_generated(cls, train_result):
@@ -1606,7 +1610,7 @@ class TrainingDocumentInfo:
                 )
         return training_document_info
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"TrainingDocumentInfo(name={self.name}, status={self.status}, page_count={self.page_count}, "
             f"errors={repr(self.errors)}, model_id={self.model_id})"[:1024]
@@ -1655,9 +1659,9 @@ class FormRecognizerError:
         Support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.code: str = kwargs.get("code", None)
+        self.message: str = kwargs.get("message", None)
 
     @classmethod
     def _from_generated(cls, err):
@@ -1667,7 +1671,7 @@ class FormRecognizerError:
             else []
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"FormRecognizerError(code={self.code}, message={self.message})"[:1024]
 
     def to_dict(self) -> dict:
@@ -1712,13 +1716,13 @@ class CustomFormModelInfo:
         The *model_name* and *properties* properties, support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.model_id = kwargs.get("model_id", None)
-        self.status = kwargs.get("status", None)
-        self.training_started_on = kwargs.get("training_started_on", None)
-        self.training_completed_on = kwargs.get("training_completed_on", None)
-        self.model_name = kwargs.get("model_name", None)
-        self.properties = kwargs.get("properties", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.model_id: str = kwargs.get("model_id", None)
+        self.status:str = kwargs.get("status", None)
+        self.training_started_on: datetime.datetime = kwargs.get("training_started_on", None)
+        self.training_completed_on: datetime.datetime = kwargs.get("training_completed_on", None)
+        self.model_name: str = kwargs.get("model_name", None)
+        self.properties: CustomFormModelProperties = kwargs.get("properties", None)
 
     @classmethod
     def _from_generated(cls, model, model_id=None, **kwargs):
@@ -1743,7 +1747,7 @@ class CustomFormModelInfo:
             model_name=model_name,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"CustomFormModelInfo(model_id={self.model_id}, status={self.status}, "
             f"training_started_on={self.training_started_on}, training_completed_on={self.training_completed_on}, "
@@ -1795,9 +1799,9 @@ class AccountProperties:
         Support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.custom_model_count = kwargs.get("custom_model_count", None)
-        self.custom_model_limit = kwargs.get("custom_model_limit", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.custom_model_count: int = kwargs.get("custom_model_count", None)
+        self.custom_model_limit: int = kwargs.get("custom_model_limit", None)
 
     @classmethod
     def _from_generated(cls, model):
@@ -1806,7 +1810,7 @@ class AccountProperties:
             custom_model_limit=model.limit,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"AccountProperties(custom_model_count={self.custom_model_count}, "
             f"custom_model_limit={self.custom_model_limit})"
@@ -1846,8 +1850,8 @@ class CustomFormModelProperties:
         Support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.is_composed_model = kwargs.get("is_composed_model", False)
+    def __init__(self, **kwargs: Any) -> None:
+        self.is_composed_model: bool = kwargs.get("is_composed_model", False)
 
     @classmethod
     def _from_generated(cls, model_info):
@@ -1855,7 +1859,7 @@ class CustomFormModelProperties:
             return cls(is_composed_model=model_info.attributes.is_composed)
         return cls(is_composed_model=False)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"CustomFormModelProperties(is_composed_model={self.is_composed_model})"
 
     def to_dict(self) -> dict:
@@ -1886,9 +1890,9 @@ class DocumentSpan:
     :ivar int length: Number of characters in the content represented by the span.
     """
 
-    def __init__(self, **kwargs):
-        self.offset = kwargs.get("offset", None)
-        self.length = kwargs.get("length", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.offset: int = kwargs.get("offset", None)
+        self.length: int = kwargs.get("length", None)
 
     @classmethod
     def _from_generated(cls, span):
@@ -1899,7 +1903,7 @@ class DocumentSpan:
             length=span.length,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"DocumentSpan(offset={self.offset}, length={self.length})"
 
     def to_dict(self) -> dict:
@@ -1938,9 +1942,9 @@ class TextAppearance:
         Support for *to_dict* and *from_dict* methods
     """
 
-    def __init__(self, **kwargs):
-        self.style_name = kwargs.get("style_name", None)
-        self.style_confidence = kwargs.get("style_confidence", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.style_name: str = kwargs.get("style_name", None)
+        self.style_confidence: float = kwargs.get("style_confidence", None)
 
     @classmethod
     def _from_generated(cls, appearance):
@@ -1951,7 +1955,7 @@ class TextAppearance:
             style_confidence=appearance.style.confidence,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"TextAppearance(style_name={self.style_name}, style_confidence={self.style_confidence})"
 
     def to_dict(self) -> dict:
@@ -1992,11 +1996,11 @@ class BoundingRegion:
         The 1-based number of the page in which this content is present.
     """
 
-    def __init__(self, **kwargs):
-        self.page_number = kwargs.get("page_number", None)
-        self.polygon = kwargs.get("polygon", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.page_number: int = kwargs.get("page_number", None)
+        self.polygon: Sequence[Point] = kwargs.get("polygon", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"BoundingRegion(page_number={self.page_number}, polygon={self.polygon})"
 
     @classmethod
@@ -2057,15 +2061,15 @@ class AddressValue:
     :vartype street_address: Optional[str]
     """
 
-    def __init__(self, **kwargs):
-        self.house_number = kwargs.get("house_number", None)
-        self.po_box = kwargs.get("po_box", None)
-        self.road = kwargs.get("road", None)
-        self.city = kwargs.get("city", None)
-        self.state = kwargs.get("state", None)
-        self.postal_code = kwargs.get("postal_code", None)
-        self.country_region = kwargs.get("country_region", None)
-        self.street_address = kwargs.get("street_address", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.house_number: Optional[str] = kwargs.get("house_number", None)
+        self.po_box: Optional[str] = kwargs.get("po_box", None)
+        self.road: Optional[str] = kwargs.get("road", None)
+        self.city: Optional[str] = kwargs.get("city", None)
+        self.state: Optional[str] = kwargs.get("state", None)
+        self.postal_code: Optional[str] = kwargs.get("postal_code", None)
+        self.country_region: Optional[str] = kwargs.get("country_region", None)
+        self.street_address: Optional[str] = kwargs.get("street_address", None)
 
     @classmethod
     def _from_generated(cls, data):
@@ -2080,7 +2084,7 @@ class AddressValue:
             street_address=data.street_address,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"AddressValue(house_number={self.house_number}, po_box={self.po_box}, road={self.road}, "
             f"city={self.city}, state={self.state}, postal_code={self.postal_code}, "
@@ -2133,9 +2137,9 @@ class CurrencyValue:
     :vartype symbol: Optional[str]
     """
 
-    def __init__(self, **kwargs):
-        self.amount = kwargs.get("amount", None)
-        self.symbol = kwargs.get("symbol", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.amount: float = kwargs.get("amount", None)
+        self.symbol: Optional[str] = kwargs.get("symbol", None)
 
     @classmethod
     def _from_generated(cls, data):
@@ -2149,7 +2153,7 @@ class CurrencyValue:
             return f"{self.symbol}{self.amount}"
         return f"{self.amount}"
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"CurrencyValue(amount={self.amount}, symbol={self.symbol})"
 
     def to_dict(self) -> dict:
@@ -2190,10 +2194,10 @@ class DocumentLanguage:
     :vartype confidence: float
     """
 
-    def __init__(self, **kwargs):
-        self.locale = kwargs.get("locale", None)
-        self.spans = kwargs.get("spans", None)
-        self.confidence = kwargs.get("confidence", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.locale: str = kwargs.get("locale", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, language):
@@ -2203,7 +2207,7 @@ class DocumentLanguage:
             confidence=language.confidence,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"DocumentLanguage(locale={self.locale}, spans={repr(self.spans)}, confidence={self.confidence})"
 
     def to_dict(self) -> dict:
@@ -2252,12 +2256,12 @@ class AnalyzedDocument:
     :vartype confidence: float
     """
 
-    def __init__(self, **kwargs):
-        self.doc_type = kwargs.get("doc_type", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)
-        self.spans = kwargs.get("spans", None)
-        self.fields = kwargs.get("fields", None)
-        self.confidence = kwargs.get("confidence", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.doc_type: str = kwargs.get("doc_type", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.fields: Optional[dict[str, DocumentField]] = kwargs.get("fields", None)
+        self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, document):
@@ -2274,7 +2278,7 @@ class AnalyzedDocument:
             confidence=document.confidence,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"AnalyzedDocument(doc_type={self.doc_type}, bounding_regions={repr(self.bounding_regions)}, "
             f"spans={repr(self.spans)}, fields={repr(self.fields)}, confidence={self.confidence})"
@@ -2347,13 +2351,15 @@ class DocumentField:
     :vartype confidence: float
     """
 
-    def __init__(self, **kwargs):
-        self.value_type = kwargs.get("value_type", None)
-        self.value = kwargs.get("value", None)
-        self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)
-        self.spans = kwargs.get("spans", None)
-        self.confidence = kwargs.get("confidence", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.value_type: str = kwargs.get("value_type", None)
+        self.value: Optional[Union[str, int, float, datetime.date, datetime.time,
+        CurrencyValue, AddressValue, dict[str, DocumentField], list[DocumentField]]
+        ] = kwargs.get("value", None)
+        self.content: Optional[str] = kwargs.get("content", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.spans: Optional[list[DocumentSpan]] = kwargs.get("spans", None)
+        self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, field):
@@ -2384,7 +2390,7 @@ class DocumentField:
             confidence=field.confidence if field.confidence else None,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentField(value_type={self.value_type}, value={repr(self.value)}, content={self.content}, "
             f"bounding_regions={repr(self.bounding_regions)}, spans={repr(self.spans)}, "
@@ -2472,10 +2478,10 @@ class DocumentKeyValueElement:
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
 
-    def __init__(self, **kwargs):
-        self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)
-        self.spans = kwargs.get("spans", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.content: str = kwargs.get("content", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, element):
@@ -2492,7 +2498,7 @@ class DocumentKeyValueElement:
             else [],
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentKeyValueElement(content={self.content}, bounding_regions={repr(self.bounding_regions)}, "
             f"spans={repr(self.spans)})"
@@ -2544,10 +2550,10 @@ class DocumentKeyValuePair:
     :vartype confidence: float
     """
 
-    def __init__(self, **kwargs):
-        self.key = kwargs.get("key", None)
-        self.value = kwargs.get("value", None)
-        self.confidence = kwargs.get("confidence", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.key: DocumentKeyValueElement = kwargs.get("key", None)
+        self.value: Optional[DocumentKeyValueElement] = kwargs.get("value", None)
+        self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, key_value_pair):
@@ -2561,7 +2567,7 @@ class DocumentKeyValuePair:
             confidence=key_value_pair.confidence,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentKeyValuePair(key={repr(self.key)}, value={repr(self.value)}, "
             f"confidence={self.confidence})"
@@ -2609,11 +2615,11 @@ class DocumentLine:
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         self._parent = kwargs.get("_parent", None)
-        self.content = kwargs.get("content", None)
-        self.polygon = kwargs.get("polygon", None)
-        self.spans = kwargs.get("spans", None)
+        self.content: str = kwargs.get("content", None)
+        self.polygon: Optional[Sequence[Point]] = kwargs.get("polygon", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, line, document_page):
@@ -2624,7 +2630,7 @@ class DocumentLine:
             spans=prepare_document_spans(line.spans),
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"DocumentLine(content={self.content}, polygon={self.polygon}, spans={repr(self.spans)})"
 
     def to_dict(self) -> dict:
@@ -2693,11 +2699,11 @@ class DocumentParagraph:
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
 
-    def __init__(self, **kwargs):
-        self.role = kwargs.get("role", None)
-        self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)
-        self.spans = kwargs.get("spans", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.role: Optional[str] = kwargs.get("role", None)
+        self.content: str = kwargs.get("content", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, paragraph):
@@ -2708,7 +2714,7 @@ class DocumentParagraph:
             spans=prepare_document_spans(paragraph.spans),
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentParagraph(role={self.role}, content={self.content}, "
             f"bounding_regions={repr(self.bounding_regions)}, spans={repr(self.spans)})"
@@ -2779,16 +2785,16 @@ class DocumentPage:
     :vartype lines: Optional[list[~azure.ai.formrecognizer.DocumentLine]]
     """
 
-    def __init__(self, **kwargs):
-        self.page_number = kwargs.get("page_number", None)
-        self.angle = kwargs.get("angle", None)
-        self.width = kwargs.get("width", None)
-        self.height = kwargs.get("height", None)
-        self.unit = kwargs.get("unit", None)
-        self.spans = kwargs.get("spans", None)
-        self.words = kwargs.get("words", None)
-        self.selection_marks = kwargs.get("selection_marks", None)
-        self.lines = kwargs.get("lines", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.page_number: int = kwargs.get("page_number", None)
+        self.angle: Optional[float] = kwargs.get("angle", None)
+        self.width: Optional[float] = kwargs.get("width", None)
+        self.height: Optional[float] = kwargs.get("height", None)
+        self.unit: Optional[str] = kwargs.get("unit", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.words: Optional[list[DocumentWord]] = kwargs.get("words", None)
+        self.selection_marks: Optional[list[DocumentSelectionMark]] = kwargs.get("selection_marks", None)
+        self.lines: Optional[list[DocumentLine]] = kwargs.get("lines", None)
 
     @classmethod
     def _from_generated(cls, page):
@@ -2814,7 +2820,7 @@ class DocumentPage:
             spans=prepare_document_spans(page.spans),
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentPage(page_number={self.page_number}, angle={self.angle}, "
             f"width={self.width}, height={self.height}, unit={self.unit}, lines={repr(self.lines)}, "
@@ -2892,11 +2898,11 @@ class DocumentSelectionMark:
     :vartype confidence: float
     """
 
-    def __init__(self, **kwargs):
-        self.polygon = kwargs.get("polygon", None)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
-        self.state = kwargs.get("state", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.polygon: Optional[Sequence[Point]] = kwargs.get("polygon", None)
+        self.span: DocumentSpan = kwargs.get("span", None)
+        self.confidence: float = kwargs.get("confidence", None)
+        self.state: str = kwargs.get("state", None)
 
     @classmethod
     def _from_generated(cls, mark):
@@ -2909,7 +2915,7 @@ class DocumentSelectionMark:
             confidence=mark.confidence,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentSelectionMark(state={self.state}, span={repr(self.span)}, "
             f"confidence={self.confidence}, polygon={self.polygon})"
@@ -2960,10 +2966,10 @@ class DocumentStyle:
     :vartype confidence: float
     """
 
-    def __init__(self, **kwargs):
-        self.is_handwritten = kwargs.get("is_handwritten", None)
-        self.spans = kwargs.get("spans", None)
-        self.confidence = kwargs.get("confidence", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.is_handwritten: Optional[bool] = kwargs.get("is_handwritten", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
+        self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, style):
@@ -2975,7 +2981,7 @@ class DocumentStyle:
             confidence=style.confidence,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentStyle(is_handwritten={self.is_handwritten}, spans={repr(self.spans)}, "
             f"confidence={self.confidence})"
@@ -3027,12 +3033,12 @@ class DocumentTable:
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
 
-    def __init__(self, **kwargs):
-        self.row_count = kwargs.get("row_count", None)
-        self.column_count = kwargs.get("column_count", None)
-        self.cells = kwargs.get("cells", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)
-        self.spans = kwargs.get("spans", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.row_count: int = kwargs.get("row_count", None)
+        self.column_count: int = kwargs.get("column_count", None)
+        self.cells: list[DocumentTableCell] = kwargs.get("cells", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, table):
@@ -3046,7 +3052,7 @@ class DocumentTable:
             spans=prepare_document_spans(table.spans),
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentTable(row_count={self.row_count}, column_count={self.column_count}, "
             f"cells={repr(self.cells)}, bounding_regions={repr(self.bounding_regions)}, "
@@ -3118,15 +3124,15 @@ class DocumentTableCell:
     :vartype spans: list[~azure.ai.formrecognizer.DocumentSpan]
     """
 
-    def __init__(self, **kwargs):
-        self.kind = kwargs.get("kind", "content")
-        self.row_index = kwargs.get("row_index", None)
-        self.column_index = kwargs.get("column_index", None)
-        self.row_span = kwargs.get("row_span", 1)
-        self.column_span = kwargs.get("column_span", 1)
-        self.content = kwargs.get("content", None)
-        self.bounding_regions = kwargs.get("bounding_regions", None)
-        self.spans = kwargs.get("spans", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.kind: Optional[str] = kwargs.get("kind", "content")
+        self.row_index: int = kwargs.get("row_index", None)
+        self.column_index: int = kwargs.get("column_index", None)
+        self.row_span: Optional[int] = kwargs.get("row_span", 1)
+        self.column_span: Optional[int] = kwargs.get("column_span", 1)
+        self.content: str = kwargs.get("content", None)
+        self.bounding_regions: Optional[list[BoundingRegion]] = kwargs.get("bounding_regions", None)
+        self.spans: list[DocumentSpan] = kwargs.get("spans", None)
 
     @classmethod
     def _from_generated(cls, cell):
@@ -3148,7 +3154,7 @@ class DocumentTableCell:
             else [],
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentTableCell(kind={self.kind}, row_index={self.row_index}, "
             f"column_index={self.column_index}, row_span={self.row_span}, "
@@ -3231,18 +3237,18 @@ class OperationSummary:
     :vartype tags: Optional[dict[str, str]]
     """
 
-    def __init__(self, **kwargs):
-        self.operation_id = kwargs.get("operation_id", None)
-        self.status = kwargs.get("status", None)
-        self.percent_completed = kwargs.get("percent_completed", 0)
-        self.created_on = kwargs.get("created_on", None)
-        self.last_updated_on = kwargs.get("last_updated_on", None)
-        self.kind = kwargs.get("kind", None)
-        self.resource_location = kwargs.get("resource_location", None)
-        self.api_version = kwargs.get("api_version", None)
-        self.tags = kwargs.get("tags", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.operation_id: str = kwargs.get("operation_id", None)
+        self.status: str = kwargs.get("status", None)
+        self.percent_completed: Optional[int] = kwargs.get("percent_completed", 0)
+        self.created_on: datetime.datetime = kwargs.get("created_on", None)
+        self.last_updated_on: datetime.datetime = kwargs.get("last_updated_on", None)
+        self.kind: str = kwargs.get("kind", None)
+        self.resource_location: str = kwargs.get("resource_location", None)
+        self.api_version: Optional[str] = kwargs.get("api_version", None)
+        self.tags: Optional[dict[str, str]] = kwargs.get("tags", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"OperationSummary(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
@@ -3339,12 +3345,12 @@ class OperationDetails(OperationSummary):
     :vartype tags: Optional[dict[str, str]]
     """
 
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any) -> None:
         super().__init__(**kwargs)
-        self.error = kwargs.get("error", None)
-        self.result = kwargs.get("result", None)
+        self.error: Optional[DocumentAnalysisError] = kwargs.get("error", None)
+        self.result: Optional[DocumentModelDetails] = kwargs.get("result", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"OperationDetails(operation_id={self.operation_id}, status={self.status}, "
             f"percent_completed={self.percent_completed}, created_on={self.created_on}, "
@@ -3429,11 +3435,11 @@ class DocumentWord:
     :vartype confidence: float
     """
 
-    def __init__(self, **kwargs):
-        self.content = kwargs.get("content", None)
-        self.polygon = kwargs.get("polygon", None)
-        self.span = kwargs.get("span", None)
-        self.confidence = kwargs.get("confidence", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.content: str = kwargs.get("content", None)
+        self.polygon: Optional[Sequence[Point]] = kwargs.get("polygon", None)
+        self.span: DocumentSpan = kwargs.get("span", None)
+        self.confidence: float = kwargs.get("confidence", None)
 
     @classmethod
     def _from_generated(cls, word):
@@ -3446,7 +3452,7 @@ class DocumentWord:
             confidence=word.confidence,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentWord(content={self.content}, polygon={self.polygon}, "
             f"span={repr(self.span)}, confidence={self.confidence})"
@@ -3512,17 +3518,17 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
     :vartype documents: Optional[list[~azure.ai.formrecognizer.AnalyzedDocument]]
     """
 
-    def __init__(self, **kwargs):
-        self.api_version = kwargs.get("api_version", None)
-        self.model_id = kwargs.get("model_id", None)
-        self.content = kwargs.get("content", None)
-        self.languages = kwargs.get("languages", None)
-        self.pages = kwargs.get("pages", None)
-        self.paragraphs = kwargs.get("paragraphs", None)
-        self.tables = kwargs.get("tables", None)
-        self.key_value_pairs = kwargs.get("key_value_pairs", None)
-        self.styles = kwargs.get("styles", None)
-        self.documents = kwargs.get("documents", None)
+    def __init__(self, **kwargs: Any) -> None:
+        self.api_version: str = kwargs.get("api_version", None)
+        self.model_id: str = kwargs.get("model_id", None)
+        self.content: str = kwargs.get("content", None)
+        self.languages: Optional[list[DocumentLanguage]] = kwargs.get("languages", None)
+        self.pages: list[DocumentPage] = kwargs.get("pages", None)
+        self.paragraphs: Optional[list[DocumentParagraph]] = kwargs.get("paragraphs", None)
+        self.tables: Optional[list[DocumentTable]] = kwargs.get("tables", None)
+        self.key_value_pairs: Optional[list[DocumentKeyValuePair]] = kwargs.get("key_value_pairs", None)
+        self.styles: Optional[list[DocumentStyle]] = kwargs.get("styles", None)
+        self.documents: Optional[list[AnalyzedDocument]] = kwargs.get("documents", None)
 
     @classmethod
     def _from_generated(cls, response):
@@ -3559,7 +3565,7 @@ class AnalyzeResult:  # pylint: disable=too-many-instance-attributes
             else [],
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"AnalyzeResult(api_version={self.api_version}, model_id={self.model_id}, "
             f"content={self.content}, languages={repr(self.languages)}, "
@@ -3655,13 +3661,13 @@ class DocumentModelSummary:
         self,
         **kwargs
     ):
-        self.model_id = kwargs.get("model_id", None)
-        self.description = kwargs.get("description", None)
-        self.created_on = kwargs.get("created_on", None)
-        self.api_version = kwargs.get("api_version", None)
-        self.tags = kwargs.get("tags", None)
+        self.model_id: str = kwargs.get("model_id", None)
+        self.description: Optional[str] = kwargs.get("description", None)
+        self.created_on: datetime.datetime = kwargs.get("created_on", None)
+        self.api_version: Optional[str] = kwargs.get("api_version", None)
+        self.tags: Optional[dict[str, str]] = kwargs.get("tags", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentModelSummary(model_id={self.model_id}, description={self.description}, "
             f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags})"
@@ -3728,9 +3734,9 @@ class DocumentModelDetails(DocumentModelSummary):
         **kwargs
     ):
         super().__init__(**kwargs)
-        self.doc_types = kwargs.get("doc_types", None)
+        self.doc_types: Optional[dict[str, DocumentTypeDetails]] = kwargs.get("doc_types", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentModelDetails(model_id={self.model_id}, description={self.description}, "
             f"created_on={self.created_on}, api_version={self.api_version}, tags={self.tags}, "
@@ -3802,12 +3808,12 @@ class DocumentTypeDetails:
         self,
         **kwargs
     ):
-        self.description = kwargs.get("description", None)
-        self.build_mode = kwargs.get("build_mode", None)
-        self.field_schema = kwargs.get("field_schema", None)
-        self.field_confidence = kwargs.get("field_confidence", None)
+        self.description: Optional[str] = kwargs.get("description", None)
+        self.build_mode: Optional[str] = kwargs.get("build_mode", None)
+        self.field_schema: dict[str, Any] = kwargs.get("field_schema", None)
+        self.field_confidence: Optional[dict[str, float]] = kwargs.get("field_confidence", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentTypeDetails(description={self.description}, build_mode={self.build_mode}, "
             f"field_schema={self.field_schema}, field_confidence={self.field_confidence})"
@@ -3864,10 +3870,10 @@ class CustomDocumentModelsDetails:
         self,
         **kwargs
     ):
-        self.count = kwargs.get("count", None)
-        self.limit = kwargs.get("limit", None)
+        self.count: int = kwargs.get("count", None)
+        self.limit: int = kwargs.get("limit", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"CustomDocumentModelsDetails(count={self.count}, limit={self.limit})"
 
     @classmethod
@@ -3914,9 +3920,9 @@ class ResourceDetails:
         self,
         **kwargs
     ):
-        self.custom_document_models = kwargs.get("custom_document_models", None)
+        self.custom_document_models: CustomDocumentModelsDetails = kwargs.get("custom_document_models", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"ResourceDetails(custom_document_models={repr(self.custom_document_models)})"
 
     @classmethod
@@ -3973,13 +3979,13 @@ class DocumentAnalysisError:
         self,
         **kwargs
     ):
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
-        self.target = kwargs.get("target", None)
-        self.details = kwargs.get("details", None)
-        self.innererror = kwargs.get("innererror", None)
+        self.code: str = kwargs.get("code", None)
+        self.message: str = kwargs.get("message", None)
+        self.target: Optional[str] = kwargs.get("target", None)
+        self.details: Optional[list[DocumentAnalysisError]] = kwargs.get("details", None)
+        self.innererror: Optional[DocumentAnalysisInnerError] = kwargs.get("innererror", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentAnalysisError(code={self.code}, message={self.message}, target={self.target}, "
             f"details={repr(self.details)}, innererror={repr(self.innererror)})"
@@ -4043,11 +4049,11 @@ class DocumentAnalysisInnerError:
         **kwargs
     ):
 
-        self.code = kwargs.get("code", None)
-        self.message = kwargs.get("message", None)
-        self.innererror = kwargs.get("innererror", None)
+        self.code: str = kwargs.get("code", None)
+        self.message: Optional[str] = kwargs.get("message", None)
+        self.innererror: Optional[DocumentAnalysisInnerError] = kwargs.get("innererror", None)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return (
             f"DocumentAnalysisInnerError(code={self.code}, message={self.message}, "
             f"innererror={repr(self.innererror)})"
