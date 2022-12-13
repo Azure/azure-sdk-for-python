@@ -93,7 +93,6 @@ class TestSipRoutingClientE2EAsync(PhoneNumbersTestCase):
     async def test_set_trunks_empty_list(self):
         """Verification of bug fix. SDK shouldn't send empty PATCH, otherwise it will receive exception.
         This situation occurs, when sending empty trunks list to already empty trunk configuration."""
-        self._sip_routing_client = self._get_sip_client_managed_identity()
         async with self._sip_routing_client:
             try: 
                 await self._sip_routing_client.set_trunks([])
