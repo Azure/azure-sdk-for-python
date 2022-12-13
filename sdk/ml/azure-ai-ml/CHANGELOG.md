@@ -1,5 +1,10 @@
 # Release History
 
+## 1.3.0 (Unreleased)
+
+### Other Changes
+- Switched compute operations to go through 2022-12-01-preview API version.
+
 ## 1.2.0 (2022-12-05)
 
 ### Breaking Changes
