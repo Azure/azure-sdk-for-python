@@ -24,7 +24,7 @@ from azure.ai.ml._scope_dependent_operations import (
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
-    _create_or_update_autoincrement,
+    _get_next_version_from_container,
     _get_latest,
     _resolve_label_to_asset,
 )
@@ -81,63 +81,43 @@ class EnvironmentOperations(_ScopeDependentOperations):
         """
         try:
             sas_uri = None
-
-            if not environment.version and self._registry_name:
-                msg = "Environment version is required for registry"
-                raise ValidationException(
-                    message=msg,
-                    no_personal_data_message=msg,
-                    target=ErrorTarget.ENVIRONMENT,
-                    error_category=ErrorCategory.USER_ERROR,
-                    error_type=ValidationErrorType.MISSING_FIELD,
-                )
-
-            if self._registry_name:
-                sas_uri = get_sas_uri_for_registry_asset(
-                    service_client=self._service_client,
-                    name=environment.name,
-                    version=environment.version,
-                    resource_group=self._resource_group_name,
-                    registry=self._registry_name,
-                    body=get_asset_body_for_registry_storage(
-                        self._registry_name,
-                        "environments",
-                        environment.name,
-                        environment.version,
-                    ),
-                )
-                if not sas_uri:  # This means the env already exists and we just get the env
-                    module_logger.debug(
-                        "Getting the existing asset name: %s, version: %s", environment.name, environment.version
+            if not environment.version and environment._auto_increment_version:
+                environment.version = _get_next_version_from_container(name=environment.name,
+                            container_operation=self._containers_operations,
+                            resource_group_name=self._operation_scope.resource_group_name,
+                            workspace_name=self._workspace_name,
+                            registry_name=self._registry_name,
+                            **self._kwargs,
+                        )
+                if self._registry_name:
+                    sas_uri = get_sas_uri_for_registry_asset(
+                        service_client=self._service_client,
+                        name=environment.name,
+                        version=environment.version,
+                        resource_group=self._resource_group_name,
+                        registry=self._registry_name,
+                        body=get_asset_body_for_registry_storage(
+                            self._registry_name,
+                            "environments",
+                            environment.name,
+                            environment.version,
+                        ),
                     )
-                    return self.get(name=environment.name, version=environment.version)
-
-            environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
-
-            env_version_resource = environment._to_rest_object()
-
-            if environment._auto_increment_version:
-                env_rest_obj = _create_or_update_autoincrement(
-                    name=environment.name,
-                    body=env_version_resource,
-                    version_operation=self._version_operations,
-                    container_operation=self._containers_operations,
-                    workspace_name=self._workspace_name,
-                    **self._scope_kwargs,
-                    **self._kwargs,
-                )
-            else:
-                env_rest_obj = (
-                    self._version_operations.begin_create_or_update(
+                    if not sas_uri:  # This means the env already exists and we just get the env
+                        module_logger.debug(
+                            "Getting the existing asset name: %s, version: %s", environment.name, environment.version
+                        )
+                        return self.get(name=environment.name, version=environment.version)
+                environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
+                env_version_resource = environment._to_rest_object()
+                env_rest_obj = self._version_operations.begin_create_or_update(
                         name=environment.name,
                         version=environment.version,
                         registry_name=self._registry_name,
                         body=env_version_resource,
                         **self._scope_kwargs,
                         **self._kwargs,
-                    ).result()
-                    if self._registry_name
-                    else self._version_operations.create_or_update(
+                    ).result() if self._registry_name else self._version_operations.create_or_update(
                         name=environment.name,
                         version=environment.version,
                         workspace_name=self._workspace_name,
@@ -145,11 +125,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         **self._scope_kwargs,
                         **self._kwargs,
                     )
-                )
-
-            if not env_rest_obj and self._registry_name:
-                env_rest_obj = self._get(name=environment.name, version=environment.version)
-            return Environment._from_rest_object(env_rest_obj)
+                
+                if not env_rest_obj and self._registry_name:
+                    env_rest_obj = self._get(name=environment.name, version=environment.version)
+                return Environment._from_rest_object(env_rest_obj)
         except Exception as ex: # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
