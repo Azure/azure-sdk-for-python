@@ -242,10 +242,6 @@ def install_package_locally(service_name, sdk_name):
     print_exec('pip install -r dev_requirements.txt')
 
 
-def prepare_test_env(service_name, sdk_name):
-    install_package_locally(service_name, sdk_name)
-
-
 @return_origin_path
 def run_test_proc(sdk_name, service_name, sdk_folder):
     # run test
@@ -281,7 +277,7 @@ def run_test_proc(sdk_name, service_name, sdk_folder):
 
 
 def run_test(sdk_name, service_name, sdk_folder):
-    prepare_test_env(service_name, sdk_name)
+    install_package_locally(service_name, sdk_name)
     test_result = run_test_proc(sdk_name, service_name, sdk_folder)
     return test_result
 
