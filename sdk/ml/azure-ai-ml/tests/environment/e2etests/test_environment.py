@@ -88,6 +88,7 @@ class TestEnvironment(AzureRecordedTestCase):
         assert env_dump["id"] == ARM_ID_PREFIX + environment_id
         assert env_dump["image"] == environment.image
 
+    @pytest.mark.skip(reason="This test not recording, task : 2128097")
     def test_environment_create_or_update_docker_context(self, client: MLClient, env_name: Callable[[str], str]) -> None:
         params_override = [{"name": env_name("name")}]
         env = load_environment(
