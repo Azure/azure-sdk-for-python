@@ -66,3 +66,24 @@ def test_mixin_operation_valid():
         _passes(client.check_dns_name_availability, "1", domain_name_label="2")
     with get_client(api_version="2015-06-15") as client:
         _passes(client.check_dns_name_availability, "1", domain_name_label="2")
+
+def test_mixin_operation_removed():
+    with get_client() as client:
+        _passes(client.check_dns_name_availability, "1", domain_name_label="2")
+
+    with get_client(api_version="2021-02-01-preview") as client:
+        with pytest.raises(ValueError) as ex:
+            client.check_dns_name_availability("1", domain_name_label="2")
+        assert str(ex.value) == "'check_dns_name_availability' is not available in API version 2021-02-01-preview. Pass service API version 2015-06-15 or newer to your client."
+
+def test_parameter_not_added_yet():
+    with get_client() as client:
+        _passes(client.virtual_network_peerings.begin_create_or_update, "1", "2", "3", models.VirtualNetworkPeering(), sync_remote_address_space="4")
+
+    with get_client(api_version="2015-06-15") as client:
+        with pytest.raises(ValueError) as ex:
+            client.virtual_network_peerings.begin_create_or_update("1", "2", "3", models.VirtualNetworkPeering(), sync_remote_address_space="4")
+        assert str(ex.value) == "'virtual_network_peerings' is not available in API version 2015-06-15. Pass service API version 2016-09-01 or newer to your client."
+
+def test_parameter_valid():
+    ...

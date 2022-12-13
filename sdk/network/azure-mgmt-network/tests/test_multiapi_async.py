@@ -74,3 +74,13 @@ async def test_mixin_operation_valid():
         await _passes(client.check_dns_name_availability, "1", domain_name_label="2")
     async with get_client(api_version="2015-06-15") as client:
         await _passes(client.check_dns_name_availability, "1", domain_name_label="2")
+
+@pytest.mark.asyncio
+async def test_mixin_operation_removed():
+    async with get_client() as client:
+        await _passes(client.check_dns_name_availability, "1", domain_name_label="2")
+
+    async with get_client(api_version="2021-02-01-preview") as client:
+        with pytest.raises(ValueError) as ex:
+            await client.check_dns_name_availability("1", domain_name_label="2")
+        assert str(ex.value) == "'check_dns_name_availability' is not available in API version 2021-02-01-preview. Pass service API version 2015-06-15 or newer to your client."
