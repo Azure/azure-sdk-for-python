@@ -76,6 +76,7 @@ def mock_batch_deployment_operations(
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestBatchDeploymentOperations:
     def test_batch_deployment_create(
         self,

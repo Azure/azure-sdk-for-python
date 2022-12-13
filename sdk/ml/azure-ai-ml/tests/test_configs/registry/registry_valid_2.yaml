@@ -11,7 +11,5 @@ replication_locations:
   - location: EastUS
     storage_config:
     - /subscriptions/sub_id/resourceGroups/some_rg/providers/Microsoft.Storage/storageAccounts/some_storage_account
-    - storage_account_hns: False
-      storage_account_type: Standard_RAGRS
 container_registry:
   acr_account_sku: premium

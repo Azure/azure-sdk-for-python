@@ -12,7 +12,7 @@ from typing import IO, Any, AnyStr, Dict, Union
 from azure.ai.ml._restclient.v2022_05_01.models import DatastoreData, DatastoreType
 from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, CommonYamlFields
-from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
 from azure.ai.ml.entities._util import find_type_in_override
@@ -55,7 +55,7 @@ class Datastore(Resource, RestTranslatableMixin, ABC):
             **kwargs,
         )
 
-        self.credentials = NoneCredentials() if credentials is None else credentials
+        self.credentials = NoneCredentialConfiguration() if credentials is None else credentials
 
     @property
     def type(self) -> str:

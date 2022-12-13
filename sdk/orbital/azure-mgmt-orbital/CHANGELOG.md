@@ -1,5 +1,11 @@
 # Release History
 
+## 1.1.0b1 (2022-11-30)
+
+### Features Added
+
+  - Added model ContactsStatus
+
 ## 1.0.0 (2022-06-16)
 
 **Features**

@@ -1199,7 +1199,7 @@ class SearchAlongRouteOptions(object):
         self.route = route
 
 
-class SearchAddressBatchItem(object):
+class SearchAddressBatchItem(_SearchAddressBatchItem):
     """An item returned from Search Address Batch service call.
 
     Variables are only populated by the server, and will be ignored when sending a request.

@@ -45,7 +45,7 @@ def build_list_request(
     top: Optional[int] = None,
     orderby: Optional[str] = None,
     filter: Optional[str] = None,
-    result_type: Optional[Union[str, "_models.ResultType"]] = None,
+    result_type: Optional[Union[str, _models.ResultType]] = None,
     **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
@@ -117,7 +117,7 @@ class MetricsOperations:
         top: Optional[int] = None,
         orderby: Optional[str] = None,
         filter: Optional[str] = None,
-        result_type: Optional[Union[str, "_models.ResultType"]] = None,
+        result_type: Optional[Union[str, _models.ResultType]] = None,
         **kwargs: Any
     ) -> _models.Response:
         """**Lists the metric values for a resource**.

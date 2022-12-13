@@ -11,76 +11,80 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class ActionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the automation rule action
-    """
+    """The type of the automation rule action."""
 
-    #: Modify an object's properties.
+    #: Modify an object's properties
     MODIFY_PROPERTIES = "ModifyProperties"
-    #: Run a playbook on an object.
+    #: Run a playbook on an object
     RUN_PLAYBOOK = "RunPlaybook"
 
-class AlertDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Alert detail
-    """
 
-    #: Alert display name.
+class AlertDetail(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Alert detail."""
+
+    #: Alert display name
     DISPLAY_NAME = "DisplayName"
-    #: Alert severity.
+    #: Alert severity
     SEVERITY = "Severity"
 
+
 class AlertRuleKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the alert rule
-    """
+    """The kind of the alert rule."""
 
     SCHEDULED = "Scheduled"
     MICROSOFT_SECURITY_INCIDENT_CREATION = "MicrosoftSecurityIncidentCreation"
     FUSION = "Fusion"
+    ML_BEHAVIOR_ANALYTICS = "MLBehaviorAnalytics"
+    THREAT_INTELLIGENCE = "ThreatIntelligence"
+    NRT = "NRT"
+
 
 class AlertSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The severity of the alert
-    """
+    """The severity of the alert."""
 
-    #: High severity.
+    #: High severity
     HIGH = "High"
-    #: Medium severity.
+    #: Medium severity
     MEDIUM = "Medium"
-    #: Low severity.
+    #: Low severity
     LOW = "Low"
-    #: Informational severity.
+    #: Informational severity
     INFORMATIONAL = "Informational"
 
-class AlertStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The lifecycle status of the alert.
-    """
 
-    #: Unknown value.
+class AlertStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The lifecycle status of the alert."""
+
+    #: Unknown value
     UNKNOWN = "Unknown"
-    #: New alert.
+    #: New alert
     NEW = "New"
-    #: Alert closed after handling.
+    #: Alert closed after handling
     RESOLVED = "Resolved"
-    #: Alert dismissed as false positive.
+    #: Alert dismissed as false positive
     DISMISSED = "Dismissed"
-    #: Alert is being handled.
+    #: Alert is being handled
     IN_PROGRESS = "InProgress"
 
-class AntispamMailDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The directionality of this mail message
-    """
 
-    #: Unknown.
+class AntispamMailDirection(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The directionality of this mail message."""
+
+    #: Unknown
     UNKNOWN = "Unknown"
-    #: Inbound.
+    #: Inbound
     INBOUND = "Inbound"
-    #: Outbound.
+    #: Outbound
     OUTBOUND = "Outbound"
-    #: Intraorg.
+    #: Intraorg
     INTRAORG = "Intraorg"
 
-class AttackTactic(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The severity for alerts created by this alert rule.
-    """
 
+class AttackTactic(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The severity for alerts created by this alert rule."""
+
+    RECONNAISSANCE = "Reconnaissance"
+    RESOURCE_DEVELOPMENT = "ResourceDevelopment"
     INITIAL_ACCESS = "InitialAccess"
     EXECUTION = "Execution"
     PERSISTENCE = "Persistence"
@@ -94,251 +98,449 @@ class AttackTactic(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COMMAND_AND_CONTROL = "CommandAndControl"
     IMPACT = "Impact"
     PRE_ATTACK = "PreAttack"
+    IMPAIR_PROCESS_CONTROL = "ImpairProcessControl"
+    INHIBIT_RESPONSE_FUNCTION = "InhibitResponseFunction"
+
+
+class AutomationRuleBooleanConditionSupportedOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutomationRuleBooleanConditionSupportedOperator."""
+
+    #: Evaluates as true if all the item conditions are evaluated as true
+    AND = "And"
+    #: Evaluates as true if at least one of the item conditions are evaluated as true
+    OR = "Or"
+
+
+class AutomationRulePropertyArrayChangedConditionSupportedArrayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutomationRulePropertyArrayChangedConditionSupportedArrayType."""
+
+    #: Evaluate the condition on the alerts
+    ALERTS = "Alerts"
+    #: Evaluate the condition on the labels
+    LABELS = "Labels"
+    #: Evaluate the condition on the tactics
+    TACTICS = "Tactics"
+    #: Evaluate the condition on the comments
+    COMMENTS = "Comments"
+
+
+class AutomationRulePropertyArrayChangedConditionSupportedChangeType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutomationRulePropertyArrayChangedConditionSupportedChangeType."""
+
+    #: Evaluate the condition on items added to the array
+    ADDED = "Added"
+
+
+class AutomationRulePropertyArrayConditionSupportedArrayConditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutomationRulePropertyArrayConditionSupportedArrayConditionType."""
+
+    #: Evaluate the condition as true if any item fulfills it
+    ANY_ITEM = "AnyItem"
+
+
+class AutomationRulePropertyArrayConditionSupportedArrayType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutomationRulePropertyArrayConditionSupportedArrayType."""
+
+    #: Evaluate the condition on the custom detail keys
+    CUSTOM_DETAILS = "CustomDetails"
+    #: Evaluate the condition on a custom detail's values
+    CUSTOM_DETAIL_VALUES = "CustomDetailValues"
+
+
+class AutomationRulePropertyChangedConditionSupportedChangedType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutomationRulePropertyChangedConditionSupportedChangedType."""
+
+    #: Evaluate the condition on the previous value of the property
+    CHANGED_FROM = "ChangedFrom"
+    #: Evaluate the condition on the updated value of the property
+    CHANGED_TO = "ChangedTo"
+
+
+class AutomationRulePropertyChangedConditionSupportedPropertyType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutomationRulePropertyChangedConditionSupportedPropertyType."""
+
+    #: Evaluate the condition on the incident severity
+    INCIDENT_SEVERITY = "IncidentSeverity"
+    #: Evaluate the condition on the incident status
+    INCIDENT_STATUS = "IncidentStatus"
+    #: Evaluate the condition on the incident owner
+    INCIDENT_OWNER = "IncidentOwner"
+
 
 class AutomationRulePropertyConditionSupportedOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """AutomationRulePropertyConditionSupportedOperator."""
 
-    #: Evaluates if the property equals at least one of the condition values.
+    #: Evaluates if the property equals at least one of the condition values
     EQUALS = "Equals"
-    #: Evaluates if the property does not equal any of the condition values.
+    #: Evaluates if the property does not equal any of the condition values
     NOT_EQUALS = "NotEquals"
-    #: Evaluates if the property contains at least one of the condition values.
+    #: Evaluates if the property contains at least one of the condition values
     CONTAINS = "Contains"
-    #: Evaluates if the property does not contain any of the condition values.
+    #: Evaluates if the property does not contain any of the condition values
     NOT_CONTAINS = "NotContains"
-    #: Evaluates if the property starts with any of the condition values.
+    #: Evaluates if the property starts with any of the condition values
     STARTS_WITH = "StartsWith"
-    #: Evaluates if the property does not start with any of the condition values.
+    #: Evaluates if the property does not start with any of the condition values
     NOT_STARTS_WITH = "NotStartsWith"
-    #: Evaluates if the property ends with any of the condition values.
+    #: Evaluates if the property ends with any of the condition values
     ENDS_WITH = "EndsWith"
-    #: Evaluates if the property does not end with any of the condition values.
+    #: Evaluates if the property does not end with any of the condition values
     NOT_ENDS_WITH = "NotEndsWith"
 
-class AutomationRulePropertyConditionSupportedProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The property to evaluate in an automation rule property condition
-    """
 
-    #: The title of the incident.
+class AutomationRulePropertyConditionSupportedProperty(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The property to evaluate in an automation rule property condition."""
+
+    #: The title of the incident
     INCIDENT_TITLE = "IncidentTitle"
-    #: The description of the incident.
+    #: The description of the incident
     INCIDENT_DESCRIPTION = "IncidentDescription"
-    #: The severity of the incident.
+    #: The severity of the incident
     INCIDENT_SEVERITY = "IncidentSeverity"
-    #: The status of the incident.
+    #: The status of the incident
     INCIDENT_STATUS = "IncidentStatus"
-    #: The related Analytic rule ids of the incident.
+    #: The related Analytic rule ids of the incident
     INCIDENT_RELATED_ANALYTIC_RULE_IDS = "IncidentRelatedAnalyticRuleIds"
-    #: The tactics of the incident.
+    #: The tactics of the incident
     INCIDENT_TACTICS = "IncidentTactics"
-    #: The labels of the incident.
+    #: The labels of the incident
     INCIDENT_LABEL = "IncidentLabel"
-    #: The provider name of the incident.
+    #: The provider name of the incident
     INCIDENT_PROVIDER_NAME = "IncidentProviderName"
-    #: The account Azure Active Directory tenant id.
+    #: The update source of the incident
+    INCIDENT_UPDATED_BY_SOURCE = "IncidentUpdatedBySource"
+    #: The incident custom detail key
+    INCIDENT_CUSTOM_DETAILS_KEY = "IncidentCustomDetailsKey"
+    #: The incident custom detail value
+    INCIDENT_CUSTOM_DETAILS_VALUE = "IncidentCustomDetailsValue"
+    #: The account Azure Active Directory tenant id
     ACCOUNT_AAD_TENANT_ID = "AccountAadTenantId"
-    #: The account Azure Active Directory user id.
+    #: The account Azure Active Directory user id
     ACCOUNT_AAD_USER_ID = "AccountAadUserId"
-    #: The account name.
+    #: The account name
     ACCOUNT_NAME = "AccountName"
-    #: The account NetBIOS domain name.
+    #: The account NetBIOS domain name
     ACCOUNT_NT_DOMAIN = "AccountNTDomain"
-    #: The account Azure Active Directory Passport User ID.
+    #: The account Azure Active Directory Passport User ID
     ACCOUNT_PUID = "AccountPUID"
-    #: The account security identifier.
+    #: The account security identifier
     ACCOUNT_SID = "AccountSid"
-    #: The account unique identifier.
+    #: The account unique identifier
     ACCOUNT_OBJECT_GUID = "AccountObjectGuid"
-    #: The account user principal name suffix.
+    #: The account user principal name suffix
     ACCOUNT_UPN_SUFFIX = "AccountUPNSuffix"
-    #: The name of the product of the alert.
+    #: The name of the product of the alert
     ALERT_PRODUCT_NAMES = "AlertProductNames"
-    #: The Azure resource id.
+    #: The analytic rule ids of the alert
+    ALERT_ANALYTIC_RULE_IDS = "AlertAnalyticRuleIds"
+    #: The Azure resource id
     AZURE_RESOURCE_RESOURCE_ID = "AzureResourceResourceId"
-    #: The Azure resource subscription id.
+    #: The Azure resource subscription id
     AZURE_RESOURCE_SUBSCRIPTION_ID = "AzureResourceSubscriptionId"
-    #: The cloud application identifier.
+    #: The cloud application identifier
     CLOUD_APPLICATION_APP_ID = "CloudApplicationAppId"
-    #: The cloud application name.
+    #: The cloud application name
     CLOUD_APPLICATION_APP_NAME = "CloudApplicationAppName"
-    #: The dns record domain name.
+    #: The dns record domain name
     DNS_DOMAIN_NAME = "DNSDomainName"
-    #: The file directory full path.
+    #: The file directory full path
     FILE_DIRECTORY = "FileDirectory"
-    #: The file name without path.
+    #: The file name without path
     FILE_NAME = "FileName"
-    #: The file hash value.
+    #: The file hash value
     FILE_HASH_VALUE = "FileHashValue"
-    #: The host Azure resource id.
+    #: The host Azure resource id
     HOST_AZURE_ID = "HostAzureID"
-    #: The host name without domain.
+    #: The host name without domain
     HOST_NAME = "HostName"
-    #: The host NetBIOS name.
+    #: The host NetBIOS name
     HOST_NET_BIOS_NAME = "HostNetBiosName"
-    #: The host NT domain.
+    #: The host NT domain
     HOST_NT_DOMAIN = "HostNTDomain"
-    #: The host operating system.
+    #: The host operating system
     HOST_OS_VERSION = "HostOSVersion"
-    #: "The IoT device id.
+    #: "The IoT device id
     IO_T_DEVICE_ID = "IoTDeviceId"
-    #: The IoT device name.
+    #: The IoT device name
     IO_T_DEVICE_NAME = "IoTDeviceName"
-    #: The IoT device type.
+    #: The IoT device type
     IO_T_DEVICE_TYPE = "IoTDeviceType"
-    #: The IoT device vendor.
+    #: The IoT device vendor
     IO_T_DEVICE_VENDOR = "IoTDeviceVendor"
-    #: The IoT device model.
+    #: The IoT device model
     IO_T_DEVICE_MODEL = "IoTDeviceModel"
-    #: The IoT device operating system.
+    #: The IoT device operating system
     IO_T_DEVICE_OPERATING_SYSTEM = "IoTDeviceOperatingSystem"
-    #: The IP address.
+    #: The IP address
     IP_ADDRESS = "IPAddress"
-    #: The mailbox display name.
+    #: The mailbox display name
     MAILBOX_DISPLAY_NAME = "MailboxDisplayName"
-    #: The mailbox primary address.
+    #: The mailbox primary address
     MAILBOX_PRIMARY_ADDRESS = "MailboxPrimaryAddress"
-    #: The mailbox user principal name.
+    #: The mailbox user principal name
     MAILBOX_UPN = "MailboxUPN"
-    #: The mail message delivery action.
+    #: The mail message delivery action
     MAIL_MESSAGE_DELIVERY_ACTION = "MailMessageDeliveryAction"
-    #: The mail message delivery location.
+    #: The mail message delivery location
     MAIL_MESSAGE_DELIVERY_LOCATION = "MailMessageDeliveryLocation"
-    #: The mail message recipient.
+    #: The mail message recipient
     MAIL_MESSAGE_RECIPIENT = "MailMessageRecipient"
-    #: The mail message sender IP address.
+    #: The mail message sender IP address
     MAIL_MESSAGE_SENDER_IP = "MailMessageSenderIP"
-    #: The mail message subject.
+    #: The mail message subject
     MAIL_MESSAGE_SUBJECT = "MailMessageSubject"
-    #: The mail message P1 sender.
+    #: The mail message P1 sender
     MAIL_MESSAGE_P1_SENDER = "MailMessageP1Sender"
-    #: The mail message P2 sender.
+    #: The mail message P2 sender
     MAIL_MESSAGE_P2_SENDER = "MailMessageP2Sender"
-    #: The malware category.
+    #: The malware category
     MALWARE_CATEGORY = "MalwareCategory"
-    #: The malware name.
+    #: The malware name
     MALWARE_NAME = "MalwareName"
-    #: The process execution command line.
+    #: The process execution command line
     PROCESS_COMMAND_LINE = "ProcessCommandLine"
-    #: The process id.
+    #: The process id
     PROCESS_ID = "ProcessId"
-    #: The registry key path.
+    #: The registry key path
     REGISTRY_KEY = "RegistryKey"
-    #: The registry key value in string formatted representation.
+    #: The registry key value in string formatted representation
     REGISTRY_VALUE_DATA = "RegistryValueData"
-    #: The url.
+    #: The url
     URL = "Url"
 
-class ConditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
-    #: Evaluate an object property value.
+class ConditionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """ConditionType."""
+
+    #: Evaluate an object property value
     PROPERTY = "Property"
+    #: Evaluate an object array property value
+    PROPERTY_ARRAY = "PropertyArray"
+    #: Evaluate an object property changed value
+    PROPERTY_CHANGED = "PropertyChanged"
+    #: Evaluate an object array property changed value
+    PROPERTY_ARRAY_CHANGED = "PropertyArrayChanged"
+    #: Apply a boolean operator (e.g AND, OR) to conditions
+    BOOLEAN = "Boolean"
+
 
 class ConfidenceLevel(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The confidence level of this alert.
-    """
+    """The confidence level of this alert."""
 
-    #: Unknown confidence, the is the default value.
+    #: Unknown confidence, the is the default value
     UNKNOWN = "Unknown"
-    #: Low confidence, meaning we have some doubts this is indeed malicious or part of an attack.
+    #: Low confidence, meaning we have some doubts this is indeed malicious or part of an attack
     LOW = "Low"
-    #: High confidence that the alert is true positive malicious.
+    #: High confidence that the alert is true positive malicious
     HIGH = "High"
+
 
 class ConfidenceScoreStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The confidence score calculation status, i.e. indicating if score calculation is pending for
     this alert, not applicable or final.
     """
 
-    #: Score will not be calculated for this alert as it is not supported by virtual analyst.
+    #: Score will not be calculated for this alert as it is not supported by virtual analyst
     NOT_APPLICABLE = "NotApplicable"
-    #: No score was set yet and calculation is in progress.
+    #: No score was set yet and calculation is in progress
     IN_PROCESS = "InProcess"
     #: Score is calculated and shown as part of the alert, but may be updated again at a later time
-    #: following the processing of additional data.
+    #: following the processing of additional data
     NOT_FINAL = "NotFinal"
-    #: Final score was calculated and available.
+    #: Final score was calculated and available
     FINAL = "Final"
 
+
+class ConnectAuthKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The authentication kind used to poll the data."""
+
+    BASIC = "Basic"
+    O_AUTH2 = "OAuth2"
+    API_KEY = "APIKey"
+
+
+class ConnectivityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """type of connectivity."""
+
+    IS_CONNECTED_QUERY = "IsConnectedQuery"
+
+
+class ContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The content type of a source control path."""
+
+    ANALYTIC_RULE = "AnalyticRule"
+    WORKBOOK = "Workbook"
+
+
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
+class CustomEntityQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the entity query that supports put request."""
+
+    ACTIVITY = "Activity"
+
+
+class DataConnectorAuthorizationState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the state of user's authorization for a connector kind."""
+
+    VALID = "Valid"
+    INVALID = "Invalid"
+
+
 class DataConnectorKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the data connector
-    """
+    """The kind of the data connector."""
 
     AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
     AZURE_SECURITY_CENTER = "AzureSecurityCenter"
     MICROSOFT_CLOUD_APP_SECURITY = "MicrosoftCloudAppSecurity"
     THREAT_INTELLIGENCE = "ThreatIntelligence"
+    THREAT_INTELLIGENCE_TAXII = "ThreatIntelligenceTaxii"
     OFFICE365 = "Office365"
+    OFFICE_ATP = "OfficeATP"
+    OFFICE_IRM = "OfficeIRM"
+    OFFICE365_PROJECT = "Office365Project"
+    OFFICE_POWER_BI = "OfficePowerBI"
     AMAZON_WEB_SERVICES_CLOUD_TRAIL = "AmazonWebServicesCloudTrail"
+    AMAZON_WEB_SERVICES_S3 = "AmazonWebServicesS3"
     AZURE_ADVANCED_THREAT_PROTECTION = "AzureAdvancedThreatProtection"
     MICROSOFT_DEFENDER_ADVANCED_THREAT_PROTECTION = "MicrosoftDefenderAdvancedThreatProtection"
+    DYNAMICS365 = "Dynamics365"
+    MICROSOFT_THREAT_PROTECTION = "MicrosoftThreatProtection"
+    MICROSOFT_THREAT_INTELLIGENCE = "MicrosoftThreatIntelligence"
+    GENERIC_UI = "GenericUI"
+    API_POLLING = "APIPolling"
+    IOT = "IOT"
+
+
+class DataConnectorLicenseState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes the state of user's license for a connector kind."""
+
+    VALID = "Valid"
+    INVALID = "Invalid"
+    UNKNOWN = "Unknown"
+
 
 class DataTypeState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Describe whether this data type connection is enabled or not.
-    """
+    """Describe whether this data type connection is enabled or not."""
 
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
-class DeliveryAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The delivery action of this mail message like Delivered, Blocked, Replaced etc
-    """
 
-    #: Unknown.
+class DeleteStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Indicates whether the file was deleted from the storage account."""
+
+    #: The file was deleted.
+    DELETED = "Deleted"
+    #: The file was not deleted.
+    NOT_DELETED = "NotDeleted"
+    #: Unspecified
+    UNSPECIFIED = "Unspecified"
+
+
+class DeliveryAction(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The delivery action of this mail message like Delivered, Blocked, Replaced etc."""
+
+    #: Unknown
     UNKNOWN = "Unknown"
-    #: DeliveredAsSpam.
+    #: DeliveredAsSpam
     DELIVERED_AS_SPAM = "DeliveredAsSpam"
-    #: Delivered.
+    #: Delivered
     DELIVERED = "Delivered"
-    #: Blocked.
+    #: Blocked
     BLOCKED = "Blocked"
-    #: Replaced.
+    #: Replaced
     REPLACED = "Replaced"
 
-class DeliveryLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The delivery location of this mail message like Inbox, JunkFolder etc
-    """
 
-    #: Unknown.
+class DeliveryLocation(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The delivery location of this mail message like Inbox, JunkFolder etc."""
+
+    #: Unknown
     UNKNOWN = "Unknown"
-    #: Inbox.
+    #: Inbox
     INBOX = "Inbox"
-    #: JunkFolder.
+    #: JunkFolder
     JUNK_FOLDER = "JunkFolder"
-    #: DeletedFolder.
+    #: DeletedFolder
     DELETED_FOLDER = "DeletedFolder"
-    #: Quarantine.
+    #: Quarantine
     QUARANTINE = "Quarantine"
-    #: External.
+    #: External
     EXTERNAL = "External"
-    #: Failed.
+    #: Failed
     FAILED = "Failed"
-    #: Dropped.
+    #: Dropped
     DROPPED = "Dropped"
-    #: Forwarded.
+    #: Forwarded
     FORWARDED = "Forwarded"
 
-class ElevationToken(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The elevation token associated with the process.
-    """
 
-    #: Default elevation token.
+class DeploymentFetchStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status while trying to fetch the deployment information."""
+
+    SUCCESS = "Success"
+    UNAUTHORIZED = "Unauthorized"
+    NOT_FOUND = "NotFound"
+
+
+class DeploymentResult(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Status while trying to fetch the deployment information."""
+
+    SUCCESS = "Success"
+    CANCELED = "Canceled"
+    FAILED = "Failed"
+
+
+class DeploymentState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The current state of the deployment."""
+
+    IN_PROGRESS = "In_Progress"
+    COMPLETED = "Completed"
+    QUEUED = "Queued"
+    CANCELING = "Canceling"
+
+
+class DeviceImportance(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Device importance, determines if the device classified as 'crown jewel'."""
+
+    #: Unknown - Default value
+    UNKNOWN = "Unknown"
+    #: Low
+    LOW = "Low"
+    #: Normal
+    NORMAL = "Normal"
+    #: High
+    HIGH = "High"
+
+
+class ElevationToken(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The elevation token associated with the process."""
+
+    #: Default elevation token
     DEFAULT = "Default"
-    #: Full elevation token.
+    #: Full elevation token
     FULL = "Full"
-    #: Limited elevation token.
+    #: Limited elevation token
     LIMITED = "Limited"
 
-class EntityKindEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the entity
-    """
+
+class EntityItemQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """EntityItemQueryKind."""
+
+    #: insight
+    INSIGHT = "Insight"
+
+
+class EntityKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the entity."""
 
     #: Entity represents account in the system.
     ACCOUNT = "Account"
@@ -382,132 +584,289 @@ class EntityKindEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MAILBOX = "Mailbox"
     #: Entity represents submission mail in the system.
     SUBMISSION_MAIL = "SubmissionMail"
+    #: Entity represents network interface in the system.
+    NIC = "Nic"
+
 
 class EntityMappingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The V3 type of the mapped entity
-    """
+    """The V3 type of the mapped entity."""
 
-    #: User account entity type.
+    #: User account entity type
     ACCOUNT = "Account"
-    #: Host entity type.
+    #: Host entity type
     HOST = "Host"
-    #: IP address entity type.
+    #: IP address entity type
     IP = "IP"
-    #: Malware entity type.
+    #: Malware entity type
     MALWARE = "Malware"
-    #: System file entity type.
+    #: System file entity type
     FILE = "File"
-    #: Process entity type.
+    #: Process entity type
     PROCESS = "Process"
-    #: Cloud app entity type.
+    #: Cloud app entity type
     CLOUD_APPLICATION = "CloudApplication"
-    #: DNS entity type.
+    #: DNS entity type
     DNS = "DNS"
-    #: Azure resource entity type.
+    #: Azure resource entity type
     AZURE_RESOURCE = "AzureResource"
-    #: File-hash entity type.
+    #: File-hash entity type
     FILE_HASH = "FileHash"
-    #: Registry key entity type.
+    #: Registry key entity type
     REGISTRY_KEY = "RegistryKey"
-    #: Registry value entity type.
+    #: Registry value entity type
     REGISTRY_VALUE = "RegistryValue"
-    #: Security group entity type.
+    #: Security group entity type
     SECURITY_GROUP = "SecurityGroup"
-    #: URL entity type.
+    #: URL entity type
     URL = "URL"
-    #: Mailbox entity type.
+    #: Mailbox entity type
     MAILBOX = "Mailbox"
-    #: Mail cluster entity type.
+    #: Mail cluster entity type
     MAIL_CLUSTER = "MailCluster"
-    #: Mail message entity type.
+    #: Mail message entity type
     MAIL_MESSAGE = "MailMessage"
-    #: Submission mail entity type.
+    #: Submission mail entity type
     SUBMISSION_MAIL = "SubmissionMail"
 
+
+class EntityProviders(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The entity provider that is synced."""
+
+    ACTIVE_DIRECTORY = "ActiveDirectory"
+    AZURE_ACTIVE_DIRECTORY = "AzureActiveDirectory"
+
+
+class EntityQueryKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the entity query."""
+
+    EXPANSION = "Expansion"
+    INSIGHT = "Insight"
+    ACTIVITY = "Activity"
+
+
+class EntityQueryTemplateKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the entity query template."""
+
+    ACTIVITY = "Activity"
+
+
+class EntityTimelineKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The entity query kind."""
+
+    #: activity
+    ACTIVITY = "Activity"
+    #: bookmarks
+    BOOKMARK = "Bookmark"
+    #: security alerts
+    SECURITY_ALERT = "SecurityAlert"
+    #: anomaly
+    ANOMALY = "Anomaly"
+
+
+class EntityType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the entity."""
+
+    #: Entity represents account in the system.
+    ACCOUNT = "Account"
+    #: Entity represents host in the system.
+    HOST = "Host"
+    #: Entity represents file in the system.
+    FILE = "File"
+    #: Entity represents azure resource in the system.
+    AZURE_RESOURCE = "AzureResource"
+    #: Entity represents cloud application in the system.
+    CLOUD_APPLICATION = "CloudApplication"
+    #: Entity represents dns in the system.
+    DNS = "DNS"
+    #: Entity represents file hash in the system.
+    FILE_HASH = "FileHash"
+    #: Entity represents ip in the system.
+    IP = "IP"
+    #: Entity represents malware in the system.
+    MALWARE = "Malware"
+    #: Entity represents process in the system.
+    PROCESS = "Process"
+    #: Entity represents registry key in the system.
+    REGISTRY_KEY = "RegistryKey"
+    #: Entity represents registry value in the system.
+    REGISTRY_VALUE = "RegistryValue"
+    #: Entity represents security group in the system.
+    SECURITY_GROUP = "SecurityGroup"
+    #: Entity represents url in the system.
+    URL = "URL"
+    #: Entity represents IoT device in the system.
+    IO_T_DEVICE = "IoTDevice"
+    #: Entity represents security alert in the system.
+    SECURITY_ALERT = "SecurityAlert"
+    #: Entity represents HuntingBookmark in the system.
+    HUNTING_BOOKMARK = "HuntingBookmark"
+    #: Entity represents mail cluster in the system.
+    MAIL_CLUSTER = "MailCluster"
+    #: Entity represents mail message in the system.
+    MAIL_MESSAGE = "MailMessage"
+    #: Entity represents mailbox in the system.
+    MAILBOX = "Mailbox"
+    #: Entity represents submission mail in the system.
+    SUBMISSION_MAIL = "SubmissionMail"
+    #: Entity represents network interface in the system.
+    NIC = "Nic"
+
+
+class Enum13(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum13."""
+
+    EXPANSION = "Expansion"
+    ACTIVITY = "Activity"
+
+
+class Enum15(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Enum15."""
+
+    ACTIVITY = "Activity"
+
+
 class EventGroupingAggregationKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The event grouping aggregation kinds
-    """
+    """The event grouping aggregation kinds."""
 
     SINGLE_ALERT = "SingleAlert"
     ALERT_PER_RESULT = "AlertPerResult"
 
-class FileHashAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The hash algorithm type.
-    """
 
-    #: Unknown hash algorithm.
+class FileFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The format of the file."""
+
+    #: A CSV file.
+    CSV = "CSV"
+    #: A JSON file.
+    JSON = "JSON"
+    #: A file of other format.
+    UNSPECIFIED = "Unspecified"
+
+
+class FileHashAlgorithm(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The hash algorithm type."""
+
+    #: Unknown hash algorithm
     UNKNOWN = "Unknown"
-    #: MD5 hash type.
+    #: MD5 hash type
     MD5 = "MD5"
-    #: SHA1 hash type.
+    #: SHA1 hash type
     SHA1 = "SHA1"
-    #: SHA256 hash type.
+    #: SHA256 hash type
     SHA256 = "SHA256"
-    #: SHA256 Authenticode hash type.
+    #: SHA256 Authenticode hash type
     SHA256_AC = "SHA256AC"
 
-class IncidentClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The reason the incident was closed
-    """
 
-    #: Incident classification was undetermined.
+class FileImportContentType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The content type of this file."""
+
+    #: File containing records with the core fields of an indicator, plus the observables to construct
+    #: the STIX pattern.
+    BASIC_INDICATOR = "BasicIndicator"
+    #: File containing STIX indicators.
+    STIX_INDICATOR = "StixIndicator"
+    #: File containing other records.
+    UNSPECIFIED = "Unspecified"
+
+
+class FileImportState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The state of the file import."""
+
+    #: A fatal error has occurred while ingesting the file.
+    FATAL_ERROR = "FatalError"
+    #: The file has been ingested.
+    INGESTED = "Ingested"
+    #: The file has been ingested with errors.
+    INGESTED_WITH_ERRORS = "IngestedWithErrors"
+    #: The file ingestion is in progress.
+    IN_PROGRESS = "InProgress"
+    #: The file is invalid.
+    INVALID = "Invalid"
+    #: Waiting for the file to be uploaded.
+    WAITING_FOR_UPLOAD = "WaitingForUpload"
+    #: Unspecified state.
+    UNSPECIFIED = "Unspecified"
+
+
+class GetInsightsError(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the query kind."""
+
+    INSIGHT = "Insight"
+
+
+class IncidentClassification(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The reason the incident was closed."""
+
+    #: Incident classification was undetermined
     UNDETERMINED = "Undetermined"
-    #: Incident was true positive.
+    #: Incident was true positive
     TRUE_POSITIVE = "TruePositive"
-    #: Incident was benign positive.
+    #: Incident was benign positive
     BENIGN_POSITIVE = "BenignPositive"
-    #: Incident was false positive.
+    #: Incident was false positive
     FALSE_POSITIVE = "FalsePositive"
 
-class IncidentClassificationReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The classification reason the incident was closed with
-    """
 
-    #: Classification reason was suspicious activity.
+class IncidentClassificationReason(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The classification reason the incident was closed with."""
+
+    #: Classification reason was suspicious activity
     SUSPICIOUS_ACTIVITY = "SuspiciousActivity"
-    #: Classification reason was suspicious but expected.
+    #: Classification reason was suspicious but expected
     SUSPICIOUS_BUT_EXPECTED = "SuspiciousButExpected"
-    #: Classification reason was incorrect alert logic.
+    #: Classification reason was incorrect alert logic
     INCORRECT_ALERT_LOGIC = "IncorrectAlertLogic"
-    #: Classification reason was inaccurate data.
+    #: Classification reason was inaccurate data
     INACCURATE_DATA = "InaccurateData"
 
-class IncidentLabelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the label
-    """
 
-    #: Label manually created by a user.
+class IncidentLabelType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the label."""
+
+    #: Label manually created by a user
     USER = "User"
-    #: Label automatically created by the system.
+    #: Label automatically created by the system
     AUTO_ASSIGNED = "AutoAssigned"
 
-class IncidentSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The severity of the incident
-    """
 
-    #: High severity.
+class IncidentSeverity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The severity of the incident."""
+
+    #: High severity
     HIGH = "High"
-    #: Medium severity.
+    #: Medium severity
     MEDIUM = "Medium"
-    #: Low severity.
+    #: Low severity
     LOW = "Low"
-    #: Informational severity.
+    #: Informational severity
     INFORMATIONAL = "Informational"
 
-class IncidentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The status of the incident
-    """
 
-    #: An active incident which isn't being handled currently.
+class IncidentStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The status of the incident."""
+
+    #: An active incident which isn't being handled currently
     NEW = "New"
-    #: An active incident which is being handled.
+    #: An active incident which is being handled
     ACTIVE = "Active"
-    #: A non-active incident.
+    #: A non-active incident
     CLOSED = "Closed"
 
+
+class IngestionMode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Describes how to ingest the records in the file."""
+
+    #: No records should be ingested when invalid records are detected.
+    INGEST_ONLY_IF_ALL_ARE_VALID = "IngestOnlyIfAllAreValid"
+    #: Valid records should still be ingested when invalid records are detected.
+    INGEST_ANY_VALID_RECORDS = "IngestAnyValidRecords"
+    #: Unspecified
+    UNSPECIFIED = "Unspecified"
+
+
 class KillChainIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Holds the alert intent stage(s) mapping for this alert.
-    """
+    """Holds the alert intent stage(s) mapping for this alert."""
 
     #: The default value.
     UNKNOWN = "Unknown"
@@ -578,32 +937,64 @@ class KillChainIntent(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: manipulation and others.
     IMPACT = "Impact"
 
+
+class Kind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of content the metadata is for."""
+
+    DATA_CONNECTOR = "DataConnector"
+    DATA_TYPE = "DataType"
+    WORKBOOK = "Workbook"
+    WORKBOOK_TEMPLATE = "WorkbookTemplate"
+    PLAYBOOK = "Playbook"
+    PLAYBOOK_TEMPLATE = "PlaybookTemplate"
+    ANALYTICS_RULE_TEMPLATE = "AnalyticsRuleTemplate"
+    ANALYTICS_RULE = "AnalyticsRule"
+    HUNTING_QUERY = "HuntingQuery"
+    INVESTIGATION_QUERY = "InvestigationQuery"
+    PARSER = "Parser"
+    WATCHLIST = "Watchlist"
+    WATCHLIST_TEMPLATE = "WatchlistTemplate"
+    SOLUTION = "Solution"
+    AZURE_FUNCTION = "AzureFunction"
+    LOGIC_APPS_CUSTOM_CONNECTOR = "LogicAppsCustomConnector"
+    AUTOMATION_RULE = "AutomationRule"
+
+
 class MatchingMethod(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Grouping matching method. When method is Selected at least one of groupByEntities,
     groupByAlertDetails, groupByCustomDetails must be provided and not empty.
     """
 
-    #: Grouping alerts into a single incident if all the entities match.
+    #: Grouping alerts into a single incident if all the entities match
     ALL_ENTITIES = "AllEntities"
-    #: Grouping any alerts triggered by this rule into a single incident.
+    #: Grouping any alerts triggered by this rule into a single incident
     ANY_ALERT = "AnyAlert"
     #: Grouping alerts into a single incident if the selected entities, custom details and alert
-    #: details match.
+    #: details match
     SELECTED = "Selected"
 
+
 class MicrosoftSecurityProductName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The alerts' productName on which the cases will be generated
-    """
+    """The alerts' productName on which the cases will be generated."""
 
     MICROSOFT_CLOUD_APP_SECURITY = "Microsoft Cloud App Security"
     AZURE_SECURITY_CENTER = "Azure Security Center"
     AZURE_ADVANCED_THREAT_PROTECTION = "Azure Advanced Threat Protection"
     AZURE_ACTIVE_DIRECTORY_IDENTITY_PROTECTION = "Azure Active Directory Identity Protection"
     AZURE_SECURITY_CENTER_FOR_IO_T = "Azure Security Center for IoT"
+    OFFICE365_ADVANCED_THREAT_PROTECTION = "Office 365 Advanced Threat Protection"
+    MICROSOFT_DEFENDER_ADVANCED_THREAT_PROTECTION = "Microsoft Defender Advanced Threat Protection"
+
+
+class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Operator used for list of dependencies in criteria array."""
+
+    AND = "AND"
+    OR = "OR"
+
 
 class OSFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operating system type.
-    """
+    """The operating system type."""
 
     #: Host with Linux operating system.
     LINUX = "Linux"
@@ -616,112 +1007,232 @@ class OSFamily(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     #: Host with Unknown operating system.
     UNKNOWN = "Unknown"
 
-class OwnerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the owner the incident is assigned to.
-    """
 
-    #: The incident owner type is unknown.
+class OutputType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Insights Column type."""
+
+    NUMBER = "Number"
+    STRING = "String"
+    DATE = "Date"
+    ENTITY = "Entity"
+
+
+class OwnerType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of the owner the incident is assigned to."""
+
+    #: The incident owner type is unknown
     UNKNOWN = "Unknown"
-    #: The incident owner type is an AAD user.
+    #: The incident owner type is an AAD user
     USER = "User"
-    #: The incident owner type is an AAD group.
+    #: The incident owner type is an AAD group
     GROUP = "Group"
 
-class RegistryHive(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the hive that holds the registry key.
-    """
 
-    #: HKEY_LOCAL_MACHINE.
+class PermissionProviderScope(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Permission provider scope."""
+
+    RESOURCE_GROUP = "ResourceGroup"
+    SUBSCRIPTION = "Subscription"
+    WORKSPACE = "Workspace"
+
+
+class PollingFrequency(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The polling frequency for the TAXII server."""
+
+    #: Once a minute
+    ONCE_A_MINUTE = "OnceAMinute"
+    #: Once an hour
+    ONCE_AN_HOUR = "OnceAnHour"
+    #: Once a day
+    ONCE_A_DAY = "OnceADay"
+
+
+class ProviderName(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Provider name."""
+
+    MICROSOFT_OPERATIONAL_INSIGHTS_SOLUTIONS = "Microsoft.OperationalInsights/solutions"
+    MICROSOFT_OPERATIONAL_INSIGHTS_WORKSPACES = "Microsoft.OperationalInsights/workspaces"
+    MICROSOFT_OPERATIONAL_INSIGHTS_WORKSPACES_DATASOURCES = "Microsoft.OperationalInsights/workspaces/datasources"
+    MICROSOFT_AADIAM_DIAGNOSTIC_SETTINGS = "microsoft.aadiam/diagnosticSettings"
+    MICROSOFT_OPERATIONAL_INSIGHTS_WORKSPACES_SHARED_KEYS = "Microsoft.OperationalInsights/workspaces/sharedKeys"
+    MICROSOFT_AUTHORIZATION_POLICY_ASSIGNMENTS = "Microsoft.Authorization/policyAssignments"
+
+
+class RegistryHive(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """the hive that holds the registry key."""
+
+    #: HKEY_LOCAL_MACHINE
     HKEY_LOCAL_MACHINE = "HKEY_LOCAL_MACHINE"
-    #: HKEY_CLASSES_ROOT.
+    #: HKEY_CLASSES_ROOT
     HKEY_CLASSES_ROOT = "HKEY_CLASSES_ROOT"
-    #: HKEY_CURRENT_CONFIG.
+    #: HKEY_CURRENT_CONFIG
     HKEY_CURRENT_CONFIG = "HKEY_CURRENT_CONFIG"
-    #: HKEY_USERS.
+    #: HKEY_USERS
     HKEY_USERS = "HKEY_USERS"
-    #: HKEY_CURRENT_USER_LOCAL_SETTINGS.
+    #: HKEY_CURRENT_USER_LOCAL_SETTINGS
     HKEY_CURRENT_USER_LOCAL_SETTINGS = "HKEY_CURRENT_USER_LOCAL_SETTINGS"
-    #: HKEY_PERFORMANCE_DATA.
+    #: HKEY_PERFORMANCE_DATA
     HKEY_PERFORMANCE_DATA = "HKEY_PERFORMANCE_DATA"
-    #: HKEY_PERFORMANCE_NLSTEXT.
+    #: HKEY_PERFORMANCE_NLSTEXT
     HKEY_PERFORMANCE_NLSTEXT = "HKEY_PERFORMANCE_NLSTEXT"
-    #: HKEY_PERFORMANCE_TEXT.
+    #: HKEY_PERFORMANCE_TEXT
     HKEY_PERFORMANCE_TEXT = "HKEY_PERFORMANCE_TEXT"
-    #: HKEY_A.
+    #: HKEY_A
     HKEY_A = "HKEY_A"
-    #: HKEY_CURRENT_USER.
+    #: HKEY_CURRENT_USER
     HKEY_CURRENT_USER = "HKEY_CURRENT_USER"
+
 
 class RegistryValueKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Specifies the data types to use when storing values in the registry, or identifies the data
     type of a value in the registry.
     """
 
-    #: None.
+    #: None
     NONE = "None"
-    #: Unknown value type.
+    #: Unknown value type
     UNKNOWN = "Unknown"
-    #: String value type.
+    #: String value type
     STRING = "String"
-    #: ExpandString value type.
+    #: ExpandString value type
     EXPAND_STRING = "ExpandString"
-    #: Binary value type.
+    #: Binary value type
     BINARY = "Binary"
-    #: DWord value type.
+    #: DWord value type
     D_WORD = "DWord"
-    #: MultiString value type.
+    #: MultiString value type
     MULTI_STRING = "MultiString"
-    #: QWord value type.
+    #: QWord value type
     Q_WORD = "QWord"
 
-class Source(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The source of the watchlist
-    """
+
+class RepoType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The type of repository."""
+
+    GITHUB = "Github"
+    DEV_OPS = "DevOps"
+
+
+class SecurityMLAnalyticsSettingsKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of security ML analytics settings."""
+
+    ANOMALY = "Anomaly"
+
+
+class SettingKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the setting."""
+
+    ANOMALIES = "Anomalies"
+    EYES_ON = "EyesOn"
+    ENTITY_ANALYTICS = "EntityAnalytics"
+    UEBA = "Ueba"
+
+
+class SettingsStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The anomaly SecurityMLAnalyticsSettings status."""
+
+    #: Anomaly settings status in Production mode
+    PRODUCTION = "Production"
+    #: Anomaly settings status in Flighting mode
+    FLIGHTING = "Flighting"
+
+
+class SettingType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the setting."""
+
+    COPYABLE_LABEL = "CopyableLabel"
+    INSTRUCTION_STEPS_GROUP = "InstructionStepsGroup"
+    INFO_MESSAGE = "InfoMessage"
+
+
+class SourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Source type of the content."""
+
+    LOCAL_WORKSPACE = "LocalWorkspace"
+    COMMUNITY = "Community"
+    SOLUTION = "Solution"
+    SOURCE_REPOSITORY = "SourceRepository"
+
+
+class SourceType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The sourceType of the watchlist."""
 
     LOCAL_FILE = "Local file"
     REMOTE_STORAGE = "Remote storage"
 
-class TemplateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The alert rule template status.
-    """
 
-    #: Alert rule template installed. and can not use more then once.
+class SupportTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Type of support for content item."""
+
+    MICROSOFT = "Microsoft"
+    PARTNER = "Partner"
+    COMMUNITY = "Community"
+
+
+class TemplateStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The alert rule template status."""
+
+    #: Alert rule template installed. and can not use more then once
     INSTALLED = "Installed"
     #: Alert rule template is available.
     AVAILABLE = "Available"
-    #: Alert rule template is not available.
+    #: Alert rule template is not available
     NOT_AVAILABLE = "NotAvailable"
 
-class ThreatIntelligenceResourceInnerKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the threat intelligence entity
-    """
+
+class ThreatIntelligenceResourceKindEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The kind of the threat intelligence entity."""
 
     #: Entity represents threat intelligence indicator in the system.
     INDICATOR = "indicator"
 
-class ThreatIntelligenceSortingOrder(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Sorting order (ascending/descending/unsorted).
-    """
+
+class ThreatIntelligenceSortingCriteriaEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """Sorting order (ascending/descending/unsorted)."""
 
     UNSORTED = "unsorted"
     ASCENDING = "ascending"
     DESCENDING = "descending"
 
+
 class TriggerOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operation against the threshold that triggers alert rule.
-    """
+    """The operation against the threshold that triggers alert rule."""
 
     GREATER_THAN = "GreaterThan"
     LESS_THAN = "LessThan"
     EQUAL = "Equal"
     NOT_EQUAL = "NotEqual"
 
-class TriggersOn(str, Enum, metaclass=CaseInsensitiveEnumMeta):
 
-    #: Trigger on Incidents.
+class TriggersOn(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TriggersOn."""
+
+    #: Trigger on Incidents
     INCIDENTS = "Incidents"
+    #: Trigger on Alerts
+    ALERTS = "Alerts"
+
 
 class TriggersWhen(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """TriggersWhen."""
 
-    #: Trigger on created objects.
+    #: Trigger on created objects
     CREATED = "Created"
+    #: Trigger on updated objects
+    UPDATED = "Updated"
+
+
+class UebaDataSources(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The data source that enriched by ueba."""
+
+    AUDIT_LOGS = "AuditLogs"
+    AZURE_ACTIVITY = "AzureActivity"
+    SECURITY_EVENT = "SecurityEvent"
+    SIGNIN_LOGS = "SigninLogs"
+
+
+class Version(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """The version of the source control."""
+
+    V1 = "V1"
+    V2 = "V2"

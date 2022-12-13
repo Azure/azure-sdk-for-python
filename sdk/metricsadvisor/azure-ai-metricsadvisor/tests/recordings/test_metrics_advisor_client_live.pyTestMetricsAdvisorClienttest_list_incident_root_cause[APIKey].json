@@ -7,35 +7,35 @@
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "bc50c50a-5e0c-11ec-8ca8-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "66b644dd-9936-4ff2-9d8b-c3ff6d4a6b9a",
-        "Content-Length": "239",
+        "apim-request-id": "d807a2b5-3d55-4eeb-b098-7ed9bae13642",
+        "Content-Length": "210",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:08:53 GMT",
+        "Date": "Thu, 29 Sep 2022 23:23:22 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "321",
-        "X-Request-ID": "66b644dd-9936-4ff2-9d8b-c3ff6d4a6b9a"
+        "x-envoy-upstream-service-time": "333",
+        "X-Request-ID": "d807a2b5-3d55-4eeb-b098-7ed9bae13642"
       },
       "ResponseBody": {
         "value": [
           {
             "rootCause": {
               "dimension": {
-                "region": "Beijing",
-                "category": "Handmade"
+                "Dim1": "JPN",
+                "Dim2": "JP"
               }
             },
             "path": [
-              "category"
+              "Dim1",
+              "Dim2"
             ],
-            "score": 0.05937581364487382,
-            "description": "Increase on region = Beijing | category = Handmade contributes the most to current incident."
+            "score": 0.24316873576926223,
+            "description": "Increase on Dim1 = JPN | Dim2 = JP contributes the most to current incident."
           }
         ]
       }

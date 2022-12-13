@@ -19,7 +19,7 @@ ENV_CLIENT_ID = "AZURE_CLIENT_ID"
 ENV_CLIENT_SECRET = "AZURE_CLIENT_SECRET"
 
 # Fake values
-TEST_ENDPOINT = "https://test-resource.api.cognitive.microsoft.com"
+TEST_ENDPOINT = "https://test-resource.api.cognitive.microsoft.com/"
 TEST_KEY = "0000000000000000"
 TEST_PROJECT = "test-project"
 TEST_ID = "00000000-0000-0000-0000-000000000000"
@@ -44,7 +44,7 @@ def add_sanitizers(test_proxy, environment_variables):
 @pytest.fixture(scope="session")
 def qna_creds(environment_variables):
     yield {
-        "qna_endpoint": environment_variables.get(ENV_ENDPOINT).rstrip("/"),
+        "qna_endpoint": environment_variables.get(ENV_ENDPOINT),
         "qna_key": environment_variables.get(ENV_KEY),
         "qna_project": environment_variables.get(ENV_PROJECT)
     }

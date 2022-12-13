@@ -8,7 +8,7 @@ import logging
 
 from marshmallow import ValidationError, fields, post_load, pre_dump
 
-from azure.ai.ml._schema.core.fields import ArmVersionedStr, StringTransformedEnum, UnionField
+from azure.ai.ml._schema.core.fields import ArmVersionedStr, StringTransformedEnum, UnionField, ArmStr
 from azure.ai.ml._schema.core.schema import PatchedSchemaMeta, PathAwareSchema
 from azure.ai.ml.constants._common import LOCAL_PATH, AssetTypes, AzureMLResourceType, InputOutputModes
 
@@ -28,18 +28,18 @@ class InputSchema(metaclass=PatchedSchemaMeta):
 
         if isinstance(data, Input):
             return data
-        else:
-            raise ValidationError("InputSchema needs type Input to dump")
+        raise ValidationError("InputSchema needs type Input to dump")
 
 
 def generate_path_property(azureml_type):
     return UnionField(
         [
-            ArmVersionedStr(azureml_type=azureml_type),
-            ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
-            fields.Str(metadata={"pattern": "^(http(s)?):.*"}),
-            fields.Str(metadata={"pattern": "^(wasb(s)?):.*"}),
-            ArmVersionedStr(azureml_type=LOCAL_PATH, pattern="^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
+            ArmVersionedStr(azureml_type=azureml_type, pattern=r"^azureml:\w+"),
+            fields.Str(metadata={"pattern": r"^azureml:(?!\w).*"}),
+            ArmStr(azureml_type=LOCAL_PATH, pattern="^file:.*"),
+            fields.Str(metadata={"pattern": r"^(http(s)?):.*"}),
+            fields.Str(metadata={"pattern": r"^(wasb(s)?):.*"}),
+            ArmStr(azureml_type=LOCAL_PATH, pattern=r"^(?!(azureml|http(s)?|wasb(s)?|file):).*"),
         ],
         is_strict=True,
     )
@@ -111,8 +111,7 @@ class InputLiteralValueSchema(metaclass=PatchedSchemaMeta):
     def check_dict(self, data, **kwargs):
         if hasattr(data, "value"):
             return data
-        else:
-            raise ValidationError("InputLiteralValue must have a field value")
+        raise ValidationError("InputLiteralValue must have a field value")
 
 
 class OutputSchema(PathAwareSchema):
@@ -149,6 +148,5 @@ class OutputSchema(PathAwareSchema):
 
         if isinstance(data, Output):
             return data
-        else:
-            # Assists with union schema
-            raise ValidationError("OutputSchema needs type Output to dump")
+        # Assists with union schema
+        raise ValidationError("OutputSchema needs type Output to dump")

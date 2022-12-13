@@ -12,7 +12,9 @@ from typing import Dict, List, Optional, Union
 
 from azure.ai.ml._utils._arm_id_utils import get_resource_name_from_arm_id_safe
 from azure.ai.ml.constants import JobType
-from azure.ai.ml.entities import Data
+from azure.ai.ml.constants._common import CommonYamlFields
+from azure.ai.ml.constants._component import NodeType
+from azure.ai.ml.entities import Data, Model
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._job._input_output_helpers import build_input_output
@@ -23,7 +25,7 @@ from azure.ai.ml.entities._job.pipeline._pipeline_expression import PipelineExpr
 from azure.ai.ml.entities._job.sweep.search_space import SweepDistribution
 from azure.ai.ml.entities._mixins import YamlTranslatableMixin
 from azure.ai.ml.entities._util import convert_ordered_dict_to_dict, resolve_pipeline_parameters
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._validation import MutableValidationResult, SchemaValidatableMixin
 from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
 
 module_logger = logging.getLogger(__name__)
@@ -57,6 +59,7 @@ def pipeline_node_decorator(func):
     return wrapper
 
 
+# pylint: disable=too-many-instance-attributes
 class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, SchemaValidatableMixin):
     """Base class for node in pipeline, used for component version consumption.
     Can't be instantiated directly.
@@ -80,6 +83,8 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
     :type tags: dict[str, str]
     :param properties: The job property dictionary.
     :type properties: dict[str, str]
+    :param comment: Comment of the pipeline node, which will be shown in designer canvas.
+    :type comment: str
     :param display_name: Display name of the job.
     :type display_name: str
     :param compute: Compute definition containing the compute information for the step
@@ -114,6 +119,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         description: str = None,
         tags: Dict = None,
         properties: Dict = None,
+        comment: str = None,
         compute: str = None,
         experiment_name: str = None,
         **kwargs,
@@ -133,6 +139,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             experiment_name=experiment_name,
             **kwargs,
         )
+        self.comment = comment
 
         # initialize io
         inputs = resolve_pipeline_parameters(inputs)
@@ -174,6 +181,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             if isinstance(self._component, Component)
             else Component._resolve_component_source_from_id(id=self._component)
         )
+        self._validate_required_input_not_provided = True
         self._init = False
 
     @classmethod
@@ -184,6 +192,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             NodeOutput,
             Input,
             Data,
+            Model,
             str,
             bool,
             int,
@@ -226,7 +235,10 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 value = value._deepcopy()  # Decoupled input and output
                 io_dict[key] = value
                 value.mode = None
-            elif isinstance(value, dict):
+            elif type(value) == dict: # pylint: disable=unidiomatic-typecheck
+                # Use type comparison instead of is_instance to skip _GroupAttrDict
+                # when loading from yaml io will be a dict,
+                # like {'job_data_path': '${{parent.inputs.pipeline_job_data_path}}'}
                 # parse dict to allowed type
                 io_dict[key] = parse_cls(**value)
 
@@ -284,19 +296,20 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     def _validate_inputs(self, raise_error=True):
         validation_result = self._create_empty_validation_result()
-        # validate inputs
-        if isinstance(self._component, Component):
-            for key, meta in self._component.inputs.items():
-                # raise error when required input with no default value not set
-                if (
-                    not self._is_input_set(input_name=key)  # input not provided
-                    and meta.optional is not True  # and it's required
-                    and meta.default is None  # and it does not have default
-                ):
-                    validation_result.append_error(
-                        yaml_path=f"inputs.{key}",
-                        message=f"Required input {key!r} for component {self.name!r} not provided.",
-                    )
+        if self._validate_required_input_not_provided:
+            # validate required inputs not provided
+            if isinstance(self._component, Component):
+                for key, meta in self._component.inputs.items():
+                    # raise error when required input with no default value not set
+                    if (
+                        not self._is_input_set(input_name=key)  # input not provided
+                        and meta.optional is not True  # and it's required
+                        and meta.default is None  # and it does not have default
+                    ):
+                        validation_result.append_error(
+                            yaml_path=f"inputs.{key}",
+                            message=f"Required input {key!r} for component {self.name!r} not provided.",
+                        )
 
         inputs = self._build_inputs()
         for input_name, input_obj in inputs.items():
@@ -308,12 +321,13 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 )
         return validation_result.try_raise(self._get_validation_error_target(), raise_error=raise_error)
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         """Validate the resource with customized logic.
 
         Override this method to add customized validation logic.
         """
-        return self._validate_inputs(raise_error=False)
+        validate_result = self._validate_inputs(raise_error=False)
+        return validate_result
 
     @classmethod
     def _get_skip_fields_in_schema_validation(cls) -> List[str]:
@@ -323,7 +337,6 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
             "name",
             "display_name",
             "experiment_name",  # name is not part of schema but may be set in dsl/yml file
-            cls._get_component_attr_name(),  # processed separately
             "kwargs",
         ]
 
@@ -346,16 +359,22 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
 
     @classmethod
     def _from_rest_object(cls, obj: dict) -> "BaseNode":
-        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+        if CommonYamlFields.TYPE not in obj:
+            obj[CommonYamlFields.TYPE] = NodeType.COMMAND
 
-        return pipeline_node_factory.load_from_rest_object(obj=obj)
+        from azure.ai.ml.entities._job.pipeline._load_component import pipeline_node_factory
+        instance: BaseNode = pipeline_node_factory.get_create_instance_func(obj[CommonYamlFields.TYPE])()
+        init_kwargs = instance._from_rest_object_to_init_params(obj)
+        instance.__init__(**init_kwargs)
+        return instance
 
     @classmethod
-    def _rest_object_to_init_params(cls, obj: dict):
+    def _from_rest_object_to_init_params(cls, obj: dict) -> Dict:
         """Transfer the rest object to a dict containing items to init the
         node.
 
-        Will be used in _from_rest_object in subclasses.
+        Will be used in _from_rest_object. Please override this method instead of
+        _from_rest_object to make the logic reusable.
         """
         inputs = obj.get("inputs", {})
         outputs = obj.get("outputs", {})
@@ -366,6 +385,15 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         # Change computeId -> compute
         compute_id = obj.pop("computeId", None)
         obj["compute"] = get_resource_name_from_arm_id_safe(compute_id)
+
+        # Change componentId -> component. Note that sweep node has no componentId.
+        if "componentId" in obj:
+            obj["component"] = obj.pop("componentId")
+
+        # distribution, sweep won't have distribution
+        if "distribution" in obj and obj["distribution"]:
+            from azure.ai.ml.entities._job.distribution import DistributionConfiguration
+            obj["distribution"] = DistributionConfiguration._from_rest_object(obj["distribution"])
 
         return obj
 
@@ -382,9 +410,7 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
         """Convert self to a rest object for remote call."""
         base_dict, rest_obj = self._to_dict(), {}
         for key in self._picked_fields_from_dict_to_rest_object():
-            if key not in base_dict:
-                rest_obj[key] = None
-            else:
+            if key in base_dict:
                 rest_obj[key] = base_dict.get(key)
 
         rest_obj.update(
@@ -396,11 +422,15 @@ class BaseNode(Job, PipelineNodeIOMixin, YamlTranslatableMixin, _AttrDict, Schem
                 computeId=self.compute,
                 inputs=self._to_rest_inputs(),
                 outputs=self._to_rest_outputs(),
+                properties=self.properties,
                 _source=self._source,
                 # add all arbitrary attributes to support setting unknown attributes
                 **self._get_attrs(),
             )
         )
+        # only add comment in REST object when it is set
+        if self.comment is not None:
+            rest_obj.update(dict(comment=self.comment))
 
         return convert_ordered_dict_to_dict(rest_obj)
 

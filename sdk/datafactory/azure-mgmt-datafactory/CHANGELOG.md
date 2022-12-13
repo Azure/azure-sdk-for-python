@@ -1,5 +1,28 @@
 # Release History
 
+## 2.10.0 (2022-11-22)
+
+### Features Added
+
+  - Model ScriptActivity has a new parameter script_block_execution_timeout
+
+## 2.9.0 (2022-10-24)
+
+### Features Added
+
+  - Model AzureSynapseArtifactsLinkedService has a new parameter workspace_resource_id
+  - Model FactoryGitHubConfiguration has a new parameter disable_publish
+  - Model FactoryRepoConfiguration has a new parameter disable_publish
+  - Model FactoryVSTSConfiguration has a new parameter disable_publish
+  - Model SynapseSparkJobDefinitionActivity has a new parameter files_v2
+  - Model SynapseSparkJobDefinitionActivity has a new parameter python_code_reference
+
+## 2.8.1 (2022-10-17)
+
+### Other Changes
+
+  - Changed type of stored_procedure_parameters to json-like object
+
 ## 2.8.0 (2022-09-13)
 
 ### Features Added

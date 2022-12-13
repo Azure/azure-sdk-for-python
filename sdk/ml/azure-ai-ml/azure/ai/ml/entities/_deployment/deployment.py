@@ -15,7 +15,13 @@ from azure.ai.ml._utils.utils import dump_yaml_to_file
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
 from azure.ai.ml.entities._resource import Resource
-from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import (
+    DeploymentException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from .code_configuration import CodeConfiguration
 
@@ -45,6 +51,8 @@ class Deployment(Resource, RestTranslatableMixin):
     :type code_path: Union[str, PathLike], optional
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
     :type scoring_script: Union[str, PathLike], optional
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Deployment cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     def __init__(
@@ -74,6 +82,7 @@ class Deployment(Resource, RestTranslatableMixin):
                 target=ErrorTarget.DEPLOYMENT,
                 no_personal_data_message=msg,
                 error_category=ErrorCategory.USER_ERROR,
+                error_type=ValidationErrorType.INVALID_VALUE,
             )
 
         super().__init__(name, description, tags, properties, **kwargs)
@@ -161,6 +170,7 @@ class Deployment(Resource, RestTranslatableMixin):
                     target=ErrorTarget.DEPLOYMENT,
                     no_personal_data_message=msg.format("[name1]", "[name2]"),
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             if other.tags:
                 self.tags = {**self.tags, **other.tags}

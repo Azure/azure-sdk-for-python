@@ -1,66 +1,53 @@
-# coding: utf-8
-
 # -------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
 import unittest
+
 import pytest
+from azure.storage.fileshare import ShareServiceClient
 
-from azure.storage.fileshare import (
-    ShareServiceClient,
-    ShareDirectoryClient,
-    ShareFileClient,
-    ShareClient
-)
-from devtools_testutils.storage import StorageTestCase
+from devtools_testutils import recorded_by_proxy
+from devtools_testutils.storage import StorageRecordedTestCase
 from settings.testcase import FileSharePreparer
-# ------------------------------------------------------------------------------
-TEST_SHARE_NAME = 'test'
-TEST_SHARE_PREFIX = 'share'
-
 
 # ------------------------------------------------------------------------------
+TEST_SHARE_NAME = 'test-share'
+# ------------------------------------------------------------------------------
 
-class StorageHandleTest(StorageTestCase):
+
+class TestStorageHandle(StorageRecordedTestCase):
     def _setup(self, storage_account_name, storage_account_key):
         file_url = self.account_url(storage_account_name, "file")
         credentials = storage_account_key
         self.fsc = ShareServiceClient(account_url=file_url, credential=credentials)
-        self.test_shares = []
 
     # --Helpers-----------------------------------------------------------------
-    def _get_share_reference(self, prefix=TEST_SHARE_PREFIX):
-        share_name = self.get_resource_name(prefix)
-        share = self.fsc.get_share_client(share_name)
-        self.test_shares.append(share)
-        return share
-
-    def _create_share(self, prefix=TEST_SHARE_PREFIX):
-        share_client = self._get_share_reference(prefix)
-        share = share_client.create_share()
-        return share_client
 
     def _validate_handles(self, handles):
         # Assert
-        self.assertIsNotNone(handles)
-        self.assertGreaterEqual(len(handles), 1)
-        self.assertIsNotNone(handles[0])
+        assert handles is not None
+        assert len(handles) >= 1
+        assert handles[0] is not None
 
         # verify basic fields
         # path may or may not be present
         # last_connect_time_string has been missing in the test
-        self.assertIsNotNone(handles[0].id)
-        self.assertIsNotNone(handles[0].file_id)
-        self.assertIsNotNone(handles[0].parent_id)
-        self.assertIsNotNone(handles[0].session_id)
-        self.assertIsNotNone(handles[0].client_ip)
-        self.assertIsNotNone(handles[0].open_time)
+        assert handles[0].id is not None
+        assert handles[0].file_id is not None
+        assert handles[0].parent_id is not None
+        assert handles[0].session_id is not None
+        assert handles[0].client_ip is not None
+        assert handles[0].open_time is not None
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
-    def test_list_handles_on_share(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_handles_on_share(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
     
@@ -76,12 +63,16 @@ class StorageHandleTest(StorageTestCase):
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
-    def test_list_handles_on_share_snapshot(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_handles_on_share_snapshot(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
 
         self._setup(storage_account_name, storage_account_key)
-        share = self.fsc.get_share_client(TEST_SHARE_NAME, snapshot="2019-05-08T23:27:24.0000000Z")
+        share = self.fsc.get_share_client(TEST_SHARE_NAME, snapshot="2022-11-21T22:38:55.0000000Z")
         root = share.get_directory_client()
 
         # Act
@@ -92,7 +83,11 @@ class StorageHandleTest(StorageTestCase):
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
-    def test_list_handles_with_marker(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_handles_with_marker(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
 
@@ -105,7 +100,7 @@ class StorageHandleTest(StorageTestCase):
         handles = list(next(handle_generator))
 
         # Assert
-        self.assertIsNotNone(handle_generator.continuation_token)
+        assert handle_generator.continuation_token is not None
         self._validate_handles(handles)
 
         # Note down a handle that we saw
@@ -121,17 +116,21 @@ class StorageHandleTest(StorageTestCase):
         # Make sure the old handle did not appear
         # In other words, the marker worked
         old_handle_not_present = all([old_handle.id != handle.id for handle in remaining_handles])
-        self.assertTrue(old_handle_not_present)
+        assert old_handle_not_present
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
-    def test_list_handles_on_directory(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_handles_on_directory(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
-        dir = share.get_directory_client('wut')
+        dir = share.get_directory_client('testdir')
 
         # Act
         handles = list(dir.list_handles(recursive=True))
@@ -143,17 +142,21 @@ class StorageHandleTest(StorageTestCase):
         handles = list(dir.list_handles(recursive=False))
 
         # Assert recursive option is functioning when disabled
-        self.assertTrue(len(handles) == 0)
+        assert len(handles) == 0
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
-    def test_list_handles_on_file(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_list_handles_on_file(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
 
         self._setup(storage_account_name, storage_account_key)
         share = self.fsc.get_share_client(TEST_SHARE_NAME)
-        client = share.get_file_client('wut/bla.txt')
+        client = share.get_file_client('testdir/test.txt')
 
         # Act
         handles = list(client.list_handles())
@@ -163,7 +166,11 @@ class StorageHandleTest(StorageTestCase):
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
-    def test_close_single_handle(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_close_single_handle(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
 
@@ -174,18 +181,22 @@ class StorageHandleTest(StorageTestCase):
         self._validate_handles(handles)
 
         # Act
-        with self.assertRaises(ValueError):
+        with pytest.raises(ValueError):
             root.close_handle('*')
 
         handles_info = root.close_handle(handles[0])
 
         # Assert 1 handle has been closed
-        self.assertEqual(1, handles_info['closed_handles_count'])
-        self.assertEqual(handles_info['failed_handles_count'], 0)
+        assert 1 == handles_info['closed_handles_count']
+        assert handles_info['failed_handles_count'] == 0
 
     @pytest.mark.playback_test_only
     @FileSharePreparer()
-    def test_close_all_handle(self, storage_account_name, storage_account_key):
+    @recorded_by_proxy
+    def test_close_all_handle(self, **kwargs):
+        storage_account_name = kwargs.pop("storage_account_name")
+        storage_account_key = kwargs.pop("storage_account_key")
+
         # don't run live, since the test set up was highly manual
         # only run when recording, or playing back in CI
 
@@ -199,8 +210,8 @@ class StorageHandleTest(StorageTestCase):
         handles_info = root.close_all_handles(recursive=True)
 
         # Assert at least 1 handle has been closed
-        self.assertTrue(handles_info['closed_handles_count'] > 1)
-        self.assertEqual(handles_info['failed_handles_count'], 0)
+        assert handles_info['closed_handles_count'] > 1
+        assert handles_info['failed_handles_count'] == 0
 
 
 # ------------------------------------------------------------------------------

@@ -5,13 +5,13 @@ import yaml
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2022_06_01_preview.models import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models import (
     InputDeliveryMode,
     JobInputType,
     JobOutputType,
     OutputDeliveryMode,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
+from azure.ai.ml._restclient.v2022_10_01_preview.models import UriFolderJobOutput as RestUriFolderJobOutput
 from azure.ai.ml._schema import CommandJobSchema
 from azure.ai.ml._utils.utils import is_valid_uuid, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, AssetTypes, InputOutputModes
@@ -21,6 +21,7 @@ from azure.ai.ml.entities._job.to_rest_functions import to_rest_job_object
 
 
 @pytest.mark.unittest
+@pytest.mark.training_experiences_test
 class TestCommandJob:
     def test_deserialize(self):
         test_path = "./tests/test_configs/command_job/command_job_test.yml"

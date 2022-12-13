@@ -5,21 +5,15 @@
 import abc
 import logging
 import time
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Optional
 
-from . import within_credential_chain
+from .utils import within_credential_chain
 from .._constants import DEFAULT_REFRESH_OFFSET, DEFAULT_TOKEN_REFRESH_RETRY_DELAY
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
 if TYPE_CHECKING:
-    # pylint:disable=ungrouped-imports,unused-import
-    from typing import Any, Optional
     from azure.core.credentials import AccessToken
 
+ABC = abc.ABC
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -57,10 +51,10 @@ class GetTokenMixin(ABC):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
-
         :rtype: :class:`azure.core.credentials.AccessToken`
-
         :raises CredentialUnavailableError: the credential is unable to attempt authentication because it lacks
             required data, state, or platform support
         :raises ~azure.core.exceptions.ClientAuthenticationError: authentication failed. The error's ``message``

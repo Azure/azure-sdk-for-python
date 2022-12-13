@@ -1,0 +1,1304 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Azure Machine Learning Workspaces",
+    "version": "2020-09-01-dataplanepreview"
+  },
+  "host": "management.azure.com",
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/deployments/{deploymentName}/jobs": {
+      "get": {
+        "tags": [
+          "BatchJob"
+        ],
+        "summary": "Lists batch inference jobs in this deployment.",
+        "operationId": "BatchJobDeployment_List",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "endpointName",
+            "description": "Name of endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "deploymentName",
+            "description": "Name of deployment",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/PaginationParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "machineLearningServices.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BatchJobResourceArmPaginatedResult"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      },
+      "post": {
+        "tags": [
+          "BatchJob"
+        ],
+        "summary": "Creates a batch inference job for a deployment.",
+        "operationId": "BatchJobDeployment_Create",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "endpointName",
+            "description": "Name of endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "deploymentName",
+            "description": "Name of deployment",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Batch inference endpoint Job definition object.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BatchJobResource"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "machineLearningServices.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BatchJobResource"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/BatchJobResource"
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/deployments/{deploymentName}/jobs/{id}": {
+      "get": {
+        "tags": [
+          "BatchJob"
+        ],
+        "summary": "Gets a batch inference job by name at deployment.",
+        "operationId": "BatchJobDeployment_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "endpointName",
+            "description": "Name of endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "deploymentName",
+            "description": "Name of deployment",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Identifier for the batch endpoint job.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "machineLearningServices.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BatchJobResource"
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/jobs": {
+      "get": {
+        "tags": [
+          "BatchJob"
+        ],
+        "summary": "Lists batch inference endpoint jobs in this endpoint.",
+        "operationId": "BatchJobEndpoint_List",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "endpointName",
+            "description": "Name of endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "in": "query",
+            "name": "deployment",
+            "description": "Optional filter for jobs related to a specific deployment in the endpoint.",
+            "type": "string"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/PaginationParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "machineLearningServices.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BatchJobResourceArmPaginatedResult"
+            }
+          }
+        },
+        "x-ms-pageable": {
+          "nextLinkName": "nextLink"
+        }
+      },
+      "post": {
+        "tags": [
+          "BatchJob"
+        ],
+        "summary": "Creates a batch inference endpoint job.",
+        "operationId": "BatchJobEndpoint_Create",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "endpointName",
+            "description": "Name of endpoint",
+            "required": true,
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9][a-zA-Z0-9\\-_]{0,254}$"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Batch inference endpoint Job definition object.",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/BatchJobResource"
+            }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "machineLearningServices.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BatchJobResource"
+            }
+          },
+          "201": {
+            "description": "Created",
+            "schema": {
+              "$ref": "#/definitions/BatchJobResource"
+            }
+          }
+        }
+      }
+    },
+    "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.MachineLearningServices/workspaces/{workspaceName}/batchEndpoints/{endpointName}/jobs/{id}": {
+      "get": {
+        "tags": [
+          "BatchJob"
+        ],
+        "summary": "Gets a batch inference endpoint job by name.",
+        "operationId": "BatchJobEndpoint_Get",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "endpointName",
+            "description": "Name of endpoint",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "path",
+            "name": "id",
+            "description": "Identifier for the batch endpoint job.",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ApiVersionParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/SubscriptionIdParameter"
+          },
+          {
+            "$ref": "../../../../../common-types/resource-management/v2/types.json#/parameters/ResourceGroupNameParameter"
+          },
+          {
+            "$ref": "machineLearningServices.json#/parameters/WorkspaceNameParameter"
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "Error",
+            "schema": {
+              "$ref": "machineLearningServices.json#/definitions/ErrorResponse"
+            }
+          },
+          "200": {
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/BatchJobResource"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AssetJobInput": {
+      "description": "Asset input type.",
+      "required": [
+        "uri"
+      ],
+      "type": "object",
+      "properties": {
+        "mode": {
+          "description": "Input Asset Delivery Mode.",
+          "default": "ReadOnlyMount",
+          "$ref": "#/definitions/InputDeliveryMode",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "uri": {
+          "description": "Input Asset URI.",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "AssetJobOutput": {
+      "description": "Asset output type.",
+      "type": "object",
+      "properties": {
+        "mode": {
+          "description": "Output Asset Delivery Mode.",
+          "default": "ReadWriteMount",
+          "$ref": "#/definitions/OutputDeliveryMode",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "uri": {
+          "description": "Output Asset URI. This will have a default value of \"azureml/{jobId}/{outputFolder}/{outputFileName}\" if omitted.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "BatchJob": {
+      "description": "Batch endpoint job",
+      "type": "object",
+      "properties": {
+        "compute": {
+          "description": "Compute configuration used to set instance count.",
+          "$ref": "#/definitions/ComputeConfiguration",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "dataset": {
+          "description": "Input dataset\r\nThis will be deprecated. Use InputData instead",
+          "$ref": "#/definitions/InferenceDataInputBase",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "description": {
+          "description": "The asset description text.",
+          "type": "string"
+        },
+        "errorThreshold": {
+          "format": "int32",
+          "description": "Error threshold, if the error count for the entire input goes above this value,\r\nthe batch inference will be aborted. Range is [-1, int.MaxValue]\r\n-1 value indicates, ignore all failures during batch inference",
+          "type": "integer",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "inputData": {
+          "description": "Input data for the job",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Job input definition.",
+            "$ref": "#/definitions/JobInput"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "interactionEndpoints": {
+          "description": "Dictonary of endpoint URIs, keyed by enumerated job endpoints.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/JobEndpoint"
+          },
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "loggingLevel": {
+          "description": "Logging level for batch inference operation.",
+          "$ref": "#/definitions/BatchLoggingLevel",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "maxConcurrencyPerInstance": {
+          "format": "int32",
+          "description": "Indicates maximum number of parallelism per instance.",
+          "type": "integer",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "miniBatchSize": {
+          "format": "int64",
+          "description": "Size of the mini-batch passed to each batch invocation.\r\nFor FileDataset, this is the number of files per mini-batch.\r\nFor TabularDataset, this is the size of the records in bytes, per mini-batch.",
+          "type": "integer",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "name": {
+          "type": "string"
+        },
+        "output": {
+          "description": "Location of the job output logs and artifacts.",
+          "$ref": "#/definitions/JobOutputArtifacts",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "outputData": {
+          "description": "Job output data location\r\nOptional parameter: when not specified, the default location is\r\nworkspaceblobstore location.",
+          "type": "object",
+          "additionalProperties": {
+            "description": "Job output definition container information on where to find the job output.",
+            "$ref": "#/definitions/JobOutputV2"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "outputDataset": {
+          "description": "Output dataset location\r\nOptional parameter: when not specified, the default location is\r\nworkspaceblobstore location.\r\nThis will be deprecated. Use OutputData instead",
+          "$ref": "#/definitions/DataVersion",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "outputFileName": {
+          "description": "Output file name",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "partitionKeys": {
+          "description": "Partition keys list used for Named partitioning.",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "properties": {
+          "description": "The asset property dictionary.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "provisioningState": {
+          "$ref": "#/definitions/JobProvisioningState",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "retrySettings": {
+          "description": "Retry Settings for the batch inference operation.",
+          "$ref": "#/definitions/BatchRetrySettings",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "status": {
+          "description": "Status of the job.",
+          "$ref": "#/definitions/JobStatus",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "tags": {
+          "description": "Tag dictionary. Tags can be added, removed, and updated.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "BatchJobResource": {
+      "description": "Azure Resource Manager resource envelope.",
+      "required": [
+        "properties"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "../../../../../common-types/resource-management/v2/types.json#/definitions/Resource"
+        }
+      ],
+      "properties": {
+        "properties": {
+          "description": "[Required] Additional attributes of the entity.",
+          "$ref": "#/definitions/BatchJob"
+        },
+        "systemData": {
+          "description": "System data associated with resource provider",
+          "$ref": "../../../../../common-types/resource-management/v2/types.json#/definitions/systemData",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "BatchJobResourceArmPaginatedResult": {
+      "description": "A paginated list of BatchJob entities.",
+      "type": "object",
+      "properties": {
+        "nextLink": {
+          "description": "The link to the next page of BatchJob objects. If null, there are no additional pages.",
+          "type": "string"
+        },
+        "value": {
+          "description": "An array of objects of type BatchJob.",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BatchJobResource"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "BatchLoggingLevel": {
+      "description": "Log verbosity for batch inferencing.\r\nIncreasing verbosity order for logging is : Warning, Info and Debug.\r\nThe default value is Info.",
+      "enum": [
+        "Info",
+        "Warning",
+        "Debug"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "BatchLoggingLevel",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "BatchRetrySettings": {
+      "description": "Retry settings for a batch inference operation.",
+      "type": "object",
+      "properties": {
+        "maxRetries": {
+          "format": "int32",
+          "description": "Maximum retry count for a mini-batch",
+          "type": "integer"
+        },
+        "timeout": {
+          "format": "duration",
+          "description": "Invocation timeout for a mini-batch, in ISO 8601 format.",
+          "type": "string"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ComputeConfiguration": {
+      "description": "Configuration for compute binding.",
+      "type": "object",
+      "properties": {
+        "instanceCount": {
+          "format": "int32",
+          "description": "Number of instances or nodes.",
+          "type": "integer",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "instanceType": {
+          "description": "SKU type to run on.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "isLocal": {
+          "description": "Set to true for jobs running on local compute.",
+          "type": "boolean",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "location": {
+          "description": "Location for virtual cluster run.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "properties": {
+          "description": "Additional properties.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "target": {
+          "description": "ARM resource ID of the Compute you are targeting. If not provided the resource will be deployed as Managed.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "CustomModelJobInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobInput"
+        },
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "CustomModel",
+      "additionalProperties": false
+    },
+    "CustomModelJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
+        }
+      ],
+      "x-ms-discriminator-value": "CustomModel",
+      "additionalProperties": false
+    },
+    "DatasetType": {
+      "enum": [
+        "Simple",
+        "Dataflow"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "DatasetType",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "DataVersion": {
+      "description": "Data asset version details.",
+      "required": [
+        "path"
+      ],
+      "type": "object",
+      "properties": {
+        "datasetType": {
+          "description": "The Format of dataset.",
+          "$ref": "#/definitions/DatasetType"
+        },
+        "datastoreId": {
+          "description": "ARM resource ID of the datastore where the asset is located.",
+          "type": "string"
+        },
+        "description": {
+          "description": "The asset description text.",
+          "type": "string"
+        },
+        "isAnonymous": {
+          "description": "If the name version are system generated (anonymous registration).",
+          "type": "boolean",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "path": {
+          "description": "[Required] The path of the file/directory in the datastore.",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        },
+        "properties": {
+          "description": "The asset property dictionary.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "tags": {
+          "description": "Tag dictionary. Tags can be added, removed, and updated.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "InferenceDataInputBase": {
+      "required": [
+        "dataInputType"
+      ],
+      "type": "object",
+      "properties": {
+        "dataInputType": {
+          "$ref": "#/definitions/InferenceDataInputType"
+        }
+      },
+      "discriminator": "dataInputType"
+    },
+    "InferenceDataInputType": {
+      "enum": [
+        "DatasetVersion",
+        "DatasetId",
+        "DataUrl"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "InferenceDataInputType",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "InferenceDatasetIdInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/InferenceDataInputBase"
+        }
+      ],
+      "properties": {
+        "datasetId": {
+          "description": "ARM ID of the input dataset",
+          "type": "string"
+        }
+      },
+      "x-ms-discriminator-value": "DatasetId",
+      "additionalProperties": false
+    },
+    "InferenceDatasetInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/InferenceDataInputBase"
+        }
+      ],
+      "properties": {
+        "datasetName": {
+          "description": "Name of the input dataset",
+          "type": "string"
+        },
+        "datasetVersion": {
+          "description": "Version of the input dataset",
+          "type": "string"
+        }
+      },
+      "x-ms-discriminator-value": "DatasetVersion",
+      "additionalProperties": false
+    },
+    "InferenceDataUrlInput": {
+      "required": [
+        "path"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/InferenceDataInputBase"
+        }
+      ],
+      "properties": {
+        "path": {
+          "description": "Asset path to the input data, say a blob URL.",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
+      },
+      "x-ms-discriminator-value": "DataUrl",
+      "additionalProperties": false
+    },
+    "InputDeliveryMode": {
+      "description": "Enum to determine the input data delivery mode.",
+      "enum": [
+        "ReadOnlyMount",
+        "ReadWriteMount",
+        "Download",
+        "Direct",
+        "EvalMount",
+        "EvalDownload"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "InputDeliveryMode",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "JobEndpoint": {
+      "description": "Job endpoint definition",
+      "type": "object",
+      "properties": {
+        "endpoint": {
+          "description": "Url for endpoint.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "jobEndpointType": {
+          "description": "Endpoint type.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "port": {
+          "format": "int32",
+          "description": "Port for endpoint.",
+          "type": "integer",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "properties": {
+          "description": "Additional properties to set on the endpoint.",
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "JobInput": {
+      "description": "Job input definition.",
+      "required": [
+        "jobInputType"
+      ],
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Description for the input.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "jobInputType": {
+          "description": "Specifies the type of job.",
+          "$ref": "#/definitions/JobInputType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "discriminator": "jobInputType"
+    },
+    "JobInputType": {
+      "description": "Enum to determine the Job Input Type.",
+      "enum": [
+        "UriFile",
+        "UriFolder",
+        "MLTable",
+        "Literal",
+        "CustomModel",
+        "MLFlowModel",
+        "TritonModel"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "JobInputType",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "JobOutputArtifacts": {
+      "description": "Job output definition container information on where to find job logs and artifacts.",
+      "type": "object",
+      "properties": {
+        "datastoreId": {
+          "description": "ARM ID of the datastore where the job logs and artifacts are stored",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        },
+        "path": {
+          "description": "Path within the datastore to the job logs and artifacts.",
+          "type": "string",
+          "readOnly": true,
+          "x-ms-mutability": [
+            "read"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "JobOutputType": {
+      "description": "Enum to determine the Job Output Type.",
+      "enum": [
+        "UriFile",
+        "UriFolder",
+        "MLTable",
+        "CustomModel",
+        "MLFlowModel",
+        "TritonModel"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "JobOutputType",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "JobOutputV2": {
+      "description": "Job output definition container information on where to find the job output.",
+      "required": [
+        "jobOutputType"
+      ],
+      "type": "object",
+      "properties": {
+        "description": {
+          "description": "Description for the output.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "jobOutputType": {
+          "description": "Specifies the type of job.",
+          "$ref": "#/definitions/JobOutputType",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        }
+      },
+      "discriminator": "jobOutputType"
+    },
+    "JobProvisioningState": {
+      "enum": [
+        "Succeeded",
+        "Failed",
+        "Canceled",
+        "InProgress"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "JobProvisioningState",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "JobStatus": {
+      "description": "The status of a job.",
+      "enum": [
+        "NotStarted",
+        "Starting",
+        "Provisioning",
+        "Preparing",
+        "Queued",
+        "Running",
+        "Finalizing",
+        "CancelRequested",
+        "Completed",
+        "Failed",
+        "Canceled",
+        "NotResponding",
+        "Paused",
+        "Unknown"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "JobStatus",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "LabelClass": {
+      "description": "Label class definition",
+      "type": "object",
+      "properties": {
+        "displayName": {
+          "description": "Display name of the label class.",
+          "type": "string",
+          "x-ms-mutability": [
+            "create",
+            "read"
+          ]
+        },
+        "subclasses": {
+          "description": "Dictionary of subclasses of the label class.",
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/LabelClass"
+          },
+          "x-ms-mutability": [
+            "create",
+            "read",
+            "update"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "LiteralJobInput": {
+      "required": [
+        "value"
+      ],
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "properties": {
+        "value": {
+          "description": "Literal input value",
+          "pattern": "[a-zA-Z0-9_]",
+          "type": "string"
+        }
+      },
+      "x-ms-discriminator-value": "Literal",
+      "additionalProperties": false
+    },
+    "MLFlowModelJobInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobInput"
+        },
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "MLFlowModel",
+      "additionalProperties": false
+    },
+    "MLFlowModelJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
+        }
+      ],
+      "x-ms-discriminator-value": "MLFlowModel",
+      "additionalProperties": false
+    },
+    "MLTableJobInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobInput"
+        },
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "MLTable",
+      "additionalProperties": false
+    },
+    "MLTableJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
+        }
+      ],
+      "x-ms-discriminator-value": "MLTable",
+      "additionalProperties": false
+    },
+    "OutputDeliveryMode": {
+      "description": "Output data delivery mode enums.",
+      "enum": [
+        "ReadWriteMount",
+        "Upload"
+      ],
+      "type": "string",
+      "x-ms-enum": {
+        "name": "OutputDeliveryMode",
+        "modelAsString": true
+      },
+      "additionalProperties": false
+    },
+    "TritonModelJobInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobInput"
+        },
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "TritonModel",
+      "additionalProperties": false
+    },
+    "TritonModelJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
+        }
+      ],
+      "x-ms-discriminator-value": "TritonModel",
+      "additionalProperties": false
+    },
+    "UriFileJobInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobInput"
+        },
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "UriFile",
+      "additionalProperties": false
+    },
+    "UriFileJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
+        }
+      ],
+      "x-ms-discriminator-value": "UriFile",
+      "additionalProperties": false
+    },
+    "UriFolderJobInput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobInput"
+        },
+        {
+          "$ref": "#/definitions/JobInput"
+        }
+      ],
+      "x-ms-discriminator-value": "UriFolder",
+      "additionalProperties": false
+    },
+    "UriFolderJobOutput": {
+      "type": "object",
+      "allOf": [
+        {
+          "$ref": "#/definitions/AssetJobOutput"
+        },
+        {
+          "$ref": "#/definitions/JobOutputV2"
+        }
+      ],
+      "x-ms-discriminator-value": "UriFolder",
+      "additionalProperties": false
+    }
+  },
+  "securityDefinitions": {
+    "azure_auth": {
+      "type": "oauth2",
+      "flow": "implicit",
+      "authorizationUrl": "https://login.microsoftonline.com/common/oauth2/authorize",
+      "scopes": {
+        "user_impersonation": "impersonate your user account"
+      },
+      "description": "Azure Active Directory OAuth2 Flow."
+    }
+  }
+}

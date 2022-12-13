@@ -14,6 +14,8 @@ DESCRIPTION:
     In this sample, we will be working for a company that handles loan payments. To follow privacy guidelines,
     we need to redact all of our information before we make it public.
 
+    See more information in the service docs: https://aka.ms/azsdk/language/pii
+
 USAGE:
     python sample_recognize_pii_entities_async.py
 

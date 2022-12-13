@@ -1,6 +1,28 @@
 # Release History
 
-## 12.10.0 (Unreleased)
+## 12.11.0b1 (Unreleased)
+
+### Features Added
+- Added support for service version 2021-12-02.
+- Added support for file and directory paths that contain invalid XML characters. When listing or fetching properties,
+the service will encode illegal characters and the SDK will now automatically decode them.
+- Added support for `AsyncIterable` as data type for async file upload.
+
+### Bugs Fixed
+- Fixed an issue where keyword `name_starts_with` was not being passed to the service properly for the `list_shares` async API
+
+### Other Changes
+- Removed `msrest` dependency.
+- Added `typing-extensions>=4.0.1` as a dependency.
+- Added `isodate>=0.6.1` as a dependency.
+- Added extra dependency `aio` for installing optional async dependencies. Use `pip install azure-storage-file-share[aio]` to install.
+
+## 12.10.1 (2022-10-18)
+
+### Bugs Fixed
+- Fixed possible `ValueError` for invalid content range that gets raised when downloading empty files through Azurite.
+
+## 12.10.0 (2022-10-11)
 
 ### Features Added
 - Stable release of features from 12.10.0b1.

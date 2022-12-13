@@ -1,58 +1,57 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds?dataFeedName=azureSqlDatafeed",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds?dataFeedName=azBlobDataFeed",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "2b31af09-5e0d-11ec-ac36-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "b48e193a-bda0-4c1e-a0c7-54dfbbb8391f",
-        "Content-Length": "1594",
+        "apim-request-id": "ddad7eab-8efe-4342-bbaa-e806610fab62",
+        "Content-Length": "1480",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:11:58 GMT",
+        "Date": "Thu, 29 Sep 2022 23:25:37 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "138",
-        "X-Request-ID": "b48e193a-bda0-4c1e-a0c7-54dfbbb8391f"
+        "x-envoy-upstream-service-time": "140",
+        "X-Request-ID": "ddad7eab-8efe-4342-bbaa-e806610fab62"
       },
       "ResponseBody": {
         "value": [
           {
             "dataFeedId": "metrics_advisor_data_feed_id",
-            "dataFeedName": "azureSqlDatafeed",
+            "dataFeedName": "azBlobDataFeed",
             "metrics": [
               {
                 "metricId": "metrics_advisor_metric_id",
-                "metricName": "cost",
-                "metricDisplayName": "cost",
+                "metricName": "Metric1",
+                "metricDisplayName": "Metric1",
                 "metricDescription": ""
               },
               {
-                "metricId": "4ab1295e-c85d-40b2-97f5-24f5087dd010",
-                "metricName": "revenue",
-                "metricDisplayName": "revenue",
+                "metricId": "81fafdc5-e2fc-4679-8c20-e2fe3e366c15",
+                "metricName": "Metric2",
+                "metricDisplayName": "Metric2",
                 "metricDescription": ""
               }
             ],
             "dimension": [
               {
-                "dimensionName": "category",
-                "dimensionDisplayName": "category"
+                "dimensionName": "Dim1",
+                "dimensionDisplayName": "Dim1"
               },
               {
-                "dimensionName": "region",
-                "dimensionDisplayName": "region"
+                "dimensionName": "Dim2",
+                "dimensionDisplayName": "Dim2"
               }
             ],
-            "dataStartFrom": "2020-08-30T00:00:00Z",
-            "dataSourceType": "SqlServer",
-            "timestampColumn": "timestamp",
+            "dataStartFrom": "2022-02-28T00:00:00Z",
+            "dataSourceType": "AzureBlob",
+            "timestampColumn": "Timestamp",
             "startOffsetInSeconds": 0,
             "maxQueryPerMinute": 30.0,
             "granularityName": "Daily",
@@ -76,16 +75,17 @@
               "camaiaor@microsoft.com",
               "chriss@microsoft.com",
               "elraikhm@microsoft.com",
-              "f850650c-1fcf-4489-b46f-71af2e30d360"
+              "yutongzhai@microsoft.com"
             ],
             "viewers": [],
             "creator": "savaity@microsoft.com",
             "status": "Active",
-            "createdTime": "2021-09-07T22:29:43Z",
+            "createdTime": "2022-04-05T17:10:58Z",
             "isAdmin": true,
             "actionLinkTemplate": "",
             "dataSourceParameter": {
-              "query": "SELECT @IntervalStart as timestamp, region, category, revenue, cost FROM MASampleRevenueCost WHERE timestamp \u003E= @IntervalStart and timestamp \u003C @IntervalEnd"
+              "container": "adsample",
+              "blobTemplate": "data/%Y/%m/sample_%Y_%m_%d.json"
             },
             "authenticationType": "Basic"
           }

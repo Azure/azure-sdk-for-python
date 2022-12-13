@@ -15,6 +15,7 @@ from azure.ai.formrecognizer import AnalyzeResult
 from preparers import FormRecognizerPreparer
 from asynctestcase import AsyncFormRecognizerTest
 from preparers import GlobalClientPreparer as _GlobalClientPreparer
+from conftest import skip_flaky_test
 
 DocumentModelAdministrationClientPreparer = functools.partial(_GlobalClientPreparer, DocumentModelAdministrationClient)
 
@@ -38,6 +39,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
             async with client:
                 await client.begin_analyze_document_from_url(model_id="", document_url="https://badurl.jpg")
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -82,6 +84,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async
@@ -126,6 +129,7 @@ class TestDACAnalyzeCustomModelFromUrlAsync(AsyncFormRecognizerTest):
         # check page range
         assert len(raw_analyze_result.pages) == len(returned_model.pages)
 
+    @skip_flaky_test
     @FormRecognizerPreparer()
     @DocumentModelAdministrationClientPreparer()
     @recorded_by_proxy_async

@@ -1,4 +1,5 @@
 import os
+import sys
 from copy import deepcopy
 from email.mime import image
 from pathlib import Path
@@ -9,46 +10,43 @@ import pytest
 from marshmallow.exceptions import ValidationError
 
 from azure.ai.ml import load_job
-from azure.ai.ml._restclient.v2022_06_01_preview.models._azure_machine_learning_workspaces_enums import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._azure_machine_learning_workspaces_enums import (
     LearningRateScheduler,
     ModelSize,
     StochasticOptimizer,
     ValidationMetricType,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import AutoMLJob as RestAutoMLJob
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import BanditPolicy as RestBanditPolicy
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ClassificationMultilabelPrimaryMetrics,
     ClassificationPrimaryMetrics,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageClassification as RestImageClassification,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageClassificationMultilabel as RestImageClassificationMultilabel,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageInstanceSegmentation as RestImageInstanceSegmentation,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import ImageLimitSettings as RestImageLimitSettings
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ImageLimitSettings as RestImageLimitSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelDistributionSettingsClassification as RestImageClassificationSearchSpace,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageModelDistributionSettingsObjectDetection as RestImageObjectDetectionSearchSpace,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
-    ImageModelSettingsClassification,
-    ImageModelSettingsObjectDetection,
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
+    ImageModelSettingsClassification as RestImageModelSettingsClassification,
+    ImageModelSettingsObjectDetection as RestImageModelSettingsObjectDetection,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     ImageObjectDetection as RestImageObjectDetection,
 )
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
-    ImageSweepLimitSettings as RestImageSweepLimitSettings,
-)
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import ImageSweepSettings as RestImageSweepSettings
-from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import ImageSweepSettings as RestImageSweepSettings
+from azure.ai.ml._restclient.v2022_10_01_preview.models._models_py3 import (
     InstanceSegmentationPrimaryMetrics,
     JobBase,
     LogVerbosity,
@@ -56,7 +54,7 @@ from azure.ai.ml._restclient.v2022_06_01_preview.models._models_py3 import (
     ObjectDetectionPrimaryMetrics,
 )
 from azure.ai.ml._scope_dependent_operations import OperationScope
-from azure.ai.ml._utils.utils import dump_yaml_to_file, load_yaml, to_iso_duration_format_mins
+from azure.ai.ml._utils.utils import camel_to_snake, dump_yaml_to_file, load_yaml, to_iso_duration_format_mins
 from azure.ai.ml.automl import (
     ImageClassificationSearchSpace,
     ImageLimitSettings,
@@ -71,6 +69,8 @@ from azure.ai.ml.entities._job.automl.image import (
     image_classification_job,
     image_instance_segmentation_job,
     image_object_detection_job,
+    ImageModelSettingsClassification,
+    ImageModelSettingsObjectDetection,
 )
 
 
@@ -124,7 +124,6 @@ def expected_image_target_column_name() -> str:
 @pytest.fixture
 def expected_image_sweep_settings() -> RestImageSweepSettings:
     return RestImageSweepSettings(
-        limits=RestImageSweepLimitSettings(),
         sampling_algorithm="grid",
         early_termination=RestBanditPolicy(
             slack_factor=0.2,
@@ -134,8 +133,8 @@ def expected_image_sweep_settings() -> RestImageSweepSettings:
 
 
 @pytest.fixture
-def expected_image_model_settings_classification() -> ImageModelSettingsClassification:
-    return ImageModelSettingsClassification(
+def expected_image_model_settings_classification() -> RestImageModelSettingsClassification:
+    return RestImageModelSettingsClassification(
         checkpoint_frequency=1,
         early_stopping=True,
         early_stopping_delay=2,
@@ -145,8 +144,8 @@ def expected_image_model_settings_classification() -> ImageModelSettingsClassifi
 
 
 @pytest.fixture
-def expected_image_model_settings_object_detection() -> ImageModelSettingsObjectDetection:
-    return ImageModelSettingsObjectDetection(
+def expected_image_model_settings_object_detection() -> RestImageModelSettingsObjectDetection:
+    return RestImageModelSettingsObjectDetection(
         checkpoint_frequency=1,
         early_stopping=True,
         early_stopping_delay=2,
@@ -163,6 +162,8 @@ def expected_image_search_space_settings() -> List[RestImageClassificationSearch
             learning_rate="uniform(0.005,0.05)",
             model_name="choice('vitb16r224','vits16r224')",
             number_of_epochs="choice(15,30)",
+            ams_gradient="choice(True,False)"
+
         ),
         RestImageClassificationSearchSpace(
             learning_rate="uniform(0.005,0.05)",
@@ -170,6 +171,7 @@ def expected_image_search_space_settings() -> List[RestImageClassificationSearch
             training_crop_size="choice(224,256)",
             validation_crop_size="choice(224,256)",
             validation_resize_size="choice(288,320,352)",
+            ams_gradient="False"
         ),
     ]
 
@@ -214,7 +216,7 @@ def expected_image_classification_job(
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_classification: ImageModelSettingsClassification,
+    expected_image_model_settings_classification: RestImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
@@ -244,7 +246,7 @@ def expected_image_classification_multilabel_job(
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_classification: ImageModelSettingsClassification,
+    expected_image_model_settings_classification: RestImageModelSettingsClassification,
     expected_image_search_space_settings: List[RestImageClassificationSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
@@ -274,7 +276,7 @@ def expected_image_object_detection_job(
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
+    expected_image_model_settings_object_detection: RestImageModelSettingsObjectDetection,
     expected_image_object_detection_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
@@ -304,7 +306,7 @@ def expected_image_instance_segmentation_job(
     expected_image_validation_data: MLTableJobInput,
     expected_image_limits: RestImageLimitSettings,
     expected_image_sweep_settings: RestImageSweepSettings,
-    expected_image_model_settings_object_detection: ImageModelSettingsObjectDetection,
+    expected_image_model_settings_object_detection: RestImageModelSettingsObjectDetection,
     expected_image_instance_segmentation_search_space_settings: List[RestImageObjectDetectionSearchSpace],
     compute_binding_expected: str,
 ) -> JobBase:
@@ -445,6 +447,7 @@ def loaded_image_instance_segmentation_job(
     return job
 
 
+@pytest.mark.automl_test
 @pytest.mark.unittest
 class TestAutoMLImageSchema:
     @pytest.mark.parametrize("run_type", ["single", "sweep", "automode"])
@@ -686,13 +689,13 @@ class TestAutoMLImageSchema:
         with pytest.raises(ValidationError, match="Value 'random_lr_scheduler1' passed is not in set"):
             load_job(test_yaml_path)
 
-        test_config_copy["search_space"][0]["learning_rate_scheduler"] = f"{LearningRateScheduler.WARMUP_COSINE}"
+        test_config_copy["search_space"][0]["learning_rate_scheduler"] = f"{camel_to_snake(LearningRateScheduler.WARMUP_COSINE)}"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
 
         test_config_copy["search_space"][0]["learning_rate_scheduler"] = {
             "type": "choice",
-            "values": [f"{LearningRateScheduler.WARMUP_COSINE}", f"{LearningRateScheduler.STEP}"],
+            "values": [f"{camel_to_snake(LearningRateScheduler.WARMUP_COSINE)}", f"{camel_to_snake(LearningRateScheduler.STEP)}"],
         }
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
@@ -704,13 +707,13 @@ class TestAutoMLImageSchema:
         with pytest.raises(ValidationError, match="Value 'random1' passed is not in set"):
             load_job(test_yaml_path)
 
-        test_config_copy["search_space"][0]["optimizer"] = f"{StochasticOptimizer.ADAM}"
+        test_config_copy["search_space"][0]["optimizer"] = f"{camel_to_snake(StochasticOptimizer.ADAM)}"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
 
         test_config_copy["search_space"][0]["optimizer"] = {
             "type": "choice",
-            "values": [f"{StochasticOptimizer.SGD}", f"{StochasticOptimizer.ADAM}"],
+            "values": [f"{camel_to_snake(StochasticOptimizer.SGD)}", f"{camel_to_snake(StochasticOptimizer.ADAM)}"],
         }
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_classification_job.ImageClassificationJob)
@@ -759,13 +762,13 @@ class TestAutoMLImageSchema:
         with pytest.raises(ValidationError, match="Value 100 passed is not in set"):
             load_job(test_yaml_path)
 
-        test_config_copy["search_space"][0]["model_size"] = f"{ModelSize.SMALL}"
+        test_config_copy["search_space"][0]["model_size"] = f"{camel_to_snake(ModelSize.SMALL)}"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_object_detection_job.ImageObjectDetectionJob)
 
         test_config_copy["search_space"][0]["model_size"] = {
             "type": "choice",
-            "values": [f"{ModelSize.SMALL}", f"{ModelSize.LARGE}"],
+            "values": [f"{camel_to_snake(ModelSize.SMALL)}", f"{camel_to_snake(ModelSize.LARGE)}"],
         }
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_object_detection_job.ImageObjectDetectionJob)
@@ -793,13 +796,13 @@ class TestAutoMLImageSchema:
         with pytest.raises(ValidationError, match="Value 'type1' passed is not in set"):
             load_job(test_yaml_path)
 
-        test_config_copy["search_space"][0]["validation_metric_type"] = f"{ValidationMetricType.COCO}"
+        test_config_copy["search_space"][0]["validation_metric_type"] = f"{camel_to_snake(ValidationMetricType.COCO)}"
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_instance_segmentation_job.ImageInstanceSegmentationJob)
 
         test_config_copy["search_space"][0]["validation_metric_type"] = {
             "type": "choice",
-            "values": [f"{ValidationMetricType.COCO}", f"{ValidationMetricType.VOC}"],
+            "values": [f"{camel_to_snake(ValidationMetricType.COCO)}", f"{camel_to_snake(ValidationMetricType.VOC)}"],
         }
         dump_yaml_to_file(test_yaml_path, test_config_copy)
         assert isinstance(load_job(test_yaml_path), image_instance_segmentation_job.ImageInstanceSegmentationJob)

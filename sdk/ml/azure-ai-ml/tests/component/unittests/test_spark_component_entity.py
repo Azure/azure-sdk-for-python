@@ -2,10 +2,9 @@ import pydash
 import pytest
 
 from azure.ai.ml import load_component
-from azure.ai.ml._restclient.v2022_06_01_preview.models import ManagedIdentity
+from azure.ai.ml._restclient.v2022_10_01_preview.models import ManagedIdentity
 from azure.ai.ml._utils.utils import load_yaml
 from azure.ai.ml.entities._component.spark_component import SparkComponent
-from azure.ai.ml.entities._job.pipeline._exceptions import UnexpectedKeywordError
 from azure.ai.ml.entities._job.pipeline._io import PipelineInput
 
 from .._util import _COMPONENT_TIMEOUT_SECOND
@@ -13,6 +12,7 @@ from .._util import _COMPONENT_TIMEOUT_SECOND
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestSparkComponentEntity:
     def test_component_load(self):
         # code is specified in yaml, value is respected
@@ -78,9 +78,7 @@ class TestSparkComponentEntity:
             "resources": {"instance_type": "Standard_E8S_V3", "runtime_version": "3.1.0"},
             "entry": {"file": "add_greeting_column.py", "spark_job_entry_type": "SparkJobPythonEntry"},
             "py_files": ["utils.zip"],
-            "jars": None,
             "files": ["my_files.txt"],
-            "archives": None,
             "identity": {"identity_type": "UserIdentity"},
             "conf": {
                 "spark.driver.cores": 2,
@@ -90,14 +88,9 @@ class TestSparkComponentEntity:
                 "spark.executor.memory": "1g",
             },
             "args": "--file_input ${{inputs.file_input}}",
-            "name": None,
-            "display_name": None,
-            "tags": {},
-            "computeId": None,
             "inputs": {
                 "file_input": {"job_input_type": "literal", "value": "${{parent.inputs.pipeline_input}}"},
             },
-            "outputs": {},
             "_source": "YAML.COMPONENT",
             "componentId": "fake_component",
         }

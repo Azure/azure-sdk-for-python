@@ -79,6 +79,11 @@ steps:
       displayName: Dump Test-Proxy Logs
       condition: succeededOrFailed()
 
+  - template: /eng/common/pipelines/templates/steps/publish-artifact.yml
+    parameters:
+      ArtifactPath: '$(Build.SourcesDirectory)/.logs'
+      ArtifactName: '$(System.StageName)_$(Agent.JobName)_logs'
+
   - task: PublishPipelineArtifact@1
     displayName: Publish Tox Logs
     condition: failed()
@@ -100,12 +105,18 @@ steps:
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
   - task: PublishPipelineArtifact@1
-    displayName: 'Publish .coverage files'
+    displayName: 'Publish raw .coverage files'
     continueOnError: true
     condition: and(succeeded(), ${{ parameters.RunCoverage }})
     inputs:
       targetPath: '$(Build.SourcesDirectory)/_coverage'
       artifactType: 'pipeline'
+
+  - pwsh: |
+      python -m pip install coverage==4.5.4
+      python scripts/devops_tasks/create_coverage.py
+    displayName: Create Coverage Report
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
 
   - task: PublishTestResults@2
     condition: always()
@@ -124,3 +135,11 @@ steps:
         --service="${{ parameters.ServiceDirectory }}"
         --toxenv="samples"
     env: ${{ parameters.EnvVars }}
+
+  - task: PublishCodeCoverageResults@1
+    displayName: 'Publish Code Coverage to DevOps'
+    continueOnError: true
+    condition: and(succeeded(), ${{ parameters.RunCoverage }})
+    inputs:
+      codeCoverageTool: Cobertura
+      summaryFileLocation: '$(Build.SourcesDirectory)/coverage.xml'

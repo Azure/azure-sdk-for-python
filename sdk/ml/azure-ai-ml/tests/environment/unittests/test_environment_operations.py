@@ -46,6 +46,7 @@ def mock_environment_operation(
 
 
 @pytest.mark.unittest
+@pytest.mark.production_experiences_test
 class TestEnvironmentOperations:
     @patch.object(Environment, "_from_rest_object", new=Mock())
     @patch.object(Environment, "_from_container_rest_object", new=Mock())

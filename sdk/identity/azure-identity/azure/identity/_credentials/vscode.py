@@ -5,7 +5,7 @@
 import abc
 import os
 import sys
-from typing import cast, TYPE_CHECKING
+from typing import cast, TYPE_CHECKING, Any, Dict, Optional
 
 from .._exceptions import CredentialUnavailableError
 from .._constants import AzureAuthorityHosts, AZURE_VSCODE_CLIENT_ID, EnvironmentVariables
@@ -22,16 +22,10 @@ else:
     from .._internal.linux_vscode_adapter import get_refresh_token, get_user_settings
 
 if TYPE_CHECKING:
-    # pylint:disable=unused-import,ungrouped-imports
-    from typing import Any, Dict, Optional, List
     from azure.core.credentials import AccessToken
     from .._internal.aad_client import AadClientBase
 
-try:
-    ABC = abc.ABC
-except AttributeError:  # Python 2.7, abc exists, but not ABC
-    ABC = abc.ABCMeta("ABC", (object,), {"__slots__": ()})  # type: ignore
-
+ABC = abc.ABC
 
 class _VSCodeCredentialBase(ABC):
     def __init__(self, **kwargs):
@@ -112,7 +106,12 @@ class _VSCodeCredentialBase(ABC):
 
 
 class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
-    """Authenticates as the Azure user signed in to Visual Studio Code.
+    """Authenticates as the Azure user signed in to Visual Studio Code via the 'Azure Account' extension.
+
+    It's a `known issue <https://github.com/Azure/azure-sdk-for-python/issues/23249>`_ that this credential doesn't
+    work with `Azure Account extension <https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account>`_
+    versions newer than **0.9.11**. A long-term fix to this problem is in progress. In the meantime, consider
+    authenticating with :class:`AzureCliCredential`.
 
     :keyword str authority: Authority of an Azure Active Directory endpoint, for example "login.microsoftonline.com".
         This argument is required for a custom cloud and usually unnecessary otherwise. Defaults to the authority
@@ -148,6 +147,8 @@ class VisualStudioCodeCredential(_VSCodeCredentialBase, GetTokenMixin):
         This method is called automatically by Azure SDK clients.
 
         :param str scopes: desired scopes for the access token. This method requires at least one scope.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :rtype: :class:`azure.core.credentials.AccessToken`
         :raises ~azure.identity.CredentialUnavailableError: the credential cannot retrieve user details from Visual
           Studio Code

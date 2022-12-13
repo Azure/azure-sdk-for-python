@@ -5,10 +5,8 @@ import pytest
 from azure.ai.ml import MLClient, load_datastore
 from azure.ai.ml.entities import AzureBlobDatastore, AzureFileDatastore
 from azure.ai.ml.entities._datastore._on_prem import HdfsDatastore
-from azure.ai.ml.entities._datastore.credentials import NoneCredentials
+from azure.ai.ml.entities._credentials import NoneCredentialConfiguration
 from azure.ai.ml.entities._datastore.datastore import Datastore
-from azure.core.paging import ItemPaged
-from azure.mgmt.storage import StorageManagementClient
 
 from devtools_testutils import AzureRecordedTestCase, is_live
 
@@ -67,6 +65,7 @@ def b64read(p):
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
+@pytest.mark.data_experiences_test
 class TestDatastore(AzureRecordedTestCase):
     @pytest.mark.skip(reason="Disable until preview release")
     def test_hdfs_pw(
@@ -169,7 +168,7 @@ class TestDatastore(AzureRecordedTestCase):
         assert isinstance(created_datastore, AzureBlobDatastore)
         assert created_datastore.container_name == internal_blob_ds.container_name
         assert created_datastore.account_name == internal_blob_ds.account_name
-        assert isinstance(created_datastore.credentials, NoneCredentials)
+        assert isinstance(created_datastore.credentials, NoneCredentialConfiguration)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
             client.datastores.get(random_name)
@@ -236,7 +235,7 @@ class TestDatastore(AzureRecordedTestCase):
         internal_adls_gen1 = load_datastore(adls_gen1_credential_less_file, params_override=params_override)
         created_datastore = datastore_create_get_list(client, internal_adls_gen1, random_name)
         assert created_datastore.store_name == internal_adls_gen1.store_name
-        assert isinstance(created_datastore.credentials, NoneCredentials)
+        assert isinstance(created_datastore.credentials, NoneCredentialConfiguration)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
             client.datastores.get(random_name)
@@ -274,7 +273,7 @@ class TestDatastore(AzureRecordedTestCase):
         internal_adls_gen2 = load_datastore(adls_gen2_credential_less_file, params_override=params_override)
         created_datastore = datastore_create_get_list(client, internal_adls_gen2, random_name)
         assert created_datastore.account_name == internal_adls_gen2.account_name
-        assert isinstance(created_datastore.credentials, NoneCredentials)
+        assert isinstance(created_datastore.credentials, NoneCredentialConfiguration)
         client.datastores.delete(random_name)
         with pytest.raises(Exception):
             client.datastores.get(random_name)

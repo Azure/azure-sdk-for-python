@@ -22,7 +22,7 @@ from azure.ai.ml.sweep import BanditPolicy, Choice, Uniform
 from devtools_testutils import AzureRecordedTestCase, is_live
 
 
-@pytest.mark.automle2etest
+@pytest.mark.automl_test
 @pytest.mark.usefixtures("recorded_test")
 @pytest.mark.skipif(
     condition=not is_live(),
@@ -116,7 +116,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
                 ),
             ]
         )
-        image_classification_multilabel_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
+        image_classification_job_sweep.set_limits(max_trials=1, max_concurrent_trials=1)
         image_classification_job_sweep.set_sweep(
             sampling_algorithm="Random",
             early_termination=BanditPolicy(evaluation_interval=2, slack_factor=0.2, delay_evaluation=6),
@@ -135,7 +135,7 @@ class TestAutoMLImageClassification(AzureRecordedTestCase):
         submitted_job_automode = client.jobs.create_or_update(image_classification_job_automode)
 
         # Assert completion of regular sweep job
-        assert_final_job_status(submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED)
+        assert_final_job_status(submitted_job_sweep, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600)
 
         # Assert completion of Automode job
-        assert_final_job_status(submitted_job_automode, client, ImageClassificationJob, JobStatus.COMPLETED)
+        assert_final_job_status(submitted_job_automode, client, ImageClassificationJob, JobStatus.COMPLETED, deadline=3600)

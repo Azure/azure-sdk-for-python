@@ -9,57 +9,89 @@
         "Connection": "keep-alive",
         "Content-Length": "696",
         "Content-Type": "application/json",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5abcc7a6-5e0c-11ec-a949-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
-      "RequestBody": "{\u0022dataSourceType\u0022: \u0022InfluxDB\u0022, \u0022dataFeedName\u0022: \u0022influxdb279dbd60-f957-4b67-a9d3-ab0ae1a1e163\u0022, \u0022granularityName\u0022: \u0022Daily\u0022, \u0022metrics\u0022: [{\u0022metricName\u0022: \u0022cost\u0022}, {\u0022metricName\u0022: \u0022revenue\u0022}], \u0022dimension\u0022: [{\u0022dimensionName\u0022: \u0022category\u0022}, {\u0022dimensionName\u0022: \u0022city\u0022}], \u0022dataStartFrom\u0022: \u00222019-01-01T00:00:00.000Z\u0022, \u0022startOffsetInSeconds\u0022: 0, \u0022maxConcurrency\u0022: -1, \u0022minRetryIntervalInSeconds\u0022: -1, \u0022stopRetryAfterInSeconds\u0022: -1, \u0022viewMode\u0022: \u0022Private\u0022, \u0022authenticationType\u0022: \u0022Basic\u0022, \u0022dataSourceParameter\u0022: {\u0022connectionString\u0022: \u0022influxdb_connection_string\u0022, \u0022database\u0022: \u0022adsample\u0022, \u0022userName\u0022: \u0022adreadonly\u0022, \u0022password\u0022: \u0022influxdb_password\u0022, \u0022query\u0022: \u0022\u0027select * from adsample2 where Timestamp = @StartTime\u0027\u0022}}",
+      "RequestBody": {
+        "dataSourceType": "InfluxDB",
+        "dataFeedName": "influxdb05e176a4-e3d2-43b8-b67f-008ad12cd7eb",
+        "granularityName": "Daily",
+        "metrics": [
+          {
+            "metricName": "cost"
+          },
+          {
+            "metricName": "revenue"
+          }
+        ],
+        "dimension": [
+          {
+            "dimensionName": "category"
+          },
+          {
+            "dimensionName": "city"
+          }
+        ],
+        "dataStartFrom": "2019-01-01T00:00:00.000Z",
+        "startOffsetInSeconds": 0,
+        "maxConcurrency": -1,
+        "minRetryIntervalInSeconds": -1,
+        "stopRetryAfterInSeconds": -1,
+        "viewMode": "Private",
+        "authenticationType": "Basic",
+        "dataSourceParameter": {
+          "connectionString": "influxdb_connection_string",
+          "database": "adsample",
+          "userName": "adreadonly",
+          "password": "influxdb_password",
+          "query": "\u0027select * from adsample2 where Timestamp = @StartTime\u0027"
+        }
+      },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "apim-request-id": "a4435213-fed0-4bc8-9d8a-aa1940f3ef9e",
+        "apim-request-id": "8f31e4ce-f9f9-4f99-a5cb-f30c37a9942a",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:06:10 GMT",
-        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/c4a18009-47c6-4410-b3b7-4165aaef893a",
+        "Date": "Thu, 29 Sep 2022 23:21:43 GMT",
+        "Location": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/a05aa3b8-d713-4dc2-830a-dba8053b3d1d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "537",
-        "X-Request-ID": "a4435213-fed0-4bc8-9d8a-aa1940f3ef9e"
+        "x-envoy-upstream-service-time": "556",
+        "X-Request-ID": "8f31e4ce-f9f9-4f99-a5cb-f30c37a9942a"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/c4a18009-47c6-4410-b3b7-4165aaef893a",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/a05aa3b8-d713-4dc2-830a-dba8053b3d1d",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5b15f570-5e0c-11ec-869a-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
       "ResponseHeaders": {
-        "apim-request-id": "5bf1dee4-5dcb-4205-b053-027c3f5a965b",
+        "apim-request-id": "3ee4cc11-f932-45cd-bbdd-9a0bea0673b8",
         "Content-Length": "1302",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Thu, 16 Dec 2021 01:06:10 GMT",
+        "Date": "Thu, 29 Sep 2022 23:21:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "181",
-        "X-Request-ID": "5bf1dee4-5dcb-4205-b053-027c3f5a965b"
+        "x-envoy-upstream-service-time": "175",
+        "X-Request-ID": "3ee4cc11-f932-45cd-bbdd-9a0bea0673b8"
       },
       "ResponseBody": {
-        "dataFeedId": "c4a18009-47c6-4410-b3b7-4165aaef893a",
-        "dataFeedName": "influxdb279dbd60-f957-4b67-a9d3-ab0ae1a1e163",
+        "dataFeedId": "a05aa3b8-d713-4dc2-830a-dba8053b3d1d",
+        "dataFeedName": "influxdb05e176a4-e3d2-43b8-b67f-008ad12cd7eb",
         "metrics": [
           {
-            "metricId": "1a26f3fe-9ccb-42c9-beda-8af7cef7f847",
+            "metricId": "16442a2a-fd8a-431c-9cfb-a1c3b021ebe9",
             "metricName": "cost",
             "metricDisplayName": "cost",
             "metricDescription": ""
           },
           {
-            "metricId": "4b81a038-d53e-468f-aa34-b206b3ae9e59",
+            "metricId": "8f8fdb3f-5262-4454-b55f-c1b2b54fc44c",
             "metricName": "revenue",
             "metricDisplayName": "revenue",
             "metricDescription": ""
@@ -96,7 +128,7 @@
         "viewers": [],
         "creator": "krpratic@microsoft.com",
         "status": "Active",
-        "createdTime": "2021-12-16T01:06:09Z",
+        "createdTime": "2022-09-29T23:21:43Z",
         "isAdmin": true,
         "actionLinkTemplate": "",
         "dataSourceParameter": {
@@ -109,32 +141,31 @@
       }
     },
     {
-      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/c4a18009-47c6-4410-b3b7-4165aaef893a",
+      "RequestUri": "https://fakeendpoint.cognitiveservices.azure.com/metricsadvisor/v1.0/dataFeeds/a05aa3b8-d713-4dc2-830a-dba8053b3d1d",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azsdk-python-ai-metricsadvisor/1.0.1 Python/3.10.0 (Windows-10-10.0.22000-SP0)",
-        "x-ms-client-request-id": "5b39c181-5e0c-11ec-a0a1-6245b51668de"
+        "User-Agent": "azsdk-python-ai-metricsadvisor/1.1.0 Python/3.10.0 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 204,
       "ResponseHeaders": {
-        "apim-request-id": "492d2361-08dc-46fb-9211-41130c87f0cc",
+        "apim-request-id": "013e25dd-ed3e-494f-8411-482338c8b145",
         "Content-Length": "0",
-        "Date": "Thu, 16 Dec 2021 01:06:10 GMT",
+        "Date": "Thu, 29 Sep 2022 23:21:43 GMT",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains; preload",
         "X-Content-Type-Options": "nosniff",
-        "x-envoy-upstream-service-time": "293",
-        "X-Request-ID": "492d2361-08dc-46fb-9211-41130c87f0cc"
+        "x-envoy-upstream-service-time": "295",
+        "X-Request-ID": "013e25dd-ed3e-494f-8411-482338c8b145"
       },
       "ResponseBody": null
     }
   ],
   "Variables": {
-    "data_feed_id": "c4a18009-47c6-4410-b3b7-4165aaef893a",
-    "data_feed_name": "influxdb279dbd60-f957-4b67-a9d3-ab0ae1a1e163"
+    "data_feed_id": "a05aa3b8-d713-4dc2-830a-dba8053b3d1d",
+    "data_feed_name": "influxdb05e176a4-e3d2-43b8-b67f-008ad12cd7eb"
   }
 }

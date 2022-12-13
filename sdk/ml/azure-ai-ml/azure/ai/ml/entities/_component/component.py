@@ -2,13 +2,12 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # ---------------------------------------------------------
 import tempfile
-import typing
 from contextlib import contextmanager
 from os import PathLike
 from pathlib import Path
 from typing import IO, AnyStr, Dict, Union
 
-from marshmallow import Schema
+from marshmallow import INCLUDE
 
 from azure.ai.ml._restclient.v2022_05_01.models import (
     ComponentContainerData,
@@ -24,15 +23,18 @@ from azure.ai.ml.constants._common import (
     BASE_PATH_CONTEXT_KEY,
     PARAMS_OVERRIDE_KEY,
     REGISTRY_URI_FORMAT,
+    CommonYamlFields,
 )
 from azure.ai.ml.constants._component import ComponentSource, NodeType
+from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets.asset import Asset
 from azure.ai.ml.entities._inputs_outputs import Input, Output
 from azure.ai.ml.entities._mixins import RestTranslatableMixin, TelemetryMixin, YamlTranslatableMixin
 from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import find_type_in_override
-from azure.ai.ml.entities._validation import SchemaValidatableMixin, ValidationResult
+from azure.ai.ml.entities._validation import SchemaValidatableMixin, MutableValidationResult
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationException
+from .code import ComponentIgnoreFile
 
 # pylint: disable=protected-access, redefined-builtin
 # disable redefined-builtin to use id/type as argument name
@@ -81,6 +83,8 @@ class Component(
     :type _schema: str
     :param creation_context: Creation metadata of the component.
     :type creation_context: ~azure.ai.ml.entities.SystemData
+    :raises ~azure.ai.ml.exceptions.ValidationException: Raised if Component cannot be successfully validated.
+        Details will be provided in the error message.
     """
 
     # pylint: disable=too-many-instance-attributes
@@ -140,13 +144,17 @@ class Component(
         # Store original yaml
         self._yaml_str = yaml_str
         self._other_parameter = kwargs
+
+    @property
+    def _func(self):
         from azure.ai.ml.entities._job.pipeline._load_component import _generate_component_function
 
-        # validate input names before create component function
-        # TODO(1924371): discuss if validate & update self._func after input changes
-        self._validate_io_names(self._inputs)
-        self._validate_io_names(self._outputs)
-        self._func = _generate_component_function(self)
+        # validate input/output names before creating component function
+        validation_result = self._validate_io_names(self.inputs)
+        validation_result.merge_with(self._validate_io_names(self.outputs))
+        validation_result.try_raise(error_target=self._get_validation_error_target())
+
+        return _generate_component_function(self)
 
     @property
     def type(self) -> str:
@@ -245,7 +253,7 @@ class Component(
         )
 
     @classmethod
-    def _validate_io_names(cls, io_dict: Dict, raise_error=True):
+    def _validate_io_names(cls, io_dict: Dict, raise_error=False) -> MutableValidationResult:
         """Validate input/output names, raise exception if invalid."""
         validation_result = cls._create_empty_validation_result()
         lower2original_kwargs = {}
@@ -265,7 +273,7 @@ class Component(
                 )
             else:
                 lower2original_kwargs[lower_key] = name
-        return validation_result.try_raise(error_target=ErrorTarget.COMPONENT, raise_error=raise_error)
+        return validation_result.try_raise(error_target=cls._get_validation_error_target(), raise_error=raise_error)
 
     @classmethod
     def _build_io(cls, io_dict: Union[Dict, Input, Output], is_input: bool):
@@ -278,7 +286,7 @@ class Component(
         return component_io
 
     @classmethod
-    def _create_schema_for_validation(cls, context) -> typing.Union[PathAwareSchema, Schema]:
+    def _create_schema_for_validation(cls, context) -> PathAwareSchema:
         return ComponentSchema(context=context)
 
     @classmethod
@@ -295,18 +303,33 @@ class Component(
     ) -> "Component":
         data = data or {}
         params_override = params_override or []
-        context = {
-            BASE_PATH_CONTEXT_KEY: Path(yaml_path).parent if yaml_path else Path("./"),
-            PARAMS_OVERRIDE_KEY: params_override,
-        }
+        base_path = Path(yaml_path).parent if yaml_path else Path("./")
 
         type_in_override = find_type_in_override(params_override)
-        from azure.ai.ml.entities._component.component_factory import component_factory
 
-        component = component_factory.load_from_dict(_type=type_in_override, data=data, context=context, **kwargs)
+        # type_in_override > type_in_yaml > default (command)
+        if type_in_override is None:
+            type_in_override = data.get(CommonYamlFields.TYPE, NodeType.COMMAND)
+        data[CommonYamlFields.TYPE] = type_in_override
+
+        from azure.ai.ml.entities._component.component_factory import component_factory
+        create_instance_func, create_schema_func = component_factory.get_create_funcs(data)
+        new_instance = create_instance_func()
+        new_instance.__init__(
+            yaml_str=kwargs.pop("yaml_str", None),
+            _source=kwargs.pop("_source", ComponentSource.YAML_COMPONENT),
+            **(create_schema_func({
+                BASE_PATH_CONTEXT_KEY: base_path,
+                PARAMS_OVERRIDE_KEY: params_override,
+            }).load(data, unknown=INCLUDE, **kwargs)),
+        )
+        # Set base path separately to avoid doing this in post load, as return types of post load are not unified,
+        # could be object or dict.
+        # base_path in context can be changed in loading, so we use original base_path here.
+        new_instance._base_path = base_path
         if yaml_path:
-            component._source_path = yaml_path
-        return component
+            new_instance._source_path = yaml_path
+        return new_instance
 
     @classmethod
     def _from_container_rest_object(cls, component_container_rest_object: ComponentContainerData) -> "Component":
@@ -322,25 +345,60 @@ class Component(
             # Set this field to None as it hold a default True in init.
             is_deterministic=None,
         )
+        component.latest_version = component_container_details.latest_version
         return component
 
     @classmethod
     def _from_rest_object(cls, obj: ComponentVersionData) -> "Component":
-        from azure.ai.ml.entities._component.component_factory import component_factory
-
         # TODO: Remove in PuP with native import job/component type support in MFE/Designer
         # Convert command component back to import component private preview
         component_spec = obj.properties.component_spec
-        type = component_spec["type"]
-        if type == NodeType.COMMAND and component_spec["command"] == NodeType.IMPORT:
-            component_spec["type"] = NodeType.IMPORT
+        if component_spec[CommonYamlFields.TYPE] == NodeType.COMMAND and component_spec["command"] == NodeType.IMPORT:
+            component_spec[CommonYamlFields.TYPE] = NodeType.IMPORT
             component_spec["source"] = component_spec.pop("inputs")
             component_spec["output"] = component_spec.pop("outputs")["output"]
 
+        # shouldn't block serialization when name is not valid
+        # maybe override serialization method for name field?
+        from azure.ai.ml.entities._component.component_factory import component_factory
+        create_instance_func, _ = component_factory.get_create_funcs(obj.properties.component_spec)
+
+        instance = create_instance_func()
+        instance.__init__(**instance._from_rest_object_to_init_params(obj))
+        return instance
+
+    @classmethod
+    def _from_rest_object_to_init_params(cls, obj: ComponentVersionData) -> Dict:
         # Object got from rest data contain _source, we delete it.
         if "_source" in obj.properties.component_spec:
             del obj.properties.component_spec["_source"]
-        return component_factory.load_from_rest(obj=obj)
+
+        rest_component_version = obj.properties
+        _type = rest_component_version.component_spec[CommonYamlFields.TYPE]
+
+        # inputs/outputs will be parsed by instance._build_io in instance's __init__
+        inputs = rest_component_version.component_spec.pop("inputs", {})
+        # parse String -> string, Integer -> integer, etc
+        for _input in inputs.values():
+            _input["type"] = Input._map_from_rest_type(_input["type"])
+        outputs = rest_component_version.component_spec.pop("outputs", {})
+
+        origin_name = rest_component_version.component_spec[CommonYamlFields.NAME]
+        rest_component_version.component_spec[CommonYamlFields.NAME] = ANONYMOUS_COMPONENT_NAME
+        init_kwargs = cls._create_schema_for_validation({BASE_PATH_CONTEXT_KEY: "./"}).load(
+            rest_component_version.component_spec, unknown=INCLUDE
+        )
+        init_kwargs.update(dict(
+            id=obj.id,
+            is_anonymous=rest_component_version.is_anonymous,
+            creation_context=obj.system_data,
+            inputs=inputs,
+            outputs=outputs,
+            name=origin_name,
+        ))
+
+        # remove empty values, because some property only works for specific component, eg: distribution for command
+        return {k: v for k, v in init_kwargs.items() if v is not None and v != {}}
 
     def _set_is_anonymous(self, is_anonymous: bool):
         """Mark this component as anonymous and overwrite component name to
@@ -372,7 +430,7 @@ class Component(
         # omit name since name doesn't impact component's uniqueness
         return hash_dict(component_interface_dict, keys_to_omit=["name", "id", "version"])
 
-    def _customized_validate(self) -> ValidationResult:
+    def _customized_validate(self) -> MutableValidationResult:
         validation_result = super(Component, self)._customized_validate()
         # If private features are enable and component has code value of type str we need to check
         # that it is a valid git path case. Otherwise we should throw a ValidationError
@@ -389,8 +447,9 @@ class Component(
                 message="Not a valid code value: git paths are not supported.",
                 yaml_path="code",
             )
-        # validate inputs names before creation in case user added invalid inputs after entity built
+        # validate inputs names
         validation_result.merge_with(self._validate_io_names(self.inputs, raise_error=False))
+        validation_result.merge_with(self._validate_io_names(self.outputs, raise_error=False))
 
         return validation_result
 
@@ -403,6 +462,9 @@ class Component(
             component["type"] = NodeType.COMMAND
             component["inputs"] = component.pop("source")
             component["outputs"] = dict({"output": component.pop("output")})
+            # method _to_dict() will remove empty keys
+            if "tags" not in component:
+                component["tags"] = {}
             component["tags"]["component_type_overwrite"] = NodeType.IMPORT
             component["command"] = NodeType.IMPORT
 
@@ -422,7 +484,6 @@ class Component(
     def _to_dict(self) -> Dict:
         """Dump the command component content into a dictionary."""
 
-        # Distribution inherits from autorest generated class, use as_dist() to dump to json
         # Replace the name of $schema to schema.
         component_schema_dict = self._dump_for_validation()
         component_schema_dict.pop("base_path", None)
@@ -441,21 +502,22 @@ class Component(
 
     @contextmanager
     def _resolve_local_code(self):
-        """Resolve working directory path for the component."""
-        with tempfile.TemporaryDirectory() as tmp_dir:
-            if hasattr(self, "code"):
-                code = getattr(self, "code")
-                # Hack: when code not specified, we generated a file which contains
-                # COMPONENT_PLACEHOLDER as code
-                # This hack was introduced because job does not allow running component without a
-                # code, and we need to make sure when component updated some field(eg: description),
-                # the code remains the same. Benefit of using a constant code for all components
-                # without code is this will generate same code for anonymous components which
-                # enables component reuse
-                if code is None:
-                    code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
-                    with open(code, "w") as f:
-                        f.write(COMPONENT_CODE_PLACEHOLDER)
-                yield code
-            else:
-                yield tmp_dir
+        """Create a Code object pointing to local code and yield it."""
+        if not hasattr(self, "code"):
+            raise ValueError(f"{self.__class__} does not have attribute code.")
+        code = getattr(self, "code")
+        if code is None:
+            # Hack: when code not specified, we generated a file which contains
+            # COMPONENT_PLACEHOLDER as code
+            # This hack was introduced because job does not allow running component without a
+            # code, and we need to make sure when component updated some field(eg: description),
+            # the code remains the same. Benefit of using a constant code for all components
+            # without code is this will generate same code for anonymous components which
+            # enables component reuse
+            with tempfile.TemporaryDirectory() as tmp_dir:
+                code = Path(tmp_dir) / COMPONENT_PLACEHOLDER
+                with open(code, "w") as f:
+                    f.write(COMPONENT_CODE_PLACEHOLDER)
+                yield Code(base_path=self._base_path, path=code)
+        else:
+            yield Code(base_path=self._base_path, path=code, ignore_file=ComponentIgnoreFile(code))

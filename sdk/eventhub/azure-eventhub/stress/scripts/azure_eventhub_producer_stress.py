@@ -14,7 +14,7 @@ from dotenv import load_dotenv
 from azure.eventhub import EventHubProducerClient, EventData, EventHubSharedKeyCredential, TransportType
 from azure.eventhub.exceptions import EventHubError
 from azure.eventhub.aio import EventHubProducerClient as EventHubProducerClientAsync
-from azure.identity import ClientSecretCredential
+from azure.identity import ClientSecretCredential, DefaultAzureCredential
 from azure.identity.aio import ClientSecretCredential as ClientSecretCredentialAsync
 
 from logger import get_logger
@@ -31,6 +31,24 @@ def handle_exception(error, ignore_send_failure, stress_logger, azure_monitor_me
         stress_logger.warning(err_msg)
         return 0
     raise error
+
+def on_success(events, pid):
+    # sending succeeded
+    pass
+
+
+def on_error(events, pid, error):
+    # sending failed
+    pass
+
+async def on_success_async(events, pid):
+    # sending succeeded
+    pass
+
+
+async def on_error_async(events, pid, error):
+    # sending failed
+    pass
 
 
 def stress_send_sync(producer: EventHubProducerClient, args, stress_logger, azure_monitor_metric):
@@ -113,6 +131,8 @@ class StressTestRunner(object):
         )
         self.argument_parser.add_argument("--conn_str", help="EventHub connection string",
                                           default=os.environ.get('EVENT_HUB_CONN_STR'))
+        self.argument_parser.add_argument("--azure_identity", help="Use identity", type=bool,
+                                          default=False)
         parser.add_argument("--auth_timeout", help="Authorization Timeout", type=float, default=60)
         self.argument_parser.add_argument("--eventhub", help="Name of EventHub", default=os.environ.get('EVENT_HUB_NAME'))
         self.argument_parser.add_argument(
@@ -127,24 +147,26 @@ class StressTestRunner(object):
             action="store_true",
             help="Whether create new client for each sending",
         )
+        self.argument_parser.add_argument("--buffered_mode", help="buffer producer", action="store_true")
         self.argument_parser.add_argument("--proxy_hostname", type=str)
         self.argument_parser.add_argument("--proxy_port", type=str)
         self.argument_parser.add_argument("--proxy_username", type=str)
         self.argument_parser.add_argument("--proxy_password", type=str)
-        self.argument_parser.add_argument("--hostname", help="The fully qualified host name for the Event Hubs namespace.")
+        self.argument_parser.add_argument("--hostname", help="The fully qualified host name for the Event Hubs namespace.", default=os.environ.get("EVENT_HUB_HOSTNAME"))
         self.argument_parser.add_argument("--sas_policy", help="Name of the shared access policy to authenticate with")
         self.argument_parser.add_argument("--sas_key", help="Shared access key")
         self.argument_parser.add_argument("--aad_client_id", help="AAD client id")
         self.argument_parser.add_argument("--aad_secret", help="AAD secret")
         self.argument_parser.add_argument("--aad_tenant_id", help="AAD tenant id")
         self.argument_parser.add_argument("--payload", help="payload size", type=int, default=1024)
-        self.argument_parser.add_argument("--uamqp_logging_enable", help="uamqp logging enable", action="store_true")
+        self.argument_parser.add_argument("--pyamqp_logging_enable", help="pyamqp logging enable", action="store_true")
         self.argument_parser.add_argument("--print_console", action="store_true")
         self.argument_parser.add_argument("--log_filename", help="log file name", type=str)
         self.argument_parser.add_argument("--retry_total", type=int, default=3)
         self.argument_parser.add_argument("--retry_backoff_factor", type=float, default=0.8)
         self.argument_parser.add_argument("--retry_backoff_max", type=float, default=120)
         self.argument_parser.add_argument("--ignore_send_failure", help="ignore sending failures", action="store_true")
+        self.argument_parser.add_argument("--uamqp_mode", help="Flag for uamqp or pyamqp", action="store_true")
         self.args, _ = parser.parse_known_args()
 
         if self.args.send_partition_key and self.args.send_partition_id:
@@ -161,6 +183,7 @@ class StressTestRunner(object):
             "retry_backoff_factor": self.args.retry_backoff_factor,
             "retry_backoff_max": self.args.retry_backoff_max
         }
+
         if self.args.proxy_hostname:
             http_proxy = {
                 "proxy_hostname": self.args.proxy_hostname,
@@ -168,28 +191,71 @@ class StressTestRunner(object):
                 "username": self.args.proxy_username,
                 "password": self.args.proxy_password,
             }
-
-        if self.args.conn_str:
+        if self.args.buffered_mode:
+            if is_async:
+                client = client_class.from_connection_string(
+                    self.args.conn_str,
+                    eventhub_name=self.args.eventhub,
+                    auth_timeout=self.args.auth_timeout,
+                    http_proxy=http_proxy,
+                    transport_type=transport_type,
+                    logging_enable=self.args.pyamqp_logging_enable,
+                    buffered_mode=self.args.buffered_mode,
+                    on_success=on_success_async,
+                    on_error=on_error_async, 
+                    uamqp_transport=self.args.uamqp_mode,
+                **retry_options
+                )
+            else:
+                client = client_class.from_connection_string(
+                    self.args.conn_str,
+                    eventhub_name=self.args.eventhub,
+                    auth_timeout=self.args.auth_timeout,
+                    http_proxy=http_proxy,
+                    transport_type=transport_type,
+                    logging_enable=self.args.pyamqp_logging_enable,
+                    buffered_mode=self.args.buffered_mode,
+                    on_success=on_success,
+                    on_error=on_error,
+                    uamqp_transport=self.args.uamqp_mode,
+                **retry_options
+                )
+        elif self.args.azure_identity:
+            print("Using Azure Identity")
+            client = client_class(
+                fully_qualified_namespace=self.args.hostname,
+                eventhub_name=self.args.eventhub,
+                credential=DefaultAzureCredential(),
+                auth_timeout=self.args.auth_timeout,
+                http_proxy=http_proxy,
+                transport_type=transport_type,
+                logging_enable=self.args.pyamqp_logging_enable,
+                uamqp_transport=self.args.uamqp_mode,
+                **retry_options 
+            )
+        elif self.args.conn_str:
             client = client_class.from_connection_string(
                 self.args.conn_str,
                 eventhub_name=self.args.eventhub,
                 auth_timeout=self.args.auth_timeout,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.uamqp_logging_enable,
+                logging_enable=self.args.pyamqp_logging_enable,
+                uamqp_transport=self.args.uamqp_mode,
                 **retry_options
             )
         elif self.args.hostname:
             client = client_class(
-                fully_qualified_namespace=self.args.hostname,
-                eventhub_name=self.args.eventhub,
-                credential=EventHubSharedKeyCredential(self.args.sas_policy, self.args.sas_key),
-                auth_timeout=self.args.auth_timeout,
-                http_proxy=http_proxy,
-                transport_type=transport_type,
-                logging_enable=self.args.uamqp_logging_enable,
-                **retry_options
-            )
+                    fully_qualified_namespace=self.args.hostname,
+                    eventhub_name=self.args.eventhub,
+                    credential=EventHubSharedKeyCredential(self.args.sas_policy, self.args.sas_key),
+                    auth_timeout=self.args.auth_timeout,
+                    http_proxy=http_proxy,
+                    transport_type=transport_type,
+                    logging_enable=self.args.pyamqp_logging_enable,
+                    uamqp_transport=self.args.uamqp_mode,
+                    **retry_options
+                )
         elif self.args.aad_client_id:
             if is_async:
                 credential = ClientSecretCredentialAsync(self.args.tenant_id, self.args.aad_client_id, self.args.aad_secret)
@@ -202,7 +268,8 @@ class StressTestRunner(object):
                 credential=credential,
                 http_proxy=http_proxy,
                 transport_type=transport_type,
-                logging_enable=self.args.uamqp_logging_enable,
+                logging_enable=self.args.pyamqp_logging_enable,
+                uamqp_transport=self.args.uamqp_mode,
                 **retry_options
             )
         else:

@@ -18,6 +18,7 @@ components_dir = tests_root_dir / "test_configs/components/"
 
 @pytest.mark.timeout(_COMPONENT_TIMEOUT_SECOND)
 @pytest.mark.unittest
+@pytest.mark.pipeline_test
 class TestComponentValidate:
     def test_component_name_validate(self):
         invalid_component_names = [
@@ -52,8 +53,9 @@ class TestComponentValidate:
             str(components_dir / "invalid/helloworld_component_with_start_number_input_names.yml"),
         ]
         for yaml_file in yaml_files:
+            component = load_component(yaml_file)
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(yaml_file)
+                component()
 
     def test_component_output_name_validate(self):
         yaml_files = [
@@ -64,8 +66,9 @@ class TestComponentValidate:
             str(components_dir / "invalid/helloworld_component_with_start_number_output_names.yml"),
         ]
         for yaml_file in yaml_files:
+            component = load_component(yaml_file)
             with pytest.raises(ValidationException, match="is not a valid parameter name"):
-                load_component(yaml_file)
+                component()
 
     @pytest.mark.parametrize(
         "expected_location,asset_object",
@@ -93,14 +96,14 @@ class TestComponentValidate:
             setattr(component, expected_location, new_asset)
             validation_result = component._validate()
             if should_fail:
-                assert validation_result.passed is False and expected_location in validation_result.messages, (
+                assert validation_result.passed is False and expected_location in validation_result.error_messages, (
                     f"field {expected_location} with value {str(new_asset)} should be invalid, "
-                    f"but validation message is {json.dumps(validation_result._to_dict(), indent=2)}"
+                    f"but validation message is {repr(validation_result)}"
                 )
             else:
                 assert validation_result.passed, (
                     f"field {expected_location} with value {str(new_asset)} should be valid, "
-                    f"but met unexpected error: {json.dumps(validation_result._to_dict(), indent=2)}"
+                    f"but met unexpected error: {repr(validation_result)}"
                 )
 
         # object

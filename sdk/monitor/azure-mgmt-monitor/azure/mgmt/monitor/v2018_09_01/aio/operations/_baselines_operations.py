@@ -64,7 +64,7 @@ class BaselinesOperations:
         aggregation: Optional[str] = None,
         sensitivities: Optional[str] = None,
         filter: Optional[str] = None,
-        result_type: Optional[Union[str, "_models.ResultType"]] = None,
+        result_type: Optional[Union[str, _models.ResultType]] = None,
         **kwargs: Any
     ) -> AsyncIterable["_models.SingleMetricBaseline"]:
         """**Lists the metric baseline values for a resource**.

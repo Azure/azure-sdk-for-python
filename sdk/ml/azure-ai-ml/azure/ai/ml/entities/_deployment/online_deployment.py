@@ -31,7 +31,6 @@ from azure.ai.ml.entities._assets import Code
 from azure.ai.ml.entities._assets._artifacts.model import Model
 from azure.ai.ml.entities._assets.environment import Environment
 from azure.ai.ml.entities._deployment.code_configuration import CodeConfiguration
-from azure.ai.ml.entities._deployment.data_collector import DataCollector
 from azure.ai.ml.entities._deployment.deployment_settings import OnlineRequestSettings, ProbeSettings
 from azure.ai.ml.entities._deployment.resource_requirements_settings import ResourceRequirementsSettings
 from azure.ai.ml.entities._deployment.scale_settings import (
@@ -41,7 +40,13 @@ from azure.ai.ml.entities._deployment.scale_settings import (
 )
 from azure.ai.ml.entities._endpoint._endpoint_helpers import validate_endpoint_or_deployment_name
 from azure.ai.ml.entities._util import load_from_dict
-from azure.ai.ml.exceptions import DeploymentException, ErrorCategory, ErrorTarget, ValidationException
+from azure.ai.ml.exceptions import (
+    DeploymentException,
+    ErrorCategory,
+    ErrorTarget,
+    ValidationErrorType,
+    ValidationException,
+)
 
 from ..._vendor.azure_resources.flatten_json import flatten, unflatten
 from .deployment import Deployment
@@ -55,29 +60,29 @@ class OnlineDeployment(Deployment):
     :param name: Name of the resource.
     :type name: str
     :param tags: Tag dictionary. Tags can be added, removed, and updated.
-    :type tags: dict[str, str]
+    :type tags: Dict[str, str]
     :param properties: The asset property dictionary.
-    :type properties: Dict[str, Any], optional
+    :type properties: Dict[str, Any]
     :param description: Description of the resource.
-    :type description: str, optional
+    :type description: str
     :param model: Model entity for the endpoint deployment, defaults to None
-    :type model: Union[str, Model], optional
-    :param code_configuration: defaults to None
-    :type code_configuration: CodeConfiguration, optional
+    :type model: Union[str, ~azure.ai.ml.entities.Model]
+    :param code_configuration: Default value is None.
+    :type code_configuration: CodeConfiguration
     :param environment: Environment entity for the endpoint deployment, defaults to None
-    :type environment: Union[str, Environment], optional
-    :param app_insights_enabled: defaults to False
-    :type app_insights_enabled: bool, optional
+    :type environment: Union[str, Environment]
+    :param app_insights_enabled: Default value is False
+    :type app_insights_enabled: bool
     :param scale_settings: How the online deployment will scale.
-    :type scale_settings: OnlineScaleSettings, optional
-    :param request_settings: defaults to RequestSettings()
-    :type request_settings: OnlineRequestSettings, optional
+    :type scale_settings: OnlineScaleSettings
+    :param request_settings: Default value is RequestSettings()
+    :type request_settings: OnlineRequestSettings
     :param liveness_probe: Liveness probe settings.
-    :type liveness_probe: ProbeSettings, optional
+    :type liveness_probe: ProbeSettings
     :param readiness_probe: Readiness probe settings.
-    :type readiness_probe: ProbeSettings, optional
+    :type readiness_probe: ProbeSettings
     :param environment_variables: Environment variables that will be set in deployment.
-    :type environment_variables: dict, optional
+    :type environment_variables: Dict[str, str]
     :param instance_count: The instance count used for this deployment.
     :type instance_count: int
     :param instance_type: Azure compute sku.
@@ -85,34 +90,35 @@ class OnlineDeployment(Deployment):
     :param model_mount_path: The path to mount the model in custom container..
     :type model_mount_path: str
     :param code_path: Equivalent to code_configuration.code, will be ignored if code_configuration is present.
-    :type code_path: Union[str, PathLike], optional
+    :type code_path: Union[str, PathLike]
     :param scoring_script: Equivalent to code_configuration.code.scoring_script
         Will be ignored if code_configuration is present.
-    :type scoring_script: Union[str, PathLike], optional
+    :type scoring_script: Union[str, PathLike]
     """
 
     def __init__(
         self,
         name: str,
-        endpoint_name: str = None,
-        tags: Dict[str, Any] = None,
-        properties: Dict[str, Any] = None,
-        description: str = None,
-        model: Union[str, "Model"] = None,
-        code_configuration: CodeConfiguration = None,
-        environment: Union[str, "Environment"] = None,
-        app_insights_enabled: bool = False,
-        scale_settings: OnlineScaleSettings = None,
-        request_settings: OnlineRequestSettings = None,
-        liveness_probe: ProbeSettings = None,
-        readiness_probe: ProbeSettings = None,
-        environment_variables: Dict[str, str] = None,
-        instance_count: int = None,
-        instance_type: str = None,
-        model_mount_path: str = None,
-        code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
-        scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
-        **kwargs,
+        *,
+        endpoint_name: Optional[str] = None,
+        tags: Optional[Dict[str, Any]] = None,
+        properties: Optional[Dict[str, Any]] = None,
+        description: Optional[str] = None,
+        model: Optional[Union[str, "Model"]] = None,
+        code_configuration: Optional[CodeConfiguration] = None,
+        environment: Optional[Union[str, "Environment"]] = None,
+        app_insights_enabled: Optional[bool] = False,
+        scale_settings: Optional[OnlineScaleSettings] = None,
+        request_settings: Optional[OnlineRequestSettings] = None,
+        liveness_probe: Optional[ProbeSettings] = None,
+        readiness_probe: Optional[ProbeSettings] = None,
+        environment_variables: Optional[Dict[str, str]] = None,
+        instance_count: Optional[int] = None,
+        instance_type: Optional[str] = None,
+        model_mount_path: Optional[str] = None,
+        code_path:  Optional[Union[str, PathLike]] = None,  # promoted property from code_configuration.code
+        scoring_script:  Optional[Union[str, PathLike]] = None, # promoted property code_configuration.scoring_script
+        **kwargs: Any,
     ):
         self._provisioning_state = kwargs.pop("provisioning_state", None)
 
@@ -234,6 +240,7 @@ class OnlineDeployment(Deployment):
                     target=ErrorTarget.ONLINE_DEPLOYMENT,
                     no_personal_data_message=msg.format("[name1]", "[name2]"),
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )
             super()._merge_with(other)
             self.app_insights_enabled = other.app_insights_enabled or self.app_insights_enabled
@@ -511,12 +518,13 @@ class ManagedOnlineDeployment(OnlineDeployment):
     :type instance_type: str
     :param instance_count: The instance count used for this deployment.
     :type instance_count: int
-    :param data_collector: Allows model data collector for deployment.
-    :type data_collector: DataCollector, optional
     :param code_path: Folder path to local code assets. Equivalent to code_configuration.code.
     :type code_path: Union[str, PathLike], optional
     :param scoring_script: Scoring script name. Equivalent to code_configuration.code.scoring_script.
     :type scoring_script: Union[str, PathLike], optional
+    :param egress_public_network_access: Whether to restrict communication between a deployment
+        and the Azure resources used to by the deployment. Allowed values are: "enabled", "disabled"
+    :type egress_public_network_access: str
     """
 
     def __init__(
@@ -538,16 +546,15 @@ class ManagedOnlineDeployment(OnlineDeployment):
         environment_variables: Dict[str, str] = None,
         instance_type: str = None,
         instance_count: int = None,
-        data_collector: DataCollector = None,
         code_path: Union[str, PathLike] = None,  # promoted property from code_configuration.code
         scoring_script: Union[str, PathLike] = None,  # promoted property from code_configuration.scoring_script
+        egress_public_network_access = None,
         **kwargs,
     ):
 
         kwargs["type"] = EndpointComputeType.MANAGED.value
-
         self.private_network_connection = kwargs.pop("private_network_connection", None)
-        self.egress_public_network_access = kwargs.pop("egress_public_network_access", None)
+        self.data_collector = kwargs.pop("data_collector", None)
 
         super(ManagedOnlineDeployment, self).__init__(
             name=name,
@@ -571,8 +578,8 @@ class ManagedOnlineDeployment(OnlineDeployment):
             **kwargs,
         )
 
-        self.data_collector = data_collector
         self.readiness_probe = readiness_probe
+        self.egress_public_network_access = egress_public_network_access
 
     def _to_dict(self) -> Dict:
         return ManagedOnlineDeploymentSchema(context={BASE_PATH_CONTEXT_KEY: "./"}).dump(self)
@@ -706,4 +713,5 @@ class ManagedOnlineDeployment(OnlineDeployment):
                     target=ErrorTarget.ONLINE_DEPLOYMENT,
                     no_personal_data_message=msg,
                     error_category=ErrorCategory.USER_ERROR,
+                    error_type=ValidationErrorType.INVALID_VALUE,
                 )

@@ -13,7 +13,7 @@ _Azure SDK Python packages support for Python 2.7 has ended 01 January 2022. For
 
 
 
-For code examples, see [Service Fabric](https://docs.microsoft.com/python/api/overview/azure/servicefabric) on docs.microsoft.com.
+For code examples, see [Service Fabric](https://docs.microsoft.com/python/api/overview/azure/service-fabric) on docs.microsoft.com.
 
 
 # Provide Feedback
