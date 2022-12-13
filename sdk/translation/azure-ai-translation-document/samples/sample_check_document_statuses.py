@@ -53,7 +53,7 @@ def sample_document_status_checks():
                     print(f"Document at {document.source_document_url} was translated to {document.translated_to} "
                           f"language. You can find translated document at {document.translated_document_url}")
                     completed_docs.append(document.id)
-                if document.status == "Failed":
+                if document.status == "Failed" and document.error:
                     print(f"Document at {document.source_document_url} failed translation. "
                           f"Error Code: {document.error.code}, Message: {document.error.message}")
                     completed_docs.append(document.id)
