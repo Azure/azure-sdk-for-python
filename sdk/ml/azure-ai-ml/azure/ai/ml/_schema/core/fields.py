@@ -279,7 +279,7 @@ class DateTimeStr(fields.Str):
 class ArmStr(Field):
     def __init__(self, **kwargs):
         self.azureml_type = kwargs.pop("azureml_type", None)
-        self.pattern = kwargs.pop("pattern", r"^azureml:[\w\/]+.*")
+        self.pattern = kwargs.pop("pattern", r"^azureml:[\w\/-]+")
         super().__init__(**kwargs)
 
     def _jsonschema_type_mapping(self):
