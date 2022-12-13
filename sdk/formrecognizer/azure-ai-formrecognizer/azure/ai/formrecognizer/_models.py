@@ -3659,8 +3659,8 @@ class DocumentModelSummary:
 
     def __init__(
         self,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         self.model_id: str = kwargs.get("model_id", None)
         self.description: Optional[str] = kwargs.get("description", None)
         self.created_on: datetime.datetime = kwargs.get("created_on", None)
@@ -3731,8 +3731,8 @@ class DocumentModelDetails(DocumentModelSummary):
 
     def __init__(
         self,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         super().__init__(**kwargs)
         self.doc_types: Optional[dict[str, DocumentTypeDetails]] = kwargs.get("doc_types", None)
 
@@ -3806,8 +3806,8 @@ class DocumentTypeDetails:
 
     def __init__(
         self,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         self.description: Optional[str] = kwargs.get("description", None)
         self.build_mode: Optional[str] = kwargs.get("build_mode", None)
         self.field_schema: dict[str, Any] = kwargs.get("field_schema", None)
@@ -3868,8 +3868,8 @@ class CustomDocumentModelsDetails:
 
     def __init__(
         self,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         self.count: int = kwargs.get("count", None)
         self.limit: int = kwargs.get("limit", None)
 
@@ -3918,8 +3918,8 @@ class ResourceDetails:
 
     def __init__(
         self,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         self.custom_document_models: CustomDocumentModelsDetails = kwargs.get("custom_document_models", None)
 
     def __repr__(self) -> str:
@@ -3977,8 +3977,8 @@ class DocumentAnalysisError:
 
     def __init__(
         self,
-        **kwargs
-    ):
+        **kwargs: Any
+    ) -> None:
         self.code: str = kwargs.get("code", None)
         self.message: str = kwargs.get("message", None)
         self.target: Optional[str] = kwargs.get("target", None)
@@ -4046,9 +4046,8 @@ class DocumentAnalysisInnerError:
 
     def __init__(
         self,
-        **kwargs
-    ):
-
+        **kwargs: Any
+    ) -> None:
         self.code: str = kwargs.get("code", None)
         self.message: Optional[str] = kwargs.get("message", None)
         self.innererror: Optional[DocumentAnalysisInnerError] = kwargs.get("innererror", None)
