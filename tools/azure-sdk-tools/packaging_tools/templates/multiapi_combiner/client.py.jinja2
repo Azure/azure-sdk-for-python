@@ -31,8 +31,6 @@ from {{ ".." if async_mode else "." }}_validation import api_version_validation
         )
     {% endfor %}
 
-    {{ getsource() }}
-
     {{ def }} close(self):
         {{ await }}self._client.close()
     {{ def }} __{{ a_prefix }}enter__(self):
