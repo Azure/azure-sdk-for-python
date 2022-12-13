@@ -61,7 +61,6 @@ jobs:
         export SDK_REPO=$(pwd)/sdk-repo
         export SKIP_COVERAGE=$(SKIP_COVERAGE)
         export AZURE_TEST_RUN_LIVE=false
-        export SCRIPT_PATH=$script_path
 
         # create virtual env
         python -m venv venv-sdk
