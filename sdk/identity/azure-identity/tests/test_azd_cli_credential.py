@@ -9,7 +9,7 @@ import sys
 
 from azure.identity import AzureDeveloperCliCredential, CredentialUnavailableError
 from azure.identity._constants import EnvironmentVariables
-from azure.identity._credentials.azure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
+from azure.identity._credentials.azd_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
 from azure.core.exceptions import ClientAuthenticationError
 
 import subprocess
@@ -85,7 +85,7 @@ def test_cli_not_installed_linux():
 def test_cli_not_installed_windows():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    stderr = "'az' is not recognized as an internal or external command, operable program or batch file."
+    stderr = "'azd' is not recognized as an internal or external command, operable program or batch file."
     with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, stderr=stderr)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
             AzureDeveloperCliCredential().get_token("scope")
@@ -102,7 +102,7 @@ def test_cannot_execute_shell():
 def test_not_logged_in():
     """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
-    stderr = "ERROR: Please run 'az login' to setup account."
+    stderr = "ERROR: not logged in, run `azd login` to login"
     with mock.patch(CHECK_OUTPUT, raise_called_process_error(1, stderr=stderr)):
         with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
             AzureDeveloperCliCredential().get_token("scope")

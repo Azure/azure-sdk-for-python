@@ -17,7 +17,7 @@ from azure.core.exceptions import ClientAuthenticationError
 import pytest
 
 from helpers_async import get_completed_future
-from test_cli_credential import TEST_ERROR_OUTPUTS
+from test_azd_cli_credential import TEST_ERROR_OUTPUTS
 
 SUBPROCESS_EXEC = AzureDeveloperCliCredential.__module__ + ".asyncio.create_subprocess_exec"
 
@@ -130,7 +130,7 @@ async def test_cannot_execute_shell():
 async def test_not_logged_in():
     """When the CLI isn't logged in, the credential should raise CredentialUnavailableError"""
 
-    stderr = "ERROR: Please run 'azd login' to setup account."
+    stderr = "ERROR: not logged in, run `azd login` to login"
     with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
         with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
             credential = AzureDeveloperCliCredential()
