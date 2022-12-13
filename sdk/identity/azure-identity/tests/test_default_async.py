@@ -11,6 +11,7 @@ from azure.identity import CredentialUnavailableError
 from azure.identity.aio import (
     AzurePowerShellCredential,
     AzureCliCredential,
+    AzureDeveloperCliCredential,
     DefaultAzureCredential,
     ManagedIdentityCredential,
     SharedTokenCacheCredential,
@@ -92,7 +93,13 @@ def test_authority(authority):
             shared_cache.supported = lambda: False
             with patch.dict("os.environ", {}, clear=True):
                 test_initialization(mock_credential, expect_argument=False)
-
+                
+    # authority should not be passed to AzureDeveloperCliCredential
+    with patch(DefaultAzureCredential.__module__ + ".AzureDeveloperCliCredential") as mock_credential:
+        with patch(DefaultAzureCredential.__module__ + ".SharedTokenCacheCredential") as shared_cache:
+            shared_cache.supported = lambda: False
+            with patch.dict("os.environ", {}, clear=True):
+                test_initialization(mock_credential, expect_argument=False)
 
 def test_exclude_options():
     def assert_credentials_not_present(chain, *credential_classes):
@@ -118,6 +125,9 @@ def test_exclude_options():
 
     credential = DefaultAzureCredential(exclude_cli_credential=True)
     assert_credentials_not_present(credential, AzureCliCredential)
+
+    credential = DefaultAzureCredential(exclude_azd_cli_credential=True)
+    assert_credentials_not_present(credential, AzureDeveloperCliCredential)
 
     credential = DefaultAzureCredential(exclude_visual_studio_code_credential=True)
     assert_credentials_not_present(credential, VisualStudioCodeCredential)

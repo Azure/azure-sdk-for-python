@@ -31,11 +31,11 @@ from ._persistent_cache import TokenCachePersistenceOptions
 
 __all__ = [
     "AuthenticationRecord",
-    "AzureDeveloperCliCredential",
     "AuthenticationRequiredError",
     "AuthorizationCodeCredential",
     "AzureAuthorityHosts",
     "AzureCliCredential",
+    "AzureDeveloperCliCredential",
     "AzurePowerShellCredential",
     "CertificateCredential",
     "ChainedTokenCredential",

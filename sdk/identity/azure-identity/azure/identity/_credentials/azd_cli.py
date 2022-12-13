@@ -18,6 +18,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
+from .._internal import resolve_tenant
 from .._internal.decorators import log_get_token
 
 CLI_NOT_FOUND = "Azure Developer CLI could not be found. Please visit https://aka.ms/azure-dev for installation instructions and then, once installed, authenticate to your Azure account using 'azd login'."
@@ -26,6 +27,20 @@ NOT_LOGGED_IN = "Please run 'azd login' from a command prompt to authenticate be
 
 
 class AzureDeveloperCliCredential(object):
+    """Authenticates by requesting a token from the Azure Developer CLI.
+
+    This requires previously logging in to Azure via "azd login", and will use the CLI's currently logged in identity.
+
+    :keyword str tenant_id: Optional tenant to include in the token request.
+    :keyword List[str] additionally_allowed_tenants: Specifies tenants in addition to the specified "tenant_id"
+        for which the credential may acquire tokens. Add the wildcard value "*" to allow the credential to
+        acquire tokens for any tenant the application can access.
+    """
+    def __init__(self, *, tenant_id: str = "", additionally_allowed_tenants: List[str] = None):
+
+        self.tenant_id = tenant_id
+        self._additionally_allowed_tenants = additionally_allowed_tenants or []
+
     def __enter__(self):
         return self
 
@@ -37,9 +52,35 @@ class AzureDeveloperCliCredential(object):
 
     @log_get_token("AzureDeveloperCliCredential")
     def get_token(self, *scopes: str, **kwargs) -> AccessToken:
+        """Request an access token for `scopes`.
+
+        This method is called automatically by Azure SDK clients. Applications calling this method directly must
+        also handle token caching because this credential doesn't cache the tokens it acquires.
+
+        :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
+        :keyword str tenant_id: optional tenant to include in the token request.
+
+        :rtype: :class:`azure.core.credentials.AccessToken`
+
+        :raises ~azure.identity.CredentialUnavailableError: the credential was unable to invoke the Azure Developer CLI.
+        :raises ~azure.core.exceptions.ClientAuthenticationError: the credential invoked the Azure Developer CLI but didn't
+          receive an access token.
+        """
+
         commandString = ' --scope '.join(scopes)
         command = COMMAND_LINE.format(commandString)
         output = _run_command(command)
+        
+        tenant = resolve_tenant(
+            default_tenant=self.tenant_id,
+            additionally_allowed_tenants=self._additionally_allowed_tenants,
+            **kwargs
+        )
+        if tenant:
+            command += " --tenant " + tenant
+        
         token = parse_token(output)
         if not token:
             sanitized_output = sanitize_output(output)
@@ -50,6 +91,11 @@ class AzureDeveloperCliCredential(object):
 
 
 def parse_token(output):
+    """Parse to an AccessToken.
+
+    In particular, convert the "expiresOn" value to epoch seconds. This value is a naive local datetime as returned by
+    datetime.fromtimestamp.
+    """
     try:
         token = json.loads(output)
         dt = datetime.strptime(token["expiresOn"], "%Y-%m-%dT%H:%M:%SZ")
@@ -61,6 +107,8 @@ def parse_token(output):
 
 
 def get_safe_working_dir():
+    """Invoke 'azd' from a directory controlled by the OS, not the executing program's directory"""
+
     if sys.platform.startswith("win"):
         path = os.environ.get("SYSTEMROOT")
         if not path:

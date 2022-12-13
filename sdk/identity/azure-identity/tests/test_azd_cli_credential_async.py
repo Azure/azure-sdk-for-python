@@ -9,17 +9,17 @@ import re
 import sys
 from unittest import mock
 
-from azdure.identity import CredentialUnavailableError
-from azdure.identity.aio import azdureDeveloperCliCredential
-from azdure.identity._constants import EnvironmentVariables
-from azdure.identity._credentials.azdure_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
-from azdure.core.exceptions import ClientAuthenticationError
+from azure.identity import CredentialUnavailableError
+from azure.identity.aio import AzureDeveloperCliCredential
+from azure.identity._constants import EnvironmentVariables
+from azure.identity._credentials.azd_cli import CLI_NOT_FOUND, NOT_LOGGED_IN
+from azure.core.exceptions import ClientAuthenticationError
 import pytest
 
 from helpers_async import get_completed_future
 from test_cli_credential import TEST_ERROR_OUTPUTS
 
-SUBPROCESS_EXEC = azdureDeveloperCliCredential.__module__ + ".asyncio.create_subprocess_exec"
+SUBPROCESS_EXEC = AzureDeveloperCliCredential.__module__ + ".asyncio.create_subprocess_exec"
 
 pytestmark = pytest.mark.asyncio
 
@@ -36,26 +36,26 @@ async def test_no_scopes():
     """The credential should raise ValueError when get_token is called with no scopes"""
 
     with pytest.raises(ValueError):
-        await azdureDeveloperCliCredential().get_token()
+        await AzureDeveloperCliCredential().get_token()
 
 
 async def test_multiple_scopes():
     """The credential should raise ValueError when get_token is called with more than one scope"""
 
     with pytest.raises(ValueError):
-        await azdureDeveloperCliCredential().get_token("one scope", "and another")
+        await AzureDeveloperCliCredential().get_token("one scope", "and another")
 
 
 async def test_close():
     """The credential must define close, although it's a no-op because the credential has no transport"""
 
-    await azdureDeveloperCliCredential().close()
+    await AzureDeveloperCliCredential().close()
 
 
 async def test_context_manager():
     """The credential must be a context manager, although it does nothing as one because it has no transport"""
 
-    async with azdureDeveloperCliCredential():
+    async with AzureDeveloperCliCredential():
         pass
 
 
@@ -64,18 +64,18 @@ async def test_windows_fallback():
     """The credential should fall back to the sync implementation when not using ProactorEventLoop on Windows"""
 
     sync_get_token = mock.Mock()
-    with mock.patch("azdure.identity.aio._credentials.azdure_cli._SyncazdureDeveloperCliCredential") as fallback:
+    with mock.patch("azure.identity.aio._credentials.azd_cli._SyncAzureDeveloperCliCredential") as fallback:
         fallback.return_value = mock.Mock(get_token=sync_get_token)
-        with mock.patch(azdureDeveloperCliCredential.__module__ + ".asyncio.get_event_loop"):
+        with mock.patch(AzureDeveloperCliCredential.__module__ + ".asyncio.get_event_loop"):
             # asyncio.get_event_loop now returns Mock, i.e. never ProactorEventLoop
-            credential = azdureDeveloperCliCredential()
+            credential = AzureDeveloperCliCredential()
             await credential.get_token("scope")
 
     assert sync_get_token.call_count == 1
 
 
 async def test_get_token():
-    """The credential should parse the CLI's output to an token"""
+    """The credential should parse the CLI's output to an AccessToken"""
 
     access_token = "access token"
     expected_expires_on = 1602015811
@@ -90,7 +90,7 @@ async def test_get_token():
     )
 
     with mock.patch(SUBPROCESS_EXEC, mock_exec(successful_output)):
-        credential = azdureDeveloperCliCredential()
+        credential = AzureDeveloperCliCredential()
         token = await credential.get_token("scope")
 
     assert token.token == access_token
@@ -101,10 +101,10 @@ async def test_get_token():
 async def test_cli_not_installed_linux():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    stderr = "/bin/sh: 1: azdd: not found"
+    stderr = "/bin/sh: 1: azd: not found"
     with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=127)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
-            credential = azdureDeveloperCliCredential()
+            credential = AzureDeveloperCliCredential()
             await credential.get_token("scope")
 
 
@@ -114,7 +114,7 @@ async def test_cli_not_installed_windows():
     stderr = "'azd' is not recognized as an internal or external command, operable program or batch file."
     with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
-            credential = azdureDeveloperCliCredential()
+            credential = AzureDeveloperCliCredential()
             await credential.get_token("scope")
 
 
@@ -123,7 +123,7 @@ async def test_cannot_execute_shell():
 
     with mock.patch(SUBPROCESS_EXEC, mock.Mock(side_effect=OSError())):
         with pytest.raises(CredentialUnavailableError):
-            credential = azdureDeveloperCliCredential()
+            credential = AzureDeveloperCliCredential()
             await credential.get_token("scope")
 
 
@@ -133,7 +133,7 @@ async def test_not_logged_in():
     stderr = "ERROR: Please run 'azd login' to setup account."
     with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=1)):
         with pytest.raises(CredentialUnavailableError, match=NOT_LOGGED_IN):
-            credential = azdureDeveloperCliCredential()
+            credential = AzureDeveloperCliCredential()
             await credential.get_token("scope")
 
 
@@ -143,7 +143,7 @@ async def test_unexpected_error():
     stderr = "something went wrong"
     with mock.patch(SUBPROCESS_EXEC, mock_exec("", stderr, return_code=42)):
         with pytest.raises(ClientAuthenticationError, match=stderr):
-            credential = azdureDeveloperCliCredential()
+            credential = AzureDeveloperCliCredential()
             await credential.get_token("scope")
 
 
@@ -153,7 +153,7 @@ async def test_parsing_error_does_not_expose_token(output):
 
     with mock.patch(SUBPROCESS_EXEC, mock_exec(output)):
         with pytest.raises(ClientAuthenticationError) as ex:
-            credential = azdureDeveloperCliCredential()
+            credential = AzureDeveloperCliCredential()
             await credential.get_token("scope")
 
     assert "secret value" not in str(ex.value)
@@ -166,7 +166,7 @@ async def test_subprocess_error_does_not_expose_token(output):
 
     with mock.patch(SUBPROCESS_EXEC, mock_exec(output, return_code=1)):
         with pytest.raises(ClientAuthenticationError) as ex:
-            credential = azdureDeveloperCliCredential()
+            credential = AzureDeveloperCliCredential()
             await credential.get_token("scope")
 
     assert "secret value" not in str(ex.value)
@@ -179,7 +179,7 @@ async def test_timeout():
     proc = mock.Mock(communicate=mock.Mock(side_effect=asyncio.TimeoutError), returncode=None)
     with mock.patch(SUBPROCESS_EXEC, mock.Mock(return_value=get_completed_future(proc))):
         with pytest.raises(CredentialUnavailableError):
-            await azdureDeveloperCliCredential().get_token("scope")
+            await AzureDeveloperCliCredential().get_token("scope")
 
     assert proc.communicate.call_count == 1
 
@@ -205,7 +205,7 @@ async def test_multitenant_authentication():
         ).encode()
         return mock.Mock(communicate=mock.Mock(return_value=get_completed_future((output, b""))), returncode=0)
 
-    credential = azdureDeveloperCliCredential()
+    credential = AzureDeveloperCliCredential()
     with mock.patch(SUBPROCESS_EXEC, fake_exec):
         token = await credential.get_token("scope")
         assert token.token == first_token
@@ -238,11 +238,11 @@ async def test_multitenant_authentication_not_allowed():
         ).encode()
         return mock.Mock(communicate=mock.Mock(return_value=get_completed_future((output, b""))), returncode=0)
 
-    credential = azdureDeveloperCliCredential()
+    credential = AzureDeveloperCliCredential()
     with mock.patch(SUBPROCESS_EXEC, fake_exec):
         token = await credential.get_token("scope")
         assert token.token == expected_token
 
-        with mock.patch.dict("os.environ", {EnvironmentVariables.azdURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
+        with mock.patch.dict("os.environ", {EnvironmentVariables.AZURE_IDENTITY_DISABLE_MULTITENANTAUTH: "true"}):
             token = await credential.get_token("scope", tenant_id="un" + expected_tenant)
         assert token.token == expected_token
