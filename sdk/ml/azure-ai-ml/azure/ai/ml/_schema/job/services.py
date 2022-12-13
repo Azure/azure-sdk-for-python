@@ -28,6 +28,7 @@ class JobServiceSchema(PathAwareSchema):
             EntityNames.TENSOR_BOARD,
             EntityNames.VS_CODE,
         ],
+        pass_original = True,
     )
     port = fields.Int()
     endpoint = fields.Str(dump_only=True)
