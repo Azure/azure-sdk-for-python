@@ -63,19 +63,15 @@ def _combine_helper(
     for obj in objs:
         obj.api_versions.append(sorted_api_versions[0])
 
-    curr_objs = objs  # operation groups we see for our current api version
     for idx in range(1, len(sorted_api_versions)):
 
         next_api_version = sorted_api_versions[idx]
         next_names = get_names_by_api_version(next_api_version)
         obj_names = [obj.name for obj in objs]
 
-        existing_objs = [o for o in curr_objs if o.name in next_names]
-
-        added_next_names = [n for n in next_names if n not in obj_names]
-        new_objs: List[T] = [get_cls(code_model, name) for name in added_next_names]
-        curr_objs = existing_objs + new_objs
-        for obj in curr_objs:
+        existing_objs = [o for o in objs if o.name in next_names]
+        new_objs: List[T] = [get_cls(code_model, n) for n in next_names if n not in obj_names]
+        for obj in existing_objs + new_objs:
             obj.api_versions.append(next_api_version)
         objs.extend(new_objs)
     return objs
@@ -262,12 +258,12 @@ class CodeModel:
         self.api_version_to_metadata: Dict[str, Dict[str, Any]] = {
             _get_api_version(dir): _get_metadata(dir)
             for dir in self._root_of_code.iterdir()
-            if dir.stem.startswith("v") and "preview" not in dir.stem
+            if dir.stem.startswith("v")
         }
         self.api_version_to_folder_api_version = {
             _get_api_version(dir): dir.stem
             for dir in self._root_of_code.iterdir()
-            if dir.stem.startswith("v") and "preview" not in dir.stem
+            if dir.stem.startswith("v")
         }
         self.sorted_api_versions = sorted(self.api_version_to_metadata.keys())
         self.default_api_version = self.sorted_api_versions[-1]
@@ -399,7 +395,9 @@ class Serializer:
         operations_folder_module = self._get_operations_folder_module(async_mode)
         operations_folder = self._get_operations_folder(async_mode)
         operations_module = importlib.import_module(f"{operations_folder_module}._operations")
-        imports = inspect.getsource(operations_module).split("def build_")[0] + "\n"  # get all imports
+
+        delimiter = "class " if async_mode else "def build_" # sync as request builders
+        imports = inspect.getsource(operations_module).split(delimiter)[0] + "\n"  # get all imports
 
         # imports_to_add: List[str] = []
         # # add imports if missing
