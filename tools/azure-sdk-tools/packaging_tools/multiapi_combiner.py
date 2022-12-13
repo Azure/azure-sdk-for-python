@@ -118,7 +118,8 @@ class Operation(VersionedObject):
         if self.operation_group.property_name:
             og_name = self.operation_group.property_name
         else:
-            og_name = self.code_model.client_filename[1 : len(self.code_model.client_filename) - len("_client")]
+            client_filename = self.code_model.client.generated_filename
+            og_name = client_filename[1 : len(client_filename) - len("_client")]
         return f"build_{og_name}_{operation_section}_request"
 
     @property
@@ -253,6 +254,25 @@ class OperationGroup(VersionedObject):
             get_names_by_api_version=_get_names_by_api_version,
         )
 
+class Client:
+    def __init__(self, code_model: "CodeModel") -> None:
+        self.code_model = code_model
+
+    def generated_module(self, async_mode: bool):
+        return importlib.import_module(f"{self.code_model.module_name}{'.aio' if async_mode else ''}.{self.generated_filename}")
+
+    def generated_class(self, async_mode: bool):
+        module = self.generated_module(async_mode)
+        return getattr(module, self.name)
+
+    @property
+    def generated_filename(self) -> str:
+        return list(self.code_model.api_version_to_metadata.values())[-1]["client"]["filename"]
+
+    @property
+    def name(self) -> str:
+        return list(self.code_model.api_version_to_metadata.values())[-1]["client"]["name"]
+
 
 class CodeModel:
     def __init__(self, pkg_path: Path):
@@ -274,17 +294,10 @@ class CodeModel:
         self.default_folder_api_version = self.api_version_to_folder_api_version[self.default_api_version]
         self.module_name = pkg_path.stem.replace("-", ".")
         self.operation_groups = self._combine_operation_groups()
+        self.client = Client(self)
 
     def get_root_of_code(self, async_mode: bool) -> Path:
         return self._root_of_code / Path("aio") if async_mode else self._root_of_code
-
-    @property
-    def client_filename(self) -> str:
-        return list(self.api_version_to_metadata.values())[-1]["client"]["filename"]
-
-    @property
-    def client_name(self) -> str:
-        return list(self.api_version_to_metadata.values())[-1]["client"]["name"]
 
     def _combine_operation_groups(self) -> List[OperationGroup]:
         initial_metadata = self.api_version_to_metadata[self.sorted_api_versions[0]]
@@ -446,15 +459,11 @@ class Serializer:
 
     def serialize_client(self, async_mode: bool):
         template = self.env.get_template("client.py.jinja2")
-        filename = self.code_model.client_filename
-        client_file_module = f"{self.code_model.module_name}.{'aio.' if async_mode else ''}{filename}"
-        client_module = importlib.import_module(client_file_module)
-
         # do parsing on the source so we can build up our client
-        main_client_source = inspect.getsource(client_module)
+        main_client_source = inspect.getsource(self.code_model.client.generated_module(async_mode))
         split_main_client_source = main_client_source.split("class")
         imports = split_main_client_source[0]
-        imports = imports.replace(f"from ._operations_mixin import {self.code_model.client_name}OperationsMixin\n", "")
+        imports = imports.replace(f"from ._operations_mixin import {self.code_model.client.name}OperationsMixin\n", "")
 
         main_client_source = "class" + "class".join(split_main_client_source[1:])
 
@@ -469,12 +478,13 @@ class Serializer:
                     client_initialization=client_initialization,
                     operation_group_properties=self._get_operation_group_properties(),
                     async_mode=async_mode,
+                    getsource=inspect.getsource,
                 )
             )
 
     def _serialize_general_helper(self, async_mode: bool):
         existing_files = ["_configuration", "_patch", "__init__", "_vendor"]
-        replacement_strings = {f"from .{self.code_model.client_filename}": "from ._client"}
+        replacement_strings = {f"from .{self.code_model.client.generated_filename}": "from ._client"}
         for file in existing_files:
             self._copy_file_contents(
                 file,
@@ -510,14 +520,14 @@ class Serializer:
             shutil.rmtree(api_version_folder / Path("operations"), ignore_errors=True)
             shutil.rmtree(api_version_folder / Path("aio"), ignore_errors=True)
             files_to_remove = [
-                "__init__.py", "_configuration.py", "_metadata.json", "_patch.py", "_vendor.py", "_version.py", "py.typed", f"{self.code_model.client_filename}.py"
+                "__init__.py", "_configuration.py", "_metadata.json", "_patch.py", "_vendor.py", "_version.py", "py.typed", f"{self.code_model.client.generated_filename}.py"
             ]
             for file in files_to_remove:
                 os.remove(f"{api_version_folder}/{file}")
 
 
     def remove_top_level_files(self, async_mode: bool):
-        top_level_files = [self.code_model.client_filename, "_operations_mixin"]
+        top_level_files = [self.code_model.client.generated_filename, "_operations_mixin"]
         for file in top_level_files:
             os.remove(f"{self.code_model.get_root_of_code(async_mode)}/{file}.py")
 
