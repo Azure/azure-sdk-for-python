@@ -135,6 +135,10 @@ class Operation(VersionedObject):
     @property
     def _need_method_api_version_check(self) -> bool:
         """Whether we need to check the api version of the method"""
+        if self.operation_group.is_mixin and self.operation_group.need_decorator:
+            # for mixin operations, we need to make sure the check shows up on the operations
+            # bc we don't have decorators for mixins
+            return True
         return any(a for a in self.operation_group.api_versions if a not in self.api_versions)
 
     @property
