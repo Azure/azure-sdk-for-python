@@ -527,9 +527,9 @@ class FormField:
         """
         value = self.value
         if isinstance(self.value, dict):
-            value = {k: v.to_dict() for k, v in self.value.items()}
+            value = {k: v.to_dict() for k, v in self.value.items()}  # type: ignore
         elif isinstance(self.value, list):
-            value = [v.to_dict() for v in self.value]
+            value = [v.to_dict() for v in self.value]  # type: ignore
         return {
             "value_type": self.value_type,
             "name": self.name,
@@ -2413,7 +2413,7 @@ class DocumentField:
         elif self.value_type == "address":
             value = self.value.to_dict()  # type: ignore
         elif isinstance(self.value, dict):
-            value = {k: v.to_dict() for k, v in self.value.items()}
+            value = {k: v.to_dict() for k, v in self.value.items()}  # type: ignore
         elif isinstance(self.value, list):
             value = [v.to_dict() for v in self.value]  # type: ignore
         return {
