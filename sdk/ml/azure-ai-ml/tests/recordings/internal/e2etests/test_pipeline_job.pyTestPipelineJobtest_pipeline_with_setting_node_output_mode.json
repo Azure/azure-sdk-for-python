@@ -559,7 +559,7 @@
         "x-ms-creation-time": "Tue, 13 Dec 2022 11:37:40 GMT",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-meta-name": "50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31",
+        "x-ms-meta-name": "641cafa7-a514-f78f-efa2-d93380d3117b",
         "x-ms-meta-upload_status": "completed",
         "x-ms-meta-version": "1",
         "x-ms-server-encrypted": "true",
@@ -594,7 +594,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1?api-version=2022-05-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1?api-version=2022-05-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -640,7 +640,7 @@
         "x-request-time": "0.169"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1",
         "name": "1",
         "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
         "properties": {
@@ -720,7 +720,7 @@
               }
             },
             "type": "CommandComponent",
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1",
             "environment": {
               "docker": {
                 "image": "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20220714.v1"
@@ -852,7 +852,7 @@
             },
             "successful_return_code": "Zero",
             "command": "python train.py --training_data {inputs.training_data} --max_epochs {inputs.max_epochs} --learning_rate {inputs.learning_rate} --model_output {outputs.model_output}",
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1"
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1"
           }
         },
         "systemData": {
@@ -997,7 +997,7 @@
         "x-ms-creation-time": "Tue, 13 Dec 2022 11:37:40 GMT",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-meta-name": "50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31",
+        "x-ms-meta-name": "641cafa7-a514-f78f-efa2-d93380d3117b",
         "x-ms-meta-upload_status": "completed",
         "x-ms-meta-version": "1",
         "x-ms-server-encrypted": "true",
@@ -1032,7 +1032,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1?api-version=2022-05-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1?api-version=2022-05-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1078,7 +1078,7 @@
         "x-request-time": "0.340"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1",
         "name": "1",
         "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
         "properties": {
@@ -1152,7 +1152,7 @@
               }
             },
             "type": "CommandComponent",
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1",
             "environment": {
               "docker": {
                 "image": "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20220714.v1"
@@ -1279,7 +1279,7 @@
             },
             "successful_return_code": "Zero",
             "command": "python score.py --model_input {inputs.model_input} --test_data {inputs.test_data} --score_output {outputs.score_output}",
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1"
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1"
           }
         },
         "systemData": {
@@ -1424,7 +1424,7 @@
         "x-ms-creation-time": "Tue, 13 Dec 2022 11:37:40 GMT",
         "x-ms-lease-state": "available",
         "x-ms-lease-status": "unlocked",
-        "x-ms-meta-name": "50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31",
+        "x-ms-meta-name": "641cafa7-a514-f78f-efa2-d93380d3117b",
         "x-ms-meta-upload_status": "completed",
         "x-ms-meta-version": "1",
         "x-ms-server-encrypted": "true",
@@ -1459,7 +1459,7 @@
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1?api-version=2022-05-01",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1?api-version=2022-05-01",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -1505,7 +1505,7 @@
         "x-request-time": "0.125"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1",
         "name": "1",
         "type": "Microsoft.MachineLearningServices/workspaces/codes/versions",
         "properties": {
@@ -1567,7 +1567,7 @@
               }
             },
             "type": "CommandComponent",
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1",
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1",
             "environment": {
               "docker": {
                 "image": "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04:20220714.v1"
@@ -1681,7 +1681,7 @@
             },
             "successful_return_code": "Zero",
             "command": "python eval.py --scoring_result {inputs.scoring_result} --eval_output {outputs.eval_output}",
-            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/50b0e8eb-9ebf-e1a2-dd22-245c9aeefb31/versions/1"
+            "code": "azureml:/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/codes/641cafa7-a514-f78f-efa2-d93380d3117b/versions/1"
           }
         },
         "systemData": {
