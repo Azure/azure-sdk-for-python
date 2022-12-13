@@ -149,8 +149,6 @@ class TestEnvironment(AzureRecordedTestCase):
         assert created_env._auto_increment_version is False
 
         next_env_asset = client.environments.create_or_update(env)
-        next_version_regex = re.compile(r"\d{4}-\d{2}-\d{2}-\d{2}-\d{2}-\d{2}-\d{7}")
-        assert next_version_regex.match(next_env_asset.version)
         assert next_env_asset._auto_increment_version is False
 
     def test_environment_list(self, client: MLClient) -> None:

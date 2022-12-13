@@ -80,16 +80,16 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Environment
         """
         try:
-            sas_uri = None
-            if not environment.version and environment._auto_increment_version:
-                environment.version = _get_next_version_from_container(name=environment.name,
-                            container_operation=self._containers_operations,
-                            resource_group_name=self._operation_scope.resource_group_name,
-                            workspace_name=self._workspace_name,
-                            registry_name=self._registry_name,
-                            **self._kwargs,
-                        )
+                if not environment.version and environment._auto_increment_version:
+                    environment.version = _get_next_version_from_container(name=environment.name,
+                                container_operation=self._containers_operations,
+                                resource_group_name=self._operation_scope.resource_group_name,
+                                workspace_name=self._workspace_name,
+                                registry_name=self._registry_name,
+                                **self._kwargs,
+                            )
                 if self._registry_name:
+                    sas_uri = None
                     sas_uri = get_sas_uri_for_registry_asset(
                         service_client=self._service_client,
                         name=environment.name,
@@ -108,7 +108,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
                             "Getting the existing asset name: %s, version: %s", environment.name, environment.version
                         )
                         return self.get(name=environment.name, version=environment.version)
-                environment = _check_and_upload_env_build_context(environment=environment, operations=self, sas_uri=sas_uri)
+                    environment = _check_and_upload_env_build_context(
+                        environment=environment, operations=self, sas_uri=sas_uri
+                        )
                 env_version_resource = environment._to_rest_object()
                 env_rest_obj = self._version_operations.begin_create_or_update(
                         name=environment.name,
@@ -125,7 +127,6 @@ class EnvironmentOperations(_ScopeDependentOperations):
                         **self._scope_kwargs,
                         **self._kwargs,
                     )
-                
                 if not env_rest_obj and self._registry_name:
                     env_rest_obj = self._get(name=environment.name, version=environment.version)
                 return Environment._from_rest_object(env_rest_obj)
