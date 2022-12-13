@@ -71,6 +71,7 @@ from ._models_py3 import ContinuousModeBackupPolicy
 from ._models_py3 import ContinuousModeProperties
 from ._models_py3 import CorsPolicy
 from ._models_py3 import CosmosCassandraDataTransferDataSourceSink
+from ._models_py3 import CosmosMongoDataTransferDataSourceSink
 from ._models_py3 import CosmosSqlDataTransferDataSourceSink
 from ._models_py3 import CreateJobRequest
 from ._models_py3 import CreateUpdateOptions
@@ -210,6 +211,7 @@ from ._models_py3 import RedistributeThroughputPropertiesResource
 from ._models_py3 import RegionForOnlineOffline
 from ._models_py3 import RegionalServiceResource
 from ._models_py3 import Resource
+from ._models_py3 import ResourceRestoreParameters
 from ._models_py3 import RestorableDatabaseAccountGetResult
 from ._models_py3 import RestorableDatabaseAccountsListResult
 from ._models_py3 import RestorableGremlinDatabaseGetResult
@@ -245,6 +247,7 @@ from ._models_py3 import RestorableTableResourcesGetResult
 from ._models_py3 import RestorableTableResourcesListResult
 from ._models_py3 import RestorableTablesListResult
 from ._models_py3 import RestoreParameters
+from ._models_py3 import RestoreParametersBase
 from ._models_py3 import RetrieveThroughputParameters
 from ._models_py3 import RetrieveThroughputPropertiesResource
 from ._models_py3 import Role
@@ -422,6 +425,7 @@ __all__ = [
     "ContinuousModeProperties",
     "CorsPolicy",
     "CosmosCassandraDataTransferDataSourceSink",
+    "CosmosMongoDataTransferDataSourceSink",
     "CosmosSqlDataTransferDataSourceSink",
     "CreateJobRequest",
     "CreateUpdateOptions",
@@ -561,6 +565,7 @@ __all__ = [
     "RegionForOnlineOffline",
     "RegionalServiceResource",
     "Resource",
+    "ResourceRestoreParameters",
     "RestorableDatabaseAccountGetResult",
     "RestorableDatabaseAccountsListResult",
     "RestorableGremlinDatabaseGetResult",
@@ -596,6 +601,7 @@ __all__ = [
     "RestorableTableResourcesListResult",
     "RestorableTablesListResult",
     "RestoreParameters",
+    "RestoreParametersBase",
     "RetrieveThroughputParameters",
     "RetrieveThroughputPropertiesResource",
     "Role",

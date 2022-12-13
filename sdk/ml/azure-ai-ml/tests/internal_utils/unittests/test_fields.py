@@ -37,6 +37,7 @@ class FooSchema(Schema):
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 class TestField:
     def test_arm_str(self, mock_workspace_scope: OperationScope) -> None:
         schema = DummySchema()
@@ -156,8 +157,8 @@ class TestField:
             schema.load(input_data)
         input_data = {"model": "azureml:/subscription/something/other/value/name/"}
 
-    def test_version_types(self, tmp_path, randstr):
-        data_name = f"version_{randstr()}"
+    def test_version_types(self, tmp_path):
+        data_name = f"version_rand_name"
         p = tmp_path / "version_float.yml"
         p.write_text(
             f"""

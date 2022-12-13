@@ -16,7 +16,6 @@ from .._request_handlers import (
     _determine_action_type,
 )
 from .._validate import validate_multiapi_args, check_for_unsupported_actions_types
-from .._version import DEFAULT_API_VERSION
 from .._response_handlers import (
     process_http_response_error,
     entities_result,
@@ -25,7 +24,8 @@ from .._response_handlers import (
     sentiment_result,
     language_result,
     pii_entities_result,
-    _get_result_from_continuation_token
+    _get_result_from_continuation_token,
+    dynamic_classification_result,
 )
 from ._response_handlers_async import healthcare_paged_result, analyze_paged_result
 from .._models import (
@@ -50,7 +50,12 @@ from .._models import (
     SingleLabelClassifyAction,
     MultiLabelClassifyAction,
     ClassifyDocumentResult,
-    AnalyzeHealthcareEntitiesAction
+    AnalyzeHealthcareEntitiesAction,
+    ExtractSummaryAction,
+    ExtractSummaryResult,
+    AbstractSummaryAction,
+    AbstractSummaryResult,
+    DynamicClassificationResult,
 )
 from .._check import is_language_api, string_index_type_compatibility
 from .._lro import TextAnalyticsOperationResourcePolling
@@ -75,6 +80,8 @@ AsyncAnalyzeActionsResponse = AsyncTextAnalysisLROPoller[
                 RecognizeCustomEntitiesResult,
                 ClassifyDocumentResult,
                 AnalyzeHealthcareEntitiesResult,
+                ExtractSummaryResult,
+                AbstractSummaryResult,
                 DocumentError,
             ]
         ]
@@ -131,7 +138,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         super().__init__(
             endpoint=endpoint, credential=credential, **kwargs
         )
-        self._api_version = kwargs.get("api_version", DEFAULT_API_VERSION)
+
         self._default_language = kwargs.pop("default_language", "en")
         self._default_country_hint = kwargs.pop("default_country_hint", "US")
         self._string_code_unit = (
@@ -367,7 +374,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         Returns a list of personal information entities ("SSN",
         "Bank Account", etc) in the document.  For the list of supported entity types,
-        check https://aka.ms/tanerpii
+        check https://aka.ms/azsdk/language/pii
 
         See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
 
@@ -391,7 +398,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             level statistics in the `statistics` field of the document-level response.
         :keyword domain_filter: Filters the response entities to ones only included in the specified domain.
             I.e., if set to 'phi', will only return entities in the Protected Healthcare Information domain.
-            See https://aka.ms/tanerpii for more information.
+            See https://aka.ms/azsdk/language/pii for more information.
         :paramtype domain_filter: str or ~azure.ai.textanalytics.PiiEntityDomain
         :keyword categories_filter: Instead of filtering over all PII entity categories, you can pass in a list of
             the specific PII entity categories you want to filter out. For example, if you only want to filter out
@@ -831,7 +838,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     @validate_multiapi_args(
         version_method_added="v3.1",
-        args_mapping={"2022-05-01": ["display_name"]}
+        args_mapping={
+            "2022-10-01-preview": ["fhir_version", "document_type", "autodetect_default_language"],
+            "2022-05-01": ["display_name"]
+        }
     )
     async def begin_analyze_healthcare_entities(
         self,
@@ -862,9 +872,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Text Analytics API.
+            For automatic language detection, use "auto" (Only supported by API version
+            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            Per-document language will take precedence over whole batch language.
+            See https://aka.ms/talangs for supported languages in Language API.
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
+            automatic language detection.
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str string_index_type: Specifies the method used to interpret string offsets.
             Can be one of 'UnicodeCodePoint' (default), 'Utf16CodeUnit', or 'TextElement_v8'.
@@ -882,6 +895,14 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
             additional details, and Microsoft Responsible AI principles at
             https://www.microsoft.com/ai/responsible-ai.
+        :keyword str fhir_version: The FHIR Spec version that the result will use to format the fhir_bundle
+            on the result object. For additional information see https://www.hl7.org/fhir/overview.html.
+            The only acceptable values to pass in are None and "4.0.1". The default value is None.
+        :keyword document_type: Document type that can be provided as input for Fhir Documents. Expect to
+            have fhir_version provided when used. Behavior of using None enum is the same as not using the
+            document_type parameter. Known values are: "None", "ClinicalTrial", "DischargeSummary",
+            "ProgressNote", "HistoryAndPhysical", "Consult", "Imaging", "Pathology", and "ProcedureNote".
+        :paramtype document_type: str or ~azure.ai.textanalytics.HealthcareDocumentType
         :return: An instance of an AsyncAnalyzeHealthcareEntitiesLROPoller. Call `result()` on the poller
             object to return a heterogeneous pageable of
             :class:`~azure.ai.textanalytics.AnalyzeHealthcareEntitiesResult` and
@@ -895,6 +916,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             The *begin_analyze_healthcare_entities* client method.
         .. versionadded:: 2022-05-01
             The *display_name* keyword argument.
+        .. versionadded:: 2022-10-01-preview
+            The *fhir_version*, *document_type*, and *autodetect_default_language* keyword arguments.
 
         .. admonition:: Example:
 
@@ -914,6 +937,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         string_index_type = kwargs.pop("string_index_type", self._string_code_unit)
         disable_service_logs = kwargs.pop("disable_service_logs", None)
         display_name = kwargs.pop("display_name", None)
+        fhir_version = kwargs.pop("fhir_version", None)
+        document_type = kwargs.pop("document_type", None)
+        autodetect_default_language = kwargs.pop("autodetect_default_language", None)
 
         if continuation_token:
             return cast(
@@ -956,6 +982,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         body=models.AnalyzeTextJobsInput(
                             analysis_input=docs,
                             display_name=display_name,
+                            default_language=autodetect_default_language,
                             tasks=[
                                 models.HealthcareLROTask(
                                     task_name="0",
@@ -963,6 +990,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                                         model_version=model_version,
                                         logging_opt_out=disable_service_logs,
                                         string_index_type=string_index_type_compatibility(string_index_type),
+                                        fhir_version=fhir_version,
+                                        document_type=document_type,
                                     )
                                 )
                             ]
@@ -1037,7 +1066,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
     @distributed_trace_async
     @validate_multiapi_args(
         version_method_added="v3.1",
-        custom_wrapper=check_for_unsupported_actions_types
+        custom_wrapper=check_for_unsupported_actions_types,
+        args_mapping={
+            "2022-10-01-preview": ["autodetect_default_language"],
+        }
     )
     async def begin_analyze_actions(
         self,
@@ -1053,6 +1085,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 SingleLabelClassifyAction,
                 MultiLabelClassifyAction,
                 AnalyzeHealthcareEntitiesAction,
+                ExtractSummaryAction,
+                AbstractSummaryAction,
             ]
         ],
         **kwargs: Any,
@@ -1068,6 +1102,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                     RecognizeCustomEntitiesResult,
                     ClassifyDocumentResult,
                     AnalyzeHealthcareEntitiesResult,
+                    ExtractSummaryResult,
+                    AbstractSummaryResult,
                     DocumentError,
                 ]
             ]
@@ -1078,6 +1114,9 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         We recommend you use this function if you're looking to analyze larger documents, and / or
         combine multiple text analysis actions into one call. Otherwise, we recommend you use
         the action specific endpoints, for example :func:`analyze_sentiment`.
+
+        .. note:: The abstractive summarization feature is part of a gated preview. Request access here:
+            https://aka.ms/applyforgatedsummarizationfeatures
 
         .. note:: See the service documentation for regional support of custom action features:
             https://aka.ms/azsdk/textanalytics/customfunctionalities
@@ -1096,13 +1135,17 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             list[RecognizeEntitiesAction or RecognizePiiEntitiesAction or ExtractKeyPhrasesAction or
             RecognizeLinkedEntitiesAction or AnalyzeSentimentAction or
             RecognizeCustomEntitiesAction or SingleLabelClassifyAction or
-            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction]
+            MultiLabelClassifyAction or AnalyzeHealthcareEntitiesAction or
+            AbstractSummaryAction or ExtractSummaryAction]
         :keyword str display_name: An optional display name to set for the requested analysis.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Language API.
+            For automatic language detection, use "auto" (Only supported by API version
+            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            Per-document language will take precedence over whole batch language.
+            See https://aka.ms/talangs for supported languages in Language API.
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
+            automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword int polling_interval: Waiting time between two polls for LRO operations
             if no Retry-After header is present. Defaults to 5 seconds.
@@ -1125,7 +1168,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             ~azure.ai.textanalytics.aio.AsyncTextAnalysisLROPoller[~azure.core.async_paging.AsyncItemPaged[
             list[RecognizeEntitiesResult or RecognizeLinkedEntitiesResult or RecognizePiiEntitiesResult or
             ExtractKeyPhrasesResult or AnalyzeSentimentResult or RecognizeCustomEntitiesResult
-            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or DocumentError]]]
+            or ClassifyDocumentResult or AnalyzeHealthcareEntitiesResult or ExtractSummaryResult
+            or AbstractSummaryResult or DocumentError]]]
         :raises ~azure.core.exceptions.HttpResponseError or TypeError or ValueError:
 
         .. versionadded:: v3.1
@@ -1135,6 +1179,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
             *MultiLabelClassifyAction*, and *AnalyzeHealthcareEntitiesAction* input options and the
             corresponding *RecognizeCustomEntitiesResult*, *ClassifyDocumentResult*,
             and *AnalyzeHealthcareEntitiesResult* result objects
+        .. versionadded:: 2022-10-01-preview
+            The *ExtractSummaryAction* and *AbstractSummaryAction* input options and the corresponding
+            *ExtractSummaryResult* and *AbstractSummaryResult* result objects.
+            The *autodetect_default_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1155,6 +1203,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         polling_interval = kwargs.pop("polling_interval", 5)
         continuation_token = kwargs.pop("continuation_token", None)
         bespoke = kwargs.pop("bespoke", False)
+        autodetect_default_language = kwargs.pop("autodetect_default_language", None)
 
         if continuation_token:
             return cast(
@@ -1211,6 +1260,7 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                         body=models.AnalyzeTextJobsInput(
                             analysis_input=docs,
                             display_name=display_name,
+                            default_language=autodetect_default_language,
                             tasks=generated_tasks
                         ),
                         cls=response_cls,
@@ -1285,7 +1335,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
     @distributed_trace_async
     @validate_multiapi_args(
-        version_method_added="2022-05-01"
+        version_method_added="2022-05-01",
+        args_mapping={
+            "2022-10-01-preview": ["autodetect_default_language"],
+        }
     )
     async def begin_recognize_custom_entities(
         self,
@@ -1310,9 +1363,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str deployment_name: This field indicates the deployment name for the model.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Language API.
+            For automatic language detection, use "auto" (Only supported by API version
+            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            Per-document language will take precedence over whole batch language.
+            See https://aka.ms/talangs for supported languages in Language API.
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
+            automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1344,6 +1400,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: 2022-05-01
             The *begin_recognize_custom_entities* client method.
+        .. versionadded:: 2022-10-01-preview
+            The *autodetect_default_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1403,7 +1461,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
     @distributed_trace_async
     @validate_multiapi_args(
-        version_method_added="2022-05-01"
+        version_method_added="2022-05-01",
+        args_mapping={
+            "2022-10-01-preview": ["autodetect_default_language"],
+        }
     )
     async def begin_single_label_classify(
         self,
@@ -1428,9 +1489,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str deployment_name: This field indicates the deployment name for the model.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Language API.
+            For automatic language detection, use "auto" (Only supported by API version
+            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            Per-document language will take precedence over whole batch language.
+            See https://aka.ms/talangs for supported languages in Language API.
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
+            automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1458,6 +1522,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: 2022-05-01
             The *begin_single_label_classify* client method.
+        .. versionadded:: 2022-10-01-preview
+            The *autodetect_default_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1515,7 +1581,10 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
     @distributed_trace_async
     @validate_multiapi_args(
-        version_method_added="2022-05-01"
+        version_method_added="2022-05-01",
+        args_mapping={
+            "2022-10-01-preview": ["autodetect_default_language"],
+        }
     )
     async def begin_multi_label_classify(
         self,
@@ -1540,9 +1609,12 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
         :param str deployment_name: This field indicates the deployment name for the model.
         :keyword str language: The 2 letter ISO 639-1 representation of language for the
             entire batch. For example, use "en" for English; "es" for Spanish etc.
-            If not set, uses "en" for English as default. Per-document language will
-            take precedence over whole batch language. See https://aka.ms/talangs for
-            supported languages in Language API.
+            For automatic language detection, use "auto" (Only supported by API version
+            2022-10-01-preview and newer). If not set, uses "en" for English as default.
+            Per-document language will take precedence over whole batch language.
+            See https://aka.ms/talangs for supported languages in Language API.
+        :keyword str autodetect_default_language: Default/fallback language to use for documents requesting
+            automatic language detection.
         :keyword bool show_stats: If set to true, response will contain document level statistics.
         :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
             logged on the service side for troubleshooting. By default, the Language service logs your
@@ -1570,6 +1642,8 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
 
         .. versionadded:: 2022-05-01
             The *begin_multi_label_classify* client method.
+        .. versionadded:: 2022-10-01-preview
+            The *autodetect_default_language* keyword argument.
 
         .. admonition:: Example:
 
@@ -1622,5 +1696,105 @@ class TextAnalyticsClient(AsyncTextAnalyticsClientBase):
                 )
             )
 
+        except HttpResponseError as error:
+            return process_http_response_error(error)
+
+    @distributed_trace_async
+    @validate_multiapi_args(
+        version_method_added="2022-10-01-preview",
+    )
+    async def dynamic_classification(
+        self,
+        documents: Union[List[str], List[TextDocumentInput], List[Dict[str, str]]],
+        categories: List[str],
+        **kwargs: Any,
+    ) -> List[Union[DynamicClassificationResult, DocumentError]]:
+        """Perform dynamic classification on a batch of documents.
+
+        On the fly classification of the input documents into one or multiple categories.
+        Assigns either one or multiple categories per document. This type of classification
+        doesn't require model training.
+
+        .. note:: The dynamic classification feature is part of a gated preview. Request access here:
+            https://aka.ms/applyforgatedlanguagefeature
+
+        See https://aka.ms/azsdk/textanalytics/data-limits for service data limits.
+
+        :param documents: The set of documents to process as part of this batch.
+            If you wish to specify the ID and language on a per-item basis you must
+            use as input a list[:class:`~azure.ai.textanalytics.TextDocumentInput`] or a list
+            of dict representations of :class:`~azure.ai.textanalytics.TextDocumentInput`,
+            like `{"id": "1", "language": "en", "text": "hello world"}`.
+        :type documents:
+            list[str] or list[~azure.ai.textanalytics.TextDocumentInput] or list[dict[str, str]]
+        :param list[str] categories: A list of categories to which input is classified to.
+        :keyword classification_type: Specifies either one or multiple categories per document. Defaults
+            to multi classification which may return more than one class for each document. Known values
+            are: "Single" and "Multi".
+        :paramtype classification_type: str or ~azure.ai.textanalytics.ClassificationType
+        :keyword str language: The 2 letter ISO 639-1 representation of language for the
+            entire batch. For example, use "en" for English; "es" for Spanish etc.
+            If not set, uses "en" for English as default. Per-document language will
+            take precedence over whole batch language. See https://aka.ms/talangs for
+            supported languages in Language API.
+        :keyword str model_version: This value indicates which model will
+            be used for scoring, e.g. "latest", "2019-10-01". If a model-version
+            is not specified, the API will default to the latest, non-preview version.
+            See here for more info: https://aka.ms/text-analytics-model-versioning
+        :keyword bool show_stats: If set to true, response will contain document
+            level statistics in the `statistics` field of the document-level response.
+        :keyword bool disable_service_logs: If set to true, you opt-out of having your text input
+            logged on the service side for troubleshooting. By default, the Language service logs your
+            input text for 48 hours, solely to allow for troubleshooting issues in providing you with
+            the service's natural language processing functions. Setting this parameter to true,
+            disables input logging and may limit our ability to remediate issues that occur. Please see
+            Cognitive Services Compliance and Privacy notes at https://aka.ms/cs-compliance for
+            additional details, and Microsoft Responsible AI principles at
+            https://www.microsoft.com/ai/responsible-ai.
+        :return: The combined list of :class:`~azure.ai.textanalytics.DynamicClassificationResult` and
+            :class:`~azure.ai.textanalytics.DocumentError` in the order the original documents
+            were passed in.
+        :rtype: list[~azure.ai.textanalytics.DynamicClassificationResult or ~azure.ai.textanalytics.DocumentError]
+        :raises ~azure.core.exceptions.HttpResponseError:
+
+        .. versionadded:: 2022-10-01-preview
+            The *dynamic_classification* client method.
+
+        .. admonition:: Example:
+
+            .. literalinclude:: ../samples/async_samples/sample_dynamic_classification_async.py
+                :start-after: [START dynamic_classification_async]
+                :end-before: [END dynamic_classification_async]
+                :language: python
+                :dedent: 4
+                :caption: Perform dynamic classification on a batch of documents.
+        """
+        language_arg = kwargs.pop("language", None)
+        language = language_arg if language_arg is not None else self._default_language
+        docs = _validate_input(documents, "language", language)
+        model_version = kwargs.pop("model_version", None)
+        show_stats = kwargs.pop("show_stats", None)
+        disable_service_logs = kwargs.pop("disable_service_logs", None)
+        classification_type = kwargs.pop("classification_type", None)
+
+        try:
+            models = self._client.models(api_version=self._api_version)
+            return cast(
+                List[Union[DynamicClassificationResult, DocumentError]],
+                await self._client.analyze_text(
+                    body=models.AnalyzeTextDynamicClassificationInput(
+                        analysis_input={"documents": docs},
+                        parameters=models.DynamicClassificationTaskParameters(
+                            categories=categories,
+                            logging_opt_out=disable_service_logs,
+                            model_version=model_version,
+                            classification_type=classification_type,
+                        )
+                    ),
+                    show_stats=show_stats,
+                    cls=kwargs.pop("cls", dynamic_classification_result),
+                    **kwargs
+                )
+            )
         except HttpResponseError as error:
             return process_http_response_error(error)

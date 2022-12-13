@@ -7,9 +7,17 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar
+from urllib.parse import parse_qs, urljoin, urlparse
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.rest import HttpRequest
@@ -20,8 +28,10 @@ from azure.mgmt.core.exceptions import ARMErrorFormat
 from ... import models as _models
 from ..._vendor import _convert_request
 from ...operations._threat_intelligence_indicators_operations import build_list_request
-T = TypeVar('T')
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class ThreatIntelligenceIndicatorsOperations:
     """
@@ -42,27 +52,29 @@ class ThreatIntelligenceIndicatorsOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def list(
         self,
         resource_group_name: str,
         workspace_name: str,
         filter: Optional[str] = None,
+        orderby: Optional[str] = None,
         top: Optional[int] = None,
         skip_token: Optional[str] = None,
-        orderby: Optional[str] = None,
         **kwargs: Any
-    ) -> AsyncIterable[_models.ThreatIntelligenceInformationList]:
+    ) -> AsyncIterable["_models.ThreatIntelligenceInformation"]:
         """Get all threat intelligence indicators.
 
         :param resource_group_name: The name of the resource group. The name is case insensitive.
+         Required.
         :type resource_group_name: str
-        :param workspace_name: The name of the workspace.
+        :param workspace_name: The name of the workspace. Required.
         :type workspace_name: str
         :param filter: Filters the results, based on a Boolean condition. Optional. Default value is
          None.
         :type filter: str
+        :param orderby: Sorts the results. Optional. Default value is None.
+        :type orderby: str
         :param top: Returns only the first n results. Optional. Default value is None.
         :type top: int
         :param skip_token: Skiptoken is only used if a previous operation returned a partial result. If
@@ -70,38 +82,40 @@ class ThreatIntelligenceIndicatorsOperations:
          a skiptoken parameter that specifies a starting point to use for subsequent calls. Optional.
          Default value is None.
         :type skip_token: str
-        :param orderby: Sorts the results. Optional. Default value is None.
-        :type orderby: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either ThreatIntelligenceInformationList or the result of
+        :return: An iterator like instance of either ThreatIntelligenceInformation or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.securityinsight.models.ThreatIntelligenceInformationList]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.mgmt.securityinsight.models.ThreatIntelligenceInformation]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2021-10-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.ThreatIntelligenceInformationList]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", self._config.api_version))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.ThreatIntelligenceInformationList]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_list_request(
-                    subscription_id=self._config.subscription_id,
                     resource_group_name=resource_group_name,
                     workspace_name=workspace_name,
-                    api_version=api_version,
+                    subscription_id=self._config.subscription_id,
                     filter=filter,
+                    orderby=orderby,
                     top=top,
                     skip_token=skip_token,
-                    orderby=orderby,
-                    template_url=self.list.metadata['url'],
+                    api_version=api_version,
+                    template_url=self.list.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
@@ -109,20 +123,11 @@ class ThreatIntelligenceIndicatorsOperations:
                 request.url = self._client.format_url(request.url)  # type: ignore
 
             else:
-                
-                request = build_list_request(
-                    subscription_id=self._config.subscription_id,
-                    resource_group_name=resource_group_name,
-                    workspace_name=workspace_name,
-                    api_version=api_version,
-                    filter=filter,
-                    top=top,
-                    skip_token=skip_token,
-                    orderby=orderby,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                # make call to next link with the client's api-version
+                _parsed_next_link = urlparse(next_link)
+                _next_request_params = case_insensitive_dict(parse_qs(_parsed_next_link.query))
+                _next_request_params["api-version"] = self._config.api_version
+                request = HttpRequest("GET", urljoin(next_link, _parsed_next_link.path), params=_next_request_params)
                 request = _convert_request(request)
                 request.url = self._client.format_url(request.url)  # type: ignore
                 request.method = "GET"
@@ -138,10 +143,8 @@ class ThreatIntelligenceIndicatorsOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
@@ -151,8 +154,6 @@ class ThreatIntelligenceIndicatorsOperations:
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    list.metadata = {'url': "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/threatIntelligence/main/indicators"}  # type: ignore
+    list.metadata = {"url": "/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.OperationalInsights/workspaces/{workspaceName}/providers/Microsoft.SecurityInsights/threatIntelligence/main/indicators"}  # type: ignore

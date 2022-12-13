@@ -15,7 +15,12 @@ module_logger = logging.getLogger(__name__)
 
 class ResourceConfiguration(RestTranslatableMixin, DictMixin):
     def __init__(
-        self, *, instance_count: int = None, instance_type: str = None, properties: Dict[str, Any] = None, **kwargs
+        self,
+        *,
+        instance_count: int = None,
+        instance_type: str = None,
+        properties: Dict[str, Any] = None,
+        **kwargs  # pylint: disable=unused-argument
     ):
         self.instance_count = instance_count
         self.instance_type = instance_type
@@ -40,7 +45,7 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
                         key = JobComputePropertyFields.AISUPERCOMPUTER
                     # recursively convert Ordered Dict to dictionary
                     serialized_properties[key] = json.loads(json.dumps(value))
-                except Exception:
+                except Exception:  # pylint: disable=broad-except
                     pass
         return RestResourceConfiguration(
             instance_count=self.instance_count,
@@ -49,7 +54,9 @@ class ResourceConfiguration(RestTranslatableMixin, DictMixin):
         )
 
     @classmethod
-    def _from_rest_object(cls, rest_obj: Optional[RestResourceConfiguration]) -> Optional["ResourceConfiguration"]:
+    def _from_rest_object(  # pylint: disable=arguments-renamed
+        cls, rest_obj: Optional[RestResourceConfiguration]
+    ) -> Optional["ResourceConfiguration"]:
         if rest_obj is None:
             return None
         return ResourceConfiguration(

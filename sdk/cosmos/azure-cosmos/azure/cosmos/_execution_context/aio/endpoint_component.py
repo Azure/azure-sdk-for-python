@@ -155,7 +155,7 @@ class _QueryExecutionOffsetEndpointComponent(_QueryExecutionEndpointComponent):
 class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent):
     """Represents an endpoint in handling aggregate query.
 
-    It returns only aggreated values.
+    It returns only aggregated values.
     """
 
     def __init__(self, execution_context, aggregate_operators):
@@ -180,7 +180,10 @@ class _QueryExecutionAggregateEndpointComponent(_QueryExecutionEndpointComponent
             for item in res: #TODO check on this being an async loop
                 for operator in self._local_aggregators:
                     if isinstance(item, dict) and item:
-                        operator.aggregate(item["item"])
+                        try:
+                            operator.aggregate(item["item"])
+                        except KeyError:
+                            pass
                     elif isinstance(item, numbers.Number):
                         operator.aggregate(item)
         if self._results is None:

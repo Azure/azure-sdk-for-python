@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.20.0/full/pyodide.js"></script>
+  </head>
+  <body>
+    <code id="output"></code>
+    <script>
+      async function main() {
+        output = document.getElementById("output");
+
+        pyodide = await loadPyodide({
+          stdout: (x) =>
+            (output.innerHTML += x.replace(/\s/, "&nbsp") + "<br />"),
+          stderr: (x) =>
+            (output.innerHTML += x.replace(/\s/, "&nbsp") + "<br />"),
+        });
+        await pyodide.loadPackage("micropip");
+        await pyodide.runPythonAsync(`
+          import micropip
+          from pyodide.http import pyfetch
+
+          TEST_FILES = [
+            "browser.py",
+            "async_testing.py",
+            ".env",
+            "requirements.txt",
+          ]
+
+          for filename in TEST_FILES:
+            res = await pyfetch(filename, cache="no-cache");
+            # get the name of the file
+            with open(filename, "wb") as f:
+              f.write(await res.bytes())
+
+          with open("requirements.txt") as f:
+            # filter comments out
+            requirements = [r for r in f.read().split("\\n") if not r.startswith("#") and r]
+            await micropip.install(requirements)
+
+          from dotenv import load_dotenv
+          from types import ModuleType
+          import sys
+          import os
+
+          load_dotenv()  # Load environment variables
+
+          TEXT_ANALYTICS_KEY = os.getenv("TEXT_ANALYTICS_KEY")
+          TEXT_ANALYTICS_ENDPOINT = os.getenv("TEXT_ANALYTICS_ENDPOINT")
+          BLOB_SERVICE_KEY = os.getenv("BLOB_SERVICE_KEY")
+          BLOB_SERVICE_ENDPOINT = os.getenv("BLOB_SERVICE_ENDPOINT")
+
+          if not TEXT_ANALYTICS_KEY:
+            print("Invalid textanalytics key")
+            raise ValueError("Invalid textanalytics key")
+
+          if not TEXT_ANALYTICS_ENDPOINT:
+            print("Invalid textanalytics endpoint")
+            raise ValueError("Invalid textanalytics endpoint")
+
+          if not BLOB_SERVICE_KEY:
+            print("Invalid blob service key")
+            raise ValueError("Invalid blob service key")
+
+          if not BLOB_SERVICE_ENDPOINT:
+            print("Invalid blob service endpoint")
+            raise ValueError("Invalid blob service endpoint")
+
+          # Would have liked to use unittest.mock.patch here, but it doesn't seem
+          # to work in Pyodide.
+
+          fake_aiohttp = ModuleType("AioHttp")
+          fake_aiohttp.ClientPayloadError = Exception
+          sys.modules["aiohttp"] =  fake_aiohttp
+          from browser import PyodideTransportIntegrationTestSuite
+
+          test_case = PyodideTransportIntegrationTestSuite(
+            text_analytics_endpoint=TEXT_ANALYTICS_ENDPOINT,
+            text_analytics_key=TEXT_ANALYTICS_KEY,
+            blob_service_key=BLOB_SERVICE_KEY,
+            blob_service_endpoint=BLOB_SERVICE_ENDPOINT,
+          )
+          await test_case.run()
+        `);
+      }
+      main();
+    </script>
+  </body>
+</html>

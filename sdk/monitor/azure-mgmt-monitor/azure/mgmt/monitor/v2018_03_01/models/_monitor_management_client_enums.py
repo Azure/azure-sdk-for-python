@@ -11,8 +11,7 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class AggregationTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the criteria time aggregation types.
-    """
+    """the criteria time aggregation types."""
 
     AVERAGE = "Average"
     COUNT = "Count"
@@ -20,20 +19,21 @@ class AggregationTypeEnum(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MAXIMUM = "Maximum"
     TOTAL = "Total"
 
+
 class CriterionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """Specifies the type of threshold criteria
-    """
+    """Specifies the type of threshold criteria."""
 
     STATIC_THRESHOLD_CRITERION = "StaticThresholdCriterion"
     DYNAMIC_THRESHOLD_CRITERION = "DynamicThresholdCriterion"
 
+
 class DynamicThresholdOperator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The operator used to compare the metric value against the threshold.
-    """
+    """The operator used to compare the metric value against the threshold."""
 
     GREATER_THAN = "GreaterThan"
     LESS_THAN = "LessThan"
     GREATER_OR_LESS_THAN = "GreaterOrLessThan"
+
 
 class DynamicThresholdSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The extent of deviation required to trigger an alert. This will affect how tight the threshold
@@ -44,23 +44,30 @@ class DynamicThresholdSensitivity(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     MEDIUM = "Medium"
     HIGH = "High"
 
-class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """specifies the type of the alert criteria.
-    """
 
-    MICROSOFT_AZURE_MONITOR_SINGLE_RESOURCE_MULTIPLE_METRIC_CRITERIA = "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
-    MICROSOFT_AZURE_MONITOR_MULTIPLE_RESOURCE_MULTIPLE_METRIC_CRITERIA = "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
-    MICROSOFT_AZURE_MONITOR_WEBTEST_LOCATION_AVAILABILITY_CRITERIA = "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
+class Odatatype(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """specifies the type of the alert criteria."""
+
+    MICROSOFT_AZURE_MONITOR_SINGLE_RESOURCE_MULTIPLE_METRIC_CRITERIA = (
+        "Microsoft.Azure.Monitor.SingleResourceMultipleMetricCriteria"
+    )
+    MICROSOFT_AZURE_MONITOR_MULTIPLE_RESOURCE_MULTIPLE_METRIC_CRITERIA = (
+        "Microsoft.Azure.Monitor.MultipleResourceMultipleMetricCriteria"
+    )
+    MICROSOFT_AZURE_MONITOR_WEBTEST_LOCATION_AVAILABILITY_CRITERIA = (
+        "Microsoft.Azure.Monitor.WebtestLocationAvailabilityCriteria"
+    )
+
 
 class Operator(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """the criteria operator.
-    """
+    """the criteria operator."""
 
     EQUALS = "Equals"
     GREATER_THAN = "GreaterThan"
     GREATER_THAN_OR_EQUAL = "GreaterThanOrEqual"
     LESS_THAN = "LessThan"
     LESS_THAN_OR_EQUAL = "LessThanOrEqual"
+
 
 class ReceiverStatus(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """Indicates the status of the receiver. Receivers that are not Enabled will not receive any

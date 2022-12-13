@@ -1,5 +1,15 @@
 # Release History
 
+## 3.2.1 (Unreleased)
+
+### Features Added
+
+### Breaking Changes
+
+### Bugs Fixed
+
+### Other Changes
+
 ## 3.2.0 (2022-09-08)
 
 ### Features Added
@@ -22,6 +32,9 @@
 - Removed `DocumentContentElement`.
 - Removed `kind` and `content` properties from `DocumentSelectionMark`.
 - Removed `kind` from `DocumentWord`.
+
+### Bugs Fixed
+- Added `DocumentParagraph` to `__all__`.
 
 ## 3.2.0b6 (2022-08-09)
 

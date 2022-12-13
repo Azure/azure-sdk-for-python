@@ -8,7 +8,9 @@ Follow our quickstart for examples: https://aka.ms/azsdk/python/dpcodegen/python
 """
 
 from typing import Any, IO, Optional, Union, cast, overload, List, BinaryIO
+import time
 
+import azure.core.exceptions
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
@@ -19,6 +21,7 @@ from azure.core.exceptions import (
 from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
+from enum import Enum
 
 from ._operations import AppComponentOperations as AppComponentOperationsGenerated
 from ._operations import TestOperations as TestOperationsGenerated, JSON, ClsType
@@ -372,21 +375,19 @@ class AppComponentOperations:
         """
         return self.__app_component_operations_generated.create_or_update_app_components(name, body, **kwargs)
 
-        @distributed_trace
-        def delete_app_components(  # pylint: disable=inconsistent-return-statements
-            self, name: str, **kwargs: Any
-        ) -> None:
-            """Delete an App Component.
+    @distributed_trace
+    def delete_app_components(self, name: str, **kwargs: Any) -> None:  # pylint: disable=inconsistent-return-statements
+        """Delete an App Component.
 
-            Delete an App Component.
+        Delete an App Component.
 
-            :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
-             Required.
-            :type name: str
-            :return: None
-            :rtype: None
-            :raises ~azure.core.exceptions.HttpResponseError:
-            """
+        :param name: Unique name of the App Component, must be a valid URL character ^[a-z0-9_-]*$.
+        Required.
+        :type name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
 
         return self.__app_component_operations_generated.delete_app_components(name, **kwargs)
 

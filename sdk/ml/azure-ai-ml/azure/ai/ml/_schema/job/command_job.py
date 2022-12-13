@@ -6,7 +6,6 @@ from marshmallow import fields
 
 from azure.ai.ml._schema.core.fields import NestedField, StringTransformedEnum
 from azure.ai.ml._schema.job.input_output_fields_provider import InputsField, OutputsField
-from azure.ai.ml._schema.job_resource_configuration import JobResourceConfigurationSchema
 from azure.ai.ml.constants import JobType
 
 from .base_job import BaseJobSchema

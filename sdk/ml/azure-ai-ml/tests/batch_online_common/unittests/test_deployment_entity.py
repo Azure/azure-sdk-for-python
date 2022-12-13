@@ -25,6 +25,7 @@ from azure.ai.ml.entities._deployment.deployment_settings import BatchRetrySetti
 from azure.ai.ml.entities._job.resource_configuration import ResourceConfiguration
 
 
+@pytest.mark.production_experiences_test
 @pytest.mark.unittest
 class TestDeploymentSanity:
     def test_instantiate_OnlineEndpoint_fail(self) -> None:
@@ -173,7 +174,8 @@ class TestBatchDeploymentSDK:
             assert isinstance(deployment, BatchDeployment)
             assert isinstance(deployment.model, str)
             assert isinstance(deployment.compute, str)
-            assert isinstance(deployment.resources, ResourceConfiguration)
+            # comment out assertion as resources type has changes to JobResourceConfiguration
+            # assert isinstance(deployment.resources, ResourceConfiguration)
             assert deployment.model == "lightgbm_predict:1"
             assert deployment.output_action == BatchDeploymentOutputAction.APPEND_ROW
             assert deployment.max_concurrency_per_instance == target["max_concurrency_per_instance"]

@@ -11,17 +11,16 @@ from azure.core import CaseInsensitiveEnumMeta
 
 
 class CreatedByType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of identity that created the resource.
-    """
+    """The type of identity that created the resource."""
 
     USER = "User"
     APPLICATION = "Application"
     MANAGED_IDENTITY = "ManagedIdentity"
     KEY = "Key"
 
+
 class KnownColumnDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The type of the column data.
-    """
+    """The type of the column data."""
 
     STRING = "string"
     INT = "int"
@@ -31,36 +30,36 @@ class KnownColumnDefinitionType(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     DATETIME = "datetime"
     DYNAMIC = "dynamic"
 
+
 class KnownDataCollectionEndpointProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The resource provisioning state. This property is READ-ONLY.
-    """
+    """The resource provisioning state. This property is READ-ONLY."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
     DELETING = "Deleting"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
+
 
 class KnownDataCollectionEndpointResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the resource.
-    """
+    """The kind of the resource."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
+
 
 class KnownDataCollectionRuleAssociationProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The resource provisioning state.
-    """
+    """The resource provisioning state."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
     DELETING = "Deleting"
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
+
 
 class KnownDataCollectionRuleProvisioningState(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The resource provisioning state.
-    """
+    """The resource provisioning state."""
 
     CREATING = "Creating"
     UPDATING = "Updating"
@@ -68,22 +67,26 @@ class KnownDataCollectionRuleProvisioningState(str, Enum, metaclass=CaseInsensit
     SUCCEEDED = "Succeeded"
     FAILED = "Failed"
 
+
 class KnownDataCollectionRuleResourceKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The kind of the resource.
-    """
+    """The kind of the resource."""
 
     LINUX = "Linux"
     WINDOWS = "Windows"
 
+
 class KnownDataFlowStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownDataFlowStreams."""
 
     MICROSOFT_EVENT = "Microsoft-Event"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
     MICROSOFT_PERF = "Microsoft-Perf"
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
+
 
 class KnownExtensionDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownExtensionDataSourceStreams."""
 
     MICROSOFT_EVENT = "Microsoft-Event"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
@@ -91,15 +94,15 @@ class KnownExtensionDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMe
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
 
+
 class KnownLogFilesDataSourceFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """The data format of the log files
-    """
+    """The data format of the log files."""
 
     TEXT = "text"
 
+
 class KnownLogFileTextSettingsRecordStartTimestampFormat(str, Enum, metaclass=CaseInsensitiveEnumMeta):
-    """One of the supported timestamp formats
-    """
+    """One of the supported timestamp formats."""
 
     ISO8601 = "ISO 8601"
     YYYY_MM_DD_HH_MM_SS = "YYYY-MM-DD HH:MM:SS"
@@ -111,10 +114,13 @@ class KnownLogFileTextSettingsRecordStartTimestampFormat(str, Enum, metaclass=Ca
     DD_MMM_YYYY_HH_MM_SS_ZZZ = "dd/MMM/yyyy:HH:mm:ss zzz"
     YYYY_MM_DD_THH_MM_SS_K = "yyyy-MM-ddTHH:mm:ssK"
 
+
 class KnownPerfCounterDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownPerfCounterDataSourceStreams."""
 
     MICROSOFT_PERF = "Microsoft-Perf"
     MICROSOFT_INSIGHTS_METRICS = "Microsoft-InsightsMetrics"
+
 
 class KnownPublicNetworkAccessOptions(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     """The configuration to set whether network access from public internet to the endpoints are
@@ -124,7 +130,9 @@ class KnownPublicNetworkAccessOptions(str, Enum, metaclass=CaseInsensitiveEnumMe
     ENABLED = "Enabled"
     DISABLED = "Disabled"
 
+
 class KnownSyslogDataSourceFacilityNames(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceFacilityNames."""
 
     AUTH = "auth"
     AUTHPRIV = "authpriv"
@@ -148,7 +156,9 @@ class KnownSyslogDataSourceFacilityNames(str, Enum, metaclass=CaseInsensitiveEnu
     LOCAL7 = "local7"
     ASTERISK = "*"
 
+
 class KnownSyslogDataSourceLogLevels(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceLogLevels."""
 
     DEBUG = "Debug"
     INFO = "Info"
@@ -160,11 +170,15 @@ class KnownSyslogDataSourceLogLevels(str, Enum, metaclass=CaseInsensitiveEnumMet
     EMERGENCY = "Emergency"
     ASTERISK = "*"
 
+
 class KnownSyslogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownSyslogDataSourceStreams."""
 
     MICROSOFT_SYSLOG = "Microsoft-Syslog"
 
+
 class KnownWindowsEventLogDataSourceStreams(str, Enum, metaclass=CaseInsensitiveEnumMeta):
+    """KnownWindowsEventLogDataSourceStreams."""
 
     MICROSOFT_WINDOWS_EVENT = "Microsoft-WindowsEvent"
     MICROSOFT_EVENT = "Microsoft-Event"

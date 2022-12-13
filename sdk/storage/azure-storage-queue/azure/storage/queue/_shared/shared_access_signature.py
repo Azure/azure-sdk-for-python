@@ -10,7 +10,8 @@ from .parser import _str, _to_utc_datetime
 from .constants import X_MS_VERSION
 from . import sign_string, url_quote
 
-
+# cspell:ignoreRegExp rsc.
+# cspell:ignoreRegExp s..?id
 class QueryStringConstants(object):
     SIGNED_SIGNATURE = 'sig'
     SIGNED_PERMISSION = 'sp'

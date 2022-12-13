@@ -9,13 +9,23 @@
 from ._registration_definitions_operations import RegistrationDefinitionsOperations
 from ._registration_assignments_operations import RegistrationAssignmentsOperations
 from ._marketplace_registration_definitions_operations import MarketplaceRegistrationDefinitionsOperations
-from ._marketplace_registration_definitions_without_scope_operations import MarketplaceRegistrationDefinitionsWithoutScopeOperations
+from ._marketplace_registration_definitions_without_scope_operations import (
+    MarketplaceRegistrationDefinitionsWithoutScopeOperations,
+)
 from ._operations import Operations
+from ._operations_with_scope_operations import OperationsWithScopeOperations
+
+from ._patch import __all__ as _patch_all
+from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
+from ._patch import patch_sdk as _patch_sdk
 
 __all__ = [
-    'RegistrationDefinitionsOperations',
-    'RegistrationAssignmentsOperations',
-    'MarketplaceRegistrationDefinitionsOperations',
-    'MarketplaceRegistrationDefinitionsWithoutScopeOperations',
-    'Operations',
+    "RegistrationDefinitionsOperations",
+    "RegistrationAssignmentsOperations",
+    "MarketplaceRegistrationDefinitionsOperations",
+    "MarketplaceRegistrationDefinitionsWithoutScopeOperations",
+    "Operations",
+    "OperationsWithScopeOperations",
 ]
+__all__.extend([p for p in _patch_all if p not in __all__])
+_patch_sdk()

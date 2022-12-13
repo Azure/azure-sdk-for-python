@@ -10,13 +10,7 @@ from typing import Dict, Optional, Union
 
 import yaml
 
-from azure.ai.ml._ml_exceptions import (
-    ErrorCategory,
-    ErrorTarget,
-    ValidationErrorType,
-    ValidationException,
-    log_and_raise_error,
-)
+from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2022_05_01.models import BuildContext as RestBuildContext
 from azure.ai.ml._restclient.v2022_05_01.models import (
     EnvironmentContainerData,
@@ -29,7 +23,9 @@ from azure.ai.ml._utils._asset_utils import get_ignore_file, get_object_hash
 from azure.ai.ml._utils.utils import dump_yaml, is_url, load_file, load_yaml
 from azure.ai.ml.constants._common import ANONYMOUS_ENV_NAME, BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import get_md5_string, load_from_dict
+from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
 
 
 class BuildContext:
@@ -149,7 +145,11 @@ class Environment(Asset):
                 self._upload_hash = get_object_hash(path, self._ignore_file)
                 self._generate_anonymous_name_version(source="build")
             elif self.image:
-                self._generate_anonymous_name_version(source="image", conda_file=self._translated_conda_file)
+                self._generate_anonymous_name_version(
+                    source="image",
+                    conda_file=self._translated_conda_file,
+                    inference_config=self.inference_config
+                    )
 
     @property
     def conda_file(self) -> Dict:
@@ -223,7 +223,9 @@ class Environment(Asset):
             version=arm_id.asset_version,
             description=rest_env_version.description,
             tags=rest_env_version.tags,
-            creation_context=env_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(env_rest_object.system_data)
+            if env_rest_object.system_data
+            else None,
             is_anonymous=rest_env_version.is_anonymous,
             image=rest_env_version.image,
             os_type=rest_env_version.os_type,
@@ -234,6 +236,7 @@ class Environment(Asset):
         if rest_env_version.conda_file:
             translated_conda_file = yaml.safe_load(rest_env_version.conda_file)
             environment.conda_file = translated_conda_file
+            environment._translated_conda_file = rest_env_version.conda_file
 
         return environment
 
@@ -243,7 +246,7 @@ class Environment(Asset):
             name=env_container_rest_object.name,
             version="1",
             id=env_container_rest_object.id,
-            creation_context=env_container_rest_object.system_data,
+            creation_context=SystemData._from_rest_object(env_container_rest_object.system_data),
         )
         env.latest_version = env_container_rest_object.properties.latest_version
 
@@ -299,32 +302,35 @@ class Environment(Asset):
             log_and_raise_error(err)
 
     def __eq__(self, other) -> bool:
+        if not isinstance(other, Environment):
+            return NotImplemented
         return (
-            self.name == other.name
-            and self.id == other.id
-            and self.version == other.version
-            and self.description == other.description
-            and self.tags == other.tags
-            and self.properties == other.properties
-            and self.base_path == other.base_path
-            and self.image == other.image
-            and self.build == other.build
-            and self.conda_file == other.conda_file
-            and self.inference_config == other.inference_config
-            and self._is_anonymous == other._is_anonymous
-            and self.os_type == other.os_type
-        )
+                self.name == other.name
+                and self.id == other.id
+                and self.version == other.version
+                and self.description == other.description
+                and self.tags == other.tags
+                and self.properties == other.properties
+                and self.base_path == other.base_path
+                and self.image == other.image
+                and self.build == other.build
+                and self.conda_file == other.conda_file
+                and self.inference_config == other.inference_config
+                and self._is_anonymous == other._is_anonymous
+                and self.os_type == other.os_type
+            )
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
 
-    def _generate_anonymous_name_version(self, source: str, conda_file: str = None):
+    def _generate_anonymous_name_version(self, source: str, conda_file: str = None, inference_config: Dict = None):
         hash_str = ""
         if source == "image":
-            if not conda_file:
-                hash_str = hash_str.join(get_md5_string(self.image))
-            else:
-                hash_str = hash_str.join(get_md5_string(self.image)).join(get_md5_string(conda_file))
+            hash_str = hash_str.join(get_md5_string(self.image))
+            if inference_config:
+                hash_str = hash_str.join(get_md5_string(yaml.dump(inference_config, sort_keys=True)))
+            if conda_file:
+                hash_str = hash_str.join(get_md5_string(conda_file))
         if source == "build":
             if not self.build.dockerfile_path:
                 hash_str = hash_str.join(get_md5_string(self._upload_hash))

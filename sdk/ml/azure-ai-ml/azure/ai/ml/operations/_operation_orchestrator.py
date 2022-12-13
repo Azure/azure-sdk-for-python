@@ -10,20 +10,12 @@ from os import PathLike
 from typing import Any, Optional, Tuple, Union
 
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context, _check_and_upload_path
-from azure.ai.ml._ml_exceptions import (
-    AssetException,
-    ErrorCategory,
-    ErrorTarget,
-    MlException,
-    ModelException,
-    ValidationErrorType,
-    ValidationException,
-)
 from azure.ai.ml._restclient.v2021_10_01.models import UriReference
-from azure.ai.ml._scope_dependent_operations import OperationsContainer, OperationScope
+from azure.ai.ml._scope_dependent_operations import OperationConfig, OperationsContainer, OperationScope
 from azure.ai.ml._utils._arm_id_utils import (
     AMLNamedArmId,
     AMLVersionedArmId,
+    AMLLabelledArmId,
     get_arm_id_with_version,
     is_ARM_id_for_resource,
     is_registry_id_for_resource,
@@ -31,9 +23,7 @@ from azure.ai.ml._utils._arm_id_utils import (
     parse_prefixed_name_version,
 )
 from azure.ai.ml._utils._asset_utils import _resolve_label_to_asset
-from azure.ai.ml._utils._exception_utils import EmptyDirectoryError
 from azure.ai.ml._utils._storage_utils import AzureMLDatastorePathUri
-from azure.ai.ml._utils.utils import is_private_preview_enabled
 from azure.ai.ml.constants._common import (
     ARM_ID_PREFIX,
     AZUREML_RESOURCE_PROVIDER,
@@ -46,20 +36,40 @@ from azure.ai.ml.constants._common import (
     NAMED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_ID_FORMAT,
     VERSIONED_RESOURCE_NAME,
+    LABELLED_RESOURCE_NAME,
     AzureMLResourceType,
+    LABELLED_RESOURCE_ID_FORMAT,
+    DEFAULT_LABEL_NAME,
+    REGISTRY_VERSION_PATTERN
 )
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities._assets import Code, Data, Environment, Model
 from azure.ai.ml.entities._assets.asset import Asset
+from azure.ai.ml.exceptions import (
+    AssetException,
+    EmptyDirectoryError,
+    ErrorCategory,
+    ErrorTarget,
+    MLException,
+    ModelException,
+    ValidationErrorType,
+    ValidationException,
+)
 from azure.core.exceptions import HttpResponseError, ResourceNotFoundError
 
 module_logger = logging.getLogger(__name__)
 
 
 class OperationOrchestrator(object):
-    def __init__(self, operation_container: OperationsContainer, operation_scope: OperationScope):
+    def __init__(
+        self,
+        operation_container: OperationsContainer,
+        operation_scope: OperationScope,
+        operation_config: OperationConfig,
+    ):
         self._operation_container = operation_container
         self._operation_scope = operation_scope
+        self._operation_config = operation_config
 
     @property
     def _datastore_operation(self):
@@ -100,14 +110,16 @@ class OperationOrchestrator(object):
         :type asset: Optional[Union[str, Asset]]
         :param azureml_type: The AzureML resource type. Defined in AzureMLResourceType.
         :type azureml_type: str
-        :param register_asset: flag to register the asset, defaults to True
-        :type register_asset: bool, optional
+        :param register_asset: Indicates if the asset should be registered, defaults to True.
+        :type register_asset: Optional[bool]
         :param sub_workspace_resource:
-        :type sub_workspace_resource: bool, optional
-        :param arm_id_cache_dict: a dict to cache the arm id of input asset
-        :type arm_id_cache_dict: Dict[str, str], optional
+        :type sub_workspace_resource: Optional[bool]
+        :param arm_id_cache_dict: A dict to cache the ARM id of input asset.
+        :type arm_id_cache_dict: Optional[Dict[str, str]]
+        :raises ~azure.ai.ml.exceptions.ValidationException: Raised if asset's ID cannot be converted
+            or asset cannot be successfully registered.
         :return: The ARM Id or entity object
-        :rtype: Union[str, Asset], optional
+        :rtype: Optional[Union[str, ~azure.ai.ml.entities.Asset]]
         """
         if (
             asset is None
@@ -130,18 +142,22 @@ class OperationOrchestrator(object):
                 # CLI strips off azureml: in the schema, appending it back as required by backend
                 if (
                     azureml_type == "environments"
-                    and asset.startswith(CURATED_ENV_PREFIX)
-                    and is_private_preview_enabled()
+                    and (asset.startswith(CURATED_ENV_PREFIX) or re.match(REGISTRY_VERSION_PATTERN, f"azureml:{asset}"))
                 ):
-                    module_logger.warning(
-                        "This job/deployment uses curated environments. The syntax for using curated "
-                        "environments has changed to include azureml registry name: "
-                        "azureml:registries/azureml/environments//versions/ or "
-                        "azureml:registries/azureml/environments/labels/latest. "
-                        "Support for format you are using will be removed in future versions of the "
-                        "CLI and SDK. Learn more at aka.ms/curatedenv"
-                    )
                     return f"azureml:{asset}"
+
+                name, label = parse_name_label(asset)
+                # TODO: remove this condition after label is fully supported for all versioned resources
+                if label == DEFAULT_LABEL_NAME and azureml_type == AzureMLResourceType.COMPONENT:
+                    return LABELLED_RESOURCE_ID_FORMAT.format(
+                        self._operation_scope.subscription_id,
+                        self._operation_scope.resource_group_name,
+                        AZUREML_RESOURCE_PROVIDER,
+                        self._operation_scope.workspace_name,
+                        azureml_type,
+                        name,
+                        label,
+                    )
                 name, version = self._resolve_name_version_from_name_label(asset, azureml_type)
                 if not version:
                     name, version = parse_prefixed_name_version(asset)
@@ -166,7 +182,7 @@ class OperationOrchestrator(object):
                             "Use fully qualified name to reference custom environments "
                             "when creating assets in registry. "
                             "The syntax for fully qualified names is "
-                            "azureml:registries/azureml/environments/{{env-name}}/versions/{{version}}"
+                            "azureml://registries/azureml/environments/{{env-name}}/versions/{{version}}"
                         )
                         raise ValidationException(
                             message=msg.format(asset, azureml_type),
@@ -240,7 +256,10 @@ class OperationOrchestrator(object):
                 code_asset = self._code_assets.create_or_update(code_asset)
                 return code_asset.id
             uploaded_code_asset, _ = _check_and_upload_path(
-                artifact=code_asset, asset_operations=self._code_assets, artifact_type=ErrorTarget.CODE
+                artifact=code_asset,
+                asset_operations=self._code_assets,
+                artifact_type=ErrorTarget.CODE,
+                show_progress=self._operation_config.show_progress,
             )
             uploaded_code_asset._id = get_arm_id_with_version(
                 self._operation_scope,
@@ -249,7 +268,7 @@ class OperationOrchestrator(object):
                 code_asset.version,
             )
             return uploaded_code_asset
-        except (MlException, HttpResponseError) as e:
+        except (MLException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise AssetException(
@@ -262,9 +281,13 @@ class OperationOrchestrator(object):
 
     def _get_environment_arm_id(self, environment: Environment, register_asset: bool = True) -> Union[str, Environment]:
         if register_asset:
+            if environment.id:
+                return environment.id
             env_response = self._environments.create_or_update(environment)
             return env_response.id
-        environment = _check_and_upload_env_build_context(environment=environment, operations=self._environments)
+        environment = _check_and_upload_env_build_context(
+            environment=environment, operations=self._environments, show_progress=self._operation_config.show_progress
+        )
         environment._id = get_arm_id_with_version(
             self._operation_scope,
             AzureMLResourceType.ENVIRONMENT,
@@ -278,9 +301,14 @@ class OperationOrchestrator(object):
             self._validate_datastore_name(model.path)
 
             if register_asset:
+                if model.id:
+                    return model.id
                 return self._model.create_or_update(model).id
             uploaded_model, _ = _check_and_upload_path(
-                artifact=model, asset_operations=self._model, artifact_type=ErrorTarget.MODEL
+                artifact=model,
+                asset_operations=self._model,
+                artifact_type=ErrorTarget.MODEL,
+                show_progress=self._operation_config.show_progress,
             )
             uploaded_model._id = get_arm_id_with_version(
                 self._operation_scope,
@@ -289,7 +317,7 @@ class OperationOrchestrator(object):
                 model.version,
             )
             return uploaded_model
-        except (MlException, HttpResponseError) as e:
+        except (MLException, HttpResponseError) as e:
             raise e
         except Exception as e:
             raise ModelException(
@@ -306,7 +334,10 @@ class OperationOrchestrator(object):
         if register_asset:
             return self._data.create_or_update(data_asset).id
         data_asset, _ = _check_and_upload_path(
-            artifact=data_asset, asset_operations=self._data, artifact_type=ErrorTarget.DATA
+            artifact=data_asset,
+            asset_operations=self._data,
+            artifact_type=ErrorTarget.DATA,
+            show_progress=self._operation_config.show_progress,
         )
         return data_asset
 
@@ -315,7 +346,9 @@ class OperationOrchestrator(object):
         via remote call, register the component if necessary, and FILL BACK the
         arm id to component to reduce remote call."""
         if not component.id:
-            component._id = self._component.create_or_update(component, is_anonymous=True).id
+            component._id = self._component.create_or_update(
+                component, is_anonymous=True, show_progress=self._operation_config.show_progress
+            ).id
         return component.id
 
     def _resolve_name_version_from_name_label(self, aml_id: str, azureml_type: str) -> Tuple[str, Optional[str]]:
@@ -374,6 +407,12 @@ class OperationOrchestrator(object):
                     return arm_id
                 if self._match(arm_id_obj):
                     return VERSIONED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_version)
+            except ValidationException:
+                pass  # fall back to named arm id
+            try:
+                arm_id_obj = AMLLabelledArmId(arm_id)
+                if self._match(arm_id_obj):
+                    return LABELLED_RESOURCE_NAME.format(arm_id_obj.asset_name, arm_id_obj.asset_label)
             except ValidationException:
                 pass  # fall back to named arm id
             try:

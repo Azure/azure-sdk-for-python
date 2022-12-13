@@ -11,6 +11,7 @@ parameters:
       - azure-communication-phonenumbers
       - azure-communication-rooms
       - azure-communication-sms
+      - azure-communication-jobrouter
 
 stages:
   - ${{ each service in parameters.Services }}:

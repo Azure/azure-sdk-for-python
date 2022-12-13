@@ -9,7 +9,14 @@
 from typing import Any, AsyncIterable, Callable, Dict, Optional, TypeVar, Union, cast
 
 from azure.core.async_paging import AsyncItemPaged, AsyncList
-from azure.core.exceptions import ClientAuthenticationError, HttpResponseError, ResourceExistsError, ResourceNotFoundError, map_error
+from azure.core.exceptions import (
+    ClientAuthenticationError,
+    HttpResponseError,
+    ResourceExistsError,
+    ResourceNotFoundError,
+    ResourceNotModifiedError,
+    map_error,
+)
 from azure.core.pipeline import PipelineResponse
 from azure.core.pipeline.transport import AsyncHttpResponse
 from azure.core.polling import AsyncLROPoller, AsyncNoPolling, AsyncPollingMethod
@@ -21,9 +28,19 @@ from azure.core.utils import case_insensitive_dict
 
 from ... import models as _models
 from ..._vendor import _convert_request
-from ...operations._spark_job_definition_operations import build_create_or_update_spark_job_definition_request_initial, build_debug_spark_job_definition_request_initial, build_delete_spark_job_definition_request_initial, build_execute_spark_job_definition_request_initial, build_get_spark_job_definition_request, build_get_spark_job_definitions_by_workspace_request, build_rename_spark_job_definition_request_initial
-T = TypeVar('T')
+from ...operations._spark_job_definition_operations import (
+    build_create_or_update_spark_job_definition_request,
+    build_debug_spark_job_definition_request,
+    build_delete_spark_job_definition_request,
+    build_execute_spark_job_definition_request,
+    build_get_spark_job_definition_request,
+    build_get_spark_job_definitions_by_workspace_request,
+    build_rename_spark_job_definition_request,
+)
+
+T = TypeVar("T")
 ClsType = Optional[Callable[[PipelineResponse[HttpRequest, AsyncHttpResponse], T, Dict[str, Any]], Any]]
+
 
 class SparkJobDefinitionOperations:
     """
@@ -44,66 +61,59 @@ class SparkJobDefinitionOperations:
         self._serialize = input_args.pop(0) if input_args else kwargs.pop("serializer")
         self._deserialize = input_args.pop(0) if input_args else kwargs.pop("deserializer")
 
-
     @distributed_trace
     def get_spark_job_definitions_by_workspace(
-        self,
-        **kwargs: Any
-    ) -> AsyncIterable[_models.SparkJobDefinitionsListResponse]:
+        self, **kwargs: Any
+    ) -> AsyncIterable["_models.SparkJobDefinitionResource"]:
         """Lists spark job definitions.
 
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: An iterator like instance of either SparkJobDefinitionsListResponse or the result of
+        :return: An iterator like instance of either SparkJobDefinitionResource or the result of
          cls(response)
         :rtype:
-         ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.SparkJobDefinitionsListResponse]
-        :raises: ~azure.core.exceptions.HttpResponseError
+         ~azure.core.async_paging.AsyncItemPaged[~azure.synapse.artifacts.models.SparkJobDefinitionResource]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SparkJobDefinitionsListResponse]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SparkJobDefinitionsListResponse]
 
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
         def prepare_request(next_link=None):
             if not next_link:
-                
+
                 request = build_get_spark_job_definitions_by_workspace_request(
                     api_version=api_version,
-                    template_url=self.get_spark_job_definitions_by_workspace.metadata['url'],
+                    template_url=self.get_spark_job_definitions_by_workspace.metadata["url"],
                     headers=_headers,
                     params=_params,
                 )
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
             else:
-                
-                request = build_get_spark_job_definitions_by_workspace_request(
-                    api_version=api_version,
-                    template_url=next_link,
-                    headers=_headers,
-                    params=_params,
-                )
+                request = HttpRequest("GET", next_link)
                 request = _convert_request(request)
                 path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+                    "endpoint": self._serialize.url(
+                        "self._config.endpoint", self._config.endpoint, "str", skip_quote=True
+                    ),
                 }
                 request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-                path_format_arguments = {
-                    "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
-                }
                 request.method = "GET"
             return request
 
@@ -117,25 +127,20 @@ class SparkJobDefinitionOperations:
         async def get_next(next_link=None):
             request = prepare_request(next_link)
 
-            pipeline_response = await self._client._pipeline.run(  # pylint: disable=protected-access
-                request,
-                stream=False,
-                **kwargs
+            pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+                request, stream=False, **kwargs
             )
             response = pipeline_response.http_response
 
             if response.status_code not in [200]:
                 map_error(status_code=response.status_code, response=response, error_map=error_map)
-                error = self._deserialize.failsafe_deserialize(_models.CloudError, pipeline_response)
-                raise HttpResponseError(response=response, model=error)
+                raise HttpResponseError(response=response)
 
             return pipeline_response
 
+        return AsyncItemPaged(get_next, extract_data)
 
-        return AsyncItemPaged(
-            get_next, extract_data
-        )
-    get_spark_job_definitions_by_workspace.metadata = {'url': "/sparkJobDefinitions"}  # type: ignore
+    get_spark_job_definitions_by_workspace.metadata = {"url": "/sparkJobDefinitions"}  # type: ignore
 
     async def _create_or_update_spark_job_definition_initial(
         self,
@@ -145,41 +150,43 @@ class SparkJobDefinitionOperations:
         **kwargs: Any
     ) -> Optional[_models.SparkJobDefinitionResource]:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.SparkJobDefinitionResource]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.SparkJobDefinitionResource]]
 
         _spark_job_definition = _models.SparkJobDefinitionResource(properties=properties)
-        _json = self._serialize.body(_spark_job_definition, 'SparkJobDefinitionResource')
+        _json = self._serialize.body(_spark_job_definition, "SparkJobDefinitionResource")
 
-        request = build_create_or_update_spark_job_definition_request_initial(
+        request = build_create_or_update_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
+            if_match=if_match,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            if_match=if_match,
-            template_url=self._create_or_update_spark_job_definition_initial.metadata['url'],
+            template_url=self._create_or_update_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -188,15 +195,14 @@ class SparkJobDefinitionOperations:
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SparkJobDefinitionResource', pipeline_response)
+            deserialized = self._deserialize("SparkJobDefinitionResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _create_or_update_spark_job_definition_initial.metadata = {'url': "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
-
+    _create_or_update_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
 
     @distributed_trace_async
     async def begin_create_or_update_spark_job_definition(
@@ -208,17 +214,14 @@ class SparkJobDefinitionOperations:
     ) -> AsyncLROPoller[_models.SparkJobDefinitionResource]:
         """Creates or updates a Spark Job Definition.
 
-        :param spark_job_definition_name: The spark job definition name.
+        :param spark_job_definition_name: The spark job definition name. Required.
         :type spark_job_definition_name: str
-        :param properties: Properties of spark job definition.
+        :param properties: Properties of spark job definition. Required.
         :type properties: ~azure.synapse.artifacts.models.SparkJobDefinition
         :param if_match: ETag of the Spark Job Definition entity.  Should only be specified for update,
          for which it should match existing entity or can be * for unconditional update. Default value
          is None.
         :type if_match: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -231,20 +234,17 @@ class SparkJobDefinitionOperations:
          result of cls(response)
         :rtype:
          ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.SparkJobDefinitionResource]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SparkJobDefinitionResource]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SparkJobDefinitionResource]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._create_or_update_spark_job_definition_initial(  # type: ignore
                 spark_job_definition_name=spark_job_definition_name,
@@ -252,152 +252,143 @@ class SparkJobDefinitionOperations:
                 if_match=if_match,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('SparkJobDefinitionResource', pipeline_response)
+            deserialized = self._deserialize("SparkJobDefinitionResource", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_create_or_update_spark_job_definition.metadata = {'url': "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
+    begin_create_or_update_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
 
     @distributed_trace_async
     async def get_spark_job_definition(
-        self,
-        spark_job_definition_name: str,
-        if_none_match: Optional[str] = None,
-        **kwargs: Any
+        self, spark_job_definition_name: str, if_none_match: Optional[str] = None, **kwargs: Any
     ) -> Optional[_models.SparkJobDefinitionResource]:
         """Gets a Spark Job Definition.
 
-        :param spark_job_definition_name: The spark job definition name.
+        :param spark_job_definition_name: The spark job definition name. Required.
         :type spark_job_definition_name: str
         :param if_none_match: ETag of the Spark Job Definition entity. Should only be specified for
          get. If the ETag matches the existing entity tag, or if * was provided, then no content will be
          returned. Default value is None.
         :type if_none_match: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: SparkJobDefinitionResource, or the result of cls(response)
+        :return: SparkJobDefinitionResource or None or the result of cls(response)
         :rtype: ~azure.synapse.artifacts.models.SparkJobDefinitionResource or None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[Optional[_models.SparkJobDefinitionResource]]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[Optional[_models.SparkJobDefinitionResource]]
 
-        
         request = build_get_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
-            api_version=api_version,
             if_none_match=if_none_match,
-            template_url=self.get_spark_job_definition.metadata['url'],
+            api_version=api_version,
+            template_url=self.get_spark_job_definition.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 304]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
-            error = self._deserialize.failsafe_deserialize(_models.CloudError, pipeline_response)
-            raise HttpResponseError(response=response, model=error)
+            raise HttpResponseError(response=response)
 
         deserialized = None
         if response.status_code == 200:
-            deserialized = self._deserialize('SparkJobDefinitionResource', pipeline_response)
+            deserialized = self._deserialize("SparkJobDefinitionResource", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    get_spark_job_definition.metadata = {'url': "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
-
+    get_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
 
     async def _delete_spark_job_definition_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        spark_job_definition_name: str,
-        **kwargs: Any
+        self, spark_job_definition_name: str, **kwargs: Any
     ) -> None:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        
-        request = build_delete_spark_job_definition_request_initial(
+        request = build_delete_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
             api_version=api_version,
-            template_url=self._delete_spark_job_definition_initial.metadata['url'],
+            template_url=self._delete_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202, 204]:
@@ -407,22 +398,16 @@ class SparkJobDefinitionOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _delete_spark_job_definition_initial.metadata = {'url': "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
-
+    _delete_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
 
     @distributed_trace_async
-    async def begin_delete_spark_job_definition(  # pylint: disable=inconsistent-return-statements
-        self,
-        spark_job_definition_name: str,
-        **kwargs: Any
+    async def begin_delete_spark_job_definition(
+        self, spark_job_definition_name: str, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Deletes a Spark Job Definition.
 
-        :param spark_job_definition_name: The spark job definition name.
+        :param spark_job_definition_name: The spark job definition name. Required.
         :type spark_job_definition_name: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -433,94 +418,89 @@ class SparkJobDefinitionOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._delete_spark_job_definition_initial(  # type: ignore
                 spark_job_definition_name=spark_job_definition_name,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_delete_spark_job_definition.metadata = {'url': "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
+    begin_delete_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}"}  # type: ignore
 
     async def _execute_spark_job_definition_initial(
-        self,
-        spark_job_definition_name: str,
-        **kwargs: Any
+        self, spark_job_definition_name: str, **kwargs: Any
     ) -> _models.SparkBatchJob:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SparkBatchJob]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SparkBatchJob]
 
-        
-        request = build_execute_spark_job_definition_request_initial(
+        request = build_execute_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
             api_version=api_version,
-            template_url=self._execute_spark_job_definition_initial.metadata['url'],
+            template_url=self._execute_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -528,32 +508,26 @@ class SparkJobDefinitionOperations:
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+            deserialized = self._deserialize("SparkBatchJob", pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+            deserialized = self._deserialize("SparkBatchJob", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _execute_spark_job_definition_initial.metadata = {'url': "/sparkJobDefinitions/{sparkJobDefinitionName}/execute"}  # type: ignore
-
+    _execute_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}/execute"}  # type: ignore
 
     @distributed_trace_async
     async def begin_execute_spark_job_definition(
-        self,
-        spark_job_definition_name: str,
-        **kwargs: Any
+        self, spark_job_definition_name: str, **kwargs: Any
     ) -> AsyncLROPoller[_models.SparkBatchJob]:
         """Executes the spark job definition.
 
-        :param spark_job_definition_name: The spark job definition name.
+        :param spark_job_definition_name: The spark job definition name. Required.
         :type spark_job_definition_name: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -565,102 +539,102 @@ class SparkJobDefinitionOperations:
         :return: An instance of AsyncLROPoller that returns either SparkBatchJob or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.SparkBatchJob]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = kwargs.pop("headers", {}) or {}
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SparkBatchJob]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SparkBatchJob]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._execute_spark_job_definition_initial(  # type: ignore
                 spark_job_definition_name=spark_job_definition_name,
                 api_version=api_version,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+            deserialized = self._deserialize("SparkBatchJob", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                lro_options={'final-state-via': 'location'},
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "location"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_execute_spark_job_definition.metadata = {'url': "/sparkJobDefinitions/{sparkJobDefinitionName}/execute"}  # type: ignore
+    begin_execute_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}/execute"}  # type: ignore
 
     async def _rename_spark_job_definition_initial(  # pylint: disable=inconsistent-return-statements
-        self,
-        spark_job_definition_name: str,
-        new_name: Optional[str] = None,
-        **kwargs: Any
+        self, spark_job_definition_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> None:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         _request = _models.ArtifactRenameRequest(new_name=new_name)
-        _json = self._serialize.body(_request, 'ArtifactRenameRequest')
+        _json = self._serialize.body(_request, "ArtifactRenameRequest")
 
-        request = build_rename_spark_job_definition_request_initial(
+        request = build_rename_spark_job_definition_request(
             spark_job_definition_name=spark_job_definition_name,
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._rename_spark_job_definition_initial.metadata['url'],
+            template_url=self._rename_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -670,25 +644,18 @@ class SparkJobDefinitionOperations:
         if cls:
             return cls(pipeline_response, None, {})
 
-    _rename_spark_job_definition_initial.metadata = {'url': "/sparkJobDefinitions/{sparkJobDefinitionName}/rename"}  # type: ignore
-
+    _rename_spark_job_definition_initial.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}/rename"}  # type: ignore
 
     @distributed_trace_async
-    async def begin_rename_spark_job_definition(  # pylint: disable=inconsistent-return-statements
-        self,
-        spark_job_definition_name: str,
-        new_name: Optional[str] = None,
-        **kwargs: Any
+    async def begin_rename_spark_job_definition(
+        self, spark_job_definition_name: str, new_name: Optional[str] = None, **kwargs: Any
     ) -> AsyncLROPoller[None]:
         """Renames a sparkJobDefinition.
 
-        :param spark_job_definition_name: The spark job definition name.
+        :param spark_job_definition_name: The spark job definition name. Required.
         :type spark_job_definition_name: str
         :param new_name: New name of the artifact. Default value is None.
         :type new_name: str
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -699,101 +666,97 @@ class SparkJobDefinitionOperations:
          Retry-After header is present.
         :return: An instance of AsyncLROPoller that returns either None or the result of cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[None]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[None]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._rename_spark_job_definition_initial(  # type: ignore
                 spark_job_definition_name=spark_job_definition_name,
                 new_name=new_name,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
-        def get_long_running_output(pipeline_response):
+        def get_long_running_output(pipeline_response):  # pylint: disable=inconsistent-return-statements
             if cls:
                 return cls(pipeline_response, None, {})
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(lro_delay, path_format_arguments=path_format_arguments, **kwargs),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_rename_spark_job_definition.metadata = {'url': "/sparkJobDefinitions/{sparkJobDefinitionName}/rename"}  # type: ignore
+    begin_rename_spark_job_definition.metadata = {"url": "/sparkJobDefinitions/{sparkJobDefinitionName}/rename"}  # type: ignore
 
     async def _debug_spark_job_definition_initial(
-        self,
-        properties: _models.SparkJobDefinition,
-        **kwargs: Any
+        self, properties: _models.SparkJobDefinition, **kwargs: Any
     ) -> _models.SparkBatchJob:
         error_map = {
-            401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
         }
-        error_map.update(kwargs.pop('error_map', {}) or {})
+        error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SparkBatchJob]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SparkBatchJob]
 
         _spark_job_definition_azure_resource = _models.SparkJobDefinitionResource(properties=properties)
-        _json = self._serialize.body(_spark_job_definition_azure_resource, 'SparkJobDefinitionResource')
+        _json = self._serialize.body(_spark_job_definition_azure_resource, "SparkJobDefinitionResource")
 
-        request = build_debug_spark_job_definition_request_initial(
+        request = build_debug_spark_job_definition_request(
             api_version=api_version,
             content_type=content_type,
             json=_json,
-            template_url=self._debug_spark_job_definition_initial.metadata['url'],
+            template_url=self._debug_spark_job_definition_initial.metadata["url"],
             headers=_headers,
             params=_params,
         )
         request = _convert_request(request)
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
         request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
 
         pipeline_response = await self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request,
-            stream=False,
-            **kwargs
+            request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 202]:
@@ -801,32 +764,26 @@ class SparkJobDefinitionOperations:
             raise HttpResponseError(response=response)
 
         if response.status_code == 200:
-            deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+            deserialized = self._deserialize("SparkBatchJob", pipeline_response)
 
         if response.status_code == 202:
-            deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+            deserialized = self._deserialize("SparkBatchJob", pipeline_response)
 
         if cls:
             return cls(pipeline_response, deserialized, {})
 
         return deserialized
 
-    _debug_spark_job_definition_initial.metadata = {'url': "/debugSparkJobDefinition"}  # type: ignore
-
+    _debug_spark_job_definition_initial.metadata = {"url": "/debugSparkJobDefinition"}  # type: ignore
 
     @distributed_trace_async
     async def begin_debug_spark_job_definition(
-        self,
-        properties: _models.SparkJobDefinition,
-        **kwargs: Any
+        self, properties: _models.SparkJobDefinition, **kwargs: Any
     ) -> AsyncLROPoller[_models.SparkBatchJob]:
         """Debug the spark job definition.
 
-        :param properties: Properties of spark job definition.
+        :param properties: Properties of spark job definition. Required.
         :type properties: ~azure.synapse.artifacts.models.SparkJobDefinition
-        :keyword api_version: Api Version. Default value is "2020-12-01". Note that overriding this
-         default value may result in unsupported behavior.
-        :paramtype api_version: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be AsyncLROBasePolling. Pass in False
@@ -838,59 +795,60 @@ class SparkJobDefinitionOperations:
         :return: An instance of AsyncLROPoller that returns either SparkBatchJob or the result of
          cls(response)
         :rtype: ~azure.core.polling.AsyncLROPoller[~azure.synapse.artifacts.models.SparkBatchJob]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
         _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-        api_version = kwargs.pop('api_version', _params.pop('api-version', "2020-12-01"))  # type: str
-        content_type = kwargs.pop('content_type', _headers.pop('Content-Type', "application/json"))  # type: Optional[str]
-        cls = kwargs.pop('cls', None)  # type: ClsType[_models.SparkBatchJob]
-        polling = kwargs.pop('polling', True)  # type: Union[bool, AsyncPollingMethod]
-        lro_delay = kwargs.pop(
-            'polling_interval',
-            self._config.polling_interval
-        )
-        cont_token = kwargs.pop('continuation_token', None)  # type: Optional[str]
+        api_version = kwargs.pop("api_version", _params.pop("api-version", "2020-12-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[_models.SparkBatchJob]
+        polling = kwargs.pop("polling", True)  # type: Union[bool, AsyncPollingMethod]
+        lro_delay = kwargs.pop("polling_interval", self._config.polling_interval)
+        cont_token = kwargs.pop("continuation_token", None)  # type: Optional[str]
         if cont_token is None:
             raw_result = await self._debug_spark_job_definition_initial(  # type: ignore
                 properties=properties,
                 api_version=api_version,
                 content_type=content_type,
-                cls=lambda x,y,z: x,
+                cls=lambda x, y, z: x,
                 headers=_headers,
                 params=_params,
                 **kwargs
             )
-        kwargs.pop('error_map', None)
+        kwargs.pop("error_map", None)
 
         def get_long_running_output(pipeline_response):
-            deserialized = self._deserialize('SparkBatchJob', pipeline_response)
+            deserialized = self._deserialize("SparkBatchJob", pipeline_response)
             if cls:
                 return cls(pipeline_response, deserialized, {})
             return deserialized
 
-
         path_format_arguments = {
-            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, 'str', skip_quote=True),
+            "endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
         }
 
         if polling is True:
-            polling_method = cast(AsyncPollingMethod, AsyncLROBasePolling(
-                lro_delay,
-                lro_options={'final-state-via': 'location'},
-                path_format_arguments=path_format_arguments,
-                **kwargs
-        ))  # type: AsyncPollingMethod
-        elif polling is False: polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
-        else: polling_method = polling
+            polling_method = cast(
+                AsyncPollingMethod,
+                AsyncLROBasePolling(
+                    lro_delay,
+                    lro_options={"final-state-via": "location"},
+                    path_format_arguments=path_format_arguments,
+                    **kwargs
+                ),
+            )  # type: AsyncPollingMethod
+        elif polling is False:
+            polling_method = cast(AsyncPollingMethod, AsyncNoPolling())
+        else:
+            polling_method = polling
         if cont_token:
             return AsyncLROPoller.from_continuation_token(
                 polling_method=polling_method,
                 continuation_token=cont_token,
                 client=self._client,
-                deserialization_callback=get_long_running_output
+                deserialization_callback=get_long_running_output,
             )
         return AsyncLROPoller(self._client, raw_result, get_long_running_output, polling_method)
 
-    begin_debug_spark_job_definition.metadata = {'url': "/debugSparkJobDefinition"}  # type: ignore
+    begin_debug_spark_job_definition.metadata = {"url": "/debugSparkJobDefinition"}  # type: ignore

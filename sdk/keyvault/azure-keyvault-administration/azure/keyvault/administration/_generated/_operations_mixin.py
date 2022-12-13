@@ -8,34 +8,35 @@
 # Changes may cause incorrect behavior and will be lost if the code is
 # regenerated.
 # --------------------------------------------------------------------------
-from msrest import Serializer, Deserializer
-from typing import TYPE_CHECKING
+from ._serialization import Serializer, Deserializer
+from typing import Any, IO, Optional, Union
 
-if TYPE_CHECKING:
-    # pylint: disable=unused-import,ungrouped-imports
-    from typing import Any, Optional
+from azure.core.polling import LROPoller
 
-    from azure.core.polling import LROPoller
+from . import models as _models
 
 
 class KeyVaultClientOperationsMixin(object):
 
     def begin_full_backup(
         self,
-        vault_base_url,  # type: str
-        azure_storage_blob_container_uri=None,  # type: Optional["_models.SASTokenParameter"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.FullBackupOperation"]
-        """Creates a full backup using a user-provided SAS token to an Azure blob storage container. This
-        operation is supported only by the Managed HSM service.
+        vault_base_url: str,
+        azure_storage_blob_container_uri: Optional[Union[_models.SASTokenParameter, IO]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.FullBackupOperation]:
+        """Creates a full backup using a user-provided SAS token to an Azure blob storage container.
 
-        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :param azure_storage_blob_container_uri: Azure blob shared access signature token pointing to a
          valid Azure blob container where full backup needs to be stored. This token needs to be valid
-         for at least next 24 hours from the time of making this call. Default value is None.
-        :type azure_storage_blob_container_uri: ~azure.keyvault.v7_3.models.SASTokenParameter
+         for at least next 24 hours from the time of making this call. Is either a model type or a IO
+         type. Default value is None.
+        :type azure_storage_blob_container_uri: ~azure.keyvault.v7_4_preview_1.models.SASTokenParameter
+         or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -46,19 +47,23 @@ class KeyVaultClientOperationsMixin(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either FullBackupOperation or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_3.models.FullBackupOperation]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.v7_4_preview_1.models.FullBackupOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_full_backup')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4-preview.1':
+            from .v7_4_preview_1.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_full_backup'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -66,19 +71,22 @@ class KeyVaultClientOperationsMixin(object):
 
     def begin_full_restore_operation(
         self,
-        vault_base_url,  # type: str
-        restore_blob_details=None,  # type: Optional["_models.RestoreOperationParameters"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.RestoreOperation"]
+        vault_base_url: str,
+        restore_blob_details: Optional[Union[_models.RestoreOperationParameters, IO]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.RestoreOperation]:
         """Restores all key materials using the SAS token pointing to a previously stored Azure Blob
         storage backup folder.
 
-        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
-         successful full backup was stored. Default value is None.
-        :type restore_blob_details: ~azure.keyvault.v7_3.models.RestoreOperationParameters
+         successful full backup was stored. Is either a model type or a IO type. Default value is None.
+        :type restore_blob_details: ~azure.keyvault.v7_4_preview_1.models.RestoreOperationParameters or
+         IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -89,19 +97,22 @@ class KeyVaultClientOperationsMixin(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either RestoreOperation or the result of
          cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_3.models.RestoreOperation]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_4_preview_1.models.RestoreOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_full_restore_operation')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4-preview.1':
+            from .v7_4_preview_1.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_full_restore_operation'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -109,22 +120,25 @@ class KeyVaultClientOperationsMixin(object):
 
     def begin_selective_key_restore_operation(
         self,
-        vault_base_url,  # type: str
-        key_name,  # type: str
-        restore_blob_details=None,  # type: Optional["_models.SelectiveKeyRestoreOperationParameters"]
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> LROPoller["_models.SelectiveKeyRestoreOperation"]
+        vault_base_url: str,
+        key_name: str,
+        restore_blob_details: Optional[Union[_models.SelectiveKeyRestoreOperationParameters, IO]] = None,
+        **kwargs: Any
+    ) -> LROPoller[_models.SelectiveKeyRestoreOperation]:
         """Restores all key versions of a given key using user supplied SAS token pointing to a previously
         stored Azure Blob storage backup folder.
 
-        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param key_name: The name of the key to be restored from the user supplied backup.
+        :param key_name: The name of the key to be restored from the user supplied backup. Required.
         :type key_name: str
         :param restore_blob_details: The Azure blob SAS token pointing to a folder where the previous
-         successful full backup was stored. Default value is None.
-        :type restore_blob_details: ~azure.keyvault.v7_3.models.SelectiveKeyRestoreOperationParameters
+         successful full backup was stored. Is either a model type or a IO type. Default value is None.
+        :type restore_blob_details:
+         ~azure.keyvault.v7_4_preview_1.models.SelectiveKeyRestoreOperationParameters or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
         :keyword callable cls: A custom type or function that will be passed the direct response
         :keyword str continuation_token: A continuation token to restart a poller from a saved state.
         :keyword polling: By default, your polling method will be LROBasePolling. Pass in False for
@@ -135,19 +149,23 @@ class KeyVaultClientOperationsMixin(object):
          Retry-After header is present.
         :return: An instance of LROPoller that returns either SelectiveKeyRestoreOperation or the
          result of cls(response)
-        :rtype: ~azure.core.polling.LROPoller[~azure.keyvault.v7_3.models.SelectiveKeyRestoreOperation]
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :rtype:
+         ~azure.core.polling.LROPoller[~azure.keyvault.v7_4_preview_1.models.SelectiveKeyRestoreOperation]
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('begin_selective_key_restore_operation')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4-preview.1':
+            from .v7_4_preview_1.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'begin_selective_key_restore_operation'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
@@ -155,66 +173,176 @@ class KeyVaultClientOperationsMixin(object):
 
     def full_backup_status(
         self,
-        vault_base_url,  # type: str
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.FullBackupOperation"
+        vault_base_url: str,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.FullBackupOperation:
         """Returns the status of full backup operation.
 
-        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param job_id: The id returned as part of the backup request.
+        :param job_id: The id returned as part of the backup request. Required.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: FullBackupOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.FullBackupOperation
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: FullBackupOperation or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.FullBackupOperation
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('full_backup_status')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4-preview.1':
+            from .v7_4_preview_1.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'full_backup_status'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.full_backup_status(vault_base_url, job_id, **kwargs)
 
+    def get_setting_value(
+        self,
+        vault_base_url: str,
+        setting_name: str,
+        **kwargs: Any
+    ) -> _models.Setting:
+        """Get specified account setting value.
+
+        Retrieves the value of a specified, value account setting.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
+        :type vault_base_url: str
+        :param setting_name: The name of the account setting. Must be a valid settings option.
+         Required.
+        :type setting_name: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Setting or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.Setting
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        api_version = self._get_api_version('get_setting_value')
+        if api_version == '7.4-preview.1':
+            from .v7_4_preview_1.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_setting_value'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_setting_value(vault_base_url, setting_name, **kwargs)
+
+    def get_settings(
+        self,
+        vault_base_url: str,
+        **kwargs: Any
+    ) -> _models.SettingsListResult:
+        """List account settings.
+
+        Retrieves a list of all the available account settings that can be configured.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
+        :type vault_base_url: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: SettingsListResult or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.SettingsListResult
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        api_version = self._get_api_version('get_settings')
+        if api_version == '7.4-preview.1':
+            from .v7_4_preview_1.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'get_settings'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.get_settings(vault_base_url, **kwargs)
+
     def restore_status(
         self,
-        vault_base_url,  # type: str
-        job_id,  # type: str
-        **kwargs  # type: Any
-    ):
-        # type: (...) -> "_models.RestoreOperation"
+        vault_base_url: str,
+        job_id: str,
+        **kwargs: Any
+    ) -> _models.RestoreOperation:
         """Returns the status of restore operation.
 
-        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net.
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
         :type vault_base_url: str
-        :param job_id: The Job Id returned part of the restore operation.
+        :param job_id: The Job Id returned part of the restore operation. Required.
         :type job_id: str
         :keyword callable cls: A custom type or function that will be passed the direct response
-        :return: RestoreOperation, or the result of cls(response)
-        :rtype: ~azure.keyvault.v7_3.models.RestoreOperation
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :return: RestoreOperation or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.RestoreOperation
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
         api_version = self._get_api_version('restore_status')
         if api_version == '7.2':
             from .v7_2.operations import KeyVaultClientOperationsMixin as OperationClass
         elif api_version == '7.3':
             from .v7_3.operations import KeyVaultClientOperationsMixin as OperationClass
+        elif api_version == '7.4-preview.1':
+            from .v7_4_preview_1.operations import KeyVaultClientOperationsMixin as OperationClass
         else:
             raise ValueError("API version {} does not have operation 'restore_status'".format(api_version))
         mixin_instance = OperationClass()
         mixin_instance._client = self._client
         mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
         mixin_instance._serialize = Serializer(self._models_dict(api_version))
         mixin_instance._serialize.client_side_validation = False
         mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
         return mixin_instance.restore_status(vault_base_url, job_id, **kwargs)
+
+    def update_settings(
+        self,
+        vault_base_url: str,
+        setting_name: str,
+        parameters: Union[_models.UpdateSettingsRequest, IO],
+        **kwargs: Any
+    ) -> _models.Setting:
+        """Updates key vault account setting, stores it, then returns the setting name and value to the
+        client.
+
+        Description of the pool setting to be updated.
+
+        :param vault_base_url: The vault name, for example https://myvault.vault.azure.net. Required.
+        :type vault_base_url: str
+        :param setting_name: The name of the account setting. Must be a valid settings option.
+         Required.
+        :type setting_name: str
+        :param parameters: The parameters to update an account setting. Is either a model type or a IO
+         type. Required.
+        :type parameters: ~azure.keyvault.v7_4_preview_1.models.UpdateSettingsRequest or IO
+        :keyword content_type: Body Parameter content-type. Known values are: 'application/json'.
+         Default value is None.
+        :paramtype content_type: str
+        :keyword callable cls: A custom type or function that will be passed the direct response
+        :return: Setting or the result of cls(response)
+        :rtype: ~azure.keyvault.v7_4_preview_1.models.Setting
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        api_version = self._get_api_version('update_settings')
+        if api_version == '7.4-preview.1':
+            from .v7_4_preview_1.operations import KeyVaultClientOperationsMixin as OperationClass
+        else:
+            raise ValueError("API version {} does not have operation 'update_settings'".format(api_version))
+        mixin_instance = OperationClass()
+        mixin_instance._client = self._client
+        mixin_instance._config = self._config
+        mixin_instance._config.api_version = api_version
+        mixin_instance._serialize = Serializer(self._models_dict(api_version))
+        mixin_instance._serialize.client_side_validation = False
+        mixin_instance._deserialize = Deserializer(self._models_dict(api_version))
+        return mixin_instance.update_settings(vault_base_url, setting_name, parameters, **kwargs)

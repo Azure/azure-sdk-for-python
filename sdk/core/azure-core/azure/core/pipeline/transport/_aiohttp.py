@@ -198,7 +198,7 @@ class AioHttpTransport(AsyncHttpTransport):
         try:
             auto_decompress = self.session.auto_decompress  # type: ignore
         except AttributeError:
-            # auto_decompress is introduced in aiohttp 3.7. We need this to handle Python 3.6.
+            # auto_decompress is introduced in aiohttp 3.7. We need this to handle aiohttp 3.6-.
             auto_decompress = False
 
         proxies = config.pop('proxies', None)
@@ -217,7 +217,7 @@ class AioHttpTransport(AsyncHttpTransport):
             verify=config.pop('connection_verify', self.connection_config.verify)
         )
         # If we know for sure there is not body, disable "auto content type"
-        # Otherwise, aiohttp will send "application/octect-stream" even for empty POST request
+        # Otherwise, aiohttp will send "application/octet-stream" even for empty POST request
         # and that break services like storage signature
         if not request.data and not request.files:
             config['skip_auto_headers'] = ['Content-Type']

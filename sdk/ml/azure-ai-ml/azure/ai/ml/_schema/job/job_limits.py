@@ -4,7 +4,7 @@
 
 # pylint: disable=unused-argument,no-self-use
 
-from marshmallow import fields, post_load
+from marshmallow import fields, post_load, validate
 
 from azure.ai.ml._schema.core.schema_meta import PatchedSchemaMeta
 
@@ -35,3 +35,9 @@ class SweepJobLimitsSchema(metaclass=PatchedSchemaMeta):
         from azure.ai.ml.sweep import SweepJobLimits
 
         return SweepJobLimits(**data)
+
+
+class DoWhileLimitsSchema(metaclass=PatchedSchemaMeta):
+    max_iteration_count = fields.Int(
+        metadata={"description": "The max iteration for do_while loop."}, validate=validate.Range(min=1, max=1000)
+    )

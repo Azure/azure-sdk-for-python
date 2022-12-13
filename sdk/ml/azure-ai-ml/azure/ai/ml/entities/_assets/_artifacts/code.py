@@ -9,9 +9,10 @@ from typing import Dict, Union
 from azure.ai.ml._restclient.v2022_05_01.models import CodeVersionData, CodeVersionDetails
 from azure.ai.ml._schema import CodeAssetSchema
 from azure.ai.ml._utils._arm_id_utils import AMLVersionedArmId
-from azure.ai.ml._utils._asset_utils import get_content_hash, get_content_hash_version, get_ignore_file
+from azure.ai.ml._utils._asset_utils import get_content_hash, get_content_hash_version, get_ignore_file, IgnoreFile
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY, PARAMS_OVERRIDE_KEY, ArmConstants
 from azure.ai.ml.entities._assets import Artifact
+from azure.ai.ml.entities._system_data import SystemData
 from azure.ai.ml.entities._util import load_from_dict
 
 from .artifact import ArtifactStorageInfo
@@ -33,6 +34,8 @@ class Code(Artifact):
     :type tags: dict[str, str]
     :param properties: The asset property dictionary.
     :type properties: dict[str, str]
+    :param ignore_file: Ignore file for the resource.
+    :type ignore_file: IgnoreFile
     :param kwargs: A dictionary of additional configuration parameters.
     :type kwargs: dict
     """
@@ -46,6 +49,7 @@ class Code(Artifact):
         tags: Dict = None,
         properties: Dict = None,
         path: Union[str, PathLike] = None,
+        ignore_file: IgnoreFile = None,
         **kwargs,
     ):
         super().__init__(
@@ -60,8 +64,8 @@ class Code(Artifact):
         self._arm_type = ArmConstants.CODE_VERSION_TYPE
         if self.path and os.path.isabs(self.path):
             # Only calculate hash for local files
-            _ignore_file = get_ignore_file(self.path)
-            self._hash_sha256 = get_content_hash(self.path, _ignore_file)
+            self._ignore_file = get_ignore_file(self.path) if ignore_file is None else ignore_file
+            self._hash_sha256 = get_content_hash(self.path, self._ignore_file)
 
     @classmethod
     def _load(
@@ -94,7 +98,8 @@ class Code(Artifact):
             description=rest_code_version.description,
             tags=rest_code_version.tags,
             properties=rest_code_version.properties,
-            creation_context=code_rest_object.system_data,
+            # pylint: disable=protected-access
+            creation_context=SystemData._from_rest_object(code_rest_object.system_data),
             is_anonymous=rest_code_version.is_anonymous,
         )
         return code

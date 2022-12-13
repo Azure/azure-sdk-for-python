@@ -12,8 +12,8 @@ from azure.core.exceptions import ServiceResponseTimeoutError
 from ._timer import Timer
 from .._utils import is_retryable_status_code, get_authentication_policy
 from .._search_indexing_buffered_sender_base import SearchIndexingBufferedSenderBase
-from .._generated.aio import SearchClient as SearchIndexClient
-from .._generated.models import IndexingResult
+from .._generated.aio import SearchIndexClient
+from .._generated.models import IndexingResult, IndexBatch
 from .._search_documents_error import RequestEntityTooLargeError
 from ._index_documents_batch_async import IndexDocumentsBatch
 from .._headers_mixin import HeadersMixin
@@ -39,19 +39,14 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
     :keyword int initial_batch_action_count: The initial number of actions to group into a batch when
         tuning the behavior of the sender. The default value is 512.
     :keyword int max_retries_per_action: The number of times to retry a failed document. The default value is 3.
-    :keyword on_new: If it is set, the client will call corresponding methods when there
-        is a new IndexAction added. This may be called from main thread or a worker thread.
-    :paramtype on_new: Callable[[IndexAction], None]
-    :keyword on_progress: If it is set, the client will call corresponding methods when there
-        is a IndexAction succeeds. This may be called from main thread or a worker thread.
-    :paramtype on_progress: Callable[[IndexAction], None]
-    :keyword on_error: If it is set, the client will call corresponding methods when there
-        is a IndexAction fails. This may be called from main thread or a worker thread.
-    :paramtype on_error: Callable[[IndexAction], None]
-    :keyword on_remove: If it is set, the client will call corresponding methods when there
-        is a IndexAction removed from the queue (succeeds or fails). This may be called from main
-        thread or a worker thread.
-    :paramtype on_remove: Callable[[IndexAction], None]
+    :keyword callable on_new: If it is set, the client will call corresponding methods when there
+        is a new IndexAction added.
+    :keyword callable on_progress: If it is set, the client will call corresponding methods when there
+        is a IndexAction succeeds.
+    :keyword callable on_error: If it is set, the client will call corresponding methods when there
+        is a IndexAction fails.
+    :keyword callable on_remove: If it is set, the client will call corresponding methods when there
+        is a IndexAction removed from the queue (succeeds or fails).
     :keyword str api_version: The Search API version to use for requests.
     :keyword str audience: sets the Audience to use for authentication with Azure Active Directory (AAD). The
      audience is not considered when using a shared key. If audience is not provided, the public cloud audience
@@ -301,9 +296,10 @@ class SearchIndexingBufferedSender(SearchIndexingBufferedSenderBase, HeadersMixi
         timeout = kwargs.pop("timeout", 86400)
         begin_time = int(time.time())
         kwargs["headers"] = self._merge_client_headers(kwargs.get("headers"))
+        batch = IndexBatch(actions=actions)
         try:
             batch_response = await self._client.documents.index(
-                actions=actions, error_map=error_map, **kwargs
+                batch=batch, error_map=error_map, **kwargs
             )
             return cast(List[IndexingResult], batch_response.results)
         except RequestEntityTooLargeError:

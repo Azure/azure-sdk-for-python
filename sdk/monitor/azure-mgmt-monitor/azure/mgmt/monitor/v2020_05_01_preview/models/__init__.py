@@ -20,34 +20,32 @@ from ._models_py3 import ScheduledQueryRuleResourceCollection
 from ._models_py3 import ScheduledQueryRuleResourcePatch
 from ._models_py3 import TrackedResource
 
-
-from ._monitor_management_client_enums import (
-    AlertSeverity,
-    ConditionOperator,
-    DimensionOperator,
-    TimeAggregation,
-)
+from ._monitor_management_client_enums import AlertSeverity
+from ._monitor_management_client_enums import ConditionOperator
+from ._monitor_management_client_enums import DimensionOperator
+from ._monitor_management_client_enums import TimeAggregation
 from ._patch import __all__ as _patch_all
 from ._patch import *  # type: ignore # pylint: disable=unused-wildcard-import
 from ._patch import patch_sdk as _patch_sdk
+
 __all__ = [
-    'Action',
-    'Condition',
-    'ConditionFailingPeriods',
-    'Dimension',
-    'ErrorAdditionalInfo',
-    'ErrorContract',
-    'ErrorResponse',
-    'Resource',
-    'ScheduledQueryRuleCriteria',
-    'ScheduledQueryRuleResource',
-    'ScheduledQueryRuleResourceCollection',
-    'ScheduledQueryRuleResourcePatch',
-    'TrackedResource',
-    'AlertSeverity',
-    'ConditionOperator',
-    'DimensionOperator',
-    'TimeAggregation',
+    "Action",
+    "Condition",
+    "ConditionFailingPeriods",
+    "Dimension",
+    "ErrorAdditionalInfo",
+    "ErrorContract",
+    "ErrorResponse",
+    "Resource",
+    "ScheduledQueryRuleCriteria",
+    "ScheduledQueryRuleResource",
+    "ScheduledQueryRuleResourceCollection",
+    "ScheduledQueryRuleResourcePatch",
+    "TrackedResource",
+    "AlertSeverity",
+    "ConditionOperator",
+    "DimensionOperator",
+    "TimeAggregation",
 ]
 __all__.extend([p for p in _patch_all if p not in __all__])
 _patch_sdk()

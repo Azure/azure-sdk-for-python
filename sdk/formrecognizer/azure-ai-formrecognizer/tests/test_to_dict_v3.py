@@ -933,7 +933,7 @@ class TestToDict(FormRecognizerTest):
 
     def test_analyze_result_to_dict(self):
         model = _models.AnalyzeResult(
-            api_version="2021-07-30-preview",
+            api_version="2022-08-31",
             model_id="modelId1",
             content="Sample\nFile content.",
             languages=[
@@ -1158,7 +1158,7 @@ class TestToDict(FormRecognizerTest):
         d = model.to_dict()
 
         final = {
-            "api_version": "2021-07-30-preview",
+            "api_version": "2022-08-31",
             "model_id": "modelId1",
             "content": "Sample\nFile content.",
             "languages": [

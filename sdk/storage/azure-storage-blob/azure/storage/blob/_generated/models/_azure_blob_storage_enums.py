@@ -28,6 +28,7 @@ class AccessTier(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COOL = "Cool"
     ARCHIVE = "Archive"
     PREMIUM = "Premium"
+    COLD = "Cold"
 
 
 class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -47,6 +48,7 @@ class AccessTierOptional(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HOT = "Hot"
     COOL = "Cool"
     ARCHIVE = "Archive"
+    COLD = "Cold"
 
 
 class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -66,6 +68,7 @@ class AccessTierRequired(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     HOT = "Hot"
     COOL = "Cool"
     ARCHIVE = "Archive"
+    COLD = "Cold"
 
 
 class AccountKind(str, Enum, metaclass=CaseInsensitiveEnumMeta):
@@ -334,7 +337,7 @@ class StorageErrorCode(str, Enum, metaclass=CaseInsensitiveEnumMeta):
     COPY_ID_MISMATCH = "CopyIdMismatch"
     FEATURE_VERSION_MISMATCH = "FeatureVersionMismatch"
     INCREMENTAL_COPY_BLOB_MISMATCH = "IncrementalCopyBlobMismatch"
-    INCREMENTAL_COPY_OF_ERALIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEralierVersionSnapshotNotAllowed"
+    INCREMENTAL_COPY_OF_EARLIER_VERSION_SNAPSHOT_NOT_ALLOWED = "IncrementalCopyOfEarlierVersionSnapshotNotAllowed"
     INCREMENTAL_COPY_SOURCE_MUST_BE_SNAPSHOT = "IncrementalCopySourceMustBeSnapshot"
     INFINITE_LEASE_DURATION_REQUIRED = "InfiniteLeaseDurationRequired"
     INVALID_BLOB_OR_BLOCK = "InvalidBlobOrBlock"

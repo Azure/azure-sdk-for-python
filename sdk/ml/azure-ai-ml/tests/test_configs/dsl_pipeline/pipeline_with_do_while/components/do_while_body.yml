@@ -1,0 +1,34 @@
+$schema: https://azuremlschemas.azureedge.net/latest/pipelineComponent.schema.json
+type: pipeline
+
+display_name: do_while_body_without_primitive_inputs
+description: Do while body without primitive inputs
+
+inputs:
+  component_in_path:
+    type: uri_folder
+  component_in_number:
+    type: integer
+    optional: true
+
+outputs:
+  output_in_path:
+    type: uri_folder
+  output_in_number:
+    type: integer
+    is_control: true
+  is_number_larger_than_zero:
+    type: boolean
+    is_control: true
+
+jobs:
+  write_input_num:
+    type: command
+    component: ./basic_component.yml
+    inputs:
+      component_in_number: ${{parent.inputs.component_in_number}}
+      component_in_path: ${{parent.inputs.component_in_path}}
+    outputs:
+      output_in_path: ${{parent.outputs.output_in_path}}
+      output_in_number: ${{parent.outputs.output_in_number}}
+      is_number_larger_than_zero: ${{parent.outputs.is_number_larger_than_zero}}

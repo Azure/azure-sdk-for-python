@@ -6,6 +6,7 @@ ERROR_MSG = "Can't instantiate abstract class"
 
 
 @pytest.mark.unittest
+@pytest.mark.core_sdk_test
 def test_smoke():
     from azure.ai.ml.entities import (
         Asset,
@@ -31,6 +32,7 @@ def test_smoke():
     Environment()
     Model()
     Code()
+    Component()
     CommandComponent()
     ParallelComponent()
     SparkComponent()
@@ -50,9 +52,6 @@ def test_smoke():
         assert ERROR_MSG in e.msg
     with pytest.raises(TypeError) as e:
         OnlineEndpoint()
-        assert ERROR_MSG in e.msg
-    with pytest.raises(TypeError) as e:
-        Component()
         assert ERROR_MSG in e.msg
     with pytest.raises(TypeError) as e:
         Asset()
