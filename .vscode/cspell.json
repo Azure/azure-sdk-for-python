@@ -426,7 +426,8 @@
     {
       "filename": "sdk/translation/azure-ai-translation-document/tests/*.py",
       "words": [
-        "essai"
+        "essai",
+        "myfoldername"
       ]
     },
     {
