@@ -1,235 +1,13 @@
 {
   "Entries": [
     {
-      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0/.well-known/openid-configuration",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "*/*",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "max-age=86400, private",
-        "Content-Length": "1753",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:17:24 GMT",
-        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
-        "Set-Cookie": [
-          "fpc=AoDJPYS94xtKvFO1PgjEkdo; expires=Wed, 07-Dec-2022 22:17:25 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "esctx=AQABAAAAAAD--DLA3VO7QrddgJg7WevrZel7uaUVNdtXEFJifZmZuiJT8DTu6UTmfU4NrSkHGn4XYKV8HMYHkEgtfmwFIbSVoOqGVEQjsrZV7PMg07PGebigOo94xP8Pq5CBJjIYUixRpJA5JLlo66RnWQw6NuHJHXQwIIRyBHep4QajGrwmfrOuwz6Su-snM2-J6mvgUcgwvaFVhgvO6gpmuooOEy7UN_EwF0n-Uq_JuGLxlksq7w3WNNvcz0pqAwVovymrtwkgAA; domain=.login.microsoftonline.com; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly",
-          "stsservicecookie=estsfd; path=/; secure; samesite=none; httponly"
-        ],
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - SCUS ProdSlices",
-        "X-XSS-Protection": "0"
-      },
-      "ResponseBody": {
-        "token_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
-        "token_endpoint_auth_methods_supported": [
-          "client_secret_post",
-          "private_key_jwt",
-          "client_secret_basic"
-        ],
-        "jwks_uri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/discovery/v2.0/keys",
-        "response_modes_supported": [
-          "query",
-          "fragment",
-          "form_post"
-        ],
-        "subject_types_supported": [
-          "pairwise"
-        ],
-        "id_token_signing_alg_values_supported": [
-          "RS256"
-        ],
-        "response_types_supported": [
-          "code",
-          "id_token",
-          "code id_token",
-          "id_token token"
-        ],
-        "scopes_supported": [
-          "openid",
-          "profile",
-          "email",
-          "offline_access"
-        ],
-        "issuer": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/v2.0",
-        "request_uri_parameter_supported": false,
-        "userinfo_endpoint": "https://graph.microsoft.com/oidc/userinfo",
-        "authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/authorize",
-        "device_authorization_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/devicecode",
-        "http_logout_supported": true,
-        "frontchannel_logout_supported": true,
-        "end_session_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/logout",
-        "claims_supported": [
-          "sub",
-          "iss",
-          "cloud_instance_name",
-          "cloud_instance_host_name",
-          "cloud_graph_host_name",
-          "msgraph_host",
-          "aud",
-          "exp",
-          "iat",
-          "auth_time",
-          "acr",
-          "nonce",
-          "preferred_username",
-          "name",
-          "tid",
-          "ver",
-          "at_hash",
-          "c_hash",
-          "email"
-        ],
-        "kerberos_endpoint": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/kerberos",
-        "tenant_region_scope": "WW",
-        "cloud_instance_name": "microsoftonline.com",
-        "cloud_graph_host_name": "graph.windows.net",
-        "msgraph_host": "graph.microsoft.com",
-        "rbac_url": "https://pas.windows.net"
-      }
-    },
-    {
-      "RequestUri": "https://login.microsoftonline.com/common/discovery/instance?api-version=1.1\u0026authorization_endpoint=https://login.microsoftonline.com/common/oauth2/authorize",
-      "RequestMethod": "GET",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "Connection": "keep-alive",
-        "Cookie": "fpc=AoDJPYS94xtKvFO1PgjEkdo; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
-      },
-      "RequestBody": null,
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Access-Control-Allow-Methods": "GET, OPTIONS",
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "max-age=86400, private",
-        "Content-Length": "945",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:17:24 GMT",
-        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
-        "Set-Cookie": [
-          "fpc=AoDJPYS94xtKvFO1PgjEkdo; expires=Wed, 07-Dec-2022 22:17:25 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
-        ],
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-ests-server": "2.1.14006.10 - NCUS ProdSlices",
-        "X-XSS-Protection": "0"
-      },
-      "ResponseBody": {
-        "tenant_discovery_endpoint": "https://login.microsoftonline.com/common/.well-known/openid-configuration",
-        "api-version": "1.1",
-        "metadata": [
-          {
-            "preferred_network": "login.microsoftonline.com",
-            "preferred_cache": "login.windows.net",
-            "aliases": [
-              "login.microsoftonline.com",
-              "login.windows.net",
-              "login.microsoft.com",
-              "sts.windows.net"
-            ]
-          },
-          {
-            "preferred_network": "login.partner.microsoftonline.cn",
-            "preferred_cache": "login.partner.microsoftonline.cn",
-            "aliases": [
-              "login.partner.microsoftonline.cn",
-              "login.chinacloudapi.cn"
-            ]
-          },
-          {
-            "preferred_network": "login.microsoftonline.de",
-            "preferred_cache": "login.microsoftonline.de",
-            "aliases": [
-              "login.microsoftonline.de"
-            ]
-          },
-          {
-            "preferred_network": "login.microsoftonline.us",
-            "preferred_cache": "login.microsoftonline.us",
-            "aliases": [
-              "login.microsoftonline.us",
-              "login.usgovcloudapi.net"
-            ]
-          },
-          {
-            "preferred_network": "login-us.microsoftonline.com",
-            "preferred_cache": "login-us.microsoftonline.com",
-            "aliases": [
-              "login-us.microsoftonline.com"
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "RequestUri": "https://login.microsoftonline.com/72f988bf-86f1-41af-91ab-2d7cd011db47/oauth2/v2.0/token",
-      "RequestMethod": "POST",
-      "RequestHeaders": {
-        "Accept": "application/json",
-        "Accept-Encoding": "gzip, deflate",
-        "client-request-id": "a25ea1e4-2e33-472f-9293-eddc2ffd32a9",
-        "Connection": "keep-alive",
-        "Content-Length": "292",
-        "Content-Type": "application/x-www-form-urlencoded",
-        "Cookie": "fpc=AoDJPYS94xtKvFO1PgjEkdo; stsservicecookie=estsfd; x-ms-gateway-slice=estsfd",
-        "User-Agent": "azsdk-python-identity/1.12.0b2 Python/3.10.4 (Windows-10-10.0.22621-SP0)",
-        "x-client-cpu": "x64",
-        "x-client-current-telemetry": "4|730,0|",
-        "x-client-last-telemetry": "4|0|||",
-        "x-client-os": "win32",
-        "x-client-sku": "MSAL.Python",
-        "x-client-ver": "1.18.0b1",
-        "x-ms-lib-capability": "retry-after, h429"
-      },
-      "RequestBody": "client_id=9fd79bab-6a9b-4593-848a-249da4227b0a\u0026grant_type=client_credentials\u0026client_info=1\u0026client_secret=G0O8Q~TN4gSJe52A_NMx2XI6IJQVxpUWy0oOwaQH\u0026claims=%7B%22access_token%22%3A\u002B%7B%22xms_cc%22%3A\u002B%7B%22values%22%3A\u002B%5B%22CP1%22%5D%7D%7D%7D\u0026scope=https%3A%2F%2Fmanagement.azure.com%2F.default",
-      "StatusCode": 200,
-      "ResponseHeaders": {
-        "Cache-Control": "no-store, no-cache",
-        "client-request-id": "a25ea1e4-2e33-472f-9293-eddc2ffd32a9",
-        "Content-Length": "92",
-        "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:17:25 GMT",
-        "Expires": "-1",
-        "P3P": "CP=\u0022DSP CUR OTPi IND OTRi ONL FIN\u0022",
-        "Pragma": "no-cache",
-        "Set-Cookie": [
-          "fpc=AoDJPYS94xtKvFO1PgjEkdqnpKQyAQAAAPV6-9oOAAAA; expires=Wed, 07-Dec-2022 22:17:25 GMT; path=/; secure; HttpOnly; SameSite=None",
-          "x-ms-gateway-slice=estsfd; path=/; secure; samesite=none; httponly"
-        ],
-        "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
-        "X-Content-Type-Options": "nosniff",
-        "x-ms-clitelem": "1,0,0,,",
-        "x-ms-ests-server": "2.1.14006.10 - WUS2 ProdSlices",
-        "X-XSS-Protection": "0"
-      },
-      "ResponseBody": {
-        "token_type": "Bearer",
-        "expires_in": 86399,
-        "ext_expires_in": 86399,
-        "access_token": "Sanitized"
-      }
-    },
-    {
       "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -237,24 +15,24 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:17:26 GMT",
+        "Date": "Tue, 13 Dec 2022 21:06:42 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-bf8290035811e149ba1d59002d9a076f-efa31f155ba3d3f5-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-eb25289897d0ff36f67d6b497c1526d1-9d7b5d919ce9979f-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
           "Accept-Encoding",
           "Accept-Encoding"
         ],
-        "x-aml-cluster": "vienna-westus-02",
+        "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "a1d885b9-4737-41f6-8994-55989fe1b43f",
+        "x-ms-correlation-request-id": "4fa5c3f3-8d51-45f4-a308-9f72de672cad",
         "x-ms-ratelimit-remaining-subscription-reads": "11999",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221726Z:a1d885b9-4737-41f6-8994-55989fe1b43f",
-        "x-request-time": "0.016"
+        "x-ms-routing-request-id": "EASTUS:20221213T210642Z:4fa5c3f3-8d51-45f4-a308-9f72de672cad",
+        "x-request-time": "0.013"
       },
       "ResponseBody": {
         "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000",
@@ -266,24 +44,24 @@
         "properties": {
           "friendlyName": "00000",
           "description": "",
-          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/sac5o6kbmbsq4pe",
-          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/kvtesth4lz2qwhu3p4s",
-          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/aic5o6kbmbsq4pe",
+          "storageAccount": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Storage/storageAccounts/sauucsxpn24slls",
+          "keyVault": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.Keyvault/vaults/kvtestrxkuywvgzsybe",
+          "applicationInsights": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.insights/components/aiuucsxpn24slls",
           "hbiWorkspace": false,
           "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47",
           "imageBuildCompute": null,
           "provisioningState": "Succeeded",
           "v1LegacyMode": false,
           "softDeleteEnabled": false,
-          "containerRegistry": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/crc5o6kbmbsq4pe",
+          "containerRegistry": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.ContainerRegistry/registries/cruucsxpn24slls",
           "notebookInfo": {
-            "resourceId": "4fb4f7334c304d6fa0597f95c007c688",
-            "fqdn": "ml-sdkvnextcli-westus-ee02f532-f181-49f3-993b-70bd2efae255.westus.notebooks.azure.net",
+            "resourceId": "1104fd836a154818bfb3435f6187c376",
+            "fqdn": "ml-sdkvnextcli-westus-55dbca7f-9e65-4feb-8c41-d63789be2717.westus.notebooks.azure.net",
             "isPrivateLinkEnabled": false,
             "notebookPreparationError": null
           },
           "storageHnsEnabled": false,
-          "workspaceId": "ee02f532-f181-49f3-993b-70bd2efae255",
+          "workspaceId": "55dbca7f-9e65-4feb-8c41-d63789be2717",
           "linkedModelInventoryArmId": null,
           "privateLinkCount": 0,
           "publicNetworkAccess": "Enabled",
@@ -294,7 +72,7 @@
         },
         "identity": {
           "type": "SystemAssigned",
-          "principalId": "37951b54-480c-4581-b7e1-85a9ad6c63d3",
+          "principalId": "5ec16b47-ed1f-4a48-b66c-0c72602d3048",
           "tenantId": "72f988bf-86f1-41af-91ab-2d7cd011db47"
         },
         "sku": {
@@ -302,17 +80,17 @@
           "tier": "Basic"
         },
         "systemData": {
-          "createdAt": "2022-11-03T03:58:13.0326301Z",
-          "createdBy": "hancwang@microsoft.com",
+          "createdAt": "2022-12-13T16:14:31.8609284Z",
+          "createdBy": "nthande@microsoft.com",
           "createdByType": "User",
-          "lastModifiedAt": "2022-11-07T22:14:34.2586162Z",
-          "lastModifiedBy": "hancwang@microsoft.com",
+          "lastModifiedAt": "2022-12-13T16:14:31.8609284Z",
+          "lastModifiedBy": "nthande@microsoft.com",
           "lastModifiedByType": "User"
         }
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506?api-version=2022-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442?api-version=2022-10-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -320,7 +98,7 @@
         "Connection": "keep-alive",
         "Content-Length": "891",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "properties": {
@@ -348,33 +126,33 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/48eae5d7-98ce-41bd-8727-41caebc4c04d?api-version=2022-10-01-preview\u0026service=new",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/9cd8fd7d-0aa2-4048-90d3-bd5ddef1d357?api-version=2022-10-01-preview\u0026service=new",
         "Cache-Control": "no-cache",
         "Content-Length": "1237",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:17:28 GMT",
+        "Date": "Tue, 13 Dec 2022 21:06:44 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-9d4f0f3a7d992d22c45881cd231f55b1-1fed22eb3d466411-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-82e8cb7646dd5ec424472f641d3be90a-ad85391deb3d858e-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "3cfb9bf2-cc5a-4815-a967-d4c88c82f3f5",
+        "x-ms-correlation-request-id": "89a774cc-a710-46ef-9e21-10cb86b9b386",
         "x-ms-ratelimit-remaining-subscription-writes": "1199",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221728Z:3cfb9bf2-cc5a-4815-a967-d4c88c82f3f5",
-        "x-request-time": "1.155"
+        "x-ms-routing-request-id": "EASTUS:20221213T210644Z:89a774cc-a710-46ef-9e21-10cb86b9b386",
+        "x-request-time": "0.398"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506",
-        "name": "test423266327506",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442",
+        "name": "test421924308442",
         "type": "Microsoft.MachineLearningServices/workspaces/computes",
         "location": "westus",
         "tags": null,
         "properties": {
-          "createdOn": "2022-11-07T22:17:28.6978635\u002B00:00",
-          "modifiedOn": "2022-11-07T22:17:28.6978635\u002B00:00",
+          "createdOn": "2022-12-13T21:06:43.9729398\u002B00:00",
+          "modifiedOn": "2022-12-13T21:06:43.9729398\u002B00:00",
           "disableLocalAuth": false,
           "description": "some_desc_aml",
           "resourceId": null,
@@ -406,13 +184,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/48eae5d7-98ce-41bd-8727-41caebc4c04d?api-version=2022-10-01-preview\u0026service=new",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/9cd8fd7d-0aa2-4048-90d3-bd5ddef1d357?api-version=2022-10-01-preview\u0026service=new",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -420,34 +198,34 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:17:29 GMT",
+        "Date": "Tue, 13 Dec 2022 21:06:44 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-74167399676e21fe6997f5e74b6b48ec-3de2067eed651655-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-ffb4b2af5422d4112c642d26d2340ad3-0b414ab9550943d9-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "09869fd7-e260-4c15-a5ee-725cc38ee3fc",
+        "x-ms-correlation-request-id": "935e0584-2e16-42be-956d-317e8b792c22",
         "x-ms-ratelimit-remaining-subscription-reads": "11998",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221729Z:09869fd7-e260-4c15-a5ee-725cc38ee3fc",
-        "x-request-time": "0.009"
+        "x-ms-routing-request-id": "EASTUS:20221213T210644Z:935e0584-2e16-42be-956d-317e8b792c22",
+        "x-request-time": "0.011"
       },
       "ResponseBody": {
         "status": "InProgress"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/48eae5d7-98ce-41bd-8727-41caebc4c04d?api-version=2022-10-01-preview\u0026service=new",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/9cd8fd7d-0aa2-4048-90d3-bd5ddef1d357?api-version=2022-10-01-preview\u0026service=new",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -455,21 +233,21 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:17:58 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:14 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-058cee96b7d4574a8de4c8ba49c901ad-153099a9036458a5-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-4ef6c2f7bc0b74081648bf16ca49ae8a-92d13a1629f656cd-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "88373042-6a3b-48f6-8936-3fbb6d87c5aa",
+        "x-ms-correlation-request-id": "b0948c98-74c6-4d99-857e-79ad6345731a",
         "x-ms-ratelimit-remaining-subscription-reads": "11997",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221759Z:88373042-6a3b-48f6-8936-3fbb6d87c5aa",
-        "x-request-time": "0.009"
+        "x-ms-routing-request-id": "EASTUS:20221213T210714Z:b0948c98-74c6-4d99-857e-79ad6345731a",
+        "x-request-time": "0.008"
       },
       "ResponseBody": {
         "status": "Succeeded",
@@ -477,13 +255,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506?api-version=2022-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -491,11 +269,11 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:17:59 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:14 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-5feca74f4a53c680b47c9b1d78dbbfb6-55b5112adb60368b-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-8984140ca66a2efdcb08f2d3499614a7-d54ecc1d79a27945-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
@@ -504,21 +282,21 @@
         ],
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "2cb98b87-0202-4313-a7f2-cd8c3d7330a1",
+        "x-ms-correlation-request-id": "a7f1d53e-a96b-478e-84ff-1edb91a704e3",
         "x-ms-ratelimit-remaining-subscription-reads": "11996",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221759Z:2cb98b87-0202-4313-a7f2-cd8c3d7330a1",
-        "x-request-time": "0.401"
+        "x-ms-routing-request-id": "EASTUS:20221213T210714Z:a7f1d53e-a96b-478e-84ff-1edb91a704e3",
+        "x-request-time": "0.032"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506",
-        "name": "test423266327506",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442",
+        "name": "test421924308442",
         "type": "Microsoft.MachineLearningServices/workspaces/computes",
         "location": "westus",
         "tags": {},
         "properties": {
-          "createdOn": "2022-11-07T22:17:28.6978635\u002B00:00",
-          "modifiedOn": "2022-11-07T22:17:35.7342616\u002B00:00",
+          "createdOn": "2022-12-13T21:06:43.9729398\u002B00:00",
+          "modifiedOn": "2022-12-13T21:06:50.8620749\u002B00:00",
           "disableLocalAuth": false,
           "description": "some_desc_aml",
           "resourceId": null,
@@ -552,7 +330,7 @@
               "preemptedNodeCount": 0
             },
             "allocationState": "Steady",
-            "allocationStateTransitionTime": "2022-11-07T22:17:33.067\u002B00:00",
+            "allocationStateTransitionTime": "2022-12-13T21:06:48.255\u002B00:00",
             "errors": null,
             "remoteLoginPortPublicAccess": "Enabled",
             "osType": "Linux",
@@ -565,13 +343,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506?api-version=2022-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -579,11 +357,11 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:18:00 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:14 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-169a64a5cc5f67263cf1623b1ae07ebb-b7660793d54e3f25-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-1de8896cfe512b455778fe919aba7cdc-85c2ce3ebe0ec42e-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
@@ -592,21 +370,21 @@
         ],
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "fc33702f-ff1f-414b-a7f3-ceb81f0d043b",
+        "x-ms-correlation-request-id": "97fe8712-490e-4491-9022-ad27582dcd9d",
         "x-ms-ratelimit-remaining-subscription-reads": "11995",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221800Z:fc33702f-ff1f-414b-a7f3-ceb81f0d043b",
-        "x-request-time": "0.286"
+        "x-ms-routing-request-id": "EASTUS:20221213T210715Z:97fe8712-490e-4491-9022-ad27582dcd9d",
+        "x-request-time": "0.065"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506",
-        "name": "test423266327506",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442",
+        "name": "test421924308442",
         "type": "Microsoft.MachineLearningServices/workspaces/computes",
         "location": "westus",
         "tags": {},
         "properties": {
-          "createdOn": "2022-11-07T22:17:28.6978635\u002B00:00",
-          "modifiedOn": "2022-11-07T22:17:35.7342616\u002B00:00",
+          "createdOn": "2022-12-13T21:06:43.9729398\u002B00:00",
+          "modifiedOn": "2022-12-13T21:06:50.8620749\u002B00:00",
           "disableLocalAuth": false,
           "description": "some_desc_aml",
           "resourceId": null,
@@ -640,7 +418,7 @@
               "preemptedNodeCount": 0
             },
             "allocationState": "Steady",
-            "allocationStateTransitionTime": "2022-11-07T22:17:33.067\u002B00:00",
+            "allocationStateTransitionTime": "2022-12-13T21:06:48.255\u002B00:00",
             "errors": null,
             "remoteLoginPortPublicAccess": "Enabled",
             "osType": "Linux",
@@ -653,7 +431,7 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506?api-version=2022-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442?api-version=2022-10-01-preview",
       "RequestMethod": "PUT",
       "RequestHeaders": {
         "Accept": "application/json",
@@ -661,7 +439,7 @@
         "Connection": "keep-alive",
         "Content-Length": "855",
         "Content-Type": "application/json",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": {
         "properties": {
@@ -688,36 +466,36 @@
       },
       "StatusCode": 201,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/00f43442-04a1-407a-a228-da1b4acc3484?api-version=2022-10-01-preview\u0026service=new",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/a59c4674-ce80-4331-a526-538cf976bf33?api-version=2022-10-01-preview\u0026service=new",
         "Cache-Control": "no-cache",
         "Content-Length": "1406",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:18:00 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:15 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-42a78e78f69166cb339b40dd1068ba70-59e4a1714ab0c4c3-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-f6e81383400badd4814abca5dce2ab09-a0c7e19aa9e32854-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "73cd1c65-c024-4d8f-bad0-44c2fcbc8147",
+        "x-ms-correlation-request-id": "d4de931f-fbc1-4db3-8aa2-ac319c06a545",
         "x-ms-ratelimit-remaining-subscription-writes": "1198",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221800Z:73cd1c65-c024-4d8f-bad0-44c2fcbc8147",
-        "x-request-time": "0.055"
+        "x-ms-routing-request-id": "EASTUS:20221213T210715Z:d4de931f-fbc1-4db3-8aa2-ac319c06a545",
+        "x-request-time": "0.062"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506",
-        "name": "test423266327506",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442",
+        "name": "test421924308442",
         "type": "Microsoft.MachineLearningServices/workspaces/computes",
         "location": "westus",
         "tags": {},
         "properties": {
-          "createdOn": "2022-11-07T22:17:28.6978635\u002B00:00",
-          "modifiedOn": "2022-11-07T22:18:00.8559033\u002B00:00",
+          "createdOn": "2022-12-13T21:06:43.9729398\u002B00:00",
+          "modifiedOn": "2022-12-13T21:07:15.3527858\u002B00:00",
           "disableLocalAuth": false,
           "description": "some_desc_aml",
-          "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.BatchAI/workspaces/00000/clusters/test423266327506",
+          "resourceId": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.BatchAI/workspaces/00000/clusters/test421924308442",
           "computeType": "AmlCompute",
           "computeLocation": "westus",
           "provisioningState": "Creating",
@@ -747,13 +525,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/00f43442-04a1-407a-a228-da1b4acc3484?api-version=2022-10-01-preview\u0026service=new",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/a59c4674-ce80-4331-a526-538cf976bf33?api-version=2022-10-01-preview\u0026service=new",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -761,34 +539,34 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:18:00 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:15 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-6c70077bd9ca3618f9ce1d5c540bcafb-4084473d00dd0254-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-9b359d0fb9cfc51d013a26817b8e9739-fbb44c3e69b7f0eb-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "6caefc6c-98bf-47c4-bcee-d658fdbb0f07",
+        "x-ms-correlation-request-id": "c6528e18-6a54-4272-9696-c7c51d96d080",
         "x-ms-ratelimit-remaining-subscription-reads": "11994",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221801Z:6caefc6c-98bf-47c4-bcee-d658fdbb0f07",
-        "x-request-time": "0.009"
+        "x-ms-routing-request-id": "EASTUS:20221213T210715Z:c6528e18-6a54-4272-9696-c7c51d96d080",
+        "x-request-time": "0.010"
       },
       "ResponseBody": {
         "status": "InProgress"
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/00f43442-04a1-407a-a228-da1b4acc3484?api-version=2022-10-01-preview\u0026service=new",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/a59c4674-ce80-4331-a526-538cf976bf33?api-version=2022-10-01-preview\u0026service=new",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -796,21 +574,21 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:18:30 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:45 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-6e4d0a5a698f15847f343e43a8d74d7a-c43b8f50e7a8db72-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-102f491cfa5562e3d2b953678e65ced7-1536d8a27d77c606-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "6e29231d-b384-4192-87d7-0afa7156b4b9",
+        "x-ms-correlation-request-id": "e214bd5b-35d7-4030-86aa-1c11be50c34b",
         "x-ms-ratelimit-remaining-subscription-reads": "11993",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221831Z:6e29231d-b384-4192-87d7-0afa7156b4b9",
-        "x-request-time": "0.009"
+        "x-ms-routing-request-id": "EASTUS:20221213T210745Z:e214bd5b-35d7-4030-86aa-1c11be50c34b",
+        "x-request-time": "0.015"
       },
       "ResponseBody": {
         "status": "Succeeded",
@@ -818,13 +596,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506?api-version=2022-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -832,11 +610,11 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:18:30 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:45 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-9ba6b56a0806e5c236a0a0c27905a46a-8f86ea56bfbf0eba-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-635e239d367d907029f998cf3f0d18bc-44c8979788756e8f-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
@@ -845,21 +623,21 @@
         ],
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "5530199a-ea57-49b9-ae80-3ad594d5df25",
+        "x-ms-correlation-request-id": "53d07ff7-c07b-4a74-b7bb-4b3988d0677c",
         "x-ms-ratelimit-remaining-subscription-reads": "11992",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221831Z:5530199a-ea57-49b9-ae80-3ad594d5df25",
-        "x-request-time": "0.037"
+        "x-ms-routing-request-id": "EASTUS:20221213T210745Z:53d07ff7-c07b-4a74-b7bb-4b3988d0677c",
+        "x-request-time": "0.034"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506",
-        "name": "test423266327506",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442",
+        "name": "test421924308442",
         "type": "Microsoft.MachineLearningServices/workspaces/computes",
         "location": "westus",
         "tags": {},
         "properties": {
-          "createdOn": "2022-11-07T22:17:28.6978635\u002B00:00",
-          "modifiedOn": "2022-11-07T22:18:04.0715458\u002B00:00",
+          "createdOn": "2022-12-13T21:06:43.9729398\u002B00:00",
+          "modifiedOn": "2022-12-13T21:07:18.5573506\u002B00:00",
           "disableLocalAuth": false,
           "description": "some_desc_aml",
           "resourceId": null,
@@ -893,7 +671,7 @@
               "preemptedNodeCount": 0
             },
             "allocationState": "Steady",
-            "allocationStateTransitionTime": "2022-11-07T22:17:33.067\u002B00:00",
+            "allocationStateTransitionTime": "2022-12-13T21:06:48.255\u002B00:00",
             "errors": null,
             "remoteLoginPortPublicAccess": "Enabled",
             "osType": "Linux",
@@ -906,13 +684,13 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506?api-version=2022-10-01-preview",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442?api-version=2022-10-01-preview",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -920,11 +698,11 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:18:31 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:45 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-e0272e0fa791e55df3b6bf26f2ff1277-9da1b6c983c31b02-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-fe922fde94689fd136e8d62a1bc588ac-8674bca662ee1b7d-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": [
@@ -933,21 +711,21 @@
         ],
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "d81ccf4e-abdb-4fae-a543-dc7def3edf62",
+        "x-ms-correlation-request-id": "021e20ea-4d10-4307-9802-ea88a7496619",
         "x-ms-ratelimit-remaining-subscription-reads": "11991",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221831Z:d81ccf4e-abdb-4fae-a543-dc7def3edf62",
-        "x-request-time": "0.029"
+        "x-ms-routing-request-id": "EASTUS:20221213T210746Z:021e20ea-4d10-4307-9802-ea88a7496619",
+        "x-request-time": "0.034"
       },
       "ResponseBody": {
-        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506",
-        "name": "test423266327506",
+        "id": "/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442",
+        "name": "test421924308442",
         "type": "Microsoft.MachineLearningServices/workspaces/computes",
         "location": "westus",
         "tags": {},
         "properties": {
-          "createdOn": "2022-11-07T22:17:28.6978635\u002B00:00",
-          "modifiedOn": "2022-11-07T22:18:04.0715458\u002B00:00",
+          "createdOn": "2022-12-13T21:06:43.9729398\u002B00:00",
+          "modifiedOn": "2022-12-13T21:07:18.5573506\u002B00:00",
           "disableLocalAuth": false,
           "description": "some_desc_aml",
           "resourceId": null,
@@ -981,7 +759,7 @@
               "preemptedNodeCount": 0
             },
             "allocationState": "Steady",
-            "allocationStateTransitionTime": "2022-11-07T22:17:33.067\u002B00:00",
+            "allocationStateTransitionTime": "2022-12-13T21:06:48.255\u002B00:00",
             "errors": null,
             "remoteLoginPortPublicAccess": "Enabled",
             "osType": "Linux",
@@ -994,44 +772,46 @@
       }
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test423266327506?api-version=2022-10-01-preview\u0026underlyingResourceAction=Delete",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/resourceGroups/00000/providers/Microsoft.MachineLearningServices/workspaces/00000/computes/test421924308442?api-version=2022-10-01-preview\u0026underlyingResourceAction=Delete",
       "RequestMethod": "DELETE",
       "RequestHeaders": {
         "Accept": "application/json",
         "Accept-Encoding": "gzip, deflate",
         "Connection": "keep-alive",
         "Content-Length": "0",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)"
       },
       "RequestBody": null,
       "StatusCode": 202,
       "ResponseHeaders": {
-        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/ec26d22d-f659-4a73-9710-7e08b1fc5002?api-version=2022-10-01-preview\u0026service=new",
+        "Azure-AsyncOperation": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/e4e023e7-7403-4d23-a661-fb95ce3e05f3?api-version=2022-10-01-preview\u0026service=new",
         "Cache-Control": "no-cache",
         "Content-Length": "0",
-        "Date": "Mon, 07 Nov 2022 22:18:31 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:45 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "95a51b15-0f7a-4cfd-9aaa-a22cf526067e",
+        "x-ms-correlation-request-id": "90df2656-90d6-4271-8b86-ee4291e71b90",
         "x-ms-ratelimit-remaining-subscription-deletes": "14999",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221831Z:95a51b15-0f7a-4cfd-9aaa-a22cf526067e",
-        "x-request-time": "0.075"
+        "x-ms-routing-request-id": "EASTUS:20221213T210746Z:90df2656-90d6-4271-8b86-ee4291e71b90",
+        "x-request-time": "0.062"
       },
       "ResponseBody": null
     },
     {
-      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/ec26d22d-f659-4a73-9710-7e08b1fc5002?api-version=2022-10-01-preview\u0026service=new",
+      "RequestUri": "https://management.azure.com/subscriptions/00000000-0000-0000-0000-000000000/providers/Microsoft.MachineLearningServices/locations/westus/computeOperationsStatus/e4e023e7-7403-4d23-a661-fb95ce3e05f3?api-version=2022-10-01-preview\u0026service=new",
       "RequestMethod": "GET",
       "RequestHeaders": {
         "Accept": "*/*",
         "Accept-Encoding": "gzip, deflate",
+        "Authorization": "Sanitized",
         "Connection": "keep-alive",
-        "User-Agent": "azure-ai-ml/1.1.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.4 (Windows-10-10.0.22621-SP0)"
+        "User-Agent": "azure-ai-ml/1.3.0 azsdk-python-mgmt-machinelearningservices/0.1.0 Python/3.10.8 (Windows-10-10.0.22621-SP0)",
+        "x-ms-client-request-id": "311df12c-7b2a-11ed-9f3d-4851c588a562"
       },
       "RequestBody": null,
       "StatusCode": 200,
@@ -1039,21 +819,22 @@
         "Cache-Control": "no-cache",
         "Content-Encoding": "gzip",
         "Content-Type": "application/json; charset=utf-8",
-        "Date": "Mon, 07 Nov 2022 22:18:31 GMT",
+        "Date": "Tue, 13 Dec 2022 21:07:46 GMT",
         "Expires": "-1",
         "Pragma": "no-cache",
         "Request-Context": "appId=cid-v1:2d2e8e63-272e-4b3c-8598-4ee570a0e70d",
-        "Server-Timing": "traceparent;desc=\u002200-faa9443b23af986244efdbf98ffe7e5b-ae693fda3c639fcd-00\u0022",
+        "Server-Timing": "traceparent;desc=\u002200-d1ed70154d56af86365bb9db4e48cd30-65b78866d457cfeb-00\u0022",
         "Strict-Transport-Security": "max-age=31536000; includeSubDomains",
         "Transfer-Encoding": "chunked",
         "Vary": "Accept-Encoding",
         "x-aml-cluster": "vienna-westus-01",
         "X-Content-Type-Options": "nosniff",
-        "x-ms-correlation-request-id": "28dd766b-820d-41ab-b335-3899e6d121cd",
+        "x-ms-correlation-request-id": "9819e204-5362-47b0-b24e-75d246d9b934",
         "x-ms-ratelimit-remaining-subscription-reads": "11990",
+        "x-ms-request-id": "9819e204-5362-47b0-b24e-75d246d9b934",
         "x-ms-response-type": "standard",
-        "x-ms-routing-request-id": "WESTUS2:20221107T221831Z:28dd766b-820d-41ab-b335-3899e6d121cd",
-        "x-request-time": "0.012"
+        "x-ms-routing-request-id": "EASTUS:20221213T210746Z:9819e204-5362-47b0-b24e-75d246d9b934",
+        "x-request-time": "0.009"
       },
       "ResponseBody": {
         "status": "InProgress"
@@ -1061,6 +842,6 @@
     }
   ],
   "Variables": {
-    "compute_name": "test423266327506"
+    "compute_name": "test421924308442"
   }
 }
