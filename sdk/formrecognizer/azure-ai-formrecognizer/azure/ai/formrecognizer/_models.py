@@ -2407,15 +2407,15 @@ class DocumentField:
         # CurrencyValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper to_dict() method.
         if self.value_type == "currency":
-            value = self.value.to_dict()
+            value = self.value.to_dict()  # type: ignore
         # AddressValue objects are interpreted as dict, therefore need to be processed first
         # to call the proper to_dict() method.
         elif self.value_type == "address":
-            value = self.value.to_dict()
+            value = self.value.to_dict()  # type: ignore
         elif isinstance(self.value, dict):
             value = {k: v.to_dict() for k, v in self.value.items()}
         elif isinstance(self.value, list):
-            value = [v.to_dict() for v in self.value]
+            value = [v.to_dict() for v in self.value]  # type: ignore
         return {
             "value_type": self.value_type,
             "value": value,
