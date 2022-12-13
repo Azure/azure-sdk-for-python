@@ -85,9 +85,10 @@ parser.add_argument("--aad_secret", help="AAD secret")
 parser.add_argument("--aad_tenant_id", help="AAD tenant id")
 parser.add_argument("--storage_conn_str", help="conn str of storage blob to store ownership and checkpoint data")
 parser.add_argument("--storage_container_name", help="storage container name to store ownership and checkpoint data")
-parser.add_argument("--uamqp_logging_enable", help="uamqp logging enable", action="store_true")
+parser.add_argument("--pyamqp_logging_enable", help="pyamqp logging enable", action="store_true")
 parser.add_argument("--print_console", help="print to console", action="store_true")
 parser.add_argument("--log_filename", help="log file name", type=str)
+parser.add_argument("--uamqp_mode", help="Flag for uamqp or pyamqp", action="store_true")
 
 args = parser.parse_args()
 starting_position = parse_starting_position(args)
@@ -190,7 +191,8 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_logging_enable
+            logging_enable=args.pyamqp_logging_enable,
+            uamqp_transport=args.uamqp_mode,
         )
     elif args.conn_str:
         client = EventHubConsumerClientTest.from_connection_string(
@@ -202,7 +204,8 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_logging_enable
+            logging_enable=args.pyamqp_logging_enable,
+            uamqp_transport=args.uamqp_mode,
         )
     elif args.hostname:
         client = EventHubConsumerClientTest(
@@ -215,7 +218,8 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_logging_enable
+            logging_enable=args.pyamqp_logging_enable,
+            uamqp_transport=args.uamqp_mode,
         )
     elif args.aad_client_id:
         credential = ClientSecretCredential(args.tenant_id, args.aad_client_id, args.aad_secret)
@@ -229,7 +233,8 @@ def create_client(args):
             auth_timeout=args.auth_timeout,
             http_proxy=http_proxy,
             transport_type=transport_type,
-            logging_enable=args.uamqp_logging_enable
+            logging_enable=args.pyamqp_logging_enable,
+            uamqp_transport=args.uamqp_mode,
         )
 
     return client
