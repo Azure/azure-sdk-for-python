@@ -399,17 +399,17 @@ class Serializer:
         delimiter = "class " if async_mode else "def build_" # sync as request builders
         imports = inspect.getsource(operations_module).split(delimiter)[0] + "\n"  # get all imports
 
-        # imports_to_add: List[str] = []
-        # # add imports if missing
-        # for api_version in self.code_model.sorted_api_versions:
-        #     versioned_operations_folder_module = self._get_operations_folder_module(async_mode, api_version=api_version)
-        #     versioned_operations_module = importlib.import_module(f"{versioned_operations_folder_module}._operations")
-        #     versioned_imports = inspect.getsource(versioned_operations_module).split("def build_")[0]  # get all imports
-        #     for i in versioned_imports.splitlines():
-        #         if i not in imports:
-        #             imports_to_add.append(i)
+        imports_to_add: List[str] = []
+        # add imports if missing
+        for api_version in self.code_model.sorted_api_versions:
+            versioned_operations_folder_module = self._get_operations_folder_module(async_mode, api_version=api_version)
+            versioned_operations_module = importlib.import_module(f"{versioned_operations_folder_module}._operations")
+            versioned_imports = inspect.getsource(versioned_operations_module).split(delimiter)[0]  # get all imports
+            for i in versioned_imports.splitlines():
+                if i not in imports and not (async_mode and "build_" in i):  # don't want to incorrectly add request builder imports here
+                    imports_to_add.append(i)
 
-        # imports += "\n".join(imports_to_add)
+        imports += "\n".join(imports_to_add)
         try:
             imports = modify_relative_imports(r"from (.*)_serialization import Serializer", imports)
         except AttributeError:
