@@ -7,7 +7,7 @@ from abc import ABC
 from datetime import datetime
 from typing import List, Union
 
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Cron, Recurrence, RecurrenceSchedule
+from azure.ai.ml._restclient.v2022_12_01_preview.models import Cron, Recurrence, RecurrenceSchedule
 from azure.ai.ml._restclient.v2022_10_01.models import CronTrigger as RestCronTrigger
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceSchedule as RestRecurrencePattern
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceTrigger as RestRecurrenceTrigger
@@ -154,7 +154,7 @@ class CronTrigger(TriggerBase):
         )
         self.expression = expression
 
-    def _to_rest_object(self) -> RestCronTrigger:  # v2022_10_01.models.CronTrigger
+    def _to_rest_object(self) -> RestCronTrigger:  # v2022_12_01.models.CronTrigger
         return RestCronTrigger(
             trigger_type=self.type,
             expression=self.expression,
@@ -163,7 +163,7 @@ class CronTrigger(TriggerBase):
             time_zone=self.time_zone,
         )
 
-    def _to_rest_compute_cron_object(self) -> Cron:  # v2022_10_01_preview.models.Cron
+    def _to_rest_compute_cron_object(self) -> Cron:  # v2022_12_01_preview.models.Cron
         # This function is added because we can't make compute trigger to use same class
         # with schedule from service side.
         if self.end_time:
