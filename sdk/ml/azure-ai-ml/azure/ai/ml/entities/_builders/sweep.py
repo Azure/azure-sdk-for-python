@@ -44,8 +44,8 @@ from azure.ai.ml.entities._job.sweep.search_space import (
     Uniform,
 )
 from azure.ai.ml.exceptions import (
-    ErrorTarget, 
-    UserErrorException, 
+    ErrorTarget,
+    UserErrorException,
     ValidationErrorType,
     ValidationException,
     ErrorCategory,
