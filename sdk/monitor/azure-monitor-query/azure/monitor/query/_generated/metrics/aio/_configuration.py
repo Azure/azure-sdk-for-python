@@ -14,17 +14,17 @@ from azure.core.pipeline import policies
 VERSION = "unknown"
 
 
-class MonitorQueryClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for MonitorQueryClient.
+class MonitorMetricsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for MonitorMetricsClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        super(MonitorQueryClientConfiguration, self).__init__(**kwargs)
+        super(MonitorMetricsClientConfiguration, self).__init__(**kwargs)
 
-        kwargs.setdefault("sdk_moniker", "monitorqueryclient/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "monitormetricsclient/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
