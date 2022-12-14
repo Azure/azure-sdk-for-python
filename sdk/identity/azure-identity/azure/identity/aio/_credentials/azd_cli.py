@@ -21,7 +21,7 @@ from ..._credentials.azd_cli import (
     parse_token,
     sanitize_output,
 )
-from ..._internal import _scopes_to_resource, resolve_tenant
+from ..._internal import resolve_tenant
 
 
 class AzureDeveloperCliCredential(AsyncContextManager):
@@ -59,8 +59,11 @@ class AzureDeveloperCliCredential(AsyncContextManager):
         if sys.platform.startswith("win") and not isinstance(asyncio.get_event_loop(), asyncio.ProactorEventLoop):
             return _SyncAzureDeveloperCliCredential().get_token(*scopes, **kwargs)
 
-        resource = _scopes_to_resource(*scopes)
-        command = COMMAND_LINE.format(resource)
+        if not scopes:
+            raise ValueError("Missing scope in request. \n")
+
+        commandString = ' --scope '.join(scopes)
+        command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
             default_tenant=self.tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,

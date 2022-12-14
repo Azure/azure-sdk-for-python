@@ -39,13 +39,6 @@ async def test_no_scopes():
         await AzureDeveloperCliCredential().get_token()
 
 
-async def test_multiple_scopes():
-    """The credential should raise ValueError when get_token is called with more than one scope"""
-
-    with pytest.raises(ValueError):
-        await AzureDeveloperCliCredential().get_token("one scope", "and another")
-
-
 async def test_close():
     """The credential must define close, although it's a no-op because the credential has no transport"""
 

@@ -18,7 +18,7 @@ from azure.core.credentials import AccessToken
 from azure.core.exceptions import ClientAuthenticationError
 
 from .. import CredentialUnavailableError
-from .._internal import _scopes_to_resource,resolve_tenant
+from .._internal import resolve_tenant
 from .._internal.decorators import log_get_token
 
 CLI_NOT_FOUND = "Azure Developer CLI could not be found. Please visit https://aka.ms/azure-dev for installation instructions and then, once installed, authenticate to your Azure account using 'azd login'."
@@ -69,10 +69,11 @@ class AzureDeveloperCliCredential(object):
           receive an access token.
         """
 
-        # commandString = ' --scope '.join(scopes)
-        # command = COMMAND_LINE.format(commandString)
-        resource = _scopes_to_resource(*scopes)
-        command = COMMAND_LINE.format(resource)
+        if not scopes:
+            raise ValueError("Missing scope in request. \n")
+
+        commandString = ' --scope '.join(scopes)
+        command = COMMAND_LINE.format(commandString)
         tenant = resolve_tenant(
             default_tenant=self.tenant_id,
             additionally_allowed_tenants=self._additionally_allowed_tenants,

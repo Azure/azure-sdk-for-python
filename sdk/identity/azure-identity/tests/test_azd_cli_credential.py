@@ -43,13 +43,6 @@ def test_no_scopes():
         AzureDeveloperCliCredential().get_token()
 
 
-def test_multiple_scopes():
-    """The credential should raise ValueError when get_token is called with more than one scope"""
-
-    with pytest.raises(ValueError):
-        AzureDeveloperCliCredential().get_token("one scope", "and another")
-
-
 def test_get_token():
     """The credential should parse the CLI's output to an token"""
 
@@ -76,7 +69,7 @@ def test_get_token():
 def test_cli_not_installed_linux():
     """The credential should raise CredentialUnavailableError when the CLI isn't installed"""
 
-    stderr = "/bin/sh: 1: az: not found"
+    stderr = "/bin/sh: 1: azd: not found"
     with mock.patch(CHECK_OUTPUT, raise_called_process_error(127, stderr=stderr)):
         with pytest.raises(CredentialUnavailableError, match=CLI_NOT_FOUND):
             AzureDeveloperCliCredential().get_token("scope")
