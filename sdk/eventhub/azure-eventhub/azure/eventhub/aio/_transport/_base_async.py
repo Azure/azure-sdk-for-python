@@ -3,11 +3,15 @@
 # Licensed under the MIT License. See License.txt in the project root for license information.
 # --------------------------------------------------------------------------------------------
 from __future__ import annotations
-from typing import Tuple, Union, TYPE_CHECKING
 from abc import ABC, abstractmethod
+from typing import Tuple, Union, TYPE_CHECKING
+from typing_extensions import Literal
 
 if TYPE_CHECKING:
-    from uamqp import types as uamqp_types
+    try:
+        from uamqp import types as uamqp_types
+    except ImportError:
+        uamqp_types = None
 
 class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     """
@@ -20,12 +24,12 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
     CONNECTION_CLOSING_STATES: Tuple
 
     # define symbols
-    PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    VERSION_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    FRAMEWORK_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    PLATFORM_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
-    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, str, bytes]
+    PRODUCT_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["product"]]
+    VERSION_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["version"]]
+    FRAMEWORK_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["framework"]]
+    PLATFORM_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["platform"]]
+    USER_AGENT_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal["user-agent"]]
+    PROP_PARTITION_KEY_AMQP_SYMBOL: Union[uamqp_types.AMQPSymbol, Literal[b'x-opt-partition-key']]
 
 
     @staticmethod
@@ -198,7 +202,7 @@ class AmqpTransportAsync(ABC):  # pylint: disable=too-many-public-methods
 
     @staticmethod
     @abstractmethod
-    async def receive_messages(consumer, batch, max_batch_size, max_wait_time):
+    async def receive_messages_async(consumer, batch, max_batch_size, max_wait_time):
         """
         Receives messages, creates events, and returns them by calling the on received callback.
         :param ~azure.eventhub.aio.EventHubConsumer consumer: The EventHubConsumer.
