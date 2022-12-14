@@ -7,15 +7,14 @@
 # Changes may cause incorrect behavior and will be lost if the code is regenerated.
 # --------------------------------------------------------------------------
 import sys
-from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, Union, cast
-
-from msrest import Serializer
+from typing import Any, Callable, Dict, IO, List, Optional, TypeVar, cast
 
 from azure.core.exceptions import (
     ClientAuthenticationError,
     HttpResponseError,
     ResourceExistsError,
     ResourceNotFoundError,
+    ResourceNotModifiedError,
     map_error,
 )
 from azure.core.pipeline import PipelineResponse
@@ -24,6 +23,7 @@ from azure.core.rest import HttpRequest
 from azure.core.tracing.decorator import distributed_trace
 from azure.core.utils import case_insensitive_dict
 
+from .._serialization import Serializer
 from .._vendor import MixinABC, _format_url_section
 
 if sys.version_info >= (3, 9):
@@ -38,51 +38,14 @@ _SERIALIZER = Serializer()
 _SERIALIZER.client_side_validation = False
 
 
-def build_get_client_access_token_request(
-    hub: str,
-    *,
-    user_id: Optional[str] = None,
-    roles: Optional[List[str]] = None,
-    minutes_to_expire: Optional[int] = 60,
-    **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
-
-    # Construct URL
-    _url = "/api/hubs/{hub}/:generateToken"
-    path_format_arguments = {
-        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    if user_id is not None:
-        _params["userId"] = _SERIALIZER.query("user_id", user_id, "str")
-    if roles is not None:
-        _params["role"] = [_SERIALIZER.query("roles", q, "str") if q is not None else "" for q in roles]
-    if minutes_to_expire is not None:
-        _params["minutesToExpire"] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, "int")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
-
-
 def build_close_all_connections_request(
     hub: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/:closeConnections"
@@ -105,15 +68,55 @@ def build_close_all_connections_request(
     return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_send_to_all_request(
-    hub: str, *, json: Any = None, content: Any = None, excluded: Optional[List[str]] = None, **kwargs: Any
+def build_get_client_access_token_request(
+    hub: str,
+    *,
+    user_id: Optional[str] = None,
+    roles: Optional[List[str]] = None,
+    minutes_to_expire: int = 60,
+    group: Optional[List[str]] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
     accept = _headers.pop("Accept", "application/json, text/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/:generateToken"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if user_id is not None:
+        _params["userId"] = _SERIALIZER.query("user_id", user_id, "str")
+    if roles is not None:
+        _params["role"] = [_SERIALIZER.query("roles", q, "str") if q is not None else "" for q in roles]
+    if minutes_to_expire is not None:
+        _params["minutesToExpire"] = _SERIALIZER.query("minutes_to_expire", minutes_to_expire, "int", minimum=1)
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if group is not None:
+        _params["group"] = [_SERIALIZER.query("group", q, "str") if q is not None else "" for q in group]
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_send_to_all_request(
+    hub: str, *, content: IO, excluded: Optional[List[str]] = None, filter: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/:send"
@@ -127,48 +130,25 @@ def build_send_to_all_request(
     if excluded is not None:
         _params["excluded"] = [_SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded]
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
-
-
-def build_connection_exists_request(hub: str, connection_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
-
-    # Construct URL
-    _url = "/api/hubs/{hub}/connections/{connectionId}"
-    path_format_arguments = {
-        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
 def build_close_connection_request(
-    hub: str, connection_id: str, *, reason: Optional[str] = None, **kwargs: Any
+    connection_id: str, hub: str, *, reason: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/connections/{connectionId}"
@@ -190,15 +170,32 @@ def build_close_connection_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_send_to_connection_request(
-    hub: str, connection_id: str, *, json: Any = None, content: Any = None, **kwargs: Any
-) -> HttpRequest:
+def build_connection_exists_request(connection_id: str, hub: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    # Construct URL
+    _url = "/api/hubs/{hub}/connections/{connectionId}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
+
+
+def build_send_to_connection_request(connection_id: str, hub: str, *, content: IO, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/connections/{connectionId}/:send"
@@ -217,21 +214,21 @@ def build_send_to_connection_request(
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_group_exists_request(hub: str, group: str, **kwargs: Any) -> HttpRequest:
+def build_remove_connection_from_all_groups_request(connection_id: str, hub: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/api/hubs/{hub}/groups/{group}"
+    _url = "/api/hubs/{hub}/connections/{connectionId}/groups"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
+        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -242,23 +239,42 @@ def build_group_exists_request(hub: str, group: str, **kwargs: Any) -> HttpReque
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_group_exists_request(group: str, hub: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    # Construct URL
+    _url = "/api/hubs/{hub}/groups/{group}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1, pattern=r"^(?!\s+$).+$"),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
 
 
 def build_close_group_connections_request(
-    hub: str, group: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+    group: str, hub: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/groups/{group}/:closeConnections"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
+        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1, pattern=r"^(?!\s+$).+$"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -277,20 +293,26 @@ def build_close_group_connections_request(
 
 
 def build_send_to_group_request(
-    hub: str, group: str, *, json: Any = None, content: Any = None, excluded: Optional[List[str]] = None, **kwargs: Any
+    group: str,
+    hub: str,
+    *,
+    content: IO,
+    excluded: Optional[List[str]] = None,
+    filter: Optional[str] = None,
+    **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/groups/{group}/:send"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
+        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1, pattern=r"^(?!\s+$).+$"),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
@@ -299,53 +321,29 @@ def build_send_to_group_request(
     if excluded is not None:
         _params["excluded"] = [_SERIALIZER.query("excluded", q, "str") if q is not None else "" for q in excluded]
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_add_connection_to_group_request(hub: str, group: str, connection_id: str, **kwargs: Any) -> HttpRequest:
+def build_remove_connection_from_group_request(group: str, connection_id: str, hub: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/groups/{group}/connections/{connectionId}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
-        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_remove_connection_from_group_request(hub: str, group: str, connection_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
-
-    # Construct URL
-    _url = "/api/hubs/{hub}/groups/{group}/connections/{connectionId}"
-    path_format_arguments = {
-        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
+        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1, pattern=r"^(?!\s+$).+$"),
         "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
     }
 
@@ -360,13 +358,120 @@ def build_remove_connection_from_group_request(hub: str, group: str, connection_
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_user_exists_request(hub: str, user_id: str, **kwargs: Any) -> HttpRequest:
+def build_add_connection_to_group_request(group: str, connection_id: str, hub: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
+    # Construct URL
+    _url = "/api/hubs/{hub}/groups/{group}/connections/{connectionId}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1, pattern=r"^(?!\s+$).+$"),
+        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_revoke_permission_request(
+    permission: str, connection_id: str, hub: str, *, target_name: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+        "permission": _SERIALIZER.url("permission", permission, "str"),
+        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if target_name is not None:
+        _params["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_has_permission_request(
+    permission: str, connection_id: str, hub: str, *, target_name: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    # Construct URL
+    _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+        "permission": _SERIALIZER.url("permission", permission, "str"),
+        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if target_name is not None:
+        _params["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
+
+
+def build_grant_permission_request(
+    permission: str, connection_id: str, hub: str, *, target_name: Optional[str] = None, **kwargs: Any
+) -> HttpRequest:
+    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
+
+    # Construct URL
+    _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
+    path_format_arguments = {
+        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
+        "permission": _SERIALIZER.url("permission", permission, "str"),
+        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
+    }
+
+    _url = _format_url_section(_url, **path_format_arguments)
+
+    # Construct parameters
+    if target_name is not None:
+        _params["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
+    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+
+    # Construct headers
+    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
+
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
+
+
+def build_user_exists_request(user_id: str, hub: str, **kwargs: Any) -> HttpRequest:
+    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
     # Construct URL
     _url = "/api/hubs/{hub}/users/{userId}"
     path_format_arguments = {
@@ -379,20 +484,17 @@ def build_user_exists_request(hub: str, user_id: str, **kwargs: Any) -> HttpRequ
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="HEAD", url=_url, params=_params, **kwargs)
 
 
 def build_close_user_connections_request(
-    hub: str, user_id: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+    user_id: str, hub: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/users/{userId}/:closeConnections"
@@ -417,14 +519,14 @@ def build_close_user_connections_request(
 
 
 def build_send_to_user_request(
-    hub: str, user_id: str, *, json: Any = None, content: Any = None, **kwargs: Any
+    user_id: str, hub: str, *, content: IO, filter: Optional[str] = None, **kwargs: Any
 ) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
     content_type = kwargs.pop("content_type", _headers.pop("Content-Type", None))  # type: Optional[str]
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/users/{userId}/:send"
@@ -437,73 +539,23 @@ def build_send_to_user_request(
 
     # Construct parameters
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
+    if filter is not None:
+        _params["filter"] = _SERIALIZER.query("filter", filter, "str")
 
     # Construct headers
     if content_type is not None:
         _headers["Content-Type"] = _SERIALIZER.header("content_type", content_type, "str")
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, json=json, content=content, **kwargs)
+    return HttpRequest(method="POST", url=_url, params=_params, headers=_headers, content=content, **kwargs)
 
 
-def build_add_user_to_group_request(hub: str, group: str, user_id: str, **kwargs: Any) -> HttpRequest:
+def build_remove_user_from_all_groups_request(user_id: str, hub: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
-
-    # Construct URL
-    _url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
-    path_format_arguments = {
-        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
-        "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_remove_user_from_group_request(hub: str, group: str, user_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
-
-    # Construct URL
-    _url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
-    path_format_arguments = {
-        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1),
-        "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_remove_user_from_all_groups_request(hub: str, user_id: str, **kwargs: Any) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
     _url = "/api/hubs/{hub}/users/{userId}/groups"
@@ -523,58 +575,24 @@ def build_remove_user_from_all_groups_request(hub: str, user_id: str, **kwargs: 
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_grant_permission_request(
-    hub: str, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_remove_user_from_group_request(group: str, user_id: str, hub: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
+    _url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "permission": _SERIALIZER.url("permission", permission, "str"),
-        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
+        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1, pattern=r"^(?!\s+$).+$"),
+        "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    if target_name is not None:
-        _params["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
-    _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
-
-    # Construct headers
-    _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
-
-    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
-
-
-def build_revoke_permission_request(
-    hub: str, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
-    _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
-    _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
-
-    # Construct URL
-    _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
-    path_format_arguments = {
-        "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "permission": _SERIALIZER.url("permission", permission, "str"),
-        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
-    }
-
-    _url = _format_url_section(_url, **path_format_arguments)
-
-    # Construct parameters
-    if target_name is not None:
-        _params["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
@@ -583,44 +601,97 @@ def build_revoke_permission_request(
     return HttpRequest(method="DELETE", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-def build_has_permission_request(
-    hub: str, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
-) -> HttpRequest:
+def build_add_user_to_group_request(group: str, user_id: str, hub: str, **kwargs: Any) -> HttpRequest:
     _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
     _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
 
-    api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-    accept = _headers.pop("Accept", "application/json, text/json")
+    api_version = kwargs.pop("api_version", _params.pop("api-version", "2022-11-01"))  # type: str
+    accept = _headers.pop("Accept", "application/json")
 
     # Construct URL
-    _url = "/api/hubs/{hub}/permissions/{permission}/connections/{connectionId}"
+    _url = "/api/hubs/{hub}/users/{userId}/groups/{group}"
     path_format_arguments = {
         "hub": _SERIALIZER.url("hub", hub, "str", pattern=r"^[A-Za-z][A-Za-z0-9_`,.[\]]{0,127}$"),
-        "permission": _SERIALIZER.url("permission", permission, "str"),
-        "connectionId": _SERIALIZER.url("connection_id", connection_id, "str", min_length=1),
+        "group": _SERIALIZER.url("group", group, "str", max_length=1024, min_length=1, pattern=r"^(?!\s+$).+$"),
+        "userId": _SERIALIZER.url("user_id", user_id, "str", min_length=1),
     }
 
     _url = _format_url_section(_url, **path_format_arguments)
 
     # Construct parameters
-    if target_name is not None:
-        _params["targetName"] = _SERIALIZER.query("target_name", target_name, "str")
     _params["api-version"] = _SERIALIZER.query("api_version", api_version, "str")
 
     # Construct headers
     _headers["Accept"] = _SERIALIZER.header("accept", accept, "str")
 
-    return HttpRequest(method="HEAD", url=_url, params=_params, headers=_headers, **kwargs)
+    return HttpRequest(method="PUT", url=_url, params=_params, headers=_headers, **kwargs)
 
 
-class WebPubSubServiceClientOperationsMixin(MixinABC):
+class WebPubSubServiceClientOperationsMixin(MixinABC):  # pylint: disable=too-many-public-methods
+    @distributed_trace
+    def close_all_connections(  # pylint: disable=inconsistent-return-statements
+        self, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """Close the connections in the hub.
+
+        Close the connections in the hub.
+
+        :keyword excluded: Exclude these connectionIds when closing the connections in the hub. Default
+         value is None.
+        :paramtype excluded: list[str]
+        :keyword reason: The reason closing the client connection. Default value is None.
+        :paramtype reason: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_close_all_connections_request(
+            hub=self._config.hub,
+            excluded=excluded,
+            reason=reason,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
     @distributed_trace
     def get_client_access_token(
         self,
         *,
         user_id: Optional[str] = None,
         roles: Optional[List[str]] = None,
-        minutes_to_expire: Optional[int] = 60,
+        minutes_to_expire: int = 60,
+        group: Optional[List[str]] = None,
         **kwargs: Any
     ) -> JSON:
         """Generate token for the client to connect Azure Web PubSub service.
@@ -634,34 +705,41 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         :paramtype roles: list[str]
         :keyword minutes_to_expire: The expire time of the generated token. Default value is 60.
         :paramtype minutes_to_expire: int
+        :keyword group: Groups that the connection will join when it connects. Default value is None.
+        :paramtype group: list[str]
         :return: JSON object
         :rtype: JSON
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
 
         Example:
             .. code-block:: python
 
                 # response body for status code(s): 200
-                response.json() == {
+                response == {
                     "token": "str"  # Optional. The token value for the WebSocket client to
                       connect to the service.
                 }
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[JSON]
 
         request = build_get_client_access_token_request(
             hub=self._config.hub,
-            api_version=api_version,
             user_id=user_id,
             roles=roles,
             minutes_to_expire=minutes_to_expire,
+            group=group,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -673,6 +751,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -690,36 +769,47 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         return cast(JSON, deserialized)
 
     @distributed_trace
-    def close_all_connections(  # pylint: disable=inconsistent-return-statements
-        self, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+    def send_to_all(  # pylint: disable=inconsistent-return-statements
+        self, message: IO, *, excluded: Optional[List[str]] = None, filter: Optional[str] = None, **kwargs: Any
     ) -> None:
-        """Close the connections in the hub.
+        """Broadcast content inside request body to all the connected client connections.
 
-        Close the connections in the hub.
+        Broadcast content inside request body to all the connected client connections.
 
-        :keyword excluded: Exclude these connectionIds when closing the connections in the hub. Default
-         value is None.
+        :param message: The payload body. Required.
+        :type message: IO
+        :keyword excluded: Excluded connection Ids. Default value is None.
         :paramtype excluded: list[str]
-        :keyword reason: The reason closing the client connection. Default value is None.
-        :paramtype reason: str
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_close_all_connections_request(
+        _content = message
+
+        request = build_send_to_all_request(
             hub=self._config.hub,
-            api_version=api_version,
             excluded=excluded,
-            reason=reason,
+            filter=filter,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -731,9 +821,10 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
-        if response.status_code not in [204]:
+        if response.status_code not in [202]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -741,59 +832,39 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def send_to_all(  # pylint: disable=inconsistent-return-statements
-        self,
-        message: Union[IO, str],
-        *,
-        excluded: Optional[List[str]] = None,
-        content_type: Optional[str] = "application/json",
-        **kwargs: Any
+    def close_connection(  # pylint: disable=inconsistent-return-statements
+        self, connection_id: str, *, reason: Optional[str] = None, **kwargs: Any
     ) -> None:
-        """Broadcast content inside request body to all the connected client connections.
+        """Close the client connection.
 
-        Broadcast content inside request body to all the connected client connections.
+        Close the client connection.
 
-        :param message: The payload body.
-        :type message: IO or str
-        :keyword excluded: Excluded connection Ids. Default value is None.
-        :paramtype excluded: list[str]
-        :keyword content_type: Media type of the body sent to the API. Known values are:
-         "application/json", "application/octet-stream", and "text/plain". Default value is
-         "application/json".
-        :paramtype content_type: str
+        :param connection_id: Target connection Id. Required.
+        :type connection_id: str
+        :keyword reason: The reason closing the client connection. Default value is None.
+        :paramtype reason: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = None
-        _content = None
-        content_type = content_type or ""
-        if content_type.split(";")[0] in ["application/json"]:
-            _json = message
-        elif content_type.split(";")[0] in ["application/octet-stream", "text/plain"]:
-            _content = message
-        else:
-            raise ValueError(
-                "The content_type '{}' is not one of the allowed values: "
-                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
-            )
-
-        request = build_send_to_all_request(
+        request = build_close_connection_request(
+            connection_id=connection_id,
             hub=self._config.hub,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            excluded=excluded,
+            reason=reason,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -805,9 +876,10 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
-        if response.status_code not in [202]:
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -820,25 +892,29 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
 
         Check if the connection with the given connectionId exists.
 
-        :param connection_id: The connection Id.
+        :param connection_id: The connection Id. Required.
         :type connection_id: str
         :return: bool
         :rtype: bool
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_connection_exists_request(
-            hub=self._config.hub,
             connection_id=connection_id,
-            api_version=api_version,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -850,6 +926,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -861,108 +938,42 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         return 200 <= response.status_code <= 299
 
     @distributed_trace
-    def close_connection(  # pylint: disable=inconsistent-return-statements
-        self, connection_id: str, *, reason: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """Close the client connection.
-
-        Close the client connection.
-
-        :param connection_id: Target connection Id.
-        :type connection_id: str
-        :keyword reason: The reason closing the client connection. Default value is None.
-        :paramtype reason: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        request = build_close_connection_request(
-            hub=self._config.hub,
-            connection_id=connection_id,
-            api_version=api_version,
-            reason=reason,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @distributed_trace
     def send_to_connection(  # pylint: disable=inconsistent-return-statements
-        self,
-        connection_id: str,
-        message: Union[IO, str],
-        *,
-        content_type: Optional[str] = "application/json",
-        **kwargs: Any
+        self, connection_id: str, message: IO, **kwargs: Any
     ) -> None:
         """Send content inside request body to the specific connection.
 
         Send content inside request body to the specific connection.
 
-        :param connection_id: The connection Id.
+        :param connection_id: The connection Id. Required.
         :type connection_id: str
-        :param message: The payload body.
-        :type message: IO or str
-        :keyword content_type: Media type of the body sent to the API. Known values are:
-         "application/json", "application/octet-stream", and "text/plain". Default value is
-         "application/json".
-        :paramtype content_type: str
+        :param message: The payload body. Required.
+        :type message: IO
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = None
-        _content = None
-        content_type = content_type or ""
-        if content_type.split(";")[0] in ["application/json"]:
-            _json = message
-        elif content_type.split(";")[0] in ["application/octet-stream", "text/plain"]:
-            _content = message
-        else:
-            raise ValueError(
-                "The content_type '{}' is not one of the allowed values: "
-                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
-            )
+        _content = message
 
         request = build_send_to_connection_request(
-            hub=self._config.hub,
             connection_id=connection_id,
-            api_version=api_version,
+            hub=self._config.hub,
             content_type=content_type,
-            json=_json,
+            api_version=self._config.api_version,
             content=_content,
             headers=_headers,
             params=_params,
@@ -975,9 +986,62 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @distributed_trace
+    def remove_connection_from_all_groups(  # pylint: disable=inconsistent-return-statements
+        self, connection_id: str, **kwargs: Any
+    ) -> None:
+        """Remove a connection from all groups.
+
+        Remove a connection from all groups.
+
+        :param connection_id: Target connection Id. Required.
+        :type connection_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_remove_connection_from_all_groups_request(
+            connection_id=connection_id,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -991,24 +1055,29 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         Check if there are any client connections inside the given group.
 
         :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
         :type group: str
         :return: bool
         :rtype: bool
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_group_exists_request(
-            hub=self._config.hub,
             group=group,
-            api_version=api_version,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1020,6 +1089,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -1039,6 +1109,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         Close connections in the specific group.
 
         :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
         :type group: str
         :keyword excluded: Exclude these connectionIds when closing the connections in the group.
          Default value is None.
@@ -1047,23 +1118,27 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         :paramtype reason: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_close_group_connections_request(
-            hub=self._config.hub,
             group=group,
-            api_version=api_version,
+            hub=self._config.hub,
             excluded=excluded,
             reason=reason,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1075,6 +1150,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1088,10 +1164,10 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
     def send_to_group(  # pylint: disable=inconsistent-return-statements
         self,
         group: str,
-        message: Union[IO, str],
+        message: IO,
         *,
         excluded: Optional[List[str]] = None,
-        content_type: Optional[str] = "application/json",
+        filter: Optional[str] = None,
         **kwargs: Any
     ) -> None:
         """Send content inside request body to a group of connections.
@@ -1099,49 +1175,43 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         Send content inside request body to a group of connections.
 
         :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
         :type group: str
-        :param message: The payload body.
-        :type message: IO or str
+        :param message: The payload body. Required.
+        :type message: IO
         :keyword excluded: Excluded connection Ids. Default value is None.
         :paramtype excluded: list[str]
-        :keyword content_type: Media type of the body sent to the API. Known values are:
-         "application/json", "application/octet-stream", and "text/plain". Default value is
-         "application/json".
-        :paramtype content_type: str
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        _json = None
-        _content = None
-        content_type = content_type or ""
-        if content_type.split(";")[0] in ["application/json"]:
-            _json = message
-        elif content_type.split(";")[0] in ["application/octet-stream", "text/plain"]:
-            _content = message
-        else:
-            raise ValueError(
-                "The content_type '{}' is not one of the allowed values: "
-                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
-            )
+        _content = message
 
         request = build_send_to_group_request(
-            hub=self._config.hub,
             group=group,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
+            hub=self._config.hub,
             excluded=excluded,
+            filter=filter,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
             headers=_headers,
             params=_params,
         )
@@ -1153,59 +1223,10 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @distributed_trace
-    def add_connection_to_group(  # pylint: disable=inconsistent-return-statements
-        self, group: str, connection_id: str, **kwargs: Any
-    ) -> None:
-        """Add a connection to the target group.
-
-        Add a connection to the target group.
-
-        :param group: Target group name, which length should be greater than 0 and less than 1025.
-        :type group: str
-        :param connection_id: Target connection Id.
-        :type connection_id: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        request = build_add_connection_to_group_request(
-            hub=self._config.hub,
-            group=group,
-            connection_id=connection_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
             map_error(status_code=response.status_code, response=response, error_map=error_map)
             raise HttpResponseError(response=response)
 
@@ -1221,27 +1242,32 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         Remove a connection from the target group.
 
         :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
         :type group: str
-        :param connection_id: Target connection Id.
+        :param connection_id: Target connection Id. Required.
         :type connection_id: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_remove_connection_from_group_request(
-            hub=self._config.hub,
             group=group,
             connection_id=connection_id,
-            api_version=api_version,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1253,6 +1279,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1263,357 +1290,40 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
             return cls(pipeline_response, None, {})
 
     @distributed_trace
-    def user_exists(self, user_id: str, **kwargs: Any) -> bool:
-        """Check if there are any client connections connected for the given user.
-
-        Check if there are any client connections connected for the given user.
-
-        :param user_id: Target user Id.
-        :type user_id: str
-        :return: bool
-        :rtype: bool
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        request = build_user_exists_request(
-            hub=self._config.hub,
-            user_id=user_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200, 404]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-        return 200 <= response.status_code <= 299
-
-    @distributed_trace
-    def close_user_connections(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+    def add_connection_to_group(  # pylint: disable=inconsistent-return-statements
+        self, group: str, connection_id: str, **kwargs: Any
     ) -> None:
-        """Close connections for the specific user.
+        """Add a connection to the target group.
 
-        Close connections for the specific user.
-
-        :param user_id: The user Id.
-        :type user_id: str
-        :keyword excluded: Exclude these connectionIds when closing the connections for the user.
-         Default value is None.
-        :paramtype excluded: list[str]
-        :keyword reason: The reason closing the client connection. Default value is None.
-        :paramtype reason: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        request = build_close_user_connections_request(
-            hub=self._config.hub,
-            user_id=user_id,
-            api_version=api_version,
-            excluded=excluded,
-            reason=reason,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @distributed_trace
-    def send_to_user(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, message: Union[IO, str], *, content_type: Optional[str] = "application/json", **kwargs: Any
-    ) -> None:
-        """Send content inside request body to the specific user.
-
-        Send content inside request body to the specific user.
-
-        :param user_id: The user Id.
-        :type user_id: str
-        :param message: The payload body.
-        :type message: IO or str
-        :keyword content_type: Media type of the body sent to the API. Known values are:
-         "application/json", "application/octet-stream", and "text/plain". Default value is
-         "application/json".
-        :paramtype content_type: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        _json = None
-        _content = None
-        content_type = content_type or ""
-        if content_type.split(";")[0] in ["application/json"]:
-            _json = message
-        elif content_type.split(";")[0] in ["application/octet-stream", "text/plain"]:
-            _content = message
-        else:
-            raise ValueError(
-                "The content_type '{}' is not one of the allowed values: "
-                "['application/json', 'application/octet-stream', 'text/plain']".format(content_type)
-            )
-
-        request = build_send_to_user_request(
-            hub=self._config.hub,
-            user_id=user_id,
-            api_version=api_version,
-            content_type=content_type,
-            json=_json,
-            content=_content,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [202]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @distributed_trace
-    def add_user_to_group(  # pylint: disable=inconsistent-return-statements
-        self, group: str, user_id: str, **kwargs: Any
-    ) -> None:
-        """Add a user to the target group.
-
-        Add a user to the target group.
+        Add a connection to the target group.
 
         :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
         :type group: str
-        :param user_id: Target user Id.
-        :type user_id: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        request = build_add_user_to_group_request(
-            hub=self._config.hub,
-            group=group,
-            user_id=user_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [200]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @distributed_trace
-    def remove_user_from_group(  # pylint: disable=inconsistent-return-statements
-        self, group: str, user_id: str, **kwargs: Any
-    ) -> None:
-        """Remove a user from the target group.
-
-        Remove a user from the target group.
-
-        :param group: Target group name, which length should be greater than 0 and less than 1025.
-        :type group: str
-        :param user_id: Target user Id.
-        :type user_id: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        request = build_remove_user_from_group_request(
-            hub=self._config.hub,
-            group=group,
-            user_id=user_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @distributed_trace
-    def remove_user_from_all_groups(  # pylint: disable=inconsistent-return-statements
-        self, user_id: str, **kwargs: Any
-    ) -> None:
-        """Remove a user from all groups.
-
-        Remove a user from all groups.
-
-        :param user_id: Target user Id.
-        :type user_id: str
-        :return: None
-        :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
-        """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
-        error_map.update(kwargs.pop("error_map", {}) or {})
-
-        _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
-
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
-        cls = kwargs.pop("cls", None)  # type: ClsType[None]
-
-        request = build_remove_user_from_all_groups_request(
-            hub=self._config.hub,
-            user_id=user_id,
-            api_version=api_version,
-            headers=_headers,
-            params=_params,
-        )
-        path_format_arguments = {
-            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
-        }
-        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
-
-        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
-            request, stream=False, **kwargs
-        )
-        response = pipeline_response.http_response
-
-        if response.status_code not in [204]:
-            map_error(status_code=response.status_code, response=response, error_map=error_map)
-            raise HttpResponseError(response=response)
-
-        if cls:
-            return cls(pipeline_response, None, {})
-
-    @distributed_trace
-    def grant_permission(  # pylint: disable=inconsistent-return-statements
-        self, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
-    ) -> None:
-        """Grant permission to the connection.
-
-        Grant permission to the connection.
-
-        :param permission: The permission: current supported actions are joinLeaveGroup and
-         sendToGroup. Known values are: "sendToGroup" or "joinLeaveGroup".
-        :type permission: str
-        :param connection_id: Target connection Id.
+        :param connection_id: Target connection Id. Required.
         :type connection_id: str
-        :keyword target_name: The meaning of the target depends on the specific permission. For
-         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
-         Default value is None.
-        :paramtype target_name: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
-        request = build_grant_permission_request(
-            hub=self._config.hub,
-            permission=permission,
+        request = build_add_connection_to_group_request(
+            group=group,
             connection_id=connection_id,
-            api_version=api_version,
-            target_name=target_name,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1625,6 +1335,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200]:
@@ -1643,9 +1354,9 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         Revoke permission for the connection.
 
         :param permission: The permission: current supported actions are joinLeaveGroup and
-         sendToGroup. Known values are: "sendToGroup" or "joinLeaveGroup".
+         sendToGroup. Known values are: "sendToGroup" and "joinLeaveGroup". Required.
         :type permission: str
-        :param connection_id: Target connection Id.
+        :param connection_id: Target connection Id. Required.
         :type connection_id: str
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
@@ -1653,23 +1364,27 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         :paramtype target_name: str
         :return: None
         :rtype: None
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_revoke_permission_request(
-            hub=self._config.hub,
             permission=permission,
             connection_id=connection_id,
-            api_version=api_version,
+            hub=self._config.hub,
             target_name=target_name,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1681,6 +1396,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [204]:
@@ -1699,9 +1415,9 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         Check if a connection has permission to the specified action.
 
         :param permission: The permission: current supported actions are joinLeaveGroup and
-         sendToGroup. Known values are: "sendToGroup" or "joinLeaveGroup".
+         sendToGroup. Known values are: "sendToGroup" and "joinLeaveGroup". Required.
         :type permission: str
-        :param connection_id: Target connection Id.
+        :param connection_id: Target connection Id. Required.
         :type connection_id: str
         :keyword target_name: The meaning of the target depends on the specific permission. For
          joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
@@ -1709,23 +1425,27 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         :paramtype target_name: str
         :return: bool
         :rtype: bool
-        :raises: ~azure.core.exceptions.HttpResponseError
+        :raises ~azure.core.exceptions.HttpResponseError:
         """
-        error_map = {401: ClientAuthenticationError, 404: ResourceNotFoundError, 409: ResourceExistsError}
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
         error_map.update(kwargs.pop("error_map", {}) or {})
 
         _headers = kwargs.pop("headers", {}) or {}
-        _params = case_insensitive_dict(kwargs.pop("params", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
 
-        api_version = kwargs.pop("api_version", _params.pop("api-version", "2021-10-01"))  # type: str
         cls = kwargs.pop("cls", None)  # type: ClsType[None]
 
         request = build_has_permission_request(
-            hub=self._config.hub,
             permission=permission,
             connection_id=connection_id,
-            api_version=api_version,
+            hub=self._config.hub,
             target_name=target_name,
+            api_version=self._config.api_version,
             headers=_headers,
             params=_params,
         )
@@ -1737,6 +1457,7 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
             request, stream=False, **kwargs
         )
+
         response = pipeline_response.http_response
 
         if response.status_code not in [200, 404]:
@@ -1746,3 +1467,401 @@ class WebPubSubServiceClientOperationsMixin(MixinABC):
         if cls:
             return cls(pipeline_response, None, {})
         return 200 <= response.status_code <= 299
+
+    @distributed_trace
+    def grant_permission(  # pylint: disable=inconsistent-return-statements
+        self, permission: str, connection_id: str, *, target_name: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """Grant permission to the connection.
+
+        Grant permission to the connection.
+
+        :param permission: The permission: current supported actions are joinLeaveGroup and
+         sendToGroup. Known values are: "sendToGroup" and "joinLeaveGroup". Required.
+        :type permission: str
+        :param connection_id: Target connection Id. Required.
+        :type connection_id: str
+        :keyword target_name: The meaning of the target depends on the specific permission. For
+         joinLeaveGroup and sendToGroup, targetName is a required parameter standing for the group name.
+         Default value is None.
+        :paramtype target_name: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_grant_permission_request(
+            permission=permission,
+            connection_id=connection_id,
+            hub=self._config.hub,
+            target_name=target_name,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @distributed_trace
+    def user_exists(self, user_id: str, **kwargs: Any) -> bool:
+        """Check if there are any client connections connected for the given user.
+
+        Check if there are any client connections connected for the given user.
+
+        :param user_id: Target user Id. Required.
+        :type user_id: str
+        :return: bool
+        :rtype: bool
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_user_exists_request(
+            user_id=user_id,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200, 404]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+        return 200 <= response.status_code <= 299
+
+    @distributed_trace
+    def close_user_connections(  # pylint: disable=inconsistent-return-statements
+        self, user_id: str, *, excluded: Optional[List[str]] = None, reason: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """Close connections for the specific user.
+
+        Close connections for the specific user.
+
+        :param user_id: The user Id. Required.
+        :type user_id: str
+        :keyword excluded: Exclude these connectionIds when closing the connections for the user.
+         Default value is None.
+        :paramtype excluded: list[str]
+        :keyword reason: The reason closing the client connection. Default value is None.
+        :paramtype reason: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_close_user_connections_request(
+            user_id=user_id,
+            hub=self._config.hub,
+            excluded=excluded,
+            reason=reason,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @distributed_trace
+    def send_to_user(  # pylint: disable=inconsistent-return-statements
+        self, user_id: str, message: IO, *, filter: Optional[str] = None, **kwargs: Any
+    ) -> None:
+        """Send content inside request body to the specific user.
+
+        Send content inside request body to the specific user.
+
+        :param user_id: The user Id. Required.
+        :type user_id: str
+        :param message: The payload body. Required.
+        :type message: IO
+        :keyword filter: Following OData filter syntax to filter out the subscribers receiving the
+         messages. Default value is None.
+        :paramtype filter: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = case_insensitive_dict(kwargs.pop("headers", {}) or {})
+        _params = kwargs.pop("params", {}) or {}
+
+        content_type = kwargs.pop("content_type", _headers.pop("Content-Type", "application/json"))  # type: str
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        _content = message
+
+        request = build_send_to_user_request(
+            user_id=user_id,
+            hub=self._config.hub,
+            filter=filter,
+            content_type=content_type,
+            api_version=self._config.api_version,
+            content=_content,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [202]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @distributed_trace
+    def remove_user_from_all_groups(  # pylint: disable=inconsistent-return-statements
+        self, user_id: str, **kwargs: Any
+    ) -> None:
+        """Remove a user from all groups.
+
+        Remove a user from all groups.
+
+        :param user_id: Target user Id. Required.
+        :type user_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_remove_user_from_all_groups_request(
+            user_id=user_id,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @distributed_trace
+    def remove_user_from_group(  # pylint: disable=inconsistent-return-statements
+        self, group: str, user_id: str, **kwargs: Any
+    ) -> None:
+        """Remove a user from the target group.
+
+        Remove a user from the target group.
+
+        :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
+        :type group: str
+        :param user_id: Target user Id. Required.
+        :type user_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_remove_user_from_group_request(
+            group=group,
+            user_id=user_id,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [204]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})
+
+    @distributed_trace
+    def add_user_to_group(  # pylint: disable=inconsistent-return-statements
+        self, group: str, user_id: str, **kwargs: Any
+    ) -> None:
+        """Add a user to the target group.
+
+        Add a user to the target group.
+
+        :param group: Target group name, which length should be greater than 0 and less than 1025.
+         Required.
+        :type group: str
+        :param user_id: Target user Id. Required.
+        :type user_id: str
+        :return: None
+        :rtype: None
+        :raises ~azure.core.exceptions.HttpResponseError:
+        """
+        error_map = {
+            401: ClientAuthenticationError,
+            404: ResourceNotFoundError,
+            409: ResourceExistsError,
+            304: ResourceNotModifiedError,
+        }
+        error_map.update(kwargs.pop("error_map", {}) or {})
+
+        _headers = kwargs.pop("headers", {}) or {}
+        _params = kwargs.pop("params", {}) or {}
+
+        cls = kwargs.pop("cls", None)  # type: ClsType[None]
+
+        request = build_add_user_to_group_request(
+            group=group,
+            user_id=user_id,
+            hub=self._config.hub,
+            api_version=self._config.api_version,
+            headers=_headers,
+            params=_params,
+        )
+        path_format_arguments = {
+            "Endpoint": self._serialize.url("self._config.endpoint", self._config.endpoint, "str", skip_quote=True),
+        }
+        request.url = self._client.format_url(request.url, **path_format_arguments)  # type: ignore
+
+        pipeline_response = self._client._pipeline.run(  # type: ignore # pylint: disable=protected-access
+            request, stream=False, **kwargs
+        )
+
+        response = pipeline_response.http_response
+
+        if response.status_code not in [200]:
+            map_error(status_code=response.status_code, response=response, error_map=error_map)
+            raise HttpResponseError(response=response)
+
+        if cls:
+            return cls(pipeline_response, None, {})

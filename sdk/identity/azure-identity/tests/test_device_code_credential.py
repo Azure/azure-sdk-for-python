@@ -3,6 +3,7 @@
 # Licensed under the MIT License.
 # ------------------------------------
 import datetime
+from unittest.mock import ANY, Mock, patch
 
 from azure.core.exceptions import ClientAuthenticationError
 from azure.core.pipeline.policies import SansIOHTTPPolicy
@@ -19,11 +20,6 @@ from helpers import (
     Request,
     validating_transport,
 )
-
-try:
-    from unittest.mock import Mock, patch
-except ImportError:  # python < 3.3
-    from mock import Mock, patch  # type: ignore
 
 
 def test_tenant_id_validation():
@@ -272,23 +268,17 @@ def test_tenant_id():
 
 
 def test_timeout():
-    transport = validating_transport(
-        requests=[Request()] * 3,  # not validating requests because they're formed by MSAL
-        responses=[
-            # expected requests: discover tenant, start device code flow, poll for completion
-            mock_response(json_payload={"authorization_endpoint": "https://a/b", "token_endpoint": "https://a/b"}),
-            mock_response(json_payload={"device_code": "_", "user_code": "_", "verification_uri": "_"}),
-            mock_response(json_payload={"error": "authorization_pending"}),
-        ],
-    )
+    flow = {"expires_in": 1800, "message": "foo"}
+    with patch.object(DeviceCodeCredential, "_get_app") as get_app:
+        msal_app = get_app()
+        msal_app.initiate_device_flow.return_value = flow
+        msal_app.acquire_token_by_device_flow.return_value = {"error": "authorization_pending"}
 
-    credential = DeviceCodeCredential(
-        client_id="_", prompt_callback=Mock(), transport=transport, timeout=0.01, instance_discovery=False,
-    )
-
-    with pytest.raises(ClientAuthenticationError) as ex:
-        credential.get_token("scope")
-    assert "timed out" in ex.value.message.lower()
+        credential = DeviceCodeCredential(client_id="_", timeout=1, instance_discovery=False)
+        with pytest.raises(ClientAuthenticationError) as ex:
+            credential.get_token("scope")
+        assert "timed out" in ex.value.message.lower()
+        msal_app.acquire_token_by_device_flow.assert_called_once_with(flow, exit_condition=ANY, claims_challenge=None)
 
 
 def test_client_capabilities():

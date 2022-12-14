@@ -116,3 +116,14 @@ class TestParallelFor(TestConditionalNodeInPipeline):
             'type': 'parallel_for'
         }
         assert_foreach(client, randstr("job_name"), source, expected_node)
+
+    def test_output_binding_foreach_node(self, client: MLClient, randstr: Callable):
+        source = "./tests/test_configs/pipeline_jobs/helloworld_parallel_for_pipeline_job_output_binding.yaml"
+        expected_node = {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
+            'outputs': {'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'}},
+            'type': 'parallel_for'
+        }
+        assert_foreach(client, randstr("job_name"), source, expected_node)

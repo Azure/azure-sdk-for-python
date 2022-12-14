@@ -7,8 +7,7 @@ import logging
 import platform
 import subprocess
 import sys
-from typing import List, Any, Tuple
-
+from typing import List, Tuple
 import six
 
 from azure.core.credentials import AccessToken
@@ -75,6 +74,8 @@ class AzurePowerShellCredential(object):
         also handle token caching because this credential doesn't cache the tokens it acquires.
 
         :param str scopes: desired scope for the access token. This credential allows only one scope per request.
+            For more information about scopes, see
+            https://learn.microsoft.com/azure/active-directory/develop/scopes-oidc.
         :keyword str tenant_id: optional tenant to include in the token request.
 
         :rtype: :class:`azure.core.credentials.AccessToken`
