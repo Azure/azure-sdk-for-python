@@ -5,7 +5,7 @@ import hashlib
 import json
 import os
 import shutil
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union, Iterable
 from unittest import mock
 
 import msrest
@@ -42,15 +42,18 @@ from azure.ai.ml._schema.job import CommandJobSchema, ParallelJobSchema
 from azure.ai.ml._schema.pipeline.pipeline_job import PipelineJobSchema
 from azure.ai.ml._schema.schedule.schedule import ScheduleSchema
 from azure.ai.ml._schema.workspace import WorkspaceSchema
+from azure.ai.ml._utils.utils import is_internal_components_enabled, try_enable_internal_components
 from azure.ai.ml.constants._common import (
     REF_DOC_YAML_SCHEMA_ERROR_MSG_FORMAT,
     CommonYamlFields,
     YAMLRefDocLinks,
     YAMLRefDocSchemaNames,
+    AZUREML_INTERNAL_COMPONENTS_ENV_VAR,
+    AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX,
 )
 from azure.ai.ml.constants._endpoint import EndpointYamlFields
 from azure.ai.ml.entities._mixins import RestTranslatableMixin
-from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException
+from azure.ai.ml.exceptions import ErrorTarget, ValidationErrorType, ValidationException, ErrorCategory
 
 # Maps schema class name to formatted error message pointing to Microsoft docs reference page for a schema's YAML
 REF_DOC_ERROR_MESSAGE_MAP = {
@@ -316,6 +319,8 @@ def from_rest_dict_to_dummy_rest_object(rest_dict):
 
 
 def extract_label(input_str: str):
+    if not isinstance(input_str, str):
+        return None, None
     if "@" in input_str:
         return input_str.rsplit("@", 1)
     return input_str, None
@@ -411,3 +416,37 @@ def normalize_job_input_output_type(input_output_value):
             input_output_value["job_input_type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_input_type]
         if job_type and job_type in FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING:
             input_output_value["type"] = FEB_JUN_JOB_INPUT_OUTPUT_TYPE_MAPPING[job_type]
+
+
+def get_type_from_spec(data: dict, *, valid_keys: Iterable[str]) -> str:
+    """Get the type of the node or component from the yaml spec.
+    Yaml spec must have a key named "type" and exception will be raised if it's not once of valid_keys.
+
+    If internal components are enabled, related factory and schema will be updated.
+    """
+    _type, _ = extract_label(data.get(CommonYamlFields.TYPE, None))
+    schema = data.get(CommonYamlFields.SCHEMA, None)
+
+    # we should keep at least 1 place outside _internal to enable internal components
+    # and this is the only place
+    try_enable_internal_components()
+
+    if _type not in valid_keys:
+        if (
+            schema
+            and not is_internal_components_enabled()
+            and schema.startswith(AZUREML_INTERNAL_COMPONENTS_SCHEMA_PREFIX)
+        ):
+            msg = (
+                f"Internal components is a private feature in v2, please set environment variable "
+                f"{AZUREML_INTERNAL_COMPONENTS_ENV_VAR} to true to use it."
+            )
+        else:
+            msg = f"Unsupported component type: {_type}."
+        raise ValidationException(
+            message=msg,
+            target=ErrorTarget.COMPONENT,
+            no_personal_data_message=msg,
+            error_category=ErrorCategory.USER_ERROR,
+        )
+    return extract_label(_type)[0]
