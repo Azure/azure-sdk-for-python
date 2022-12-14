@@ -193,7 +193,7 @@ class Resource(ABC):
 
     def __str__(self) -> str:
         if self.print_as_yaml:
+            # pylint: disable=no-member
             yaml_serialized = self._to_dict()
             return dump_yaml(yaml_serialized, default_flow_style=False)
-        else:
-            return self.__repr__()
+        return self.__repr__()
