@@ -7,8 +7,7 @@ from abc import ABC
 from datetime import datetime
 from typing import List, Union
 
-from azure.ai.ml._restclient.v2022_12_01_preview.models import Recurrence, RecurrenceSchedule
-from azure.ai.ml._restclient.v2022_10_01_preview.models import Cron
+from azure.ai.ml._restclient.v2022_10_01_preview.models import Cron, Recurrence, RecurrenceSchedule
 from azure.ai.ml._restclient.v2022_10_01.models import CronTrigger as RestCronTrigger
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceSchedule as RestRecurrencePattern
 from azure.ai.ml._restclient.v2022_10_01.models import RecurrenceTrigger as RestRecurrenceTrigger
