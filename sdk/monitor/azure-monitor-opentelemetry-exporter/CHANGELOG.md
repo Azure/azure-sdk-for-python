@@ -1,6 +1,6 @@
 # Release History
 
-## 1.0.0b11 (Unreleased)
+## 1.0.0b11 (2022-12-14)
 
 ### Features Added
 
@@ -12,14 +12,12 @@
 ### Breaking Changes
 
 - Update to OpenTelemetry api/sdk v1.15.0
-    ([#27900](https://github.com/Azure/azure-sdk-for-python/issues/27900))
+    ([#27913](https://github.com/Azure/azure-sdk-for-python/pull/27913))
 
 ### Bugs Fixed
 
 - Pass along sampleRate in SpanEvents from Span
     ([#27629](https://github.com/Azure/azure-sdk-for-python/pull/27629))
-
-### Other Changes
 
 ## 1.0.0b10 (2022-11-10)
 
