@@ -1,6 +1,6 @@
 # Release History
 
-## 0.0.0 (it should be stable) (2022-12-14)
+## 1.1.0b1 (2022-12-14)
 
 
 
