@@ -5,7 +5,6 @@
 
 import os
 import abc
-import threading
 import multiprocessing
 import argparse
 

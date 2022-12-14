@@ -5,10 +5,11 @@
 
 import asyncio
 import time
-from typing import List, Optional
+import queue
+from typing import List
 import multiprocessing
 import threading
-from concurrent.futures import ThreadPoolExecutor, as_completed
+from concurrent.futures import ThreadPoolExecutor, wait, ALL_COMPLETED
 import importlib
 
 from ._perf_stress_base import _PerfTestABC, _PerfTestBase
@@ -74,7 +75,7 @@ async def _start_tests(index, test_class, num_tests, args, test_stages, results,
         # A separate process has failed, so all of them are shutting down.
         print("Another test process has aborted - shutting down.")
     except Exception as e:
-        print("Test processes failed. Aborting.\n{}".format(e))
+        print(f"Test processes failed - aborting. Error: {e}")
         for barrier in test_stages.values():
             barrier.abort()
     finally:
@@ -97,10 +98,13 @@ async def _start_tests(index, test_class, num_tests, args, test_stages, results,
                 await tests[0].global_cleanup()
         except Exception as e:
             # Tests were unable to clean up, maybe due to earlier failure state.
-            print("Failed to cleanup up tests: {}".format(e))
+            print(f"Failed to cleanup up tests: {e}")
         finally:
             # Always call close on the tests, even if cleanup failed.
-            await asyncio.gather(*[test.close() for test in tests])
+            try:
+                await asyncio.gather(*[test.close() for test in tests])
+            except Exception as e:
+                print(f"Failed to close tests: {e}")
 
 
 async def _run_tests(duration: int, args, tests, results, status) -> None:
@@ -116,13 +120,18 @@ async def _run_tests(duration: int, args, tests, results, status) -> None:
     try:
         if args.sync:
             with ThreadPoolExecutor(max_workers=args.parallel) as ex:
-                futures = [ex.submit(test.run_all_sync, duration) for test in tests]
-                for future in as_completed(futures):
-                    future.result()
-
+                tasks = [ex.submit(test.run_all_sync, duration) for test in tests]
+                wait(tasks, return_when=ALL_COMPLETED)
         else:
-            tasks = [test.run_all_async(duration) for test in tests]
-            await asyncio.gather(*tasks)
+            tasks = [asyncio.create_task(test.run_all_async(duration)) for test in tests]
+            await asyncio.wait(tasks, return_when=asyncio.ALL_COMPLETED)
+        
+        # If any of the parallel test runs raised an exception, let it be propagated, after all tasks have
+        # completed.
+        # TODO: This will only raise the first Exception encountered. Once we migrate the perf pipelines
+        # to 3.11 we could refactor to use ExceptionGroups so all exceptions will be captured.
+        for task in tasks:
+            task.result()
 
         # Add final test results to the results queue to be accumulated by the parent process.
         for test in tests:

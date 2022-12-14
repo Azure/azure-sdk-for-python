@@ -232,13 +232,18 @@ class _PerfStressRunner:
             # the "GlobalCleanup" which may start pulling down resources.
             self._next_stage("Finished")
 
-            # Close all processes.
-            [f.join() for f in futures]
-
         except threading.BrokenBarrierError:
             self.logger.warn("Exception: One or more test processes failed and exited.")
         except Exception as e:
             self.logger.warn("Exception: " + str(e))
+        finally:
+            # Close all processes.
+            try:
+                [f.join() for f in futures]
+                self.status_thread.stop()
+            except Exception as e:
+                self.logger.warn("Error closing processes: " + str(e))
+
 
     def _report_results(self):
         """Calculate and log the test run results across all child processes"""
