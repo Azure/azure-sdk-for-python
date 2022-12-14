@@ -46,6 +46,7 @@ def generate_path_property(azureml_type):
             ArmVersionedStr(azureml_type=azureml_type),
             fields.Str(metadata={"pattern": r"^(http(s)?):.*"}),
             fields.Str(metadata={"pattern": r"^(wasb(s)?):.*"}),
+            LocalPathField(pattern=r"^file:.*"),
             LocalPathField(pattern=r"^(?!(azureml|http(s)?|wasb(s)?|file):).*",),
         ],
         is_strict=True,
