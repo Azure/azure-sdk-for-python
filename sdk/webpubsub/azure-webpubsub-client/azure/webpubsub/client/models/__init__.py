@@ -36,6 +36,12 @@ from ._models import WebPubSubRetryOptions
 from ._models import SequenceAckMessage
 from ._models import SendMessageError
 from ._models import SendMessageErrorOptions
+from ._models import OnRestoreGroupFailedArgs
+from ._models import OnGroupDataMessageArgs
+from ._models import OnServerDataMessageArgs
+from ._models import CloseEvent
+from ._models import OnDisconnectedArgs
+
 
 
 
@@ -68,5 +74,10 @@ __all__ = [
     "WebPubSubRetryOptions",
     "SequenceAckMessage",
     "SendMessageError",
-    "SendMessageErrorOptions"
+    "SendMessageErrorOptions",
+    "OnRestoreGroupFailedArgs",
+    "OnGroupDataMessageArgs",
+    "OnServerDataMessageArgs",
+    "CloseEvent",
+    "OnDisconnectedArgs",
 ]

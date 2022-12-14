@@ -346,7 +346,10 @@ class SendToGroupMessage(WebPubSubMessageBase):
         self.ack_id = ack_id
 
 
-
+class OnRestoreGroupFailedArgs:
+    def __init__(self, group: str, error: Exception) -> None:
+        self.group = group
+        self.error = error
 
 
 WebPubSubMessage = TypeVar(
@@ -483,3 +486,22 @@ class SendMessageError(Exception):
         self.name = "SendMessageError"
         self.ack_id = options.ack_id
         self.error_detail = options.error_detail
+
+class OnGroupDataMessageArgs:
+    def __init__(self, message: GroupDataMessage) -> None:
+        self.message = message
+
+
+class OnServerDataMessageArgs:
+    def __init__(self, message: ServerDataMessage) -> None:
+        self.message = message
+
+class CloseEvent:
+    def __init__(self, close_status_code: Optional[int] = None, close_reason: Optional[str] = None) -> None:
+        self.close_status_code = close_status_code
+        self.close_reason = close_reason
+
+class OnDisconnectedArgs:
+    def __init__(self, connection_id: Optional[str]=None, message: Optional[DisconnectedMessage]=None) -> None:
+        self.connection_id = connection_id
+        self.message = message

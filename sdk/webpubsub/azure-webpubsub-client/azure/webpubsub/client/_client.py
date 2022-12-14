@@ -22,6 +22,7 @@ from .models import (
 import websocket
 import threading
 import time
+import urllib.parse
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -169,7 +170,12 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         self._ack_id = 0
         self._url = None
         self._ws = None
-        self._handler = {CallBackType.CONNECTED: []}
+        self._handler = {
+            CallBackType.CONNECTED: [],
+            CallBackType.REJOIN_GROUP_FAILED: [],
+            CallBackType.GROUP_MESSAGE: [],
+            CallBackType.SERVER_MESSAGE: [],
+        }
         self._last_disconnected_message = None
         self._connection_id = None
         self._is_initial_connected = False
@@ -266,30 +272,171 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
                 if message.success or (message.error and message.error.name == "Duplicate"):
                     self._ack_map[message.ack_id] = models.SendMessageErrorOptions()
                 else:
-                    self._ack_map[message.ack_id] = models.SendMessageErrorOptions(ack_id=message.ack_id, error_detail=message.error)
+                    self._ack_map[message.ack_id] = models.SendMessageErrorOptions(
+                        ack_id=message.ack_id, error_detail=message.error
+                    )
 
         def handle_connected_message(message: ConnectedMessage):
             self._connection_id = message.connection_id
 
             if not self._is_initial_connected:
                 self._is_initial_connected = True
+                for group_name, group in self._group_map.items():
+                    if group.is_joined:
+                        try:
+                            self.join_group(group_name)
+                        except Exception as e:
+                            self._call_back(
+                                CallBackType.REJOIN_GROUP_FAILED,
+                                models.OnRestoreGroupFailedArgs(group=group_name, error=e),
+                            )
 
                 connected_args = models.OnConnectedArgs(connection_id=message.connection_id, user_id=message.user_id)
-                self._call_back("connected", connected_args)
+                self._call_back(CallBackType.CONNECTED, connected_args)
 
         def handle_disconnected_message(message: models.DisconnectedMessage):
             self._last_disconnected_message = message
+
+        def handle_group_data_message(message: models.GroupDataMessage):
+            if message.sequence_id is not None:
+                if not self._sequence_id.try_update(message.sequence_id):
+                    # // drop duplicated message
+                    return
+
+            self._call_back(CallBackType.GROUP_MESSAGE, models.OnGroupDataMessageArgs(message))
+
+        def handle_server_data_message(message: models.ServerDataMessage):
+            if message.sequence_id is not None:
+                if not self._sequence_id.try_update(message.sequence_id):
+                    # // drop duplicated message
+                    return
+
+            self._call_back(CallBackType.SERVER_MESSAGE, models.OnServerDataMessageArgs(message))
 
         parsed_message = self._protocol.parse_messages(data)
         type_handler = {
             "connected": handle_connected_message,
             "disconnected": handle_disconnected_message,
             "ack": handle_ack_message,
+            "groupData": handle_group_data_message,
+            "serverData": handle_server_data_message,
         }
         if parsed_message.kind in type_handler:
             type_handler[parsed_message.kind](parsed_message)
         else:
             raise Exception(f"unknown message type: {parsed_message.kind}")
+
+    def _get_close_args(self, close_frame):
+        """
+        _get_close_args extracts the close code and reason from the close body
+        if it exists (RFC6455 says WebSocket Connection Close Code is optional)
+        """
+        # Need to catch the case where close_frame is None
+        # Otherwise the following if statement causes an error
+        # Extract close frame status code
+        if close_frame is None:
+            return [None, None]
+        if close_frame.data and len(close_frame.data) >= 2:
+            close_status_code = 256 * close_frame.data[0] + close_frame.data[1]
+            reason = close_frame.data[2:].decode("utf-8")
+            return [close_status_code, reason]
+        else:
+            # Most likely reached this because len(close_frame_data.data) < 2
+            return [None, None]
+
+    def start_from_restarting(self):
+        if self._state != WebPubSubClientState.DISCONNECTED:
+            _LOGGER.warn("Client can be only restarted when it's Disconnected")
+            return
+
+        try:
+            self.start_core()
+        except Exception as e:
+            self._state = WebPubSubClientState.DISCONNECTED
+            raise e
+
+    def auto_reconnect(self):
+        success = True
+        attempt = 0
+        while not self._is_stopping:
+            try:
+                self.start_from_restarting()
+                success = True
+                break
+            except Exception as e:
+                _LOGGER.warn("An attempt to reconnect connection failed", e)
+                attempt = attempt + 1
+                delay_in_ms = self._reconnect_retry_policy.next_retry_delay_in_ms(attempt)
+                if not delay_in_ms:
+                    break
+                time.sleep(float(delay_in_ms) / 1000.0)
+        if not success:
+            self.handle_connection_stopped()
+
+    def handle_connection_stopped(self):
+        self._is_stopping = False
+        self._state = WebPubSubClientState.STOPPED
+        self._call_back(CallBackType.STOPPED)
+
+    def handle_connection_close_and_no_recovery(self):
+        self._state = WebPubSubClientState.DISCONNECTED
+        self._call_back(
+            CallBackType.DISCONNECTED,
+            models.OnDisconnectedArgs(connection_id=self._connection_id, message=self._last_disconnected_message),
+        )
+        if self._options.auto_reconnect:
+            self.auto_reconnect()
+        else:
+            self.handle_connection_stopped()
+
+    def build_recovery_url(self):
+        if self._connection_id and self._reconnection_token and self._url:
+            params = {"awps_connection_id": self._connection_id, "awps_reconnection_token": self._reconnection_token}
+            url_parse = urllib.parse.urlparse(self._url)
+            url_dict = dict(urllib.parse.parse_qsl(url_parse.query))
+            url_dict.update(params)
+            new_query = urllib.parse.urlencode(url_dict)
+            url_parse = url_parse._replace(query=new_query)
+            new_url = urllib.parse.urlunparse(url_parse)
+            return new_url
+        return None
+
+    def handle_connection_close(self):
+        # clean ack cache
+        self._ack_map.clear()
+
+        if self._is_stopping:
+            _LOGGER.warn("The client is stopping state. Stop recovery.")
+            self.handle_connection_close_and_no_recovery()
+            return
+
+        if self._last_close_event and self._last_close_event.close_status_code == 1008:
+            _LOGGER.warn("The websocket close with status code 1008. Stop recovery.")
+            self.handle_connection_close_and_no_recovery()
+            return
+
+        if not self._protocol.is_reliable_sub_protocol:
+            _LOGGER.warn("The protocol is not reliable, recovery is not applicable")
+            self.handle_connection_close_and_no_recovery()
+            return
+
+        recovery_url = self.build_recovery_url()
+        if not recovery_url:
+            _LOGGER.warn("Connection id or reconnection token is not available")
+            self.handle_connection_close_and_no_recovery()
+            return
+
+        self._state = WebPubSubClientState.RECOVERING
+        while i < 30 or self._is_stopping:
+            try:
+                self.connect(recovery_url)
+                return
+            except:
+                time.sleep(1)
+            i = i + 1
+
+        _LOGGER.warn("Recovery attempts failed more then 30 seconds or the client is stopping")
+        self.handle_connection_close_and_no_recovery()
 
     def _listen(self):
         while self._state == WebPubSubClientState.CONNECTED:
@@ -303,7 +450,14 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
                     raise e
                 pass
             else:
-                if op_code == websocket.ABNF.OPCODE_TEXT or op_code == websocket.ABNF.OPCODE_BINARY:
+                if op_code == websocket.ABNF.OPCODE_CLOSE:
+                    close_status_code, close_reason = self._get_close_args(frame)
+                    if self._state == WebPubSubClientState.CONNECTED:
+                        self._last_close_event = models.CloseEvent(
+                            close_status_code=close_status_code, close_reason=close_reason
+                        )
+                        self.handle_connection_close()
+                elif op_code == websocket.ABNF.OPCODE_TEXT or op_code == websocket.ABNF.OPCODE_BINARY:
                     data = frame.data
                     if op_code == websocket.ABNF.OPCODE_TEXT:
                         data = data.decode("utf-8")
@@ -318,9 +472,9 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
             finally:
                 time.sleep(1)
 
-    def connect(self):
+    def connect(self, url: str):
         self._ws = websocket.WebSocket()
-        self._ws.connect(self._url, subprotocols=[self._protocol.name])
+        self._ws.connect(url, subprotocols=[self._protocol.name])
 
         if self._is_stopping:
             try:
@@ -350,7 +504,7 @@ class WebPubSubClient:  # pylint: disable=client-accepts-api-version-keyword
         self._url = None
 
         self._url = self._credential.get_client_access_url()
-        self.connect()
+        self.connect(self._url)
 
     def start(self):
         if self._is_stopping:
