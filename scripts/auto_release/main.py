@@ -251,12 +251,6 @@ class CodegenTestPR:
         folder_info = glob(f'sdk/*/azure-mgmt-{self.package_name}')[0]
         self.sdk_folder = Path(folder_info).parts[1]
 
-    def prepare_branch(self):
-        if self.spec_readme:
-            self.prepare_branch_with_readme()
-        # else:
-        # self.prepare_branch_with_base_branch()
-
     def check_sdk_readme(self):
         sdk_readme = str(Path(f'sdk/{self.sdk_folder}/azure-mgmt-{self.package_name}/README.md'))
 
