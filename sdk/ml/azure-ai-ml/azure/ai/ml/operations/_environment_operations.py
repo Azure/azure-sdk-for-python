@@ -6,8 +6,6 @@
 
 from typing import Any, Iterable, Union
 
-from marshmallow.exceptions import ValidationError as SchemaValidationError
-
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
@@ -21,11 +19,12 @@ from azure.ai.ml._scope_dependent_operations import (
     OperationScope,
     _ScopeDependentOperations,
 )
+
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
 from azure.ai.ml._utils._asset_utils import (
     _archive_or_restore,
-    _get_next_version_from_container,
     _get_latest,
+    _get_next_version_from_container,
     _resolve_label_to_asset,
 )
 from azure.ai.ml._utils._logger_utils import OpsLogger
@@ -33,6 +32,7 @@ from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_stora
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
+from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -80,57 +80,62 @@ class EnvironmentOperations(_ScopeDependentOperations):
         :rtype: ~azure.ai.ml.entities.Environment
         """
         try:
-                if not environment.version and environment._auto_increment_version:
-                    environment.version = _get_next_version_from_container(name=environment.name,
-                                container_operation=self._containers_operations,
-                                resource_group_name=self._operation_scope.resource_group_name,
-                                workspace_name=self._workspace_name,
-                                registry_name=self._registry_name,
-                                **self._kwargs,
-                            )
-                if self._registry_name:
-                    sas_uri = None
-                    sas_uri = get_sas_uri_for_registry_asset(
-                        service_client=self._service_client,
-                        name=environment.name,
-                        version=environment.version,
-                        resource_group=self._resource_group_name,
-                        registry=self._registry_name,
-                        body=get_asset_body_for_registry_storage(
-                            self._registry_name,
-                            "environments",
-                            environment.name,
-                            environment.version,
-                        ),
+            if not environment.version and environment._auto_increment_version:
+                environment.version = _get_next_version_from_container(
+                    name=environment.name,
+                    container_operation=self._containers_operations,
+                    resource_group_name=self._operation_scope.resource_group_name,
+                    workspace_name=self._workspace_name,
+                    registry_name=self._registry_name,
+                    **self._kwargs,
+                )
+            if self._registry_name:
+                sas_uri = None
+                sas_uri = get_sas_uri_for_registry_asset(
+                    service_client=self._service_client,
+                    name=environment.name,
+                    version=environment.version,
+                    resource_group=self._resource_group_name,
+                    registry=self._registry_name,
+                    body=get_asset_body_for_registry_storage(
+                        self._registry_name,
+                        "environments",
+                        environment.name,
+                        environment.version,
+                    ),
+                )
+                if not sas_uri:  # This means the env already exists and we just get the env
+                    module_logger.debug(
+                        "Getting the existing asset name: %s, version: %s", environment.name, environment.version
                     )
-                    if not sas_uri:  # This means the env already exists and we just get the env
-                        module_logger.debug(
-                            "Getting the existing asset name: %s, version: %s", environment.name, environment.version
-                        )
-                        return self.get(name=environment.name, version=environment.version)
-                    environment = _check_and_upload_env_build_context(
-                        environment=environment, operations=self, sas_uri=sas_uri
-                        )
-                env_version_resource = environment._to_rest_object()
-                env_rest_obj = self._version_operations.begin_create_or_update(
-                        name=environment.name,
-                        version=environment.version,
-                        registry_name=self._registry_name,
-                        body=env_version_resource,
-                        **self._scope_kwargs,
-                        **self._kwargs,
-                    ).result() if self._registry_name else self._version_operations.create_or_update(
-                        name=environment.name,
-                        version=environment.version,
-                        workspace_name=self._workspace_name,
-                        body=env_version_resource,
-                        **self._scope_kwargs,
-                        **self._kwargs,
-                    )
-                if not env_rest_obj and self._registry_name:
-                    env_rest_obj = self._get(name=environment.name, version=environment.version)
-                return Environment._from_rest_object(env_rest_obj)
-        except Exception as ex: # pylint: disable=broad-except
+                    return self.get(name=environment.name, version=environment.version)
+                environment = _check_and_upload_env_build_context(
+                    environment=environment, operations=self, sas_uri=sas_uri
+                )
+            env_version_resource = environment._to_rest_object()
+            env_rest_obj = (
+                self._version_operations.begin_create_or_update(
+                    name=environment.name,
+                    version=environment.version,
+                    registry_name=self._registry_name,
+                    body=env_version_resource,
+                    **self._scope_kwargs,
+                    **self._kwargs,
+                ).result()
+                if self._registry_name
+                else self._version_operations.create_or_update(
+                    name=environment.name,
+                    version=environment.version,
+                    workspace_name=self._workspace_name,
+                    body=env_version_resource,
+                    **self._scope_kwargs,
+                    **self._kwargs,
+                )
+            )
+            if not env_rest_obj and self._registry_name:
+                env_rest_obj = self._get(name=environment.name, version=environment.version)
+            return Environment._from_rest_object(env_rest_obj)
+        except Exception as ex:  # pylint: disable=broad-except
             if isinstance(ex, (ValidationException, SchemaValidationError)):
                 log_and_raise_error(ex)
             else:
@@ -267,7 +272,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
-    def archive(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def archive(
+        self, name: str, version: str = None, label: str = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Archive an environment or an environment version.
 
         :param name: Name of the environment.
@@ -289,7 +296,9 @@ class EnvironmentOperations(_ScopeDependentOperations):
         )
 
     # @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
-    def restore(self, name: str, version: str = None, label: str = None, **kwargs) -> None: # pylint:disable=unused-argument
+    def restore(
+        self, name: str, version: str = None, label: str = None, **kwargs
+    ) -> None:  # pylint:disable=unused-argument
         """Restore an archived environment version.
 
         :param name: Name of the environment.
