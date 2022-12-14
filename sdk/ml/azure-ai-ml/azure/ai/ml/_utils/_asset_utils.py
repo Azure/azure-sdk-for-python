@@ -312,70 +312,129 @@ def construct_remote_paths(
     original_file_paths: List[str],
     source: str,
     prefix: str,
-) -> Iterable[Tuple[str, Union[str, Any]]]:
-    """Enumerate all files in the given directory and compose paths for them to
-    be uploaded to in the remote storage. e.g.
-    [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
-    /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+) -> Iterable[Tuple[str, str]]:
+    """Given a list of local paths, compose remote paths for local files to be uploaded to datastore
+    and return as pairs. e.g.
+    [/mnt/c/Users/dipeck/upload_files/my_file1.txt, /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+    [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
+     (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
 
-        [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
-        (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
-
-    :param root: Root directory path
-    :type root: str
-    :param files: List of all file paths in the directory
-    :type files: List[str]
+    :param original_file_paths: List of all file paths in the directory
+    :type original_file_paths: List[str]
     :param source: Local path to project directory
     :type source: str
     :param prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
     :type prefix: str
-    :param ignore_file: The .amlignore or .gitignore file in the project directory
-    :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
-    :return: Zipped list of tuples representing the local path and remote destination path for each file
+    :return: List of remote destination paths for each file
     :rtype: Iterable[Tuple[str, Union[str, Any]]]
     """
-    constructed_remote_paths = []
-    for path in original_file_paths:
-        constructed_remote_paths.append(prefix + convert_windows_path_to_unix(os.path.relpath(path, source)))
+    upload_pairs = []
 
-    return constructed_remote_paths
+    for file_path in original_file_paths:
+        local = file_path
+        remote = prefix + convert_windows_path_to_unix(os.path.relpath(file_path, source))
+        upload_pairs.append((local, remote))
+
+    return upload_pairs
 
 
-def construct_local_paths(
-    root: str,
-    files: List[str],
+def construct_local_and_remote_paths(
+    source: str,
+    dest: str,
     ignore_file: IgnoreFile = IgnoreFile(),
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
-    """Enumerate all files in the given directory and compose paths for them to
-    be uploaded to in the remote storage. e.g.
-    [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
-    /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+    """
+    Compose local paths for local files to be uploaded to datastore.
 
-        [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
-        (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
+    This is trivial for most paths, but for symlinks, we need to resolve the symlink and
+    return the actual path to the file. e.g. if we have a symlink directory /mnt/c/Users/dipeck/link/
+    that points to /mnt/c/Users/target/, we want to return /mnt/c/Users/target/ and its subfiles, if any.
 
+    For a symlink file:
+    [/mnt/c/Users/dipeck/link.txt] -> [/mnt/c/Users/dipeck/target.txt]
+
+    For a symlink directory with subfiles:
+    [/mnt/c/Users/dipeck/link/] --> [/mnt/c/Users/target/my_file1.txt, /mnt/c/Users/target/my_file2.txt]
+
+    For a symlink directory with subdirectories:
+    [/mnt/c/Users/dipeck/link/] --> [/mnt/c/Users/target/sub_folder/my_file1.txt, /mnt/c/Users/target/my_file2.txt]
+
+    :param source: Local path to project directory
+    :type source: str
+    :param dest: Remote upload path for project directory (e.g. LocalUpload/<guid>/)
+    :type dest: str
     :param root: Root directory path
     :type root: str
     :param files: List of all file paths in the directory
     :type files: List[str]
-    :param source: Local path to project directory
-    :type source: str
-    :param prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
-    :type prefix: str
     :param ignore_file: The .amlignore or .gitignore file in the project directory
     :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
-    :return: Zipped list of tuples representing the local path and remote destination path for each file
-    :rtype: Iterable[Tuple[str, Union[str, Any]]]
+    :return: List containing a validated local path for each file
+    :rtype: List[str]
     """
-    # Get list of file paths without ignored files
 
-    original_file_paths = [
-        convert_windows_path_to_unix(os.path.join(root, name))
-        for name in files
-        if not ignore_file.is_file_excluded(os.path.join(root, name))
-    ]  # get all files not excluded by the ignore file
+    source_path = Path(source).resolve()
+    prefix = "" if dest == "" else dest + "/"
+    prefix += os.path.basename(source_path) + "/"
 
-    return original_file_paths
+    symlinks = []
+    local_paths = []
+    link_dict = {}
+
+    def untranslated_symlinks_walk(top):
+        """
+        Generate the file names in a directory tree by walking the tree either top-down or bottom-up.
+
+        Checks for symlinks and follows them if they're directories to add them to the list of directories to walk.
+        """
+        # Keep track of the symlinks that have been encountered
+
+        # Walk the directory tree
+        for root, dirs, files in os.walk(top, topdown=True):
+            # Check for symlinks
+            for file in files:
+                filename = os.path.join(root, file)
+                if os.path.islink(filename):
+                    # Follow the symlink and add the target to the list of directories to walk
+                    target = os.readlink(filename)
+                    target = os.path.abspath(target)
+                    symlinks.append(file)
+                    if os.path.isdir(target):
+                        dirs.append(target)
+
+                    link_dict[file] = {
+                        "target file": convert_windows_path_to_unix(os.path.relpath(target, source_path)),
+                        "directory": False
+                    }
+                    if os.path.isdir(target):
+                        symlinks.remove(file)
+                        link_dict[file]["directory"] = True
+                    else:
+                        yield root, file
+                else:
+                    # If the file is not a symlink, yield it
+                    yield root, file
+
+    file_tree = untranslated_symlinks_walk(source_path)
+    for r, f in file_tree:
+        if not ignore_file.is_file_excluded(os.path.join(r, f)):
+            local_paths.append(convert_windows_path_to_unix(os.path.join(r, f)))
+
+    local_upload_paths = sorted(local_paths)
+
+    upload_pairs = construct_remote_paths(local_upload_paths, source_path, prefix)
+
+    updated_upload_pairs = []
+    for local, remote in upload_pairs:
+        for link, target in zip(link_dict.keys(), link_dict.values()):
+            if target["target file"] in remote:
+                remote = remote.replace(target["target file"], link)
+            if not target["directory"]:
+                if link in local:
+                    local = local.replace(link, target["target file"])
+        updated_upload_pairs.append((local, remote))
+
+    return updated_upload_pairs
 
 
 def generate_asset_id(asset_hash: str, include_directory=True) -> str:
@@ -504,6 +563,7 @@ def traverse_directory(
     prefix: str,
     ignore_file: IgnoreFile = IgnoreFile(),
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
+    # TODO: Refactor all uses of this
     pass
 
 def upload_directory(
@@ -543,68 +603,19 @@ def upload_directory(
             prefix.strip("/").split("/")[-1]
         )
 
-    # Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage
-    constructed_upload_paths = []
-    local_upload_paths = []
-    size_dict = {}
-    total_size = 0
-
-    link_dict = {}
-    symlink_directories = []
-
-    def untranslated_symlinks_walk(top):
-        """
-        Generate the file names in a directory tree by walking the tree either top-down or bottom-up.
-
-        For each directory in the tree rooted at the directory given by the `top` argument, yields a 3-tuple:
-            dirpath, dirnames, filenames
-        """
-        for root, dirs, files in os.walk(top, topdown=True):
-            for file in files:
-                filename = os.path.join(root, file)
-                if os.path.islink(filename):
-                    target = os.path.abspath(os.readlink(filename))
-                    link_dict[file] = convert_windows_path_to_unix(os.path.relpath(target, source_path))
-                    if os.path.isdir(target):
-                        files.remove(file)
-                        dirs += [file]
-                        symlink_directories.append(os.path.abspath(file))
-                        yield from os.walk(target, topdown=True)
-                else:
-                    yield root, dirs, files
-
-    files_list = untranslated_symlinks_walk(source_path)
-    local_paths = files_list
-    for root, _, files in local_paths:
-        local_upload_paths += list(construct_local_paths(root, files, ignore_file=ignore_file))
-
-    updated_local_upload_paths = []
-    if symlink_directories:
-        for link in list(link_dict.keys()):
-            for lup in local_upload_paths:
-                if link not in lup:
-                    updated_local_upload_paths.append(lup)
-    constructed_upload_paths += list(construct_remote_paths(updated_local_upload_paths, source_path, prefix))
-
-    remote_upload_paths = []
-    for link, target in zip(link_dict.keys(), link_dict.values()):
-        for path in constructed_upload_paths:
-            if target in path:
-                path = path.replace(target, link)
-            remote_upload_paths.append(path)
-
-    assert len(updated_local_upload_paths) == len(remote_upload_paths)
-    upload_paths = list(zip(updated_local_upload_paths, remote_upload_paths))
+    upload_paths = construct_local_and_remote_paths(source=source, dest=dest, ignore_file=ignore_file)
 
     # Get each file's size for progress bar tracking
-    for path, _ in upload_paths:
-        if os.path.islink(path):
+    size_dict = {}
+    total_size = 0
+    for local_path, _ in upload_paths:
+        if os.path.islink(local_path):
             path_size = os.path.getsize(
-                os.readlink(convert_windows_path_to_unix(path))
+                os.readlink(convert_windows_path_to_unix(local_path))
             )  # ensure we're counting the size of the linked file
         else:
-            path_size = os.path.getsize(path)
-        size_dict[path] = path_size
+            path_size = os.path.getsize(local_path)
+        size_dict[local_path] = path_size
         total_size += path_size
 
     upload_paths = sorted(upload_paths)
