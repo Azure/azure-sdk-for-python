@@ -308,11 +308,42 @@ def _get_file_list_content_hash(file_list) -> str:
     return str(_hash.hexdigest())
 
 
-def traverse_directory(
-    root: str,
-    files: List[str],
+def construct_remote_paths(
+    original_file_paths: List[str],
     source: str,
     prefix: str,
+) -> Iterable[Tuple[str, Union[str, Any]]]:
+    """Enumerate all files in the given directory and compose paths for them to
+    be uploaded to in the remote storage. e.g.
+    [/mnt/c/Users/dipeck/upload_files/my_file1.txt,
+    /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
+
+        [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
+        (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
+
+    :param root: Root directory path
+    :type root: str
+    :param files: List of all file paths in the directory
+    :type files: List[str]
+    :param source: Local path to project directory
+    :type source: str
+    :param prefix: Remote upload path for project directory (e.g. LocalUpload/<guid>/project_dir)
+    :type prefix: str
+    :param ignore_file: The .amlignore or .gitignore file in the project directory
+    :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
+    :return: Zipped list of tuples representing the local path and remote destination path for each file
+    :rtype: Iterable[Tuple[str, Union[str, Any]]]
+    """
+    constructed_remote_paths = []
+    for path in original_file_paths:
+        constructed_remote_paths.append(prefix + convert_windows_path_to_unix(os.path.relpath(path, source)))
+
+    return constructed_remote_paths
+
+
+def construct_local_paths(
+    root: str,
+    files: List[str],
     ignore_file: IgnoreFile = IgnoreFile(),
 ) -> Iterable[Tuple[str, Union[str, Any]]]:
     """Enumerate all files in the given directory and compose paths for them to
@@ -336,61 +367,15 @@ def traverse_directory(
     :return: Zipped list of tuples representing the local path and remote destination path for each file
     :rtype: Iterable[Tuple[str, Union[str, Any]]]
     """
-    # Normalize Windows paths
-    root = convert_windows_path_to_unix(root)
-    source = convert_windows_path_to_unix(source)
-    working_dir = convert_windows_path_to_unix(os.getcwd())
-    project_dir = root[len(str(working_dir)) :] + "/"
-    file_paths = [
+    # Get list of file paths without ignored files
+
+    original_file_paths = [
         convert_windows_path_to_unix(os.path.join(root, name))
         for name in files
         if not ignore_file.is_file_excluded(os.path.join(root, name))
     ]  # get all files not excluded by the ignore file
-    file_paths_including_links = {fp: None for fp in file_paths}
 
-    for path in file_paths:
-        target_prefix = ""
-        symlink_prefix = ""
-
-        # check for symlinks to get their true paths
-        if os.path.islink(path):
-            target_absolute_path = os.path.join(os.path.dirname(path), os.readlink(path))
-            target_prefix = "/".join([root, str(os.readlink(path))]).replace(project_dir, "/")
-
-            # follow and add child links if the directory is a symlink
-            if os.path.isdir(target_absolute_path):
-                symlink_prefix = path.replace(root + "/", "")
-
-                for r, _, f in os.walk(target_absolute_path, followlinks=True):
-                    target_file_paths = {
-                        os.path.join(r, name): symlink_prefix + os.path.join(r, name).replace(target_prefix, "")
-                        for name in f
-                    }  # for each symlink, store its target_path as key and symlink path as value
-                    file_paths_including_links.update(target_file_paths)  # Add discovered symlinks to file paths list
-            else:
-                file_path_info = {
-                    target_absolute_path: path.replace(root + "/", "")
-                }  # for each symlink, store its target_path as key and symlink path as value
-                file_paths_including_links.update(file_path_info)  # Add discovered symlinks to file paths list
-            del file_paths_including_links[path]  # Remove original symlink entry now that detailed entry has been added
-
-    file_paths = sorted(
-        file_paths_including_links
-    )  # sort files to keep consistent order in case of repeat upload comparisons
-    dir_parts = [convert_windows_path_to_unix(os.path.relpath(root, source)) for _ in file_paths]
-    dir_parts = ["" if dir_part == "." else dir_part + "/" for dir_part in dir_parts]
-    blob_paths = []
-
-    for (dir_part, name) in zip(dir_parts, file_paths):
-        if file_paths_including_links.get(
-            name
-        ):  # for symlinks, use symlink name and structure in directory to create remote upload path
-            blob_path = prefix + dir_part + file_paths_including_links.get(name)
-        else:
-            blob_path = prefix + dir_part + name.replace(root + "/", "")
-        blob_paths.append(blob_path)
-
-    return zip(file_paths, blob_paths)
+    return original_file_paths
 
 
 def generate_asset_id(asset_hash: str, include_directory=True) -> str:
@@ -512,6 +497,14 @@ def upload_file(
 
     storage_client.uploaded_file_count += 1
 
+def traverse_directory(
+    root: str,
+    files: List[str],
+    source: str,
+    prefix: str,
+    ignore_file: IgnoreFile = IgnoreFile(),
+) -> Iterable[Tuple[str, Union[str, Any]]]:
+    pass
 
 def upload_directory(
     storage_client: Union["BlobStorageClient", "Gen2StorageClient"],
@@ -551,11 +544,57 @@ def upload_directory(
         )
 
     # Enumerate all files in the given directory and compose paths for them to be uploaded to in the remote storage
-    upload_paths = []
+    constructed_upload_paths = []
+    local_upload_paths = []
     size_dict = {}
     total_size = 0
-    for root, _, files in os.walk(source_path, followlinks=True):
-        upload_paths += list(traverse_directory(root, files, source_path, prefix, ignore_file=ignore_file))
+
+    link_dict = {}
+    symlink_directories = []
+
+    def untranslated_symlinks_walk(top):
+        """
+        Generate the file names in a directory tree by walking the tree either top-down or bottom-up.
+
+        For each directory in the tree rooted at the directory given by the `top` argument, yields a 3-tuple:
+            dirpath, dirnames, filenames
+        """
+        for root, dirs, files in os.walk(top, topdown=True):
+            for file in files:
+                filename = os.path.join(root, file)
+                if os.path.islink(filename):
+                    target = os.path.abspath(os.readlink(filename))
+                    link_dict[file] = convert_windows_path_to_unix(os.path.relpath(target, source_path))
+                    if os.path.isdir(target):
+                        files.remove(file)
+                        dirs += [file]
+                        symlink_directories.append(os.path.abspath(file))
+                        yield from os.walk(target, topdown=True)
+                else:
+                    yield root, dirs, files
+
+    files_list = untranslated_symlinks_walk(source_path)
+    local_paths = files_list
+    for root, _, files in local_paths:
+        local_upload_paths += list(construct_local_paths(root, files, ignore_file=ignore_file))
+
+    updated_local_upload_paths = []
+    if symlink_directories:
+        for link in list(link_dict.keys()):
+            for lup in local_upload_paths:
+                if link not in lup:
+                    updated_local_upload_paths.append(lup)
+    constructed_upload_paths += list(construct_remote_paths(updated_local_upload_paths, source_path, prefix))
+
+    remote_upload_paths = []
+    for link, target in zip(link_dict.keys(), link_dict.values()):
+        for path in constructed_upload_paths:
+            if target in path:
+                path = path.replace(target, link)
+            remote_upload_paths.append(path)
+
+    assert len(updated_local_upload_paths) == len(remote_upload_paths)
+    upload_paths = list(zip(updated_local_upload_paths, remote_upload_paths))
 
     # Get each file's size for progress bar tracking
     for path, _ in upload_paths:
