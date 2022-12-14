@@ -676,6 +676,7 @@ from typing import Any, AsyncIterable, Callable, Dict, IO, Optional, TypeVar, Un
 import urllib.parse
 if sys.version_info >= (3, 9):
     from collections.abc import MutableMapping
+else:
     from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
 JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 from ..._validation import api_version_validation
