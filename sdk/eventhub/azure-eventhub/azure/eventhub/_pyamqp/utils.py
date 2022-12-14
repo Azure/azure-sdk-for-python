@@ -9,7 +9,6 @@ from hashlib import sha256
 from hmac import HMAC
 from urllib.parse import urlencode, quote_plus
 import time
-import six
 
 from .types import TYPE, VALUE, AMQPTypes
 from ._encode import encode_payload
@@ -48,7 +47,7 @@ def utc_now():
 
 
 def encode(value, encoding='UTF-8'):
-    return value.encode(encoding) if isinstance(value, six.text_type) else value
+    return value.encode(encoding) if isinstance(value, str) else value
 
 
 def generate_sas_token(audience, policy, key, expiry=None):
