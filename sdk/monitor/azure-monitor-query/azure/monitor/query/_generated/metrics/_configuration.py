@@ -14,17 +14,17 @@ from azure.core.pipeline import policies
 VERSION = "unknown"
 
 
-class MonitorQueryClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
-    """Configuration for MonitorQueryClient.
+class MonitorMetricsClientConfiguration(Configuration):  # pylint: disable=too-many-instance-attributes
+    """Configuration for MonitorMetricsClient.
 
     Note that all parameters used to create this instance are saved as instance
     attributes.
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        super(MonitorQueryClientConfiguration, self).__init__(**kwargs)
+        super(MonitorMetricsClientConfiguration, self).__init__(**kwargs)
 
-        kwargs.setdefault("sdk_moniker", "monitorqueryclient/{}".format(VERSION))
+        kwargs.setdefault("sdk_moniker", "monitormetricsclient/{}".format(VERSION))
         self._configure(**kwargs)
 
     def _configure(self, **kwargs: Any) -> None:
@@ -33,7 +33,7 @@ class MonitorQueryClientConfiguration(Configuration):  # pylint: disable=too-man
         self.proxy_policy = kwargs.get("proxy_policy") or policies.ProxyPolicy(**kwargs)
         self.logging_policy = kwargs.get("logging_policy") or policies.NetworkTraceLoggingPolicy(**kwargs)
         self.http_logging_policy = kwargs.get("http_logging_policy") or policies.HttpLoggingPolicy(**kwargs)
-        self.retry_policy = kwargs.get("retry_policy") or policies.AsyncRetryPolicy(**kwargs)
+        self.retry_policy = kwargs.get("retry_policy") or policies.RetryPolicy(**kwargs)
         self.custom_hook_policy = kwargs.get("custom_hook_policy") or policies.CustomHookPolicy(**kwargs)
-        self.redirect_policy = kwargs.get("redirect_policy") or policies.AsyncRedirectPolicy(**kwargs)
+        self.redirect_policy = kwargs.get("redirect_policy") or policies.RedirectPolicy(**kwargs)
         self.authentication_policy = kwargs.get("authentication_policy")
