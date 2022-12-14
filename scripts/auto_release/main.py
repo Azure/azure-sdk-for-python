@@ -470,12 +470,13 @@ class CodegenTestPR:
     def run_test_proc(self):
         # run test
         os.chdir(self.sdk_code_path())
-        succeeded_result = 'Live test success'
-        failed_result = 'Live test fail, detailed info is in pipeline log(search keyword FAILED)!!!'
+        test_mode = "Live test" if os.getenv("AZURE_TEST_RUN_LIVE") else "Recording test"
+        succeeded_result = f'{test_mode} success'
+        failed_result = f'{test_mode} fail, detailed info is in pipeline log(search keyword FAILED)!!!'
         try:
             print_check(f'pytest  --collect-only')
         except:
-            log('live test run done, do not find any test !!!')
+            log(f'{test_mode} run done, do not find any test !!!')
             self.test_result = succeeded_result
             return
 
@@ -485,7 +486,7 @@ class CodegenTestPR:
             log('some test failed, please fix it locally')
             self.test_result = failed_result
         else:
-            log('live test run done, do not find failure !!!')
+            log(f'{test_mode} run done, do not find failure !!!')
             self.test_result = succeeded_result
 
     def run_test(self):
@@ -597,10 +598,16 @@ class CodegenTestPR:
         self.issue_comment()
 
     def run(self):
-        self.prepare_branch()
-        self.check_file()
-        self.run_test()
-        self.create_pr()
+        if "https:" in self.spec_readme:
+            self.prepare_branch_with_readme()
+            self.check_file()
+            self.run_test()
+            self.create_pr()
+        else:
+            self.sdk_folder = self.spec_readme.split('/')[0]
+            self.package_name = self.spec_readme.split('/')[-1]
+            self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
+            self.run_test()
 
 
 if __name__ == '__main__':
