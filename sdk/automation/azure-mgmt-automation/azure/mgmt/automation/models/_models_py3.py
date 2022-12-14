@@ -1,4 +1,5 @@
 # coding=utf-8
+# pylint: disable=too-many-lines
 # --------------------------------------------------------------------------
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License. See License.txt in the project root for license information.
@@ -7,17 +8,27 @@
 # --------------------------------------------------------------------------
 
 import datetime
+import sys
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, Union
 
-from azure.core.exceptions import HttpResponseError
-import msrest.serialization
+from .. import _serialization
+
+if sys.version_info >= (3, 9):
+    from collections.abc import MutableMapping
+else:
+    from typing import MutableMapping  # type: ignore  # pylint: disable=ungrouped-imports
+if sys.version_info >= (3, 8):
+    from typing import Literal  # pylint: disable=no-name-in-module, ungrouped-imports
+else:
+    from typing_extensions import Literal  # type: ignore  # pylint: disable=ungrouped-imports
 
 if TYPE_CHECKING:
     # pylint: disable=unused-import,ungrouped-imports
-    import __init__ as _models
+    from .. import models as _models
+JSON = MutableMapping[str, Any]  # pylint: disable=unsubscriptable-object
 
 
-class Activity(msrest.serialization.Model):
+class Activity(_serialization.Model):
     """Definition of the activity.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -41,24 +52,24 @@ class Activity(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'definition': {'key': 'properties.definition', 'type': 'str'},
-        'parameter_sets': {'key': 'properties.parameterSets', 'type': '[ActivityParameterSet]'},
-        'output_types': {'key': 'properties.outputTypes', 'type': '[ActivityOutputType]'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "definition": {"key": "properties.definition", "type": "str"},
+        "parameter_sets": {"key": "properties.parameterSets", "type": "[ActivityParameterSet]"},
+        "output_types": {"key": "properties.outputTypes", "type": "[ActivityOutputType]"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         definition: Optional[str] = None,
         parameter_sets: Optional[List["_models.ActivityParameterSet"]] = None,
         output_types: Optional[List["_models.ActivityOutputType"]] = None,
@@ -83,7 +94,7 @@ class Activity(msrest.serialization.Model):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(Activity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = None
         self.definition = definition
@@ -94,7 +105,7 @@ class Activity(msrest.serialization.Model):
         self.description = description
 
 
-class ActivityListResult(msrest.serialization.Model):
+class ActivityListResult(_serialization.Model):
     """The response model for the list activity operation.
 
     :ivar value: Gets or sets a list of activities.
@@ -104,29 +115,23 @@ class ActivityListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Activity]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Activity]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Activity"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Activity"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of activities.
         :paramtype value: list[~azure.mgmt.automation.models.Activity]
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(ActivityListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ActivityOutputType(msrest.serialization.Model):
+class ActivityOutputType(_serialization.Model):
     """Definition of the activity output type.
 
     :ivar name: Gets or sets the name of the activity output type.
@@ -136,29 +141,23 @@ class ActivityOutputType(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the activity output type.
         :paramtype name: str
         :keyword type: Gets or sets the type of the activity output type.
         :paramtype type: str
         """
-        super(ActivityOutputType, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class ActivityParameter(msrest.serialization.Model):
+class ActivityParameter(_serialization.Model):
     """Definition of the activity parameter.
 
     :ivar name: Gets or sets the name of the activity parameter.
@@ -171,7 +170,7 @@ class ActivityParameter(msrest.serialization.Model):
     :ivar is_dynamic: Gets or sets a Boolean value that indicates true if the parameter is dynamic.
     :vartype is_dynamic: bool
     :ivar position: Gets or sets the position of the activity parameter.
-    :vartype position: long
+    :vartype position: int
     :ivar value_from_pipeline: Gets or sets a Boolean value that indicates true if the parameter
      can take values from the incoming pipeline objects. This setting is used if the cmdlet must
      access the complete input object. false indicates that the parameter cannot take values from
@@ -194,16 +193,16 @@ class ActivityParameter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'is_mandatory': {'key': 'isMandatory', 'type': 'bool'},
-        'is_dynamic': {'key': 'isDynamic', 'type': 'bool'},
-        'position': {'key': 'position', 'type': 'long'},
-        'value_from_pipeline': {'key': 'valueFromPipeline', 'type': 'bool'},
-        'value_from_pipeline_by_property_name': {'key': 'valueFromPipelineByPropertyName', 'type': 'bool'},
-        'value_from_remaining_arguments': {'key': 'valueFromRemainingArguments', 'type': 'bool'},
-        'description': {'key': 'description', 'type': 'str'},
-        'validation_set': {'key': 'validationSet', 'type': '[ActivityParameterValidationSet]'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "is_mandatory": {"key": "isMandatory", "type": "bool"},
+        "is_dynamic": {"key": "isDynamic", "type": "bool"},
+        "position": {"key": "position", "type": "int"},
+        "value_from_pipeline": {"key": "valueFromPipeline", "type": "bool"},
+        "value_from_pipeline_by_property_name": {"key": "valueFromPipelineByPropertyName", "type": "bool"},
+        "value_from_remaining_arguments": {"key": "valueFromRemainingArguments", "type": "bool"},
+        "description": {"key": "description", "type": "str"},
+        "validation_set": {"key": "validationSet", "type": "[ActivityParameterValidationSet]"},
     }
 
     def __init__(
@@ -233,7 +232,7 @@ class ActivityParameter(msrest.serialization.Model):
          dynamic.
         :paramtype is_dynamic: bool
         :keyword position: Gets or sets the position of the activity parameter.
-        :paramtype position: long
+        :paramtype position: int
         :keyword value_from_pipeline: Gets or sets a Boolean value that indicates true if the parameter
          can take values from the incoming pipeline objects. This setting is used if the cmdlet must
          access the complete input object. false indicates that the parameter cannot take values from
@@ -254,7 +253,7 @@ class ActivityParameter(msrest.serialization.Model):
         :keyword validation_set: Gets or sets the validation set of activity parameter.
         :paramtype validation_set: list[~azure.mgmt.automation.models.ActivityParameterValidationSet]
         """
-        super(ActivityParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
         self.is_mandatory = is_mandatory
@@ -267,7 +266,7 @@ class ActivityParameter(msrest.serialization.Model):
         self.validation_set = validation_set
 
 
-class ActivityParameterSet(msrest.serialization.Model):
+class ActivityParameterSet(_serialization.Model):
     """Definition of the activity parameter set.
 
     :ivar name: Gets or sets the name of the activity parameter set.
@@ -277,16 +276,12 @@ class ActivityParameterSet(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'parameters': {'key': 'parameters', 'type': '[ActivityParameter]'},
+        "name": {"key": "name", "type": "str"},
+        "parameters": {"key": "parameters", "type": "[ActivityParameter]"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        parameters: Optional[List["_models.ActivityParameter"]] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, parameters: Optional[List["_models.ActivityParameter"]] = None, **kwargs
     ):
         """
         :keyword name: Gets or sets the name of the activity parameter set.
@@ -294,12 +289,12 @@ class ActivityParameterSet(msrest.serialization.Model):
         :keyword parameters: Gets or sets the parameters of the activity parameter set.
         :paramtype parameters: list[~azure.mgmt.automation.models.ActivityParameter]
         """
-        super(ActivityParameterSet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.parameters = parameters
 
 
-class ActivityParameterValidationSet(msrest.serialization.Model):
+class ActivityParameterValidationSet(_serialization.Model):
     """Definition of the activity parameter validation set.
 
     :ivar member_value: Gets or sets the name of the activity parameter validation set member.
@@ -307,24 +302,19 @@ class ActivityParameterValidationSet(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'member_value': {'key': 'memberValue', 'type': 'str'},
+        "member_value": {"key": "memberValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        member_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, member_value: Optional[str] = None, **kwargs):
         """
         :keyword member_value: Gets or sets the name of the activity parameter validation set member.
         :paramtype member_value: str
         """
-        super(ActivityParameterValidationSet, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.member_value = member_value
 
 
-class AdvancedSchedule(msrest.serialization.Model):
+class AdvancedSchedule(_serialization.Model):
     """The properties of the create Advanced Schedule.
 
     :ivar week_days: Days of the week that the job should execute on.
@@ -337,9 +327,9 @@ class AdvancedSchedule(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'week_days': {'key': 'weekDays', 'type': '[str]'},
-        'month_days': {'key': 'monthDays', 'type': '[int]'},
-        'monthly_occurrences': {'key': 'monthlyOccurrences', 'type': '[AdvancedScheduleMonthlyOccurrence]'},
+        "week_days": {"key": "weekDays", "type": "[str]"},
+        "month_days": {"key": "monthDays", "type": "[int]"},
+        "monthly_occurrences": {"key": "monthlyOccurrences", "type": "[AdvancedScheduleMonthlyOccurrence]"},
     }
 
     def __init__(
@@ -360,49 +350,45 @@ class AdvancedSchedule(msrest.serialization.Model):
         :paramtype monthly_occurrences:
          list[~azure.mgmt.automation.models.AdvancedScheduleMonthlyOccurrence]
         """
-        super(AdvancedSchedule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.week_days = week_days
         self.month_days = month_days
         self.monthly_occurrences = monthly_occurrences
 
 
-class AdvancedScheduleMonthlyOccurrence(msrest.serialization.Model):
+class AdvancedScheduleMonthlyOccurrence(_serialization.Model):
     """The properties of the create advanced schedule monthly occurrence.
 
     :ivar occurrence: Occurrence of the week within the month. Must be between 1 and 5.
     :vartype occurrence: int
     :ivar day: Day of the occurrence. Must be one of monday, tuesday, wednesday, thursday, friday,
      saturday, sunday. Known values are: "Monday", "Tuesday", "Wednesday", "Thursday", "Friday",
-     "Saturday", "Sunday".
+     "Saturday", and "Sunday".
     :vartype day: str or ~azure.mgmt.automation.models.ScheduleDay
     """
 
     _attribute_map = {
-        'occurrence': {'key': 'occurrence', 'type': 'int'},
-        'day': {'key': 'day', 'type': 'str'},
+        "occurrence": {"key": "occurrence", "type": "int"},
+        "day": {"key": "day", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        occurrence: Optional[int] = None,
-        day: Optional[Union[str, "_models.ScheduleDay"]] = None,
-        **kwargs
+        self, *, occurrence: Optional[int] = None, day: Optional[Union[str, "_models.ScheduleDay"]] = None, **kwargs
     ):
         """
         :keyword occurrence: Occurrence of the week within the month. Must be between 1 and 5.
         :paramtype occurrence: int
         :keyword day: Day of the occurrence. Must be one of monday, tuesday, wednesday, thursday,
          friday, saturday, sunday. Known values are: "Monday", "Tuesday", "Wednesday", "Thursday",
-         "Friday", "Saturday", "Sunday".
+         "Friday", "Saturday", and "Sunday".
         :paramtype day: str or ~azure.mgmt.automation.models.ScheduleDay
         """
-        super(AdvancedScheduleMonthlyOccurrence, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.occurrence = occurrence
         self.day = day
 
 
-class AgentRegistration(msrest.serialization.Model):
+class AgentRegistration(_serialization.Model):
     """Definition of the agent registration information type.
 
     :ivar dsc_meta_configuration: Gets or sets the dsc meta configuration.
@@ -416,10 +402,10 @@ class AgentRegistration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'dsc_meta_configuration': {'key': 'dscMetaConfiguration', 'type': 'str'},
-        'endpoint': {'key': 'endpoint', 'type': 'str'},
-        'keys': {'key': 'keys', 'type': 'AgentRegistrationKeys'},
-        'id': {'key': 'id', 'type': 'str'},
+        "dsc_meta_configuration": {"key": "dscMetaConfiguration", "type": "str"},
+        "endpoint": {"key": "endpoint", "type": "str"},
+        "keys": {"key": "keys", "type": "AgentRegistrationKeys"},
+        "id": {"key": "id", "type": "str"},
     }
 
     def __init__(
@@ -428,7 +414,7 @@ class AgentRegistration(msrest.serialization.Model):
         dsc_meta_configuration: Optional[str] = None,
         endpoint: Optional[str] = None,
         keys: Optional["_models.AgentRegistrationKeys"] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         **kwargs
     ):
         """
@@ -441,14 +427,14 @@ class AgentRegistration(msrest.serialization.Model):
         :keyword id: Gets or sets the id.
         :paramtype id: str
         """
-        super(AgentRegistration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.dsc_meta_configuration = dsc_meta_configuration
         self.endpoint = endpoint
         self.keys = keys
         self.id = id
 
 
-class AgentRegistrationKeys(msrest.serialization.Model):
+class AgentRegistrationKeys(_serialization.Model):
     """Definition of the agent registration keys.
 
     :ivar primary: Gets or sets the primary key.
@@ -458,62 +444,51 @@ class AgentRegistrationKeys(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'primary': {'key': 'primary', 'type': 'str'},
-        'secondary': {'key': 'secondary', 'type': 'str'},
+        "primary": {"key": "primary", "type": "str"},
+        "secondary": {"key": "secondary", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        primary: Optional[str] = None,
-        secondary: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, primary: Optional[str] = None, secondary: Optional[str] = None, **kwargs):
         """
         :keyword primary: Gets or sets the primary key.
         :paramtype primary: str
         :keyword secondary: Gets or sets the secondary key.
         :paramtype secondary: str
         """
-        super(AgentRegistrationKeys, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.primary = primary
         self.secondary = secondary
 
 
-class AgentRegistrationRegenerateKeyParameter(msrest.serialization.Model):
+class AgentRegistrationRegenerateKeyParameter(_serialization.Model):
     """The parameters supplied to the regenerate keys operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar key_name: Required. Gets or sets the agent registration key name - primary or secondary.
-     Known values are: "primary", "secondary".
+    :ivar key_name: Gets or sets the agent registration key name - primary or secondary. Required.
+     Known values are: "primary" and "secondary".
     :vartype key_name: str or ~azure.mgmt.automation.models.AgentRegistrationKeyName
     """
 
     _validation = {
-        'key_name': {'required': True},
+        "key_name": {"required": True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'keyName', 'type': 'str'},
+        "key_name": {"key": "keyName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        key_name: Union[str, "_models.AgentRegistrationKeyName"],
-        **kwargs
-    ):
+    def __init__(self, *, key_name: Union[str, "_models.AgentRegistrationKeyName"], **kwargs):
         """
-        :keyword key_name: Required. Gets or sets the agent registration key name - primary or
-         secondary. Known values are: "primary", "secondary".
+        :keyword key_name: Gets or sets the agent registration key name - primary or secondary.
+         Required. Known values are: "primary" and "secondary".
         :paramtype key_name: str or ~azure.mgmt.automation.models.AgentRegistrationKeyName
         """
-        super(AgentRegistrationRegenerateKeyParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_name = key_name
 
 
-class Resource(msrest.serialization.Model):
+class Resource(_serialization.Model):
     """The core properties of ARM resources.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -527,24 +502,20 @@ class Resource(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Resource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -561,45 +532,39 @@ class TrackedResource(Resource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The Azure Region where the resource lives.
     :vartype location: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        location: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, location: Optional[str] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The Azure Region where the resource lives.
         :paramtype location: str
         """
-        super(TrackedResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.location = location
 
 
-class AutomationAccount(TrackedResource):
+class AutomationAccount(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Definition of the automation account type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -610,7 +575,7 @@ class AutomationAccount(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The Azure Region where the resource lives.
     :vartype location: str
@@ -624,7 +589,7 @@ class AutomationAccount(TrackedResource):
     :vartype sku: ~azure.mgmt.automation.models.Sku
     :ivar last_modified_by: Gets or sets the last modified by.
     :vartype last_modified_by: str
-    :ivar state: Gets status of account. Known values are: "Ok", "Unavailable", "Suspended".
+    :ivar state: Gets status of account. Known values are: "Ok", "Unavailable", and "Suspended".
     :vartype state: str or ~azure.mgmt.automation.models.AutomationAccountState
     :ivar creation_time: Gets the creation time.
     :vartype creation_time: ~datetime.datetime
@@ -649,35 +614,38 @@ class AutomationAccount(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
-        'state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
+        "state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
-        'private_endpoint_connections': {'key': 'properties.privateEndpointConnections', 'type': '[PrivateEndpointConnection]'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'bool'},
-        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
-        'automation_hybrid_service_url': {'key': 'properties.automationHybridServiceUrl', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "sku": {"key": "properties.sku", "type": "Sku"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
+        "state": {"key": "properties.state", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
+        "encryption": {"key": "properties.encryption", "type": "EncryptionProperties"},
+        "private_endpoint_connections": {
+            "key": "properties.privateEndpointConnections",
+            "type": "[PrivateEndpointConnection]",
+        },
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "bool"},
+        "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
+        "automation_hybrid_service_url": {"key": "properties.automationHybridServiceUrl", "type": "str"},
     }
 
     def __init__(
@@ -698,7 +666,7 @@ class AutomationAccount(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The Azure Region where the resource lives.
         :paramtype location: str
@@ -728,7 +696,7 @@ class AutomationAccount(TrackedResource):
          hybrid worker on-boarding.
         :paramtype automation_hybrid_service_url: str
         """
-        super(AutomationAccount, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.etag = etag
         self.identity = identity
         self.system_data = None
@@ -745,7 +713,7 @@ class AutomationAccount(TrackedResource):
         self.automation_hybrid_service_url = automation_hybrid_service_url
 
 
-class AutomationAccountCreateOrUpdateParameters(msrest.serialization.Model):
+class AutomationAccountCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update automation account operation.
 
     :ivar name: Gets or sets name of the resource.
@@ -754,7 +722,7 @@ class AutomationAccountCreateOrUpdateParameters(msrest.serialization.Model):
     :vartype location: str
     :ivar identity: Sets the identity property for automation account.
     :vartype identity: ~azure.mgmt.automation.models.Identity
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
     :ivar sku: Gets or sets account SKU.
     :vartype sku: ~azure.mgmt.automation.models.Sku
@@ -768,14 +736,14 @@ class AutomationAccountCreateOrUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'bool'},
-        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "properties.sku", "type": "Sku"},
+        "encryption": {"key": "properties.encryption", "type": "EncryptionProperties"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "bool"},
+        "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
     }
 
     def __init__(
@@ -798,7 +766,7 @@ class AutomationAccountCreateOrUpdateParameters(msrest.serialization.Model):
         :paramtype location: str
         :keyword identity: Sets the identity property for automation account.
         :paramtype identity: ~azure.mgmt.automation.models.Identity
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
         :keyword sku: Gets or sets account SKU.
         :paramtype sku: ~azure.mgmt.automation.models.Sku
@@ -811,7 +779,7 @@ class AutomationAccountCreateOrUpdateParameters(msrest.serialization.Model):
          blocked.
         :paramtype disable_local_auth: bool
         """
-        super(AutomationAccountCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.location = location
         self.identity = identity
@@ -822,7 +790,7 @@ class AutomationAccountCreateOrUpdateParameters(msrest.serialization.Model):
         self.disable_local_auth = disable_local_auth
 
 
-class AutomationAccountListResult(msrest.serialization.Model):
+class AutomationAccountListResult(_serialization.Model):
     """The response model for the list account operation.
 
     :ivar value: Gets or sets list of accounts.
@@ -832,16 +800,12 @@ class AutomationAccountListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[AutomationAccount]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[AutomationAccount]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.AutomationAccount"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.AutomationAccount"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets or sets list of accounts.
@@ -849,12 +813,12 @@ class AutomationAccountListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(AutomationAccountListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class AutomationAccountUpdateParameters(msrest.serialization.Model):
+class AutomationAccountUpdateParameters(_serialization.Model):
     """The parameters supplied to the update automation account operation.
 
     :ivar name: Gets or sets the name of the resource.
@@ -863,7 +827,7 @@ class AutomationAccountUpdateParameters(msrest.serialization.Model):
     :vartype location: str
     :ivar identity: Sets the identity property for automation account.
     :vartype identity: ~azure.mgmt.automation.models.Identity
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
     :ivar sku: Gets or sets account SKU.
     :vartype sku: ~azure.mgmt.automation.models.Sku
@@ -877,14 +841,14 @@ class AutomationAccountUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'Identity'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'sku': {'key': 'properties.sku', 'type': 'Sku'},
-        'encryption': {'key': 'properties.encryption', 'type': 'EncryptionProperties'},
-        'public_network_access': {'key': 'properties.publicNetworkAccess', 'type': 'bool'},
-        'disable_local_auth': {'key': 'properties.disableLocalAuth', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "identity": {"key": "identity", "type": "Identity"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "sku": {"key": "properties.sku", "type": "Sku"},
+        "encryption": {"key": "properties.encryption", "type": "EncryptionProperties"},
+        "public_network_access": {"key": "properties.publicNetworkAccess", "type": "bool"},
+        "disable_local_auth": {"key": "properties.disableLocalAuth", "type": "bool"},
     }
 
     def __init__(
@@ -907,7 +871,7 @@ class AutomationAccountUpdateParameters(msrest.serialization.Model):
         :paramtype location: str
         :keyword identity: Sets the identity property for automation account.
         :paramtype identity: ~azure.mgmt.automation.models.Identity
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
         :keyword sku: Gets or sets account SKU.
         :paramtype sku: ~azure.mgmt.automation.models.Sku
@@ -920,7 +884,7 @@ class AutomationAccountUpdateParameters(msrest.serialization.Model):
          blocked.
         :paramtype disable_local_auth: bool
         """
-        super(AutomationAccountUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.location = location
         self.identity = identity
@@ -931,7 +895,7 @@ class AutomationAccountUpdateParameters(msrest.serialization.Model):
         self.disable_local_auth = disable_local_auth
 
 
-class AzureQueryProperties(msrest.serialization.Model):
+class AzureQueryProperties(_serialization.Model):
     """Azure query for the update configuration.
 
     :ivar scope: List of Subscription or Resource Group ARM Ids.
@@ -943,9 +907,9 @@ class AzureQueryProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'scope': {'key': 'scope', 'type': '[str]'},
-        'locations': {'key': 'locations', 'type': '[str]'},
-        'tag_settings': {'key': 'tagSettings', 'type': 'TagSettingsProperties'},
+        "scope": {"key": "scope", "type": "[str]"},
+        "locations": {"key": "locations", "type": "[str]"},
+        "tag_settings": {"key": "tagSettings", "type": "TagSettingsProperties"},
     }
 
     def __init__(
@@ -964,7 +928,7 @@ class AzureQueryProperties(msrest.serialization.Model):
         :keyword tag_settings: Tag settings for the VM.
         :paramtype tag_settings: ~azure.mgmt.automation.models.TagSettingsProperties
         """
-        super(AzureQueryProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.scope = scope
         self.locations = locations
         self.tag_settings = tag_settings
@@ -984,24 +948,20 @@ class ProxyResource(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ProxyResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
 
 
 class Certificate(ProxyResource):
@@ -1030,39 +990,34 @@ class Certificate(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'thumbprint': {'readonly': True},
-        'expiry_time': {'readonly': True},
-        'is_exportable': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "thumbprint": {"readonly": True},
+        "expiry_time": {"readonly": True},
+        "is_exportable": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
-        'expiry_time': {'key': 'properties.expiryTime', 'type': 'iso-8601'},
-        'is_exportable': {'key': 'properties.isExportable', 'type': 'bool'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
+        "expiry_time": {"key": "properties.expiryTime", "type": "iso-8601"},
+        "is_exportable": {"key": "properties.isExportable", "type": "bool"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, description: Optional[str] = None, **kwargs):
         """
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(Certificate, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.thumbprint = None
         self.expiry_time = None
         self.is_exportable = None
@@ -1071,14 +1026,14 @@ class Certificate(ProxyResource):
         self.description = description
 
 
-class CertificateCreateOrUpdateParameters(msrest.serialization.Model):
+class CertificateCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update or replace certificate operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the name of the certificate.
+    :ivar name: Gets or sets the name of the certificate. Required.
     :vartype name: str
-    :ivar base64_value: Required. Gets or sets the base64 encoded value of the certificate.
+    :ivar base64_value: Gets or sets the base64 encoded value of the certificate. Required.
     :vartype base64_value: str
     :ivar description: Gets or sets the description of the certificate.
     :vartype description: str
@@ -1089,16 +1044,16 @@ class CertificateCreateOrUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'base64_value': {'required': True},
+        "name": {"required": True},
+        "base64_value": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'base64_value': {'key': 'properties.base64Value', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'thumbprint': {'key': 'properties.thumbprint', 'type': 'str'},
-        'is_exportable': {'key': 'properties.isExportable', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "base64_value": {"key": "properties.base64Value", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "thumbprint": {"key": "properties.thumbprint", "type": "str"},
+        "is_exportable": {"key": "properties.isExportable", "type": "bool"},
     }
 
     def __init__(
@@ -1112,9 +1067,9 @@ class CertificateCreateOrUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Gets or sets the name of the certificate.
+        :keyword name: Gets or sets the name of the certificate. Required.
         :paramtype name: str
-        :keyword base64_value: Required. Gets or sets the base64 encoded value of the certificate.
+        :keyword base64_value: Gets or sets the base64 encoded value of the certificate. Required.
         :paramtype base64_value: str
         :keyword description: Gets or sets the description of the certificate.
         :paramtype description: str
@@ -1123,7 +1078,7 @@ class CertificateCreateOrUpdateParameters(msrest.serialization.Model):
         :keyword is_exportable: Gets or sets the is exportable flag of the certificate.
         :paramtype is_exportable: bool
         """
-        super(CertificateCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.base64_value = base64_value
         self.description = description
@@ -1131,7 +1086,7 @@ class CertificateCreateOrUpdateParameters(msrest.serialization.Model):
         self.is_exportable = is_exportable
 
 
-class CertificateListResult(msrest.serialization.Model):
+class CertificateListResult(_serialization.Model):
     """The response model for the list certificate operation.
 
     :ivar value: Gets or sets a list of certificates.
@@ -1141,16 +1096,12 @@ class CertificateListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Certificate]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Certificate]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Certificate"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.Certificate"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets or sets a list of certificates.
@@ -1158,12 +1109,12 @@ class CertificateListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(CertificateListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class CertificateUpdateParameters(msrest.serialization.Model):
+class CertificateUpdateParameters(_serialization.Model):
     """The parameters supplied to the update certificate operation.
 
     :ivar name: Gets or sets the name of the certificate.
@@ -1173,58 +1124,20 @@ class CertificateUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, description: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the certificate.
         :paramtype name: str
         :keyword description: Gets or sets the description of the certificate.
         :paramtype description: str
         """
-        super(CertificateUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.description = description
-
-
-class ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties(msrest.serialization.Model):
-    """ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties.
-
-    Variables are only populated by the server, and will be ignored when sending a request.
-
-    :ivar principal_id: The principal id of user assigned identity.
-    :vartype principal_id: str
-    :ivar client_id: The client id of user assigned identity.
-    :vartype client_id: str
-    """
-
-    _validation = {
-        'principal_id': {'readonly': True},
-        'client_id': {'readonly': True},
-    }
-
-    _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'client_id': {'key': 'clientId', 'type': 'str'},
-    }
-
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties, self).__init__(**kwargs)
-        self.principal_id = None
-        self.client_id = None
 
 
 class Connection(ProxyResource):
@@ -1251,23 +1164,23 @@ class Connection(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'field_definition_values': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "field_definition_values": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'connection_type': {'key': 'properties.connectionType', 'type': 'ConnectionTypeAssociationProperty'},
-        'field_definition_values': {'key': 'properties.fieldDefinitionValues', 'type': '{str}'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "connection_type": {"key": "properties.connectionType", "type": "ConnectionTypeAssociationProperty"},
+        "field_definition_values": {"key": "properties.fieldDefinitionValues", "type": "{str}"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -1283,7 +1196,7 @@ class Connection(ProxyResource):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(Connection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.connection_type = connection_type
         self.field_definition_values = None
         self.creation_time = None
@@ -1291,31 +1204,31 @@ class Connection(ProxyResource):
         self.description = description
 
 
-class ConnectionCreateOrUpdateParameters(msrest.serialization.Model):
+class ConnectionCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update connection operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the name of the connection.
+    :ivar name: Gets or sets the name of the connection. Required.
     :vartype name: str
     :ivar description: Gets or sets the description of the connection.
     :vartype description: str
-    :ivar connection_type: Required. Gets or sets the connectionType of the connection.
+    :ivar connection_type: Gets or sets the connectionType of the connection. Required.
     :vartype connection_type: ~azure.mgmt.automation.models.ConnectionTypeAssociationProperty
     :ivar field_definition_values: Gets or sets the field definition properties of the connection.
     :vartype field_definition_values: dict[str, str]
     """
 
     _validation = {
-        'name': {'required': True},
-        'connection_type': {'required': True},
+        "name": {"required": True},
+        "connection_type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'connection_type': {'key': 'properties.connectionType', 'type': 'ConnectionTypeAssociationProperty'},
-        'field_definition_values': {'key': 'properties.fieldDefinitionValues', 'type': '{str}'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "connection_type": {"key": "properties.connectionType", "type": "ConnectionTypeAssociationProperty"},
+        "field_definition_values": {"key": "properties.fieldDefinitionValues", "type": "{str}"},
     }
 
     def __init__(
@@ -1328,24 +1241,24 @@ class ConnectionCreateOrUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Gets or sets the name of the connection.
+        :keyword name: Gets or sets the name of the connection. Required.
         :paramtype name: str
         :keyword description: Gets or sets the description of the connection.
         :paramtype description: str
-        :keyword connection_type: Required. Gets or sets the connectionType of the connection.
+        :keyword connection_type: Gets or sets the connectionType of the connection. Required.
         :paramtype connection_type: ~azure.mgmt.automation.models.ConnectionTypeAssociationProperty
         :keyword field_definition_values: Gets or sets the field definition properties of the
          connection.
         :paramtype field_definition_values: dict[str, str]
         """
-        super(ConnectionCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.description = description
         self.connection_type = connection_type
         self.field_definition_values = field_definition_values
 
 
-class ConnectionListResult(msrest.serialization.Model):
+class ConnectionListResult(_serialization.Model):
     """The response model for the list connection operation.
 
     :ivar value: Gets or sets a list of connection.
@@ -1355,16 +1268,12 @@ class ConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Connection]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Connection]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Connection"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.Connection"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets or sets a list of connection.
@@ -1372,12 +1281,12 @@ class ConnectionListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(ConnectionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ConnectionType(msrest.serialization.Model):
+class ConnectionType(_serialization.Model):
     """Definition of the connection type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1401,22 +1310,22 @@ class ConnectionType(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'field_definitions': {'readonly': True},
-        'creation_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "field_definitions": {"readonly": True},
+        "creation_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'is_global': {'key': 'properties.isGlobal', 'type': 'bool'},
-        'field_definitions': {'key': 'properties.fieldDefinitions', 'type': '{FieldDefinition}'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "is_global": {"key": "properties.isGlobal", "type": "bool"},
+        "field_definitions": {"key": "properties.fieldDefinitions", "type": "{FieldDefinition}"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -1435,7 +1344,7 @@ class ConnectionType(msrest.serialization.Model):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(ConnectionType, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -1446,7 +1355,7 @@ class ConnectionType(msrest.serialization.Model):
         self.description = description
 
 
-class ConnectionTypeAssociationProperty(msrest.serialization.Model):
+class ConnectionTypeAssociationProperty(_serialization.Model):
     """The connection type property associated with the entity.
 
     :ivar name: Gets or sets the name of the connection type.
@@ -1454,45 +1363,40 @@ class ConnectionTypeAssociationProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the connection type.
         :paramtype name: str
         """
-        super(ConnectionTypeAssociationProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class ConnectionTypeCreateOrUpdateParameters(msrest.serialization.Model):
+class ConnectionTypeCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update connection type operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the name of the connection type.
+    :ivar name: Gets or sets the name of the connection type. Required.
     :vartype name: str
     :ivar is_global: Gets or sets a Boolean value to indicate if the connection type is global.
     :vartype is_global: bool
-    :ivar field_definitions: Required. Gets or sets the field definitions of the connection type.
+    :ivar field_definitions: Gets or sets the field definitions of the connection type. Required.
     :vartype field_definitions: dict[str, ~azure.mgmt.automation.models.FieldDefinition]
     """
 
     _validation = {
-        'name': {'required': True},
-        'field_definitions': {'required': True},
+        "name": {"required": True},
+        "field_definitions": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_global': {'key': 'properties.isGlobal', 'type': 'bool'},
-        'field_definitions': {'key': 'properties.fieldDefinitions', 'type': '{FieldDefinition}'},
+        "name": {"key": "name", "type": "str"},
+        "is_global": {"key": "properties.isGlobal", "type": "bool"},
+        "field_definitions": {"key": "properties.fieldDefinitions", "type": "{FieldDefinition}"},
     }
 
     def __init__(
@@ -1504,21 +1408,21 @@ class ConnectionTypeCreateOrUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Gets or sets the name of the connection type.
+        :keyword name: Gets or sets the name of the connection type. Required.
         :paramtype name: str
         :keyword is_global: Gets or sets a Boolean value to indicate if the connection type is global.
         :paramtype is_global: bool
-        :keyword field_definitions: Required. Gets or sets the field definitions of the connection
-         type.
+        :keyword field_definitions: Gets or sets the field definitions of the connection type.
+         Required.
         :paramtype field_definitions: dict[str, ~azure.mgmt.automation.models.FieldDefinition]
         """
-        super(ConnectionTypeCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.is_global = is_global
         self.field_definitions = field_definitions
 
 
-class ConnectionTypeListResult(msrest.serialization.Model):
+class ConnectionTypeListResult(_serialization.Model):
     """The response model for the list connection type operation.
 
     :ivar value: Gets or sets a list of connection types.
@@ -1528,16 +1432,12 @@ class ConnectionTypeListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[ConnectionType]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[ConnectionType]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.ConnectionType"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.ConnectionType"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets or sets a list of connection types.
@@ -1545,12 +1445,12 @@ class ConnectionTypeListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(ConnectionTypeListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ConnectionUpdateParameters(msrest.serialization.Model):
+class ConnectionUpdateParameters(_serialization.Model):
     """The parameters supplied to the update connection operation.
 
     :ivar name: Gets or sets the name of the connection.
@@ -1562,9 +1462,9 @@ class ConnectionUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'field_definition_values': {'key': 'properties.fieldDefinitionValues', 'type': '{str}'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "field_definition_values": {"key": "properties.fieldDefinitionValues", "type": "{str}"},
     }
 
     def __init__(
@@ -1583,52 +1483,46 @@ class ConnectionUpdateParameters(msrest.serialization.Model):
         :keyword field_definition_values: Gets or sets the field definition values of the connection.
         :paramtype field_definition_values: dict[str, str]
         """
-        super(ConnectionUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.description = description
         self.field_definition_values = field_definition_values
 
 
-class ContentHash(msrest.serialization.Model):
+class ContentHash(_serialization.Model):
     """Definition of the runbook property type.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar algorithm: Required. Gets or sets the content hash algorithm used to hash the content.
+    :ivar algorithm: Gets or sets the content hash algorithm used to hash the content. Required.
     :vartype algorithm: str
-    :ivar value: Required. Gets or sets expected hash value of the content.
+    :ivar value: Gets or sets expected hash value of the content. Required.
     :vartype value: str
     """
 
     _validation = {
-        'algorithm': {'required': True},
-        'value': {'required': True},
+        "algorithm": {"required": True},
+        "value": {"required": True},
     }
 
     _attribute_map = {
-        'algorithm': {'key': 'algorithm', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
+        "algorithm": {"key": "algorithm", "type": "str"},
+        "value": {"key": "value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        algorithm: str,
-        value: str,
-        **kwargs
-    ):
+    def __init__(self, *, algorithm: str, value: str, **kwargs):
         """
-        :keyword algorithm: Required. Gets or sets the content hash algorithm used to hash the content.
+        :keyword algorithm: Gets or sets the content hash algorithm used to hash the content. Required.
         :paramtype algorithm: str
-        :keyword value: Required. Gets or sets expected hash value of the content.
+        :keyword value: Gets or sets expected hash value of the content. Required.
         :paramtype value: str
         """
-        super(ContentHash, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.algorithm = algorithm
         self.value = value
 
 
-class ContentLink(msrest.serialization.Model):
+class ContentLink(_serialization.Model):
     """Definition of the content link.
 
     :ivar uri: Gets or sets the uri of the runbook content.
@@ -1640,9 +1534,9 @@ class ContentLink(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'uri': {'key': 'uri', 'type': 'str'},
-        'content_hash': {'key': 'contentHash', 'type': 'ContentHash'},
-        'version': {'key': 'version', 'type': 'str'},
+        "uri": {"key": "uri", "type": "str"},
+        "content_hash": {"key": "contentHash", "type": "ContentHash"},
+        "version": {"key": "version", "type": "str"},
     }
 
     def __init__(
@@ -1661,18 +1555,19 @@ class ContentLink(msrest.serialization.Model):
         :keyword version: Gets or sets the version of the content.
         :paramtype version: str
         """
-        super(ContentLink, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.uri = uri
         self.content_hash = content_hash
         self.version = version
 
 
-class ContentSource(msrest.serialization.Model):
+class ContentSource(_serialization.Model):
     """Definition of the content source.
 
     :ivar hash: Gets or sets the hash.
     :vartype hash: ~azure.mgmt.automation.models.ContentHash
-    :ivar type: Gets or sets the content source type. Known values are: "embeddedContent", "uri".
+    :ivar type: Gets or sets the content source type. Known values are: "embeddedContent" and
+     "uri".
     :vartype type: str or ~azure.mgmt.automation.models.ContentSourceType
     :ivar value: Gets or sets the value of the content. This is based on the content source type.
     :vartype value: str
@@ -1681,10 +1576,10 @@ class ContentSource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'hash': {'key': 'hash', 'type': 'ContentHash'},
-        'type': {'key': 'type', 'type': 'str'},
-        'value': {'key': 'value', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "hash": {"key": "hash", "type": "ContentHash"},
+        "type": {"key": "type", "type": "str"},
+        "value": {"key": "value", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
     def __init__(
@@ -1699,7 +1594,7 @@ class ContentSource(msrest.serialization.Model):
         """
         :keyword hash: Gets or sets the hash.
         :paramtype hash: ~azure.mgmt.automation.models.ContentHash
-        :keyword type: Gets or sets the content source type. Known values are: "embeddedContent",
+        :keyword type: Gets or sets the content source type. Known values are: "embeddedContent" and
          "uri".
         :paramtype type: str or ~azure.mgmt.automation.models.ContentSourceType
         :keyword value: Gets or sets the value of the content. This is based on the content source
@@ -1708,7 +1603,7 @@ class ContentSource(msrest.serialization.Model):
         :keyword version: Gets or sets the version of the content.
         :paramtype version: str
         """
-        super(ContentSource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.hash = hash
         self.type = type
         self.value = value
@@ -1737,96 +1632,83 @@ class Credential(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'user_name': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "user_name": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_name": {"key": "properties.userName", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, description: Optional[str] = None, **kwargs):
         """
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(Credential, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.user_name = None
         self.creation_time = None
         self.last_modified_time = None
         self.description = description
 
 
-class CredentialCreateOrUpdateParameters(msrest.serialization.Model):
+class CredentialCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update credential operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the name of the credential.
+    :ivar name: Gets or sets the name of the credential. Required.
     :vartype name: str
-    :ivar user_name: Required. Gets or sets the user name of the credential.
+    :ivar user_name: Gets or sets the user name of the credential. Required.
     :vartype user_name: str
-    :ivar password: Required. Gets or sets the password of the credential.
+    :ivar password: Gets or sets the password of the credential. Required.
     :vartype password: str
     :ivar description: Gets or sets the description of the credential.
     :vartype description: str
     """
 
     _validation = {
-        'name': {'required': True},
-        'user_name': {'required': True},
-        'password': {'required': True},
+        "name": {"required": True},
+        "user_name": {"required": True},
+        "password": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "user_name": {"key": "properties.userName", "type": "str"},
+        "password": {"key": "properties.password", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: str,
-        user_name: str,
-        password: str,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: str, user_name: str, password: str, description: Optional[str] = None, **kwargs):
         """
-        :keyword name: Required. Gets or sets the name of the credential.
+        :keyword name: Gets or sets the name of the credential. Required.
         :paramtype name: str
-        :keyword user_name: Required. Gets or sets the user name of the credential.
+        :keyword user_name: Gets or sets the user name of the credential. Required.
         :paramtype user_name: str
-        :keyword password: Required. Gets or sets the password of the credential.
+        :keyword password: Gets or sets the password of the credential. Required.
         :paramtype password: str
         :keyword description: Gets or sets the description of the credential.
         :paramtype description: str
         """
-        super(CredentialCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.user_name = user_name
         self.password = password
         self.description = description
 
 
-class CredentialListResult(msrest.serialization.Model):
+class CredentialListResult(_serialization.Model):
     """The response model for the list credential operation.
 
     :ivar value: Gets or sets a list of credentials.
@@ -1836,16 +1718,12 @@ class CredentialListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Credential]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Credential]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Credential"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.Credential"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets or sets a list of credentials.
@@ -1853,12 +1731,12 @@ class CredentialListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(CredentialListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class CredentialUpdateParameters(msrest.serialization.Model):
+class CredentialUpdateParameters(_serialization.Model):
     """The parameters supplied to the Update credential operation.
 
     :ivar name: Gets or sets the name of the credential.
@@ -1872,10 +1750,10 @@ class CredentialUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'user_name': {'key': 'properties.userName', 'type': 'str'},
-        'password': {'key': 'properties.password', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "user_name": {"key": "properties.userName", "type": "str"},
+        "password": {"key": "properties.password", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -1897,14 +1775,137 @@ class CredentialUpdateParameters(msrest.serialization.Model):
         :keyword description: Gets or sets the description of the credential.
         :paramtype description: str
         """
-        super(CredentialUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.user_name = user_name
         self.password = password
         self.description = description
 
 
-class DscCompilationJob(ProxyResource):
+class DeletedAutomationAccount(_serialization.Model):
+    """Definition of the deleted automation account type.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar id: The resource id.
+    :vartype id: str
+    :ivar name: Gets or sets name of the resource.
+    :vartype name: str
+    :ivar type: The resource type.
+    :vartype type: str
+    :ivar location: Gets or sets the location of the resource.
+    :vartype location: str
+    :ivar automation_account_resource_id: Gets or sets the Automation Account Resource Id.
+    :vartype automation_account_resource_id: str
+    :ivar automation_account_id: Gets or sets the Automation Account Id.
+    :vartype automation_account_id: str
+    :ivar location_properties_location: Gets or sets the location of the resource.
+    :vartype location_properties_location: str
+    :ivar deletion_time: Gets the deletion time.
+    :vartype deletion_time: ~datetime.datetime
+    """
+
+    _validation = {
+        "deletion_time": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "automation_account_resource_id": {"key": "properties.automationAccountResourceId", "type": "str"},
+        "automation_account_id": {"key": "properties.automationAccountId", "type": "str"},
+        "location_properties_location": {"key": "properties.location", "type": "str"},
+        "deletion_time": {"key": "properties.deletionTime", "type": "iso-8601"},
+    }
+
+    def __init__(
+        self,
+        *,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
+        name: Optional[str] = None,
+        type: Optional[str] = None,
+        location: Optional[str] = None,
+        automation_account_resource_id: Optional[str] = None,
+        automation_account_id: Optional[str] = None,
+        location_properties_location: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword id: The resource id.
+        :paramtype id: str
+        :keyword name: Gets or sets name of the resource.
+        :paramtype name: str
+        :keyword type: The resource type.
+        :paramtype type: str
+        :keyword location: Gets or sets the location of the resource.
+        :paramtype location: str
+        :keyword automation_account_resource_id: Gets or sets the Automation Account Resource Id.
+        :paramtype automation_account_resource_id: str
+        :keyword automation_account_id: Gets or sets the Automation Account Id.
+        :paramtype automation_account_id: str
+        :keyword location_properties_location: Gets or sets the location of the resource.
+        :paramtype location_properties_location: str
+        """
+        super().__init__(**kwargs)
+        self.id = id
+        self.name = name
+        self.type = type
+        self.location = location
+        self.automation_account_resource_id = automation_account_resource_id
+        self.automation_account_id = automation_account_id
+        self.location_properties_location = location_properties_location
+        self.deletion_time = None
+
+
+class DeletedAutomationAccountListResult(_serialization.Model):
+    """The response model for the list deleted automation account.
+
+    :ivar value: Gets or sets the list of deleted automation accounts.
+    :vartype value: list[~azure.mgmt.automation.models.DeletedAutomationAccount]
+    """
+
+    _attribute_map = {
+        "value": {"key": "value", "type": "[DeletedAutomationAccount]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.DeletedAutomationAccount"]] = None, **kwargs):
+        """
+        :keyword value: Gets or sets the list of deleted automation accounts.
+        :paramtype value: list[~azure.mgmt.automation.models.DeletedAutomationAccount]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class Dimension(_serialization.Model):
+    """Dimension of the metric.
+
+    :ivar name: The name of the dimension.
+    :vartype name: str
+    :ivar display_name: The display name of the dimension.
+    :vartype display_name: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+    }
+
+    def __init__(self, *, name: Optional[str] = None, display_name: Optional[str] = None, **kwargs):
+        """
+        :keyword name: The name of the dimension.
+        :paramtype name: str
+        :keyword display_name: The display name of the dimension.
+        :paramtype display_name: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+
+
+class DscCompilationJob(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Definition of the Dsc Compilation job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -1924,14 +1925,14 @@ class DscCompilationJob(ProxyResource):
     :ivar creation_time: Gets the creation time of the job.
     :vartype creation_time: ~datetime.datetime
     :ivar provisioning_state: The current provisioning state of the job. Known values are:
-     "Failed", "Succeeded", "Suspended", "Processing".
+     "Failed", "Succeeded", "Suspended", and "Processing".
     :vartype provisioning_state: str or ~azure.mgmt.automation.models.JobProvisioningState
     :ivar run_on: Gets or sets the runOn which specifies the group name where the job is to be
      executed.
     :vartype run_on: str
     :ivar status: Gets or sets the status of the job. Known values are: "New", "Activating",
      "Running", "Completed", "Failed", "Stopped", "Blocked", "Suspended", "Disconnected",
-     "Suspending", "Stopping", "Resuming", "Removing".
+     "Suspending", "Stopping", "Resuming", and "Removing".
     :vartype status: str or ~azure.mgmt.automation.models.JobStatus
     :ivar status_details: Gets or sets the status details of the job.
     :vartype status_details: str
@@ -1950,37 +1951,37 @@ class DscCompilationJob(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'started_by': {'readonly': True},
-        'job_id': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'exception': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'last_status_modified_time': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "started_by": {"readonly": True},
+        "job_id": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "exception": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "last_status_modified_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'configuration': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
-        'started_by': {'key': 'properties.startedBy', 'type': 'str'},
-        'job_id': {'key': 'properties.jobId', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'exception': {'key': 'properties.exception', 'type': 'str'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'last_status_modified_time': {'key': 'properties.lastStatusModifiedTime', 'type': 'iso-8601'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "configuration": {"key": "properties.configuration", "type": "DscConfigurationAssociationProperty"},
+        "started_by": {"key": "properties.startedBy", "type": "str"},
+        "job_id": {"key": "properties.jobId", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "run_on": {"key": "properties.runOn", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "status_details": {"key": "properties.statusDetails", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "exception": {"key": "properties.exception", "type": "str"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "last_status_modified_time": {"key": "properties.lastStatusModifiedTime", "type": "iso-8601"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
     }
 
     def __init__(
@@ -1998,21 +1999,21 @@ class DscCompilationJob(ProxyResource):
         :keyword configuration: Gets or sets the configuration.
         :paramtype configuration: ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
         :keyword provisioning_state: The current provisioning state of the job. Known values are:
-         "Failed", "Succeeded", "Suspended", "Processing".
+         "Failed", "Succeeded", "Suspended", and "Processing".
         :paramtype provisioning_state: str or ~azure.mgmt.automation.models.JobProvisioningState
         :keyword run_on: Gets or sets the runOn which specifies the group name where the job is to be
          executed.
         :paramtype run_on: str
         :keyword status: Gets or sets the status of the job. Known values are: "New", "Activating",
          "Running", "Completed", "Failed", "Stopped", "Blocked", "Suspended", "Disconnected",
-         "Suspending", "Stopping", "Resuming", "Removing".
+         "Suspending", "Stopping", "Resuming", and "Removing".
         :paramtype status: str or ~azure.mgmt.automation.models.JobStatus
         :keyword status_details: Gets or sets the status details of the job.
         :paramtype status_details: str
         :keyword parameters: Gets or sets the parameters of the job.
         :paramtype parameters: dict[str, str]
         """
-        super(DscCompilationJob, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.configuration = configuration
         self.started_by = None
         self.job_id = None
@@ -2029,7 +2030,7 @@ class DscCompilationJob(ProxyResource):
         self.parameters = parameters
 
 
-class DscCompilationJobCreateParameters(msrest.serialization.Model):
+class DscCompilationJobCreateParameters(_serialization.Model):
     """The parameters supplied to the create compilation job operation.
 
     All required parameters must be populated in order to send to Azure.
@@ -2038,9 +2039,9 @@ class DscCompilationJobCreateParameters(msrest.serialization.Model):
     :vartype name: str
     :ivar location: Gets or sets the location of the resource.
     :vartype location: str
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
-    :ivar configuration: Required. Gets or sets the configuration.
+    :ivar configuration: Gets or sets the configuration. Required.
     :vartype configuration: ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
     :ivar parameters: Gets or sets the parameters of the job.
     :vartype parameters: dict[str, str]
@@ -2050,16 +2051,16 @@ class DscCompilationJobCreateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'configuration': {'required': True},
+        "configuration": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'configuration': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'increment_node_configuration_build': {'key': 'properties.incrementNodeConfigurationBuild', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "configuration": {"key": "properties.configuration", "type": "DscConfigurationAssociationProperty"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "increment_node_configuration_build": {"key": "properties.incrementNodeConfigurationBuild", "type": "bool"},
     }
 
     def __init__(
@@ -2078,9 +2079,9 @@ class DscCompilationJobCreateParameters(msrest.serialization.Model):
         :paramtype name: str
         :keyword location: Gets or sets the location of the resource.
         :paramtype location: str
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
-        :keyword configuration: Required. Gets or sets the configuration.
+        :keyword configuration: Gets or sets the configuration. Required.
         :paramtype configuration: ~azure.mgmt.automation.models.DscConfigurationAssociationProperty
         :keyword parameters: Gets or sets the parameters of the job.
         :paramtype parameters: dict[str, str]
@@ -2088,7 +2089,7 @@ class DscCompilationJobCreateParameters(msrest.serialization.Model):
          required.
         :paramtype increment_node_configuration_build: bool
         """
-        super(DscCompilationJobCreateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.location = location
         self.tags = tags
@@ -2097,7 +2098,7 @@ class DscCompilationJobCreateParameters(msrest.serialization.Model):
         self.increment_node_configuration_build = increment_node_configuration_build
 
 
-class DscCompilationJobListResult(msrest.serialization.Model):
+class DscCompilationJobListResult(_serialization.Model):
     """The response model for the list job operation.
 
     :ivar value: Gets or sets a list of Dsc Compilation jobs.
@@ -2107,16 +2108,12 @@ class DscCompilationJobListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DscCompilationJob]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DscCompilationJob]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.DscCompilationJob"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.DscCompilationJob"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets or sets a list of Dsc Compilation jobs.
@@ -2124,12 +2121,12 @@ class DscCompilationJobListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(DscCompilationJobListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class DscConfiguration(TrackedResource):
+class DscConfiguration(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Definition of the configuration type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2140,14 +2137,14 @@ class DscConfiguration(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The Azure Region where the resource lives.
     :vartype location: str
     :ivar etag: Gets or sets the etag of the resource.
     :vartype etag: str
-    :ivar provisioning_state: Gets or sets the provisioning state of the configuration. The only
-     acceptable values to pass in are None and "Succeeded". The default value is None.
+    :ivar provisioning_state: Gets or sets the provisioning state of the configuration. Default
+     value is "Succeeded".
     :vartype provisioning_state: str
     :ivar job_count: Gets or sets the job count of the configuration.
     :vartype job_count: int
@@ -2155,7 +2152,7 @@ class DscConfiguration(TrackedResource):
     :vartype parameters: dict[str, ~azure.mgmt.automation.models.DscConfigurationParameter]
     :ivar source: Gets or sets the source.
     :vartype source: ~azure.mgmt.automation.models.ContentSource
-    :ivar state: Gets or sets the state of the configuration. Known values are: "New", "Edit",
+    :ivar state: Gets or sets the state of the configuration. Known values are: "New", "Edit", and
      "Published".
     :vartype state: str or ~azure.mgmt.automation.models.DscConfigurationState
     :ivar log_verbose: Gets or sets verbose log option.
@@ -2171,28 +2168,28 @@ class DscConfiguration(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'job_count': {'key': 'properties.jobCount', 'type': 'int'},
-        'parameters': {'key': 'properties.parameters', 'type': '{DscConfigurationParameter}'},
-        'source': {'key': 'properties.source', 'type': 'ContentSource'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'log_verbose': {'key': 'properties.logVerbose', 'type': 'bool'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'node_configuration_count': {'key': 'properties.nodeConfigurationCount', 'type': 'int'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "job_count": {"key": "properties.jobCount", "type": "int"},
+        "parameters": {"key": "properties.parameters", "type": "{DscConfigurationParameter}"},
+        "source": {"key": "properties.source", "type": "ContentSource"},
+        "state": {"key": "properties.state", "type": "str"},
+        "log_verbose": {"key": "properties.logVerbose", "type": "bool"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "node_configuration_count": {"key": "properties.nodeConfigurationCount", "type": "int"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -2201,7 +2198,7 @@ class DscConfiguration(TrackedResource):
         tags: Optional[Dict[str, str]] = None,
         location: Optional[str] = None,
         etag: Optional[str] = None,
-        provisioning_state: Optional[str] = None,
+        provisioning_state: Optional[Literal["Succeeded"]] = None,
         job_count: Optional[int] = None,
         parameters: Optional[Dict[str, "_models.DscConfigurationParameter"]] = None,
         source: Optional["_models.ContentSource"] = None,
@@ -2214,14 +2211,14 @@ class DscConfiguration(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The Azure Region where the resource lives.
         :paramtype location: str
         :keyword etag: Gets or sets the etag of the resource.
         :paramtype etag: str
-        :keyword provisioning_state: Gets or sets the provisioning state of the configuration. The only
-         acceptable values to pass in are None and "Succeeded". The default value is None.
+        :keyword provisioning_state: Gets or sets the provisioning state of the configuration. Default
+         value is "Succeeded".
         :paramtype provisioning_state: str
         :keyword job_count: Gets or sets the job count of the configuration.
         :paramtype job_count: int
@@ -2230,7 +2227,7 @@ class DscConfiguration(TrackedResource):
         :keyword source: Gets or sets the source.
         :paramtype source: ~azure.mgmt.automation.models.ContentSource
         :keyword state: Gets or sets the state of the configuration. Known values are: "New", "Edit",
-         "Published".
+         and "Published".
         :paramtype state: str or ~azure.mgmt.automation.models.DscConfigurationState
         :keyword log_verbose: Gets or sets verbose log option.
         :paramtype log_verbose: bool
@@ -2243,7 +2240,7 @@ class DscConfiguration(TrackedResource):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(DscConfiguration, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.etag = etag
         self.provisioning_state = provisioning_state
         self.job_count = job_count
@@ -2257,7 +2254,7 @@ class DscConfiguration(TrackedResource):
         self.description = description
 
 
-class DscConfigurationAssociationProperty(msrest.serialization.Model):
+class DscConfigurationAssociationProperty(_serialization.Model):
     """The Dsc configuration property associated with the entity.
 
     :ivar name: Gets or sets the name of the Dsc configuration.
@@ -2265,24 +2262,19 @@ class DscConfigurationAssociationProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the Dsc configuration.
         :paramtype name: str
         """
-        super(DscConfigurationAssociationProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class DscConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
+class DscConfigurationCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update configuration operation.
 
     All required parameters must be populated in order to send to Azure.
@@ -2291,13 +2283,13 @@ class DscConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
     :vartype name: str
     :ivar location: Gets or sets the location of the resource.
     :vartype location: str
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
     :ivar log_verbose: Gets or sets verbose log option.
     :vartype log_verbose: bool
     :ivar log_progress: Gets or sets progress log option.
     :vartype log_progress: bool
-    :ivar source: Required. Gets or sets the source.
+    :ivar source: Gets or sets the source. Required.
     :vartype source: ~azure.mgmt.automation.models.ContentSource
     :ivar parameters: Gets or sets the configuration parameters.
     :vartype parameters: dict[str, ~azure.mgmt.automation.models.DscConfigurationParameter]
@@ -2306,18 +2298,18 @@ class DscConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'source': {'required': True},
+        "source": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'log_verbose': {'key': 'properties.logVerbose', 'type': 'bool'},
-        'log_progress': {'key': 'properties.logProgress', 'type': 'bool'},
-        'source': {'key': 'properties.source', 'type': 'ContentSource'},
-        'parameters': {'key': 'properties.parameters', 'type': '{DscConfigurationParameter}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "log_verbose": {"key": "properties.logVerbose", "type": "bool"},
+        "log_progress": {"key": "properties.logProgress", "type": "bool"},
+        "source": {"key": "properties.source", "type": "ContentSource"},
+        "parameters": {"key": "properties.parameters", "type": "{DscConfigurationParameter}"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -2338,20 +2330,20 @@ class DscConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
         :paramtype name: str
         :keyword location: Gets or sets the location of the resource.
         :paramtype location: str
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
         :keyword log_verbose: Gets or sets verbose log option.
         :paramtype log_verbose: bool
         :keyword log_progress: Gets or sets progress log option.
         :paramtype log_progress: bool
-        :keyword source: Required. Gets or sets the source.
+        :keyword source: Gets or sets the source. Required.
         :paramtype source: ~azure.mgmt.automation.models.ContentSource
         :keyword parameters: Gets or sets the configuration parameters.
         :paramtype parameters: dict[str, ~azure.mgmt.automation.models.DscConfigurationParameter]
         :keyword description: Gets or sets the description of the configuration.
         :paramtype description: str
         """
-        super(DscConfigurationCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.location = location
         self.tags = tags
@@ -2362,7 +2354,7 @@ class DscConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
         self.description = description
 
 
-class DscConfigurationListResult(msrest.serialization.Model):
+class DscConfigurationListResult(_serialization.Model):
     """The response model for the list configuration operation.
 
     :ivar value: Gets or sets a list of configurations.
@@ -2374,9 +2366,9 @@ class DscConfigurationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DscConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'total_count': {'key': 'totalCount', 'type': 'int'},
+        "value": {"key": "value", "type": "[DscConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "total_count": {"key": "totalCount", "type": "int"},
     }
 
     def __init__(
@@ -2395,13 +2387,13 @@ class DscConfigurationListResult(msrest.serialization.Model):
         :keyword total_count: Gets the total number of configurations matching filter criteria.
         :paramtype total_count: int
         """
-        super(DscConfigurationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
         self.total_count = total_count
 
 
-class DscConfigurationParameter(msrest.serialization.Model):
+class DscConfigurationParameter(_serialization.Model):
     """Definition of the configuration parameter type.
 
     :ivar type: Gets or sets the type of the parameter.
@@ -2416,10 +2408,10 @@ class DscConfigurationParameter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'is_mandatory': {'key': 'isMandatory', 'type': 'bool'},
-        'position': {'key': 'position', 'type': 'int'},
-        'default_value': {'key': 'defaultValue', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "is_mandatory": {"key": "isMandatory", "type": "bool"},
+        "position": {"key": "position", "type": "int"},
+        "default_value": {"key": "defaultValue", "type": "str"},
     }
 
     def __init__(
@@ -2442,19 +2434,19 @@ class DscConfigurationParameter(msrest.serialization.Model):
         :keyword default_value: Gets or sets the default value of parameter.
         :paramtype default_value: str
         """
-        super(DscConfigurationParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.is_mandatory = is_mandatory
         self.position = position
         self.default_value = default_value
 
 
-class DscConfigurationUpdateParameters(msrest.serialization.Model):
+class DscConfigurationUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update configuration operation.
 
     :ivar name: Gets or sets name of the resource.
     :vartype name: str
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
     :ivar log_verbose: Gets or sets verbose log option.
     :vartype log_verbose: bool
@@ -2469,13 +2461,13 @@ class DscConfigurationUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'log_verbose': {'key': 'properties.logVerbose', 'type': 'bool'},
-        'log_progress': {'key': 'properties.logProgress', 'type': 'bool'},
-        'source': {'key': 'properties.source', 'type': 'ContentSource'},
-        'parameters': {'key': 'properties.parameters', 'type': '{DscConfigurationParameter}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "log_verbose": {"key": "properties.logVerbose", "type": "bool"},
+        "log_progress": {"key": "properties.logProgress", "type": "bool"},
+        "source": {"key": "properties.source", "type": "ContentSource"},
+        "parameters": {"key": "properties.parameters", "type": "{DscConfigurationParameter}"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -2493,7 +2485,7 @@ class DscConfigurationUpdateParameters(msrest.serialization.Model):
         """
         :keyword name: Gets or sets name of the resource.
         :paramtype name: str
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
         :keyword log_verbose: Gets or sets verbose log option.
         :paramtype log_verbose: bool
@@ -2506,7 +2498,7 @@ class DscConfigurationUpdateParameters(msrest.serialization.Model):
         :keyword description: Gets or sets the description of the configuration.
         :paramtype description: str
         """
-        super(DscConfigurationUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tags = tags
         self.log_verbose = log_verbose
@@ -2516,7 +2508,7 @@ class DscConfigurationUpdateParameters(msrest.serialization.Model):
         self.description = description
 
 
-class DscMetaConfiguration(msrest.serialization.Model):
+class DscMetaConfiguration(_serialization.Model):
     """Definition of the DSC Meta Configuration.
 
     :ivar configuration_mode_frequency_mins: Gets or sets the ConfigurationModeFrequencyMins value
@@ -2540,13 +2532,13 @@ class DscMetaConfiguration(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'configuration_mode_frequency_mins': {'key': 'configurationModeFrequencyMins', 'type': 'int'},
-        'reboot_node_if_needed': {'key': 'rebootNodeIfNeeded', 'type': 'bool'},
-        'configuration_mode': {'key': 'configurationMode', 'type': 'str'},
-        'action_after_reboot': {'key': 'actionAfterReboot', 'type': 'str'},
-        'certificate_id': {'key': 'certificateId', 'type': 'str'},
-        'refresh_frequency_mins': {'key': 'refreshFrequencyMins', 'type': 'int'},
-        'allow_module_overwrite': {'key': 'allowModuleOverwrite', 'type': 'bool'},
+        "configuration_mode_frequency_mins": {"key": "configurationModeFrequencyMins", "type": "int"},
+        "reboot_node_if_needed": {"key": "rebootNodeIfNeeded", "type": "bool"},
+        "configuration_mode": {"key": "configurationMode", "type": "str"},
+        "action_after_reboot": {"key": "actionAfterReboot", "type": "str"},
+        "certificate_id": {"key": "certificateId", "type": "str"},
+        "refresh_frequency_mins": {"key": "refreshFrequencyMins", "type": "int"},
+        "allow_module_overwrite": {"key": "allowModuleOverwrite", "type": "bool"},
     }
 
     def __init__(
@@ -2583,7 +2575,7 @@ class DscMetaConfiguration(msrest.serialization.Model):
          configuration.
         :paramtype allow_module_overwrite: bool
         """
-        super(DscMetaConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.configuration_mode_frequency_mins = configuration_mode_frequency_mins
         self.reboot_node_if_needed = reboot_node_if_needed
         self.configuration_mode = configuration_mode
@@ -2593,7 +2585,7 @@ class DscMetaConfiguration(msrest.serialization.Model):
         self.allow_module_overwrite = allow_module_overwrite
 
 
-class DscNode(ProxyResource):
+class DscNode(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Definition of a DscNode.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -2629,25 +2621,28 @@ class DscNode(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'last_seen': {'key': 'properties.lastSeen', 'type': 'iso-8601'},
-        'registration_time': {'key': 'properties.registrationTime', 'type': 'iso-8601'},
-        'ip': {'key': 'properties.ip', 'type': 'str'},
-        'account_id': {'key': 'properties.accountId', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'node_id': {'key': 'properties.nodeId', 'type': 'str'},
-        'etag': {'key': 'properties.etag', 'type': 'str'},
-        'total_count': {'key': 'properties.totalCount', 'type': 'int'},
-        'extension_handler': {'key': 'properties.extensionHandler', 'type': '[DscNodeExtensionHandlerAssociationProperty]'},
-        'name_properties_node_configuration_name': {'key': 'properties.nodeConfiguration.name', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "last_seen": {"key": "properties.lastSeen", "type": "iso-8601"},
+        "registration_time": {"key": "properties.registrationTime", "type": "iso-8601"},
+        "ip": {"key": "properties.ip", "type": "str"},
+        "account_id": {"key": "properties.accountId", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "node_id": {"key": "properties.nodeId", "type": "str"},
+        "etag": {"key": "properties.etag", "type": "str"},
+        "total_count": {"key": "properties.totalCount", "type": "int"},
+        "extension_handler": {
+            "key": "properties.extensionHandler",
+            "type": "[DscNodeExtensionHandlerAssociationProperty]",
+        },
+        "name_properties_node_configuration_name": {"key": "properties.nodeConfiguration.name", "type": "str"},
     }
 
     def __init__(
@@ -2689,7 +2684,7 @@ class DscNode(ProxyResource):
          configuration.
         :paramtype name_properties_node_configuration_name: str
         """
-        super(DscNode, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.last_seen = last_seen
         self.registration_time = registration_time
         self.ip = ip
@@ -2722,28 +2717,28 @@ class DscNodeConfiguration(ProxyResource):
     :ivar source: Source of node configuration.
     :vartype source: str
     :ivar node_count: Number of nodes with this node configuration assigned.
-    :vartype node_count: long
+    :vartype node_count: int
     :ivar increment_node_configuration_build: If a new build version of NodeConfiguration is
      required.
     :vartype increment_node_configuration_build: bool
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'configuration': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
-        'source': {'key': 'properties.source', 'type': 'str'},
-        'node_count': {'key': 'properties.nodeCount', 'type': 'long'},
-        'increment_node_configuration_build': {'key': 'properties.incrementNodeConfigurationBuild', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "configuration": {"key": "properties.configuration", "type": "DscConfigurationAssociationProperty"},
+        "source": {"key": "properties.source", "type": "str"},
+        "node_count": {"key": "properties.nodeCount", "type": "int"},
+        "increment_node_configuration_build": {"key": "properties.incrementNodeConfigurationBuild", "type": "bool"},
     }
 
     def __init__(
@@ -2767,12 +2762,12 @@ class DscNodeConfiguration(ProxyResource):
         :keyword source: Source of node configuration.
         :paramtype source: str
         :keyword node_count: Number of nodes with this node configuration assigned.
-        :paramtype node_count: long
+        :paramtype node_count: int
         :keyword increment_node_configuration_build: If a new build version of NodeConfiguration is
          required.
         :paramtype increment_node_configuration_build: bool
         """
-        super(DscNodeConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.last_modified_time = last_modified_time
         self.creation_time = creation_time
         self.configuration = configuration
@@ -2781,12 +2776,12 @@ class DscNodeConfiguration(ProxyResource):
         self.increment_node_configuration_build = increment_node_configuration_build
 
 
-class DscNodeConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
+class DscNodeConfigurationCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update node configuration operation.
 
     :ivar name: Name of the node configuration.
     :vartype name: str
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
     :ivar source: Gets or sets the source.
     :vartype source: ~azure.mgmt.automation.models.ContentSource
@@ -2798,11 +2793,11 @@ class DscNodeConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'source': {'key': 'properties.source', 'type': 'ContentSource'},
-        'configuration': {'key': 'properties.configuration', 'type': 'DscConfigurationAssociationProperty'},
-        'increment_node_configuration_build': {'key': 'properties.incrementNodeConfigurationBuild', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "source": {"key": "properties.source", "type": "ContentSource"},
+        "configuration": {"key": "properties.configuration", "type": "DscConfigurationAssociationProperty"},
+        "increment_node_configuration_build": {"key": "properties.incrementNodeConfigurationBuild", "type": "bool"},
     }
 
     def __init__(
@@ -2818,7 +2813,7 @@ class DscNodeConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
         """
         :keyword name: Name of the node configuration.
         :paramtype name: str
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
         :keyword source: Gets or sets the source.
         :paramtype source: ~azure.mgmt.automation.models.ContentSource
@@ -2828,7 +2823,7 @@ class DscNodeConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
          required.
         :paramtype increment_node_configuration_build: bool
         """
-        super(DscNodeConfigurationCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.tags = tags
         self.source = source
@@ -2836,7 +2831,7 @@ class DscNodeConfigurationCreateOrUpdateParameters(msrest.serialization.Model):
         self.increment_node_configuration_build = increment_node_configuration_build
 
 
-class DscNodeConfigurationListResult(msrest.serialization.Model):
+class DscNodeConfigurationListResult(_serialization.Model):
     """The response model for the list job operation.
 
     :ivar value: Gets or sets a list of Dsc node configurations.
@@ -2848,9 +2843,9 @@ class DscNodeConfigurationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DscNodeConfiguration]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'total_count': {'key': 'totalCount', 'type': 'int'},
+        "value": {"key": "value", "type": "[DscNodeConfiguration]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "total_count": {"key": "totalCount", "type": "int"},
     }
 
     def __init__(
@@ -2869,13 +2864,13 @@ class DscNodeConfigurationListResult(msrest.serialization.Model):
         :keyword total_count: Gets or sets the total rows in query.
         :paramtype total_count: int
         """
-        super(DscNodeConfigurationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
         self.total_count = total_count
 
 
-class DscNodeExtensionHandlerAssociationProperty(msrest.serialization.Model):
+class DscNodeExtensionHandlerAssociationProperty(_serialization.Model):
     """The dsc extensionHandler property associated with the node.
 
     :ivar name: Gets or sets the name of the extension handler.
@@ -2885,29 +2880,23 @@ class DscNodeExtensionHandlerAssociationProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'version': {'key': 'version', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "version": {"key": "version", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        version: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, version: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the extension handler.
         :paramtype name: str
         :keyword version: Gets or sets the version of the extension handler.
         :paramtype version: str
         """
-        super(DscNodeExtensionHandlerAssociationProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.version = version
 
 
-class DscNodeListResult(msrest.serialization.Model):
+class DscNodeListResult(_serialization.Model):
     """The response model for the list dsc nodes operation.
 
     :ivar value: Gets or sets a list of dsc nodes.
@@ -2919,9 +2908,9 @@ class DscNodeListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DscNode]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
-        'total_count': {'key': 'totalCount', 'type': 'int'},
+        "value": {"key": "value", "type": "[DscNode]"},
+        "next_link": {"key": "nextLink", "type": "str"},
+        "total_count": {"key": "totalCount", "type": "int"},
     }
 
     def __init__(
@@ -2940,13 +2929,13 @@ class DscNodeListResult(msrest.serialization.Model):
         :keyword total_count: Gets the total number of nodes matching filter criteria.
         :paramtype total_count: int
         """
-        super(DscNodeListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
         self.total_count = total_count
 
 
-class DscNodeReport(msrest.serialization.Model):
+class DscNodeReport(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Definition of the dsc node report type.
 
     :ivar end_time: Gets or sets the end time of the node report.
@@ -2991,25 +2980,25 @@ class DscNodeReport(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'type': {'key': 'type', 'type': 'str'},
-        'report_id': {'key': 'reportId', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'refresh_mode': {'key': 'refreshMode', 'type': 'str'},
-        'reboot_requested': {'key': 'rebootRequested', 'type': 'str'},
-        'report_format_version': {'key': 'reportFormatVersion', 'type': 'str'},
-        'configuration_version': {'key': 'configurationVersion', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'errors': {'key': 'errors', 'type': '[DscReportError]'},
-        'resources': {'key': 'resources', 'type': '[DscReportResource]'},
-        'meta_configuration': {'key': 'metaConfiguration', 'type': 'DscMetaConfiguration'},
-        'host_name': {'key': 'hostName', 'type': 'str'},
-        'i_pv4_addresses': {'key': 'iPV4Addresses', 'type': '[str]'},
-        'i_pv6_addresses': {'key': 'iPV6Addresses', 'type': '[str]'},
-        'number_of_resources': {'key': 'numberOfResources', 'type': 'int'},
-        'raw_errors': {'key': 'rawErrors', 'type': 'str'},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "type": {"key": "type", "type": "str"},
+        "report_id": {"key": "reportId", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "refresh_mode": {"key": "refreshMode", "type": "str"},
+        "reboot_requested": {"key": "rebootRequested", "type": "str"},
+        "report_format_version": {"key": "reportFormatVersion", "type": "str"},
+        "configuration_version": {"key": "configurationVersion", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "errors": {"key": "errors", "type": "[DscReportError]"},
+        "resources": {"key": "resources", "type": "[DscReportResource]"},
+        "meta_configuration": {"key": "metaConfiguration", "type": "DscMetaConfiguration"},
+        "host_name": {"key": "hostName", "type": "str"},
+        "i_pv4_addresses": {"key": "iPV4Addresses", "type": "[str]"},
+        "i_pv6_addresses": {"key": "iPV6Addresses", "type": "[str]"},
+        "number_of_resources": {"key": "numberOfResources", "type": "int"},
+        "raw_errors": {"key": "rawErrors", "type": "str"},
     }
 
     def __init__(
@@ -3025,7 +3014,7 @@ class DscNodeReport(msrest.serialization.Model):
         reboot_requested: Optional[str] = None,
         report_format_version: Optional[str] = None,
         configuration_version: Optional[str] = None,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         errors: Optional[List["_models.DscReportError"]] = None,
         resources: Optional[List["_models.DscReportResource"]] = None,
         meta_configuration: Optional["_models.DscMetaConfiguration"] = None,
@@ -3077,7 +3066,7 @@ class DscNodeReport(msrest.serialization.Model):
         :keyword raw_errors: Gets or sets the unparsed errors for the node report.
         :paramtype raw_errors: str
         """
-        super(DscNodeReport, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.end_time = end_time
         self.last_modified_time = last_modified_time
         self.start_time = start_time
@@ -3099,7 +3088,7 @@ class DscNodeReport(msrest.serialization.Model):
         self.raw_errors = raw_errors
 
 
-class DscNodeReportListResult(msrest.serialization.Model):
+class DscNodeReportListResult(_serialization.Model):
     """The response model for the list dsc nodes operation.
 
     :ivar value: Gets or sets a list of dsc node reports.
@@ -3109,16 +3098,12 @@ class DscNodeReportListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[DscNodeReport]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[DscNodeReport]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.DscNodeReport"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.DscNodeReport"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets or sets a list of dsc node reports.
@@ -3126,12 +3111,12 @@ class DscNodeReportListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(DscNodeReportListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class DscNodeUpdateParameters(msrest.serialization.Model):
+class DscNodeUpdateParameters(_serialization.Model):
     """The parameters supplied to the update dsc node operation.
 
     :ivar node_id: Gets or sets the id of the dsc node.
@@ -3141,8 +3126,8 @@ class DscNodeUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'node_id': {'key': 'nodeId', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'DscNodeUpdateParametersProperties'},
+        "node_id": {"key": "nodeId", "type": "str"},
+        "properties": {"key": "properties", "type": "DscNodeUpdateParametersProperties"},
     }
 
     def __init__(
@@ -3158,12 +3143,12 @@ class DscNodeUpdateParameters(msrest.serialization.Model):
         :keyword properties:
         :paramtype properties: ~azure.mgmt.automation.models.DscNodeUpdateParametersProperties
         """
-        super(DscNodeUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.node_id = node_id
         self.properties = properties
 
 
-class DscNodeUpdateParametersProperties(msrest.serialization.Model):
+class DscNodeUpdateParametersProperties(_serialization.Model):
     """DscNodeUpdateParametersProperties.
 
     :ivar name: Gets or sets the name of the dsc node configuration.
@@ -3171,24 +3156,19 @@ class DscNodeUpdateParametersProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'nodeConfiguration.name', 'type': 'str'},
+        "name": {"key": "nodeConfiguration.name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the dsc node configuration.
         :paramtype name: str
         """
-        super(DscNodeUpdateParametersProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class DscReportError(msrest.serialization.Model):
+class DscReportError(_serialization.Model):
     """Definition of the dsc node report error type.
 
     :ivar error_source: Gets or sets the source of the error.
@@ -3206,12 +3186,12 @@ class DscReportError(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'error_source': {'key': 'errorSource', 'type': 'str'},
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'error_code': {'key': 'errorCode', 'type': 'str'},
-        'error_message': {'key': 'errorMessage', 'type': 'str'},
-        'locale': {'key': 'locale', 'type': 'str'},
-        'error_details': {'key': 'errorDetails', 'type': 'str'},
+        "error_source": {"key": "errorSource", "type": "str"},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "error_code": {"key": "errorCode", "type": "str"},
+        "error_message": {"key": "errorMessage", "type": "str"},
+        "locale": {"key": "locale", "type": "str"},
+        "error_details": {"key": "errorDetails", "type": "str"},
     }
 
     def __init__(
@@ -3239,7 +3219,7 @@ class DscReportError(msrest.serialization.Model):
         :keyword error_details: Gets or sets the error details.
         :paramtype error_details: str
         """
-        super(DscReportError, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.error_source = error_source
         self.resource_id = resource_id
         self.error_code = error_code
@@ -3248,7 +3228,7 @@ class DscReportError(msrest.serialization.Model):
         self.error_details = error_details
 
 
-class DscReportResource(msrest.serialization.Model):
+class DscReportResource(_serialization.Model):
     """Definition of the DSC Report Resource.
 
     :ivar resource_id: Gets or sets the ID of the resource.
@@ -3275,16 +3255,16 @@ class DscReportResource(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
-        'source_info': {'key': 'sourceInfo', 'type': 'str'},
-        'depends_on': {'key': 'dependsOn', 'type': '[DscReportResourceNavigation]'},
-        'module_name': {'key': 'moduleName', 'type': 'str'},
-        'module_version': {'key': 'moduleVersion', 'type': 'str'},
-        'resource_name': {'key': 'resourceName', 'type': 'str'},
-        'error': {'key': 'error', 'type': 'str'},
-        'status': {'key': 'status', 'type': 'str'},
-        'duration_in_seconds': {'key': 'durationInSeconds', 'type': 'float'},
-        'start_date': {'key': 'startDate', 'type': 'iso-8601'},
+        "resource_id": {"key": "resourceId", "type": "str"},
+        "source_info": {"key": "sourceInfo", "type": "str"},
+        "depends_on": {"key": "dependsOn", "type": "[DscReportResourceNavigation]"},
+        "module_name": {"key": "moduleName", "type": "str"},
+        "module_version": {"key": "moduleVersion", "type": "str"},
+        "resource_name": {"key": "resourceName", "type": "str"},
+        "error": {"key": "error", "type": "str"},
+        "status": {"key": "status", "type": "str"},
+        "duration_in_seconds": {"key": "durationInSeconds", "type": "float"},
+        "start_date": {"key": "startDate", "type": "iso-8601"},
     }
 
     def __init__(
@@ -3325,7 +3305,7 @@ class DscReportResource(msrest.serialization.Model):
         :keyword start_date: Gets or sets the start date of the resource.
         :paramtype start_date: ~datetime.datetime
         """
-        super(DscReportResource, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
         self.source_info = source_info
         self.depends_on = depends_on
@@ -3338,7 +3318,7 @@ class DscReportResource(msrest.serialization.Model):
         self.start_date = start_date
 
 
-class DscReportResourceNavigation(msrest.serialization.Model):
+class DscReportResourceNavigation(_serialization.Model):
     """Navigation for DSC Report Resource.
 
     :ivar resource_id: Gets or sets the ID of the resource to navigate to.
@@ -3346,29 +3326,24 @@ class DscReportResourceNavigation(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'resource_id': {'key': 'resourceId', 'type': 'str'},
+        "resource_id": {"key": "resourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, resource_id: Optional[str] = None, **kwargs):
         """
         :keyword resource_id: Gets or sets the ID of the resource to navigate to.
         :paramtype resource_id: str
         """
-        super(DscReportResourceNavigation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.resource_id = resource_id
 
 
-class EncryptionProperties(msrest.serialization.Model):
+class EncryptionProperties(_serialization.Model):
     """The encryption settings for automation account.
 
     :ivar key_vault_properties: Key vault properties.
     :vartype key_vault_properties: ~azure.mgmt.automation.models.KeyVaultProperties
-    :ivar key_source: Encryption Key Source. Known values are: "Microsoft.Automation",
+    :ivar key_source: Encryption Key Source. Known values are: "Microsoft.Automation" and
      "Microsoft.Keyvault".
     :vartype key_source: str or ~azure.mgmt.automation.models.EncryptionKeySourceType
     :ivar identity: User identity used for CMK.
@@ -3376,9 +3351,9 @@ class EncryptionProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'key_vault_properties': {'key': 'keyVaultProperties', 'type': 'KeyVaultProperties'},
-        'key_source': {'key': 'keySource', 'type': 'str'},
-        'identity': {'key': 'identity', 'type': 'EncryptionPropertiesIdentity'},
+        "key_vault_properties": {"key": "keyVaultProperties", "type": "KeyVaultProperties"},
+        "key_source": {"key": "keySource", "type": "str"},
+        "identity": {"key": "identity", "type": "EncryptionPropertiesIdentity"},
     }
 
     def __init__(
@@ -3392,48 +3367,43 @@ class EncryptionProperties(msrest.serialization.Model):
         """
         :keyword key_vault_properties: Key vault properties.
         :paramtype key_vault_properties: ~azure.mgmt.automation.models.KeyVaultProperties
-        :keyword key_source: Encryption Key Source. Known values are: "Microsoft.Automation",
+        :keyword key_source: Encryption Key Source. Known values are: "Microsoft.Automation" and
          "Microsoft.Keyvault".
         :paramtype key_source: str or ~azure.mgmt.automation.models.EncryptionKeySourceType
         :keyword identity: User identity used for CMK.
         :paramtype identity: ~azure.mgmt.automation.models.EncryptionPropertiesIdentity
         """
-        super(EncryptionProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.key_vault_properties = key_vault_properties
         self.key_source = key_source
         self.identity = identity
 
 
-class EncryptionPropertiesIdentity(msrest.serialization.Model):
+class EncryptionPropertiesIdentity(_serialization.Model):
     """User identity used for CMK.
 
     :ivar user_assigned_identity: The user identity used for CMK. It will be an ARM resource id in
      the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-    :vartype user_assigned_identity: any
+    :vartype user_assigned_identity: JSON
     """
 
     _attribute_map = {
-        'user_assigned_identity': {'key': 'userAssignedIdentity', 'type': 'object'},
+        "user_assigned_identity": {"key": "userAssignedIdentity", "type": "object"},
     }
 
-    def __init__(
-        self,
-        *,
-        user_assigned_identity: Optional[Any] = None,
-        **kwargs
-    ):
+    def __init__(self, *, user_assigned_identity: Optional[JSON] = None, **kwargs):
         """
         :keyword user_assigned_identity: The user identity used for CMK. It will be an ARM resource id
          in the form:
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
-        :paramtype user_assigned_identity: any
+        :paramtype user_assigned_identity: JSON
         """
-        super(EncryptionPropertiesIdentity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.user_assigned_identity = user_assigned_identity
 
 
-class ErrorResponse(msrest.serialization.Model):
+class ErrorResponse(_serialization.Model):
     """Error response of an operation failure.
 
     :ivar code: Error code.
@@ -3443,29 +3413,23 @@ class ErrorResponse(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Error code.
         :paramtype code: str
         :keyword message: Error message indicating why the operation failed.
         :paramtype message: str
         """
-        super(ErrorResponse, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class FieldDefinition(msrest.serialization.Model):
+class FieldDefinition(_serialization.Model):
     """Definition of the connection fields.
 
     All required parameters must be populated in order to send to Azure.
@@ -3474,43 +3438,36 @@ class FieldDefinition(msrest.serialization.Model):
     :vartype is_encrypted: bool
     :ivar is_optional: Gets or sets the isOptional flag of the connection field definition.
     :vartype is_optional: bool
-    :ivar type: Required. Gets or sets the type of the connection field definition.
+    :ivar type: Gets or sets the type of the connection field definition. Required.
     :vartype type: str
     """
 
     _validation = {
-        'type': {'required': True},
+        "type": {"required": True},
     }
 
     _attribute_map = {
-        'is_encrypted': {'key': 'isEncrypted', 'type': 'bool'},
-        'is_optional': {'key': 'isOptional', 'type': 'bool'},
-        'type': {'key': 'type', 'type': 'str'},
+        "is_encrypted": {"key": "isEncrypted", "type": "bool"},
+        "is_optional": {"key": "isOptional", "type": "bool"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        type: str,
-        is_encrypted: Optional[bool] = None,
-        is_optional: Optional[bool] = None,
-        **kwargs
-    ):
+    def __init__(self, *, type: str, is_encrypted: Optional[bool] = None, is_optional: Optional[bool] = None, **kwargs):
         """
         :keyword is_encrypted: Gets or sets the isEncrypted flag of the connection field definition.
         :paramtype is_encrypted: bool
         :keyword is_optional: Gets or sets the isOptional flag of the connection field definition.
         :paramtype is_optional: bool
-        :keyword type: Required. Gets or sets the type of the connection field definition.
+        :keyword type: Gets or sets the type of the connection field definition. Required.
         :paramtype type: str
         """
-        super(FieldDefinition, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_encrypted = is_encrypted
         self.is_optional = is_optional
         self.type = type
 
 
-class GraphicalRunbookContent(msrest.serialization.Model):
+class GraphicalRunbookContent(_serialization.Model):
     """Graphical Runbook Content.
 
     :ivar raw_content: Raw graphical Runbook content.
@@ -3520,8 +3477,8 @@ class GraphicalRunbookContent(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'raw_content': {'key': 'rawContent', 'type': 'RawGraphicalRunbookContent'},
-        'graph_runbook_json': {'key': 'graphRunbookJson', 'type': 'str'},
+        "raw_content": {"key": "rawContent", "type": "RawGraphicalRunbookContent"},
+        "graph_runbook_json": {"key": "graphRunbookJson", "type": "str"},
     }
 
     def __init__(
@@ -3537,7 +3494,7 @@ class GraphicalRunbookContent(msrest.serialization.Model):
         :keyword graph_runbook_json: Graphical Runbook content as JSON.
         :paramtype graph_runbook_json: str
         """
-        super(GraphicalRunbookContent, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.raw_content = raw_content
         self.graph_runbook_json = graph_runbook_json
 
@@ -3563,30 +3520,30 @@ class HybridRunbookWorker(Resource):
     :vartype last_seen_date_time: ~datetime.datetime
     :ivar vm_resource_id: Azure Resource Manager Id for a virtual machine.
     :vartype vm_resource_id: str
-    :ivar worker_type: Type of the HybridWorker. Known values are: "HybridV1", "HybridV2".
+    :ivar worker_type: Type of the HybridWorker. Known values are: "HybridV1" and "HybridV2".
     :vartype worker_type: str or ~azure.mgmt.automation.models.WorkerType
     :ivar worker_name: Name of the HybridWorker.
     :vartype worker_name: str
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
-        'ip': {'key': 'properties.ip', 'type': 'str'},
-        'registered_date_time': {'key': 'properties.registeredDateTime', 'type': 'iso-8601'},
-        'last_seen_date_time': {'key': 'properties.lastSeenDateTime', 'type': 'iso-8601'},
-        'vm_resource_id': {'key': 'properties.vmResourceId', 'type': 'str'},
-        'worker_type': {'key': 'properties.workerType', 'type': 'str'},
-        'worker_name': {'key': 'properties.workerName', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "ip": {"key": "properties.ip", "type": "str"},
+        "registered_date_time": {"key": "properties.registeredDateTime", "type": "iso-8601"},
+        "last_seen_date_time": {"key": "properties.lastSeenDateTime", "type": "iso-8601"},
+        "vm_resource_id": {"key": "properties.vmResourceId", "type": "str"},
+        "worker_type": {"key": "properties.workerType", "type": "str"},
+        "worker_name": {"key": "properties.workerName", "type": "str"},
     }
 
     def __init__(
@@ -3609,12 +3566,12 @@ class HybridRunbookWorker(Resource):
         :paramtype last_seen_date_time: ~datetime.datetime
         :keyword vm_resource_id: Azure Resource Manager Id for a virtual machine.
         :paramtype vm_resource_id: str
-        :keyword worker_type: Type of the HybridWorker. Known values are: "HybridV1", "HybridV2".
+        :keyword worker_type: Type of the HybridWorker. Known values are: "HybridV1" and "HybridV2".
         :paramtype worker_type: str or ~azure.mgmt.automation.models.WorkerType
         :keyword worker_name: Name of the HybridWorker.
         :paramtype worker_name: str
         """
-        super(HybridRunbookWorker, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.system_data = None
         self.ip = ip
         self.registered_date_time = registered_date_time
@@ -3624,7 +3581,7 @@ class HybridRunbookWorker(Resource):
         self.worker_name = worker_name
 
 
-class HybridRunbookWorkerCreateParameters(msrest.serialization.Model):
+class HybridRunbookWorkerCreateParameters(_serialization.Model):
     """The parameters supplied to the create hybrid runbook worker operation.
 
     :ivar name: Gets or sets the name of the resource.
@@ -3634,123 +3591,109 @@ class HybridRunbookWorkerCreateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'vm_resource_id': {'key': 'properties.vmResourceId', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "vm_resource_id": {"key": "properties.vmResourceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        vm_resource_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, vm_resource_id: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the resource.
         :paramtype name: str
         :keyword vm_resource_id: Azure Resource Manager Id for a virtual machine.
         :paramtype vm_resource_id: str
         """
-        super(HybridRunbookWorkerCreateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.vm_resource_id = vm_resource_id
 
 
-class HybridRunbookWorkerGroup(msrest.serialization.Model):
+class HybridRunbookWorkerGroup(Resource):
     """Definition of hybrid runbook worker group.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar id: Gets or sets the id of the resource.
+    :ivar id: Fully qualified resource Id for the resource.
     :vartype id: str
-    :ivar name: Gets or sets the name of the group.
+    :ivar name: The name of the resource.
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar hybrid_runbook_workers: Gets or sets the list of hybrid runbook workers.
-    :vartype hybrid_runbook_workers: list[~azure.mgmt.automation.models.HybridRunbookWorkerLegacy]
-    :ivar credential: Sets the credential of a worker group.
-    :vartype credential: ~azure.mgmt.automation.models.RunAsCredentialAssociationProperty
-    :ivar group_type: Type of the HybridWorkerGroup. Known values are: "User", "System".
-    :vartype group_type: str or ~azure.mgmt.automation.models.GroupTypeEnum
     :ivar system_data: Resource system metadata.
     :vartype system_data: ~azure.mgmt.automation.models.SystemData
+    :ivar group_type: Type of the HybridWorkerGroup. Known values are: "User" and "System".
+    :vartype group_type: str or ~azure.mgmt.automation.models.GroupTypeEnum
+    :ivar credential: Sets the credential of a worker group.
+    :vartype credential: ~azure.mgmt.automation.models.RunAsCredentialAssociationProperty
     """
 
     _validation = {
-        'type': {'readonly': True},
-        'system_data': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "system_data": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'hybrid_runbook_workers': {'key': 'hybridRunbookWorkers', 'type': '[HybridRunbookWorkerLegacy]'},
-        'credential': {'key': 'credential', 'type': 'RunAsCredentialAssociationProperty'},
-        'group_type': {'key': 'groupType', 'type': 'str'},
-        'system_data': {'key': 'systemData', 'type': 'SystemData'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "system_data": {"key": "systemData", "type": "SystemData"},
+        "group_type": {"key": "properties.groupType", "type": "str"},
+        "credential": {"key": "properties.credential", "type": "RunAsCredentialAssociationProperty"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
-        name: Optional[str] = None,
-        hybrid_runbook_workers: Optional[List["_models.HybridRunbookWorkerLegacy"]] = None,
-        credential: Optional["_models.RunAsCredentialAssociationProperty"] = None,
         group_type: Optional[Union[str, "_models.GroupTypeEnum"]] = None,
+        credential: Optional["_models.RunAsCredentialAssociationProperty"] = None,
         **kwargs
     ):
         """
-        :keyword id: Gets or sets the id of the resource.
-        :paramtype id: str
-        :keyword name: Gets or sets the name of the group.
-        :paramtype name: str
-        :keyword hybrid_runbook_workers: Gets or sets the list of hybrid runbook workers.
-        :paramtype hybrid_runbook_workers:
-         list[~azure.mgmt.automation.models.HybridRunbookWorkerLegacy]
+        :keyword group_type: Type of the HybridWorkerGroup. Known values are: "User" and "System".
+        :paramtype group_type: str or ~azure.mgmt.automation.models.GroupTypeEnum
         :keyword credential: Sets the credential of a worker group.
         :paramtype credential: ~azure.mgmt.automation.models.RunAsCredentialAssociationProperty
-        :keyword group_type: Type of the HybridWorkerGroup. Known values are: "User", "System".
-        :paramtype group_type: str or ~azure.mgmt.automation.models.GroupTypeEnum
         """
-        super(HybridRunbookWorkerGroup, self).__init__(**kwargs)
-        self.id = id
-        self.name = name
-        self.type = None
-        self.hybrid_runbook_workers = hybrid_runbook_workers
-        self.credential = credential
-        self.group_type = group_type
+        super().__init__(**kwargs)
         self.system_data = None
+        self.group_type = group_type
+        self.credential = credential
 
 
-class HybridRunbookWorkerGroupCreateOrUpdateParameters(msrest.serialization.Model):
-    """The parameters supplied to the create or update hybrid runbook worker group operation.
+class HybridRunbookWorkerGroupCreateOrUpdateParameters(_serialization.Model):
+    """The parameters supplied to the create hybrid runbook worker group operation.
 
+    :ivar name: Gets or sets the name of the resource.
+    :vartype name: str
     :ivar credential: Sets the credential of a worker group.
     :vartype credential: ~azure.mgmt.automation.models.RunAsCredentialAssociationProperty
     """
 
     _attribute_map = {
-        'credential': {'key': 'credential', 'type': 'RunAsCredentialAssociationProperty'},
+        "name": {"key": "name", "type": "str"},
+        "credential": {"key": "properties.credential", "type": "RunAsCredentialAssociationProperty"},
     }
 
     def __init__(
         self,
         *,
+        name: Optional[str] = None,
         credential: Optional["_models.RunAsCredentialAssociationProperty"] = None,
         **kwargs
     ):
         """
+        :keyword name: Gets or sets the name of the resource.
+        :paramtype name: str
         :keyword credential: Sets the credential of a worker group.
         :paramtype credential: ~azure.mgmt.automation.models.RunAsCredentialAssociationProperty
         """
-        super(HybridRunbookWorkerGroupCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
+        self.name = name
         self.credential = credential
 
 
-class HybridRunbookWorkerGroupsListResult(msrest.serialization.Model):
+class HybridRunbookWorkerGroupsListResult(_serialization.Model):
     """The response model for the list hybrid runbook worker groups.
 
     :ivar value: Gets or sets a list of hybrid runbook worker groups.
@@ -3760,8 +3703,8 @@ class HybridRunbookWorkerGroupsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HybridRunbookWorkerGroup]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HybridRunbookWorkerGroup]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -3777,83 +3720,12 @@ class HybridRunbookWorkerGroupsListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(HybridRunbookWorkerGroupsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class HybridRunbookWorkerGroupUpdateParameters(msrest.serialization.Model):
-    """Parameters supplied to the update operation.
-
-    :ivar credential: Sets the credential of a worker group.
-    :vartype credential: ~azure.mgmt.automation.models.RunAsCredentialAssociationProperty
-    """
-
-    _attribute_map = {
-        'credential': {'key': 'credential', 'type': 'RunAsCredentialAssociationProperty'},
-    }
-
-    def __init__(
-        self,
-        *,
-        credential: Optional["_models.RunAsCredentialAssociationProperty"] = None,
-        **kwargs
-    ):
-        """
-        :keyword credential: Sets the credential of a worker group.
-        :paramtype credential: ~azure.mgmt.automation.models.RunAsCredentialAssociationProperty
-        """
-        super(HybridRunbookWorkerGroupUpdateParameters, self).__init__(**kwargs)
-        self.credential = credential
-
-
-class HybridRunbookWorkerLegacy(msrest.serialization.Model):
-    """Definition of hybrid runbook worker Legacy.
-
-    :ivar name: Gets or sets the worker machine name.
-    :vartype name: str
-    :ivar ip: Gets or sets the assigned machine IP address.
-    :vartype ip: str
-    :ivar registration_time: Gets or sets the registration time of the worker machine.
-    :vartype registration_time: ~datetime.datetime
-    :ivar last_seen_date_time: Last Heartbeat from the Worker.
-    :vartype last_seen_date_time: ~datetime.datetime
-    """
-
-    _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'ip': {'key': 'ip', 'type': 'str'},
-        'registration_time': {'key': 'registrationTime', 'type': 'iso-8601'},
-        'last_seen_date_time': {'key': 'lastSeenDateTime', 'type': 'iso-8601'},
-    }
-
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        ip: Optional[str] = None,
-        registration_time: Optional[datetime.datetime] = None,
-        last_seen_date_time: Optional[datetime.datetime] = None,
-        **kwargs
-    ):
-        """
-        :keyword name: Gets or sets the worker machine name.
-        :paramtype name: str
-        :keyword ip: Gets or sets the assigned machine IP address.
-        :paramtype ip: str
-        :keyword registration_time: Gets or sets the registration time of the worker machine.
-        :paramtype registration_time: ~datetime.datetime
-        :keyword last_seen_date_time: Last Heartbeat from the Worker.
-        :paramtype last_seen_date_time: ~datetime.datetime
-        """
-        super(HybridRunbookWorkerLegacy, self).__init__(**kwargs)
-        self.name = name
-        self.ip = ip
-        self.registration_time = registration_time
-        self.last_seen_date_time = last_seen_date_time
-
-
-class HybridRunbookWorkerMoveParameters(msrest.serialization.Model):
+class HybridRunbookWorkerMoveParameters(_serialization.Model):
     """Parameters supplied to move hybrid worker operation.
 
     :ivar hybrid_runbook_worker_group_name: Gets or sets the target hybrid runbook worker group.
@@ -3861,24 +3733,19 @@ class HybridRunbookWorkerMoveParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'hybrid_runbook_worker_group_name': {'key': 'hybridRunbookWorkerGroupName', 'type': 'str'},
+        "hybrid_runbook_worker_group_name": {"key": "hybridRunbookWorkerGroupName", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        hybrid_runbook_worker_group_name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, hybrid_runbook_worker_group_name: Optional[str] = None, **kwargs):
         """
         :keyword hybrid_runbook_worker_group_name: Gets or sets the target hybrid runbook worker group.
         :paramtype hybrid_runbook_worker_group_name: str
         """
-        super(HybridRunbookWorkerMoveParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.hybrid_runbook_worker_group_name = hybrid_runbook_worker_group_name
 
 
-class HybridRunbookWorkersListResult(msrest.serialization.Model):
+class HybridRunbookWorkersListResult(_serialization.Model):
     """The response model for the list hybrid runbook workers.
 
     :ivar value: Gets or sets a list of hybrid runbook workers.
@@ -3888,16 +3755,12 @@ class HybridRunbookWorkersListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[HybridRunbookWorker]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[HybridRunbookWorker]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.HybridRunbookWorker"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.HybridRunbookWorker"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets or sets a list of hybrid runbook workers.
@@ -3905,12 +3768,12 @@ class HybridRunbookWorkersListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(HybridRunbookWorkersListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Identity(msrest.serialization.Model):
+class Identity(_serialization.Model):
     """Identity for the resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3920,52 +3783,52 @@ class Identity(msrest.serialization.Model):
     :ivar tenant_id: The tenant ID of resource.
     :vartype tenant_id: str
     :ivar type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
-     "SystemAssigned, UserAssigned", "None".
+     "SystemAssigned, UserAssigned", and "None".
     :vartype type: str or ~azure.mgmt.automation.models.ResourceIdentityType
     :ivar user_assigned_identities: The list of user identities associated with the resource. The
      user identity dictionary key references will be ARM resource ids in the form:
      '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
     :vartype user_assigned_identities: dict[str,
-     ~azure.mgmt.automation.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
+     ~azure.mgmt.automation.models.UserAssignedIdentitiesProperties]
     """
 
     _validation = {
-        'principal_id': {'readonly': True},
-        'tenant_id': {'readonly': True},
+        "principal_id": {"readonly": True},
+        "tenant_id": {"readonly": True},
     }
 
     _attribute_map = {
-        'principal_id': {'key': 'principalId', 'type': 'str'},
-        'tenant_id': {'key': 'tenantId', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'user_assigned_identities': {'key': 'userAssignedIdentities', 'type': '{ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties}'},
+        "principal_id": {"key": "principalId", "type": "str"},
+        "tenant_id": {"key": "tenantId", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "user_assigned_identities": {"key": "userAssignedIdentities", "type": "{UserAssignedIdentitiesProperties}"},
     }
 
     def __init__(
         self,
         *,
         type: Optional[Union[str, "_models.ResourceIdentityType"]] = None,
-        user_assigned_identities: Optional[Dict[str, "_models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties"]] = None,
+        user_assigned_identities: Optional[Dict[str, "_models.UserAssignedIdentitiesProperties"]] = None,
         **kwargs
     ):
         """
         :keyword type: The identity type. Known values are: "SystemAssigned", "UserAssigned",
-         "SystemAssigned, UserAssigned", "None".
+         "SystemAssigned, UserAssigned", and "None".
         :paramtype type: str or ~azure.mgmt.automation.models.ResourceIdentityType
         :keyword user_assigned_identities: The list of user identities associated with the resource.
          The user identity dictionary key references will be ARM resource ids in the form:
          '/subscriptions/{subscriptionId}/resourceGroups/{resourceGroupName}/providers/Microsoft.ManagedIdentity/userAssignedIdentities/{identityName}'.
         :paramtype user_assigned_identities: dict[str,
-         ~azure.mgmt.automation.models.ComponentsSgqdofSchemasIdentityPropertiesUserassignedidentitiesAdditionalproperties]
+         ~azure.mgmt.automation.models.UserAssignedIdentitiesProperties]
         """
-        super(Identity, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.principal_id = None
         self.tenant_id = None
         self.type = type
         self.user_assigned_identities = user_assigned_identities
 
 
-class Job(ProxyResource):
+class Job(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Definition of the job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -3989,7 +3852,7 @@ class Job(ProxyResource):
     :vartype creation_time: ~datetime.datetime
     :ivar status: Gets or sets the status of the job. Known values are: "New", "Activating",
      "Running", "Completed", "Failed", "Stopped", "Blocked", "Suspended", "Disconnected",
-     "Suspending", "Stopping", "Resuming", "Removing".
+     "Suspending", "Stopping", "Resuming", and "Removing".
     :vartype status: str or ~azure.mgmt.automation.models.JobStatus
     :ivar status_details: Gets or sets the status details of the job.
     :vartype status_details: str
@@ -4006,34 +3869,34 @@ class Job(ProxyResource):
     :ivar parameters: Gets or sets the parameters of the job.
     :vartype parameters: dict[str, str]
     :ivar provisioning_state: The current provisioning state of the job. Known values are:
-     "Failed", "Succeeded", "Suspended", "Processing".
+     "Failed", "Succeeded", "Suspended", and "Processing".
     :vartype provisioning_state: str or ~azure.mgmt.automation.models.JobProvisioningState
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
-        'started_by': {'key': 'properties.startedBy', 'type': 'str'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
-        'job_id': {'key': 'properties.jobId', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'status_details': {'key': 'properties.statusDetails', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'exception': {'key': 'properties.exception', 'type': 'str'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'last_status_modified_time': {'key': 'properties.lastStatusModifiedTime', 'type': 'iso-8601'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "runbook": {"key": "properties.runbook", "type": "RunbookAssociationProperty"},
+        "started_by": {"key": "properties.startedBy", "type": "str"},
+        "run_on": {"key": "properties.runOn", "type": "str"},
+        "job_id": {"key": "properties.jobId", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "status": {"key": "properties.status", "type": "str"},
+        "status_details": {"key": "properties.statusDetails", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "exception": {"key": "properties.exception", "type": "str"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "last_status_modified_time": {"key": "properties.lastStatusModifiedTime", "type": "iso-8601"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
     }
 
     def __init__(
@@ -4069,7 +3932,7 @@ class Job(ProxyResource):
         :paramtype creation_time: ~datetime.datetime
         :keyword status: Gets or sets the status of the job. Known values are: "New", "Activating",
          "Running", "Completed", "Failed", "Stopped", "Blocked", "Suspended", "Disconnected",
-         "Suspending", "Stopping", "Resuming", "Removing".
+         "Suspending", "Stopping", "Resuming", and "Removing".
         :paramtype status: str or ~azure.mgmt.automation.models.JobStatus
         :keyword status_details: Gets or sets the status details of the job.
         :paramtype status_details: str
@@ -4086,10 +3949,10 @@ class Job(ProxyResource):
         :keyword parameters: Gets or sets the parameters of the job.
         :paramtype parameters: dict[str, str]
         :keyword provisioning_state: The current provisioning state of the job. Known values are:
-         "Failed", "Succeeded", "Suspended", "Processing".
+         "Failed", "Succeeded", "Suspended", and "Processing".
         :paramtype provisioning_state: str or ~azure.mgmt.automation.models.JobProvisioningState
         """
-        super(Job, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.runbook = runbook
         self.started_by = started_by
         self.run_on = run_on
@@ -4106,7 +3969,7 @@ class Job(ProxyResource):
         self.provisioning_state = provisioning_state
 
 
-class JobCollectionItem(ProxyResource):
+class JobCollectionItem(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Job collection item properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4125,7 +3988,7 @@ class JobCollectionItem(ProxyResource):
     :vartype creation_time: ~datetime.datetime
     :ivar status: The status of the job. Known values are: "New", "Activating", "Running",
      "Completed", "Failed", "Stopped", "Blocked", "Suspended", "Disconnected", "Suspending",
-     "Stopping", "Resuming", "Removing".
+     "Stopping", "Resuming", and "Removing".
     :vartype status: str or ~azure.mgmt.automation.models.JobStatus
     :ivar start_time: The start time of the job.
     :vartype start_time: ~datetime.datetime
@@ -4140,45 +4003,40 @@ class JobCollectionItem(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'runbook': {'readonly': True},
-        'job_id': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'status': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "runbook": {"readonly": True},
+        "job_id": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "status": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
-        'job_id': {'key': 'properties.jobId', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "runbook": {"key": "properties.runbook", "type": "RunbookAssociationProperty"},
+        "job_id": {"key": "properties.jobId", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "status": {"key": "properties.status", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "run_on": {"key": "properties.runOn", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        run_on: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, run_on: Optional[str] = None, **kwargs):
         """
         :keyword run_on: Specifies the runOn group name where the job was executed.
         :paramtype run_on: str
         """
-        super(JobCollectionItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.runbook = None
         self.job_id = None
         self.creation_time = None
@@ -4190,7 +4048,7 @@ class JobCollectionItem(ProxyResource):
         self.run_on = run_on
 
 
-class JobCreateParameters(msrest.serialization.Model):
+class JobCreateParameters(_serialization.Model):
     """The parameters supplied to the create job operation.
 
     :ivar runbook: Gets or sets the runbook.
@@ -4203,9 +4061,9 @@ class JobCreateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
+        "runbook": {"key": "properties.runbook", "type": "RunbookAssociationProperty"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "run_on": {"key": "properties.runOn", "type": "str"},
     }
 
     def __init__(
@@ -4225,13 +4083,13 @@ class JobCreateParameters(msrest.serialization.Model):
          executed.
         :paramtype run_on: str
         """
-        super(JobCreateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.runbook = runbook
         self.parameters = parameters
         self.run_on = run_on
 
 
-class JobListResultV2(msrest.serialization.Model):
+class JobListResultV2(_serialization.Model):
     """The response model for the list job operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4243,30 +4101,25 @@ class JobListResultV2(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[JobCollectionItem]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[JobCollectionItem]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.JobCollectionItem"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.JobCollectionItem"]] = None, **kwargs):
         """
         :keyword value: List of jobs.
         :paramtype value: list[~azure.mgmt.automation.models.JobCollectionItem]
         """
-        super(JobListResultV2, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class JobNavigation(msrest.serialization.Model):
+class JobNavigation(_serialization.Model):
     """Software update configuration machine run job navigation properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4276,24 +4129,20 @@ class JobNavigation(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(JobNavigation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
 
 
-class JobSchedule(msrest.serialization.Model):
+class JobSchedule(_serialization.Model):
     """Definition of the job schedule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4317,20 +4166,20 @@ class JobSchedule(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'job_schedule_id': {'key': 'properties.jobScheduleId', 'type': 'str'},
-        'schedule': {'key': 'properties.schedule', 'type': 'ScheduleAssociationProperty'},
-        'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "job_schedule_id": {"key": "properties.jobScheduleId", "type": "str"},
+        "schedule": {"key": "properties.schedule", "type": "ScheduleAssociationProperty"},
+        "runbook": {"key": "properties.runbook", "type": "RunbookAssociationProperty"},
+        "run_on": {"key": "properties.runOn", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
     }
 
     def __init__(
@@ -4355,7 +4204,7 @@ class JobSchedule(msrest.serialization.Model):
         :keyword parameters: Gets or sets the parameters of the job schedule.
         :paramtype parameters: dict[str, str]
         """
-        super(JobSchedule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.name = None
         self.type = None
@@ -4366,14 +4215,14 @@ class JobSchedule(msrest.serialization.Model):
         self.parameters = parameters
 
 
-class JobScheduleCreateParameters(msrest.serialization.Model):
+class JobScheduleCreateParameters(_serialization.Model):
     """The parameters supplied to the create job schedule operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar schedule: Required. Gets or sets the schedule.
+    :ivar schedule: Gets or sets the schedule. Required.
     :vartype schedule: ~azure.mgmt.automation.models.ScheduleAssociationProperty
-    :ivar runbook: Required. Gets or sets the runbook.
+    :ivar runbook: Gets or sets the runbook. Required.
     :vartype runbook: ~azure.mgmt.automation.models.RunbookAssociationProperty
     :ivar run_on: Gets or sets the hybrid worker group that the scheduled job should run on.
     :vartype run_on: str
@@ -4382,15 +4231,15 @@ class JobScheduleCreateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'schedule': {'required': True},
-        'runbook': {'required': True},
+        "schedule": {"required": True},
+        "runbook": {"required": True},
     }
 
     _attribute_map = {
-        'schedule': {'key': 'properties.schedule', 'type': 'ScheduleAssociationProperty'},
-        'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
+        "schedule": {"key": "properties.schedule", "type": "ScheduleAssociationProperty"},
+        "runbook": {"key": "properties.runbook", "type": "RunbookAssociationProperty"},
+        "run_on": {"key": "properties.runOn", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
     }
 
     def __init__(
@@ -4403,23 +4252,23 @@ class JobScheduleCreateParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword schedule: Required. Gets or sets the schedule.
+        :keyword schedule: Gets or sets the schedule. Required.
         :paramtype schedule: ~azure.mgmt.automation.models.ScheduleAssociationProperty
-        :keyword runbook: Required. Gets or sets the runbook.
+        :keyword runbook: Gets or sets the runbook. Required.
         :paramtype runbook: ~azure.mgmt.automation.models.RunbookAssociationProperty
         :keyword run_on: Gets or sets the hybrid worker group that the scheduled job should run on.
         :paramtype run_on: str
         :keyword parameters: Gets or sets a list of job properties.
         :paramtype parameters: dict[str, str]
         """
-        super(JobScheduleCreateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.schedule = schedule
         self.runbook = runbook
         self.run_on = run_on
         self.parameters = parameters
 
 
-class JobScheduleListResult(msrest.serialization.Model):
+class JobScheduleListResult(_serialization.Model):
     """The response model for the list job schedule operation.
 
     :ivar value: Gets or sets a list of job schedules.
@@ -4429,16 +4278,12 @@ class JobScheduleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[JobSchedule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[JobSchedule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.JobSchedule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.JobSchedule"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: Gets or sets a list of job schedules.
@@ -4446,12 +4291,12 @@ class JobScheduleListResult(msrest.serialization.Model):
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(JobScheduleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class JobStream(msrest.serialization.Model):
+class JobStream(_serialization.Model):
     """Definition of the job stream.
 
     :ivar id: Gets or sets the id of the resource.
@@ -4461,36 +4306,36 @@ class JobStream(msrest.serialization.Model):
     :ivar time: Gets or sets the creation time of the job.
     :vartype time: ~datetime.datetime
     :ivar stream_type: Gets or sets the stream type. Known values are: "Progress", "Output",
-     "Warning", "Error", "Debug", "Verbose", "Any".
+     "Warning", "Error", "Debug", "Verbose", and "Any".
     :vartype stream_type: str or ~azure.mgmt.automation.models.JobStreamType
     :ivar stream_text: Gets or sets the stream text.
     :vartype stream_text: str
     :ivar summary: Gets or sets the summary.
     :vartype summary: str
     :ivar value: Gets or sets the values of the job stream.
-    :vartype value: dict[str, any]
+    :vartype value: dict[str, JSON]
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'job_stream_id': {'key': 'properties.jobStreamId', 'type': 'str'},
-        'time': {'key': 'properties.time', 'type': 'iso-8601'},
-        'stream_type': {'key': 'properties.streamType', 'type': 'str'},
-        'stream_text': {'key': 'properties.streamText', 'type': 'str'},
-        'summary': {'key': 'properties.summary', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': '{object}'},
+        "id": {"key": "id", "type": "str"},
+        "job_stream_id": {"key": "properties.jobStreamId", "type": "str"},
+        "time": {"key": "properties.time", "type": "iso-8601"},
+        "stream_type": {"key": "properties.streamType", "type": "str"},
+        "stream_text": {"key": "properties.streamText", "type": "str"},
+        "summary": {"key": "properties.summary", "type": "str"},
+        "value": {"key": "properties.value", "type": "{object}"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         job_stream_id: Optional[str] = None,
         time: Optional[datetime.datetime] = None,
         stream_type: Optional[Union[str, "_models.JobStreamType"]] = None,
         stream_text: Optional[str] = None,
         summary: Optional[str] = None,
-        value: Optional[Dict[str, Any]] = None,
+        value: Optional[Dict[str, JSON]] = None,
         **kwargs
     ):
         """
@@ -4501,16 +4346,16 @@ class JobStream(msrest.serialization.Model):
         :keyword time: Gets or sets the creation time of the job.
         :paramtype time: ~datetime.datetime
         :keyword stream_type: Gets or sets the stream type. Known values are: "Progress", "Output",
-         "Warning", "Error", "Debug", "Verbose", "Any".
+         "Warning", "Error", "Debug", "Verbose", and "Any".
         :paramtype stream_type: str or ~azure.mgmt.automation.models.JobStreamType
         :keyword stream_text: Gets or sets the stream text.
         :paramtype stream_text: str
         :keyword summary: Gets or sets the summary.
         :paramtype summary: str
         :keyword value: Gets or sets the values of the job stream.
-        :paramtype value: dict[str, any]
+        :paramtype value: dict[str, JSON]
         """
-        super(JobStream, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.job_stream_id = job_stream_id
         self.time = time
@@ -4520,7 +4365,7 @@ class JobStream(msrest.serialization.Model):
         self.value = value
 
 
-class JobStreamListResult(msrest.serialization.Model):
+class JobStreamListResult(_serialization.Model):
     """The response model for the list job stream operation.
 
     :ivar value: A list of job streams.
@@ -4530,66 +4375,56 @@ class JobStreamListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[JobStream]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[JobStream]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.JobStream"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.JobStream"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: A list of job streams.
         :paramtype value: list[~azure.mgmt.automation.models.JobStream]
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(JobStreamListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class Key(msrest.serialization.Model):
+class Key(_serialization.Model):
     """Automation key which is used to register a DSC Node.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
-    :ivar key_name: Automation key name. Known values are: "Primary", "Secondary".
+    :ivar key_name: Automation key name. Known values are: "Primary" and "Secondary".
     :vartype key_name: str or ~azure.mgmt.automation.models.AutomationKeyName
-    :ivar permissions: Automation key permissions. Known values are: "Read", "Full".
+    :ivar permissions: Automation key permissions. Known values are: "Read" and "Full".
     :vartype permissions: str or ~azure.mgmt.automation.models.AutomationKeyPermissions
     :ivar value: Value of the Automation Key used for registration.
     :vartype value: str
     """
 
     _validation = {
-        'key_name': {'readonly': True},
-        'permissions': {'readonly': True},
-        'value': {'readonly': True},
+        "key_name": {"readonly": True},
+        "permissions": {"readonly": True},
+        "value": {"readonly": True},
     }
 
     _attribute_map = {
-        'key_name': {'key': 'KeyName', 'type': 'str'},
-        'permissions': {'key': 'Permissions', 'type': 'str'},
-        'value': {'key': 'Value', 'type': 'str'},
+        "key_name": {"key": "KeyName", "type": "str"},
+        "permissions": {"key": "Permissions", "type": "str"},
+        "value": {"key": "Value", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Key, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.key_name = None
         self.permissions = None
         self.value = None
 
 
-class KeyListResult(msrest.serialization.Model):
+class KeyListResult(_serialization.Model):
     """KeyListResult.
 
     :ivar keys: Lists the automation keys.
@@ -4597,24 +4432,19 @@ class KeyListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'keys': {'key': 'keys', 'type': '[Key]'},
+        "keys": {"key": "keys", "type": "[Key]"},
     }
 
-    def __init__(
-        self,
-        *,
-        keys: Optional[List["_models.Key"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, keys: Optional[List["_models.Key"]] = None, **kwargs):
         """
         :keyword keys: Lists the automation keys.
         :paramtype keys: list[~azure.mgmt.automation.models.Key]
         """
-        super(KeyListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.keys = keys
 
 
-class KeyVaultProperties(msrest.serialization.Model):
+class KeyVaultProperties(_serialization.Model):
     """Settings concerning key vault encryption for a configuration store.
 
     :ivar keyvault_uri: The URI of the key vault key used to encrypt data.
@@ -4626,9 +4456,9 @@ class KeyVaultProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'keyvault_uri': {'key': 'keyvaultUri', 'type': 'str'},
-        'key_name': {'key': 'keyName', 'type': 'str'},
-        'key_version': {'key': 'keyVersion', 'type': 'str'},
+        "keyvault_uri": {"key": "keyvaultUri", "type": "str"},
+        "key_name": {"key": "keyName", "type": "str"},
+        "key_version": {"key": "keyVersion", "type": "str"},
     }
 
     def __init__(
@@ -4647,13 +4477,13 @@ class KeyVaultProperties(msrest.serialization.Model):
         :keyword key_version: The key version of the key used to encrypt data.
         :paramtype key_version: str
         """
-        super(KeyVaultProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.keyvault_uri = keyvault_uri
         self.key_name = key_name
         self.key_version = key_version
 
 
-class LinkedWorkspace(msrest.serialization.Model):
+class LinkedWorkspace(_serialization.Model):
     """Definition of the linked workspace.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4663,28 +4493,24 @@ class LinkedWorkspace(msrest.serialization.Model):
     """
 
     _validation = {
-        'id': {'readonly': True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(LinkedWorkspace, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.id = None
 
 
-class LinuxProperties(msrest.serialization.Model):
+class LinuxProperties(_serialization.Model):
     """Linux specific update configuration.
 
     :ivar included_package_classifications: Update classifications included in the software update
-     configuration. Known values are: "Unclassified", "Critical", "Security", "Other".
+     configuration. Known values are: "Unclassified", "Critical", "Security", and "Other".
     :vartype included_package_classifications: str or
      ~azure.mgmt.automation.models.LinuxUpdateClasses
     :ivar excluded_package_name_masks: packages excluded from the software update configuration.
@@ -4696,10 +4522,10 @@ class LinuxProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'included_package_classifications': {'key': 'includedPackageClassifications', 'type': 'str'},
-        'excluded_package_name_masks': {'key': 'excludedPackageNameMasks', 'type': '[str]'},
-        'included_package_name_masks': {'key': 'includedPackageNameMasks', 'type': '[str]'},
-        'reboot_setting': {'key': 'rebootSetting', 'type': 'str'},
+        "included_package_classifications": {"key": "includedPackageClassifications", "type": "str"},
+        "excluded_package_name_masks": {"key": "excludedPackageNameMasks", "type": "[str]"},
+        "included_package_name_masks": {"key": "includedPackageNameMasks", "type": "[str]"},
+        "reboot_setting": {"key": "rebootSetting", "type": "str"},
     }
 
     def __init__(
@@ -4713,7 +4539,7 @@ class LinuxProperties(msrest.serialization.Model):
     ):
         """
         :keyword included_package_classifications: Update classifications included in the software
-         update configuration. Known values are: "Unclassified", "Critical", "Security", "Other".
+         update configuration. Known values are: "Unclassified", "Critical", "Security", and "Other".
         :paramtype included_package_classifications: str or
          ~azure.mgmt.automation.models.LinuxUpdateClasses
         :keyword excluded_package_name_masks: packages excluded from the software update configuration.
@@ -4723,14 +4549,113 @@ class LinuxProperties(msrest.serialization.Model):
         :keyword reboot_setting: Reboot setting for the software update configuration.
         :paramtype reboot_setting: str
         """
-        super(LinuxProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.included_package_classifications = included_package_classifications
         self.excluded_package_name_masks = excluded_package_name_masks
         self.included_package_name_masks = included_package_name_masks
         self.reboot_setting = reboot_setting
 
 
-class Module(TrackedResource):
+class LogSpecification(_serialization.Model):
+    """Description of logging specification.
+
+    :ivar name: The name of the specification.
+    :vartype name: str
+    :ivar display_name: The display name of the specification.
+    :vartype display_name: str
+    :ivar blob_duration: Duration of the blob.
+    :vartype blob_duration: str
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "blob_duration": {"key": "blobDuration", "type": "str"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        blob_duration: Optional[str] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: The name of the specification.
+        :paramtype name: str
+        :keyword display_name: The display name of the specification.
+        :paramtype display_name: str
+        :keyword blob_duration: Duration of the blob.
+        :paramtype blob_duration: str
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.blob_duration = blob_duration
+
+
+class MetricSpecification(_serialization.Model):
+    """Description of metrics specification.
+
+    :ivar name: The name of the metric.
+    :vartype name: str
+    :ivar display_name: The display name of the metric.
+    :vartype display_name: str
+    :ivar display_description: The description of the metric.
+    :vartype display_description: str
+    :ivar unit: Units the metric to be displayed in.
+    :vartype unit: str
+    :ivar aggregation_type: The aggregation type.
+    :vartype aggregation_type: str
+    :ivar dimensions: List of dimensions.
+    :vartype dimensions: list[~azure.mgmt.automation.models.Dimension]
+    """
+
+    _attribute_map = {
+        "name": {"key": "name", "type": "str"},
+        "display_name": {"key": "displayName", "type": "str"},
+        "display_description": {"key": "displayDescription", "type": "str"},
+        "unit": {"key": "unit", "type": "str"},
+        "aggregation_type": {"key": "aggregationType", "type": "str"},
+        "dimensions": {"key": "dimensions", "type": "[Dimension]"},
+    }
+
+    def __init__(
+        self,
+        *,
+        name: Optional[str] = None,
+        display_name: Optional[str] = None,
+        display_description: Optional[str] = None,
+        unit: Optional[str] = None,
+        aggregation_type: Optional[str] = None,
+        dimensions: Optional[List["_models.Dimension"]] = None,
+        **kwargs
+    ):
+        """
+        :keyword name: The name of the metric.
+        :paramtype name: str
+        :keyword display_name: The display name of the metric.
+        :paramtype display_name: str
+        :keyword display_description: The description of the metric.
+        :paramtype display_description: str
+        :keyword unit: Units the metric to be displayed in.
+        :paramtype unit: str
+        :keyword aggregation_type: The aggregation type.
+        :paramtype aggregation_type: str
+        :keyword dimensions: List of dimensions.
+        :paramtype dimensions: list[~azure.mgmt.automation.models.Dimension]
+        """
+        super().__init__(**kwargs)
+        self.name = name
+        self.display_name = display_name
+        self.display_description = display_description
+        self.unit = unit
+        self.aggregation_type = aggregation_type
+        self.dimensions = dimensions
+
+
+class Module(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Definition of the module type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -4741,7 +4666,7 @@ class Module(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The Azure Region where the resource lives.
     :vartype location: str
@@ -4752,14 +4677,14 @@ class Module(TrackedResource):
     :ivar version: Gets or sets the version of the module.
     :vartype version: str
     :ivar size_in_bytes: Gets or sets the size in bytes of the module.
-    :vartype size_in_bytes: long
+    :vartype size_in_bytes: int
     :ivar activity_count: Gets or sets the activity count of the module.
     :vartype activity_count: int
     :ivar provisioning_state: Gets or sets the provisioning state of the module. Known values are:
      "Created", "Creating", "StartingImportModuleRunbook", "RunningImportModuleRunbook",
      "ContentRetrieved", "ContentDownloaded", "ContentValidated", "ConnectionTypeImported",
      "ContentStored", "ModuleDataStored", "ActivitiesStored", "ModuleImportRunbookComplete",
-     "Succeeded", "Failed", "Cancelled", "Updating".
+     "Succeeded", "Failed", "Cancelled", and "Updating".
     :vartype provisioning_state: str or ~azure.mgmt.automation.models.ModuleProvisioningState
     :ivar content_link: Gets or sets the contentLink of the module.
     :vartype content_link: ~azure.mgmt.automation.models.ContentLink
@@ -4776,29 +4701,29 @@ class Module(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'is_global': {'key': 'properties.isGlobal', 'type': 'bool'},
-        'version': {'key': 'properties.version', 'type': 'str'},
-        'size_in_bytes': {'key': 'properties.sizeInBytes', 'type': 'long'},
-        'activity_count': {'key': 'properties.activityCount', 'type': 'int'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'content_link': {'key': 'properties.contentLink', 'type': 'ContentLink'},
-        'error': {'key': 'properties.error', 'type': 'ModuleErrorInfo'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'is_composite': {'key': 'properties.isComposite', 'type': 'bool'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "is_global": {"key": "properties.isGlobal", "type": "bool"},
+        "version": {"key": "properties.version", "type": "str"},
+        "size_in_bytes": {"key": "properties.sizeInBytes", "type": "int"},
+        "activity_count": {"key": "properties.activityCount", "type": "int"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "content_link": {"key": "properties.contentLink", "type": "ContentLink"},
+        "error": {"key": "properties.error", "type": "ModuleErrorInfo"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
+        "is_composite": {"key": "properties.isComposite", "type": "bool"},
     }
 
     def __init__(
@@ -4821,7 +4746,7 @@ class Module(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The Azure Region where the resource lives.
         :paramtype location: str
@@ -4832,14 +4757,14 @@ class Module(TrackedResource):
         :keyword version: Gets or sets the version of the module.
         :paramtype version: str
         :keyword size_in_bytes: Gets or sets the size in bytes of the module.
-        :paramtype size_in_bytes: long
+        :paramtype size_in_bytes: int
         :keyword activity_count: Gets or sets the activity count of the module.
         :paramtype activity_count: int
         :keyword provisioning_state: Gets or sets the provisioning state of the module. Known values
          are: "Created", "Creating", "StartingImportModuleRunbook", "RunningImportModuleRunbook",
          "ContentRetrieved", "ContentDownloaded", "ContentValidated", "ConnectionTypeImported",
          "ContentStored", "ModuleDataStored", "ActivitiesStored", "ModuleImportRunbookComplete",
-         "Succeeded", "Failed", "Cancelled", "Updating".
+         "Succeeded", "Failed", "Cancelled", and "Updating".
         :paramtype provisioning_state: str or ~azure.mgmt.automation.models.ModuleProvisioningState
         :keyword content_link: Gets or sets the contentLink of the module.
         :paramtype content_link: ~azure.mgmt.automation.models.ContentLink
@@ -4854,7 +4779,7 @@ class Module(TrackedResource):
         :keyword is_composite: Gets or sets type of module, if its composite or not.
         :paramtype is_composite: bool
         """
-        super(Module, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.etag = etag
         self.is_global = is_global
         self.version = version
@@ -4869,7 +4794,7 @@ class Module(TrackedResource):
         self.is_composite = is_composite
 
 
-class ModuleCreateOrUpdateParameters(msrest.serialization.Model):
+class ModuleCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update module operation.
 
     All required parameters must be populated in order to send to Azure.
@@ -4878,21 +4803,21 @@ class ModuleCreateOrUpdateParameters(msrest.serialization.Model):
     :vartype name: str
     :ivar location: Gets or sets the location of the resource.
     :vartype location: str
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
-    :ivar content_link: Required. Gets or sets the module content link.
+    :ivar content_link: Gets or sets the module content link. Required.
     :vartype content_link: ~azure.mgmt.automation.models.ContentLink
     """
 
     _validation = {
-        'content_link': {'required': True},
+        "content_link": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'content_link': {'key': 'properties.contentLink', 'type': 'ContentLink'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "content_link": {"key": "properties.contentLink", "type": "ContentLink"},
     }
 
     def __init__(
@@ -4909,19 +4834,19 @@ class ModuleCreateOrUpdateParameters(msrest.serialization.Model):
         :paramtype name: str
         :keyword location: Gets or sets the location of the resource.
         :paramtype location: str
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
-        :keyword content_link: Required. Gets or sets the module content link.
+        :keyword content_link: Gets or sets the module content link. Required.
         :paramtype content_link: ~azure.mgmt.automation.models.ContentLink
         """
-        super(ModuleCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.location = location
         self.tags = tags
         self.content_link = content_link
 
 
-class ModuleErrorInfo(msrest.serialization.Model):
+class ModuleErrorInfo(_serialization.Model):
     """Definition of the module error info type.
 
     :ivar code: Gets or sets the error code.
@@ -4931,29 +4856,23 @@ class ModuleErrorInfo(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'code': {'key': 'code', 'type': 'str'},
-        'message': {'key': 'message', 'type': 'str'},
+        "code": {"key": "code", "type": "str"},
+        "message": {"key": "message", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        code: Optional[str] = None,
-        message: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, code: Optional[str] = None, message: Optional[str] = None, **kwargs):
         """
         :keyword code: Gets or sets the error code.
         :paramtype code: str
         :keyword message: Gets or sets the error message.
         :paramtype message: str
         """
-        super(ModuleErrorInfo, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.code = code
         self.message = message
 
 
-class ModuleListResult(msrest.serialization.Model):
+class ModuleListResult(_serialization.Model):
     """The response model for the list module operation.
 
     :ivar value: Gets or sets a list of modules.
@@ -4963,46 +4882,40 @@ class ModuleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Module]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Module]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Module"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Module"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of modules.
         :paramtype value: list[~azure.mgmt.automation.models.Module]
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(ModuleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ModuleUpdateParameters(msrest.serialization.Model):
+class ModuleUpdateParameters(_serialization.Model):
     """The parameters supplied to the update module operation.
 
     :ivar name: Gets or sets name of the resource.
     :vartype name: str
     :ivar location: Gets or sets the location of the resource.
     :vartype location: str
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
     :ivar content_link: Gets or sets the module content link.
     :vartype content_link: ~azure.mgmt.automation.models.ContentLink
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'content_link': {'key': 'properties.contentLink', 'type': 'ContentLink'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "content_link": {"key": "properties.contentLink", "type": "ContentLink"},
     }
 
     def __init__(
@@ -5019,19 +4932,19 @@ class ModuleUpdateParameters(msrest.serialization.Model):
         :paramtype name: str
         :keyword location: Gets or sets the location of the resource.
         :paramtype location: str
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
         :keyword content_link: Gets or sets the module content link.
         :paramtype content_link: ~azure.mgmt.automation.models.ContentLink
         """
-        super(ModuleUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.location = location
         self.tags = tags
         self.content_link = content_link
 
 
-class NodeCount(msrest.serialization.Model):
+class NodeCount(_serialization.Model):
     """Number of nodes based on the Filter.
 
     :ivar name: Gets the name of a count type.
@@ -5041,16 +4954,12 @@ class NodeCount(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'properties': {'key': 'properties', 'type': 'NodeCountProperties'},
+        "name": {"key": "name", "type": "str"},
+        "properties": {"key": "properties", "type": "NodeCountProperties"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        properties: Optional["_models.NodeCountProperties"] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, properties: Optional["_models.NodeCountProperties"] = None, **kwargs
     ):
         """
         :keyword name: Gets the name of a count type.
@@ -5058,12 +4967,12 @@ class NodeCount(msrest.serialization.Model):
         :keyword properties:
         :paramtype properties: ~azure.mgmt.automation.models.NodeCountProperties
         """
-        super(NodeCount, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.properties = properties
 
 
-class NodeCountProperties(msrest.serialization.Model):
+class NodeCountProperties(_serialization.Model):
     """NodeCountProperties.
 
     :ivar count: Gets the count for the name.
@@ -5071,24 +4980,19 @@ class NodeCountProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'count': {'key': 'count', 'type': 'int'},
+        "count": {"key": "count", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        count: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, count: Optional[int] = None, **kwargs):
         """
         :keyword count: Gets the count for the name.
         :paramtype count: int
         """
-        super(NodeCountProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.count = count
 
 
-class NodeCounts(msrest.serialization.Model):
+class NodeCounts(_serialization.Model):
     """Gets the count of nodes by count type.
 
     :ivar value: Gets an array of counts.
@@ -5098,16 +5002,12 @@ class NodeCounts(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[NodeCount]'},
-        'total_count': {'key': 'totalCount', 'type': 'int'},
+        "value": {"key": "value", "type": "[NodeCount]"},
+        "total_count": {"key": "totalCount", "type": "int"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.NodeCount"]] = None,
-        total_count: Optional[int] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.NodeCount"]] = None, total_count: Optional[int] = None, **kwargs
     ):
         """
         :keyword value: Gets an array of counts.
@@ -5115,12 +5015,12 @@ class NodeCounts(msrest.serialization.Model):
         :keyword total_count: Gets the total number of records matching countType criteria.
         :paramtype total_count: int
         """
-        super(NodeCounts, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.total_count = total_count
 
 
-class NonAzureQueryProperties(msrest.serialization.Model):
+class NonAzureQueryProperties(_serialization.Model):
     """Non Azure query for the update configuration.
 
     :ivar function_alias: Log Analytics Saved Search name.
@@ -5130,40 +5030,44 @@ class NonAzureQueryProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'function_alias': {'key': 'functionAlias', 'type': 'str'},
-        'workspace_id': {'key': 'workspaceId', 'type': 'str'},
+        "function_alias": {"key": "functionAlias", "type": "str"},
+        "workspace_id": {"key": "workspaceId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        function_alias: Optional[str] = None,
-        workspace_id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, function_alias: Optional[str] = None, workspace_id: Optional[str] = None, **kwargs):
         """
         :keyword function_alias: Log Analytics Saved Search name.
         :paramtype function_alias: str
         :keyword workspace_id: Workspace Id for Log Analytics in which the saved Search is resided.
         :paramtype workspace_id: str
         """
-        super(NonAzureQueryProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.function_alias = function_alias
         self.workspace_id = workspace_id
 
 
-class Operation(msrest.serialization.Model):
+class Operation(_serialization.Model):
     """Automation REST API operation.
 
     :ivar name: Operation name: {provider}/{resource}/{operation}.
     :vartype name: str
     :ivar display: Provider, Resource and Operation values.
     :vartype display: ~azure.mgmt.automation.models.OperationDisplay
+    :ivar origin: Origin of the operation.
+    :vartype origin: str
+    :ivar service_specification: Specification of the service.
+    :vartype service_specification:
+     ~azure.mgmt.automation.models.OperationPropertiesFormatServiceSpecification
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'display': {'key': 'display', 'type': 'OperationDisplay'},
+        "name": {"key": "name", "type": "str"},
+        "display": {"key": "display", "type": "OperationDisplay"},
+        "origin": {"key": "origin", "type": "str"},
+        "service_specification": {
+            "key": "properties.serviceSpecification",
+            "type": "OperationPropertiesFormatServiceSpecification",
+        },
     }
 
     def __init__(
@@ -5171,6 +5075,8 @@ class Operation(msrest.serialization.Model):
         *,
         name: Optional[str] = None,
         display: Optional["_models.OperationDisplay"] = None,
+        origin: Optional[str] = None,
+        service_specification: Optional["_models.OperationPropertiesFormatServiceSpecification"] = None,
         **kwargs
     ):
         """
@@ -5178,13 +5084,20 @@ class Operation(msrest.serialization.Model):
         :paramtype name: str
         :keyword display: Provider, Resource and Operation values.
         :paramtype display: ~azure.mgmt.automation.models.OperationDisplay
+        :keyword origin: Origin of the operation.
+        :paramtype origin: str
+        :keyword service_specification: Specification of the service.
+        :paramtype service_specification:
+         ~azure.mgmt.automation.models.OperationPropertiesFormatServiceSpecification
         """
-        super(Operation, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.display = display
+        self.origin = origin
+        self.service_specification = service_specification
 
 
-class OperationDisplay(msrest.serialization.Model):
+class OperationDisplay(_serialization.Model):
     """Provider, Resource and Operation values.
 
     :ivar provider: Service provider: Microsoft.Automation.
@@ -5193,12 +5106,15 @@ class OperationDisplay(msrest.serialization.Model):
     :vartype resource: str
     :ivar operation: Operation type: Read, write, delete, etc.
     :vartype operation: str
+    :ivar description: Description of the operation.
+    :vartype description: str
     """
 
     _attribute_map = {
-        'provider': {'key': 'provider', 'type': 'str'},
-        'resource': {'key': 'resource', 'type': 'str'},
-        'operation': {'key': 'operation', 'type': 'str'},
+        "provider": {"key": "provider", "type": "str"},
+        "resource": {"key": "resource", "type": "str"},
+        "operation": {"key": "operation", "type": "str"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -5207,6 +5123,7 @@ class OperationDisplay(msrest.serialization.Model):
         provider: Optional[str] = None,
         resource: Optional[str] = None,
         operation: Optional[str] = None,
+        description: Optional[str] = None,
         **kwargs
     ):
         """
@@ -5216,14 +5133,17 @@ class OperationDisplay(msrest.serialization.Model):
         :paramtype resource: str
         :keyword operation: Operation type: Read, write, delete, etc.
         :paramtype operation: str
+        :keyword description: Description of the operation.
+        :paramtype description: str
         """
-        super(OperationDisplay, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.provider = provider
         self.resource = resource
         self.operation = operation
+        self.description = description
 
 
-class OperationListResult(msrest.serialization.Model):
+class OperationListResult(_serialization.Model):
     """The response model for the list of Automation operations.
 
     :ivar value: List of Automation operations supported by the Automation resource provider.
@@ -5231,21 +5151,48 @@ class OperationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Operation]'},
+        "value": {"key": "value", "type": "[Operation]"},
+    }
+
+    def __init__(self, *, value: Optional[List["_models.Operation"]] = None, **kwargs):
+        """
+        :keyword value: List of Automation operations supported by the Automation resource provider.
+        :paramtype value: list[~azure.mgmt.automation.models.Operation]
+        """
+        super().__init__(**kwargs)
+        self.value = value
+
+
+class OperationPropertiesFormatServiceSpecification(_serialization.Model):
+    """Specification of the service.
+
+    :ivar metric_specifications: Operation service specification.
+    :vartype metric_specifications: list[~azure.mgmt.automation.models.MetricSpecification]
+    :ivar log_specifications: Operation log specification.
+    :vartype log_specifications: list[~azure.mgmt.automation.models.LogSpecification]
+    """
+
+    _attribute_map = {
+        "metric_specifications": {"key": "metricSpecifications", "type": "[MetricSpecification]"},
+        "log_specifications": {"key": "logSpecifications", "type": "[LogSpecification]"},
     }
 
     def __init__(
         self,
         *,
-        value: Optional[List["_models.Operation"]] = None,
+        metric_specifications: Optional[List["_models.MetricSpecification"]] = None,
+        log_specifications: Optional[List["_models.LogSpecification"]] = None,
         **kwargs
     ):
         """
-        :keyword value: List of Automation operations supported by the Automation resource provider.
-        :paramtype value: list[~azure.mgmt.automation.models.Operation]
+        :keyword metric_specifications: Operation service specification.
+        :paramtype metric_specifications: list[~azure.mgmt.automation.models.MetricSpecification]
+        :keyword log_specifications: Operation log specification.
+        :paramtype log_specifications: list[~azure.mgmt.automation.models.LogSpecification]
         """
-        super(OperationListResult, self).__init__(**kwargs)
-        self.value = value
+        super().__init__(**kwargs)
+        self.metric_specifications = metric_specifications
+        self.log_specifications = log_specifications
 
 
 class PrivateEndpointConnection(ProxyResource):
@@ -5270,18 +5217,21 @@ class PrivateEndpointConnection(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'private_endpoint': {'key': 'properties.privateEndpoint', 'type': 'PrivateEndpointProperty'},
-        'group_ids': {'key': 'properties.groupIds', 'type': '[str]'},
-        'private_link_service_connection_state': {'key': 'properties.privateLinkServiceConnectionState', 'type': 'PrivateLinkServiceConnectionStateProperty'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "private_endpoint": {"key": "properties.privateEndpoint", "type": "PrivateEndpointProperty"},
+        "group_ids": {"key": "properties.groupIds", "type": "[str]"},
+        "private_link_service_connection_state": {
+            "key": "properties.privateLinkServiceConnectionState",
+            "type": "PrivateLinkServiceConnectionStateProperty",
+        },
     }
 
     def __init__(
@@ -5302,13 +5252,13 @@ class PrivateEndpointConnection(ProxyResource):
         :paramtype private_link_service_connection_state:
          ~azure.mgmt.automation.models.PrivateLinkServiceConnectionStateProperty
         """
-        super(PrivateEndpointConnection, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.private_endpoint = private_endpoint
         self.group_ids = group_ids
         self.private_link_service_connection_state = private_link_service_connection_state
 
 
-class PrivateEndpointConnectionListResult(msrest.serialization.Model):
+class PrivateEndpointConnectionListResult(_serialization.Model):
     """A list of private endpoint connections.
 
     :ivar value: Array of private endpoint connections.
@@ -5316,24 +5266,19 @@ class PrivateEndpointConnectionListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateEndpointConnection]'},
+        "value": {"key": "value", "type": "[PrivateEndpointConnection]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PrivateEndpointConnection"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.PrivateEndpointConnection"]] = None, **kwargs):
         """
         :keyword value: Array of private endpoint connections.
         :paramtype value: list[~azure.mgmt.automation.models.PrivateEndpointConnection]
         """
-        super(PrivateEndpointConnectionListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PrivateEndpointProperty(msrest.serialization.Model):
+class PrivateEndpointProperty(_serialization.Model):
     """Private endpoint which the connection belongs to.
 
     :ivar id: Resource id of the private endpoint.
@@ -5341,20 +5286,15 @@ class PrivateEndpointProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        id: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, id: Optional[str] = None, **kwargs):  # pylint: disable=redefined-builtin
         """
         :keyword id: Resource id of the private endpoint.
         :paramtype id: str
         """
-        super(PrivateEndpointProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
 
 
@@ -5376,33 +5316,29 @@ class PrivateLinkResource(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'group_id': {'readonly': True},
-        'required_members': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "group_id": {"readonly": True},
+        "required_members": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'group_id': {'key': 'properties.groupId', 'type': 'str'},
-        'required_members': {'key': 'properties.requiredMembers', 'type': '[str]'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "group_id": {"key": "properties.groupId", "type": "str"},
+        "required_members": {"key": "properties.requiredMembers", "type": "[str]"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(PrivateLinkResource, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.group_id = None
         self.required_members = None
 
 
-class PrivateLinkResourceListResult(msrest.serialization.Model):
+class PrivateLinkResourceListResult(_serialization.Model):
     """A list of private link resources.
 
     :ivar value: Array of private link resources.
@@ -5410,24 +5346,19 @@ class PrivateLinkResourceListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[PrivateLinkResource]'},
+        "value": {"key": "value", "type": "[PrivateLinkResource]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.PrivateLinkResource"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.PrivateLinkResource"]] = None, **kwargs):
         """
         :keyword value: Array of private link resources.
         :paramtype value: list[~azure.mgmt.automation.models.PrivateLinkResource]
         """
-        super(PrivateLinkResourceListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
+class PrivateLinkServiceConnectionStateProperty(_serialization.Model):
     """Connection State of the Private Endpoint Connection.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5442,113 +5373,96 @@ class PrivateLinkServiceConnectionStateProperty(msrest.serialization.Model):
     """
 
     _validation = {
-        'actions_required': {'readonly': True},
+        "actions_required": {"readonly": True},
     }
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'description': {'key': 'description', 'type': 'str'},
-        'actions_required': {'key': 'actionsRequired', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "description": {"key": "description", "type": "str"},
+        "actions_required": {"key": "actionsRequired", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        status: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, status: Optional[str] = None, description: Optional[str] = None, **kwargs):
         """
         :keyword status: The private link service connection status.
         :paramtype status: str
         :keyword description: The private link service connection description.
         :paramtype description: str
         """
-        super(PrivateLinkServiceConnectionStateProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.description = description
         self.actions_required = None
 
 
-class PythonPackageCreateParameters(msrest.serialization.Model):
+class PythonPackageCreateParameters(_serialization.Model):
     """The parameters supplied to the create or update module operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
-    :ivar content_link: Required. Gets or sets the module content link.
+    :ivar content_link: Gets or sets the module content link. Required.
     :vartype content_link: ~azure.mgmt.automation.models.ContentLink
     """
 
     _validation = {
-        'content_link': {'required': True},
+        "content_link": {"required": True},
     }
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'content_link': {'key': 'properties.contentLink', 'type': 'ContentLink'},
+        "tags": {"key": "tags", "type": "{str}"},
+        "content_link": {"key": "properties.contentLink", "type": "ContentLink"},
     }
 
-    def __init__(
-        self,
-        *,
-        content_link: "_models.ContentLink",
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, content_link: "_models.ContentLink", tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
-        :keyword content_link: Required. Gets or sets the module content link.
+        :keyword content_link: Gets or sets the module content link. Required.
         :paramtype content_link: ~azure.mgmt.automation.models.ContentLink
         """
-        super(PythonPackageCreateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.content_link = content_link
 
 
-class PythonPackageUpdateParameters(msrest.serialization.Model):
+class PythonPackageUpdateParameters(_serialization.Model):
     """The parameters supplied to the update module operation.
 
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{str}'},
+        "tags": {"key": "tags", "type": "{str}"},
     }
 
-    def __init__(
-        self,
-        *,
-        tags: Optional[Dict[str, str]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, tags: Optional[Dict[str, str]] = None, **kwargs):
         """
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
         """
-        super(PythonPackageUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
 
 
-class RawGraphicalRunbookContent(msrest.serialization.Model):
+class RawGraphicalRunbookContent(_serialization.Model):
     """Raw Graphical Runbook content.
 
     :ivar schema_version: Schema version of the serializer.
     :vartype schema_version: str
     :ivar runbook_definition: Serialized Graphical runbook.
     :vartype runbook_definition: str
-    :ivar runbook_type: Runbook Type. Known values are: "GraphPowerShell",
+    :ivar runbook_type: Runbook Type. Known values are: "GraphPowerShell" and
      "GraphPowerShellWorkflow".
     :vartype runbook_type: str or ~azure.mgmt.automation.models.GraphRunbookType
     """
 
     _attribute_map = {
-        'schema_version': {'key': 'schemaVersion', 'type': 'str'},
-        'runbook_definition': {'key': 'runbookDefinition', 'type': 'str'},
-        'runbook_type': {'key': 'runbookType', 'type': 'str'},
+        "schema_version": {"key": "schemaVersion", "type": "str"},
+        "runbook_definition": {"key": "runbookDefinition", "type": "str"},
+        "runbook_type": {"key": "runbookType", "type": "str"},
     }
 
     def __init__(
@@ -5564,17 +5478,17 @@ class RawGraphicalRunbookContent(msrest.serialization.Model):
         :paramtype schema_version: str
         :keyword runbook_definition: Serialized Graphical runbook.
         :paramtype runbook_definition: str
-        :keyword runbook_type: Runbook Type. Known values are: "GraphPowerShell",
+        :keyword runbook_type: Runbook Type. Known values are: "GraphPowerShell" and
          "GraphPowerShellWorkflow".
         :paramtype runbook_type: str or ~azure.mgmt.automation.models.GraphRunbookType
         """
-        super(RawGraphicalRunbookContent, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.schema_version = schema_version
         self.runbook_definition = runbook_definition
         self.runbook_type = runbook_type
 
 
-class RunAsCredentialAssociationProperty(msrest.serialization.Model):
+class RunAsCredentialAssociationProperty(_serialization.Model):
     """Definition of RunAs credential to use for hybrid worker.
 
     :ivar name: Gets or sets the name of the credential.
@@ -5582,24 +5496,19 @@ class RunAsCredentialAssociationProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the credential.
         :paramtype name: str
         """
-        super(RunAsCredentialAssociationProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class Runbook(TrackedResource):
+class Runbook(TrackedResource):  # pylint: disable=too-many-instance-attributes
     """Definition of the runbook type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -5610,7 +5519,7 @@ class Runbook(TrackedResource):
     :vartype name: str
     :ivar type: The type of the resource.
     :vartype type: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The Azure Region where the resource lives.
     :vartype location: str
@@ -5618,11 +5527,11 @@ class Runbook(TrackedResource):
     :vartype etag: str
     :ivar runbook_type: Gets or sets the type of the runbook. Known values are: "Script", "Graph",
      "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow", "GraphPowerShell", "Python2",
-     "Python3".
+     and "Python3".
     :vartype runbook_type: str or ~azure.mgmt.automation.models.RunbookTypeEnum
     :ivar publish_content_link: Gets or sets the published runbook content link.
     :vartype publish_content_link: ~azure.mgmt.automation.models.ContentLink
-    :ivar state: Gets or sets the state of the runbook. Known values are: "New", "Edit",
+    :ivar state: Gets or sets the state of the runbook. Known values are: "New", "Edit", and
      "Published".
     :vartype state: str or ~azure.mgmt.automation.models.RunbookState
     :ivar log_verbose: Gets or sets verbose log option.
@@ -5639,8 +5548,8 @@ class Runbook(TrackedResource):
     :vartype output_types: list[str]
     :ivar draft: Gets or sets the draft runbook properties.
     :vartype draft: ~azure.mgmt.automation.models.RunbookDraft
-    :ivar provisioning_state: Gets or sets the provisioning state of the runbook. The only
-     acceptable values to pass in are None and "Succeeded". The default value is None.
+    :ivar provisioning_state: Gets or sets the provisioning state of the runbook. Default value is
+     "Succeeded".
     :vartype provisioning_state: str
     :ivar last_modified_by: Gets or sets the last modified by.
     :vartype last_modified_by: str
@@ -5653,33 +5562,33 @@ class Runbook(TrackedResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'runbook_type': {'key': 'properties.runbookType', 'type': 'str'},
-        'publish_content_link': {'key': 'properties.publishContentLink', 'type': 'ContentLink'},
-        'state': {'key': 'properties.state', 'type': 'str'},
-        'log_verbose': {'key': 'properties.logVerbose', 'type': 'bool'},
-        'log_progress': {'key': 'properties.logProgress', 'type': 'bool'},
-        'log_activity_trace': {'key': 'properties.logActivityTrace', 'type': 'int'},
-        'job_count': {'key': 'properties.jobCount', 'type': 'int'},
-        'parameters': {'key': 'properties.parameters', 'type': '{RunbookParameter}'},
-        'output_types': {'key': 'properties.outputTypes', 'type': '[str]'},
-        'draft': {'key': 'properties.draft', 'type': 'RunbookDraft'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "runbook_type": {"key": "properties.runbookType", "type": "str"},
+        "publish_content_link": {"key": "properties.publishContentLink", "type": "ContentLink"},
+        "state": {"key": "properties.state", "type": "str"},
+        "log_verbose": {"key": "properties.logVerbose", "type": "bool"},
+        "log_progress": {"key": "properties.logProgress", "type": "bool"},
+        "log_activity_trace": {"key": "properties.logActivityTrace", "type": "int"},
+        "job_count": {"key": "properties.jobCount", "type": "int"},
+        "parameters": {"key": "properties.parameters", "type": "{RunbookParameter}"},
+        "output_types": {"key": "properties.outputTypes", "type": "[str]"},
+        "draft": {"key": "properties.draft", "type": "RunbookDraft"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -5698,7 +5607,7 @@ class Runbook(TrackedResource):
         parameters: Optional[Dict[str, "_models.RunbookParameter"]] = None,
         output_types: Optional[List[str]] = None,
         draft: Optional["_models.RunbookDraft"] = None,
-        provisioning_state: Optional[str] = None,
+        provisioning_state: Optional[Literal["Succeeded"]] = None,
         last_modified_by: Optional[str] = None,
         creation_time: Optional[datetime.datetime] = None,
         last_modified_time: Optional[datetime.datetime] = None,
@@ -5706,7 +5615,7 @@ class Runbook(TrackedResource):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The Azure Region where the resource lives.
         :paramtype location: str
@@ -5714,11 +5623,11 @@ class Runbook(TrackedResource):
         :paramtype etag: str
         :keyword runbook_type: Gets or sets the type of the runbook. Known values are: "Script",
          "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow", "GraphPowerShell",
-         "Python2", "Python3".
+         "Python2", and "Python3".
         :paramtype runbook_type: str or ~azure.mgmt.automation.models.RunbookTypeEnum
         :keyword publish_content_link: Gets or sets the published runbook content link.
         :paramtype publish_content_link: ~azure.mgmt.automation.models.ContentLink
-        :keyword state: Gets or sets the state of the runbook. Known values are: "New", "Edit",
+        :keyword state: Gets or sets the state of the runbook. Known values are: "New", "Edit", and
          "Published".
         :paramtype state: str or ~azure.mgmt.automation.models.RunbookState
         :keyword log_verbose: Gets or sets verbose log option.
@@ -5735,8 +5644,8 @@ class Runbook(TrackedResource):
         :paramtype output_types: list[str]
         :keyword draft: Gets or sets the draft runbook properties.
         :paramtype draft: ~azure.mgmt.automation.models.RunbookDraft
-        :keyword provisioning_state: Gets or sets the provisioning state of the runbook. The only
-         acceptable values to pass in are None and "Succeeded". The default value is None.
+        :keyword provisioning_state: Gets or sets the provisioning state of the runbook. Default value
+         is "Succeeded".
         :paramtype provisioning_state: str
         :keyword last_modified_by: Gets or sets the last modified by.
         :paramtype last_modified_by: str
@@ -5747,7 +5656,7 @@ class Runbook(TrackedResource):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(Runbook, self).__init__(tags=tags, location=location, **kwargs)
+        super().__init__(tags=tags, location=location, **kwargs)
         self.etag = etag
         self.runbook_type = runbook_type
         self.publish_content_link = publish_content_link
@@ -5766,7 +5675,7 @@ class Runbook(TrackedResource):
         self.description = description
 
 
-class RunbookAssociationProperty(msrest.serialization.Model):
+class RunbookAssociationProperty(_serialization.Model):
     """The runbook property associated with the entity.
 
     :ivar name: Gets or sets the name of the runbook.
@@ -5774,55 +5683,45 @@ class RunbookAssociationProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the runbook.
         :paramtype name: str
         """
-        super(RunbookAssociationProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class RunbookCreateOrUpdateDraftParameters(msrest.serialization.Model):
+class RunbookCreateOrUpdateDraftParameters(_serialization.Model):
     """The parameters supplied to the create or update runbook operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar runbook_content: Required. Content of the Runbook.
+    :ivar runbook_content: Content of the Runbook. Required.
     :vartype runbook_content: str
     """
 
     _validation = {
-        'runbook_content': {'required': True},
+        "runbook_content": {"required": True},
     }
 
     _attribute_map = {
-        'runbook_content': {'key': 'runbookContent', 'type': 'str'},
+        "runbook_content": {"key": "runbookContent", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        runbook_content: str,
-        **kwargs
-    ):
+    def __init__(self, *, runbook_content: str, **kwargs):
         """
-        :keyword runbook_content: Required. Content of the Runbook.
+        :keyword runbook_content: Content of the Runbook. Required.
         :paramtype runbook_content: str
         """
-        super(RunbookCreateOrUpdateDraftParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.runbook_content = runbook_content
 
 
-class RunbookCreateOrUpdateDraftProperties(msrest.serialization.Model):
+class RunbookCreateOrUpdateDraftProperties(_serialization.Model):
     """The parameters supplied to the create or update draft runbook properties.
 
     All required parameters must be populated in order to send to Azure.
@@ -5831,11 +5730,11 @@ class RunbookCreateOrUpdateDraftProperties(msrest.serialization.Model):
     :vartype log_verbose: bool
     :ivar log_progress: Gets or sets progress log option.
     :vartype log_progress: bool
-    :ivar runbook_type: Required. Gets or sets the type of the runbook. Known values are: "Script",
+    :ivar runbook_type: Gets or sets the type of the runbook. Required. Known values are: "Script",
      "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow", "GraphPowerShell",
-     "Python2", "Python3".
+     "Python2", and "Python3".
     :vartype runbook_type: str or ~azure.mgmt.automation.models.RunbookTypeEnum
-    :ivar draft: Required. Gets or sets the draft runbook properties.
+    :ivar draft: Gets or sets the draft runbook properties. Required.
     :vartype draft: ~azure.mgmt.automation.models.RunbookDraft
     :ivar description: Gets or sets the description of the runbook.
     :vartype description: str
@@ -5844,17 +5743,17 @@ class RunbookCreateOrUpdateDraftProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'runbook_type': {'required': True},
-        'draft': {'required': True},
+        "runbook_type": {"required": True},
+        "draft": {"required": True},
     }
 
     _attribute_map = {
-        'log_verbose': {'key': 'logVerbose', 'type': 'bool'},
-        'log_progress': {'key': 'logProgress', 'type': 'bool'},
-        'runbook_type': {'key': 'runbookType', 'type': 'str'},
-        'draft': {'key': 'draft', 'type': 'RunbookDraft'},
-        'description': {'key': 'description', 'type': 'str'},
-        'log_activity_trace': {'key': 'logActivityTrace', 'type': 'int'},
+        "log_verbose": {"key": "logVerbose", "type": "bool"},
+        "log_progress": {"key": "logProgress", "type": "bool"},
+        "runbook_type": {"key": "runbookType", "type": "str"},
+        "draft": {"key": "draft", "type": "RunbookDraft"},
+        "description": {"key": "description", "type": "str"},
+        "log_activity_trace": {"key": "logActivityTrace", "type": "int"},
     }
 
     def __init__(
@@ -5873,18 +5772,18 @@ class RunbookCreateOrUpdateDraftProperties(msrest.serialization.Model):
         :paramtype log_verbose: bool
         :keyword log_progress: Gets or sets progress log option.
         :paramtype log_progress: bool
-        :keyword runbook_type: Required. Gets or sets the type of the runbook. Known values are:
+        :keyword runbook_type: Gets or sets the type of the runbook. Required. Known values are:
          "Script", "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow",
-         "GraphPowerShell", "Python2", "Python3".
+         "GraphPowerShell", "Python2", and "Python3".
         :paramtype runbook_type: str or ~azure.mgmt.automation.models.RunbookTypeEnum
-        :keyword draft: Required. Gets or sets the draft runbook properties.
+        :keyword draft: Gets or sets the draft runbook properties. Required.
         :paramtype draft: ~azure.mgmt.automation.models.RunbookDraft
         :keyword description: Gets or sets the description of the runbook.
         :paramtype description: str
         :keyword log_activity_trace: Gets or sets the activity-level tracing options of the runbook.
         :paramtype log_activity_trace: int
         """
-        super(RunbookCreateOrUpdateDraftProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.log_verbose = log_verbose
         self.log_progress = log_progress
         self.runbook_type = runbook_type
@@ -5893,7 +5792,7 @@ class RunbookCreateOrUpdateDraftProperties(msrest.serialization.Model):
         self.log_activity_trace = log_activity_trace
 
 
-class RunbookCreateOrUpdateParameters(msrest.serialization.Model):
+class RunbookCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update runbook operation.
 
     All required parameters must be populated in order to send to Azure.
@@ -5902,15 +5801,15 @@ class RunbookCreateOrUpdateParameters(msrest.serialization.Model):
     :vartype name: str
     :ivar location: Gets or sets the location of the resource.
     :vartype location: str
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
     :ivar log_verbose: Gets or sets verbose log option.
     :vartype log_verbose: bool
     :ivar log_progress: Gets or sets progress log option.
     :vartype log_progress: bool
-    :ivar runbook_type: Required. Gets or sets the type of the runbook. Known values are: "Script",
+    :ivar runbook_type: Gets or sets the type of the runbook. Required. Known values are: "Script",
      "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow", "GraphPowerShell",
-     "Python2", "Python3".
+     "Python2", and "Python3".
     :vartype runbook_type: str or ~azure.mgmt.automation.models.RunbookTypeEnum
     :ivar draft: Gets or sets the draft runbook properties.
     :vartype draft: ~azure.mgmt.automation.models.RunbookDraft
@@ -5923,20 +5822,20 @@ class RunbookCreateOrUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'runbook_type': {'required': True},
+        "runbook_type": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'log_verbose': {'key': 'properties.logVerbose', 'type': 'bool'},
-        'log_progress': {'key': 'properties.logProgress', 'type': 'bool'},
-        'runbook_type': {'key': 'properties.runbookType', 'type': 'str'},
-        'draft': {'key': 'properties.draft', 'type': 'RunbookDraft'},
-        'publish_content_link': {'key': 'properties.publishContentLink', 'type': 'ContentLink'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'log_activity_trace': {'key': 'properties.logActivityTrace', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "log_verbose": {"key": "properties.logVerbose", "type": "bool"},
+        "log_progress": {"key": "properties.logProgress", "type": "bool"},
+        "runbook_type": {"key": "properties.runbookType", "type": "str"},
+        "draft": {"key": "properties.draft", "type": "RunbookDraft"},
+        "publish_content_link": {"key": "properties.publishContentLink", "type": "ContentLink"},
+        "description": {"key": "properties.description", "type": "str"},
+        "log_activity_trace": {"key": "properties.logActivityTrace", "type": "int"},
     }
 
     def __init__(
@@ -5959,15 +5858,15 @@ class RunbookCreateOrUpdateParameters(msrest.serialization.Model):
         :paramtype name: str
         :keyword location: Gets or sets the location of the resource.
         :paramtype location: str
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
         :keyword log_verbose: Gets or sets verbose log option.
         :paramtype log_verbose: bool
         :keyword log_progress: Gets or sets progress log option.
         :paramtype log_progress: bool
-        :keyword runbook_type: Required. Gets or sets the type of the runbook. Known values are:
+        :keyword runbook_type: Gets or sets the type of the runbook. Required. Known values are:
          "Script", "Graph", "PowerShellWorkflow", "PowerShell", "GraphPowerShellWorkflow",
-         "GraphPowerShell", "Python2", "Python3".
+         "GraphPowerShell", "Python2", and "Python3".
         :paramtype runbook_type: str or ~azure.mgmt.automation.models.RunbookTypeEnum
         :keyword draft: Gets or sets the draft runbook properties.
         :paramtype draft: ~azure.mgmt.automation.models.RunbookDraft
@@ -5978,7 +5877,7 @@ class RunbookCreateOrUpdateParameters(msrest.serialization.Model):
         :keyword log_activity_trace: Gets or sets the activity-level tracing options of the runbook.
         :paramtype log_activity_trace: int
         """
-        super(RunbookCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.location = location
         self.tags = tags
@@ -5991,7 +5890,7 @@ class RunbookCreateOrUpdateParameters(msrest.serialization.Model):
         self.log_activity_trace = log_activity_trace
 
 
-class RunbookDraft(msrest.serialization.Model):
+class RunbookDraft(_serialization.Model):
     """RunbookDraft.
 
     :ivar in_edit: Gets or sets whether runbook is in edit mode.
@@ -6009,12 +5908,12 @@ class RunbookDraft(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'in_edit': {'key': 'inEdit', 'type': 'bool'},
-        'draft_content_link': {'key': 'draftContentLink', 'type': 'ContentLink'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'parameters': {'key': 'parameters', 'type': '{RunbookParameter}'},
-        'output_types': {'key': 'outputTypes', 'type': '[str]'},
+        "in_edit": {"key": "inEdit", "type": "bool"},
+        "draft_content_link": {"key": "draftContentLink", "type": "ContentLink"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "parameters": {"key": "parameters", "type": "{RunbookParameter}"},
+        "output_types": {"key": "outputTypes", "type": "[str]"},
     }
 
     def __init__(
@@ -6042,7 +5941,7 @@ class RunbookDraft(msrest.serialization.Model):
         :keyword output_types: Gets or sets the runbook output types.
         :paramtype output_types: list[str]
         """
-        super(RunbookDraft, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.in_edit = in_edit
         self.draft_content_link = draft_content_link
         self.creation_time = creation_time
@@ -6051,7 +5950,7 @@ class RunbookDraft(msrest.serialization.Model):
         self.output_types = output_types
 
 
-class RunbookDraftUndoEditResult(msrest.serialization.Model):
+class RunbookDraftUndoEditResult(_serialization.Model):
     """The response model for the undo edit runbook operation.
 
     :ivar status_code: Known values are: "Continue", "SwitchingProtocols", "OK", "Created",
@@ -6063,15 +5962,15 @@ class RunbookDraftUndoEditResult(msrest.serialization.Model):
      "LengthRequired", "PreconditionFailed", "RequestEntityTooLarge", "RequestUriTooLong",
      "UnsupportedMediaType", "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired",
      "InternalServerError", "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-     "HttpVersionNotSupported".
+     and "HttpVersionNotSupported".
     :vartype status_code: str or ~azure.mgmt.automation.models.HttpStatusCode
     :ivar request_id:
     :vartype request_id: str
     """
 
     _attribute_map = {
-        'status_code': {'key': 'statusCode', 'type': 'str'},
-        'request_id': {'key': 'requestId', 'type': 'str'},
+        "status_code": {"key": "statusCode", "type": "str"},
+        "request_id": {"key": "requestId", "type": "str"},
     }
 
     def __init__(
@@ -6091,17 +5990,17 @@ class RunbookDraftUndoEditResult(msrest.serialization.Model):
          "LengthRequired", "PreconditionFailed", "RequestEntityTooLarge", "RequestUriTooLong",
          "UnsupportedMediaType", "RequestedRangeNotSatisfiable", "ExpectationFailed", "UpgradeRequired",
          "InternalServerError", "NotImplemented", "BadGateway", "ServiceUnavailable", "GatewayTimeout",
-         "HttpVersionNotSupported".
+         and "HttpVersionNotSupported".
         :paramtype status_code: str or ~azure.mgmt.automation.models.HttpStatusCode
         :keyword request_id:
         :paramtype request_id: str
         """
-        super(RunbookDraftUndoEditResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status_code = status_code
         self.request_id = request_id
 
 
-class RunbookListResult(msrest.serialization.Model):
+class RunbookListResult(_serialization.Model):
     """The response model for the list runbook operation.
 
     :ivar value: Gets or sets a list of runbooks.
@@ -6111,29 +6010,23 @@ class RunbookListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Runbook]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Runbook]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Runbook"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Runbook"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of runbooks.
         :paramtype value: list[~azure.mgmt.automation.models.Runbook]
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(RunbookListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class RunbookParameter(msrest.serialization.Model):
+class RunbookParameter(_serialization.Model):
     """Definition of the runbook parameter type.
 
     :ivar type: Gets or sets the type of the parameter.
@@ -6148,10 +6041,10 @@ class RunbookParameter(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'type': {'key': 'type', 'type': 'str'},
-        'is_mandatory': {'key': 'isMandatory', 'type': 'bool'},
-        'position': {'key': 'position', 'type': 'int'},
-        'default_value': {'key': 'defaultValue', 'type': 'str'},
+        "type": {"key": "type", "type": "str"},
+        "is_mandatory": {"key": "isMandatory", "type": "bool"},
+        "position": {"key": "position", "type": "int"},
+        "default_value": {"key": "defaultValue", "type": "str"},
     }
 
     def __init__(
@@ -6174,21 +6067,21 @@ class RunbookParameter(msrest.serialization.Model):
         :keyword default_value: Gets or sets the default value of parameter.
         :paramtype default_value: str
         """
-        super(RunbookParameter, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.type = type
         self.is_mandatory = is_mandatory
         self.position = position
         self.default_value = default_value
 
 
-class RunbookUpdateParameters(msrest.serialization.Model):
+class RunbookUpdateParameters(_serialization.Model):
     """The parameters supplied to the update runbook operation.
 
     :ivar name: Gets or sets the name of the resource.
     :vartype name: str
     :ivar location: Gets or sets the location of the resource.
     :vartype location: str
-    :ivar tags: A set of tags. Gets or sets the tags attached to the resource.
+    :ivar tags: Gets or sets the tags attached to the resource.
     :vartype tags: dict[str, str]
     :ivar description: Gets or sets the description of the runbook.
     :vartype description: str
@@ -6201,13 +6094,13 @@ class RunbookUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'location': {'key': 'location', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'log_verbose': {'key': 'properties.logVerbose', 'type': 'bool'},
-        'log_progress': {'key': 'properties.logProgress', 'type': 'bool'},
-        'log_activity_trace': {'key': 'properties.logActivityTrace', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "location": {"key": "location", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
+        "log_verbose": {"key": "properties.logVerbose", "type": "bool"},
+        "log_progress": {"key": "properties.logProgress", "type": "bool"},
+        "log_activity_trace": {"key": "properties.logActivityTrace", "type": "int"},
     }
 
     def __init__(
@@ -6227,7 +6120,7 @@ class RunbookUpdateParameters(msrest.serialization.Model):
         :paramtype name: str
         :keyword location: Gets or sets the location of the resource.
         :paramtype location: str
-        :keyword tags: A set of tags. Gets or sets the tags attached to the resource.
+        :keyword tags: Gets or sets the tags attached to the resource.
         :paramtype tags: dict[str, str]
         :keyword description: Gets or sets the description of the runbook.
         :paramtype description: str
@@ -6238,7 +6131,7 @@ class RunbookUpdateParameters(msrest.serialization.Model):
         :keyword log_activity_trace: Gets or sets the activity-level tracing options of the runbook.
         :paramtype log_activity_trace: int
         """
-        super(RunbookUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.location = location
         self.tags = tags
@@ -6248,7 +6141,7 @@ class RunbookUpdateParameters(msrest.serialization.Model):
         self.log_activity_trace = log_activity_trace
 
 
-class Schedule(ProxyResource):
+class Schedule(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Definition of the schedule.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6276,7 +6169,7 @@ class Schedule(ProxyResource):
     :ivar interval: Gets or sets the interval of the schedule.
     :vartype interval: any
     :ivar frequency: Gets or sets the frequency of the schedule. Known values are: "OneTime",
-     "Day", "Hour", "Week", "Month", "Minute".
+     "Day", "Hour", "Week", "Month", and "Minute".
     :vartype frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
     :ivar time_zone: Gets or sets the time zone of the schedule.
     :vartype time_zone: str
@@ -6291,30 +6184,30 @@ class Schedule(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'start_time_offset_minutes': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "start_time_offset_minutes": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'start_time_offset_minutes': {'key': 'properties.startTimeOffsetMinutes', 'type': 'float'},
-        'expiry_time': {'key': 'properties.expiryTime', 'type': 'iso-8601'},
-        'expiry_time_offset_minutes': {'key': 'properties.expiryTimeOffsetMinutes', 'type': 'float'},
-        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
-        'next_run': {'key': 'properties.nextRun', 'type': 'iso-8601'},
-        'next_run_offset_minutes': {'key': 'properties.nextRunOffsetMinutes', 'type': 'float'},
-        'interval': {'key': 'properties.interval', 'type': 'object'},
-        'frequency': {'key': 'properties.frequency', 'type': 'str'},
-        'time_zone': {'key': 'properties.timeZone', 'type': 'str'},
-        'advanced_schedule': {'key': 'properties.advancedSchedule', 'type': 'AdvancedSchedule'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "start_time_offset_minutes": {"key": "properties.startTimeOffsetMinutes", "type": "float"},
+        "expiry_time": {"key": "properties.expiryTime", "type": "iso-8601"},
+        "expiry_time_offset_minutes": {"key": "properties.expiryTimeOffsetMinutes", "type": "float"},
+        "is_enabled": {"key": "properties.isEnabled", "type": "bool"},
+        "next_run": {"key": "properties.nextRun", "type": "iso-8601"},
+        "next_run_offset_minutes": {"key": "properties.nextRunOffsetMinutes", "type": "float"},
+        "interval": {"key": "properties.interval", "type": "object"},
+        "frequency": {"key": "properties.frequency", "type": "str"},
+        "time_zone": {"key": "properties.timeZone", "type": "str"},
+        "advanced_schedule": {"key": "properties.advancedSchedule", "type": "AdvancedSchedule"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -6323,7 +6216,7 @@ class Schedule(ProxyResource):
         start_time: Optional[datetime.datetime] = None,
         expiry_time: Optional[datetime.datetime] = None,
         expiry_time_offset_minutes: Optional[float] = None,
-        is_enabled: Optional[bool] = False,
+        is_enabled: bool = False,
         next_run: Optional[datetime.datetime] = None,
         next_run_offset_minutes: Optional[float] = None,
         interval: Optional[Any] = None,
@@ -6351,7 +6244,7 @@ class Schedule(ProxyResource):
         :keyword interval: Gets or sets the interval of the schedule.
         :paramtype interval: any
         :keyword frequency: Gets or sets the frequency of the schedule. Known values are: "OneTime",
-         "Day", "Hour", "Week", "Month", "Minute".
+         "Day", "Hour", "Week", "Month", and "Minute".
         :paramtype frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
         :keyword time_zone: Gets or sets the time zone of the schedule.
         :paramtype time_zone: str
@@ -6364,7 +6257,7 @@ class Schedule(ProxyResource):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(Schedule, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.start_time_offset_minutes = None
         self.expiry_time = expiry_time
@@ -6381,7 +6274,7 @@ class Schedule(ProxyResource):
         self.description = description
 
 
-class ScheduleAssociationProperty(msrest.serialization.Model):
+class ScheduleAssociationProperty(_serialization.Model):
     """The schedule property associated with the entity.
 
     :ivar name: Gets or sets the name of the Schedule.
@@ -6389,40 +6282,35 @@ class ScheduleAssociationProperty(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the Schedule.
         :paramtype name: str
         """
-        super(ScheduleAssociationProperty, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
 
 
-class ScheduleCreateOrUpdateParameters(msrest.serialization.Model):
+class ScheduleCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update schedule operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the name of the Schedule.
+    :ivar name: Gets or sets the name of the Schedule. Required.
     :vartype name: str
     :ivar description: Gets or sets the description of the schedule.
     :vartype description: str
-    :ivar start_time: Required. Gets or sets the start time of the schedule.
+    :ivar start_time: Gets or sets the start time of the schedule. Required.
     :vartype start_time: ~datetime.datetime
     :ivar expiry_time: Gets or sets the end time of the schedule.
     :vartype expiry_time: ~datetime.datetime
     :ivar interval: Gets or sets the interval of the schedule.
     :vartype interval: any
-    :ivar frequency: Required. Gets or sets the frequency of the schedule. Known values are:
-     "OneTime", "Day", "Hour", "Week", "Month", "Minute".
+    :ivar frequency: Gets or sets the frequency of the schedule. Required. Known values are:
+     "OneTime", "Day", "Hour", "Week", "Month", and "Minute".
     :vartype frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
     :ivar time_zone: Gets or sets the time zone of the schedule.
     :vartype time_zone: str
@@ -6431,20 +6319,20 @@ class ScheduleCreateOrUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
-        'start_time': {'required': True},
-        'frequency': {'required': True},
+        "name": {"required": True},
+        "start_time": {"required": True},
+        "frequency": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'expiry_time': {'key': 'properties.expiryTime', 'type': 'iso-8601'},
-        'interval': {'key': 'properties.interval', 'type': 'object'},
-        'frequency': {'key': 'properties.frequency', 'type': 'str'},
-        'time_zone': {'key': 'properties.timeZone', 'type': 'str'},
-        'advanced_schedule': {'key': 'properties.advancedSchedule', 'type': 'AdvancedSchedule'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "expiry_time": {"key": "properties.expiryTime", "type": "iso-8601"},
+        "interval": {"key": "properties.interval", "type": "object"},
+        "frequency": {"key": "properties.frequency", "type": "str"},
+        "time_zone": {"key": "properties.timeZone", "type": "str"},
+        "advanced_schedule": {"key": "properties.advancedSchedule", "type": "AdvancedSchedule"},
     }
 
     def __init__(
@@ -6461,25 +6349,25 @@ class ScheduleCreateOrUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Gets or sets the name of the Schedule.
+        :keyword name: Gets or sets the name of the Schedule. Required.
         :paramtype name: str
         :keyword description: Gets or sets the description of the schedule.
         :paramtype description: str
-        :keyword start_time: Required. Gets or sets the start time of the schedule.
+        :keyword start_time: Gets or sets the start time of the schedule. Required.
         :paramtype start_time: ~datetime.datetime
         :keyword expiry_time: Gets or sets the end time of the schedule.
         :paramtype expiry_time: ~datetime.datetime
         :keyword interval: Gets or sets the interval of the schedule.
         :paramtype interval: any
-        :keyword frequency: Required. Gets or sets the frequency of the schedule. Known values are:
-         "OneTime", "Day", "Hour", "Week", "Month", "Minute".
+        :keyword frequency: Gets or sets the frequency of the schedule. Required. Known values are:
+         "OneTime", "Day", "Hour", "Week", "Month", and "Minute".
         :paramtype frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
         :keyword time_zone: Gets or sets the time zone of the schedule.
         :paramtype time_zone: str
         :keyword advanced_schedule: Gets or sets the AdvancedSchedule.
         :paramtype advanced_schedule: ~azure.mgmt.automation.models.AdvancedSchedule
         """
-        super(ScheduleCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.description = description
         self.start_time = start_time
@@ -6490,7 +6378,7 @@ class ScheduleCreateOrUpdateParameters(msrest.serialization.Model):
         self.advanced_schedule = advanced_schedule
 
 
-class ScheduleListResult(msrest.serialization.Model):
+class ScheduleListResult(_serialization.Model):
     """The response model for the list schedule operation.
 
     :ivar value: Gets or sets a list of schedules.
@@ -6500,29 +6388,23 @@ class ScheduleListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Schedule]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Schedule]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Schedule"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Schedule"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of schedules.
         :paramtype value: list[~azure.mgmt.automation.models.Schedule]
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(ScheduleListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class ScheduleUpdateParameters(msrest.serialization.Model):
+class ScheduleUpdateParameters(_serialization.Model):
     """The parameters supplied to the update schedule operation.
 
     :ivar name: Gets or sets the name of the Schedule.
@@ -6534,9 +6416,9 @@ class ScheduleUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "is_enabled": {"key": "properties.isEnabled", "type": "bool"},
     }
 
     def __init__(
@@ -6555,18 +6437,18 @@ class ScheduleUpdateParameters(msrest.serialization.Model):
         :keyword is_enabled: Gets or sets a value indicating whether this schedule is enabled.
         :paramtype is_enabled: bool
         """
-        super(ScheduleUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.description = description
         self.is_enabled = is_enabled
 
 
-class Sku(msrest.serialization.Model):
+class Sku(_serialization.Model):
     """The account SKU.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the SKU name of the account. Known values are: "Free",
+    :ivar name: Gets or sets the SKU name of the account. Required. Known values are: "Free" and
      "Basic".
     :vartype name: str or ~azure.mgmt.automation.models.SkuNameEnum
     :ivar family: Gets or sets the SKU family.
@@ -6576,13 +6458,13 @@ class Sku(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'family': {'key': 'family', 'type': 'str'},
-        'capacity': {'key': 'capacity', 'type': 'int'},
+        "name": {"key": "name", "type": "str"},
+        "family": {"key": "family", "type": "str"},
+        "capacity": {"key": "capacity", "type": "int"},
     }
 
     def __init__(
@@ -6594,7 +6476,7 @@ class Sku(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Gets or sets the SKU name of the account. Known values are: "Free",
+        :keyword name: Gets or sets the SKU name of the account. Required. Known values are: "Free" and
          "Basic".
         :paramtype name: str or ~azure.mgmt.automation.models.SkuNameEnum
         :keyword family: Gets or sets the SKU family.
@@ -6602,13 +6484,13 @@ class Sku(msrest.serialization.Model):
         :keyword capacity: Gets or sets the SKU capacity.
         :paramtype capacity: int
         """
-        super(Sku, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.family = family
         self.capacity = capacity
 
 
-class SoftwareUpdateConfiguration(msrest.serialization.Model):
+class SoftwareUpdateConfiguration(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Software update configuration properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6621,10 +6503,10 @@ class SoftwareUpdateConfiguration(msrest.serialization.Model):
     :vartype id: str
     :ivar type: Resource type.
     :vartype type: str
-    :ivar update_configuration: Required. update specific properties for the Software update
-     configuration.
+    :ivar update_configuration: update specific properties for the Software update configuration.
+     Required.
     :vartype update_configuration: ~azure.mgmt.automation.models.UpdateConfiguration
-    :ivar schedule_info: Required. Schedule information for the Software update configuration.
+    :ivar schedule_info: Schedule information for the Software update configuration. Required.
     :vartype schedule_info: ~azure.mgmt.automation.models.SUCScheduleProperties
     :ivar provisioning_state: Provisioning state for the software update configuration, which only
      appears in the response.
@@ -6644,31 +6526,31 @@ class SoftwareUpdateConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'type': {'readonly': True},
-        'update_configuration': {'required': True},
-        'schedule_info': {'required': True},
-        'provisioning_state': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'last_modified_by': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "type": {"readonly": True},
+        "update_configuration": {"required": True},
+        "schedule_info": {"required": True},
+        "provisioning_state": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "created_by": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "last_modified_by": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'update_configuration': {'key': 'properties.updateConfiguration', 'type': 'UpdateConfiguration'},
-        'schedule_info': {'key': 'properties.scheduleInfo', 'type': 'SUCScheduleProperties'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'error': {'key': 'properties.error', 'type': 'ErrorResponse'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'tasks': {'key': 'properties.tasks', 'type': 'SoftwareUpdateConfigurationTasks'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "update_configuration": {"key": "properties.updateConfiguration", "type": "UpdateConfiguration"},
+        "schedule_info": {"key": "properties.scheduleInfo", "type": "SUCScheduleProperties"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "error": {"key": "properties.error", "type": "ErrorResponse"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "created_by": {"key": "properties.createdBy", "type": "str"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
+        "tasks": {"key": "properties.tasks", "type": "SoftwareUpdateConfigurationTasks"},
     }
 
     def __init__(
@@ -6681,17 +6563,17 @@ class SoftwareUpdateConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword update_configuration: Required. update specific properties for the Software update
-         configuration.
+        :keyword update_configuration: update specific properties for the Software update
+         configuration. Required.
         :paramtype update_configuration: ~azure.mgmt.automation.models.UpdateConfiguration
-        :keyword schedule_info: Required. Schedule information for the Software update configuration.
+        :keyword schedule_info: Schedule information for the Software update configuration. Required.
         :paramtype schedule_info: ~azure.mgmt.automation.models.SUCScheduleProperties
         :keyword error: Details of provisioning error.
         :paramtype error: ~azure.mgmt.automation.models.ErrorResponse
         :keyword tasks: Tasks information for the Software update configuration.
         :paramtype tasks: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationTasks
         """
-        super(SoftwareUpdateConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.type = None
@@ -6706,7 +6588,7 @@ class SoftwareUpdateConfiguration(msrest.serialization.Model):
         self.tasks = tasks
 
 
-class SoftwareUpdateConfigurationCollectionItem(msrest.serialization.Model):
+class SoftwareUpdateConfigurationCollectionItem(_serialization.Model):
     """Software update configuration collection item properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6720,7 +6602,7 @@ class SoftwareUpdateConfigurationCollectionItem(msrest.serialization.Model):
     :ivar tasks: Pre and Post Tasks defined.
     :vartype tasks: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationTasks
     :ivar frequency: execution frequency of the schedule associated with the software update
-     configuration. Known values are: "OneTime", "Day", "Hour", "Week", "Month", "Minute".
+     configuration. Known values are: "OneTime", "Day", "Hour", "Week", "Month", and "Minute".
     :vartype frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
     :ivar start_time: the start time of the update.
     :vartype start_time: ~datetime.datetime
@@ -6738,24 +6620,24 @@ class SoftwareUpdateConfigurationCollectionItem(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'provisioning_state': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "provisioning_state": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'update_configuration': {'key': 'properties.updateConfiguration', 'type': 'UpdateConfiguration'},
-        'tasks': {'key': 'properties.tasks', 'type': 'SoftwareUpdateConfigurationTasks'},
-        'frequency': {'key': 'properties.frequency', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'next_run': {'key': 'properties.nextRun', 'type': 'iso-8601'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "update_configuration": {"key": "properties.updateConfiguration", "type": "UpdateConfiguration"},
+        "tasks": {"key": "properties.tasks", "type": "SoftwareUpdateConfigurationTasks"},
+        "frequency": {"key": "properties.frequency", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "next_run": {"key": "properties.nextRun", "type": "iso-8601"},
     }
 
     def __init__(
@@ -6774,14 +6656,14 @@ class SoftwareUpdateConfigurationCollectionItem(msrest.serialization.Model):
         :keyword tasks: Pre and Post Tasks defined.
         :paramtype tasks: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationTasks
         :keyword frequency: execution frequency of the schedule associated with the software update
-         configuration. Known values are: "OneTime", "Day", "Hour", "Week", "Month", "Minute".
+         configuration. Known values are: "OneTime", "Day", "Hour", "Week", "Month", and "Minute".
         :paramtype frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
         :keyword start_time: the start time of the update.
         :paramtype start_time: ~datetime.datetime
         :keyword next_run: ext run time of the update.
         :paramtype next_run: ~datetime.datetime
         """
-        super(SoftwareUpdateConfigurationCollectionItem, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.update_configuration = update_configuration
@@ -6794,7 +6676,7 @@ class SoftwareUpdateConfigurationCollectionItem(msrest.serialization.Model):
         self.next_run = next_run
 
 
-class SoftwareUpdateConfigurationListResult(msrest.serialization.Model):
+class SoftwareUpdateConfigurationListResult(_serialization.Model):
     """result of listing all software update configuration.
 
     :ivar value: outer object returned when listing all software update configurations.
@@ -6802,24 +6684,19 @@ class SoftwareUpdateConfigurationListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SoftwareUpdateConfigurationCollectionItem]'},
+        "value": {"key": "value", "type": "[SoftwareUpdateConfigurationCollectionItem]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SoftwareUpdateConfigurationCollectionItem"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.SoftwareUpdateConfigurationCollectionItem"]] = None, **kwargs):
         """
         :keyword value: outer object returned when listing all software update configurations.
         :paramtype value: list[~azure.mgmt.automation.models.SoftwareUpdateConfigurationCollectionItem]
         """
-        super(SoftwareUpdateConfigurationListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class SoftwareUpdateConfigurationMachineRun(msrest.serialization.Model):
+class SoftwareUpdateConfigurationMachineRun(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Software update configuration machine run model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -6864,42 +6741,45 @@ class SoftwareUpdateConfigurationMachineRun(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'target_computer': {'readonly': True},
-        'target_computer_type': {'readonly': True},
-        'status': {'readonly': True},
-        'os_type': {'readonly': True},
-        'correlation_id': {'readonly': True},
-        'source_computer_id': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'configured_duration': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'last_modified_by': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "target_computer": {"readonly": True},
+        "target_computer_type": {"readonly": True},
+        "status": {"readonly": True},
+        "os_type": {"readonly": True},
+        "correlation_id": {"readonly": True},
+        "source_computer_id": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "configured_duration": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "created_by": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "last_modified_by": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'target_computer': {'key': 'properties.targetComputer', 'type': 'str'},
-        'target_computer_type': {'key': 'properties.targetComputerType', 'type': 'str'},
-        'software_update_configuration': {'key': 'properties.softwareUpdateConfiguration', 'type': 'UpdateConfigurationNavigation'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'correlation_id': {'key': 'properties.correlationId', 'type': 'str'},
-        'source_computer_id': {'key': 'properties.sourceComputerId', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'configured_duration': {'key': 'properties.configuredDuration', 'type': 'str'},
-        'job': {'key': 'properties.job', 'type': 'JobNavigation'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'error': {'key': 'properties.error', 'type': 'ErrorResponse'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "target_computer": {"key": "properties.targetComputer", "type": "str"},
+        "target_computer_type": {"key": "properties.targetComputerType", "type": "str"},
+        "software_update_configuration": {
+            "key": "properties.softwareUpdateConfiguration",
+            "type": "UpdateConfigurationNavigation",
+        },
+        "status": {"key": "properties.status", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "correlation_id": {"key": "properties.correlationId", "type": "str"},
+        "source_computer_id": {"key": "properties.sourceComputerId", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "configured_duration": {"key": "properties.configuredDuration", "type": "str"},
+        "job": {"key": "properties.job", "type": "JobNavigation"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "created_by": {"key": "properties.createdBy", "type": "str"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
+        "error": {"key": "properties.error", "type": "ErrorResponse"},
     }
 
     def __init__(
@@ -6919,7 +6799,7 @@ class SoftwareUpdateConfigurationMachineRun(msrest.serialization.Model):
         :keyword error: Details of provisioning error.
         :paramtype error: ~azure.mgmt.automation.models.ErrorResponse
         """
-        super(SoftwareUpdateConfigurationMachineRun, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.target_computer = None
@@ -6940,7 +6820,7 @@ class SoftwareUpdateConfigurationMachineRun(msrest.serialization.Model):
         self.error = error
 
 
-class SoftwareUpdateConfigurationMachineRunListResult(msrest.serialization.Model):
+class SoftwareUpdateConfigurationMachineRunListResult(_serialization.Model):
     """result of listing all software update configuration machine runs.
 
     :ivar value: outer object returned when listing all software update configuration machine runs.
@@ -6950,8 +6830,8 @@ class SoftwareUpdateConfigurationMachineRunListResult(msrest.serialization.Model
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SoftwareUpdateConfigurationMachineRun]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SoftwareUpdateConfigurationMachineRun]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -6968,12 +6848,12 @@ class SoftwareUpdateConfigurationMachineRunListResult(msrest.serialization.Model
         :keyword next_link: link to next page of results.
         :paramtype next_link: str
         """
-        super(SoftwareUpdateConfigurationMachineRunListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SoftwareUpdateConfigurationRun(msrest.serialization.Model):
+class SoftwareUpdateConfigurationRun(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Software update configuration Run properties.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7012,37 +6892,40 @@ class SoftwareUpdateConfigurationRun(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'id': {'readonly': True},
-        'status': {'readonly': True},
-        'configured_duration': {'readonly': True},
-        'os_type': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'computer_count': {'readonly': True},
-        'failed_count': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'created_by': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'last_modified_by': {'readonly': True},
+        "name": {"readonly": True},
+        "id": {"readonly": True},
+        "status": {"readonly": True},
+        "configured_duration": {"readonly": True},
+        "os_type": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "computer_count": {"readonly": True},
+        "failed_count": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "created_by": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "last_modified_by": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'software_update_configuration': {'key': 'properties.softwareUpdateConfiguration', 'type': 'UpdateConfigurationNavigation'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'configured_duration': {'key': 'properties.configuredDuration', 'type': 'str'},
-        'os_type': {'key': 'properties.osType', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'computer_count': {'key': 'properties.computerCount', 'type': 'int'},
-        'failed_count': {'key': 'properties.failedCount', 'type': 'int'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'created_by': {'key': 'properties.createdBy', 'type': 'str'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'tasks': {'key': 'properties.tasks', 'type': 'SoftwareUpdateConfigurationRunTasks'},
+        "name": {"key": "name", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "software_update_configuration": {
+            "key": "properties.softwareUpdateConfiguration",
+            "type": "UpdateConfigurationNavigation",
+        },
+        "status": {"key": "properties.status", "type": "str"},
+        "configured_duration": {"key": "properties.configuredDuration", "type": "str"},
+        "os_type": {"key": "properties.osType", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "computer_count": {"key": "properties.computerCount", "type": "int"},
+        "failed_count": {"key": "properties.failedCount", "type": "int"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "created_by": {"key": "properties.createdBy", "type": "str"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
+        "tasks": {"key": "properties.tasks", "type": "SoftwareUpdateConfigurationRunTasks"},
     }
 
     def __init__(
@@ -7059,7 +6942,7 @@ class SoftwareUpdateConfigurationRun(msrest.serialization.Model):
         :keyword tasks: Software update configuration tasks triggered in this run.
         :paramtype tasks: ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTasks
         """
-        super(SoftwareUpdateConfigurationRun, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.id = None
         self.software_update_configuration = software_update_configuration
@@ -7077,7 +6960,7 @@ class SoftwareUpdateConfigurationRun(msrest.serialization.Model):
         self.tasks = tasks
 
 
-class SoftwareUpdateConfigurationRunListResult(msrest.serialization.Model):
+class SoftwareUpdateConfigurationRunListResult(_serialization.Model):
     """result of listing all software update configuration runs.
 
     :ivar value: outer object returned when listing all software update configuration runs.
@@ -7087,8 +6970,8 @@ class SoftwareUpdateConfigurationRunListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SoftwareUpdateConfigurationRun]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SoftwareUpdateConfigurationRun]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
@@ -7104,12 +6987,12 @@ class SoftwareUpdateConfigurationRunListResult(msrest.serialization.Model):
         :keyword next_link: link to next page of results.
         :paramtype next_link: str
         """
-        super(SoftwareUpdateConfigurationRunListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SoftwareUpdateConfigurationRunTaskProperties(msrest.serialization.Model):
+class SoftwareUpdateConfigurationRunTaskProperties(_serialization.Model):
     """Task properties of the software update configuration.
 
     :ivar status: The status of the task.
@@ -7121,18 +7004,13 @@ class SoftwareUpdateConfigurationRunTaskProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'status': {'key': 'status', 'type': 'str'},
-        'source': {'key': 'source', 'type': 'str'},
-        'job_id': {'key': 'jobId', 'type': 'str'},
+        "status": {"key": "status", "type": "str"},
+        "source": {"key": "source", "type": "str"},
+        "job_id": {"key": "jobId", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        status: Optional[str] = None,
-        source: Optional[str] = None,
-        job_id: Optional[str] = None,
-        **kwargs
+        self, *, status: Optional[str] = None, source: Optional[str] = None, job_id: Optional[str] = None, **kwargs
     ):
         """
         :keyword status: The status of the task.
@@ -7142,13 +7020,13 @@ class SoftwareUpdateConfigurationRunTaskProperties(msrest.serialization.Model):
         :keyword job_id: The job id of the task.
         :paramtype job_id: str
         """
-        super(SoftwareUpdateConfigurationRunTaskProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.status = status
         self.source = source
         self.job_id = job_id
 
 
-class SoftwareUpdateConfigurationRunTasks(msrest.serialization.Model):
+class SoftwareUpdateConfigurationRunTasks(_serialization.Model):
     """Software update configuration run tasks model.
 
     :ivar pre_task: Pre task properties.
@@ -7158,8 +7036,8 @@ class SoftwareUpdateConfigurationRunTasks(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'pre_task': {'key': 'preTask', 'type': 'SoftwareUpdateConfigurationRunTaskProperties'},
-        'post_task': {'key': 'postTask', 'type': 'SoftwareUpdateConfigurationRunTaskProperties'},
+        "pre_task": {"key": "preTask", "type": "SoftwareUpdateConfigurationRunTaskProperties"},
+        "post_task": {"key": "postTask", "type": "SoftwareUpdateConfigurationRunTaskProperties"},
     }
 
     def __init__(
@@ -7176,12 +7054,12 @@ class SoftwareUpdateConfigurationRunTasks(msrest.serialization.Model):
         :paramtype post_task:
          ~azure.mgmt.automation.models.SoftwareUpdateConfigurationRunTaskProperties
         """
-        super(SoftwareUpdateConfigurationRunTasks, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pre_task = pre_task
         self.post_task = post_task
 
 
-class SoftwareUpdateConfigurationTasks(msrest.serialization.Model):
+class SoftwareUpdateConfigurationTasks(_serialization.Model):
     """Task properties of the software update configuration.
 
     :ivar pre_task: Pre task properties.
@@ -7191,8 +7069,8 @@ class SoftwareUpdateConfigurationTasks(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'pre_task': {'key': 'preTask', 'type': 'TaskProperties'},
-        'post_task': {'key': 'postTask', 'type': 'TaskProperties'},
+        "pre_task": {"key": "preTask", "type": "TaskProperties"},
+        "post_task": {"key": "postTask", "type": "TaskProperties"},
     }
 
     def __init__(
@@ -7208,12 +7086,12 @@ class SoftwareUpdateConfigurationTasks(msrest.serialization.Model):
         :keyword post_task: Post task properties.
         :paramtype post_task: ~azure.mgmt.automation.models.TaskProperties
         """
-        super(SoftwareUpdateConfigurationTasks, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.pre_task = pre_task
         self.post_task = post_task
 
 
-class SourceControl(ProxyResource):
+class SourceControl(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Definition of the source control.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7236,7 +7114,7 @@ class SourceControl(ProxyResource):
     :ivar publish_runbook: The auto publish of the source control. Default is true.
     :vartype publish_runbook: bool
     :ivar source_type: The source type. Must be one of VsoGit, VsoTfvc, GitHub. Known values are:
-     "VsoGit", "VsoTfvc", "GitHub".
+     "VsoGit", "VsoTfvc", and "GitHub".
     :vartype source_type: str or ~azure.mgmt.automation.models.SourceType
     :ivar description: The description.
     :vartype description: str
@@ -7247,24 +7125,24 @@ class SourceControl(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'repo_url': {'key': 'properties.repoUrl', 'type': 'str'},
-        'branch': {'key': 'properties.branch', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'auto_sync': {'key': 'properties.autoSync', 'type': 'bool'},
-        'publish_runbook': {'key': 'properties.publishRunbook', 'type': 'bool'},
-        'source_type': {'key': 'properties.sourceType', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "repo_url": {"key": "properties.repoUrl", "type": "str"},
+        "branch": {"key": "properties.branch", "type": "str"},
+        "folder_path": {"key": "properties.folderPath", "type": "str"},
+        "auto_sync": {"key": "properties.autoSync", "type": "bool"},
+        "publish_runbook": {"key": "properties.publishRunbook", "type": "bool"},
+        "source_type": {"key": "properties.sourceType", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
     }
 
     def __init__(
@@ -7294,7 +7172,7 @@ class SourceControl(ProxyResource):
         :keyword publish_runbook: The auto publish of the source control. Default is true.
         :paramtype publish_runbook: bool
         :keyword source_type: The source type. Must be one of VsoGit, VsoTfvc, GitHub. Known values
-         are: "VsoGit", "VsoTfvc", "GitHub".
+         are: "VsoGit", "VsoTfvc", and "GitHub".
         :paramtype source_type: str or ~azure.mgmt.automation.models.SourceType
         :keyword description: The description.
         :paramtype description: str
@@ -7303,7 +7181,7 @@ class SourceControl(ProxyResource):
         :keyword last_modified_time: The last modified time.
         :paramtype last_modified_time: ~datetime.datetime
         """
-        super(SourceControl, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.repo_url = repo_url
         self.branch = branch
         self.folder_path = folder_path
@@ -7315,7 +7193,7 @@ class SourceControl(ProxyResource):
         self.last_modified_time = last_modified_time
 
 
-class SourceControlCreateOrUpdateParameters(msrest.serialization.Model):
+class SourceControlCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update source control operation.
 
     :ivar repo_url: The repo url of the source control.
@@ -7330,7 +7208,7 @@ class SourceControlCreateOrUpdateParameters(msrest.serialization.Model):
     :ivar publish_runbook: The auto publish of the source control. Default is true.
     :vartype publish_runbook: bool
     :ivar source_type: The source type. Must be one of VsoGit, VsoTfvc, GitHub, case sensitive.
-     Known values are: "VsoGit", "VsoTfvc", "GitHub".
+     Known values are: "VsoGit", "VsoTfvc", and "GitHub".
     :vartype source_type: str or ~azure.mgmt.automation.models.SourceType
     :ivar security_token: The authorization token for the repo of the source control.
     :vartype security_token: ~azure.mgmt.automation.models.SourceControlSecurityTokenProperties
@@ -7339,21 +7217,21 @@ class SourceControlCreateOrUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'repo_url': {'max_length': 2000, 'min_length': 0},
-        'branch': {'max_length': 255, 'min_length': 0},
-        'folder_path': {'max_length': 255, 'min_length': 0},
-        'description': {'max_length': 512, 'min_length': 0},
+        "repo_url": {"max_length": 2000},
+        "branch": {"max_length": 255},
+        "folder_path": {"max_length": 255},
+        "description": {"max_length": 512},
     }
 
     _attribute_map = {
-        'repo_url': {'key': 'properties.repoUrl', 'type': 'str'},
-        'branch': {'key': 'properties.branch', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'auto_sync': {'key': 'properties.autoSync', 'type': 'bool'},
-        'publish_runbook': {'key': 'properties.publishRunbook', 'type': 'bool'},
-        'source_type': {'key': 'properties.sourceType', 'type': 'str'},
-        'security_token': {'key': 'properties.securityToken', 'type': 'SourceControlSecurityTokenProperties'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "repo_url": {"key": "properties.repoUrl", "type": "str"},
+        "branch": {"key": "properties.branch", "type": "str"},
+        "folder_path": {"key": "properties.folderPath", "type": "str"},
+        "auto_sync": {"key": "properties.autoSync", "type": "bool"},
+        "publish_runbook": {"key": "properties.publishRunbook", "type": "bool"},
+        "source_type": {"key": "properties.sourceType", "type": "str"},
+        "security_token": {"key": "properties.securityToken", "type": "SourceControlSecurityTokenProperties"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -7382,14 +7260,14 @@ class SourceControlCreateOrUpdateParameters(msrest.serialization.Model):
         :keyword publish_runbook: The auto publish of the source control. Default is true.
         :paramtype publish_runbook: bool
         :keyword source_type: The source type. Must be one of VsoGit, VsoTfvc, GitHub, case sensitive.
-         Known values are: "VsoGit", "VsoTfvc", "GitHub".
+         Known values are: "VsoGit", "VsoTfvc", and "GitHub".
         :paramtype source_type: str or ~azure.mgmt.automation.models.SourceType
         :keyword security_token: The authorization token for the repo of the source control.
         :paramtype security_token: ~azure.mgmt.automation.models.SourceControlSecurityTokenProperties
         :keyword description: The user description of the source control.
         :paramtype description: str
         """
-        super(SourceControlCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.repo_url = repo_url
         self.branch = branch
         self.folder_path = folder_path
@@ -7400,7 +7278,7 @@ class SourceControlCreateOrUpdateParameters(msrest.serialization.Model):
         self.description = description
 
 
-class SourceControlListResult(msrest.serialization.Model):
+class SourceControlListResult(_serialization.Model):
     """The response model for the list source controls operation.
 
     :ivar value: The list of source controls.
@@ -7410,16 +7288,12 @@ class SourceControlListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SourceControl]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SourceControl]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SourceControl"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.SourceControl"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of source controls.
@@ -7427,12 +7301,12 @@ class SourceControlListResult(msrest.serialization.Model):
         :keyword next_link: The next link.
         :paramtype next_link: str
         """
-        super(SourceControlListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SourceControlSecurityTokenProperties(msrest.serialization.Model):
+class SourceControlSecurityTokenProperties(_serialization.Model):
     """SourceControlSecurityTokenProperties.
 
     :ivar access_token: The access token.
@@ -7440,19 +7314,19 @@ class SourceControlSecurityTokenProperties(msrest.serialization.Model):
     :ivar refresh_token: The refresh token.
     :vartype refresh_token: str
     :ivar token_type: The token type. Must be either PersonalAccessToken or Oauth. Known values
-     are: "PersonalAccessToken", "Oauth".
+     are: "PersonalAccessToken" and "Oauth".
     :vartype token_type: str or ~azure.mgmt.automation.models.TokenType
     """
 
     _validation = {
-        'access_token': {'max_length': 1024, 'min_length': 0},
-        'refresh_token': {'max_length': 1024, 'min_length': 0},
+        "access_token": {"max_length": 1024},
+        "refresh_token": {"max_length": 1024},
     }
 
     _attribute_map = {
-        'access_token': {'key': 'accessToken', 'type': 'str'},
-        'refresh_token': {'key': 'refreshToken', 'type': 'str'},
-        'token_type': {'key': 'tokenType', 'type': 'str'},
+        "access_token": {"key": "accessToken", "type": "str"},
+        "refresh_token": {"key": "refreshToken", "type": "str"},
+        "token_type": {"key": "tokenType", "type": "str"},
     }
 
     def __init__(
@@ -7469,16 +7343,16 @@ class SourceControlSecurityTokenProperties(msrest.serialization.Model):
         :keyword refresh_token: The refresh token.
         :paramtype refresh_token: str
         :keyword token_type: The token type. Must be either PersonalAccessToken or Oauth. Known values
-         are: "PersonalAccessToken", "Oauth".
+         are: "PersonalAccessToken" and "Oauth".
         :paramtype token_type: str or ~azure.mgmt.automation.models.TokenType
         """
-        super(SourceControlSecurityTokenProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.access_token = access_token
         self.refresh_token = refresh_token
         self.token_type = token_type
 
 
-class SourceControlSyncJob(msrest.serialization.Model):
+class SourceControlSyncJob(_serialization.Model):
     """Definition of the source control sync job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7494,35 +7368,35 @@ class SourceControlSyncJob(msrest.serialization.Model):
     :ivar creation_time: The creation time of the job.
     :vartype creation_time: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the job. Known values are: "Completed",
-     "Failed", "Running".
+     "Failed", and "Running".
     :vartype provisioning_state: str or ~azure.mgmt.automation.models.ProvisioningState
     :ivar start_time: The start time of the job.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: The end time of the job.
     :vartype end_time: ~datetime.datetime
-    :ivar sync_type: The sync type. Known values are: "PartialSync", "FullSync".
+    :ivar sync_type: The sync type. Known values are: "PartialSync" and "FullSync".
     :vartype sync_type: str or ~azure.mgmt.automation.models.SyncType
     """
 
     _validation = {
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'id': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "id": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'id': {'key': 'id', 'type': 'str'},
-        'source_control_sync_job_id': {'key': 'properties.sourceControlSyncJobId', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'sync_type': {'key': 'properties.syncType', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "id": {"key": "id", "type": "str"},
+        "source_control_sync_job_id": {"key": "properties.sourceControlSyncJobId", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "sync_type": {"key": "properties.syncType", "type": "str"},
     }
 
     def __init__(
@@ -7537,12 +7411,12 @@ class SourceControlSyncJob(msrest.serialization.Model):
         :keyword source_control_sync_job_id: The source control sync job id.
         :paramtype source_control_sync_job_id: str
         :keyword provisioning_state: The provisioning state of the job. Known values are: "Completed",
-         "Failed", "Running".
+         "Failed", and "Running".
         :paramtype provisioning_state: str or ~azure.mgmt.automation.models.ProvisioningState
-        :keyword sync_type: The sync type. Known values are: "PartialSync", "FullSync".
+        :keyword sync_type: The sync type. Known values are: "PartialSync" and "FullSync".
         :paramtype sync_type: str or ~azure.mgmt.automation.models.SyncType
         """
-        super(SourceControlSyncJob, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = None
         self.type = None
         self.id = None
@@ -7554,7 +7428,7 @@ class SourceControlSyncJob(msrest.serialization.Model):
         self.sync_type = sync_type
 
 
-class SourceControlSyncJobById(msrest.serialization.Model):
+class SourceControlSyncJobById(_serialization.Model):
     """Definition of the source control sync job.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7566,39 +7440,39 @@ class SourceControlSyncJobById(msrest.serialization.Model):
     :ivar creation_time: The creation time of the job.
     :vartype creation_time: ~datetime.datetime
     :ivar provisioning_state: The provisioning state of the job. Known values are: "Completed",
-     "Failed", "Running".
+     "Failed", and "Running".
     :vartype provisioning_state: str or ~azure.mgmt.automation.models.ProvisioningState
     :ivar start_time: The start time of the job.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: The end time of the job.
     :vartype end_time: ~datetime.datetime
-    :ivar sync_type: The sync type. Known values are: "PartialSync", "FullSync".
+    :ivar sync_type: The sync type. Known values are: "PartialSync" and "FullSync".
     :vartype sync_type: str or ~azure.mgmt.automation.models.SyncType
     :ivar exception: The exceptions that occurred while running the sync job.
     :vartype exception: str
     """
 
     _validation = {
-        'creation_time': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
+        "creation_time": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'source_control_sync_job_id': {'key': 'properties.sourceControlSyncJobId', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'provisioning_state': {'key': 'properties.provisioningState', 'type': 'str'},
-        'start_time': {'key': 'properties.startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'properties.endTime', 'type': 'iso-8601'},
-        'sync_type': {'key': 'properties.syncType', 'type': 'str'},
-        'exception': {'key': 'properties.exception', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "source_control_sync_job_id": {"key": "properties.sourceControlSyncJobId", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "provisioning_state": {"key": "properties.provisioningState", "type": "str"},
+        "start_time": {"key": "properties.startTime", "type": "iso-8601"},
+        "end_time": {"key": "properties.endTime", "type": "iso-8601"},
+        "sync_type": {"key": "properties.syncType", "type": "str"},
+        "exception": {"key": "properties.exception", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         source_control_sync_job_id: Optional[str] = None,
         provisioning_state: Optional[Union[str, "_models.ProvisioningState"]] = None,
         sync_type: Optional[Union[str, "_models.SyncType"]] = None,
@@ -7611,14 +7485,14 @@ class SourceControlSyncJobById(msrest.serialization.Model):
         :keyword source_control_sync_job_id: The source control sync job id.
         :paramtype source_control_sync_job_id: str
         :keyword provisioning_state: The provisioning state of the job. Known values are: "Completed",
-         "Failed", "Running".
+         "Failed", and "Running".
         :paramtype provisioning_state: str or ~azure.mgmt.automation.models.ProvisioningState
-        :keyword sync_type: The sync type. Known values are: "PartialSync", "FullSync".
+        :keyword sync_type: The sync type. Known values are: "PartialSync" and "FullSync".
         :paramtype sync_type: str or ~azure.mgmt.automation.models.SyncType
         :keyword exception: The exceptions that occurred while running the sync job.
         :paramtype exception: str
         """
-        super(SourceControlSyncJobById, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.source_control_sync_job_id = source_control_sync_job_id
         self.creation_time = None
@@ -7629,40 +7503,35 @@ class SourceControlSyncJobById(msrest.serialization.Model):
         self.exception = exception
 
 
-class SourceControlSyncJobCreateParameters(msrest.serialization.Model):
+class SourceControlSyncJobCreateParameters(_serialization.Model):
     """The parameters supplied to the create source control sync job operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar commit_id: Required. The commit id of the source control sync job. If not syncing to a
-     commitId, enter an empty string.
+    :ivar commit_id: The commit id of the source control sync job. If not syncing to a commitId,
+     enter an empty string. Required.
     :vartype commit_id: str
     """
 
     _validation = {
-        'commit_id': {'required': True},
+        "commit_id": {"required": True},
     }
 
     _attribute_map = {
-        'commit_id': {'key': 'properties.commitId', 'type': 'str'},
+        "commit_id": {"key": "properties.commitId", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        commit_id: str,
-        **kwargs
-    ):
+    def __init__(self, *, commit_id: str, **kwargs):
         """
-        :keyword commit_id: Required. The commit id of the source control sync job. If not syncing to a
-         commitId, enter an empty string.
+        :keyword commit_id: The commit id of the source control sync job. If not syncing to a commitId,
+         enter an empty string. Required.
         :paramtype commit_id: str
         """
-        super(SourceControlSyncJobCreateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.commit_id = commit_id
 
 
-class SourceControlSyncJobListResult(msrest.serialization.Model):
+class SourceControlSyncJobListResult(_serialization.Model):
     """The response model for the list source control sync jobs operation.
 
     :ivar value: The list of source control sync jobs.
@@ -7672,16 +7541,12 @@ class SourceControlSyncJobListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SourceControlSyncJob]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SourceControlSyncJob]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SourceControlSyncJob"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
+        self, *, value: Optional[List["_models.SourceControlSyncJob"]] = None, next_link: Optional[str] = None, **kwargs
     ):
         """
         :keyword value: The list of source control sync jobs.
@@ -7689,12 +7554,12 @@ class SourceControlSyncJobListResult(msrest.serialization.Model):
         :keyword next_link: The next link.
         :paramtype next_link: str
         """
-        super(SourceControlSyncJobListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class SourceControlSyncJobStream(msrest.serialization.Model):
+class SourceControlSyncJobStream(_serialization.Model):
     """Definition of the source control sync job stream.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7707,21 +7572,21 @@ class SourceControlSyncJobStream(msrest.serialization.Model):
     :vartype summary: str
     :ivar time: The time of the sync job stream.
     :vartype time: ~datetime.datetime
-    :ivar stream_type: The type of the sync job stream. Known values are: "Error", "Output".
+    :ivar stream_type: The type of the sync job stream. Known values are: "Error" and "Output".
     :vartype stream_type: str or ~azure.mgmt.automation.models.StreamType
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'time': {'readonly': True},
+        "id": {"readonly": True},
+        "time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'source_control_sync_job_stream_id': {'key': 'properties.sourceControlSyncJobStreamId', 'type': 'str'},
-        'summary': {'key': 'properties.summary', 'type': 'str'},
-        'time': {'key': 'properties.time', 'type': 'iso-8601'},
-        'stream_type': {'key': 'properties.streamType', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "source_control_sync_job_stream_id": {"key": "properties.sourceControlSyncJobStreamId", "type": "str"},
+        "summary": {"key": "properties.summary", "type": "str"},
+        "time": {"key": "properties.time", "type": "iso-8601"},
+        "stream_type": {"key": "properties.streamType", "type": "str"},
     }
 
     def __init__(
@@ -7737,10 +7602,10 @@ class SourceControlSyncJobStream(msrest.serialization.Model):
         :paramtype source_control_sync_job_stream_id: str
         :keyword summary: The summary of the sync job stream.
         :paramtype summary: str
-        :keyword stream_type: The type of the sync job stream. Known values are: "Error", "Output".
+        :keyword stream_type: The type of the sync job stream. Known values are: "Error" and "Output".
         :paramtype stream_type: str or ~azure.mgmt.automation.models.StreamType
         """
-        super(SourceControlSyncJobStream, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.source_control_sync_job_stream_id = source_control_sync_job_stream_id
         self.summary = summary
@@ -7748,7 +7613,7 @@ class SourceControlSyncJobStream(msrest.serialization.Model):
         self.stream_type = stream_type
 
 
-class SourceControlSyncJobStreamById(msrest.serialization.Model):
+class SourceControlSyncJobStreamById(_serialization.Model):
     """Definition of the source control sync job stream by id.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7761,27 +7626,27 @@ class SourceControlSyncJobStreamById(msrest.serialization.Model):
     :vartype summary: str
     :ivar time: The time of the sync job stream.
     :vartype time: ~datetime.datetime
-    :ivar stream_type: The type of the sync job stream. Known values are: "Error", "Output".
+    :ivar stream_type: The type of the sync job stream. Known values are: "Error" and "Output".
     :vartype stream_type: str or ~azure.mgmt.automation.models.StreamType
     :ivar stream_text: The text of the sync job stream.
     :vartype stream_text: str
     :ivar value: The values of the job stream.
-    :vartype value: dict[str, any]
+    :vartype value: dict[str, JSON]
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'time': {'readonly': True},
+        "id": {"readonly": True},
+        "time": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'source_control_sync_job_stream_id': {'key': 'properties.sourceControlSyncJobStreamId', 'type': 'str'},
-        'summary': {'key': 'properties.summary', 'type': 'str'},
-        'time': {'key': 'properties.time', 'type': 'iso-8601'},
-        'stream_type': {'key': 'properties.streamType', 'type': 'str'},
-        'stream_text': {'key': 'properties.streamText', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': '{object}'},
+        "id": {"key": "id", "type": "str"},
+        "source_control_sync_job_stream_id": {"key": "properties.sourceControlSyncJobStreamId", "type": "str"},
+        "summary": {"key": "properties.summary", "type": "str"},
+        "time": {"key": "properties.time", "type": "iso-8601"},
+        "stream_type": {"key": "properties.streamType", "type": "str"},
+        "stream_text": {"key": "properties.streamText", "type": "str"},
+        "value": {"key": "properties.value", "type": "{object}"},
     }
 
     def __init__(
@@ -7791,7 +7656,7 @@ class SourceControlSyncJobStreamById(msrest.serialization.Model):
         summary: Optional[str] = None,
         stream_type: Optional[Union[str, "_models.StreamType"]] = None,
         stream_text: Optional[str] = None,
-        value: Optional[Dict[str, Any]] = None,
+        value: Optional[Dict[str, JSON]] = None,
         **kwargs
     ):
         """
@@ -7799,14 +7664,14 @@ class SourceControlSyncJobStreamById(msrest.serialization.Model):
         :paramtype source_control_sync_job_stream_id: str
         :keyword summary: The summary of the sync job stream.
         :paramtype summary: str
-        :keyword stream_type: The type of the sync job stream. Known values are: "Error", "Output".
+        :keyword stream_type: The type of the sync job stream. Known values are: "Error" and "Output".
         :paramtype stream_type: str or ~azure.mgmt.automation.models.StreamType
         :keyword stream_text: The text of the sync job stream.
         :paramtype stream_text: str
         :keyword value: The values of the job stream.
-        :paramtype value: dict[str, any]
+        :paramtype value: dict[str, JSON]
         """
-        super(SourceControlSyncJobStreamById, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = None
         self.source_control_sync_job_stream_id = source_control_sync_job_stream_id
         self.summary = summary
@@ -7816,7 +7681,7 @@ class SourceControlSyncJobStreamById(msrest.serialization.Model):
         self.value = value
 
 
-class SourceControlSyncJobStreamsListBySyncJob(msrest.serialization.Model):
+class SourceControlSyncJobStreamsListBySyncJob(_serialization.Model):
     """The response model for the list source control sync job streams operation.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7828,30 +7693,25 @@ class SourceControlSyncJobStreamsListBySyncJob(msrest.serialization.Model):
     """
 
     _validation = {
-        'next_link': {'readonly': True},
+        "next_link": {"readonly": True},
     }
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[SourceControlSyncJobStream]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[SourceControlSyncJobStream]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.SourceControlSyncJobStream"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.SourceControlSyncJobStream"]] = None, **kwargs):
         """
         :keyword value: The list of source control sync job streams.
         :paramtype value: list[~azure.mgmt.automation.models.SourceControlSyncJobStream]
         """
-        super(SourceControlSyncJobStreamsListBySyncJob, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = None
 
 
-class SourceControlUpdateParameters(msrest.serialization.Model):
+class SourceControlUpdateParameters(_serialization.Model):
     """The parameters supplied to the update source control operation.
 
     :ivar branch: The repo branch of the source control.
@@ -7869,12 +7729,12 @@ class SourceControlUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'branch': {'key': 'properties.branch', 'type': 'str'},
-        'folder_path': {'key': 'properties.folderPath', 'type': 'str'},
-        'auto_sync': {'key': 'properties.autoSync', 'type': 'bool'},
-        'publish_runbook': {'key': 'properties.publishRunbook', 'type': 'bool'},
-        'security_token': {'key': 'properties.securityToken', 'type': 'SourceControlSecurityTokenProperties'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "branch": {"key": "properties.branch", "type": "str"},
+        "folder_path": {"key": "properties.folderPath", "type": "str"},
+        "auto_sync": {"key": "properties.autoSync", "type": "bool"},
+        "publish_runbook": {"key": "properties.publishRunbook", "type": "bool"},
+        "security_token": {"key": "properties.securityToken", "type": "SourceControlSecurityTokenProperties"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -7902,7 +7762,7 @@ class SourceControlUpdateParameters(msrest.serialization.Model):
         :keyword description: The user description of the source control.
         :paramtype description: str
         """
-        super(SourceControlUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.branch = branch
         self.folder_path = folder_path
         self.auto_sync = auto_sync
@@ -7911,7 +7771,7 @@ class SourceControlUpdateParameters(msrest.serialization.Model):
         self.description = description
 
 
-class Statistics(msrest.serialization.Model):
+class Statistics(_serialization.Model):
     """Definition of the statistic.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -7919,7 +7779,7 @@ class Statistics(msrest.serialization.Model):
     :ivar counter_property: Gets the property value of the statistic.
     :vartype counter_property: str
     :ivar counter_value: Gets the value of the statistic.
-    :vartype counter_value: long
+    :vartype counter_value: int
     :ivar start_time: Gets the startTime of the statistic.
     :vartype start_time: ~datetime.datetime
     :ivar end_time: Gets the endTime of the statistic.
@@ -7929,28 +7789,24 @@ class Statistics(msrest.serialization.Model):
     """
 
     _validation = {
-        'counter_property': {'readonly': True},
-        'counter_value': {'readonly': True},
-        'start_time': {'readonly': True},
-        'end_time': {'readonly': True},
-        'id': {'readonly': True},
+        "counter_property": {"readonly": True},
+        "counter_value": {"readonly": True},
+        "start_time": {"readonly": True},
+        "end_time": {"readonly": True},
+        "id": {"readonly": True},
     }
 
     _attribute_map = {
-        'counter_property': {'key': 'counterProperty', 'type': 'str'},
-        'counter_value': {'key': 'counterValue', 'type': 'long'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'id': {'key': 'id', 'type': 'str'},
+        "counter_property": {"key": "counterProperty", "type": "str"},
+        "counter_value": {"key": "counterValue", "type": "int"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "id": {"key": "id", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(Statistics, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.counter_property = None
         self.counter_value = None
         self.start_time = None
@@ -7958,7 +7814,7 @@ class Statistics(msrest.serialization.Model):
         self.id = None
 
 
-class StatisticsListResult(msrest.serialization.Model):
+class StatisticsListResult(_serialization.Model):
     """The response model for the list statistics operation.
 
     :ivar value: Gets or sets a list of statistics.
@@ -7966,24 +7822,19 @@ class StatisticsListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Statistics]'},
+        "value": {"key": "value", "type": "[Statistics]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Statistics"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Statistics"]] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of statistics.
         :paramtype value: list[~azure.mgmt.automation.models.Statistics]
         """
-        super(StatisticsListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class SUCScheduleProperties(msrest.serialization.Model):
+class SUCScheduleProperties(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Definition of schedule parameters.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8003,9 +7854,9 @@ class SUCScheduleProperties(msrest.serialization.Model):
     :ivar next_run_offset_minutes: Gets or sets the next run time's offset in minutes.
     :vartype next_run_offset_minutes: float
     :ivar interval: Gets or sets the interval of the schedule.
-    :vartype interval: long
+    :vartype interval: int
     :ivar frequency: Gets or sets the frequency of the schedule. Known values are: "OneTime",
-     "Day", "Hour", "Week", "Month", "Minute".
+     "Day", "Hour", "Week", "Month", and "Minute".
     :vartype frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
     :ivar time_zone: Gets or sets the time zone of the schedule.
     :vartype time_zone: str
@@ -8020,24 +7871,24 @@ class SUCScheduleProperties(msrest.serialization.Model):
     """
 
     _validation = {
-        'start_time_offset_minutes': {'readonly': True},
+        "start_time_offset_minutes": {"readonly": True},
     }
 
     _attribute_map = {
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'start_time_offset_minutes': {'key': 'startTimeOffsetMinutes', 'type': 'float'},
-        'expiry_time': {'key': 'expiryTime', 'type': 'iso-8601'},
-        'expiry_time_offset_minutes': {'key': 'expiryTimeOffsetMinutes', 'type': 'float'},
-        'is_enabled': {'key': 'isEnabled', 'type': 'bool'},
-        'next_run': {'key': 'nextRun', 'type': 'iso-8601'},
-        'next_run_offset_minutes': {'key': 'nextRunOffsetMinutes', 'type': 'float'},
-        'interval': {'key': 'interval', 'type': 'long'},
-        'frequency': {'key': 'frequency', 'type': 'str'},
-        'time_zone': {'key': 'timeZone', 'type': 'str'},
-        'advanced_schedule': {'key': 'advancedSchedule', 'type': 'AdvancedSchedule'},
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'description', 'type': 'str'},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "start_time_offset_minutes": {"key": "startTimeOffsetMinutes", "type": "float"},
+        "expiry_time": {"key": "expiryTime", "type": "iso-8601"},
+        "expiry_time_offset_minutes": {"key": "expiryTimeOffsetMinutes", "type": "float"},
+        "is_enabled": {"key": "isEnabled", "type": "bool"},
+        "next_run": {"key": "nextRun", "type": "iso-8601"},
+        "next_run_offset_minutes": {"key": "nextRunOffsetMinutes", "type": "float"},
+        "interval": {"key": "interval", "type": "int"},
+        "frequency": {"key": "frequency", "type": "str"},
+        "time_zone": {"key": "timeZone", "type": "str"},
+        "advanced_schedule": {"key": "advancedSchedule", "type": "AdvancedSchedule"},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "description", "type": "str"},
     }
 
     def __init__(
@@ -8046,7 +7897,7 @@ class SUCScheduleProperties(msrest.serialization.Model):
         start_time: Optional[datetime.datetime] = None,
         expiry_time: Optional[datetime.datetime] = None,
         expiry_time_offset_minutes: Optional[float] = None,
-        is_enabled: Optional[bool] = False,
+        is_enabled: bool = False,
         next_run: Optional[datetime.datetime] = None,
         next_run_offset_minutes: Optional[float] = None,
         interval: Optional[int] = None,
@@ -8072,9 +7923,9 @@ class SUCScheduleProperties(msrest.serialization.Model):
         :keyword next_run_offset_minutes: Gets or sets the next run time's offset in minutes.
         :paramtype next_run_offset_minutes: float
         :keyword interval: Gets or sets the interval of the schedule.
-        :paramtype interval: long
+        :paramtype interval: int
         :keyword frequency: Gets or sets the frequency of the schedule. Known values are: "OneTime",
-         "Day", "Hour", "Week", "Month", "Minute".
+         "Day", "Hour", "Week", "Month", and "Minute".
         :paramtype frequency: str or ~azure.mgmt.automation.models.ScheduleFrequency
         :keyword time_zone: Gets or sets the time zone of the schedule.
         :paramtype time_zone: str
@@ -8087,7 +7938,7 @@ class SUCScheduleProperties(msrest.serialization.Model):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(SUCScheduleProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.start_time = start_time
         self.start_time_offset_minutes = None
         self.expiry_time = expiry_time
@@ -8104,32 +7955,32 @@ class SUCScheduleProperties(msrest.serialization.Model):
         self.description = description
 
 
-class SystemData(msrest.serialization.Model):
+class SystemData(_serialization.Model):
     """Metadata pertaining to creation and last modification of the resource.
 
     :ivar created_by: The identity that created the resource.
     :vartype created_by: str
     :ivar created_by_type: The type of identity that created the resource. Known values are:
-     "User", "Application", "ManagedIdentity", "Key".
+     "User", "Application", "ManagedIdentity", and "Key".
     :vartype created_by_type: str or ~azure.mgmt.automation.models.CreatedByType
     :ivar created_at: The timestamp of resource creation (UTC).
     :vartype created_at: ~datetime.datetime
     :ivar last_modified_by: The identity that last modified the resource.
     :vartype last_modified_by: str
     :ivar last_modified_by_type: The type of identity that last modified the resource. Known values
-     are: "User", "Application", "ManagedIdentity", "Key".
+     are: "User", "Application", "ManagedIdentity", and "Key".
     :vartype last_modified_by_type: str or ~azure.mgmt.automation.models.CreatedByType
     :ivar last_modified_at: The timestamp of resource last modification (UTC).
     :vartype last_modified_at: ~datetime.datetime
     """
 
     _attribute_map = {
-        'created_by': {'key': 'createdBy', 'type': 'str'},
-        'created_by_type': {'key': 'createdByType', 'type': 'str'},
-        'created_at': {'key': 'createdAt', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'lastModifiedBy', 'type': 'str'},
-        'last_modified_by_type': {'key': 'lastModifiedByType', 'type': 'str'},
-        'last_modified_at': {'key': 'lastModifiedAt', 'type': 'iso-8601'},
+        "created_by": {"key": "createdBy", "type": "str"},
+        "created_by_type": {"key": "createdByType", "type": "str"},
+        "created_at": {"key": "createdAt", "type": "iso-8601"},
+        "last_modified_by": {"key": "lastModifiedBy", "type": "str"},
+        "last_modified_by_type": {"key": "lastModifiedByType", "type": "str"},
+        "last_modified_at": {"key": "lastModifiedAt", "type": "iso-8601"},
     }
 
     def __init__(
@@ -8147,19 +7998,19 @@ class SystemData(msrest.serialization.Model):
         :keyword created_by: The identity that created the resource.
         :paramtype created_by: str
         :keyword created_by_type: The type of identity that created the resource. Known values are:
-         "User", "Application", "ManagedIdentity", "Key".
+         "User", "Application", "ManagedIdentity", and "Key".
         :paramtype created_by_type: str or ~azure.mgmt.automation.models.CreatedByType
         :keyword created_at: The timestamp of resource creation (UTC).
         :paramtype created_at: ~datetime.datetime
         :keyword last_modified_by: The identity that last modified the resource.
         :paramtype last_modified_by: str
         :keyword last_modified_by_type: The type of identity that last modified the resource. Known
-         values are: "User", "Application", "ManagedIdentity", "Key".
+         values are: "User", "Application", "ManagedIdentity", and "Key".
         :paramtype last_modified_by_type: str or ~azure.mgmt.automation.models.CreatedByType
         :keyword last_modified_at: The timestamp of resource last modification (UTC).
         :paramtype last_modified_at: ~datetime.datetime
         """
-        super(SystemData, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.created_by = created_by
         self.created_by_type = created_by_type
         self.created_at = created_at
@@ -8168,18 +8019,19 @@ class SystemData(msrest.serialization.Model):
         self.last_modified_at = last_modified_at
 
 
-class TagSettingsProperties(msrest.serialization.Model):
+class TagSettingsProperties(_serialization.Model):
     """Tag filter information for the VM.
 
-    :ivar tags: A set of tags. Dictionary of tags with its list of values.
+    :ivar tags: Dictionary of tags with its list of values.
     :vartype tags: dict[str, list[str]]
-    :ivar filter_operator: Filter VMs by Any or All specified tags. Known values are: "All", "Any".
+    :ivar filter_operator: Filter VMs by Any or All specified tags. Known values are: "All" and
+     "Any".
     :vartype filter_operator: str or ~azure.mgmt.automation.models.TagOperators
     """
 
     _attribute_map = {
-        'tags': {'key': 'tags', 'type': '{[str]}'},
-        'filter_operator': {'key': 'filterOperator', 'type': 'str'},
+        "tags": {"key": "tags", "type": "{[str]}"},
+        "filter_operator": {"key": "filterOperator", "type": "str"},
     }
 
     def __init__(
@@ -8190,18 +8042,18 @@ class TagSettingsProperties(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword tags: A set of tags. Dictionary of tags with its list of values.
+        :keyword tags: Dictionary of tags with its list of values.
         :paramtype tags: dict[str, list[str]]
-        :keyword filter_operator: Filter VMs by Any or All specified tags. Known values are: "All",
+        :keyword filter_operator: Filter VMs by Any or All specified tags. Known values are: "All" and
          "Any".
         :paramtype filter_operator: str or ~azure.mgmt.automation.models.TagOperators
         """
-        super(TagSettingsProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.tags = tags
         self.filter_operator = filter_operator
 
 
-class TargetProperties(msrest.serialization.Model):
+class TargetProperties(_serialization.Model):
     """Group specific to the update configuration.
 
     :ivar azure_queries: List of Azure queries in the software update configuration.
@@ -8211,8 +8063,8 @@ class TargetProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'azure_queries': {'key': 'azureQueries', 'type': '[AzureQueryProperties]'},
-        'non_azure_queries': {'key': 'nonAzureQueries', 'type': '[NonAzureQueryProperties]'},
+        "azure_queries": {"key": "azureQueries", "type": "[AzureQueryProperties]"},
+        "non_azure_queries": {"key": "nonAzureQueries", "type": "[NonAzureQueryProperties]"},
     }
 
     def __init__(
@@ -8228,12 +8080,12 @@ class TargetProperties(msrest.serialization.Model):
         :keyword non_azure_queries: List of non Azure queries in the software update configuration.
         :paramtype non_azure_queries: list[~azure.mgmt.automation.models.NonAzureQueryProperties]
         """
-        super(TargetProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.azure_queries = azure_queries
         self.non_azure_queries = non_azure_queries
 
 
-class TaskProperties(msrest.serialization.Model):
+class TaskProperties(_serialization.Model):
     """Task properties of the software update configuration.
 
     :ivar parameters: Gets or sets the parameters of the task.
@@ -8243,29 +8095,23 @@ class TaskProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'parameters': {'key': 'parameters', 'type': '{str}'},
-        'source': {'key': 'source', 'type': 'str'},
+        "parameters": {"key": "parameters", "type": "{str}"},
+        "source": {"key": "source", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: Optional[Dict[str, str]] = None,
-        source: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, parameters: Optional[Dict[str, str]] = None, source: Optional[str] = None, **kwargs):
         """
         :keyword parameters: Gets or sets the parameters of the task.
         :paramtype parameters: dict[str, str]
         :keyword source: Gets or sets the name of the runbook.
         :paramtype source: str
         """
-        super(TaskProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.parameters = parameters
         self.source = source
 
 
-class TestJob(msrest.serialization.Model):
+class TestJob(_serialization.Model):  # pylint: disable=too-many-instance-attributes
     """Definition of the test job.
 
     :ivar creation_time: Gets or sets the creation time of the test job.
@@ -8294,17 +8140,17 @@ class TestJob(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'creation_time': {'key': 'creationTime', 'type': 'iso-8601'},
-        'status': {'key': 'status', 'type': 'str'},
-        'status_details': {'key': 'statusDetails', 'type': 'str'},
-        'run_on': {'key': 'runOn', 'type': 'str'},
-        'start_time': {'key': 'startTime', 'type': 'iso-8601'},
-        'end_time': {'key': 'endTime', 'type': 'iso-8601'},
-        'exception': {'key': 'exception', 'type': 'str'},
-        'last_modified_time': {'key': 'lastModifiedTime', 'type': 'iso-8601'},
-        'last_status_modified_time': {'key': 'lastStatusModifiedTime', 'type': 'iso-8601'},
-        'parameters': {'key': 'parameters', 'type': '{str}'},
-        'log_activity_trace': {'key': 'logActivityTrace', 'type': 'int'},
+        "creation_time": {"key": "creationTime", "type": "iso-8601"},
+        "status": {"key": "status", "type": "str"},
+        "status_details": {"key": "statusDetails", "type": "str"},
+        "run_on": {"key": "runOn", "type": "str"},
+        "start_time": {"key": "startTime", "type": "iso-8601"},
+        "end_time": {"key": "endTime", "type": "iso-8601"},
+        "exception": {"key": "exception", "type": "str"},
+        "last_modified_time": {"key": "lastModifiedTime", "type": "iso-8601"},
+        "last_status_modified_time": {"key": "lastStatusModifiedTime", "type": "iso-8601"},
+        "parameters": {"key": "parameters", "type": "{str}"},
+        "log_activity_trace": {"key": "logActivityTrace", "type": "int"},
     }
 
     def __init__(
@@ -8348,7 +8194,7 @@ class TestJob(msrest.serialization.Model):
         :keyword log_activity_trace: The activity-level tracing options of the runbook.
         :paramtype log_activity_trace: int
         """
-        super(TestJob, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.creation_time = creation_time
         self.status = status
         self.status_details = status_details
@@ -8362,7 +8208,7 @@ class TestJob(msrest.serialization.Model):
         self.log_activity_trace = log_activity_trace
 
 
-class TestJobCreateParameters(msrest.serialization.Model):
+class TestJobCreateParameters(_serialization.Model):
     """The parameters supplied to the create test job operation.
 
     :ivar parameters: Gets or sets the parameters of the test job.
@@ -8373,17 +8219,11 @@ class TestJobCreateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'parameters': {'key': 'parameters', 'type': '{str}'},
-        'run_on': {'key': 'runOn', 'type': 'str'},
+        "parameters": {"key": "parameters", "type": "{str}"},
+        "run_on": {"key": "runOn", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        parameters: Optional[Dict[str, str]] = None,
-        run_on: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, parameters: Optional[Dict[str, str]] = None, run_on: Optional[str] = None, **kwargs):
         """
         :keyword parameters: Gets or sets the parameters of the test job.
         :paramtype parameters: dict[str, str]
@@ -8391,12 +8231,12 @@ class TestJobCreateParameters(msrest.serialization.Model):
          executed.
         :paramtype run_on: str
         """
-        super(TestJobCreateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.parameters = parameters
         self.run_on = run_on
 
 
-class TypeField(msrest.serialization.Model):
+class TypeField(_serialization.Model):
     """Information about a field of a type.
 
     :ivar name: Gets or sets the name of the field.
@@ -8406,29 +8246,23 @@ class TypeField(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        type: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, type: Optional[str] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the field.
         :paramtype name: str
         :keyword type: Gets or sets the type of the field.
         :paramtype type: str
         """
-        super(TypeField, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.type = type
 
 
-class TypeFieldListResult(msrest.serialization.Model):
+class TypeFieldListResult(_serialization.Model):
     """The response model for the list fields operation.
 
     :ivar value: Gets or sets a list of fields.
@@ -8436,30 +8270,25 @@ class TypeFieldListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[TypeField]'},
+        "value": {"key": "value", "type": "[TypeField]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.TypeField"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.TypeField"]] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of fields.
         :paramtype value: list[~azure.mgmt.automation.models.TypeField]
         """
-        super(TypeFieldListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
 
 
-class UpdateConfiguration(msrest.serialization.Model):
+class UpdateConfiguration(_serialization.Model):
     """Update specific properties of the software update configuration.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar operating_system: Required. operating system of target machines. Known values are:
-     "Windows", "Linux".
+    :ivar operating_system: operating system of target machines. Required. Known values are:
+     "Windows" and "Linux".
     :vartype operating_system: str or ~azure.mgmt.automation.models.OperatingSystemType
     :ivar windows: Windows specific update configuration.
     :vartype windows: ~azure.mgmt.automation.models.WindowsProperties
@@ -8479,17 +8308,17 @@ class UpdateConfiguration(msrest.serialization.Model):
     """
 
     _validation = {
-        'operating_system': {'required': True},
+        "operating_system": {"required": True},
     }
 
     _attribute_map = {
-        'operating_system': {'key': 'operatingSystem', 'type': 'str'},
-        'windows': {'key': 'windows', 'type': 'WindowsProperties'},
-        'linux': {'key': 'linux', 'type': 'LinuxProperties'},
-        'duration': {'key': 'duration', 'type': 'duration'},
-        'azure_virtual_machines': {'key': 'azureVirtualMachines', 'type': '[str]'},
-        'non_azure_computer_names': {'key': 'nonAzureComputerNames', 'type': '[str]'},
-        'targets': {'key': 'targets', 'type': 'TargetProperties'},
+        "operating_system": {"key": "operatingSystem", "type": "str"},
+        "windows": {"key": "windows", "type": "WindowsProperties"},
+        "linux": {"key": "linux", "type": "LinuxProperties"},
+        "duration": {"key": "duration", "type": "duration"},
+        "azure_virtual_machines": {"key": "azureVirtualMachines", "type": "[str]"},
+        "non_azure_computer_names": {"key": "nonAzureComputerNames", "type": "[str]"},
+        "targets": {"key": "targets", "type": "TargetProperties"},
     }
 
     def __init__(
@@ -8505,8 +8334,8 @@ class UpdateConfiguration(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword operating_system: Required. operating system of target machines. Known values are:
-         "Windows", "Linux".
+        :keyword operating_system: operating system of target machines. Required. Known values are:
+         "Windows" and "Linux".
         :paramtype operating_system: str or ~azure.mgmt.automation.models.OperatingSystemType
         :keyword windows: Windows specific update configuration.
         :paramtype windows: ~azure.mgmt.automation.models.WindowsProperties
@@ -8524,7 +8353,7 @@ class UpdateConfiguration(msrest.serialization.Model):
         :keyword targets: Group targets for the software update configuration.
         :paramtype targets: ~azure.mgmt.automation.models.TargetProperties
         """
-        super(UpdateConfiguration, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.operating_system = operating_system
         self.windows = windows
         self.linux = linux
@@ -8534,7 +8363,7 @@ class UpdateConfiguration(msrest.serialization.Model):
         self.targets = targets
 
 
-class UpdateConfigurationNavigation(msrest.serialization.Model):
+class UpdateConfigurationNavigation(_serialization.Model):
     """Software update configuration Run Navigation model.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8545,24 +8374,20 @@ class UpdateConfigurationNavigation(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'readonly': True},
+        "name": {"readonly": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
     }
 
-    def __init__(
-        self,
-        **kwargs
-    ):
-        """
-        """
-        super(UpdateConfigurationNavigation, self).__init__(**kwargs)
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
         self.name = None
 
 
-class Usage(msrest.serialization.Model):
+class Usage(_serialization.Model):
     """Definition of Usage.
 
     :ivar id: Gets or sets the id of the resource.
@@ -8574,24 +8399,24 @@ class Usage(msrest.serialization.Model):
     :ivar current_value: Gets or sets the current usage value.
     :vartype current_value: float
     :ivar limit: Gets or sets max limit. -1 for unlimited.
-    :vartype limit: long
+    :vartype limit: int
     :ivar throttle_status: Gets or sets the throttle status.
     :vartype throttle_status: str
     """
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'UsageCounterName'},
-        'unit': {'key': 'unit', 'type': 'str'},
-        'current_value': {'key': 'currentValue', 'type': 'float'},
-        'limit': {'key': 'limit', 'type': 'long'},
-        'throttle_status': {'key': 'throttleStatus', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "UsageCounterName"},
+        "unit": {"key": "unit", "type": "str"},
+        "current_value": {"key": "currentValue", "type": "float"},
+        "limit": {"key": "limit", "type": "int"},
+        "throttle_status": {"key": "throttleStatus", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        id: Optional[str] = None,
+        id: Optional[str] = None,  # pylint: disable=redefined-builtin
         name: Optional["_models.UsageCounterName"] = None,
         unit: Optional[str] = None,
         current_value: Optional[float] = None,
@@ -8609,11 +8434,11 @@ class Usage(msrest.serialization.Model):
         :keyword current_value: Gets or sets the current usage value.
         :paramtype current_value: float
         :keyword limit: Gets or sets max limit. -1 for unlimited.
-        :paramtype limit: long
+        :paramtype limit: int
         :keyword throttle_status: Gets or sets the throttle status.
         :paramtype throttle_status: str
         """
-        super(Usage, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.id = id
         self.name = name
         self.unit = unit
@@ -8622,7 +8447,7 @@ class Usage(msrest.serialization.Model):
         self.throttle_status = throttle_status
 
 
-class UsageCounterName(msrest.serialization.Model):
+class UsageCounterName(_serialization.Model):
     """Definition of usage counter name.
 
     :ivar value: Gets or sets the usage counter name.
@@ -8632,29 +8457,23 @@ class UsageCounterName(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': 'str'},
-        'localized_value': {'key': 'localizedValue', 'type': 'str'},
+        "value": {"key": "value", "type": "str"},
+        "localized_value": {"key": "localizedValue", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[str] = None,
-        localized_value: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[str] = None, localized_value: Optional[str] = None, **kwargs):
         """
         :keyword value: Gets or sets the usage counter name.
         :paramtype value: str
         :keyword localized_value: Gets or sets the localized usage counter name.
         :paramtype localized_value: str
         """
-        super(UsageCounterName, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.localized_value = localized_value
 
 
-class UsageListResult(msrest.serialization.Model):
+class UsageListResult(_serialization.Model):
     """The response model for the get usage operation.
 
     :ivar value: Gets or sets usage.
@@ -8662,21 +8481,44 @@ class UsageListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Usage]'},
+        "value": {"key": "value", "type": "[Usage]"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Usage"]] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Usage"]] = None, **kwargs):
         """
         :keyword value: Gets or sets usage.
         :paramtype value: list[~azure.mgmt.automation.models.Usage]
         """
-        super(UsageListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
+
+
+class UserAssignedIdentitiesProperties(_serialization.Model):
+    """UserAssignedIdentitiesProperties.
+
+    Variables are only populated by the server, and will be ignored when sending a request.
+
+    :ivar principal_id: The principal id of user assigned identity.
+    :vartype principal_id: str
+    :ivar client_id: The client id of user assigned identity.
+    :vartype client_id: str
+    """
+
+    _validation = {
+        "principal_id": {"readonly": True},
+        "client_id": {"readonly": True},
+    }
+
+    _attribute_map = {
+        "principal_id": {"key": "principalId", "type": "str"},
+        "client_id": {"key": "clientId", "type": "str"},
+    }
+
+    def __init__(self, **kwargs):
+        """ """
+        super().__init__(**kwargs)
+        self.principal_id = None
+        self.client_id = None
 
 
 class Variable(ProxyResource):
@@ -8703,20 +8545,20 @@ class Variable(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': 'str'},
-        'is_encrypted': {'key': 'properties.isEncrypted', 'type': 'bool'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "value": {"key": "properties.value", "type": "str"},
+        "is_encrypted": {"key": "properties.isEncrypted", "type": "bool"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -8741,7 +8583,7 @@ class Variable(ProxyResource):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(Variable, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.is_encrypted = is_encrypted
         self.creation_time = creation_time
@@ -8749,12 +8591,12 @@ class Variable(ProxyResource):
         self.description = description
 
 
-class VariableCreateOrUpdateParameters(msrest.serialization.Model):
+class VariableCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update variable operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the name of the variable.
+    :ivar name: Gets or sets the name of the variable. Required.
     :vartype name: str
     :ivar value: Gets or sets the value of the variable.
     :vartype value: str
@@ -8765,14 +8607,14 @@ class VariableCreateOrUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
-        'is_encrypted': {'key': 'properties.isEncrypted', 'type': 'bool'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "properties.value", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
+        "is_encrypted": {"key": "properties.isEncrypted", "type": "bool"},
     }
 
     def __init__(
@@ -8785,7 +8627,7 @@ class VariableCreateOrUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Gets or sets the name of the variable.
+        :keyword name: Gets or sets the name of the variable. Required.
         :paramtype name: str
         :keyword value: Gets or sets the value of the variable.
         :paramtype value: str
@@ -8794,14 +8636,14 @@ class VariableCreateOrUpdateParameters(msrest.serialization.Model):
         :keyword is_encrypted: Gets or sets the encrypted flag of the variable.
         :paramtype is_encrypted: bool
         """
-        super(VariableCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
         self.description = description
         self.is_encrypted = is_encrypted
 
 
-class VariableListResult(msrest.serialization.Model):
+class VariableListResult(_serialization.Model):
     """The response model for the list variables operation.
 
     :ivar value: Gets or sets a list of variables.
@@ -8811,29 +8653,23 @@ class VariableListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Variable]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Variable]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Variable"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Variable"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of variables.
         :paramtype value: list[~azure.mgmt.automation.models.Variable]
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(VariableListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class VariableUpdateParameters(msrest.serialization.Model):
+class VariableUpdateParameters(_serialization.Model):
     """The parameters supplied to the update variable operation.
 
     :ivar name: Gets or sets the name of the variable.
@@ -8845,18 +8681,13 @@ class VariableUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'value': {'key': 'properties.value', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "value": {"key": "properties.value", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        value: Optional[str] = None,
-        description: Optional[str] = None,
-        **kwargs
+        self, *, name: Optional[str] = None, value: Optional[str] = None, description: Optional[str] = None, **kwargs
     ):
         """
         :keyword name: Gets or sets the name of the variable.
@@ -8866,13 +8697,13 @@ class VariableUpdateParameters(msrest.serialization.Model):
         :keyword description: Gets or sets the description of the variable.
         :paramtype description: str
         """
-        super(VariableUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.value = value
         self.description = description
 
 
-class Watcher(Resource):
+class Watcher(Resource):  # pylint: disable=too-many-instance-attributes
     """Definition of the watcher type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -8885,13 +8716,13 @@ class Watcher(Resource):
     :vartype type: str
     :ivar etag: Gets or sets the etag of the resource.
     :vartype etag: str
-    :ivar tags: A set of tags. Resource tags.
+    :ivar tags: Resource tags.
     :vartype tags: dict[str, str]
     :ivar location: The geo-location where the resource lives.
     :vartype location: str
     :ivar execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
      invoked.
-    :vartype execution_frequency_in_seconds: long
+    :vartype execution_frequency_in_seconds: int
     :ivar script_name: Gets or sets the name of the script the watcher is attached to, i.e. the
      name of an existing runbook.
     :vartype script_name: str
@@ -8912,31 +8743,31 @@ class Watcher(Resource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
-        'status': {'readonly': True},
-        'creation_time': {'readonly': True},
-        'last_modified_time': {'readonly': True},
-        'last_modified_by': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
+        "status": {"readonly": True},
+        "creation_time": {"readonly": True},
+        "last_modified_time": {"readonly": True},
+        "last_modified_by": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'etag': {'key': 'etag', 'type': 'str'},
-        'tags': {'key': 'tags', 'type': '{str}'},
-        'location': {'key': 'location', 'type': 'str'},
-        'execution_frequency_in_seconds': {'key': 'properties.executionFrequencyInSeconds', 'type': 'long'},
-        'script_name': {'key': 'properties.scriptName', 'type': 'str'},
-        'script_parameters': {'key': 'properties.scriptParameters', 'type': '{str}'},
-        'script_run_on': {'key': 'properties.scriptRunOn', 'type': 'str'},
-        'status': {'key': 'properties.status', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "etag": {"key": "etag", "type": "str"},
+        "tags": {"key": "tags", "type": "{str}"},
+        "location": {"key": "location", "type": "str"},
+        "execution_frequency_in_seconds": {"key": "properties.executionFrequencyInSeconds", "type": "int"},
+        "script_name": {"key": "properties.scriptName", "type": "str"},
+        "script_parameters": {"key": "properties.scriptParameters", "type": "{str}"},
+        "script_run_on": {"key": "properties.scriptRunOn", "type": "str"},
+        "status": {"key": "properties.status", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -8955,13 +8786,13 @@ class Watcher(Resource):
         """
         :keyword etag: Gets or sets the etag of the resource.
         :paramtype etag: str
-        :keyword tags: A set of tags. Resource tags.
+        :keyword tags: Resource tags.
         :paramtype tags: dict[str, str]
         :keyword location: The geo-location where the resource lives.
         :paramtype location: str
         :keyword execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
          invoked.
-        :paramtype execution_frequency_in_seconds: long
+        :paramtype execution_frequency_in_seconds: int
         :keyword script_name: Gets or sets the name of the script the watcher is attached to, i.e. the
          name of an existing runbook.
         :paramtype script_name: str
@@ -8973,7 +8804,7 @@ class Watcher(Resource):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(Watcher, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.etag = etag
         self.tags = tags
         self.location = location
@@ -8988,7 +8819,7 @@ class Watcher(Resource):
         self.description = description
 
 
-class WatcherListResult(msrest.serialization.Model):
+class WatcherListResult(_serialization.Model):
     """The response model for the list watcher operation.
 
     :ivar value: Gets or sets a list of watchers.
@@ -8998,63 +8829,51 @@ class WatcherListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Watcher]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Watcher]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Watcher"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Watcher"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of watchers.
         :paramtype value: list[~azure.mgmt.automation.models.Watcher]
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(WatcherListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class WatcherUpdateParameters(msrest.serialization.Model):
+class WatcherUpdateParameters(_serialization.Model):
     """WatcherUpdateParameters.
 
     :ivar name: Gets or sets the name of the resource.
     :vartype name: str
     :ivar execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
      invoked.
-    :vartype execution_frequency_in_seconds: long
+    :vartype execution_frequency_in_seconds: int
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'execution_frequency_in_seconds': {'key': 'properties.executionFrequencyInSeconds', 'type': 'long'},
+        "name": {"key": "name", "type": "str"},
+        "execution_frequency_in_seconds": {"key": "properties.executionFrequencyInSeconds", "type": "int"},
     }
 
-    def __init__(
-        self,
-        *,
-        name: Optional[str] = None,
-        execution_frequency_in_seconds: Optional[int] = None,
-        **kwargs
-    ):
+    def __init__(self, *, name: Optional[str] = None, execution_frequency_in_seconds: Optional[int] = None, **kwargs):
         """
         :keyword name: Gets or sets the name of the resource.
         :paramtype name: str
         :keyword execution_frequency_in_seconds: Gets or sets the frequency at which the watcher is
          invoked.
-        :paramtype execution_frequency_in_seconds: long
+        :paramtype execution_frequency_in_seconds: int
         """
-        super(WatcherUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.execution_frequency_in_seconds = execution_frequency_in_seconds
 
 
-class Webhook(ProxyResource):
+class Webhook(ProxyResource):  # pylint: disable=too-many-instance-attributes
     """Definition of the webhook type.
 
     Variables are only populated by the server, and will be ignored when sending a request.
@@ -9091,32 +8910,32 @@ class Webhook(ProxyResource):
     """
 
     _validation = {
-        'id': {'readonly': True},
-        'name': {'readonly': True},
-        'type': {'readonly': True},
+        "id": {"readonly": True},
+        "name": {"readonly": True},
+        "type": {"readonly": True},
     }
 
     _attribute_map = {
-        'id': {'key': 'id', 'type': 'str'},
-        'name': {'key': 'name', 'type': 'str'},
-        'type': {'key': 'type', 'type': 'str'},
-        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
-        'uri': {'key': 'properties.uri', 'type': 'str'},
-        'expiry_time': {'key': 'properties.expiryTime', 'type': 'iso-8601'},
-        'last_invoked_time': {'key': 'properties.lastInvokedTime', 'type': 'iso-8601'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
-        'creation_time': {'key': 'properties.creationTime', 'type': 'iso-8601'},
-        'last_modified_time': {'key': 'properties.lastModifiedTime', 'type': 'iso-8601'},
-        'last_modified_by': {'key': 'properties.lastModifiedBy', 'type': 'str'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "id": {"key": "id", "type": "str"},
+        "name": {"key": "name", "type": "str"},
+        "type": {"key": "type", "type": "str"},
+        "is_enabled": {"key": "properties.isEnabled", "type": "bool"},
+        "uri": {"key": "properties.uri", "type": "str"},
+        "expiry_time": {"key": "properties.expiryTime", "type": "iso-8601"},
+        "last_invoked_time": {"key": "properties.lastInvokedTime", "type": "iso-8601"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "runbook": {"key": "properties.runbook", "type": "RunbookAssociationProperty"},
+        "run_on": {"key": "properties.runOn", "type": "str"},
+        "creation_time": {"key": "properties.creationTime", "type": "iso-8601"},
+        "last_modified_time": {"key": "properties.lastModifiedTime", "type": "iso-8601"},
+        "last_modified_by": {"key": "properties.lastModifiedBy", "type": "str"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
         self,
         *,
-        is_enabled: Optional[bool] = False,
+        is_enabled: bool = False,
         uri: Optional[str] = None,
         expiry_time: Optional[datetime.datetime] = None,
         last_invoked_time: Optional[datetime.datetime] = None,
@@ -9154,7 +8973,7 @@ class Webhook(ProxyResource):
         :keyword description: Gets or sets the description.
         :paramtype description: str
         """
-        super(Webhook, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.is_enabled = is_enabled
         self.uri = uri
         self.expiry_time = expiry_time
@@ -9168,12 +8987,12 @@ class Webhook(ProxyResource):
         self.description = description
 
 
-class WebhookCreateOrUpdateParameters(msrest.serialization.Model):
+class WebhookCreateOrUpdateParameters(_serialization.Model):
     """The parameters supplied to the create or update webhook operation.
 
     All required parameters must be populated in order to send to Azure.
 
-    :ivar name: Required. Gets or sets the name of the webhook.
+    :ivar name: Gets or sets the name of the webhook. Required.
     :vartype name: str
     :ivar is_enabled: Gets or sets the value of the enabled flag of webhook.
     :vartype is_enabled: bool
@@ -9190,17 +9009,17 @@ class WebhookCreateOrUpdateParameters(msrest.serialization.Model):
     """
 
     _validation = {
-        'name': {'required': True},
+        "name": {"required": True},
     }
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
-        'uri': {'key': 'properties.uri', 'type': 'str'},
-        'expiry_time': {'key': 'properties.expiryTime', 'type': 'iso-8601'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'runbook': {'key': 'properties.runbook', 'type': 'RunbookAssociationProperty'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_enabled": {"key": "properties.isEnabled", "type": "bool"},
+        "uri": {"key": "properties.uri", "type": "str"},
+        "expiry_time": {"key": "properties.expiryTime", "type": "iso-8601"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "runbook": {"key": "properties.runbook", "type": "RunbookAssociationProperty"},
+        "run_on": {"key": "properties.runOn", "type": "str"},
     }
 
     def __init__(
@@ -9216,7 +9035,7 @@ class WebhookCreateOrUpdateParameters(msrest.serialization.Model):
         **kwargs
     ):
         """
-        :keyword name: Required. Gets or sets the name of the webhook.
+        :keyword name: Gets or sets the name of the webhook. Required.
         :paramtype name: str
         :keyword is_enabled: Gets or sets the value of the enabled flag of webhook.
         :paramtype is_enabled: bool
@@ -9231,7 +9050,7 @@ class WebhookCreateOrUpdateParameters(msrest.serialization.Model):
         :keyword run_on: Gets or sets the name of the hybrid worker group the webhook job will run on.
         :paramtype run_on: str
         """
-        super(WebhookCreateOrUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.is_enabled = is_enabled
         self.uri = uri
@@ -9241,7 +9060,7 @@ class WebhookCreateOrUpdateParameters(msrest.serialization.Model):
         self.run_on = run_on
 
 
-class WebhookListResult(msrest.serialization.Model):
+class WebhookListResult(_serialization.Model):
     """The response model for the list webhook operation.
 
     :ivar value: Gets or sets a list of webhooks.
@@ -9251,29 +9070,23 @@ class WebhookListResult(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'value': {'key': 'value', 'type': '[Webhook]'},
-        'next_link': {'key': 'nextLink', 'type': 'str'},
+        "value": {"key": "value", "type": "[Webhook]"},
+        "next_link": {"key": "nextLink", "type": "str"},
     }
 
-    def __init__(
-        self,
-        *,
-        value: Optional[List["_models.Webhook"]] = None,
-        next_link: Optional[str] = None,
-        **kwargs
-    ):
+    def __init__(self, *, value: Optional[List["_models.Webhook"]] = None, next_link: Optional[str] = None, **kwargs):
         """
         :keyword value: Gets or sets a list of webhooks.
         :paramtype value: list[~azure.mgmt.automation.models.Webhook]
         :keyword next_link: Gets or sets the next link.
         :paramtype next_link: str
         """
-        super(WebhookListResult, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.value = value
         self.next_link = next_link
 
 
-class WebhookUpdateParameters(msrest.serialization.Model):
+class WebhookUpdateParameters(_serialization.Model):
     """The parameters supplied to the update webhook operation.
 
     :ivar name: Gets or sets the name of the webhook.
@@ -9289,11 +9102,11 @@ class WebhookUpdateParameters(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'name': {'key': 'name', 'type': 'str'},
-        'is_enabled': {'key': 'properties.isEnabled', 'type': 'bool'},
-        'run_on': {'key': 'properties.runOn', 'type': 'str'},
-        'parameters': {'key': 'properties.parameters', 'type': '{str}'},
-        'description': {'key': 'properties.description', 'type': 'str'},
+        "name": {"key": "name", "type": "str"},
+        "is_enabled": {"key": "properties.isEnabled", "type": "bool"},
+        "run_on": {"key": "properties.runOn", "type": "str"},
+        "parameters": {"key": "properties.parameters", "type": "{str}"},
+        "description": {"key": "properties.description", "type": "str"},
     }
 
     def __init__(
@@ -9318,7 +9131,7 @@ class WebhookUpdateParameters(msrest.serialization.Model):
         :keyword description: Gets or sets the description of the webhook.
         :paramtype description: str
         """
-        super(WebhookUpdateParameters, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.name = name
         self.is_enabled = is_enabled
         self.run_on = run_on
@@ -9326,13 +9139,13 @@ class WebhookUpdateParameters(msrest.serialization.Model):
         self.description = description
 
 
-class WindowsProperties(msrest.serialization.Model):
+class WindowsProperties(_serialization.Model):
     """Windows specific update configuration.
 
     :ivar included_update_classifications: Update classification included in the software update
      configuration. A comma separated string with required values. Known values are: "Unclassified",
      "Critical", "Security", "UpdateRollup", "FeaturePack", "ServicePack", "Definition", "Tools",
-     "Updates".
+     and "Updates".
     :vartype included_update_classifications: str or
      ~azure.mgmt.automation.models.WindowsUpdateClasses
     :ivar excluded_kb_numbers: KB numbers excluded from the software update configuration.
@@ -9344,10 +9157,10 @@ class WindowsProperties(msrest.serialization.Model):
     """
 
     _attribute_map = {
-        'included_update_classifications': {'key': 'includedUpdateClassifications', 'type': 'str'},
-        'excluded_kb_numbers': {'key': 'excludedKbNumbers', 'type': '[str]'},
-        'included_kb_numbers': {'key': 'includedKbNumbers', 'type': '[str]'},
-        'reboot_setting': {'key': 'rebootSetting', 'type': 'str'},
+        "included_update_classifications": {"key": "includedUpdateClassifications", "type": "str"},
+        "excluded_kb_numbers": {"key": "excludedKbNumbers", "type": "[str]"},
+        "included_kb_numbers": {"key": "includedKbNumbers", "type": "[str]"},
+        "reboot_setting": {"key": "rebootSetting", "type": "str"},
     }
 
     def __init__(
@@ -9363,7 +9176,7 @@ class WindowsProperties(msrest.serialization.Model):
         :keyword included_update_classifications: Update classification included in the software update
          configuration. A comma separated string with required values. Known values are: "Unclassified",
          "Critical", "Security", "UpdateRollup", "FeaturePack", "ServicePack", "Definition", "Tools",
-         "Updates".
+         and "Updates".
         :paramtype included_update_classifications: str or
          ~azure.mgmt.automation.models.WindowsUpdateClasses
         :keyword excluded_kb_numbers: KB numbers excluded from the software update configuration.
@@ -9373,7 +9186,7 @@ class WindowsProperties(msrest.serialization.Model):
         :keyword reboot_setting: Reboot setting for the software update configuration.
         :paramtype reboot_setting: str
         """
-        super(WindowsProperties, self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.included_update_classifications = included_update_classifications
         self.excluded_kb_numbers = excluded_kb_numbers
         self.included_kb_numbers = included_kb_numbers

@@ -111,7 +111,9 @@ def test_client_azure_sas_credential(live_eventhub, uamqp_transport):
     token = credential.get_token(auth_uri).token.decode()
     producer_client = EventHubProducerClient(fully_qualified_namespace=hostname,
                                              eventhub_name=live_eventhub['event_hub'],
-                                             credential=AzureSasCredential(token))
+                                             credential=AzureSasCredential(token),
+                                             auth_timeout=3,
+                                             uamqp_transport=uamqp_transport)
 
     with producer_client:
         batch = producer_client.create_batch(partition_id='0')
@@ -127,6 +129,7 @@ def test_client_azure_named_key_credential(live_eventhub, uamqp_transport):
                                              consumer_group='$default',
                                              credential=credential,
                                              user_agent='customized information',
+                                             auth_timeout=3,
                                              uamqp_transport=uamqp_transport)
 
     assert consumer_client.get_eventhub_properties() is not None
