@@ -30,7 +30,6 @@ try:
 except ImportError:
     from typing_extensions import TypeAlias
 
-import six
 
 from .types import (
     TYPE,
@@ -302,11 +301,11 @@ def encode_uuid(
     """
     <encoding code="0x98" category="fixed" width="16" label="UUID as defined in section 4.1.2 of RFC-4122"/>
     """
-    if isinstance(value, six.text_type):
+    if isinstance(value, str):
         value = uuid.UUID(value).bytes
     elif isinstance(value, uuid.UUID):
         value = value.bytes
-    elif isinstance(value, six.binary_type):
+    elif isinstance(value, bytes):
         value = uuid.UUID(bytes=value).bytes
     else:
         raise TypeError("Invalid UUID type: {}".format(type(value)))
