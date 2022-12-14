@@ -599,7 +599,7 @@ class CodegenTestPR:
             self.create_pr()
         else:
             self.sdk_folder = self.spec_readme.split('/')[0]
-            self.package_name = self.spec_readme.split('/')[-1]
+            self.package_name = self.spec_readme.split('/')[-1].split('-')[-1]
             self.checkout_branch("DEBUG_SDK_BRANCH", "azure-sdk-for-python")
             self.run_test()
 
