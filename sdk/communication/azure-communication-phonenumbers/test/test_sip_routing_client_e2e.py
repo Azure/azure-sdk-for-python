@@ -3,7 +3,7 @@
 # Licensed under the MIT License. See License.txt in the project root for
 # license information.
 # --------------------------------------------------------------------------
-
+from azure.core.exceptions import HttpResponseError
 from phone_numbers_testcase import PhoneNumbersTestCase
 from _shared.utils import create_token_credential, get_http_logging_policy
 from sip_routing_helper import get_user_domain, assert_trunks_are_equal, assert_routes_are_equal
@@ -78,6 +78,16 @@ class TestSipRoutingClientE2E(PhoneNumbersTestCase):
         result_trunks = client.get_trunks()
         assert result_trunks is not None, "No trunks were returned."
         assert_trunks_are_equal(result_trunks,[self.additional_trunk])
+
+    @recorded_by_proxy
+    def test_set_trunks_empty_list(self, **kwargs):
+        """Verification of bug fix. SDK shouldn't send empty PATCH, otherwise it will receive exception.
+        This situation occurs, when sending empty trunks list to already empty trunk configuration."""
+        try: 
+            self._sip_routing_client.set_trunks([])
+            self._sip_routing_client.set_trunks([])
+        except HttpResponseError as exception:
+             assert False, "Trying to set empty trunks list returned Http error: " + str(exception.status_code) + ", message: " + exception.message
 
     @recorded_by_proxy
     def test_set_routes(self, **kwargs):
