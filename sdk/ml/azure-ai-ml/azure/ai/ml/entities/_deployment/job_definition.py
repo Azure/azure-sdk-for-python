@@ -8,8 +8,9 @@ from azure.ai.ml._schema._deployment.batch.job_definition_schema import JobDefin
 from azure.ai.ml.constants._common import BASE_PATH_CONTEXT_KEY
 from azure.ai.ml.entities._component.component import Component
 from azure.ai.ml.entities._job.job import Job
+from azure.ai.ml._utils._experimental import experimental
 
-
+@experimental
 class JobDefinition:
     """Job Definition entity
 
