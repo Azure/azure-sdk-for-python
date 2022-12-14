@@ -1246,11 +1246,11 @@ class TestStorageAppendBlob(StorageRecordedTestCase):
         with tempfile.TemporaryFile() as temp_file:
             temp_file.write(data)
             temp_file.seek(0)
-            with tempfile.TemporaryFile() as temp_file2:
-                temp_file2.write(data)
-                temp_file2.seek(0)
-                blob.upload_blob(temp_file, blob_type=BlobType.AppendBlob)
-                blob.upload_blob(temp_file2, blob_type=BlobType.AppendBlob)
+            blob.upload_blob(temp_file, blob_type=BlobType.AppendBlob)
+        with tempfile.TemporaryFile() as temp_file2:
+            temp_file2.write(data)
+            temp_file2.seek(0)
+            blob.upload_blob(temp_file2, blob_type=BlobType.AppendBlob)
 
         # Assert
         data = data * 2
