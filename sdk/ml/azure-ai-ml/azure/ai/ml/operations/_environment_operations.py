@@ -5,7 +5,7 @@
 # pylint: disable=protected-access
 
 from typing import Any, Iterable, Union
-
+from marshmallow.exceptions import ValidationError as SchemaValidationError
 from azure.ai.ml._artifacts._artifact_utilities import _check_and_upload_env_build_context
 from azure.ai.ml._exception_helper import log_and_raise_error
 from azure.ai.ml._restclient.v2021_10_01_dataplanepreview import (
@@ -32,7 +32,6 @@ from azure.ai.ml._utils._registry_utils import get_asset_body_for_registry_stora
 from azure.ai.ml.constants._common import ARM_ID_PREFIX, AzureMLResourceType
 from azure.ai.ml.entities._assets import Environment
 from azure.ai.ml.exceptions import ErrorCategory, ErrorTarget, ValidationErrorType, ValidationException
-from marshmallow.exceptions import ValidationError as SchemaValidationError
 
 ops_logger = OpsLogger(__name__)
 module_logger = ops_logger.module_logger
@@ -273,7 +272,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "Environment.Delete", ActivityType.PUBLICAPI)
     def archive(
-        self, name: str, version: str = None, label: str = None, **kwargs
+        self,
+        name: str,
+        version: str = None,
+        label: str = None,
     ) -> None:  # pylint:disable=unused-argument
         """Archive an environment or an environment version.
 
@@ -297,7 +299,10 @@ class EnvironmentOperations(_ScopeDependentOperations):
 
     # @monitor_with_activity(logger, "Environment.Restore", ActivityType.PUBLICAPI)
     def restore(
-        self, name: str, version: str = None, label: str = None, **kwargs
+        self,
+        name: str,
+        version: str = None,
+        label: str = None,
     ) -> None:  # pylint:disable=unused-argument
         """Restore an archived environment version.
 
