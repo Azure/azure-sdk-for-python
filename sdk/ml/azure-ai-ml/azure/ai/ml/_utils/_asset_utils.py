@@ -422,8 +422,8 @@ def construct_local_and_remote_paths(
 
     Composing Local Paths
         This is trivial for most paths, but for symlinks, we need to resolve the symlink and
-        return the actual path to the file. e.g. if we have a symlink directory /mnt/c/Users/dipeck/link/
-        that points to /mnt/c/Users/target/, we want to return /mnt/c/Users/target/ and its subfiles, if any.
+        return the target path to the file. e.g. if we have a symlink directory /mnt/c/Users/dipeck/link/
+        that points to /mnt/c/Users/target/, we want to return /mnt/c/Users/target/ and its file tree.
 
         For a symlink file:
         [/mnt/c/Users/dipeck/link.txt] -> [/mnt/c/Users/dipeck/target.txt]
@@ -439,21 +439,17 @@ def construct_local_and_remote_paths(
         we need to construct the remote path for each file.
         [/mnt/c/Users/dipeck/upload_files/my_file1.txt, /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
         [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
-        (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
+         (/mnt/c/Users/dipeck/upload_files/my_file2.txt, LocalUpload/<guid>/upload_files/my_file2.txt))]
 
-        For symlinks, we need to use the actual symlink relative path here because the user is expecting to see the
-        folder or file the same way it appears in their project directory. e.g. if a user has a symlink 
+        For symlinks, we need to use the symlink's relative path here because the user is expecting to see the
+        folder or file the same way it appears in their project directory. e.g. if a user has a symlink
         /mnt/c/Users/dipeck/link.txt whose target is actually located at /mnt/c/Users/dipeck/target.txt, its remote
-        upload path will reflect the link -> LocalUpload/21fasj3289jf321373/dipeck/link.txt
+        upload path will reflect the link -> LocalUpload/21fasj3289jf321373/dipeck/link.txt and *not* the target
 
     :param source: Local path to project directory
     :type source: str
     :param dest: Remote upload path for project directory (e.g. LocalUpload/<guid>/)
     :type dest: str
-    :param root: Root directory path
-    :type root: str
-    :param files: List of all file paths in the directory
-    :type files: List[str]
     :param ignore_file: The .amlignore or .gitignore file in the project directory
     :type ignore_file: azure.ai.ml._utils._asset_utils.IgnoreFile
     :return: List of tuples each containing a validated local path and a remote upload path for each file
