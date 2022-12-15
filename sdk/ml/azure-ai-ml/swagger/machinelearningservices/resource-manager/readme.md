@@ -162,7 +162,6 @@ batch:
   - tag: registry-discovery
   - tag: v2022-10-01-preview
   #unstable tags
-  - tag: v2021-10-01
   - tag: v2021-10-01-dataplanepreview
   - multiapiscript: true
 ```
