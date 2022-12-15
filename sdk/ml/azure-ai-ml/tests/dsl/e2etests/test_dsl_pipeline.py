@@ -21,7 +21,7 @@ from azure.ai.ml._utils._arm_id_utils import is_ARM_id_for_resource
 from azure.ai.ml.constants._common import AssetTypes, InputOutputModes
 from azure.ai.ml.constants._job.pipeline import PipelineConstants
 from azure.ai.ml.dsl._load_import import to_component
-from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
+from azure.ai.ml.dsl._group_decorator import group
 from azure.ai.ml.entities import CommandComponent, CommandJob
 from azure.ai.ml.entities import Component
 from azure.ai.ml.entities import Component as ComponentEntity
@@ -474,7 +474,7 @@ class TestDSLPipeline(AzureRecordedTestCase):
             "outputs": {
                 "pipeline_job_out": {
                     "mode": "ReadWriteMount",
-                    "job_output_type": "uri_folder",
+                    "job_output_type": "mlflow_model",
                 }
             },
             "settings": {},
@@ -1002,6 +1002,21 @@ class TestDSLPipeline(AzureRecordedTestCase):
             client.components.create_or_update(pipeline_with_non_pipeline_inputs)
         assert "Cannot register pipeline component 'pipeline_with_non_pipeline_inputs' with non_pipeline_inputs." in e.value.message
 
+        @dsl.pipeline()
+        def pipeline_with_variable_inputs(
+            required_input: Input,
+            required_param: str,
+            *args, **kwargs
+        ):
+            default_optional_func(
+                required_input=required_input,
+                required_param=required_param,
+            )
+
+        with pytest.raises(ValidationException) as e:
+            client.components.create_or_update(pipeline_with_variable_inputs)
+        assert "Cannot register the component pipeline_with_variable_inputs with variable inputs ['args', 'kwargs']" in e.value.message
+
     def test_create_pipeline_component_by_dsl(self, caplog, client: MLClient):
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
@@ -1044,11 +1059,11 @@ class TestDSLPipeline(AzureRecordedTestCase):
     def test_create_pipeline_with_parameter_group(self, client: MLClient) -> None:
         default_optional_func = load_component(source=str(components_dir / "default_optional_component.yml"))
 
-        @parameter_group
+        @group
         class SubGroup:
             required_param: str
 
-        @parameter_group
+        @group
         class Group:
             sub: SubGroup
             node_compute: str = "cpu-cluster"
@@ -1619,6 +1634,8 @@ class TestDSLPipeline(AzureRecordedTestCase):
         @dsl.pipeline(experiment_name="test_pipeline_with_parallel_function", default_compute="cpu-cluster")
         def parallel_in_pipeline(job_data_path):
             node1 = parallel_function(job_data_path=job_data_path)
+            # TODO 2104247: node1.task will be kept as a local path when submitting the pipeline job.
+            node1.task = None
             return {
                 "pipeline_output": node1.outputs.job_output_path,
             }
@@ -1654,13 +1671,6 @@ class TestDSLPipeline(AzureRecordedTestCase):
                     "outputs": {"job_output_path": {"type": "literal", "value": "${{parent.outputs.pipeline_output}}"}},
                     "resources": {"instance_count": 2},
                     "type": "parallel",
-                    "task": {
-                        "type": "run_function",
-                        "code": "./tests/test_configs/dsl_pipeline/parallel_component_with_file_input/src/",
-                        "entry_script": "score.py",
-                        "program_arguments": "--job_output_path ${{outputs.job_output_path}}",
-                        "environment": "azureml:AzureML-sklearn-0.24-ubuntu18.04-py37-cpu:5",
-                    },
                 },
             },
             "outputs": {
@@ -2219,9 +2229,9 @@ class TestDSLPipeline(AzureRecordedTestCase):
 
         hello_world_component_yaml = "./tests/test_configs/components/input_types_component.yml"
         hello_world_component_func = load_component(hello_world_component_yaml)
-        from azure.ai.ml.dsl._parameter_group_decorator import parameter_group
+        from azure.ai.ml.dsl._group_decorator import group
 
-        @parameter_group
+        @group
         class ParamClass:
             int_param: Input(min=1.0, max=5.0, type="integer")
             enum_param: EnumOps

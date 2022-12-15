@@ -1,35 +1,31 @@
-import contextlib
 import pytest
 
-from azure.ai.ml._schema.pipeline import PipelineJobSchema
-from azure.ai.ml.dsl._do_while import do_while
-from .._util import _DSL_TIMEOUT_SECOND
 from test_utilities.utils import _PYTEST_TIMEOUT_METHOD, omit_with_wildcard, assert_job_cancel
-from azure.ai.ml._schema.pipeline.pipeline_component import PipelineJobsField
-from devtools_testutils import AzureRecordedTestCase
+from devtools_testutils import AzureRecordedTestCase, is_live
 
+from azure.ai.ml.dsl._parallel_for import parallel_for
+from azure.ai.ml.dsl._do_while import do_while
 from azure.ai.ml import MLClient, load_component, Input
 from azure.ai.ml.dsl import pipeline
 from azure.ai.ml.dsl._condition import condition
 
-job_input = Input(
+from .._util import include_private_preview_nodes_in_pipeline, _DSL_TIMEOUT_SECOND
+
+test_input = Input(
     type="uri_file",
     path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv",
 )
 
-
-@contextlib.contextmanager
-def include_private_preview_nodes_in_pipeline():
-    original_jobs = PipelineJobSchema._declared_fields["jobs"]
-    PipelineJobSchema._declared_fields["jobs"] = PipelineJobsField()
-
-    try:
-        yield
-    finally:
-        PipelineJobSchema._declared_fields["jobs"] = original_jobs
+omit_fields = [
+    "name",
+    "properties.display_name",
+    "properties.jobs.*.componentId",
+    "properties.settings",
+]
 
 
 @pytest.mark.usefixtures(
+    "enable_private_preview_schema_features",
     "enable_environment_id_arm_expansion",
     "enable_pipeline_private_preview_features",
     "mock_code_hash",
@@ -40,11 +36,11 @@ def include_private_preview_nodes_in_pipeline():
 @pytest.mark.timeout(timeout=_DSL_TIMEOUT_SECOND, method=_PYTEST_TIMEOUT_METHOD)
 @pytest.mark.e2etest
 @pytest.mark.pipeline_test
-class TestControlflowPipeline(AzureRecordedTestCase):
+class TestControlFlowPipeline(AzureRecordedTestCase):
     pass
 
 
-class TestIfElse(TestControlflowPipeline):
+class TestIfElse(TestControlFlowPipeline):
     def test_dsl_condition_pipeline(self, client: MLClient):
         # update jobs field to include private preview nodes
 
@@ -70,15 +66,9 @@ class TestIfElse(TestControlflowPipeline):
 
         # include private preview nodes
         with include_private_preview_nodes_in_pipeline():
-            rest_job = assert_job_cancel(pipeline_job, client)
+            pipeline_job = assert_job_cancel(pipeline_job, client)
 
-        omit_fields = [
-            "name",
-            "properties.display_name",
-            "properties.jobs.*.componentId",
-            "properties.settings",
-        ]
-        dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             "conditionnode": {
                 "condition": "${{parent.jobs.result.outputs.output}}",
@@ -125,14 +115,8 @@ class TestIfElse(TestControlflowPipeline):
 
         pipeline_job = condition_pipeline()
         with include_private_preview_nodes_in_pipeline():
-            rest_job = client.jobs.create_or_update(pipeline_job)
+            rest_job = assert_job_cancel(pipeline_job, client)
 
-        omit_fields = [
-            "name",
-            "properties.display_name",
-            "properties.jobs.*.componentId",
-            "properties.settings",
-        ]
         dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             'conditionnode': {'condition': True,
@@ -165,14 +149,8 @@ class TestIfElse(TestControlflowPipeline):
 
         pipeline_job = condition_pipeline()
         with include_private_preview_nodes_in_pipeline():
-            rest_job = client.jobs.create_or_update(pipeline_job)
+            rest_job = assert_job_cancel(pipeline_job, client)
 
-        omit_fields = [
-            "name",
-            "properties.display_name",
-            "properties.jobs.*.componentId",
-            "properties.settings",
-        ]
         dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
             'conditionnode': {'condition': True,
@@ -226,18 +204,11 @@ class TestIfElse(TestControlflowPipeline):
 
             condition(condition=do_while_body_func.outputs.condition, true_block=primitive_output_component_true)
 
-        pipeline_job = test_pipeline(input_data=job_input, int_param=4, bool_param=True, float_param=22.0,
+        pipeline_job = test_pipeline(input_data=test_input, int_param=4, bool_param=True, float_param=22.0,
                                      str_param="string_param_no_space")
 
         with include_private_preview_nodes_in_pipeline():
-            rest_job = client.jobs.create_or_update(pipeline_job)
-
-        omit_fields = [
-            "name",
-            "properties.display_name",
-            "properties.jobs.*.componentId",
-            "properties.settings",
-        ]
+            rest_job = assert_job_cancel(pipeline_job, client)
 
         dsl_pipeline_job_dict = omit_with_wildcard(rest_job._to_rest_object().as_dict(), *omit_fields)
         assert dsl_pipeline_job_dict["properties"]["jobs"] == {
@@ -284,3 +255,358 @@ class TestIfElse(TestControlflowPipeline):
                 'name': 'primitive_output_component_true',
                 'type': 'command'}
         }
+
+
+@pytest.mark.skipif(
+    condition=is_live(),
+    # TODO: reopen live test when parallel_for deployed to canary
+    reason="parallel_for is not available in canary."
+)
+class TestParallelForPipeline(TestControlFlowPipeline):
+    def test_simple_dsl_parallel_for_pipeline(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component(component_in_path=test_input)
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            after_node = hello_world_component(
+                component_in_path=parallel_node.outputs.component_out_path,
+            )
+            after_node.compute = "cpu-cluster"
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"] == {
+            'after_node': {
+                '_source': 'REMOTE.WORKSPACE.COMPONENT',
+                'computeId': 'cpu-cluster',
+                'inputs': {'component_in_path': {'job_input_type': 'literal',
+                                                 'value': '${{parent.jobs.parallel_node.outputs.component_out_path}}'}},
+                'name': 'after_node',
+                'type': 'command'},
+            'parallel_body': {
+                '_source': 'REMOTE.WORKSPACE.COMPONENT',
+                'inputs': {'component_in_path': {'job_input_type': 'uri_file',
+                                                 'uri': 'https://dprepdata.blob.core.windows.net/demo/Titanic.csv'}},
+                'name': 'parallel_body',
+                'type': 'command'},
+            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+                              'items': '[{"component_in_number": 1}, '
+                                       '{"component_in_number": 2}]',
+                              'type': 'parallel_for'}
+        }
+
+    def test_dsl_parallel_for_pipeline_unprovided_input(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component_alt1.yml"
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component(component_in_path=test_input)
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            after_node = hello_world_component(
+                component_in_path=parallel_node.outputs.component_out_path,
+                component_in_number=1
+            )
+            after_node.compute = "cpu-cluster"
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"] == {
+            'after_node': {
+                '_source': 'REMOTE.WORKSPACE.COMPONENT',
+                'computeId': 'cpu-cluster',
+                'inputs': {'component_in_number': {'job_input_type': 'literal',
+                                                   'value': '1'},
+                           'component_in_path': {'job_input_type': 'literal',
+                                                 'value': '${{parent.jobs.parallel_node.outputs.component_out_path}}'}},
+                'name': 'after_node',
+                'type': 'command'},
+            'parallel_body': {
+                '_source': 'REMOTE.WORKSPACE.COMPONENT',
+                'inputs': {'component_in_path': {'job_input_type': 'uri_file',
+                                                 'uri': 'https://dprepdata.blob.core.windows.net/demo/Titanic.csv'}},
+                'name': 'parallel_body',
+                'type': 'command'},
+            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+                              'items': '[{"component_in_number": 1}, '
+                                       '{"component_in_number": 2}]',
+                              'type': 'parallel_for'}
+        }
+
+    def test_parallel_for_pipeline_with_subgraph(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+
+        @pipeline
+        def sub_graph(component_in_number: int = 10):
+            node = hello_world_component(component_in_path=test_input, component_in_number=component_in_number)
+            return {
+                "component_out_path": node.outputs.component_out_path
+            }
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = sub_graph()
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            after_node = hello_world_component(
+                component_in_path=parallel_node.outputs.component_out_path,
+            )
+            after_node.compute = "cpu-cluster"
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"] == {
+            'after_node': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
+                           'computeId': 'cpu-cluster',
+                           'inputs': {'component_in_path': {
+                               'job_input_type': 'literal',
+                               'value': '${{parent.jobs.parallel_node.outputs.component_out_path}}'}},
+                           'name': 'after_node',
+                           'type': 'command'},
+            'parallel_body': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
+                              'name': 'parallel_body',
+                              'type': 'pipeline'},
+            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+                              'items': '[{"component_in_number": 1}, '
+                                       '{"component_in_number": 2}]',
+                              'type': 'parallel_for'}
+        }
+
+    def test_parallel_for_pipeline_subgraph_unprovided_input(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml"
+        )
+
+        @pipeline
+        def sub_graph(component_in_number: int):
+            node = hello_world_component(component_in_path=test_input, component_in_number=component_in_number)
+            return {
+                "component_out_path": node.outputs.component_out_path
+            }
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = sub_graph()
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            after_node = hello_world_component(
+                component_in_path=parallel_node.outputs.component_out_path,
+            )
+            after_node.compute = "cpu-cluster"
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"] == {
+            'after_node': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
+                           'computeId': 'cpu-cluster',
+                           'inputs': {'component_in_path': {
+                               'job_input_type': 'literal',
+                               'value': '${{parent.jobs.parallel_node.outputs.component_out_path}}'}},
+                           'name': 'after_node',
+                           'type': 'command'},
+            'parallel_body': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
+                              'name': 'parallel_body',
+                              'type': 'pipeline'},
+            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+                              'items': '[{"component_in_number": 1}, '
+                                       '{"component_in_number": 2}]',
+                              'type': 'parallel_for'}
+        }
+
+    def test_parallel_for_pipeline_with_port_outputs(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml",
+            params_override=[
+                {"outputs": {
+                    "component_out_path": {"type": "uri_folder"},
+                    "component_out_file": {"type": "uri_file"},
+                    "component_out_table": {"type": "mltable"},
+                }}
+            ]
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component(component_in_path=test_input)
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 3},
+                    {"component_in_number": 4},
+                ]
+            )
+            return {
+                "component_out_path": parallel_node.outputs.component_out_path,
+                "component_out_file": parallel_node.outputs.component_out_file,
+                "component_out_table": parallel_node.outputs.component_out_table,
+            }
+
+        pipeline_job = parallel_for_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        with include_private_preview_nodes_in_pipeline():
+            pipeline_job = assert_job_cancel(pipeline_job, client)
+
+        dsl_pipeline_job_dict = omit_with_wildcard(pipeline_job._to_rest_object().as_dict(), *omit_fields)
+        assert dsl_pipeline_job_dict["properties"]["jobs"] == {
+            'parallel_body': {'_source': 'REMOTE.WORKSPACE.COMPONENT',
+                              'inputs': {'component_in_path': {
+                                  'job_input_type': 'uri_file',
+                                  'uri': 'https://dprepdata.blob.core.windows.net/demo/Titanic.csv'}},
+                              'name': 'parallel_body',
+                              'type': 'command'},
+            'parallel_node': {'body': '${{parent.jobs.parallel_body}}',
+                              'items': '[{"component_in_number": 3}, '
+                                       '{"component_in_number": 4}]',
+                              'type': 'parallel_for',
+                              'outputs': {'component_out_file': {'type': 'literal',
+                                                                 'value': '${{parent.outputs.component_out_file}}'},
+                                          'component_out_path': {'type': 'literal',
+                                                                 'value': '${{parent.outputs.component_out_path}}'},
+                                          'component_out_table': {'type': 'literal',
+                                                                  'value': '${{parent.outputs.component_out_table}}'}},
+                              }
+        }
+        assert dsl_pipeline_job_dict["properties"]["outputs"] == {
+            'component_out_file': {'job_output_type': 'mltable',
+                                   'mode': 'ReadWriteMount'},
+            'component_out_path': {'job_output_type': 'mltable',
+                                   'mode': 'ReadWriteMount'},
+            'component_out_table': {'job_output_type': 'mltable',
+                                    'mode': 'ReadWriteMount'}
+        }
+
+        # parallel for pipeline component is correctly generated
+        @pipeline
+        def parent_pipeline():
+            parallel_for_pipeline()
+
+        pipeline_job = parent_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        rest_pipeline_component = pipeline_job.jobs["parallel_for_pipeline"].component._to_rest_object().as_dict()
+        assert rest_pipeline_component["properties"]["component_spec"]["outputs"] == {
+            'component_out_file': {'type': 'mltable'},
+            'component_out_path': {'type': 'mltable'},
+            'component_out_table': {'type': 'mltable'}
+        }
+        assert rest_pipeline_component["properties"]["component_spec"]["jobs"]["parallel_node"] == {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 3}, {"component_in_number": 4}]',
+            'outputs': {'component_out_file': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_file}}'},
+                        'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'},
+                        'component_out_table': {'type': 'literal',
+                                                'value': '${{parent.outputs.component_out_table}}'}},
+            'type': 'parallel_for'
+        }
+
+        with include_private_preview_nodes_in_pipeline():
+            assert_job_cancel(pipeline_job, client)
+
+    def test_parallel_for_pipeline_with_primitive_outputs(self, client: MLClient):
+        hello_world_component = load_component(
+            source="./tests/test_configs/components/helloworld_component.yml",
+            params_override=[
+                {"outputs": {
+                    "component_out_path": {"type": "uri_folder"},
+                    "component_out_number": {"type": "number"},
+                    "component_out_boolean": {"type": "boolean", "is_control": True},
+                }}
+            ]
+        )
+
+        @pipeline
+        def parallel_for_pipeline():
+            parallel_body = hello_world_component(component_in_path=test_input)
+            parallel_node = parallel_for(
+                body=parallel_body,
+                items=[
+                    {"component_in_number": 1},
+                    {"component_in_number": 2},
+                ]
+            )
+            return {
+                "component_out_path": parallel_node.outputs.component_out_path,
+                "component_out_number": parallel_node.outputs.component_out_number,
+                "component_out_boolean": parallel_node.outputs.component_out_boolean,
+            }
+
+        @pipeline
+        def parent_pipeline():
+            parallel_for_pipeline()
+
+        pipeline_job = parent_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+
+        rest_pipeline_component = pipeline_job.jobs["parallel_for_pipeline"].component._to_rest_object().as_dict()
+        assert rest_pipeline_component["properties"]["component_spec"]["outputs"] == {
+            'component_out_boolean': {'is_control': True, 'type': 'string'},
+            'component_out_number': {'type': 'string'},
+            'component_out_path': {'type': 'mltable'}
+        }
+
+        assert rest_pipeline_component["properties"]["component_spec"]["jobs"]["parallel_node"] == {
+            'body': '${{parent.jobs.parallel_body}}',
+            'items': '[{"component_in_number": 1}, {"component_in_number": 2}]',
+            'outputs': {'component_out_boolean': {'type': 'literal',
+                                                  'value': '${{parent.outputs.component_out_boolean}}'},
+                        'component_out_number': {'type': 'literal',
+                                                 'value': '${{parent.outputs.component_out_number}}'},
+                        'component_out_path': {'type': 'literal',
+                                               'value': '${{parent.outputs.component_out_path}}'}},
+            'type': 'parallel_for'
+        }
+
+        # parallel for pipeline component is correctly generated
+        with include_private_preview_nodes_in_pipeline():
+            assert_job_cancel(pipeline_job, client)

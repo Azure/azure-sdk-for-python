@@ -6,10 +6,18 @@
 
 - Add pre-aggregated standard metrics - requests/duration, dependencies/duration
     ([#26753](https://github.com/Azure/azure-sdk-for-python/pull/26753))
+- Add azure-sdk usage to instrumentations statsbeat
+    ([#27756](https://github.com/Azure/azure-sdk-for-python/pull/27756))
 
 ### Breaking Changes
 
+- Update to OpenTelemetry api/sdk v1.15.0
+    ([#27900](https://github.com/Azure/azure-sdk-for-python/issues/27900))
+
 ### Bugs Fixed
+
+- Pass along sampleRate in SpanEvents from Span
+    ([#27629](https://github.com/Azure/azure-sdk-for-python/pull/27629))
 
 ### Other Changes
 

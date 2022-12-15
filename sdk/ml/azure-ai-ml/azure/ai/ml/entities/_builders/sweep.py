@@ -261,6 +261,16 @@ class Sweep(ParameterizedSweep, BaseNode):
     def _get_component_attr_name(cls):
         return "trial"
 
+    def _build_inputs(self):
+        inputs = super(Sweep, self)._build_inputs()
+        built_inputs = {}
+        # Validate and remove non-specified inputs
+        for key, value in inputs.items():
+            if value is not None:
+                built_inputs[key] = value
+
+        return built_inputs
+
     @classmethod
     def _create_schema_for_validation(cls, context) -> Union[PathAwareSchema, Schema]:
         from azure.ai.ml._schema.pipeline.component_job import SweepSchema

@@ -7,11 +7,12 @@
 # --------------------------------------------------------------------------
 
 from copy import deepcopy
-from typing import Any, Awaitable, Optional, TYPE_CHECKING
+from typing import Any, Awaitable, TYPE_CHECKING
+
+from msrest import Deserializer, Serializer
 
 from azure.core.rest import AsyncHttpResponse, HttpRequest
 from azure.mgmt.core import AsyncARMPipelineClient
-from msrest import Deserializer, Serializer
 
 from .. import models
 from ._configuration import AzureMachineLearningWorkspacesConfiguration
@@ -36,6 +37,9 @@ class AzureMachineLearningWorkspaces:
     :type subscription_id: str
     :param base_url: Service URL. Default value is 'https://management.azure.com'.
     :type base_url: str
+    :keyword api_version: Api Version. The default value is "2020-09-01-dataplanepreview". Note
+     that overriding this default value may result in unsupported behavior.
+    :paramtype api_version: str
     """
 
     def __init__(

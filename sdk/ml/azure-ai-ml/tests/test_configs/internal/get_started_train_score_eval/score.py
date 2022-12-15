@@ -2,9 +2,9 @@ import argparse
 from pathlib import Path
 
 parser = argparse.ArgumentParser("score")
-parser.add_argument("--model_input", type=str, help="Path of input model")
-parser.add_argument("--test_data", type=str, help="Path to test data")
-parser.add_argument("--score_output", type=str, help="Path of scoring output")
+parser.add_argument("--model_input", type=str, help="Path of input model.")
+parser.add_argument("--test_data", type=str, help="Path to test data.")
+parser.add_argument("--score_output", type=str, help="Path of scoring output.")
 
 args = parser.parse_args()
 

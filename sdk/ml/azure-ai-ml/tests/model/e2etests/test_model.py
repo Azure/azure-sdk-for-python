@@ -36,7 +36,7 @@ def artifact_path(tmpdir_factory) -> str:  # type: ignore
 
 @pytest.mark.e2etest
 @pytest.mark.usefixtures("recorded_test")
-@pytest.mark.production_experience_test
+@pytest.mark.production_experiences_test
 class TestModel(AzureRecordedTestCase):
     def test_crud_file(self, client: MLClient, randstr: Callable[[], str], tmp_path: Path) -> None:
         path = Path("./tests/test_configs/model/model_full.yml")

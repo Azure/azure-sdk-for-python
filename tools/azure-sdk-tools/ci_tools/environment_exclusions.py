@@ -61,6 +61,7 @@ PYLINT_OPT_OUT = [
     "azure-agrifood-farming",
     "azure-developer-loadtesting",
     "azure-developer-devcenter",
+    "azure-messaging-webpubsubservice",
 ]
 
 # omit package from running mypy checks
@@ -78,6 +79,7 @@ MYPY_OPT_OUT = [
     "azure-communication-phonenumbers",
     "azure-communication-rooms",
     "azure-communication-sms",
+    "azure-cosmos",
     "azure-confidentialledger",
     "azure-containerregistry",
     "azure-mgmt-core",
@@ -276,6 +278,7 @@ VERIFYTYPES_OPT_OUT = [
 # note: if removed from this list, you must enable one or both of mypy or pyright checks.
 TYPE_CHECK_SAMPLES_OPT_OUT = [
     "azure-ai-metricsadvisor",
+    "azure-ai-personalizer",
     "azure-agrifood-farming",
     "azure-ai-anomalydetector",
     "azure-appconfiguration",

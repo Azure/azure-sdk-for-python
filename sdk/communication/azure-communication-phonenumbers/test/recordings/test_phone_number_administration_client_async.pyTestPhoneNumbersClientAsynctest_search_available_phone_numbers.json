@@ -1,0 +1,44 @@
+{
+  "Entries": [
+    {
+      "RequestUri": "https://sanitized.communication.azure.com/availablePhoneNumbers/countries/US/:search?api-version=2022-01-11-preview2",
+      "RequestMethod": "POST",
+      "RequestHeaders": {
+        "Accept": "application/json",
+        "Accept-Encoding": "gzip, deflate",
+        "Content-Length": "131",
+        "Content-Type": "application/json",
+        "User-Agent": "azsdk-python-communication-phonenumbers/1.1.0b3 Python/3.9.13 (Windows-10-10.0.22621-SP0)",
+        "x-ms-content-sha256": "sanitized",
+        "x-ms-date": "sanitized",
+        "x-ms-return-client-request-id": "true"
+      },
+      "RequestBody": {
+        "phoneNumberType": "tollFree",
+        "assignmentType": "application",
+        "capabilities": {
+          "calling": "inbound",
+          "sms": "inbound\u002Boutbound"
+        }
+      },
+      "StatusCode": 202,
+      "ResponseHeaders": {
+        "Access-Control-Expose-Headers": "Location,Operation-Location,operation-id,search-id",
+        "api-supported-versions": "2021-03-07, 2022-01-11-preview2, 2022-06-01-preview, 2022-12-01",
+        "Content-Length": "0",
+        "Date": "sanitized",
+        "Location": "/availablePhoneNumbers/searchResults/21b9a178-8679-4baf-9d3a-d6f0088a2d72?api-version=2022-01-11-preview2",
+        "MS-CV": "sanitized",
+        "operation-id": "search_21b9a178-8679-4baf-9d3a-d6f0088a2d72",
+        "Operation-Location": "/phoneNumbers/operations/search_21b9a178-8679-4baf-9d3a-d6f0088a2d72?api-version=2022-01-11-preview2",
+        "search-id": "21b9a178-8679-4baf-9d3a-d6f0088a2d72",
+        "Strict-Transport-Security": "max-age=2592000",
+        "X-Azure-Ref": "sanitized",
+        "X-Cache": "CONFIG_NOCACHE",
+        "X-Processing-Time": "2430ms"
+      },
+      "ResponseBody": null
+    }
+  ],
+  "Variables": {}
+}

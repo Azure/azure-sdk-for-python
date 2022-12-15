@@ -40,5 +40,8 @@ class ClientSecretCredential(ClientCredentialBase):
             )
 
         super(ClientSecretCredential, self).__init__(
-            client_id=client_id, client_credential=client_secret, tenant_id=tenant_id, **kwargs
+            client_id=client_id,
+            client_credential=client_secret,
+            tenant_id=tenant_id,
+            **kwargs
         )

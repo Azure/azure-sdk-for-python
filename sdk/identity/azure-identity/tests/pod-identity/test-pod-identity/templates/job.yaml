@@ -31,8 +31,8 @@ spec:
         - name: AZURE_IDENTITY_TEST_VAULT_URL
           value: "{{ .Values.vaultUrl }}"
         - name: AZURE_TEST_RUN_LIVE
-          value: true
+          value: "true"
         - name: AZURE_SKIP_LIVE_RECORDING
-          value: true
+          value: "true"
         - name: AZURE_IDENTITY_TEST_MANAGED_IDENTITY_CLIENT_ID
-          value: {{ index .Values "aad-pod-identity" "azureIdentity" "clientID" | quote }}
+          value: {{ index .Values "aad-pod-identity" "azureIdentities" "pod-identity-test-identity" "clientID" | quote }}

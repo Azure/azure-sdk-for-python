@@ -139,6 +139,26 @@ class TestScheduleEntity:
         assert rest_schedule_job_dict["distribution"] == {'distribution_type': 'PyTorch', 'process_count_per_instance': 1}
         assert rest_schedule_job_dict["limits"] == {'job_limits_type': 'Command', 'timeout': 'PT50M'}
 
+    @pytest.mark.usefixtures(
+        "enable_pipeline_private_preview_features",
+    )
+    def test_schedule_entity_with_spark_job(self):
+        # Test with local file job
+        test_path = "./tests/test_configs/schedule/local_cron_spark_job.yml"
+        inner_job_path = "./tests/test_configs/spark_job/spark_job_word_count_test.yml"
+        inner_job = load_job(inner_job_path)._to_job()
+        schedule = load_schedule(test_path)
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
+        loaded_job_dict = inner_job._to_rest_object().as_dict()["properties"]
+        assert rest_schedule_job_dict == loaded_job_dict
+        # Test with local file + overwrites
+        test_path = "./tests/test_configs/schedule/local_cron_spark_job2.yml"
+        schedule = load_schedule(test_path)
+        rest_schedule_job_dict = schedule._to_rest_object().as_dict()["properties"]["action"]["job_definition"]
+        # assert overwrite values
+        assert rest_schedule_job_dict["conf"] == {'spark.driver.cores': '2', 'spark.driver.memory': '2g', 'spark.executor.cores': '2', 'spark.executor.memory': '2g', 'spark.executor.instances': '2'}
+        assert "mcr.microsoft.com/azureml/openmpi3.1.2-ubuntu18.04" in rest_schedule_job_dict["environment_id"]
+
     def test_invalid_date_string(self):
         pipeline_job = load_job(
             "./tests/test_configs/command_job/local_job.yaml",
