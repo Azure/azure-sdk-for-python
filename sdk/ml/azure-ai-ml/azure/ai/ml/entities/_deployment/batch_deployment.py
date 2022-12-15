@@ -337,7 +337,10 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
         key_arr = key_str.split(".")
         pascal_array = []
         for key in key_arr:
-            pascal_array.append(snake_to_pascal(key))
+            if key not in [PipelineConstants.CONTINUE_ON_STEP_FAILURE, PipelineConstants.DEFAULT_COMPUTE, PipelineConstants.DEFAULT_DATASTORE]:
+                pascal_array.append(snake_to_pascal(key))
+            else:
+                pascal_array.append(key)
         return '.'.join(pascal_array)
 
     @classmethod
@@ -345,7 +348,7 @@ class BatchDeployment(Deployment): # pylint: disable=too-many-instance-attribute
         key_arr = key_str.split(".")
         snake_array = []
         for key in key_arr:
-            if key != "continue_on_step_failure":
+            if key not in [PipelineConstants.CONTINUE_ON_STEP_FAILURE, PipelineConstants.DEFAULT_COMPUTE, PipelineConstants.DEFAULT_DATASTORE]:
                 snake_array.append(camel_to_snake(key))
             else:
                 snake_array.append(key)
