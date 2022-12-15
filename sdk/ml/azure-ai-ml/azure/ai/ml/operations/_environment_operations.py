@@ -89,7 +89,6 @@ class EnvironmentOperations(_ScopeDependentOperations):
                     **self._kwargs,
                 )
             if self._registry_name:
-                sas_uri = None
                 sas_uri = get_sas_uri_for_registry_asset(
                     service_client=self._service_client,
                     name=environment.name,
@@ -276,7 +275,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         name: str,
         version: str = None,
         label: str = None,
-    ) -> None:  # pylint:disable=unused-argument
+    ) -> None:
         """Archive an environment or an environment version.
 
         :param name: Name of the environment.
@@ -303,7 +302,7 @@ class EnvironmentOperations(_ScopeDependentOperations):
         name: str,
         version: str = None,
         label: str = None,
-    ) -> None:  # pylint:disable=unused-argument
+    ) -> None:
         """Restore an archived environment version.
 
         :param name: Name of the environment.
