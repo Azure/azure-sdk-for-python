@@ -78,14 +78,14 @@ class WorkspaceKeys:
         container_registry_credentials = None
         notebook_access_keys = None
 
-        if hasattr(rest_obj, "container_registry_credentials") and rest_obj.container_registry_credentials != None:
+        if hasattr(rest_obj, "container_registry_credentials") and rest_obj.container_registry_credentials is not None:
             container_registry_credentials = ContainerRegistryCredential(
                 location=rest_obj.container_registry_credentials.location,
                 username=rest_obj.container_registry_credentials.username,
                 passwords=rest_obj.container_registry_credentials.passwords,
             )
 
-        if hasattr(rest_obj, "notebook_access_keys") and rest_obj.notebook_access_keys != None:
+        if hasattr(rest_obj, "notebook_access_keys") and rest_obj.notebook_access_keys is not None:
             notebook_access_keys = NotebookAccessKeys(
                 primary_access_key=rest_obj.notebook_access_keys.primary_access_key,
                 secondary_access_key=rest_obj.notebook_access_keys.secondary_access_key,

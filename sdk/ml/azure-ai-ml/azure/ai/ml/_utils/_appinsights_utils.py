@@ -3,14 +3,12 @@
 # ---------------------------------------------------------
 
 import logging
-import random
-import uuid
-from typing import Tuple
 
 from azure.ai.ml._azure_environments import _get_base_url_from_metadata
 from azure.ai.ml._vendor.azure_resources._resource_management_client import ResourceManagementClient
 from azure.ai.ml.constants._common import ArmConstants
 from azure.core.credentials import TokenCredential
+from azure.core.exceptions import (HttpResponseError)
 
 module_logger = logging.getLogger(__name__)
 
@@ -26,7 +24,7 @@ def default_resource_group_for_app_insights_exists(credentials: TokenCredential,
     try:
         client.resource_groups.get(resource_group_name=default_rgName)
         return True
-    except:
+    except HttpResponseError:
         return False
 
 
@@ -43,10 +41,11 @@ def default_log_analytics_workspace_exists(credentials: TokenCredential, subscri
         filter="substringof('%s',name)"%get_default_log_analytics_name(location)
     )
     for item in default_workspace:
-        # return arm id of log analytics workspace, true for is_existing
+        item = item
+        # return true for is_existing
         return True
-    # else return arm id for to be created log analytics workspace, false for is_existing
-    return False        
+    # else return false for is_existing
+    return False
 
 
 def get_default_log_analytics_arm_id(subscription_id: str, location: str) -> str:
@@ -108,32 +107,31 @@ def get_default_log_analytics_deployment(deployment_name: str, location: str, su
                 }
             }
         }
-    else:
-        return {
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2019-10-01",
-            "name": deployment_name,
-            "resourceGroup": get_default_resource_group_name(location),
-            "subscriptionId": subscription_id,
-            "properties": {
-                "mode": "Incremental",
-                "template": {
-                    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-                    "contentVersion": "1.0.0.0",
-                    "parameters": {},
-                    "variables": {},
-                    "resources": [
-                        {
-                            "apiVersion": "2020-08-01",
-                            "name": get_default_log_analytics_name(location),
-                            "type": "Microsoft.OperationalInsights/workspaces",
-                            "location": location,
-                            "properties": {}
-                        }
-                    ]
-                }
+    return {
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2019-10-01",
+        "name": deployment_name,
+        "resourceGroup": get_default_resource_group_name(location),
+        "subscriptionId": subscription_id,
+        "properties": {
+            "mode": "Incremental",
+            "template": {
+                "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+                "contentVersion": "1.0.0.0",
+                "parameters": {},
+                "variables": {},
+                "resources": [
+                    {
+                        "apiVersion": "2020-08-01",
+                        "name": get_default_log_analytics_name(location),
+                        "type": "Microsoft.OperationalInsights/workspaces",
+                        "location": location,
+                        "properties": {}
+                    }
+                ]
             }
         }
+    }
 
 
 def get_default_log_analytics_name(location: str) -> str:
