@@ -280,8 +280,9 @@ def get_content_hash(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFil
 
 
 def _get_upload_files_from_folder(path: Union[str, Path], ignore_file: IgnoreFile = IgnoreFile()) -> List[str]:
-    upload_files, _ = get_local_paths(source_path=Path(path).resolve(), ignore_file=ignore_file)
-    return upload_files
+    upload_pairs = construct_local_and_remote_paths(path, dest="", ignore_file=ignore_file)
+    local_paths = [i for i, _ in upload_pairs]
+    return local_paths
 
 
 def _get_file_list_content_hash(file_list) -> str:
