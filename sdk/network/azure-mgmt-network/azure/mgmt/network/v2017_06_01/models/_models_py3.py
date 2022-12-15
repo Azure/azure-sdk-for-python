@@ -18,8 +18,7 @@ if TYPE_CHECKING:
 
 
 class AddressSpace(_serialization.Model):
-    """AddressSpace contains an array of IP address ranges that can be used by subnets of the virtual
-    network.
+    """AddressSpace contains an array of IP address ranges that can be used by subnets of the virtual network.
 
     :ivar address_prefixes: A list of address blocks reserved for this virtual network in CIDR
      notation.
@@ -964,8 +963,7 @@ class ApplicationGatewayBackendHttpSettings(SubResource):  # pylint: disable=too
 
 
 class ApplicationGatewayConnectionDraining(_serialization.Model):
-    """Connection draining allows open connections to a backend server to be active for a specified
-    time after the backend server got removed from the configuration.
+    """Connection draining allows open connections to a backend server to be active for a specified time after the backend server got removed from the configuration.
 
     All required parameters must be populated in order to send to Azure.
 
@@ -1443,8 +1441,7 @@ class ApplicationGatewayHttpListener(SubResource):  # pylint: disable=too-many-i
 
 
 class ApplicationGatewayIPConfiguration(SubResource):
-    """IP configuration of an application gateway. Currently 1 public and 1 private IP configuration
-    is allowed.
+    """IP configuration of an application gateway. Currently 1 public and 1 private IP configuration is allowed.
 
     :ivar id: Resource ID.
     :vartype id: str
@@ -2391,8 +2388,7 @@ class ApplicationGatewayWebApplicationFirewallConfiguration(_serialization.Model
 
 
 class AuthorizationListResult(_serialization.Model):
-    """Response for ListAuthorizations API service call retrieves all authorizations that belongs to
-    an ExpressRouteCircuit.
+    """Response for ListAuthorizations API service call retrieves all authorizations that belongs to an ExpressRouteCircuit.
 
     :ivar value: The authorizations in an ExpressRoute Circuit.
     :vartype value: list[~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitAuthorization]
@@ -2424,12 +2420,7 @@ class AuthorizationListResult(_serialization.Model):
 
 
 class AzureAsyncOperationResult(_serialization.Model):
-    """The response body contains the status of the specified asynchronous operation, indicating
-    whether it has succeeded, is in progress, or has failed. Note that this status is distinct from
-    the HTTP status code returned for the Get Operation Status operation itself. If the
-    asynchronous operation succeeded, the response body includes the HTTP status code for the
-    successful request. If the asynchronous operation failed, the response body includes the HTTP
-    status code for the failed request and error information regarding the failure.
+    """The response body contains the status of the specified asynchronous operation, indicating whether it has succeeded, is in progress, or has failed. Note that this status is distinct from the HTTP status code returned for the Get Operation Status operation itself. If the asynchronous operation succeeded, the response body includes the HTTP status code for the successful request. If the asynchronous operation failed, the response body includes the HTTP status code for the failed request and error information regarding the failure.
 
     :ivar status: Status of the Azure async operation. Possible values are: 'InProgress',
      'Succeeded', and 'Failed'. Known values are: "InProgress", "Succeeded", and "Failed".
@@ -3110,8 +3101,7 @@ class ConnectivitySource(_serialization.Model):
 
 
 class DhcpOptions(_serialization.Model):
-    """DhcpOptions contains an array of DNS servers available to VMs deployed in the virtual network.
-    Standard DHCP option for a subnet overrides VNET DHCP options.
+    """DhcpOptions contains an array of DNS servers available to VMs deployed in the virtual network. Standard DHCP option for a subnet overrides VNET DHCP options.
 
     :ivar dns_servers: The list of DNS servers IP addresses.
     :vartype dns_servers: list[str]
@@ -4198,8 +4188,7 @@ class ExpressRouteCircuitPeeringConfig(_serialization.Model):
 
 
 class ExpressRouteCircuitPeeringListResult(_serialization.Model):
-    """Response for ListPeering API service call retrieves all peerings that belong to an
-    ExpressRouteCircuit.
+    """Response for ListPeering API service call retrieves all peerings that belong to an ExpressRouteCircuit.
 
     :ivar value: The peerings in an express route circuit.
     :vartype value: list[~azure.mgmt.network.v2017_06_01.models.ExpressRouteCircuitPeering]
@@ -8731,8 +8720,7 @@ class SecurityRuleAssociations(_serialization.Model):
 
 
 class SecurityRuleListResult(_serialization.Model):
-    """Response for ListSecurityRule API service call. Retrieves all security rules that belongs to a
-    network security group.
+    """Response for ListSecurityRule API service call. Retrieves all security rules that belongs to a network security group.
 
     :ivar value: The security rules in a network security group.
     :vartype value: list[~azure.mgmt.network.v2017_06_01.models.SecurityRule]
@@ -8928,8 +8916,7 @@ class SubnetAssociation(_serialization.Model):
 
 
 class SubnetListResult(_serialization.Model):
-    """Response for ListSubnets API service callRetrieves all subnet that belongs to a virtual
-    network.
+    """Response for ListSubnets API service callRetrieves all subnet that belongs to a virtual network.
 
     :ivar value: The subnets in a virtual network.
     :vartype value: list[~azure.mgmt.network.v2017_06_01.models.Subnet]
@@ -10629,8 +10616,7 @@ class VirtualNetworkPeering(SubResource):
 
 
 class VirtualNetworkPeeringListResult(_serialization.Model):
-    """Response for ListSubnets API service call. Retrieves all subnets that belong to a virtual
-    network.
+    """Response for ListSubnets API service call. Retrieves all subnets that belong to a virtual network.
 
     :ivar value: The peerings in a virtual network.
     :vartype value: list[~azure.mgmt.network.v2017_06_01.models.VirtualNetworkPeering]

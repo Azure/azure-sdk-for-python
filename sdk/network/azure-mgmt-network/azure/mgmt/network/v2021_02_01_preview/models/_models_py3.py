@@ -477,8 +477,7 @@ class ActiveConnectivityConfiguration(
 
 
 class ActiveConnectivityConfigurationsListResult(_serialization.Model):
-    """Result of the request to list active connectivity configurations. It contains a list of active
-    connectivity configurations and a skiptoken to get the next set of results.
+    """Result of the request to list active connectivity configurations. It contains a list of active connectivity configurations and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active connectivity configurations.
     :vartype value:
@@ -1041,8 +1040,7 @@ class ActiveSecurityAdminRule(ActiveBaseSecurityAdminRule):  # pylint: disable=t
 
 
 class ActiveSecurityAdminRulesListResult(_serialization.Model):
-    """Result of the request to list active security admin rules. It contains a list of active
-    security admin rules and a skiptoken to get the next set of results.
+    """Result of the request to list active security admin rules. It contains a list of active security admin rules and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active security admin rules.
     :vartype value:
@@ -1250,8 +1248,7 @@ class ActiveSecurityUserRule(ActiveBaseSecurityUserRule):  # pylint: disable=too
 
 
 class ActiveSecurityUserRulesListResult(_serialization.Model):
-    """Result of the request to list active security user rules. It contains a list of active security
-    user rules and a skiptoken to get the next set of results.
+    """Result of the request to list active security user rules. It contains a list of active security user rules and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of active security user rules.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.ActiveBaseSecurityUserRule]
@@ -1870,8 +1867,7 @@ class ConnectivityConfiguration(ProxyResource):  # pylint: disable=too-many-inst
 
 
 class ConnectivityConfigurationListResult(_serialization.Model):
-    """Result of the request to list network manager connectivity configurations. It contains a list
-    of configurations and a link to get the next set of results.
+    """Result of the request to list network manager connectivity configurations. It contains a list of configurations and a link to get the next set of results.
 
     :ivar value: Gets a page of Connectivity Configurations.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.ConnectivityConfiguration]
@@ -2645,8 +2641,7 @@ class EffectiveVirtualNetwork(_serialization.Model):
 
 
 class EffectiveVirtualNetworksListResult(_serialization.Model):
-    """Result of the request to list Effective Virtual Network. It contains a list of groups and a URL
-    link to get the next set of results.
+    """Result of the request to list Effective Virtual Network. It contains a list of groups and a URL link to get the next set of results.
 
     :ivar value: Gets a page of EffectiveVirtualNetwork.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.EffectiveVirtualNetwork]
@@ -2840,8 +2835,7 @@ class NetworkGroup(ProxyResource):  # pylint: disable=too-many-instance-attribut
 
 
 class NetworkGroupListResult(_serialization.Model):
-    """Result of the request to list NetworkGroup. It contains a list of groups and a URL link to get
-    the next set of results.
+    """Result of the request to list NetworkGroup. It contains a list of groups and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NetworkGroup.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkGroup]
@@ -3222,8 +3216,7 @@ class NetworkManagerDeploymentStatusParameter(_serialization.Model):
 
 
 class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.Model):
-    """Result of the request to list networkManagerEffectiveConnectivityConfiguration. It contains a
-    list of groups and a skiptoken to get the next set of results.
+    """Result of the request to list networkManagerEffectiveConnectivityConfiguration. It contains a list of groups and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of NetworkManagerEffectiveConnectivityConfiguration.
     :vartype value:
@@ -3259,8 +3252,7 @@ class NetworkManagerEffectiveConnectivityConfigurationListResult(_serialization.
 
 
 class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
-    """Result of the request to list networkManagerEffectiveSecurityAdminRules. It contains a list of
-    groups and a skiptoken to get the next set of results.
+    """Result of the request to list networkManagerEffectiveSecurityAdminRules. It contains a list of groups and a skiptoken to get the next set of results.
 
     :ivar value: Gets a page of NetworkManagerEffectiveSecurityAdminRules.
     :vartype value:
@@ -3296,8 +3288,7 @@ class NetworkManagerEffectiveSecurityAdminRulesListResult(_serialization.Model):
 
 
 class NetworkManagerListResult(_serialization.Model):
-    """Result of the request to list NetworkManager. It contains a list of network managers and a URL
-    link to get the next set of results.
+    """Result of the request to list NetworkManager. It contains a list of network managers and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NetworkManager.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkManager]
@@ -3434,8 +3425,7 @@ class NetworkSecurityPerimeter(Resource):
 
 
 class NetworkSecurityPerimeterListResult(_serialization.Model):
-    """Result of the request to list NetworkSecurityPerimeter. It contains a list of network security
-    perimeters and a URL link to get the next set of results.
+    """Result of the request to list NetworkSecurityPerimeter. It contains a list of network security perimeters and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NetworkSecurityPerimeter.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NetworkSecurityPerimeter]
@@ -3565,8 +3555,7 @@ class NspAccessRule(Resource):  # pylint: disable=too-many-instance-attributes
 
 
 class NspAccessRuleListResult(_serialization.Model):
-    """Result of the request to list NSP access rules. Contains a list of NSP access rules and a URL
-    link to get the next set of results.
+    """Result of the request to list NSP access rules. Contains a list of NSP access rules and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP access rule.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspAccessRule]
@@ -3680,8 +3669,7 @@ class NspAssociation(Resource):
 
 
 class NspAssociationsListResult(_serialization.Model):
-    """Result of the request to list NSP resource associations. Contains a list of NSP resource
-    associations and a URL link to get the next set of results.
+    """Result of the request to list NSP resource associations. Contains a list of NSP resource associations and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP resource associations.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspAssociation]
@@ -3829,8 +3817,7 @@ class NspLink(ProxyResource):  # pylint: disable=too-many-instance-attributes
 
 
 class NspLinkListResult(_serialization.Model):
-    """Result of the request to list NSP link resources. Contains a list of NSP link resources and a
-    URL link to get the next set of results.
+    """Result of the request to list NSP link resources. Contains a list of NSP link resources and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP Link resources.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLink]
@@ -3958,8 +3945,7 @@ class NspLinkReference(ProxyResource):  # pylint: disable=too-many-instance-attr
 
 
 class NspLinkReferenceListResult(_serialization.Model):
-    """Result of the request to list NSP linkReference resources. Contains a list of NSP linkReference
-    resources and a URL link to get the next set of results.
+    """Result of the request to list NSP linkReference resources. Contains a list of NSP linkReference resources and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP LinkReference resources.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspLinkReference]
@@ -4048,8 +4034,7 @@ class NspProfile(Resource):
 
 
 class NspProfileListResult(_serialization.Model):
-    """Result of the request to list NSP profiles. Contains a list of NSP profiles and a URL link to
-    get the next set of results.
+    """Result of the request to list NSP profiles. Contains a list of NSP profiles and a URL link to get the next set of results.
 
     :ivar value: Gets a page of NSP profile.
     :vartype value: list[~azure.mgmt.network.v2021_02_01_preview.models.NspProfile]
@@ -4077,8 +4062,7 @@ class NspProfileListResult(_serialization.Model):
 
 
 class PerimeterAssociableResource(Resource):
-    """Resource that is onboarded to use network security perimeter. Also referred as perimeter
-    associable resource.
+    """Resource that is onboarded to use network security perimeter. Also referred as perimeter associable resource.
 
     Variables are only populated by the server, and will be ignored when sending a request.
 
