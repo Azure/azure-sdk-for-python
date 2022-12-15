@@ -310,21 +310,33 @@ def get_local_paths(
     source_path: str,
     ignore_file: IgnoreFile = IgnoreFile(),
 ) -> Tuple[List[str], Dict[str, str]]:
-    symlinks = []
+    """
+    Get the list of local paths to upload and if symlinks are discovered, return a dictionary of the link,target pairs.
+
+    :param source_path: The path to the local file or directory to upload
+    :type source_path: str
+    :param ignore_file: The ignore file to use when determining which files to upload
+    :type ignore_file: IgnoreFile
+    :return: A tuple of the list of local paths to upload and a dictionary of any symlinks and their targets
+    :rtype: Tuple[List[str], Dict[str, str]]
+    """
     local_paths = []
-    link_dict = {}
+    symlink_dict = {}
+    symlinks = []
 
-    def walk_directory_including_symlinks(top):
+    def walk_directory_including_symlinks(source: Union[str, os.PathLike]) -> List[Tuple[str, str]]:
         """
-        Generate the file names in a directory tree by walking the tree either top-down or bottom-up.
+        Python's os.walk() function doesn't follow symlinks to directories and subdirectories reliably on
+        all platforms. This function modifies it to check for symlinks, follow them if they're directories,
+        and add them to the list of directories to walk.
 
-        Checks for symlinks and follows them if they're directories to add them to the list of directories to walk.
+        :param source: The directory to walk
+        :type source: str
+        :return: A generator of all directories and files in the directory tree.
+        :rtype: Generator[Tuple[str, str]]
         """
-        # Keep track of the symlinks that have been encountered
 
-        # Walk the directory tree
-        for root, dirs, files in os.walk(top, topdown=True):
-            # Check for symlinks
+        for root, dirs, files in os.walk(source, topdown=True):
             for file in files:
                 filename = os.path.join(root, file)
                 if os.path.islink(filename):
@@ -335,17 +347,16 @@ def get_local_paths(
                     if os.path.isdir(target):
                         dirs.append(target)
 
-                    link_dict[file] = {
-                        "target file": convert_windows_path_to_unix(os.path.relpath(target, source_path)),
+                    symlink_dict[file] = {
+                        "target file": convert_windows_path_to_unix(os.path.relpath(target, source)),
                         "directory": False
                     }
                     if os.path.isdir(target):
                         symlinks.remove(file)
-                        link_dict[file]["directory"] = True
+                        symlink_dict[file]["directory"] = True
                     else:
                         yield root, file
                 else:
-                    # If the file is not a symlink, yield it
                     yield root, file
 
     file_tree = walk_directory_including_symlinks(source_path)
@@ -353,7 +364,7 @@ def get_local_paths(
         if not ignore_file.is_file_excluded(os.path.join(r, f)):
             local_paths.append(convert_windows_path_to_unix(os.path.join(r, f)))
 
-    return sorted(local_paths), link_dict
+    return sorted(local_paths), symlink_dict
 
 
 def construct_remote_paths(
@@ -397,7 +408,7 @@ def construct_remote_paths(
                     local = local.replace(link, target["target file"])
         updated_upload_pairs.append((local, remote))
 
-    return upload_pairs
+    return updated_upload_pairs
 
 
 def construct_local_and_remote_paths(
@@ -423,7 +434,7 @@ def construct_local_and_remote_paths(
         [/mnt/c/Users/dipeck/link/] --> [/mnt/c/Users/target/sub_folder/my_file1.txt, /mnt/c/Users/target/my_file2.txt]
 
     Composing Remote Paths
-        Files are uploaded to the datastore under the path LocalUpload/<artifact hash>/project_dir/<relative path>, so 
+        Files are uploaded to the datastore under the path LocalUpload/<artifact hash>/project_dir/<relative path>, so
         we need to construct the remote path for each file.
         [/mnt/c/Users/dipeck/upload_files/my_file1.txt, /mnt/c/Users/dipeck/upload_files/my_file2.txt] -->
         [(/mnt/c/Users/dipeck/upload_files/my_file1.txt, LocalUpload/<guid>/upload_files/my_file1.txt),
@@ -451,10 +462,7 @@ def construct_local_and_remote_paths(
     prefix = "" if dest == "" else dest + "/"
     prefix += os.path.basename(source_path) + "/"
 
-    local_upload_paths, link_dict = get_local_paths(
-        source_path=source_path,
-        ignore_file=ignore_file
-    )
+    local_upload_paths, link_dict = get_local_paths(source_path=source_path, ignore_file=ignore_file)
     upload_pairs = construct_remote_paths(local_upload_paths, source_path, prefix, link_dict)
 
     return upload_pairs
