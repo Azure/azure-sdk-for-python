@@ -26,7 +26,7 @@ from azure.ai.ml._utils.utils import (
     is_private_preview_enabled
 )
 from azure.ai.ml.constants._common import AzureMLResourceType, LROConfigurations, ARM_ID_PREFIX
-from azure.ai.ml.entities import BatchDeployment, BatchJob, Component, PipelineComponent
+from azure.ai.ml.entities import BatchDeployment, BatchJob, PipelineComponent
 from azure.ai.ml.entities._deployment.deployment import Deployment
 from azure.core.credentials import TokenCredential
 from azure.core.paging import ItemPaged
@@ -255,15 +255,14 @@ class BatchDeploymentOperations(_ScopeDependentOperations):
         """
         component = None
         if isinstance(deployment.job_definition.component, PipelineComponent):
-            component = self._component_operations.create_or_update(
+            component = self._all_operations.all_operations[AzureMLResourceType.COMPONENT].create_or_update(
                 name =  deployment.job_definition.component.name,
                 resource_group_name=self._resource_group_name,
                 workspace_name=self._workspace_name,
-                body = deployment.job_definition.component._to_rest_object(),
+                component = deployment.job_definition.component,
                 version=deployment.job_definition.component.version,
                 **self._init_kwargs
             )
-            component = Component._from_rest_object(component)
             deployment.job_definition.component = None
             deployment.job_definition.component_id = component.id
             if not deployment.job_definition.name and component.name:

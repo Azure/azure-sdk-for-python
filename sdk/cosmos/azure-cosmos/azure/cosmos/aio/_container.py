@@ -30,7 +30,7 @@ from azure.core.tracing.decorator_async import distributed_trace_async  # type: 
 
 from ._cosmos_client_connection_async import CosmosClientConnection
 from .._base import build_options as _build_options, validate_cache_staleness_value, _deserialize_throughput, \
-    _replace_throughput
+    _replace_throughput, GenerateGuidId
 from ..exceptions import CosmosResourceNotFoundError
 from ..http_constants import StatusCodes
 from ..offer import ThroughputProperties
@@ -364,7 +364,8 @@ class ContainerProxy(object):
         if max_integrated_cache_staleness_in_ms:
             validate_cache_staleness_value(max_integrated_cache_staleness_in_ms)
             feed_options["maxIntegratedCacheStaleness"] = max_integrated_cache_staleness_in_ms
-
+        correlated_activity_id = GenerateGuidId()
+        feed_options["correlatedActivityId"] = correlated_activity_id
         if hasattr(response_hook, "clear"):
             response_hook.clear()
 
