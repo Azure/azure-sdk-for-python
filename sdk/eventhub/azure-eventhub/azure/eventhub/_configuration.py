@@ -6,7 +6,7 @@ from typing import Optional, Dict, Any
 from urllib.parse import urlparse
 
 from azure.core.pipeline.policies import RetryMode
-from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT, UAMQP_TRANSPORT, PYAMQP_TRANSPORT
+from ._constants import TransportType, DEFAULT_AMQPS_PORT, DEFAULT_AMQP_WSS_PORT, UAMQP_LIBRARY, PYAMQP_LIBRARY
 
 
 
@@ -36,8 +36,8 @@ class Configuration(object):  # pylint:disable=too-many-instance-attributes
         self.custom_endpoint_hostname = None
         self.hostname = kwargs.pop("hostname")
         uamqp_transport = kwargs.pop("uamqp_transport")
-        self.amqp_library = PYAMQP_TRANSPORT if not uamqp_transport else UAMQP_TRANSPORT
-        self.user_agent = f"{self.amqp_library} {self.user_agent}"
+        amqp_library = PYAMQP_LIBRARY if not uamqp_transport else UAMQP_LIBRARY
+        self.user_agent = f"{amqp_library} {self.user_agent}"
 
         if self.http_proxy or self.transport_type.value == TransportType.AmqpOverWebsocket.value:
             self.transport_type = TransportType.AmqpOverWebsocket
