@@ -22,12 +22,13 @@ from {{ ".." if async_mode else "." }}_validation import api_version_validation
     {{ operation_group.decorator | indent }}
     {% endif %}
     def {{ operation_group.property_name }}(self):
+        api_version = self._get_api_version("{{ operation_group.property_name }}")
         return {{ operation_group.name }}(
             self._client,
             self._config,
-            Serializer({}),
-            Deserializer({}),
-            api_version=self._get_api_version("{{ operation_group.property_name }}")
+            Serializer(self._models_dict(api_version)),
+            Deserializer(self._models_dict(api_version)),
+            api_version=api_version,
         )
     {% endfor %}
 
