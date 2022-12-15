@@ -96,7 +96,7 @@ async def analyze_custom_documents_async(custom_model_id):
     for i, table in enumerate(result.tables):
         print("\nTable {} can be found on page:".format(i + 1))
         for region in table.bounding_regions:
-            print("...{}".format(i + 1, region.page_number))
+            print("...{}".format(region.page_number))
         for cell in table.cells:
             print(
                 "...Cell[{}][{}] has text '{}'".format(
@@ -125,11 +125,13 @@ async def main():
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
         async with document_model_admin_client:
-            poller = await document_model_admin_client.begin_build_document_model(
-                ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")
-            )
-            model = await poller.result()
-            model_id = model.model_id
+            blob_container_sas_url = os.getenv("CONTAINER_SAS_URL")
+            if blob_container_sas_url is not None:
+                poller = await document_model_admin_client.begin_build_document_model(
+                    ModelBuildMode.TEMPLATE, blob_container_url=blob_container_sas_url
+                )
+                model = await poller.result()
+                model_id = model.model_id
 
     await analyze_custom_documents_async(model_id)
 

@@ -27,7 +27,7 @@ USAGE:
 """
 
 import os
-from azure.ai.formrecognizer import FormField
+from azure.ai.formrecognizer import FormField, RecognizedForm
 
 
 class Receipt(object):
@@ -38,20 +38,20 @@ class Receipt(object):
     https://aka.ms/formrecognizer/receiptfields
     """
 
-    def __init__(self, form):
-        self.receipt_type = form.fields.get("ReceiptType", FormField())
-        self.merchant_name = form.fields.get("MerchantName", FormField())
-        self.merchant_address = form.fields.get("MerchantAddress", FormField())
-        self.merchant_phone_number = form.fields.get("MerchantPhoneNumber", FormField())
-        self.receipt_items = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
-        self.subtotal = form.fields.get("Subtotal", FormField())
-        self.tax = form.fields.get("Tax", FormField())
-        self.tip = form.fields.get("Tip", FormField())
-        self.total = form.fields.get("Total", FormField())
-        self.transaction_date = form.fields.get("TransactionDate", FormField())
-        self.transaction_time = form.fields.get("TransactionTime", FormField())
+    def __init__(self, form: RecognizedForm) -> None:
+        self.receipt_type: FormField = form.fields.get("ReceiptType", FormField())
+        self.merchant_name: FormField  = form.fields.get("MerchantName", FormField())
+        self.merchant_address: FormField  = form.fields.get("MerchantAddress", FormField())
+        self.merchant_phone_number: FormField  = form.fields.get("MerchantPhoneNumber", FormField())
+        self.receipt_items: FormField  = self.convert_to_receipt_item(form.fields.get("Items", FormField()))
+        self.subtotal: FormField  = form.fields.get("Subtotal", FormField())
+        self.tax: FormField  = form.fields.get("Tax", FormField())
+        self.tip: FormField  = form.fields.get("Tip", FormField())
+        self.total: FormField  = form.fields.get("Total", FormField())
+        self.transaction_date: FormField  = form.fields.get("TransactionDate", FormField())
+        self.transaction_time: FormField  = form.fields.get("TransactionTime", FormField())
 
-    def convert_to_receipt_item(self, items):
+    def convert_to_receipt_item(self, items: FormField) -> list["ReceiptItem"]:
         """Converts Items in a receipt to a list of strongly-typed ReceiptItem
         """
         if items is None:
@@ -63,11 +63,11 @@ class ReceiptItem(object):
     """Creates a strongly-typed ReceiptItem for every receipt item found in a RecognizedForm
     """
 
-    def __init__(self, item):
-        self.name = item.value.get("Name", FormField())
-        self.quantity = item.value.get("Quantity", FormField())
-        self.price = item.value.get("Price", FormField())
-        self.total_price = item.value.get("TotalPrice", FormField())
+    def __init__(self, item: FormField) -> None:
+        self.name: FormField  = item.value.get("Name", FormField())
+        self.quantity: FormField  = item.value.get("Quantity", FormField())
+        self.price: FormField  = item.value.get("Price", FormField())
+        self.total_price: FormField  = item.value.get("TotalPrice", FormField())
 
 
 class StronglyTypedRecognizedFormSample(object):

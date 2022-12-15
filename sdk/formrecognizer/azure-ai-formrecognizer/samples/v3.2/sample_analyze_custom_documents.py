@@ -89,7 +89,7 @@ def analyze_custom_documents(custom_model_id):
     for i, table in enumerate(result.tables):
         print("\nTable {} can be found on page:".format(i + 1))
         for region in table.bounding_regions:
-            print("...{}".format(i + 1, region.page_number))
+            print("...{}".format(region.page_number))
         for cell in table.cells:
             print(
                 "...Cell[{}][{}] has content '{}'".format(
@@ -115,9 +115,11 @@ if __name__ == "__main__":
         document_model_admin_client = DocumentModelAdministrationClient(
             endpoint=endpoint, credential=AzureKeyCredential(key)
         )
-        model = document_model_admin_client.begin_build_document_model(
-            ModelBuildMode.TEMPLATE, blob_container_url=os.getenv("CONTAINER_SAS_URL")
-        ).result()
-        model_id = model.model_id
+        blob_container_sas_url = os.getenv("CONTAINER_SAS_URL")
+        if blob_container_sas_url is not None:
+            model = document_model_admin_client.begin_build_document_model(
+                ModelBuildMode.TEMPLATE, blob_container_url=blob_container_sas_url
+            ).result()
+            model_id = model.model_id
 
     analyze_custom_documents(model_id)
