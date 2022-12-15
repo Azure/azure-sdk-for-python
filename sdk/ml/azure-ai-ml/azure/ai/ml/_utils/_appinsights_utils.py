@@ -43,8 +43,7 @@ def default_log_analytics_workspace_exists(credentials: TokenCredential, subscri
         default_resource_group,
         filter="substringof('%s',name)"%get_default_log_analytics_name(location)
     )
-    for item in default_workspace:
-        item = item
+    for item in default_workspace: # pylint: disable=unused-variable
         # return true for is_existing
         return True
     # else return false for is_existing
