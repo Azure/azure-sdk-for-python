@@ -42,7 +42,7 @@ class ConversationAuthoringClientConfiguration(Configuration):  # pylint: disabl
 
     def __init__(self, endpoint: str, credential: "AsyncTokenCredential", **kwargs: Any) -> None:
         super(ConversationAuthoringClientConfiguration, self).__init__(**kwargs)
-        api_version = kwargs.pop("api_version", "2022-10-01-preview")  # type: Literal["2022-10-01-preview"]
+        api_version: Literal["2022-10-01-preview"] = kwargs.pop("api_version", "2022-10-01-preview")
 
         if endpoint is None:
             raise ValueError("Parameter 'endpoint' must not be None.")
