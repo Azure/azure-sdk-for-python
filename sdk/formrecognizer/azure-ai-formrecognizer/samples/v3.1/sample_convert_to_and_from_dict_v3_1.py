@@ -7,15 +7,15 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_convert_to_and_from_dict_async.py
+FILE: sample_convert_to_and_from_dict_v3_1.py
 
 DESCRIPTION:
-    This sample demonstrates how to convert models returned from a recognize operation
+    This sample demonstrates how to convert models returned from an analyze operation
     to and from a dictionary. The dictionary in this sample is then converted to a
     JSON file, then the same dictionary is converted back to its original model.
 
 USAGE:
-    python sample_convert_to_and_from_dict_async.py
+    python sample_convert_to_and_from_dict_v3_1.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
@@ -24,13 +24,11 @@ USAGE:
 
 import os
 import json
-import asyncio
 
-async def convert_to_and_from_dict_async():
+def convert_to_and_from_dict():
     path_to_sample_forms = os.path.abspath(
         os.path.join(
             os.path.abspath(__file__),
-            "..",
             "..",
             "..",
             "./sample_forms/id_documents/license.jpg",
@@ -39,8 +37,7 @@ async def convert_to_and_from_dict_async():
 
     from azure.core.serialization import AzureJSONEncoder
     from azure.core.credentials import AzureKeyCredential
-    from azure.ai.formrecognizer.aio import FormRecognizerClient
-    from azure.ai.formrecognizer import RecognizedForm
+    from azure.ai.formrecognizer import FormRecognizerClient, RecognizedForm
 
     endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
     key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -48,11 +45,10 @@ async def convert_to_and_from_dict_async():
     form_recognizer_client = FormRecognizerClient(
         endpoint=endpoint, credential=AzureKeyCredential(key)
     )
-    async with form_recognizer_client:
-        with open(path_to_sample_forms, "rb") as f:
-            poller = await form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
-        
-        id_documents = await poller.result()
+    with open(path_to_sample_forms, "rb") as f:
+        poller = form_recognizer_client.begin_recognize_identity_documents(identity_document=f)
+    
+    id_documents = poller.result()
 
     # convert the received model to a dictionary
     recognized_form_dict = [doc.to_dict() for doc in id_documents]
@@ -82,9 +78,5 @@ async def convert_to_and_from_dict_async():
     print("----------------------------------------")
 
 
-async def main():
-    await convert_to_and_from_dict_async()
-
-
-if __name__ == '__main__':
-    asyncio.run(main())
+if __name__ == "__main__":
+    convert_to_and_from_dict()

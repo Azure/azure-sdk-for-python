@@ -7,7 +7,7 @@
 # --------------------------------------------------------------------------
 
 """
-FILE: sample_authentication.py
+FILE: sample_authentication_v3_1.py
 
 DESCRIPTION:
     This sample demonstrates how to authenticate to the Form Recognizer service.
@@ -20,7 +20,7 @@ DESCRIPTION:
     https://docs.microsoft.com/azure/cognitive-services/authentication
 
 USAGE:
-    python sample_authentication.py
+    python sample_authentication_v3_1.py
 
     Set the environment variables with your own values before running the sample:
     1) AZURE_FORM_RECOGNIZER_ENDPOINT - the endpoint to your Form Recognizer resource.
