@@ -25,7 +25,7 @@ from azure.ai.ml._scope_dependent_operations import (
     _ScopeDependentOperations,
 )
 # from azure.ai.ml._telemetry import ActivityType, monitor_with_activity
-from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_datastore_prefix
+from azure.ai.ml._utils._arm_id_utils import get_datastore_arm_id, is_ARM_id_for_resource, remove_aml_prefix
 from azure.ai.ml._utils._azureml_polling import AzureMLPolling
 from azure.ai.ml._utils._endpoint_utils import validate_response
 from azure.ai.ml._utils._http_utils import HttpPipeline
@@ -432,8 +432,8 @@ class BatchEndpointOperations(_ScopeDependentOperations):
                     return
                 if is_private_preview_enabled() and re.match(AZUREML_REGEX_FORMAT, entry.path):
                     return
-                asset_type = AzureMLResourceType.DATASTORE
-                entry.path = remove_datastore_prefix(entry.path)
+                asset_type = AzureMLResourceType.DATA
+                entry.path = remove_aml_prefix(entry.path)
                 orchestrator = OperationOrchestrator(
                     self._all_operations, self._operation_scope, self._operation_config
                 )
