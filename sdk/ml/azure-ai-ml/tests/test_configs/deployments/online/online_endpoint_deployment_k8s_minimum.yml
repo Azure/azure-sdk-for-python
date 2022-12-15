@@ -13,6 +13,6 @@ code_configuration:
 environment:
     name: aks-env
     version: 3
-    image: mcr.microsoft.com/azureml/intelmpi2018.3-ubuntu16.04:20210301.v1
+    image: mcr.microsoft.com/azureml/intelmpi2018.3-ubuntu20.04:20210301.v1
     conda_file: ../../environment/endpoint_conda.yml
 instance_type: cpuInstance

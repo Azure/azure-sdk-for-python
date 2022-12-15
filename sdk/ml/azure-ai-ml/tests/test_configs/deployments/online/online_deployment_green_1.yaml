@@ -15,7 +15,7 @@ environment:
   path: .
   conda_file: file:../model-2/environment/conda.yml
   docker:
-    image: mcr.microsoft.com/azureml/intelmpi2018.3-ubuntu16.04:20210301.v1
+    image: mcr.microsoft.com/azureml/intelmpi2018.3-ubuntu20.04:20210301.v1
 instance_type: Standard_F2s_v2
 scale_settings:
   scale_type: manual

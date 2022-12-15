@@ -32,7 +32,7 @@
   "type": "ParallelComponent",
   "environment": {
     "docker": {
-      "image": "mcr.microsoft.com/azureml/openmpi3.1.2-cuda10.1-cudnn7-ubuntu18.04"
+      "image": "mcr.microsoft.com/azureml/openmpi3.1.2-cuda10.1-cudnn7-ubuntu20.04"
     },
     "conda": {
       "conda_dependencies": {
