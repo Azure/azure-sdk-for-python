@@ -326,7 +326,7 @@ class FormElement:
     """
 
     def __init__(self, **kwargs: Any) -> None:
-        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)  # type: ignore
+        self.bounding_box: list[Point] = kwargs.get("bounding_box", None)  # pylint: disable=unsubscriptable-object
         self.page_number: int = kwargs.get("page_number", None)
         self.text: str = kwargs.get("text", None)
         self.kind: str = kwargs.get("kind", None)
