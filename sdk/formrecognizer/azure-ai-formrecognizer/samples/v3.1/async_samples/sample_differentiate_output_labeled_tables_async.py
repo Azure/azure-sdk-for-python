@@ -90,6 +90,7 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
     async def test_recognize_tables_dynamic_rows_async(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential
         from azure.ai.formrecognizer.aio import FormRecognizerClient
+        from azure.ai.formrecognizer import RecognizedForm
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -109,7 +110,7 @@ class TestDifferentiateOutputLabeledTablesAsync(object):
                 model_id=model_id_dynamic_rows_table, form=form
             )
 
-            result = await poller.result()
+            result: list[RecognizedForm] = await poller.result()
 
         print("\n\n--------Recognizing labeled table with dynamic rows--------\n")
         for form in result:
