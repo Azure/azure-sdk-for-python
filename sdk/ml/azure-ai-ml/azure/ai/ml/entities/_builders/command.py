@@ -257,14 +257,14 @@ class Command(BaseNode):
                                 AmlTokenConfiguration,
                                 UserIdentityConfiguration, None]):
         if isinstance(value, dict):
-            identify_schema = UnionField(
+            identity_schema = UnionField(
                 [
                     NestedField(ManagedIdentitySchema, unknown=INCLUDE),
                     NestedField(AMLTokenIdentitySchema, unknown=INCLUDE),
                     NestedField(UserIdentitySchema, unknown=INCLUDE),
                 ]
             )
-            value = identify_schema._deserialize(value=value, attr=None, data=None)
+            value = identity_schema._deserialize(value=value, attr=None, data=None)
         self._identity = value
 
     @property
