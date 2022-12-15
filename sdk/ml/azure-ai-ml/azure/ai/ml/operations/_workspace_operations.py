@@ -482,7 +482,7 @@ class WorkspaceOperations:
             rg_is_existing = default_resource_group_for_app_insights_exists(self._credentials, self._subscription_id, app_insights_location)
             # if default resource group does not exist yet, create resource group with log analytics inside 
             if not rg_is_existing:
-                # add resource goup and log analytics deployments to resources
+                # add resource group and log analytics deployments to resources
                 app_insights_resource_group_deployment_name = "DeployResourceGroup%s"%get_deployment_name("")
                 app_insights_log_workspace_deployment_name = "DeployLogWorkspace%s"%get_deployment_name("")
                 template["resources"].append(get_default_resource_group_deployment(app_insights_resource_group_deployment_name, app_insights_location, self._subscription_id))

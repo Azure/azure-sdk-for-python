@@ -223,6 +223,10 @@ class TestWorkspaceOperation:
         self, mock_workspace_operation: WorkspaceOperations, mocker: MockFixture
     ) -> None:
         mocker.patch("azure.ai.ml.operations._workspace_operations.get_resource_group_location", return_value="random_name")
+<<<<<<< HEAD
+=======
+        mocker.patch("azure.ai.ml.operations._workspace_operations.get_default_log_analytics_arm_id", return_value=("random_id", True))
+>>>>>>> a42f60d482 (comment fix)
         mock_workspace_operation._populate_arm_paramaters(workspace=Workspace(name="name"))
 
     def test_populate_arm_paramaters_other_branches(
