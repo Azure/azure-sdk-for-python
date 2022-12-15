@@ -246,13 +246,6 @@ class MLClient(object):
         # http requests
         self._requests_pipeline = HttpPipeline(**kwargs)
 
-        self._service_client_06_2022_preview = ServiceClient062022Preview(
-            credential=self._credential,
-            subscription_id=self._operation_scope._subscription_id,
-            base_url=base_url,
-            **kwargs,
-        )
-
         self._service_client_10_2022_preview = ServiceClient102022Preview(
             credential=self._credential,
             subscription_id=self._operation_scope._subscription_id,

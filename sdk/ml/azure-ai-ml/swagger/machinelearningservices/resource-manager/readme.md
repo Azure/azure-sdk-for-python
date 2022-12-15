@@ -61,16 +61,6 @@ input-file:
 output-folder: $(python-sdks-folder)/v2022_02_01_preview
 ```
 
-### Tag: v2022-06-01-preview
-
-These settings apply only when `--tag=v2022-06-01-preview` is specified on the command line.
-
-```yaml $(tag) == 'v2022-06-01-preview'
-input-file:
-  - Microsoft.MachineLearningServices/preview/2022-06-01-preview/mfe.json
-output-folder: $(python-sdks-folder)/v2022_06_01_preview
-```
-
 ### Tag: v2022-01-01-preview
 
 These settings apply only when `--tag=v2022-01-01-preview` is specified on the command line.
@@ -155,7 +145,6 @@ batch:
   - tag: dataset-dataplane
   - tag: v2022-05-01
   - tag: v2022-02-01-preview
-  - tag: v2022-06-01-preview
   - tag: v2022-01-01-preview
   - tag: runhistory
   - tag: v2020-09-01-dataplanepreview
