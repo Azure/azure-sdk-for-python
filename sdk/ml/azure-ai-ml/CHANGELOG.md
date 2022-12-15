@@ -5,6 +5,9 @@
 ### Features Added
 - Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
 
+### Other Changes
+- Removed dependency on API version 2021-10-01 and 2022-06-01-preview to reduce side of azure-ai-ml package.
+
 ## 1.2.0 (2022-12-05)
 
 ### Breaking Changes
