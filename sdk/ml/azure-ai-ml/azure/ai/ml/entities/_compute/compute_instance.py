@@ -280,12 +280,6 @@ class ComputeInstance(Compute):
         compute_instance_prop.setup_scripts = (
             self.setup_scripts._to_rest_object() if self.setup_scripts else None
         )
-        compute_instance_prop.schedules = (
-            self.schedules._to_rest_object() if self.schedules else None
-        )
-        compute_instance_prop.setup_scripts = (
-            self.setup_scripts._to_rest_object() if self.setup_scripts else None
-        )
         compute_instance = CIRest(
             description=self.description,
             compute_type=self.type,
