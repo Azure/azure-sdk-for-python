@@ -21,7 +21,7 @@ from azure.identity.aio import DefaultAzureCredential
 
 class ListDefinitions():
     async def list_definitions(self):
-        credential  = DefaultAzureCredential()
+        credential = DefaultAzureCredential()
 
         client = MetricsQueryClient(credential)
 

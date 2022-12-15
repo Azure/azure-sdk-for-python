@@ -26,7 +26,7 @@ from azure.identity import DefaultAzureCredential
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # [START metrics_client_auth_with_token_cred]
-credential  = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
 client = MetricsQueryClient(credential)
 # [END metrics_client_auth_with_token_cred]

@@ -11,7 +11,7 @@ USAGE:
     1) LOGS_WORKSPACE_ID - The first (primary) workspace ID.
 
 This example uses DefaultAzureCredential, which requests a token from Azure Active Directory.
-For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.   
+For more information on DefaultAzureCredential, see https://docs.microsoft.com/python/api/overview/azure/identity-readme?view=azure-python#defaultazurecredential.
 """
 import os
 from datetime import timedelta
@@ -19,7 +19,7 @@ from azure.monitor.query import LogsQueryClient, LogsQueryStatus
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 
-credential  = DefaultAzureCredential()
+credential = DefaultAzureCredential()
 
 client = LogsQueryClient(credential)
 
@@ -31,7 +31,7 @@ try:
         # handle error here
         error = response.partial_error
         data = response.partial_data
-        print(error.message)
+        print(error)
     elif response.status == LogsQueryStatus.SUCCESS:
         data = response.tables
     for table in data:
