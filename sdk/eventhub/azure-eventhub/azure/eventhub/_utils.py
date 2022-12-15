@@ -24,8 +24,6 @@ from typing import (
     Callable
 )
 
-import six
-
 from azure.core.settings import settings
 from azure.core.tracing import SpanKind, Link
 
@@ -219,7 +217,7 @@ def event_position_selector(value, inclusive=False):
         return (
             f"amqp.annotation.x-opt-enqueued-time {operator} '{int(timestamp)}'"
         ).encode("utf-8")
-    elif isinstance(value, six.integer_types):
+    elif isinstance(value, int):
         return (
             f"amqp.annotation.x-opt-sequence-number {operator} '{value}'"
         ).encode("utf-8")
@@ -324,7 +322,7 @@ def decode_with_recurse(data, encoding="UTF-8"):
 
     if isinstance(data, str):
         return data
-    if isinstance(data, six.binary_type):
+    if isinstance(data, bytes):
         return data.decode(encoding)
     if isinstance(
         data, Mapping

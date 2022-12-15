@@ -2,6 +2,9 @@
 
 ## 1.3.0 (Unreleased)
 
+### Features Added
+- Change print behavior of entity classes to show object yaml in notebooks, can be configured on in other contexts.
+
 ### Other Changes
 - Switched compute operations to go through 2022-12-01-preview API version.
 

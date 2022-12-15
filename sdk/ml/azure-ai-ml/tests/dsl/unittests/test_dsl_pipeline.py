@@ -2346,3 +2346,214 @@ class TestDSLPipeline:
 
         validate_result = pipeline_job._validate()
         assert validate_result.passed
+
+    def test_dsl_pipeline_with_unprovided_pipeline_optional_input(self, client: MLClient) -> None:
+        component_func = load_component(source=str(components_dir / "default_optional_component.yml"))
+
+        # optional pipeline input binding to optional node input
+        @dsl.pipeline()
+        def pipeline_func(optional_input: Input(optional=True, type="uri_file")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_input=optional_input,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {}
+
+        # optional pipeline parameter binding to optional node parameter
+        @dsl.pipeline()
+        def pipeline_func(optional_param: Input(optional=True, type="string"),
+                          optional_param_duplicate: Input(optional=True, type="string")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_param=optional_param,
+                optional_param_with_default=optional_param_duplicate,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {}
+
+    def test_dsl_pipeline_with_unprovided_pipeline_required_input(self, client: MLClient) -> None:
+        component_func = load_component(source=str(components_dir / "default_optional_component.yml"))
+
+        # required pipeline input binding to optional node input
+        @dsl.pipeline()
+        def pipeline_func(required_input: Input(optional=False, type="uri_file")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_input=required_input,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {
+            'inputs.required_input': "Required input 'required_input' for pipeline "
+                                     "'pipeline_func' not provided."
+        }
+
+        # required pipeline parameter binding to optional node parameter
+        @dsl.pipeline()
+        def pipeline_func(required_param: Input(optional=False, type="string"),
+                          required_param_duplicate: Input(optional=False, type="string")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_param=required_param,
+                optional_param_with_default=required_param_duplicate,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {
+            'inputs.required_param': "Required input 'required_param' for pipeline "
+                                     "'pipeline_func' not provided.",
+            'inputs.required_param_duplicate': "Required input 'required_param_duplicate' for pipeline "
+                                               "'pipeline_func' not provided."
+        }
+
+        # required pipeline parameter with default value binding to optional node parameter
+        @dsl.pipeline()
+        def pipeline_func(required_param: Input(optional=False, type="string", default="pipeline_required_param")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param=required_param,
+                optional_param=required_param,
+                optional_param_with_default=required_param,
+            )
+
+        pipeline_job = pipeline_func()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {}
+
+    def test_dsl_pipeline_with_pipeline_component_unprovided_pipeline_optional_input(self, client: MLClient) -> None:
+        component_func = load_component(source=str(components_dir / "default_optional_component.yml"))
+
+        # optional pipeline input binding to optional node input
+        @dsl.pipeline()
+        def subgraph_pipeline(optional_input: Input(optional=True, type="uri_file")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_input=optional_input,
+            )
+
+        @dsl.pipeline()
+        def root_pipeline():
+            subgraph_node = subgraph_pipeline(
+            )
+
+        pipeline_job = root_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {}
+
+        # optional pipeline parameter binding to optional node parameter
+        @dsl.pipeline()
+        def subgraph_pipeline(optional_parameter: Input(optional=True, type="string"),
+                              optional_parameter_duplicate: Input(optional=True, type="string")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_param=optional_parameter,
+                optional_param_with_default=optional_parameter_duplicate,
+            )
+
+        @dsl.pipeline()
+        def root_pipeline():
+            subgraph_node = subgraph_pipeline(
+            )
+
+        pipeline_job = root_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {}
+
+    def test_dsl_pipeline_with_pipeline_component_unprovided_pipeline_required_input(self, client: MLClient) -> None:
+        component_func = load_component(source=str(components_dir / "default_optional_component.yml"))
+
+        # required pipeline input binding to optional node input
+        @dsl.pipeline()
+        def subgraph_pipeline(required_input: Input(optional=False, type="uri_file")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_input=required_input
+            )
+
+        @dsl.pipeline()
+        def root_pipeline():
+            subgraph_node = subgraph_pipeline(
+            )
+
+        pipeline_job = root_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {
+            'jobs.subgraph_node.inputs.required_input': "Required input 'required_input' for component 'subgraph_node'"
+                                                        " not provided."
+        }
+
+        @dsl.pipeline()
+        def root_pipeline(required_input: Input(optional=False, type="uri_file")):
+            subgraph_node = subgraph_pipeline(
+                required_input=required_input
+            )
+
+        pipeline_job = root_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {
+            'inputs.required_input': "Required input 'required_input' for pipeline 'root_pipeline' not provided."
+        }
+
+        # required pipeline parameter binding to optional node parameter
+        @dsl.pipeline()
+        def subgraph_pipeline(required_parameter: Input(optional=False, type="string")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_param=required_parameter
+            )
+
+        @dsl.pipeline()
+        def root_pipeline():
+            subgraph_node = subgraph_pipeline(
+            )
+
+        pipeline_job = root_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {
+            'jobs.subgraph_node.inputs.required_parameter': "Required input 'required_parameter' for component "
+                                                            "'subgraph_node' not provided."
+        }
+
+        # required pipeline parameter with default value binding to optional node parameter
+        @dsl.pipeline()
+        def subgraph_pipeline(required_parameter: Input(optional=False, type="string", default="subgraph_pipeline")):
+            component_func(
+                required_input=Input(type="uri_file", path="https://dprepdata.blob.core.windows.net/demo/Titanic.csv"),
+                required_param="def",
+                optional_param=required_parameter
+            )
+
+        @dsl.pipeline()
+        def root_pipeline():
+            subgraph_node = subgraph_pipeline(
+            )
+
+        pipeline_job = root_pipeline()
+        pipeline_job.settings.default_compute = "cpu-cluster"
+        validate_result = pipeline_job._validate()
+        assert validate_result.error_messages == {}

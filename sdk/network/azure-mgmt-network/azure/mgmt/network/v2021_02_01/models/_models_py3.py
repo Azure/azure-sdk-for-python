@@ -3870,7 +3870,7 @@ class FirewallPolicyRule(_serialization.Model):
         super().__init__(**kwargs)
         self.name = name
         self.description = description
-        self.rule_type = None  # type: Optional[str]
+        self.rule_type: Optional[str] = None
 
 
 class ApplicationRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-attributes
@@ -3967,7 +3967,7 @@ class ApplicationRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-
         :paramtype web_categories: list[str]
         """
         super().__init__(name=name, description=description, **kwargs)
-        self.rule_type = "ApplicationRule"  # type: str
+        self.rule_type: str = "ApplicationRule"
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
         self.protocols = protocols
@@ -12968,7 +12968,7 @@ class FirewallPolicyRuleCollection(_serialization.Model):
         :paramtype priority: int
         """
         super().__init__(**kwargs)
-        self.rule_collection_type = None  # type: Optional[str]
+        self.rule_collection_type: Optional[str] = None
         self.name = name
         self.priority = priority
 
@@ -13027,7 +13027,7 @@ class FirewallPolicyFilterRuleCollection(FirewallPolicyRuleCollection):
         :paramtype rules: list[~azure.mgmt.network.v2021_02_01.models.FirewallPolicyRule]
         """
         super().__init__(name=name, priority=priority, **kwargs)
-        self.rule_collection_type = "FirewallPolicyFilterRuleCollection"  # type: str
+        self.rule_collection_type: str = "FirewallPolicyFilterRuleCollection"
         self.action = action
         self.rules = rules
 
@@ -13427,7 +13427,7 @@ class FirewallPolicyNatRuleCollection(FirewallPolicyRuleCollection):
         :paramtype rules: list[~azure.mgmt.network.v2021_02_01.models.FirewallPolicyRule]
         """
         super().__init__(name=name, priority=priority, **kwargs)
-        self.rule_collection_type = "FirewallPolicyNatRuleCollection"  # type: str
+        self.rule_collection_type: str = "FirewallPolicyNatRuleCollection"
         self.action = action
         self.rules = rules
 
@@ -17931,7 +17931,7 @@ class NatRule(FirewallPolicyRule):  # pylint: disable=too-many-instance-attribut
         :paramtype translated_fqdn: str
         """
         super().__init__(name=name, description=description, **kwargs)
-        self.rule_type = "NatRule"  # type: str
+        self.rule_type: str = "NatRule"
         self.ip_protocols = ip_protocols
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
@@ -19084,7 +19084,7 @@ class NetworkRule(FirewallPolicyRule):
         :paramtype destination_fqdns: list[str]
         """
         super().__init__(name=name, description=description, **kwargs)
-        self.rule_type = "NetworkRule"  # type: str
+        self.rule_type: str = "NetworkRule"
         self.ip_protocols = ip_protocols
         self.source_addresses = source_addresses
         self.destination_addresses = destination_addresses
