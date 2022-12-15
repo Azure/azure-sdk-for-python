@@ -87,7 +87,7 @@ class TestDifferentiateOutputLabeledTables(object):
 
     def test_recognize_tables_dynamic_rows(self, custom_model_id):
         from azure.core.credentials import AzureKeyCredential
-        from azure.ai.formrecognizer import FormRecognizerClient
+        from azure.ai.formrecognizer import FormRecognizerClient, RecognizedForm
 
         endpoint = os.environ["AZURE_FORM_RECOGNIZER_ENDPOINT"]
         key = os.environ["AZURE_FORM_RECOGNIZER_KEY"]
@@ -106,7 +106,7 @@ class TestDifferentiateOutputLabeledTables(object):
             model_id=model_id_dynamic_rows_table, form=form
         )
 
-        result = poller.result()
+        result: list[RecognizedForm] = poller.result()
 
         print("\n\n--------Recognizing labeled table with dynamic rows--------\n")
         for form in result:
