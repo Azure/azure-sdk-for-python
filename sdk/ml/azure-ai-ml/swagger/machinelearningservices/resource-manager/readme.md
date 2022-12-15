@@ -72,18 +72,6 @@ input-file:
 output-folder: $(python-sdks-folder)/v2022_01_01_preview
 ```
 
-### Tag: v2021-10-01
-
-These settings apply only when `--tag=v2021-10-01` is specified on the command line.
-
-```yaml $(tag) == 'v2021-10-01'
-input-file:
-  - Microsoft.MachineLearningServices/stable/2021-10-01/mfe.json
-  - Microsoft.MachineLearningServices/stable/2021-10-01/machineLearningServices.json
-  - Microsoft.MachineLearningServices/stable/2021-10-01/workspaceFeatures.json
-output-folder: $(python-sdks-folder)/v2021_10_01
-```
-
 ### Tag: mfe-dataplane-preview
 
 These settings apply only when `--v2020-09-01-dataplanepreview` is specified on the command line.
